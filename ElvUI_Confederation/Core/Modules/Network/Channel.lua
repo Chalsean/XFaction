@@ -2,24 +2,23 @@ local CON, E, L, V, P, G = unpack(select(2, ...))
 local DB = E.db.Confederation
 local LogCategory = 'MChannel'
 local Initialized = false
-local MaxChannels = 100
+local MaxChannels = 50
 
 local function ScanChannels()
 	CON:Info(LogCategory, "Caching channel information")
 	for i = 1, MaxChannels do
 		local ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(i)
-		if(ChannelInfo == nil) then
-			break
-		end
-		CON.Network.Channel[ChannelInfo.localID] = {
-			Name = ChannelInfo.name,
-			ShortName = ChannelInfo.shortcut,
-			ChannelID = ChannelInfo.localID,
-			Community = (ChannelInfo.channelType == 2) and true or false
-		}
-		
-		if(CON.Network.Channel[ChannelInfo.localID].Name == CON.Category) then
-			CON.Network.ChannelID = CON.Network.Channel[ChannelInfo.localID].ChannelID
+		if(ChannelInfo ~= nil) then
+			CON.Network.Channel[ChannelInfo.localID] = {
+				Name = ChannelInfo.name,
+				ShortName = ChannelInfo.shortcut,
+				ChannelID = ChannelInfo.localID,
+				Community = (ChannelInfo.channelType == 2) and true or false
+			}
+			
+			if(CON.Network.Channel[ChannelInfo.localID].Name == CON.Category) then
+				CON.Network.ChannelID = CON.Network.Channel[ChannelInfo.localID].ChannelID
+			end
 		end
 	end
 	CON:DataDumper(LogCategory, CON.Network)
@@ -53,9 +52,25 @@ function CON:InitializeChannel()
 		end
 		CON.Network.Message = {
 			UnitData = 'CON_DATA',
-			Status = 'CON_STATUS'
+			Status = 'CON_STATUS',
+			BNet = 'CON_BNET_DATA'
 		}
 		ScanChannels()
+
+		CON:InitializeComm()
 		Initialized = true
 	end
+end
+
+function CON:BroadcastUnitData(UnitData)
+	CON:InitializeChannel()
+	CON:Info(LogCategory, "Broadcasting data for [%s] on channel [%d]", UnitData.Unit, CON.Network.ChannelID)
+	local MessageData = CON:EncodeUnitData(UnitData)
+	CON:SendCommMessage(CON.Network.Message.UnitData, MessageData, "CHANNEL", CON.Network.ChannelID)
+end
+
+function CON:BroadcastStatus()
+	CON:InitializeChannel()
+	CON:Info(LogCategory, "Broadcasting status request on channel [%d]", CON.Network.ChannelID)
+	CON:SendCommMessage(CON.Network.Message.Status, DB.Data.CurrentRealm.Name, "CHANNEL", CON.Network.ChannelID)
 end

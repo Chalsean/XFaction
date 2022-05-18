@@ -2,13 +2,11 @@ local CON, E, L, V, P, G = unpack(select(2, ...))
 local DB = E.db.Confederation
 local LogCategory = 'MMessage'
 local Initialized = false
-local COMM = LibStub("AceAddon-3.0"):NewAddon(CON.Category, "AceComm-3.0")
-CON.Comm = COMM
 
 local function ProcessDataMessage(Message, Sender)
 
 	local UnitData = CON:DecodeUnitData(Message)
-	CON:DataDumper(LogCategory, UnitData)
+	--CON:DataDumper(LogCategory, UnitData)
 
     -- Ignore if it's your own message (unfortunately there's no realm name attached)
 	if(DB.Data.Player.Name == Sender) then
@@ -16,7 +14,7 @@ local function ProcessDataMessage(Message, Sender)
 	end
 
 	-- It's about you, sender needs current information
-	if(UnitData.Unit == DB.Data.PlayerUnit) then
+	if(UnitData.GUID == DB.PlayerGUID) then
 		CON:WhisperUnitData(DB.Data.Player, Sender)
 		return
 	end
@@ -74,18 +72,20 @@ local function ProcessStatusMessage(RealmName, Sender)
 	end
 end
 
-function COMM:OnCommReceived(MessageType, Message, Distribution, Sender)
+function CON:OnCommReceived(MessageType, Message, Distribution, Sender)
 	
-	CON:Debug(LogCategory, "Message received [%s][%s][%s]", MessageType, Distribution, Sender)
+	--CON:Debug(LogCategory, "Message received [%s][%s][%s]", MessageType, Distribution, Sender)
 
 	if(MessageType == CON.Network.Message.UnitData) then
 		ProcessDataMessage(Message, Sender)
 	elseif(MessageType == CON.Network.Message.Status) then
 		ProcessStatusMessage(Message, Sender)
+	else
+		CON:Warning(LogCategory, "Received unknown message type [%s] from [%s] over [%s]", MessageType, Sender, Distribution)
 	end	
 end
 
-function COMM:Initialize()
+function CON:InitializeComm()
 	if(Initialized == false) then
 		for Key, Value in pairs (CON.Network.Message) do
 			CON:Info(LogCategory, format("Registering to receive [%s] messages", CON.Network.Message[Key]))
@@ -93,27 +93,4 @@ function COMM:Initialize()
 		end
 		Initialized = true
 	end
-end
-
-local function SendCommunication(MessageType, Message, Medium, ChannelID)
-	CON:Debug(LogCategory, format("Sending communication type [%s] length [%d] medium [%s]", MessageType, string.len(Message), Medium))
-	COMM:SendCommMessage(MessageType, Message, Medium, ChannelID)
-end
-
-function CON:BroadcastUnitData(UnitData)
-	COMM:Initialize()
-	CON:Info(LogCategory, format("Broadcasting data for [%s] on channel [%d]", UnitData.Unit, CON.Network.ChannelID))
-	local MessageData = CON:EncodeUnitData(UnitData)
-	SendCommunication(CON.Network.Message.UnitData, MessageData, "CHANNEL", CON.Network.ChannelID)
-end
-
-function CON:BroadcastStatus()
-	CON:Info(LogCategory, "Broadcasting status request on channel [%d]", CON.Network.ChannelID)
-	SendCommunication(CON.Network.Message.Status, DB.Data.RealmName, "CHANNEL", CON.Network.ChannelID)
-end
-
-function CON:WhisperUnitData(UnitData, Target)
-	CON:Info(LogCategory, "Whispering data for [%s] to [%s]", UnitData.Unit, Target)
-	local MessageData = CON:EncodeUnitData(UnitData)
-	SendCommunication(CON.Network.Message.UnitData, MessageData, "WHISPER", Target)
 end

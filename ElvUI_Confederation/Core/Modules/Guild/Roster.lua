@@ -27,7 +27,7 @@ local function BuildUnitData(GuildIndex)
 		GUID = GUID,
 		Unit = unit,
 		Name = ParsedName[1],
-		RealmName = ParsedName[2],
+		RealmName = DB.CurrentRealm.Name,
 		GuildName = DB.Guild.Name,
 		GuildIndex = i,
 		GuildRank = (DB.Guild.Ranks[rank] ~= nil) and DB.Guild.Ranks[rank] or rank,
@@ -47,12 +47,19 @@ local function BuildUnitData(GuildIndex)
 		RunningCovenant = false
 	}
 
-	if(DB.PlayerUnit == UnitData.Unit) then
+	local ParsedGUID = string.Split(GUID, "-")
+	UnitData.RealmID = ParsedGUID[2]
+
+	if(UnitData.GUID == DB.PlayerGUID) then
 		UnitData.Spec = CON:GetActiveSpec()
 
 		local FirstProfessionID, SecondProfessionID = GetProfessions()
-		UnitData.Profession1 = CON:GetProfession(FirstProfessionID)
-		UnitData.Profession2 = CON:GetProfession(SecondProfessionID)
+		if(FirstProfessionID ~= nil) then
+			UnitData.Profession1 = CON:GetProfession(FirstProfessionID)
+		end
+		if(SecondProfessionID ~= nil) then
+			UnitData.Profession2 = CON:GetProfession(SecondProfessionID)
+		end
 		
 		if(CON:HasActiveCovenant()) then
 			UnitData.Covenant = CON:GetActiveCovenant()
@@ -61,7 +68,7 @@ local function BuildUnitData(GuildIndex)
 			UnitData.Soulbind = CON:GetActiveSoulbind()
 		end
 		RunningAddon = true
-	end
+	end	
 
 	local UpperNote = string.upper(UnitData.Note)
 	if(string.match(UpperNote, "%[EN?KA%]")) then
@@ -112,21 +119,23 @@ end
 function CON:AddGuildMember(UnitData)
 
 	-- Potential for race conditions, so do not process messages that are older than what is already cached
-	if(DB.Guild.Roster[UnitData.Unit] and DB.Guild.Roster[UnitData.Unit].TimeStamp >= UnitData.TimeStamp) then
+	if(DB.Guild.Roster[UnitData.GUID] ~= nil and 
+	   DB.Guild.Roster[UnitData.GUID].TimeStampe ~= nil and
+	   DB.Guild.Roster[UnitData.GUID].TimeStamp >= UnitData.TimeStamp) then
 		return false
 	end	
 
-	if(DB.Guild.Roster[UnitData.Unit] ~= nil) then
-		wipe(DB.Guild.Roster[UnitData.Unit])
+	if(DB.Guild.Roster[UnitData.GUID] ~= nil) then
+		wipe(DB.Guild.Roster[UnitData.GUID])
 	end
-	DB.Guild.Roster[UnitData.Unit] = UnitData
+	DB.Guild.Roster[UnitData.GUID] = UnitData
 
 	if(DB.Teams[UnitData.Team] == nil) then
 		DB.Teams[UnitData.Team] = UnitData.Team
 		table.sort(DB.Teams)
 	end
 
-	if(DB.PlayerUnit == UnitData.Unit) then
+	if(UnitData.GUID == DB.PlayerGUID) then
 		wipe(DB.Player)
 		DB.Player = UnitData
 	end
@@ -135,14 +144,14 @@ function CON:AddGuildMember(UnitData)
 end
 
 function CON:RemoveGuildMember(UnitData)
-	if(DB.Guild.Roster[UnitData.Unit] and DB.Guild.Roster[UnitData.Unit].TimeStamp >= UnitData.TimeStamp) then
+	if(DB.Guild.Roster[UnitData.GUID] and DB.Guild.Roster[UnitData.GUID].TimeStamp >= UnitData.TimeStamp) then
 		return false
 	end
 
-	if(DB.Guild.Roster[UnitData.Unit] ~= nil) then
-		wipe(DB.Guild.Roster[UnitData.Unit])
+	if(DB.Guild.Roster[UnitData.GUID] ~= nil) then
+		wipe(DB.Guild.Roster[UnitData.GUID])
 	end
-	DB.Guild.Roster[UnitData.Unit] = UnitData
+	DB.Guild.Roster[UnitData.GUID] = UnitData
 
 	return true
 end
@@ -154,34 +163,38 @@ function CON:RefreshLocalGuildRoster()
 		local UnitData = BuildUnitData(i)
 		
 		-- Detect a new person joined guild
-		if(DB.Guild.Roster[UnitData.Unit] == nil) then
+		if(DB.Guild.Roster[UnitData.GUID] == nil) then
 			CON:Debug(LogCategory, format('Detected guild member not in cache [%s]', UnitData.Unit))
 			if(CON:AddGuildMember(UnitData) and UnitData.RunningCovenant == false and UnitData.Online == true) then
 				CON:BroadcastUnitData(UnitData)
+				--CON:BnetUnitData(UnitData)
 			end
 
 		-- Detect members going offline
-		elseif(UnitData.Online == false and DB.Guild.Roster[UnitData.Unit].Online == true) then
+		elseif(UnitData.Online == false and DB.Guild.Roster[UnitData.GUID].Online == true) then
 			CON:Debug(LogCategory, format("Detected someone going offline [%s]", UnitData.Unit))
 			if(CON:RemoveGuildMember(UnitData) and UnitData.RunningCovenant == false) then
 				CON:BroadcastUnitData(UnitData)
+				--CON:BnetUnitData(UnitData)
 			end
 		
 		-- Detect members coming online
-		elseif(UnitData.Online == true and DB.Guild.Roster[UnitData.Unit].Online == false) then
+		elseif(UnitData.Online == true and DB.Guild.Roster[UnitData.GUID].Online == false) then
 			CON:Debug(LogCategory, format("Detected someone coming online [%s]", UnitData.Unit))
 			if(CON:AddGuildMember(UnitData) and UnitData.RunningCovenant == false) then
 				CON:BroadcastUnitData(UnitData)
+				--CON:BnetUnitData(UnitData)
 			end
 
 		-- Detect members staying online, need to check for changes for broadcast to peer guilds
 		elseif(UnitData.Online == true and UnitData.RunningCovenant == false) then
 			for Key, Value in pairs (UnitData) do
-				if(Key ~= 'TimeStamp' and DB.Guild.Roster[UnitData.Unit][Key] ~= Value) then
-					local OldValue = DB.Guild.Roster[UnitData.Unit][Key]
+				if(Key ~= 'TimeStamp' and DB.Guild.Roster[UnitData.GUID][Key] ~= Value) then
+					local OldValue = DB.Guild.Roster[UnitData.GUID][Key]
 					if(CON:AddGuildMember(UnitData)) then
 						CON:Debug(LogCategory, "Detected unit status change [%s][%s][%s][%s]", UnitData.Unit, Key, OldValue, Value)
 						CON:BroadcastUnitData(UnitData)
+						--CON:BnetUnitData(UnitData)
 					end
 					break
 				end
@@ -230,14 +243,9 @@ function CON:InitializeRoster()
 			DB.Player = {}
 		end
 
-		DB.Guild.Name = GetGuildInfo('player')
-		DB.RealmName = GetRealmName()
-		DB.PlayerGUID = UnitGUID('player')
-		DB.PlayerUnit = UnitName('player') .. "-" .. DB.RealmName
+--		DB.CurrentRealm.ID = CON:GetRealmID(DB.CurrentRealm.Name)
 
 		InitializeLocalGuildRoster()
-
-		CON:JoinChannel(CON.Category .. '_' .. DB.Player.Team)
 		Initialized = true
 	end
 end

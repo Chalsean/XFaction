@@ -17,11 +17,13 @@ local KeyMapping = {
 	S = "Status",
 	IM = "IsMobile",
 	G = "GUID",
-	R = "Race",
 	TS = "TimeStamp",
 	T = "Team",
 	A = "Alt",
-	RA = "RunningAddon"
+	RA = "RunningAddon",
+	U = "Unit",
+	RI = "RealmID",
+	Z = "Zone"
 }
 
 function CON:EncodeMessage(Message)
@@ -37,10 +39,11 @@ function CON:EncodeUnitData(UnitData)
 		MessageUnitData[EncodeKey] = UnitData[DecodeKey]
 	end
 
+	CON:DataDumper(LogCategory, UnitData)
+
 	MessageUnitData.C = CON:GetClassID(UnitData.Class) and CON:GetClassID(UnitData.Class) or UnitData.Class
 	MessageUnitData.R = CON:GetRaceID(UnitData.Race, UnitData.Faction) and CON:GetRaceID(UnitData.Race, UnitData.Faction) or UnitData.Race
-	MessageUnitData.RI = CON:GetRealmID(UnitData.RealmName) and CON:GetRealmID(UnitData.RealmName) or UnitData.RealmName
-	MessageUnitData.Z = CON:GetZoneID(UnitData.Zone) and CON:GetZoneID(UnitData.Zone) or UnitData.Zone
+	--MessageUnitData.Z = CON:GetZoneID(UnitData.Zone) and CON:GetZoneID(UnitData.Zone) or UnitData.Zone
 	MessageUnitData.IM = (UnitData.IsMobile == true) and 1 or 0
 	MessageUnitData.Lo = (UnitData.Local == true) and 1 or 0
 	MessageUnitData.O = (UnitData.Online == true) and 1 or 0
@@ -87,10 +90,10 @@ function CON:DecodeUnitData(EncodedUnitData)
 	end
 
 	UnitData.Class = CON:GetClass(MessageUnitData.C) and CON:GetClass(MessageUnitData.C) or MessageUnitData.C
-	UnitData.Race, UnitData.Faction = CON:GetRace(MessageUnitData.R) and CON:GetRace(MessageUnitData.R) or MessageUnitData.R
-	UnitData.RealmName = CON:GetRealmName(MessageUnitData.RI) and CON:GetRealmName(MessageUnitData.RI) or MessageUnitData.RI
-	UnitData.Zone = CON:GetZoneName(MessageUnitData.Z) and CON:GetZoneName(MessageUnitData.Z) or MessageUnitData.Z
-	UnitData.Unit = UnitData.Name .. "-" .. UnitData.RealmName
+	UnitData.Race, UnitData.Faction = CON:GetRace(MessageUnitData.R)
+	CON:Debug(LogCategory, "realm id [%d]", UnitData.RealmID)
+	UnitData.RealmName = CON:GetRealmNameFromID(UnitData.RealmID)
+	--UnitData.Zone = CON:GetZoneName(MessageUnitData.Z) and CON:GetZoneName(MessageUnitData.Z) or MessageUnitData.Z
 	UnitData.IsMobile = (MessageUnitData.IM == 1) and true or false
 	UnitData.Local = (MessageUnitData.Lo == 1) and true or false
 	UnitData.Online = (MessageUnitData.O == 1) and true or false

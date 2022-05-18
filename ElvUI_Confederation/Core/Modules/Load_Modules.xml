@@ -8,7 +8,9 @@
     <Script file='Guild\Roster.lua'/>
     <Script file='Shadowlands\Covenant.lua'/>  
     <Script file='Shadowlands\Soulbind.lua'/>
+    <Script file='Network\BattleNet.lua'/>
     <Script file='Network\Channel.lua'/>
     <Script file='Network\Encode.lua'/>
     <Script file='Network\Message.lua'/>
+    <Script file='Network\Whisper.lua'/>    
 </Ui>

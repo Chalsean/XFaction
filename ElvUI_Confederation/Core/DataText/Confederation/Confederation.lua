@@ -50,9 +50,10 @@ local function OnEvent(self, event, ...)
 
 		-- Broadcast you have logged in, because only you know your covenant/soulbind
 		CON:BroadcastUnitData(DB.Data.Player)
+		CON:BnetUnitData(DB.Data.Player)
 
 		-- Broadcast a request to everyone for current information
-		CON:BroadcastStatus()
+		CON:BroadcastStatus()		
 	end
 
 	if(event == 'COVENANT_CHOSEN' or event == 'SOULBIND_CHOSEN') then
@@ -128,10 +129,10 @@ local function OnEnter(self)
 				if(UnitData.Covenant ~= nil) then
 					tooltip:SetCell(line, 5, format('%s', format(IconTokenString, IconNumbersCovenant[UnitData.Covenant.ID])))
 				end
-				if(UnitData.Profession1 ~= nil) then
+				if(UnitData.Profession1 ~= nil and UnitData.Profession1.Icon ~= nil) then
 					tooltip:SetCell(line, 12, format('%s', format(IconTokenString, UnitData.Profession1.Icon)))
 				end
-				if(UnitData.Profession2 ~= nil) then
+				if(UnitData.Profession2 ~= nil and UnitData.Profession2.Icon ~= nil) then
 					tooltip:SetCell(line, 13, format('%s', format(IconTokenString, UnitData.Profession2.Icon)))
 				end
 				if(UnitData.Spec ~= nil) then
