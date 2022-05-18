@@ -1,4 +1,5 @@
 --[[--------------------------------------------------------------------
+** This library is based on LibRealmInfo and thus leaving their contact/legal stuff
 	LibRealmInfo
 	World of Warcraft library for obtaining information about realms.
 	Copyright 2014-2019 Phanx <addons@phanx.net>
@@ -16,212 +17,102 @@ if not lib then return end
 local standalone = (...) == MAJOR
 local realmData, connectionData
 local Unpack
+local Unpacked = false
+local LogCategory = 'LibZoneInfo'
 
-local function debug(...)
-	if standalone then
-		print("|cffff7f7f["..MAJOR.."]|r", ...)
+local function Debug(...)
+	local status, res = pcall(format, ...)
+	if status then
+		if DLAPI then DLAPI.DebugLog(LogCategory, format("%s~9~%s", LogCategory, res)) end
 	end
-end
-
-local function shallowCopy(t)
-	if not t then return end
-
-	local n = {}
-	for k, v in next, t do
-		n[k] = v
-	end
-	return n
-end
-
-local function getNameForAPI(name)
-	return name and (name:gsub("[%s%-]", "")) or nil
 end
 
 ------------------------------------------------------------------------
 
-local currentRegion
-
-function lib:GetCurrentRegion()
-	if currentRegion then
-		return currentRegion
-	end
-
-	if Unpack then
-		Unpack()
-	end
-
-	local guid = UnitGUID("player")
-	if guid then
-		local server = tonumber(strmatch(guid, "^Player%-(%d+)"))
-		local realm = realmData[server]
-		if realm then
-			currentRegion = realm.region
-			return currentRegion
-		end
-	end
-
-	debug("GetCurrentRegion: could not identify region based on player GUID", guid)
-end
-
-------------------------------------------------------------------------
-
-local validRegions = { US = true, EU = true, CN = true, KR = true, TW = true }
-
-function lib:GetRealmInfo(name, region)
-	debug("GetRealmInfo", name, region)
-	local isString = type(name) == "string"
+function lib:GetZoneInfo(ZoneName)
+	
+	local isString = type(ZoneName) == "string"
 	if isString then
-		name = strtrim(name)
+		ZoneName = strtrim(ZoneName)
 	end
-	if type(name) == "number" or isString and strmatch(name, "^%d+$") then
-		return self:GetRealmInfoByID(name)
+	if type(ZoneName) == "number" or isString and strmatch(ZoneName, "^%d+$") then
+		return self:GetZoneInfoByID(ZoneName)
 	end
-	assert(isString and strlen(name) > 0, "Usage: GetRealmInfo(name[, region])")
-
-	if not region or not validRegions[region] then
-		region = self:GetCurrentRegion()
-	end
+	assert(isString and strlen(ZoneName) > 0, "Usage: GetZoneInfo(ZoneName)")
+	Debug("GetZoneInfo [%s]", ZoneName)
 
 	if Unpack then
 		Unpack()
 	end
 
-	for id, realm in pairs(realmData) do
-		if realm.region == region and (realm.nameForAPI == name or realm.name == name or realm.englishNameForAPI == name or realm.englishName == name) then
-			return id, realm.name, realm.nameForAPI, realm.rules, realm.locale, nil, realm.region, realm.timezone, shallowCopy(realm.connections), realm.englishName, realm.englishNameForAPI
+	for i, ZoneData in pairs(zoneData) do
+		if(ZoneData.Name == ZoneName) then
+			return ZoneData.ID, ZoneData.Name, ZoneData.ParentMapID, ZoneData.SystemType, ZoneData.UIMapTypeID, ZoneData.UIMapType
 		end
 	end
 
-	debug("No info found for realm", name, "in region", region)
+	Debug("No info found for realm", ZoneName)
 end
 
 ------------------------------------------------------------------------
 
-function lib:GetRealmInfoByID(id)
-	debug("GetRealmInfoByID", id)
-	id = tonumber(id)
-	assert(id, "Usage: GetRealmInfoByID(id)")
+function lib:GetZoneInfoByID(ZoneID)
+	
+	ZoneID = tonumber(ZoneID)
+	assert(ZoneID, "Usage: GetZoneInfoByID(ZoneID)")
+	Debug("GetZoneInfoByID [%d]", ZoneID)
 
 	if Unpack then
 		Unpack()
 	end
 
-	local realm = realmData[id]
-	if realm and realm.name then
-		return realm.id, realm.name, realm.nameForAPI, realm.rules, realm.locale, nil, realm.region, realm.timezone, shallowCopy(realm.connections), realm.englishName, realm.englishNameForAPI
+	for i, ZoneData in pairs(zoneData) do
+		if(ZoneData.ID == ZoneID) then
+			return ZoneData.ID, ZoneData.Name, ZoneData.ParentMapID, ZoneData.SystemType, ZoneData.UIMapTypeID, ZoneData.UIMapType
+		end
 	end
 
-	debug("No info found for realm ID", name)
+	Debug("No info found for zone ID", ZoneID)
 end
-
-------------------------------------------------------------------------
-
-function lib:GetRealmInfoByGUID(guid)
-	assert(type(guid) == "string", "Usage: GetRealmInfoByGUID(guid)")
-	if not strmatch(guid, "^Player%-") then
-		return debug("Unsupported GUID type", (strsplit("-", guid)))
-	end
-	local _, _, _, _, _, _, realm = GetPlayerInfoByGUID(guid)
-	if realm == "" then
-		realm = GetRealmName()
-	end
-	return self:GetRealmInfo(realm)
-end
-
-------------------------------------------------------------------------
-
-function lib:GetRealmInfoByUnit(unit)
-	assert(type(unit) == "string", "Usage: GetRealmInfoByUnit(unit)")
-	local guid = UnitGUID(unit)
-	if not guid then
-		return debug("No GUID available for unit", unit)
-	end
-	return self:GetRealmInfoByGUID(guid)
-end
-
-------------------------------------------------------------------------
 
 function Unpack()
-	debug("Unpacking data...")
+	if(Unpacked == false) then
+		Debug("Unpacking data...")
 
-	for id, info in pairs(realmData) do
-		-- Aegwynn,PvE,enUS,US,CST
-		-- Nathrezim,PvE,deDE,EU
-		-- Азурегос,PvE,ruRU,EU,Azuregos
-		local name, rules, locale, region, timezone = strsplit(",", info)
+		for id, info in pairs(zoneData) do
+			local name, mapID, parentMapID, _, system, zoneType = strsplit(",", info)
+			name = name:gsub("%&comma%;", ",")
 
-		local englishName
-		if region ~= "US" then
-			englishName = timezone
-			timezone = nil
-		end
-
-		realmData[id] = {
-			id = id,
-			name = name,
-			nameForAPI = getNameForAPI(name),
-			rules = string.upper(rules),
-			locale = locale,
-			region = region,
-			timezone = timezone, -- only for realms in US region
-			englishName = englishName, -- only for realms with non-Latin names
-			englishNameForAPI = getNameForAPI(englishName), -- only for realms with non-Latin names
-		}
-	end
-
-	for i = 1, #connectionData do
-		local connectedRealms = { strsplit(",", connectionData[i]) }
-		local connectionID = tonumber(table.remove(connectedRealms, 1))
-		local region = table.remove(connectedRealms, 1)
-
-		if not realmData[connectionID] then
-			-- nameless server used to host connected realms
-			table.insert(connectedRealms, connectionID)
-			realmData[connectionID] = {
-				region = region,
-				connections = connectedRealms
+			zoneData[id] = {
+				ID = mapID,
+				Name = name,
+				ParentMapID = parentMapID,
+				SystemType = system,
+				UIMapTypeID = zoneType,
+				UIMapType = nil
 			}
-		end
 
-		for j = 1, #connectedRealms do
-			local realmID = tonumber(connectedRealms[j])
-			connectedRealms[j] = realmID
-			realmData[realmID].connections = connectedRealms
-		end
-	end
-
-	-- Partial workaround for missing Chinese connected realm data:
-	local autoCompleteRealms = GetAutoCompleteRealms()
-	if #autoCompleteRealms > 0 then
-		local autoCompleteIDs = {}
-		for _, name in pairs(autoCompleteRealms) do
-			for realmID, realm in pairs(realmData) do
-				if realm.nameForAPI == name then
-					table.insert(autoCompleteIDs, realmID)
-					break
-				end
+			if(UIMapType[zoneType] ~= nil) then
+				zoneData[id].UIMapType = UIMapType[zoneType]
 			end
 		end
-		if #autoCompleteIDs == #autoCompleteRealms then
-			for _, realmID in pairs(autoCompleteIDs) do
-				local realm = realmData[realmID]
-				if realm and not realm.connections then
-					realm.connections = autoCompleteIDs
-				end
-			end
-		else
-			debug("Failed to match names from GetAutoCompleteRealms!")
-		end
+
+		Debug("Done unpacking data.")
+		Unpacked = true
 	end
-
-	connectionData = nil
-	Unpack = nil
-	collectgarbage()
-
-	debug("Done unpacking data.")
 end
 
 ------------------------------------------------------------------------
+
+UIMapType = {
+	[0]	= "Cosmic",
+	[1]	= "World",
+	[2]	= "Continent",
+	[3]	= "Zone",
+	[4]	= "Dungeon",
+	[5]	= "Micro",
+	[6]	= "Orphan"
+}
 
 zoneData = {
 	[0001] = "Durotar,1,12,6,0,3,0,0,0,0,0,0,70",

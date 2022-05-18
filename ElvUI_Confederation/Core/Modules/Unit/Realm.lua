@@ -24,12 +24,12 @@ function CON:GetRealmID(RealmName)
 	if(DB.Realm.RealmsByName[RealmName] == nil) then
 		local id, name, nameForAPI, rules, locale, _, region, timezone, connections, englishName, englishNameForAPI = REALM:GetRealmInfo(RealmName)
 		DB.Realm.RealmsByName[name] = {
-			RealmID = id,
-			RealmName = name
+			ID = id,
+			Name = name
 		}
 		DB.Realm.RealmsByID[id] = DB.Realm.RealmsByName[name]
 	end
-	return DB.Realm.RealmsByName[RealmName].RealmID
+	return DB.Realm.RealmsByName[RealmName].ID
 end
 
 function CON:GetRealmName(RealmID)
@@ -42,5 +42,5 @@ function CON:GetRealmName(RealmID)
 		}
 		DB.Realm.RealmsByID[id] = DB.Realm.RealmsByName[name]
 	end
-	return DB.Realm.RealmsByID[RealmID].RealmName
+	return DB.Realm.RealmsByID[RealmID].Name
 end

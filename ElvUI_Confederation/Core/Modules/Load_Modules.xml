@@ -1,9 +1,9 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <!-- Order matters as some modules reference others -->
+<Ui xmlns="http://www.blizzard.com/wow/ui/">    
     <Script file='Unit\Race.lua'/>
     <Script file='Unit\Class.lua'/>
     <Script file='Unit\Profession.lua'/>
     <Script file='Unit\Realm.lua'/>
+    <Script file='Unit\Zone.lua'/>
     <Script file='Unit\Specialization.lua'/>
     <Script file='Guild\Roster.lua'/>
     <Script file='Shadowlands\Covenant.lua'/>  
