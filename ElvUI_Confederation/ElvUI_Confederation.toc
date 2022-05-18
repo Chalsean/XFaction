@@ -1,0 +1,19 @@
+## Interface: 90200
+## Author: Chalsean (US-Proudmoore)
+## Version: 0.1
+## Title: |cff1784d1ElvUI|r |cff33ccffConfederation|r
+## Notes: an ElvUI add-on to assist with Confederate guild communication
+## RequiredDeps: ElvUI
+## DefaultState: Enabled
+## LoadOnDemand: 0
+
+## Unmodified external Libraries
+Libraries\Load_Libraries.xml
+
+Initialize.lua
+Core\Developer\Load_Developer.xml
+Core\Libraries\Load_Libraries.xml
+Core\Functions\Load_Functions.xml
+Core\Configuration\Load_Configurations.xml
+Core\Modules\Load_Modules.xml
+Core\DataText\Load_DataText.xml
