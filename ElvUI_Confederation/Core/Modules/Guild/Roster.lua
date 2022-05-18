@@ -48,6 +48,12 @@ local function BuildUnitData(GuildIndex)
 	}
 
 	if(DB.PlayerUnit == UnitData.Unit) then
+		UnitData.Spec = CON:GetActiveSpec()
+
+		local FirstProfessionID, SecondProfessionID = GetProfessions()
+		UnitData.Profession1 = CON:GetProfession(FirstProfessionID)
+		UnitData.Profession2 = CON:GetProfession(SecondProfessionID)
+		
 		if(CON:HasActiveCovenant()) then
 			UnitData.Covenant = CON:GetActiveCovenant()
 		end

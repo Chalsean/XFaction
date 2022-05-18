@@ -81,8 +81,8 @@ local function OnEnter(self)
 	if QT:IsAcquired("ConfederationDT") then
 		tooltip:Clear()
 	else
-		-- Team, Level, Faction, Covenant, Name, Race, Realm, Guild, Zone, Note, Rank
-		tooltip = QT:Acquire("ConfederationDT", 11, "RIGHT", "CENTER", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "CENTER", "CENTER", "LEFT", "LEFT")
+		-- Faction, Covenant, Prof1, Prof2, Spec, Name, Race, Level, Realm, Guild, Team, Zone, Note, Rank
+		tooltip = QT:Acquire("ConfederationDT", 13, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "RIGHT", "LEFT")
 
 		ttHeaderFont:SetFont(GameTooltipHeaderText:GetFont())
 		ttRegFont:SetFont(GameTooltipText:GetFont())
@@ -102,15 +102,15 @@ local function OnEnter(self)
 	line = tooltip:AddLine()
 
 	line = tooltip:AddHeader()
-	line = tooltip:SetCell(line, 1, "Team")
-	line = tooltip:SetCell(line, 2, "Level")
-	line = tooltip:SetCell(line, 5, "Name")	
+	
+	line = tooltip:SetCell(line, 4, "Name")	
 	line = tooltip:SetCell(line, 6, "Race")
+	line = tooltip:SetCell(line, 2, "Level")
 	line = tooltip:SetCell(line, 7, "Realm")
 	line = tooltip:SetCell(line, 8, "Guild")
-	line = tooltip:SetCell(line, 9, "Zone")
-	line = tooltip:SetCell(line, 10, "Note")
-	line = tooltip:SetCell(line, 11, "Rank")
+	line = tooltip:SetCell(line, 9, "Team")
+	line = tooltip:SetCell(line, 10, "Rank")
+	line = tooltip:SetCell(line, 11, "Zone")	
 	tooltip:AddSeparator()
 
 	for TeamKey, TeamValue in PairsByKeys (DB.Data.Teams) do		
@@ -122,22 +122,29 @@ local function OnEnter(self)
 				line = tooltip:AddLine()
 
 				-- Team, Level, Faction, Covenant, Name, Race, Realm, Guild, Zone, Note, Rank
-				tooltip:SetCell(line, 1, format("|cffffffff%s|r", UnitData.Team))
-				tooltip:SetCell(line, 2, format("|cffffffff%d|r", UnitData.Level))
-				--CON:Debug(LogCategory, format("unit [%s] faction [%s]", UnitData.Unit, UnitData.Faction))
 				if(UnitData.Faction ~= nil) then
-					tooltip:SetCell(line, 3, format('%s', format(IconTokenString, IconNumbersFaction[UnitData.Faction])))
+					tooltip:SetCell(line, 1, format('%s', format(IconTokenString, IconNumbersFaction[UnitData.Faction])))
 				end
 				if(UnitData.Covenant ~= nil) then
-					tooltip:SetCell(line, 4, format('%s', format(IconTokenString, IconNumbersCovenant[UnitData.Covenant.ID])))
+					tooltip:SetCell(line, 5, format('%s', format(IconTokenString, IconNumbersCovenant[UnitData.Covenant.ID])))
 				end
-				tooltip:SetCell(line, 5, ClassColorString(UnitData.Name, UnitData.Class))
+				if(UnitData.Profession1 ~= nil) then
+					tooltip:SetCell(line, 12, format('%s', format(IconTokenString, UnitData.Profession1.Icon)))
+				end
+				if(UnitData.Profession2 ~= nil) then
+					tooltip:SetCell(line, 13, format('%s', format(IconTokenString, UnitData.Profession2.Icon)))
+				end
+				if(UnitData.Spec ~= nil) then
+					tooltip:SetCell(line, 3, format('%s', format(IconTokenString, UnitData.Spec.Icon)))
+				end
+				tooltip:SetCell(line, 4, ClassColorString(UnitData.Name, UnitData.Class))				
 				tooltip:SetCell(line, 6, format("|cffffffff%s|r", UnitData.Race))
+				tooltip:SetCell(line, 2, format("|cffffffff%d|r", UnitData.Level))				
 				tooltip:SetCell(line, 7, format("|cffffffff%s|r", UnitData.RealmName))
 				tooltip:SetCell(line, 8, format("|cffffffff%s|r", UnitData.GuildName))
-				tooltip:SetCell(line, 9, format("|cffffffff%s|r", (UnitData.Zone == nil) and '?' or UnitData.Zone))
-				tooltip:SetCell(line, 10, format("|cffffffff%s|r", UnitData.Note))
-				tooltip:SetCell(line, 11, format("|cffffffff%s|r", UnitData.GuildRank))
+				tooltip:SetCell(line, 9, format("|cffffffff%s|r", UnitData.Team))
+				tooltip:SetCell(line, 10, format("|cffffffff%s|r", UnitData.GuildRank))
+				tooltip:SetCell(line, 11, format("|cffffffff%s|r", (UnitData.Zone == nil) and '?' or UnitData.Zone))
 			end
 		end
 	end

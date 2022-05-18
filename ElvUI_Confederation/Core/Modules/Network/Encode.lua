@@ -54,6 +54,17 @@ function CON:EncodeUnitData(UnitData)
 	if(UnitData.Soulbind ~= nil) then
 		MessageUnitData.So = UnitData.Soulbind.ID
 	end
+	
+	if(UnitData.Profession1 ~= nil) then
+		MessageUnitData.P1 = UnitData.Profession1.ID
+	end
+	if(UnitData.Profession2 ~= nil) then
+		MessageUnitData.P2 = UnitData.Profession2.ID
+	end
+
+	if(UnitData.Spec ~= nil) then
+		MessageUnitData.X = UnitData.Spec.ID
+	end
 
 	return CON:EncodeMessage(MessageUnitData)
 end
@@ -91,6 +102,17 @@ function CON:DecodeUnitData(EncodedUnitData)
 	end
 	if(MessageUnitData.So ~= nil) then
 		UnitData.Soulbind = CON:GetSoulbind(MessageUnitData.So)
+	end
+
+	if(MessageUnitData.P1 ~= nil) then
+		UnitData.Profession1 = CON:GetProfession(MessageUnitData.P1)
+	end
+	if(MessageUnitData.P2 ~= nil) then
+		UnitData.Profession2 = CON:GetProfession(MessageUnitData.P2)
+	end
+
+	if(MessageUnitData.X ~= nil) then
+		UnitData.Spec = CON:GetSpec(MessageUnitData.X)
 	end
 
 	return UnitData
