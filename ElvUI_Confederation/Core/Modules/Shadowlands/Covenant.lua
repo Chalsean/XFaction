@@ -4,7 +4,24 @@ local LogCategory = 'MCovenant'
 local Initialized = false
 
 local function CallbackCovenantChosen(event)
-	CheckCovenant()
+	if(CON:HasActiveCovenant()) then
+		local Covenant = CON:GetActiveCovenant()
+		local Broadcast = false
+		if(DB.Player.Covenant.ID ~= Covenant.ID) then
+			DB.Player.Covenant = Covenant
+			Broadcast = true
+		end
+		if(CON:HasActiveSoulbind()) then
+			local Soulbind = CON:GetActiveSoulbind()
+			if(DB.Player.Soulbind.ID ~= Soulbind.ID) then
+				DB.Player.Soulbind = Soulbind
+				Broadcast = true
+			end
+		end
+		if(Broadcast == true) then
+			CON:BroadcastMessage(DB.Data.Player)
+		end
+	end
 end
 
 local function Initialize()
@@ -26,6 +43,7 @@ local function Initialize()
 			table.RemoveKey(DB.Covenant[i], 'upgradeTabSelectSoundKitID')
 		end
 		CON:RegisterEvent('COVENANT_CHOSEN', CallbackCovenantChosen)
+		CON:RegisterEvent('SOULBIND_ACTIVATED', CallbackCovenantChosen)
 		Initialized = true
 	end
 end

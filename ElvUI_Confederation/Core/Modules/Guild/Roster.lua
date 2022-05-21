@@ -107,56 +107,23 @@ local function BuildUnitData(GuildIndex)
 		UnitData.Team = 'Tsunami'
 	elseif(string.match(UpperNote, "%[Y%]")) then
 		UnitData.Team = 'Gravity'
+	elseif(string.match(UpperNote, "%[R%]")) then
+		UnitData.Team = 'Reckoning'
 	elseif(string.match(UpperNote, "%[BANK%]")) then
 		UnitData.Team = 'Management'
 	else
 		UnitData.Team = 'Unknown'
 	end
 
+	if(UnitData.Alt == true) then
+		local ParsedNotes = string.Split(UnitData.Note, ") ")
+		UnitData.AltName = ParsedNotes[table.getn(ParsedNotes)]
+	end
+
 	return UnitData
 end
 
-function CON:AddGuildMember(UnitData)
-
-	-- Potential for race conditions, so do not process messages that are older than what is already cached
-	if(DB.Guild.Roster[UnitData.GUID] ~= nil and 
-	   DB.Guild.Roster[UnitData.GUID].TimeStampe ~= nil and
-	   DB.Guild.Roster[UnitData.GUID].TimeStamp >= UnitData.TimeStamp) then
-		return false
-	end	
-
-	if(DB.Guild.Roster[UnitData.GUID] ~= nil) then
-		wipe(DB.Guild.Roster[UnitData.GUID])
-	end
-	DB.Guild.Roster[UnitData.GUID] = UnitData
-
-	if(DB.Teams[UnitData.Team] == nil) then
-		DB.Teams[UnitData.Team] = UnitData.Team
-		table.sort(DB.Teams)
-	end
-
-	if(UnitData.GUID == DB.PlayerGUID) then
-		wipe(DB.Player)
-		DB.Player = UnitData
-	end
-
-	return true
-end
-
-function CON:RemoveGuildMember(UnitData)
-	if(DB.Guild.Roster[UnitData.GUID] and DB.Guild.Roster[UnitData.GUID].TimeStamp >= UnitData.TimeStamp) then
-		return false
-	end
-
-	if(DB.Guild.Roster[UnitData.GUID] ~= nil) then
-		wipe(DB.Guild.Roster[UnitData.GUID])
-	end
-	DB.Guild.Roster[UnitData.GUID] = UnitData
-
-	return true
-end
-
-function CON:RefreshLocalGuildRoster()
+local function CallbackRosterUpdate()
 	DB.Guild.TotalMembers, _, DB.Guild.OnlineMembers = GetNumGuildMembers()
 	
 	for i = 1, DB.Guild.TotalMembers do
@@ -203,38 +170,7 @@ function CON:RefreshLocalGuildRoster()
 	end
 end
 
-function CON:UpdatePlayerCovenantSoulbind()
-	if(CON:HasActiveCovenant()) then
-		local Covenant = CON:GetActiveCovenant()
-		local Broadcast = false
-		if(DB.Player.Covenant.ID ~= Covenant.ID) then
-			DB.Player.Covenant = Covenant
-			Broadcast = true
-		end
-		if(CON:HasActiveSoulbind()) then
-			local Soulbind = CON:GetActiveSoulbind()
-			if(DB.Player.Soulbind.ID ~= Soulbind.ID) then
-				DB.Player.Soulbind = Soulbind
-				Broadcast = true
-			end
-		end
-		if(Broadcast == true) then
-			CON:BroadcastMessage(DB.Data.Player)
-		end
-	end
-end
-
-local function InitializeLocalGuildRoster()
-	CON:Info(LogCategory, "Initializing local guild roster cache")
-	DB.Guild.TotalMembers, _, DB.Guild.OnlineMembers = GetNumGuildMembers()
-	
-	for i = 1, DB.Guild.TotalMembers do
-		local UnitData = BuildUnitData(i)
-		CON:AddGuildMember(UnitData)
-	end
-end
-
-function CON:InitializeRoster()
+local function InitializeRoster()
 	if(Initialized == false) then
 		if(DB.Guild.Roster == nil) then
 			DB.Guild.Roster = {}
@@ -243,9 +179,26 @@ function CON:InitializeRoster()
 			DB.Player = {}
 		end
 
---		DB.CurrentRealm.ID = CON:GetRealmID(DB.CurrentRealm.Name)
+		CON:Info(LogCategory, "Initializing local guild roster cache")
+		DB.Guild.TotalMembers, _, DB.Guild.OnlineMembers = GetNumGuildMembers()
+		
+		for i = 1, DB.Guild.TotalMembers do
+			local UnitData = BuildUnitData(i)
+			CON:AddGuildMember(UnitData)
+		end
 
-		InitializeLocalGuildRoster()
 		Initialized = true
 	end
+end
+
+do
+	InitializeRoster()
+	CON:RegisterEvent('GUILD_ROSTER_UPDATE', CallbackRosterUpdate)
+
+	-- Broadcast you have logged in, because only you know your covenant/soulbind
+	CON:BroadcastUnitData(DB.Player)
+	
+	
+	-- Broadcast a request to everyone for current information
+	CON:BroadcastStatus()
 end

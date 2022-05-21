@@ -44,25 +44,23 @@ DB.DataText = {
 local function OnEvent(self, event, ...)
 
 	if(event == 'PLAYER_ENTERING_WORLD') then
-		CON:InitializeChannel()		
-		CON:InitializeRoster()
+		--CON:InitializeChannel()		
+		--CON:InitializeRoster()
 		--CON.Comm:Initialize()
 
-		-- Broadcast you have logged in, because only you know your covenant/soulbind
-		CON:BroadcastUnitData(DB.Data.Player)
-		CON:BnetUnitData(DB.Data.Player)
-
-		-- Broadcast a request to everyone for current information
-		CON:BroadcastStatus()		
+		local myGuild = Guild:new("Bob")
+		local myGuild2 = Guild:new(myGuild)
+		CON:Info(LogCategory, myGuild2:GetName())
+		local myRealm = Realm:new()
+		myRealm:AddGuild(myGuild)
+		local bool = myRealm:HasGuild(myGuild)
+		CON:DataDumper(LogCategory, bool)
+		
 	end
 
-	if(event == 'COVENANT_CHOSEN' or event == 'SOULBIND_CHOSEN') then
-		UpdatePlayerCovenantSoulbind()
-	end
-
-	if(event == 'GUILD_ROSTER_UPDATE' or event == 'PLAYER_GUILD_UPDATE') then
-		CON:RefreshLocalGuildRoster()
-	end
+	-- if(event == 'GUILD_ROSTER_UPDATE' or event == 'PLAYER_GUILD_UPDATE') then
+	-- 	CON:RefreshLocalGuildRoster()
+	-- end
 
 	if(event == 'GUILD_ROSTER_UPDATE' or event == 'PLAYER_GUILD_UPDATE' or event == 'PLAYER_ENTERING_WORLD') then
 		if (not self.text) then
@@ -138,7 +136,11 @@ local function OnEnter(self)
 				if(UnitData.Spec ~= nil) then
 					tooltip:SetCell(line, 3, format('%s', format(IconTokenString, UnitData.Spec.Icon)))
 				end
-				tooltip:SetCell(line, 4, ClassColorString(UnitData.Name, UnitData.Class))				
+				local Name = UnitData.Name
+				if(UnitData.Alt == true and UnitData.AltName ~= nil) then
+					Name = Name .. " (" .. UnitData.AltName .. ")"
+				end
+				tooltip:SetCell(line, 4, ClassColorString(Name, UnitData.Class))				
 				tooltip:SetCell(line, 6, format("|cffffffff%s|r", UnitData.Race))
 				tooltip:SetCell(line, 2, format("|cffffffff%d|r", UnitData.Level))				
 				tooltip:SetCell(line, 7, format("|cffffffff%s|r", UnitData.RealmName))
@@ -160,12 +162,7 @@ local function OnClick(self, button)
 end
 
 local events = {
-	'GUILD_ROSTER_UPDATE',
-	'PLAYER_GUILD_UPDATE',
-	'GUILD_MOTD',
-	'PLAYER_ENTERING_WORLD',
-	'COVENANT_CHOSEN',
-	'SOULBIND_ACTIVATED'
+	'PLAYER_ENTERING_WORLD'
 }
 
 DT:RegisterDatatext('Confederation (C)', CON.Category, events, OnEvent, nil, OnClick, OnEnter)

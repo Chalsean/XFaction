@@ -57,3 +57,11 @@ end
 function CON:DataDumper(SubCategory, ...)
 	CON:Debug(SubCategory, TableToString(..., 1, "root"))
 end
+
+function CON:SingleLine(SubCategory)
+	CON:Debug(SubCategory, "-------------------------------------")
+end
+
+function CON:DoubleLine(SubCategory)
+	CON:Debug(SubCategory, "=====================================")
+end

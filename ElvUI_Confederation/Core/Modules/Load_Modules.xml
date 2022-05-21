@@ -1,16 +1,28 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">    
-    <Script file='Unit\Race.lua'/>
-    <Script file='Unit\Class.lua'/>
-    <Script file='Unit\Profession.lua'/>
-    <Script file='Unit\Realm.lua'/>
-    <Script file='Unit\Zone.lua'/>
-    <Script file='Unit\Specialization.lua'/>
-    <Script file='Guild\Roster.lua'/>
-    <Script file='Shadowlands\Covenant.lua'/>  
-    <Script file='Shadowlands\Soulbind.lua'/>
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+<!-- 
     <Script file='Network\BattleNet.lua'/>
     <Script file='Network\Channel.lua'/>
     <Script file='Network\Encode.lua'/>
     <Script file='Network\Message.lua'/>
-    <Script file='Network\Whisper.lua'/>    
+    <Script file='Network\Whisper.lua'/>   
+    -->
+
+    <Script file='Guild\Profession.lua'/>
+    <Script file='Guild\ProfessionCollection.lua'/>   
+    <Script file='Guild\Spec.lua'/>    
+    <Script file='Guild\SpecCollection.lua'/>    
+    <Script file='Guild\Class.lua'/>    
+    <Script file='Guild\ClassCollection.lua'/>    
+    <Script file='Guild\Race.lua'/>    
+    <Script file='Guild\RaceCollection.lua'/>
+    <Script file='Guild\Soulbind.lua'/>
+    <Script file='Guild\SoulbindCollection.lua'/>
+    <Script file='Guild\Covenant.lua'/>
+    <Script file='Guild\CovenantCollection.lua'/>
+    <Script file='Guild\Rank.lua'/>
+    <Script file='Guild\Unit.lua'/>
+    <Script file='Guild\Guild.lua'/>
+    <Script file='Guild\Realm.lua'/>
+    <Script file='Guild\Team.lua'/>    
+    <Script file='Guild\Confederate.lua'/>
 </Ui>

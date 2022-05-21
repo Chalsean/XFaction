@@ -91,7 +91,6 @@ function CON:DecodeUnitData(EncodedUnitData)
 
 	UnitData.Class = CON:GetClass(MessageUnitData.C) and CON:GetClass(MessageUnitData.C) or MessageUnitData.C
 	UnitData.Race, UnitData.Faction = CON:GetRace(MessageUnitData.R)
-	CON:Debug(LogCategory, "realm id [%d]", UnitData.RealmID)
 	UnitData.RealmName = CON:GetRealmNameFromID(UnitData.RealmID)
 	--UnitData.Zone = CON:GetZoneName(MessageUnitData.Z) and CON:GetZoneName(MessageUnitData.Z) or MessageUnitData.Z
 	UnitData.IsMobile = (MessageUnitData.IM == 1) and true or false

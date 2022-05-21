@@ -38,7 +38,6 @@ function CON:GetRealmID(RealmName)
 end
 
 function CON:GetRealmNameFromID(RealmID)
-	CON:DataDumper(LogCategory, RealmID)
 	--Initialize()
 	if(RealmID == 5 or RealmID == "5") then
 		return "Proudmoore"
