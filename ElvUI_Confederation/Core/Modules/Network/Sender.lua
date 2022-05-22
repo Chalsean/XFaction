@@ -1,0 +1,118 @@
+local CON, E, L, V, P, G = unpack(select(2, ...))
+local ObjectName = 'Sender'
+local LogCategory = 'NSender'
+
+Sender = {}
+
+function Sender:new(inObject)
+    local _typeof = type(inObject)
+    local _newObject = true
+
+	assert(inObject == nil or
+	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
+	      "argument must be nil or " .. ObjectName .. " object")
+
+    if(typeof == 'table') then
+        Object = inObject
+        _newObject = false
+    else
+        Object = {}
+    end
+    setmetatable(Object, self)
+    self.__index = self
+    self.__name = ObjectName
+
+    if(_newObject == true) then
+        self._Key = nil
+        self._Initialized = false
+        self._LocalChannel = nil
+        self._CanBroadcast = false
+        self._CanWhisper = false
+        self._CanBNetWhisper = false
+        self._BroadcastQueue = {}
+    end
+
+    return Object
+end
+
+function Sender:IsInitialized(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+    if(inBoolean ~= nil) then
+        self._Initialized = inBoolean
+    end
+    return self._Initialized
+end
+
+function Sender:Initialize()
+    if(self:IsInitialized() == false) then
+        self:SetKey(math.GenerateUID())
+        self:IsInitialized(true)
+    end
+    return self:IsInitialized()
+end
+
+function Sender:Print()
+    CON:SingleLine(LogCategory)
+    CON:Debug(LogCategory, ObjectName .. " Object")
+    CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    CON:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    CON:Debug(LogCategory, "  _CanBroadcast (" .. type(self._CanBroadcast) .. "): ".. tostring(self._CanBroadcast))
+    CON:Debug(LogCategory, "  _LocalChannel (" .. type(self._LocalChannel) .. ")")
+    if(self._LocalChannel ~= nil) then
+        self._LocalChannel:Print()
+    end
+end
+
+function Sender:GetKey()
+    return self._Key
+end
+
+function Sender:SetKey(inKey)
+    assert(type(inKey) == 'string')
+    self._Key = inKey
+    return self:GetKey()
+end
+
+function Sender:CanBroadcast(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+    if(inBoolean ~= nil) then
+        self._CanBroadcast = inBoolean
+    end
+    return self._CanBroadcast
+end
+
+function Sender:HasLocalChannel(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean')
+    return self._LocalChannel ~= nil
+end
+
+function Sender:GetLocalChannel()
+    return self._LocalChannel
+end
+
+function Sender:SetLocalChannel(inChannel)
+    assert(type(inChannel) == 'table' and inChannel.__name ~= nil and inChannel.__name == 'Channel', "argument must be Channel object")
+    self._LocalChannel = inChannel
+    return self:HasLocalChannel()
+end
+
+function Sender:SendMessage(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
+    if(inMessage:IsInitialized() == false) then
+        inMessage:Initialize()
+    end
+
+    local _OutgoingData = CON:EncodeMessage(inMessage)
+
+    if(inMessage:GetType() == CON.Network.Type.BROADCAST) then
+        self:BroadcastLocally(_OutgoingData)
+    end
+end
+
+function Sender:BroadcastLocally(inData)
+    if(self:CanBroadcast()) then
+        local _Channel = self:GetLocalChannel()
+        CON:Debug(LogCategory, "Broadcasting on channel [%d] with tag [%s]", _Channel:GetID(), CON.Network.Message.Tag)
+        CON:SendCommMessage(CON.Network.Message.Tag, inData, "CHANNEL", _Channel:GetID())
+    end
+end
