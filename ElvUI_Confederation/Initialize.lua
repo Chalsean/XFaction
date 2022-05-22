@@ -3,7 +3,7 @@ local EP = LibStub("LibElvUIPlugin-1.0")
 local addon, Engine = ...
 local LogCategory = 'Initialize'
 
-local CON = E.Libs.AceAddon:NewAddon(addon, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceSerializer-3.0", "AceComm-3.0")
+local CON = E.Libs.AceAddon:NewAddon(addon, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceSerializer-3.0", "AceComm-3.0", "AceTimer-3.0")
 
 Engine[1] = CON
 Engine[2] = E
@@ -18,6 +18,7 @@ CON.Config = {}
 CON.Title = format('|cff33ccff%s|r', 'Confederation')
 CON["RegisteredModules"] = {}
 CON.Version = tonumber(GetAddOnMetadata(addon, "Version"))
+CON.Handlers = {}
 
 function CON:Init()
 	self.initialized = true
@@ -25,7 +26,51 @@ function CON:Init()
 	CON.Confederate = Confederate:new()
 	CON.Confederate:SetName('Eternal Kingdom')
 	CON.Confederate:SetKey('EK')
-	CON.PlayerGUID = UnitGUID('player')
+	CON.Confederate:SetMainRealmName('Proudmoore')
+	CON.Confederate:SetMainGuildName('Eternal Kingdom')
+	
+	CON.Player = {}
+	CON.Player.GUID = UnitGUID('player')
+
+	CON.Network = {}
+	CON.Network.ChannelName = 'EKConfederate'
+	CON.Network.Message = {}
+	CON.Network.Message.Tag = 'EKCon'
+	CON.Network.Message.Subject = {
+		DATA = 'DATA',
+		REQUEST = 'REQUEST'
+	}
+	CON.Network.Message.EncodeKey = {
+		GI = "GuildIndex",
+		N = "Name",
+		GN = "GuildName",
+		GR = "GuildRank",
+		L = "Level",
+		C = "Class",
+		No = "Note",
+		O = "Online",
+		S = "Status",
+		IM = "IsMobile",
+		G = "GUID",
+		TS = "TimeStamp",
+		T = "Team",
+		A = "Alt",
+		RA = "RunningAddon",
+		U = "Unit",
+		RI = "RealmID",
+		Z = "Zone"
+	}
+	CON.Network.Type = {
+		BROADCAST = 'BROADCAST',
+		WHISPER = 'WHISPER',
+		BNET = 'BNET'
+	}	
+	CON.Network.Sender = Sender:new()
+	CON.Network.Receiver = Receiver:new(); CON.Network.Receiver:Initialize()
+	CON.Network.Channels = ChannelCollection:new(); CON.Network.Channels:Initialize()
+
+	-- This handler will register additional handlers
+	CON.Handlers.TimerEvent = TimerEvent:new(); CON.Handlers.TimerEvent:Initialize()
 
 	-- Lua doesn't have static variables, so need global caches to reduce memory footprint
 	CON.Races = RaceCollection:new(); CON.Races:Initialize()	
@@ -41,25 +86,33 @@ function CON:Init()
 	for i = 1, _TotalMembers do
 		-- Until I can figure out how to hook the constructors, will have to call init explicitly
 		local _UnitData = Unit:new()
-		_UnitData:Initialize(i)
+		_UnitData:Initialize(i)		
 		CON.Confederate:AddUnit(_UnitData)
+
+		if(_UnitData:IsPlayer()) then
+			CON.Player.Unit = _UnitData
+			CON.Player.Unit:Print()
+
+			-- If player is on main realm/guild, this guild is source for motd
+			if(CON.Confederate:GetMainRealmName() == CON.Player.Unit:GetRealmName() and 
+			   CON.Confederate:GetMainGuildName() == CON.Player.Unit:GetGuildName()) then
+				CON.Confederate:SetMOTD(GetGuildRosterMOTD())
+			end
+
+			local _Message = Message:new(); _Message:Initialize()
+			_Message:SetType(CON.Network.Type.BROADCAST)
+			_Message:SetSubject(CON.Network.Message.Subject.DATA)
+			_Message:SetData(CON.Player.Unit)
+			CON.Network.Sender:SendMessage(_Message)
+		end
 	end
 
-	--CON.Confederate:ShallowPrint()
-	CON.Confederate:PrintTeam()
-
-	--CON:GuildInitialize()
-
-	--E.db.Confederation.Data.CurrentRealm.Name = GetRealmName()	
-	--E.db.Confederation.Data.PlayerGUID = UnitGUID('player')
-
-	--if(E.db.Confederation.Data.CurrentRealm.Name == 'Proudmoore') then
-	--	E.db.Confederation.Data.CurrentRealm.ID = 5
-	--elseif(E.db.Confederation.Data.CurrentRealm.Name == 'Area 52') then
-		-- this bnet realm id does not match in-game realm id, no idea why
-		-- its forcing some hardcoding until i can find a solution
-	--	E.db.Confederation.Data.CurrentRealm.ID = 3676
-	--end
+	-- These event handlers have a dependency on player data being populated
+	CON.Handlers.SpecEvent = SpecEvent:new(); CON.Handlers.SpecEvent:Initialize()
+	CON.Handlers.CovenantEvent = CovenantEvent:new(); CON.Handlers.CovenantEvent:Initialize()
+	CON.Handlers.SoulbindEvent = SoulbindEvent:new(); CON.Handlers.SoulbindEvent:Initialize()
+	CON.Handlers.ProfessionEvent = ProfessionEvent:new(); CON.Handlers.ProfessionEvent:Initialize()
+	CON.Handlers.GuildEvent = GuildEvent:new(); CON.Handlers.GuildEvent:Initialize()
 
 	EP:RegisterPlugin(addon, CON.ConfigCallback)
 end

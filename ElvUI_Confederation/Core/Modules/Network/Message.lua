@@ -1,116 +1,124 @@
 local CON, E, L, V, P, G = unpack(select(2, ...))
-local DB = E.db.Confederation
-local LogCategory = 'MMessage'
-local Initialized = false
+local ObjectName = 'Message'
+local LogCategory = 'NMessage'
 
-local function ProcessDataMessage(Message, Sender)
+Message = {}
 
-	local UnitData = CON:DecodeUnitData(Message)
-	--CON:DataDumper(LogCategory, UnitData)
+function Message:new(inObject)
+    local _typeof = type(inObject)
+    local _newObject = true
 
-    -- Ignore if it's your own message (unfortunately there's no realm name attached)
-	if(DB.Data.Player.Name == Sender) then
-		return
-	end
+	assert(inObject == nil or
+	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
+	      "argument must be nil or " .. ObjectName .. " object")
 
-	-- It's about you, sender needs current information
-	if(UnitData.GUID == DB.PlayerGUID) then
-		CON:WhisperUnitData(DB.Data.Player, Sender)
-		return
-	end
+    if(typeof == 'table') then
+        Object = inObject
+        _newObject = false
+    else
+        Object = {}
+    end
+    setmetatable(Object, self)
+    self.__index = self
+    self.__name = ObjectName
 
-	-- Process if coming from the Unit themselves
-	if(UnitData.Name == Sender and UnitData.RealmName == DB.Data.RealmName) then
-		if(CON:AddGuildMember(UnitData)) then
-			CON:Info(LogCategory, format("Updated unit [%s] information based on message received", UnitData.Unit))
-		end
-		return
-	end
+    if(_newObject == true) then
+        self._Key = nil
+        self._To = nil
+        self._From = nil
+        self._Type = nil
+        self._Subject = nil
+        self._Data = nil
+        self._Initialized = false
+    end
 
-	-- Process if you've never heard of this unit before
-	if(DB.Data.Guild.Roster[UnitData.GUID] == nil) then
-		if(UnitData.Online == true and CON:AddGuildMember(UnitData)) then
-			CON:Info(LogCategory, format("Updated unit [%s] information based on message received", UnitData.Unit))
-		elseif(UnitData.Online == false and CON:RemoveGuildMember(UnitData)) then
-			CON:Info(LogCategory, format("Removed unit [%s] information based on message received", UnitData.Unit))
-		end
-		return
-	end
-
-	-- Ignore if Unit is known to be running addon and it's not coming from Unit themselves
-	if(UnitData.Online == true and DB.Data.Guild.Roster[UnitData.GUID].RunningAddon == true) then
-		return
-	end
-
-	-- Ignore if same guild and unit is not running addon
-	-- Your scans will contain the same information
-	if(UnitData.GuildName == DB.Data.Player.GuildName and DB.Data.Guild.Roster[UnitData.GUID].RunningAddon == false) then
-		return
-	end
-
-	-- If passed all above checks, process message
-	if(UnitData.Online == true and CON:AddGuildMember(UnitData)) then
-		CON:Info(LogCategory, format("Updated unit [%s] information based on message received", UnitData.Unit))
-	elseif(UnitData.Online == false and CON:RemoveGuildMember(UnitData)) then
-		CON:Info(LogCategory, format("Removed unit [%s] information based on message received", UnitData.Unit))
-	end
+    return Object
 end
 
-local function ProcessStatusMessage(RealmName, Sender)
-	-- Ignore your own messages
-	if(DB.Data.CurrentRealm.Name == RealmName and DB.Data.Player.Name == Sender) then
-		return
-	end
-
-	CON:Info(LogCategory, "Request for current status from %s-%s", Sender, RealmName)
-	-- Whisper if on same server
-	if(DB.Data.CurrentRealm.Name == RealmName) then		
-		CON:WhisperUnitData(DB.Data.Player, Sender)
-	-- Otherwise broadcast
-	else
-		CON:BroadcastUnitData(DB.Data.Player)
-	end
+function Message:IsInitialized(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+    if(inBoolean ~= nil) then
+        self._Initialized = inBoolean
+    end
+    return self._Initialized
 end
 
-function CON:OnCommReceived(MessageType, Message, Distribution, Sender)
-	
-	--CON:Debug(LogCategory, "Message received [%s][%s][%s]", MessageType, Distribution, Sender)
-
-	if(MessageType == DB.Network.Message.UnitData) then
-		ProcessDataMessage(Message, Sender)
-	elseif(MessageType == DB.Network.Message.Status) then
-		ProcessStatusMessage(Message, Sender)
-	else
-		CON:Warning(LogCategory, "Received unknown message type [%s] from [%s] over [%s]", MessageType, Sender, Distribution)
-	end	
+function Message:Initialize()
+    if(self:IsInitialized() == false) then
+        self:SetKey(math.GenerateUID())
+        self:SetFrom(CON.Player.Unit:GetUnitName())
+        self:IsInitialized(true)
+    end
+    return self:IsInitialized()
 end
 
-function CON:BroadcastUnitData(UnitData)
-
-	-- Broadcast over local realm channel
-	CON:Info(LogCategory, "Broadcasting data for [%s] on channel [%d]", UnitData.Unit, DB.Network.ChannelID)
-	local MessageData = CON:EncodeUnitData(UnitData)
-	CON:SendCommMessage(DB.Network.Message.UnitData, MessageData, "CHANNEL", DB.Network.ChannelID)
-
-	-- Broadcast via bnet relay
-	CON:BnetUnitData(UnitData)
+function Message:Print()
+    CON:SingleLine(LogCategory)
+    CON:Debug(LogCategory, ObjectName .. " Object")
+    CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    CON:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
+    CON:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+    CON:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
+    CON:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
+    CON:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
+    CON:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
-function CON:BroadcastStatus()
-	CON:Info(LogCategory, "Broadcasting status request on channel [%d]", DB.Network.ChannelID)
-	CON:SendCommMessage(DB.Network.Message.Status, DB.Data.CurrentRealm.Name, "CHANNEL", DB.Network.ChannelID)
+function Message:GetKey()
+    return self._Key
 end
 
-local function Initialize()
-	if(Initialized == false) then
-		for Key, Value in pairs (DB.Network.Message) do
-			CON:Info(LogCategory, format("Registering to receive [%s] messages", DB.Network.Message[Key]))
-			CON:RegisterComm(DB.Network.Message[Key])
-		end
-		Initialized = true
-	end
+function Message:SetKey(inKey)
+    assert(type(inKey) == 'string')
+    self._Key = inKey
+    return self:GetKey()
 end
 
-do
-	Initialize()
+function Message:GetTo()
+    return self._To
+end
+
+function Message:SetTo(inTo)
+    assert(type(inTo) == 'string')
+    self._To = inTo
+    return self:GetTo()
+end
+
+function Message:GetFrom()
+    return self._From
+end
+
+function Message:SetFrom(inFrom)
+    assert(type(inFrom) == 'string')
+    self._From = inFrom
+    return self:GetFrom()
+end
+
+function Message:GetType()
+    return self._Type
+end
+
+function Message:SetType(inType)
+    assert(type(inType) == 'string')
+    self._Type = inType
+    return self:GetType()
+end
+
+function Message:GetSubject()
+    return self._Subject
+end
+
+function Message:SetSubject(inSubject)
+    assert(type(inSubject) == 'string')
+    self._Subject = inSubject
+    return self:GetSubject()
+end
+
+function Message:GetData()
+    return self._Data
+end
+
+function Message:SetData(inData)
+    self._Data = inData
+    return self:GetData()
 end

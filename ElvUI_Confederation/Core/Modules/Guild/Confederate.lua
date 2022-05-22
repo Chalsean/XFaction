@@ -25,6 +25,9 @@ function Confederate:new(inObject)
     if(_newObject) then
         self._Key = nil
         self._Name = nil
+        self._MainRealmName = nil
+        self._MainGuildName = nil
+        self._MOTD = nil
         self._Units = {}
         self._NumberOfUnits = 0
         self._Teams = {}
@@ -43,6 +46,9 @@ function Confederate:Print(inPrintOffline)
     CON:Debug(LogCategory, "Confederate Object")
     CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     CON:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
+    CON:Debug(LogCategory, "  _MainRealmName (" .. type(self._MainRealmName) .. "): ".. tostring(self._MainRealmName))
+    CON:Debug(LogCategory, "  _MainGuildName (" .. type(self._MainGuildName) .. "): ".. tostring(self._MainGuildName))
+    CON:Debug(LogCategory, "  _MOTD (" .. type(self._MOTD) .. "): ".. tostring(self._MOTD))
     CON:Debug(LogCategory, "  _NumberOfTeams (" .. type(self._NumberOfTeams) .. "): ".. tostring(self._NumberOfTeams))
     CON:Debug(LogCategory, "  _NumberOfRealms (" .. type(self._NumberOfRealms) .. "): ".. tostring(self._NumberOfRealms))
     CON:Debug(LogCategory, "  _NumberOfGuilds (" .. type(self._NumberOfGuilds) .. "): ".. tostring(self._NumberOfGuilds))
@@ -60,6 +66,9 @@ function Confederate:ShallowPrint()
     CON:Debug(LogCategory, "Confederate Object")
     CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     CON:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
+    CON:Debug(LogCategory, "  _MainRealmName (" .. type(self._MainRealmName) .. "): ".. tostring(self._MainRealmName))
+    CON:Debug(LogCategory, "  _MainGuildName (" .. type(self._MainGuildName) .. "): ".. tostring(self._MainGuildName))
+    CON:Debug(LogCategory, "  _MOTD (" .. type(self._MOTD) .. "): ".. tostring(self._MOTD))
     CON:Debug(LogCategory, "  _NumberOfTeams (" .. type(self._NumberOfTeams) .. "): ".. tostring(self._NumberOfTeams))
     CON:Debug(LogCategory, "  _NumberOfRealms (" .. type(self._NumberOfRealms) .. "): ".. tostring(self._NumberOfRealms))
     CON:Debug(LogCategory, "  _NumberOfGuilds (" .. type(self._NumberOfGuilds) .. "): ".. tostring(self._NumberOfGuilds))
@@ -88,6 +97,36 @@ function Confederate:SetName(inName)
     assert(type(inName) == 'string')
     self._Name = inName
     return self:GetName()
+end
+
+function Confederate:GetMainRealmName()
+    return self._MainRealmName
+end
+
+function Confederate:SetMainRealmName(inMainRealmName)
+    assert(type(inMainRealmName) == 'string')
+    self._MainRealmName = inMainRealmName
+    return self:GetMainRealmName()
+end
+
+function Confederate:GetMainGuildName()
+    return self._MainGuildName
+end
+
+function Confederate:SetMainGuildName(inMainGuildName)
+    assert(type(inMainGuildName) == 'string')
+    self._MainGuildName = inMainGuildName
+    return self:GetMainGuildName()
+end
+
+function Confederate:GetMOTD()
+    return self._MOTD
+end
+
+function Confederate:SetName(inMOTD)
+    assert(type(inMOTD) == 'string')
+    self._MOTD = inMOTD
+    return self:GetMOTD()
 end
 
 function Confederate:ContainsUnit(inKey)
@@ -173,7 +212,7 @@ function Confederate:PrintTeam(inKey, inPrintOffline)
     --         _Team:Print(inPrintOffline)
     --     end
     -- end
-    CON:DataDumper(LogCategory, self._Teams)
+    --CON:DataDumper(LogCategory, self._Teams)
 end
 
 function Confederate:ContainsRealm(inKey)
