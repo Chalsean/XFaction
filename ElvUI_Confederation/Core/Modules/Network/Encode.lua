@@ -1,8 +1,6 @@
 local CON, E, L, V, P, G = unpack(select(2, ...))
 local LogCategory = 'MEncode'
 local Initialized = false
-local COMPRESS = LibStub:GetLibrary("LibCompress")
-local ENCODE = COMPRESS:GetAddonEncodeTable()
 
 -- To reduce payload, strip out unnecessary key characters, replace text with ids, compress, etc.
 -- The message will get reconstructed to original state on receiving end
@@ -10,6 +8,7 @@ function CON:EncodeMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be a Message object")
 
 	local _MessageData = {}
+	_MessageData.K = inMessage:GetKey()
 	_MessageData.To = inMessage:GetTo()
 	_MessageData.F = inMessage:GetFrom()
 	_MessageData.S = inMessage:GetSubject()
@@ -70,6 +69,6 @@ function CON:EncodeMessage(inMessage)
 	end
 
 	local _Serialized = CON:Serialize(_MessageData)
-	local _Compressed = COMPRESS:Compress(_Serialized)
-	return ENCODE:Encode(_Compressed)
+	local _Compressed = CON.Lib.Compress:Compress(_Serialized)
+	return CON.Lib.Encode:Encode(_Compressed)
 end

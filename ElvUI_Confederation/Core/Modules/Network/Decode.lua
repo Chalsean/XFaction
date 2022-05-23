@@ -1,19 +1,16 @@
 local CON, E, L, V, P, G = unpack(select(2, ...))
 local LogCategory = 'MEncode'
 local Initialized = false
-local COMPRESS = LibStub:GetLibrary("LibCompress")
-local ENCODE = COMPRESS:GetAddonEncodeTable()
 
 -- Reconstruct a Unit object from the message
 function CON:DecodeMessage(inMessage)	
 	
-	local _Decoded = ENCODE:Decode(inMessage)
-	local _Decompressed = COMPRESS:DecompressHuffman(_Decoded)
+	local _Decoded = CON.Lib.Encode:Decode(inMessage)
+	local _Decompressed = CON.Lib.Compress:DecompressHuffman(_Decoded)
 	local _, _MessageData = CON:Deserialize(_Decompressed)
 
-	CON:DataDumper(LogCategory, _MessageData)
-
 	local _Message = Message:new()
+	if(_MessageData.K ~= nil) then	_Message:SetKey(_MessageData.K)	end
 	if(_MessageData.To ~= nil) then	_Message:SetTo(_MessageData.To)	end
 	if(_MessageData.F ~= nil) then _Message:SetFrom(_MessageData.F)	end
 	if(_MessageData.S ~= nil) then _Message:SetSubject(_MessageData.S) end
@@ -21,6 +18,7 @@ function CON:DecodeMessage(inMessage)
 
 	if(_Message:GetSubject() == CON.Network.Message.Subject.DATA) then
 		local _UnitData = Unit:new()
+		_UnitData:SetKey(_Message:GetFrom())
 		_UnitData:SetGuildIndex(_MessageData.GI)
 		_UnitData:SetName(_MessageData.N)
 		_UnitData:SetGuildName(_MessageData.GN)

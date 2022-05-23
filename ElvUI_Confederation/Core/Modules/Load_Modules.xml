@@ -1,13 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
-<!-- 
-    <Script file='Network\BattleNet.lua'/>
-    <Script file='Network\Channel.lua'/>
-    <Script file='Network\Encode.lua'/>
-    <Script file='Network\Message.lua'/>
-    <Script file='Network\Whisper.lua'/>   
-    -->
-
+    <Script file='Handlers\BNetEvent.lua'/>
     <Script file='Handlers\ChannelEvent.lua'/>
+    <Script file='Handlers\ChatEvent.lua'/>
     <Script file='Handlers\CovenantEvent.lua'/>
     <Script file='Handlers\GuildEvent.lua'/>    
     <Script file='Handlers\ProfessionEvent.lua'/>
@@ -22,6 +16,8 @@
     <Script file='Network\Message.lua'/>
     <Script file='Network\Channel.lua'/>
     <Script file='Network\ChannelCollection.lua'/>
+    <Script file='Network\Friend.lua'/>
+    <Script file='Network\FriendCollection.lua'/>
 
     <Script file='Unit\Profession.lua'/>
     <Script file='Unit\ProfessionCollection.lua'/>   
@@ -38,8 +34,8 @@
     <Script file='Unit\Unit.lua'/>
 
     <Script file='Guild\Rank.lua'/>
-    <Script file='Guild\Guild.lua'/>
+    <Script file='Guild\RankCollection.lua'/>
     <Script file='Guild\Realm.lua'/>
-    <Script file='Guild\Team.lua'/>    
+    <Script file='Guild\RealmCollection.lua'/>
     <Script file='Guild\Confederate.lua'/>
 </Ui>

@@ -46,7 +46,7 @@ end
 function Message:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
-        self:SetFrom(CON.Player.Unit:GetUnitName())
+        self:SetFrom(CON.Player.Unit:GetKey())
         self:IsInitialized(true)
     end
     return self:IsInitialized()

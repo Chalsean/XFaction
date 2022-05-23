@@ -1,11 +1,10 @@
 local CON, E, L, V, P, G = unpack(select(2, ...))
-local ObjectName = 'TimerEvent'
-local LogCategory = 'HETimer'
-local TotalChannels = 10  -- Ceiling set by Blizz
+local ObjectName = 'ChatEvent'
+local LogCategory = 'HEChat'
 
-TimerEvent = {}
+ChatEvent = {}
 
-function TimerEvent:new(inObject)
+function ChatEvent:new(inObject)
     local _typeof = type(inObject)
     local _newObject = true
 
@@ -30,17 +29,16 @@ function TimerEvent:new(inObject)
     return Object
 end
 
-function TimerEvent:Initialize()
+function ChatEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		CON:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
-        CON:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
-        CON:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", 60)
+		CON:RegisterEvent('CHAT_MSG_GUILD', self.CallbackGuildMessage)
+        CON:Info(LogCategory, "Registered for CHAT_MSG_GUILD events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
-function TimerEvent:IsInitialized(inBoolean)
+function ChatEvent:IsInitialized(inBoolean)
 	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
 	if(inBoolean ~= nil) then
 		self._Initialized = inBoolean
@@ -48,23 +46,13 @@ function TimerEvent:IsInitialized(inBoolean)
 	return self._Initialized
 end
 
-function TimerEvent:Print()
+function ChatEvent:Print()
     CON:SingleLine(LogCategory)
     CON:Debug(LogCategory, ObjectName .. " Object")
     CON:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
--- Wait for General chat to grab #1
-function TimerEvent:CallbackChannelTimer()
-    CON.Handlers.ChannelEvent = ChannelEvent:new(); CON.Handlers.ChannelEvent:Initialize()
-    if(CON.Network.Sender:GetLocalChannel() == nil) then
-        -- This will fire an event that ChannelEvent handler catches and updates
-        JoinChannelByName(CON.Network.ChannelName)
-    end
-end
-
--- Force garbage cleanup
-function TimerEvent:CallbackGarbageTimer()
-    collectgarbage() -- This identifies objects to clean and calls finalizers
-    collectgarbage() -- The second call actually deletes the objects
+-- The event doesn't tell you what has changed, only that something has changed
+function ChatEvent:CallbackGuildMessage(inText, inSenderName, _, _ChannelName, _, _, _, _, _, _, inSenderGUID, inBNetFriendID)
+    CON:Debug(LogCategory, "Guild message [%s][%s][%s][%s]", inText, inSenderName, _ChannelName, inSenderGUID)
 end

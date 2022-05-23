@@ -74,7 +74,7 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelTy
 		_NewChannel:SetName(inChannelName)
 		_NewChannel:SetShortName(inChannelName)
 		_NewChannel:SetType(inChannelType)
-		if(CON.Channels:AddChannel(_NewChannel)) then
+		if(CON.Network.Channels:AddChannel(_NewChannel)) then
 			CON:Info(LogCategory, "Added channel [%d:%s] due to system event", inChannelNumber, inChannelName)
 			if(_NewChannel:GetShortName() == CON.ChannelName) then
 				CON.Network.Sender:SetLocalChannel(_NewChannel)
@@ -103,9 +103,11 @@ end
 function ChannelEvent:CallbackDisconnect()
 	CON:Info(LogCategory, "Received CHAT_SERVER_DISCONNECTED system event")
 	CON.Network.Sender:CanBroadcast(false)
+	CON.Network.Sender:CanWhisper(false)
 end
 
 function ChannelEvent:CallbackReconnect()
 	CON:Info(LogCategory, "Received CHAT_SERVER_DISCONNECTED system event")
 	CON.Network.Sender:CanBroadcast(true)
+	CON.Network.Sender:CanWhisper(false)
 end

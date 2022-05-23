@@ -1,6 +1,6 @@
 local CON, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Realm'
-local LogCategory = 'O' .. ObjectName
+local LogCategory = 'GRealm'
 
 Realm = {}
 
@@ -25,9 +25,10 @@ function Realm:new(inObject)
     if(_newObject) then
         self._Key = nil
         self._Name = nil
-        self._ID = nil
+        self._IDs = {}
+        self._IDCount = 0
         self._Units = {}
-        self._NumberOfUnits = 0
+        self._NumberRunningAddon = 0
         self._Initialized = false
     end
 
@@ -44,26 +45,41 @@ end
 
 function Realm:Initialize()
 	if(self:IsInitialized() == false) then
-        self:SetName(GetRealmName())
-        self:SetKey(self:GetName())
-		self:IsInitialized(true)
+        if(self:GetKey() == nil) then
+            self:SetKey(GetRealmName())
+            self:SetName(GetRealmName())
+        end
+        local _, _, _, _, _, _, _, _, _RealmIDs = CON.Lib.Realm:GetRealmInfo(self:GetName())
+        self:SetIDs(_RealmIDs)
 	end
 	return self:IsInitialized()
 end
 
 function Realm:Print(inPrintOffline)
     CON:DoubleLine(LogCategory)
-    CON:Debug(LogCategory, "Realm Object")
+    CON:Debug(LogCategory, ObjectName .. " Object")
     CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     CON:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    CON:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
+    CON:Debug(LogCategory, "  _IDCount (" .. type(self._IDCount) .. "): ".. tostring(self._IDCount))
     CON:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    CON:Debug(LogCategory, "  _NumberOfUnits (" .. type(self._NumberOfUnits) .. "): ".. tostring(self._NumberOfUnits))
-    CON:Debug(LogCategory, "  _Units (" .. type(self._Units) .. "): ")
-    for _Key, _Unit in pairs (self._Units) do
-        if(inPrintOffline == true or _Unit:IsOnline()) then    
-            _Unit:Print()
-        end
+    CON:Debug(LogCategory, "  _NumberRunningAddon (" .. type(self._NumberRunningAddon) .. "): ".. tostring(self._NumberRunningAddon))
+    CON:Debug(LogCategory, "  _IDs (" .. type(self._IDs) .. "): ")
+    for _, _Value in pairs (self._IDs) do
+        CON:Debug(LogCategory, "  ID (" .. type(_Value) .. ") " .. tostring(_Value))
+    end
+end
+
+function Realm:ShallowPrint()
+    CON:DoubleLine(LogCategory)
+    CON:Debug(LogCategory, ObjectName .. " Object")
+    CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    CON:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
+    CON:Debug(LogCategory, "  _IDCount (" .. type(self._IDCount) .. "): ".. tostring(self._IDCount))
+    CON:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    CON:Debug(LogCategory, "  _NumberRunningAddon (" .. type(self._NumberRunningAddon) .. "): ".. tostring(self._NumberRunningAddon))
+    CON:Debug(LogCategory, "  _IDs (" .. type(self._IDs) .. "): ")
+    for _, _Value in pairs (self._IDs) do
+        CON:Debug(LogCategory, "  ID (" .. type(_Value) .. ") " .. tostring(_Value))
     end
 end
 
@@ -87,18 +103,49 @@ function Realm:SetName(inName)
     return self:GetName()
 end
 
+function Realm:GetIDs()
+    return self._IDs
+end
+
+function Realm:SetIDs(inIDs)
+    assert(type(inIDs) == 'table')
+    self._IDs = inIDs
+    return self:GetIDs()
+end
+
 function Realm:Contains(inKey)
     assert(type(inKey) == 'string')
     return self._Units[inKey] ~= nil
 end
 
+function Realm:GetUnit(inKey)
+    assert(type(inKey) == 'string')
+    return self._Units[inKey]
+end
+
 function Realm:AddUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', "argument must be Unit object")
 
-    if(self:Contains(inUnit:GetKey()) == false) then
+    if(self:Contains(inUnit:GetKey()) == false) then        
+        if(inUnit:IsPlayer() == false and inUnit:IsRunningAddon()) then
+            self._NumberRunningAddon = self._NumberRunningAddon + 1
+        end
+    elseif(inUnit:IsPlayer() == false) then
+        local _CachedUnit = self:GetUnit(inUnit:GetKey())
+        if(_CachedUnit:IsRunningAddon() == false and inUnit:IsRunningAddon()) then   
+            self._NumberRunningAddon = self._NumberRunningAddon + 1
+        elseif(_CachedUnit:IsRunningAddon() and inUnit:IsRunningAddon() == false) then
+            self._NumberRunningAddon = self._NumberRunningAddon - 1
+        end
+    end
+
+    if(inUnit:IsRunningAddon()) then
         self._Units[inUnit:GetKey()] = inUnit
-        self._NumberOfUnits = self._NumberOfUnits + 1
     end
 
     return self:Contains(inUnit:GetKey())
+end
+
+function Realm:GetNumberRunningAddon()
+    return self._NumberRunningAddon
 end

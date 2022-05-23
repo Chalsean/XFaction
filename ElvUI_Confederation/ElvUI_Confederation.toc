@@ -7,12 +7,11 @@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 
-## Unmodified external Libraries
 Libraries\Load_Libraries.xml
+Core\Libraries\Load_Libraries.xml
 
 Initialize.lua
 Core\Developer\Load_Developer.xml
-Core\Libraries\Load_Libraries.xml
 Core\Functions\Load_Functions.xml
 ##Core\Configuration\Load_Configurations.xml
 Core\Modules\Load_Modules.xml

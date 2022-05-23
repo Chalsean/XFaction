@@ -105,3 +105,10 @@ function Profession:SetIconID(_IconID)
     self._IconID = _IconID
     return self:GetIconID()
 end
+
+function Profession:Equals(inProfession)
+    if(inProfession == nil) then return false end
+    if(type(inProfession) ~= 'table' or inProfession.__name == nil or inProfession.__name ~= 'Profession') then return false end
+    if(self:GetKey() ~= inProfession:GetKey()) then return false end
+    return true
+end

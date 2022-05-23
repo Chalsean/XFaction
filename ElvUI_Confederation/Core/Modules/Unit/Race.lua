@@ -1,19 +1,19 @@
 local CON, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Race'
-local LogCategory = 'U' .. ObjectName
+local LogCategory = 'URace'
 
 Race = {}
 
-function Race:new(_Argument)
-    local _typeof = type(_Argument)
+function Race:new(inObject)
+    local _typeof = type(inObject)
     local _newObject = true
 
-	assert(_Argument == nil or _typeof == 'string' or
-	      (_typeof == 'table' and _Argument.__name ~= nil and _Argument.__name == ObjectName),
-	      "argument must be nil, string or " .. ObjectName .. " object")
+	assert(inObject == nil or 
+	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
+	      "argument must be nil or " .. ObjectName .. " object")
 
     if(_typeof == 'table') then
-        Object = _Argument
+        Object = inObject
         _newObject = false
     else
         Object = {}
@@ -23,7 +23,8 @@ function Race:new(_Argument)
     self.__name = ObjectName
 
     if(_newObject) then
-        self._Name = (_typeof == 'string') and _Argument or nil
+        self._Key = nil
+        self._Name = nil
 		self._ID = nil
         self._Faction = nil
     end
@@ -33,10 +34,21 @@ end
 
 function Race:Print()
     CON:SingleLine(LogCategory)
-    CON:Debug(LogCategory, "Race Object")
+    CON:Debug(LogCategory, ObjectName .. " Object")
+    CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     CON:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
     CON:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
     CON:Debug(LogCategory, "  _Faction (" .. type(self._Faction) .. "): ".. tostring(self._Faction))
+end
+
+function Race:GetKey()
+    return self._Key
+end
+
+function Race:SetKey(inKey)
+    assert(type(inKey) == 'number')
+    self._Key = inKey
+    return self:GetKey()
 end
 
 function Race:GetName()
@@ -53,9 +65,9 @@ function Race:GetID()
     return self._ID
 end
 
-function Race:SetID(_ID)
-    assert(type(_ID) == 'number')
-    self._ID = _ID
+function Race:SetID(inID)
+    assert(type(inID) == 'number')
+    self._ID = inID
     return self:GetID()
 end
 
@@ -63,8 +75,15 @@ function Race:GetFaction()
     return self._Faction
 end
 
-function Race:SetFaction(_Faction)
-    assert(type(_Faction) == 'string' and (_Faction == "Horde" or _Faction == "Alliance" or _Faction == "Neutral"), "argument must be Horde, Alliance or Neutral")
-    self._Faction = _Faction
+function Race:SetFaction(inFaction)
+    assert(type(inFaction) == 'string' and (inFaction == "Horde" or inFaction == "Alliance" or inFaction == "Neutral"), "argument must be Horde, Alliance or Neutral")
+    self._Faction = inFaction
     return self:GetFaction()
+end
+
+function Race:Equals(inRace)
+    if(inRace == nil) then return false end
+    if(type(inRace) ~= 'table' or inRace.__name == nil or inRace.__name ~= 'Race') then return false end
+    if(self:GetKey() ~= inRace:GetKey()) then return false end
+    return true
 end

@@ -100,3 +100,10 @@ function Spec:SetIconID(inIconID)
     self._IconID = inIconID
     return self:GetIconID()
 end
+
+function Spec:Equals(inSpec)
+    if(inSpec == nil) then return false end
+    if(type(inSpec) ~= 'table' or inSpec.__name == nil or inSpec.__name ~= 'Spec') then return false end
+    if(self:GetKey() ~= inSpec:GetKey()) then return false end
+    return true
+end

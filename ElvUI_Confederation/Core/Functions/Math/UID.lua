@@ -1,3 +1,4 @@
+-- Credit to jrus: https://gist.github.com/jrus/3197011
 function math.GenerateUID()
     local _Template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
     return string.gsub(_Template, '[xy]', function (c)

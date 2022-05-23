@@ -1,20 +1,20 @@
 local CON, E, L, V, P, G = unpack(select(2, ...))
-local ObjectName = 'CRace'
-local LogCategory = 'U' .. ObjectName
+local ObjectName = 'RaceCollection'
+local LogCategory = 'UCRace'
 local MaxRaces = 37
 
 RaceCollection = {}
 
-function RaceCollection:new(_Argument)
-    local _typeof = type(_Argument)
+function RaceCollection:new(inObject)
+    local _typeof = type(inObject)
     local _newObject = true
 
-	assert(_Argument == nil or 
-	      (_typeof == 'table' and _Argument.__name ~= nil and _Argument.__name == ObjectName),
+	assert(inObject == nil or 
+	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
 	      "argument must be nil or " .. ObjectName .. " object")
 
     if(_typeof == 'table') then
-        Object = _Argument
+        Object = inObject
         _newObject = false
     else
         Object = {}
@@ -24,6 +24,7 @@ function RaceCollection:new(_Argument)
     self.__name = ObjectName
 
     if(_newObject) then
+		self._Key = nil
         self._Races = {}
 		self._RaceCount = 0
 		self._Initialized = false
@@ -34,16 +35,18 @@ end
 
 function RaceCollection:Initialize()
 	if(self._Initialized == false) then
+		self._Key = math.GenerateUID()
 		for i = 1, MaxRaces do
 			local _RaceInfo = C_CreatureInfo.GetRaceInfo(i)
-			local _Race = Race:new()
-			_Race:SetID(_RaceInfo.raceID)
-			_Race:SetName(_RaceInfo.raceName)
-			local _FactionInfo = C_CreatureInfo.GetFactionInfo(_Race:GetID())
-			_Race:SetFaction(_FactionInfo.groupTag)
 
-			self._Races[_Race:GetID()] = _Race
-			self._RaceCount = self._RaceCount + 1
+			local _NewRace = Race:new()
+			_NewRace:SetKey(_RaceInfo.raceID)
+			_NewRace:SetID(_RaceInfo.raceID)
+			_NewRace:SetName(_RaceInfo.raceName)
+			local _FactionInfo = C_CreatureInfo.GetFactionInfo(_NewRace:GetID())
+			_NewRace:SetFaction(_FactionInfo.groupTag)
+
+			self:AddRace(_NewRace)
 		end
 		self._Initialized = true
 	end
@@ -51,7 +54,8 @@ end
 
 function RaceCollection:Print()
 	CON:DoubleLine(LogCategory)
-	CON:Debug(LogCategory, "RaceCollection Object")
+	CON:Debug(LogCategory, ObjectName .. " Object")
+	CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
 	CON:Debug(LogCategory, "  _RaceCount (" .. type(self._RaceCount) .. "): ".. tostring(self._RaceCount))
 	CON:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Race in pairs (self._Races) do
@@ -59,18 +63,33 @@ function RaceCollection:Print()
 	end
 end
 
-function RaceCollection:GetRace(_Argument)
-	local _typeof = type(_Argument)
-	assert(_typeof == 'string' or _typeof == 'number', "argument must be string or number")
+function RaceCollection:Contains(inKey)
+	assert(type(inKey) == 'number')
+    return self._Races[inKey] ~= nil
+end
 
-	if(_typeof == 'string') then
-		for i = 1, self._RaceCount do
-			local _Race = self._Races[i]
-			if(_Race:GetName() == _Argument) then
-				return _Race
-			end
+function RaceCollection:GetRace(inKey)
+	assert(type(inKey) == 'number')
+    return self._Races[inKey]
+end
+
+function RaceCollection:GetRaceByName(inName, inFaction)
+	assert(type(inName) == 'string' and type(inFaction) == 'string')
+	
+	for _, _Race in pairs (self._Races) do
+		if(_Race:GetName() == inName and _Race:GetFaction() == inFaction) then
+			return _Race
 		end
 	end
-	
-    return self._Races[_Argument]
+
+    return nil
+end
+
+function RaceCollection:AddRace(inRace)
+	assert(type(inRace) == 'table' and inRace.__name ~= nil and inRace.__name == 'Race', "argument must be Race object")
+	if(self:Contains(inRace:GetKey()) == false) then
+		self._RaceCount = self._RaceCount + 1
+	end
+	self._Races[inRace:GetKey()] = inRace
+    return self:Contains(inRace:GetKey())
 end

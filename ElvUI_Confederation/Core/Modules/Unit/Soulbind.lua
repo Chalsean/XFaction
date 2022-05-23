@@ -87,3 +87,10 @@ function Soulbind:SetID(inID)
     self._ID = inID
     return self:GetID()
 end
+
+function Soulbind:Equals(inSoulbind)
+    if(inSoulbind == nil) then return false end
+    if(type(inSoulbind) ~= 'table' or inSoulbind.__name == nil or inSoulbind.__name ~= 'Soulbind') then return false end
+    if(self:GetKey() ~= inSoulbind:GetKey()) then return false end
+    return true
+end

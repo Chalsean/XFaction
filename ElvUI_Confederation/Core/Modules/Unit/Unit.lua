@@ -27,6 +27,7 @@ function Unit:new(_Argument)
         self._Rank = nil
         self._Level = 60
         self._Class = nil
+        self._Spec = nil
         self._Zone = nil
         self._Note = nil
         self._Online = false
@@ -63,26 +64,41 @@ function Unit:Initialize(_Argument)
     self:SetKey(self:GetGUID())
     self:SetUnitName(_unit)
 	self:SetLevel(_level)
-	--self:SetZone(_zone)
 	self:SetNote(_note)
 	self:IsOnline(_online)
 	self:IsMobile(_isMobile)
+    
+	if(_zone == nil) then
+        self:SetZone("?")
+    else
+        self:SetZone(_zone)
+    end
 
-    self:SetGuildName(GetGuildInfo('player'))
-    self:SetRealmName(GetRealmName())
+    self:SetGuildName(CON.Player.GuildName)
+    self:SetRealmName(CON.Player.RealmName)
     self:SetTimeStamp(GetServerTime())
 
     local _ParsedName = string.Split(_unit, "-")
     self:SetName(_ParsedName[1])
-    self:SetRank(Rank:new(_rank))
 
     self:SetClass(CON.Classes:GetClass(_class))
-    local _, _, _Race = GetPlayerInfoByGUID(self:GetGUID())
-    self:SetRace(CON.Races:GetRace(_Race))
+
+    local _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
+    self:SetRace(CON.Races:GetRaceByName(_RaceName, CON.Player.Faction))
 
     local _SpecGroupID = GetSpecialization()
 	local _SpecID = GetSpecializationInfo(_SpecGroupID)
     self:SetSpec(CON.Specs:GetSpec(_SpecID))
+
+    local _RankID = C_GuildInfo.GetGuildRankOrder(self:GetGUID())
+    if(CON.Ranks:Contains(_RankID) == false) then
+        local _NewRank = Rank:new()
+        _NewRank:SetKey(_RankID)
+        _NewRank:SetID(_RankID)
+        _NewRank:SetName(_rank)
+        CON.Ranks:AddRank(_NewRank)
+    end
+    self:SetRank(CON.Ranks:GetRank(_RankID))
 
     if(self:IsPlayer()) then
         local _CovenantID = C_Covenants.GetActiveCovenantID()
@@ -167,13 +183,12 @@ function Unit:Initialize(_Argument)
 end
 
 function Unit:Print()
-	CON:SingleLine(LogCategory)
+	CON:DoubleLine(LogCategory)
 	CON:Debug(LogCategory, "Unit Object")
     CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     CON:Debug(LogCategory, "  _GUID (" .. type(self._GUID) .. "): ".. tostring(self._GUID))
 	CON:Debug(LogCategory, "  _UnitName (" .. type(self._UnitName) .. "): ".. tostring(self._UnitName))
-    CON:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    CON:Debug(LogCategory, "  _Rank (" .. type(self._Rank) .. "): ".. tostring(self._Rank))
+    CON:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))    
     CON:Debug(LogCategory, "  _GuildIndex (" .. type(self._GuildIndex) .. "): ".. tostring(self._GuildIndex))
     CON:Debug(LogCategory, "  _Level (" .. type(self._Level) .. "): ".. tostring(self._Level))
     CON:Debug(LogCategory, "  _Zone (" .. type(self._Zone) .. "): ".. tostring(self._Zone))
@@ -211,6 +226,10 @@ function Unit:Print()
     CON:Debug(LogCategory, "  _Profession2 (" .. type(self._Profession2) .. "): ")
     if(self._Profession2 ~= nil) then
         self._Profession2:Print()
+    end
+    CON:Debug(LogCategory, "  _Rank (" .. type(self._Rank) .. "): ")
+    if(self._Rank ~= nil) then
+        self._Rank:Print()
     end
 end
 
@@ -273,6 +292,10 @@ function Unit:SetGuildIndex(_GuildIndex)
     return self:GetGuildIndex()
 end
 
+function Unit:HasRank()
+    return self._Rank ~= nil
+end
+
 function Unit:GetRank()
     return self._Rank
 end
@@ -298,7 +321,7 @@ function Unit:GetZone()
 end
 
 function Unit:SetZone(inZone)
-    assert(type(inZone) == 'string')
+    assert(type(inZone) == 'string', "Usage: SetZone(string)")
     self._Zone = inZone
     return self:GetZone()
 end
@@ -313,12 +336,20 @@ function Unit:SetNote(_Note)
     return self:GetNote()
 end
 
-function Unit:IsOnline(_Online)
-    assert(_Online == nil or type(_Online == 'boolean'), "argument must be nil or boolean")
-    if(_Online ~= nil) then
-        self._Online = _Online
+function Unit:IsOnline(inBoolean)
+    assert(inBoolean == nil or type(inBoolean == 'boolean'), "argument must be nil or boolean")
+    if(inBoolean ~= nil) then
+        self._Online = inBoolean
     end
     return self._Online
+end
+
+function Unit:IsOffline(inBoolean)
+    assert(inBoolean == nil or type(inBoolean == 'boolean'), "argument must be nil or boolean")
+    if(inBoolean ~= nil) then
+        self._Online = inBoolean
+    end
+    return self._Online == false
 end
 
 function Unit:IsMobile(_Mobile)
@@ -327,6 +358,10 @@ function Unit:IsMobile(_Mobile)
         self._Mobile = _Mobile
     end
     return self._Mobile
+end
+
+function Unit:HasRace()
+    return self._Race ~= nil
 end
 
 function Unit:GetRace()
@@ -357,6 +392,10 @@ function Unit:SetClass(_Class)
     assert(type(_Class) == 'table' and _Class.__name ~= nil and _Class.__name == 'Class', "argument must be Class object")
     self._Class = _Class
     return self:GetClass()
+end
+
+function Unit:HasSpec()
+    return self._Spec ~= nil
 end
 
 function Unit:GetSpec()
@@ -487,4 +526,76 @@ function Unit:IsOnMainGuild(inBoolean)
         self._IsOnMainGuild = inBoolean
     end
     return self._IsOnMainGuild
+end
+
+-- Usually a key check is enough for equality check, but use case is to detect any data differences
+function Unit:Equals(inUnit)
+    if(inUnit == nil) then return false end
+    if(type(inUnit) ~= 'table' or inUnit.__name == nil or inUnit.__name ~= 'Unit') then return false end
+
+    if(self:GetKey() ~= inUnit:GetKey()) then return false end
+    if(self:GetGUID() ~= inUnit:GetGUID()) then return false end
+    if(self:GetUnitName() ~= inUnit:GetUnitName()) then return false end
+    if(self:GetName() ~= inUnit:GetName()) then return false end
+    if(self:GetGuildIndex() ~= inUnit:GetGuildIndex()) then return false end
+    if(self:GetLevel() ~= inUnit:GetLevel()) then return false end
+    if(self:GetZone() ~= inUnit:GetZone()) then return false end
+    if(self:GetNote() ~= inUnit:GetNote()) then return false end
+    if(self:IsOnline() ~= inUnit:IsOnline()) then return false end
+    --if(self:GetStatus() ~= inUnit:GetStatus()) then return false end
+    if(self:IsMobile() ~= inUnit:IsMobile()) then return false end    
+    if(self:IsRunningAddon() ~= inUnit:IsRunningAddon()) then return false end
+    if(self:IsAlt() ~= inUnit:IsAlt()) then return false end
+    if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
+    if(self:IsOnMainGuild() ~= inUnit:IsOnMainGuild()) then return false end
+    if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
+    if(self:GetGuildName() ~= inUnit:GetGuildName()) then return false end
+    if(self:GetRealmName() ~= inUnit:GetRealmName()) then return false end
+
+    if(self:HasCovenant() == false and inUnit:HasCovenant()) then return false end
+    if(self:HasCovenant()) then
+        local _CachedCovenant = self:GetCovenant()
+        if(_CachedCovenant:Equals(inUnit:GetCovenant()) == false) then return false end
+    end
+
+    if(self:HasSoulbind() == false and inUnit:HasSoulbind()) then return false end
+    if(self:HasSoulbind()) then
+        local _CachedSoulbind = self:GetSoulbind()
+        if(_CachedSoulbind:Equals(inUnit:GetSoulbind()) == false) then return false end
+    end
+    
+    if(self:HasProfession1() == false and inUnit:HasProfession1()) then return false end
+    if(self:HasProfession1()) then
+        local _CachedProfession1 = self:GetProfession1()
+        if(_CachedProfession1:Equals(inUnit:GetProfession1()) == false) then return false end
+    end
+
+    if(self:HasProfession2() == false and inUnit:HasProfession2()) then return false end
+    if(self:HasProfession2()) then
+        local _CachedProfession2 = self:GetProfession2()
+        if(_CachedProfession2:Equals(inUnit:GetProfession2()) == false) then return false end
+    end
+
+    if(self:HasRank() == false and inUnit:HasRank()) then return false end
+    if(self:HasRank()) then
+        local _CachedRank = self:GetRank()
+        if(_CachedRank:Equals(inUnit:GetRank()) == false) then return false end
+    end
+
+    if(self:HasRace() == false and inUnit:HasRace()) then return false end
+    if(self:HasRace()) then
+        local _CachedRace = self:GetRace()
+        if(_CachedRace:Equals(inUnit:GetRace()) == false) then return false end
+    end
+    
+    if(self:HasSpec() == false and inUnit:HasSpec()) then return false end
+    if(self:HasSpec()) then
+        local _CachedSpec = self:GetSpec()
+        if(_CachedSpec:Equals(inUnit:GetSpec()) == false) then return false end
+    end
+    
+    -- Do not consider TimeStamp
+    -- A unit cannot change Class, do not consider
+    
+    return true
 end

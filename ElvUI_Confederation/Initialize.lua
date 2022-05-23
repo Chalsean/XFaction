@@ -20,6 +20,11 @@ CON["RegisteredModules"] = {}
 CON.Version = tonumber(GetAddOnMetadata(addon, "Version"))
 CON.Handlers = {}
 
+CON.Lib = {}
+CON.Lib.Compress = LibStub:GetLibrary("LibCompress")
+CON.Lib.Encode = CON.Lib.Compress:GetAddonEncodeTable()
+CON.Lib.Realm = LibStub:GetLibrary('LibRealmInfo')
+
 function CON:Init()
 	self.initialized = true
 	
@@ -28,9 +33,14 @@ function CON:Init()
 	CON.Confederate:SetKey('EK')
 	CON.Confederate:SetMainRealmName('Proudmoore')
 	CON.Confederate:SetMainGuildName('Eternal Kingdom')
+	CON.Realms = RealmCollection:new(); CON.Realms:Initialize()
+	CON.Ranks = RankCollection:new(); CON.Ranks:Initialize()
 	
 	CON.Player = {}
 	CON.Player.GUID = UnitGUID('player')
+	CON.Player.Faction = UnitFactionGroup('player')
+	CON.Player.GuildName = GetGuildInfo('player')
+	CON.Player.RealmName = GetRealmName()
 
 	CON.Network = {}
 	CON.Network.ChannelName = 'EKConfederate'
@@ -40,26 +50,6 @@ function CON:Init()
 		DATA = 'DATA',
 		REQUEST = 'REQUEST'
 	}
-	CON.Network.Message.EncodeKey = {
-		GI = "GuildIndex",
-		N = "Name",
-		GN = "GuildName",
-		GR = "GuildRank",
-		L = "Level",
-		C = "Class",
-		No = "Note",
-		O = "Online",
-		S = "Status",
-		IM = "IsMobile",
-		G = "GUID",
-		TS = "TimeStamp",
-		T = "Team",
-		A = "Alt",
-		RA = "RunningAddon",
-		U = "Unit",
-		RI = "RealmID",
-		Z = "Zone"
-	}
 	CON.Network.Type = {
 		BROADCAST = 'BROADCAST',
 		WHISPER = 'WHISPER',
@@ -68,7 +58,11 @@ function CON:Init()
 	CON.Network.Sender = Sender:new()
 	CON.Network.Receiver = Receiver:new(); CON.Network.Receiver:Initialize()
 	CON.Network.Channels = ChannelCollection:new(); CON.Network.Channels:Initialize()
-
+	CON.Network.BNet = {}
+	CON.Network.BNet.Friends = FriendCollection:new(); CON.Network.BNet.Friends:Initialize()
+	CON.Network.BNet.Realms = { 'Proudmoore', 'Area 52' } -- config
+	CON.Handlers.BNetEvent = BNetEvent:new(); CON.Handlers.BNetEvent:Initialize()
+	
 	-- This handler will register additional handlers
 	CON.Handlers.TimerEvent = TimerEvent:new(); CON.Handlers.TimerEvent:Initialize()
 
@@ -99,11 +93,7 @@ function CON:Init()
 				CON.Confederate:SetMOTD(GetGuildRosterMOTD())
 			end
 
-			local _Message = Message:new(); _Message:Initialize()
-			_Message:SetType(CON.Network.Type.BROADCAST)
-			_Message:SetSubject(CON.Network.Message.Subject.DATA)
-			_Message:SetData(CON.Player.Unit)
-			CON.Network.Sender:SendMessage(_Message)
+			CON.Network.Sender:BroadcastUnitData(_UnitData)
 		end
 	end
 
@@ -113,6 +103,9 @@ function CON:Init()
 	CON.Handlers.SoulbindEvent = SoulbindEvent:new(); CON.Handlers.SoulbindEvent:Initialize()
 	CON.Handlers.ProfessionEvent = ProfessionEvent:new(); CON.Handlers.ProfessionEvent:Initialize()
 	CON.Handlers.GuildEvent = GuildEvent:new(); CON.Handlers.GuildEvent:Initialize()
+	CON.Handlers.ChatEvent = ChatEvent:new(); CON.Handlers.ChatEvent:Initialize()
+
+	CON.Realms:Print()
 
 	EP:RegisterPlugin(addon, CON.ConfigCallback)
 end

@@ -89,3 +89,10 @@ end
 function Covenant:GetSoulbindIDs()
     return self._SoulbindIDs
 end
+
+function Covenant:Equals(inCovenant)
+    if(inCovenant == nil) then return false end
+    if(type(inCovenant) ~= 'table' or inCovenant.__name == nil or inCovenant.__name ~= 'Covenant') then return false end
+    if(self:GetKey() ~= inCovenant:GetKey()) then return false end
+    return true
+end

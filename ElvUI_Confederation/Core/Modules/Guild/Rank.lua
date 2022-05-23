@@ -1,19 +1,19 @@
 local CON, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Rank'
-local LogCategory = 'O' .. ObjectName
+local LogCategory = 'GRank'
 
 Rank = {}
 
-function Rank:new(_Argument)
-    local _typeof = type(_Argument)
+function Rank:new(inObject)
+    local _typeof = type(inObject)
     local _newObject = true
 
-	assert(_Argument == nil or _typeof == 'string' or
-	      (_typeof == 'table' and _Argument.__name ~= nil and _Argument.__name == ObjectName),
+	assert(inObject == nil or 
+	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
 	      "argument must be nil, string or " .. ObjectName .. " object")
 
     if(_typeof == 'table') then
-        Object = _Argument
+        Object = inObject
         _newObject = false
     else
         Object = {}
@@ -23,12 +23,32 @@ function Rank:new(_Argument)
     self.__name = ObjectName
 
     if(_newObject) then
-        self._Name = (_typeof == 'string') and _Argument or 'Trial'
-        self._ID = nil
+        self._Key = nil
+        self._Name = nil
         self._AltName = nil
+        self._ID = nil
     end
 
     return Object
+end
+
+function Rank:Print()
+	CON:SingleLine(LogCategory)
+	CON:Debug(LogCategory, ObjectName .. " Object")
+	CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+	CON:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
+	CON:Debug(LogCategory, "  _AltName (" .. type(self._AltName) .. "): ".. tostring(self._AltName))
+    CON:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
+end
+
+function Rank:GetKey()
+    return self._Key
+end
+
+function Rank:SetKey(inKey)
+    assert(type(inKey) == 'number')
+    self._Key = inKey
+    return self:GetKey()
 end
 
 function Rank:GetName()
@@ -51,6 +71,10 @@ function Rank:SetID(_ID)
     return self:GetID()
 end
 
+function Rank:HasAltName()
+    return self._AltName ~= nil
+end
+
 function Rank:GetAltName()
     return self._AltName
 end
@@ -59,4 +83,11 @@ function Rank:SetAltName(_AltName)
     assert(type(_AltName) == 'string')
     self._AltName = _AltName
     return self:GetAltName()
+end
+
+function Rank:Equals(inRank)
+    if(inRank == nil) then return false end
+    if(type(inRank) ~= 'table' or inRank.__name == nil or inRank.__name ~= 'Rank') then return false end
+    if(self:GetKey() ~= inRank:GetKey()) then return false end
+    return true
 end
