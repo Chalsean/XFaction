@@ -36,10 +36,11 @@ function SoulbindCollection:Initialize()
 		for _, _Covenant in pairs (CON.Covenants:GetCovenants()) do
 			for _, _SoulbindID in pairs (_Covenant:GetSoulbindIDs()) do
 				local _Soulbind = Soulbind:new()
+				_Soulbind:SetKey(_SoulbindID)
 				_Soulbind:SetID(_SoulbindID)
 				_Soulbind:Initialize()
-				if(self:Contains(_Soulbind) == false) then
-					self._Soulbinds[_Soulbind:GetName()] = _Soulbind
+				if(self:Contains(_Soulbind:GetKey()) == false) then
+					self._Soulbinds[_Soulbind:GetKey()] = _Soulbind
 					self._SoulbindCount = self._SoulbindCount + 1
 				end
 			end
@@ -65,54 +66,24 @@ function SoulbindCollection:Print()
 	end
 end
 
-function SoulbindCollection:Contains(_Argument)
-	local _typeof = type(_Argument)
-	assert(_typeof == 'string' or _typeof == 'number' or
-	      (_typeof == 'table' and _Argument.__name ~= nil and _Argument.__name == 'Soulbind'), 
-		  "argument must be string, number or Soulbind object")
-
-	for _, _Soulbind in pairs (self._Soulbinds) do
-		if(_typeof == 'number' and _Soulbind:GetID() == _Argument) then
-			return true
-		elseif(_typeof == 'string' and _Soulbind:GetName() == _Argument) then
-			return true
-		elseif(_typeof == 'table' and _Soulbind:GetID() == _Argument:GetID()) then
-			return true
-		end
-	end
-
-	return false
+function SoulbindCollection:Contains(inKey)
+	assert(type(inKey) == 'number')
+	return self._Soulbinds[inKey] ~= nil
 end
 
-function SoulbindCollection:GetSoulbind(_Argument)
-	local _typeof = type(_Argument)
-	assert(_typeof == 'string' or _typeof == 'number', "argument must be string or number")
-
-	for _, _Soulbind in pairs (self._Soulbinds) do
-		if(_typeof == 'number' and _Soulbind:GetID() == _Argument) then
-			return _Soulbind
-		elseif(_typeof == 'string' and _Soulbind:GetName() == _Argument) then
-			return _Soulbind
-		end
-	end
-
-    return nil
+function SoulbindCollection:GetSoulbind(inKey)
+	assert(type(inKey) == 'number')
+	return self._Soulbinds[inKey]
 end
 
-function SoulbindCollection:AddSoulbind(_Argument)
-	local _typeof = type(_Argument)
-	assert(_typeof == 'number' or
-	      (_typeof == 'table' and _Argument.__name ~= nil and _Argument.__name == 'Soulbind'),
-	      "argument must be number or Soulbind object")
+function SoulbindCollection:AddSoulbind(inSoulbind)
+	assert(type(inSoulbind) == 'table' and inSoulbind.__name ~= nil and inSoulbind.__name == 'Soulbind', "argument must be Soulbind object")
 
-	local _Soulbind = _Argument
-	if(_typeof == 'number') then
-		_Soulbind = Soulbind:new(_Argument)
-		_Soulbind:Initialize()
+	if(self:Contains(inSoulbind:GetKey()) == false) then
+		self._SoulbindCount = self._SoulbindCount + 1
 	end
 
-	self._Soulbinds[_Soulbind:GetID()] = _Soulbind
-	self._SoulbindCount = self._SoulbindCount + 1
+	self._Soulbinds[inSoulbind:GetKey()] = inSoulbind
 
-	return self._Soulbinds[_Soulbind:GetID()] ~= nil
+	return self:Contains(inSoulbind:GetKey())
 end

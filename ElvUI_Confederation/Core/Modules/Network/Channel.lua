@@ -64,7 +64,7 @@ function Channel:SetName(inName)
 end
 
 function Channel:GetShortName()
-    return self._Name
+    return self._ShortName
 end
 
 function Channel:SetShortName(inShortName)

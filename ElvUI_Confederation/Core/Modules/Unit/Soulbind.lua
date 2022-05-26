@@ -26,6 +26,7 @@ function Soulbind:new(inObject)
         self._Key = nil
         self._ID = nil
 		self._Name = nil
+        self._IconID = nil
         self._Initialized = false
     end
 
@@ -44,6 +45,17 @@ function Soulbind:Initialize()
     if(self:IsInitialized() == false and self._ID ~= nil) then
         local _SoulbindInfo = C_Soulbinds.GetSoulbindData(self:GetID())
         self:SetName(_SoulbindInfo.name)
+        
+        if(self:GetName() == 'Kyrian') then
+            self:SetIconID(3257748)
+        elseif(self:GetName() == 'Venthyr') then
+            self:SetIconID(3257751)
+        elseif(self:GetName() == 'Night Fae') then
+            self:SetIconID(3257750)
+        elseif(self:GetName() == 'Necrolord') then
+            self:SetIconID(3257749)
+        end
+
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -86,6 +98,16 @@ function Soulbind:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
     return self:GetID()
+end
+
+function Soulbind:GetIconID()
+    return self._IconID
+end
+
+function Soulbind:SetIconID(inIconID)
+    assert(type(inIconID) == 'number')
+    self._IconID = inIconID
+    return self:GetIconID()
 end
 
 function Soulbind:Equals(inSoulbind)

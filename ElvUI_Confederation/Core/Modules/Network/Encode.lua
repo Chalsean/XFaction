@@ -13,6 +13,9 @@ function CON:EncodeMessage(inMessage)
 	_MessageData.F = inMessage:GetFrom()
 	_MessageData.S = inMessage:GetSubject()
 	_MessageData.Ty = inMessage:GetType()
+	local _Faction = inMessage:GetFaction()
+	_MessageData.FN = _Faction:GetKey()
+	_MessageData.TS = inMessage:GetTimeStamp()
 
 	if(inMessage:GetSubject() == CON.Network.Message.Subject.DATA) then
 		local _UnitData = inMessage:GetData()
@@ -53,19 +56,21 @@ function CON:EncodeMessage(inMessage)
 		end
 		
 		if(_UnitData:HasProfession1()) then
-			local _Profession = _UnitData:GetSoulbind()
+			local _Profession = _UnitData:GetProfession1()
 			_MessageData.P1 = _Profession:GetID()
 		end
 
 		if(_UnitData:HasProfession2()) then
-			local _Profession = _UnitData:GetSoulbind()
+			local _Profession = _UnitData:GetProfession2()
 			_MessageData.P2 = _Profession:GetID()
 		end
 
-		local _Spec = _UnitData:GetSpec()
-		_MessageData.X = _Spec:GetID()
+		if(_UnitData:HasSpec()) then
+			local _Spec = _UnitData:GetSpec()
+			_MessageData.X = _Spec:GetID()
+		end
 	else
-		_MessageData.Z = inMessage:GetData()
+		_MessageData.Y = inMessage:GetData()
 	end
 
 	local _Serialized = CON:Serialize(_MessageData)

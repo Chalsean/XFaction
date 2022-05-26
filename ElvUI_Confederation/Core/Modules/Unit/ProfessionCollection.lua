@@ -2,7 +2,7 @@ local CON, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ProfessionCollection'
 local LogCategory = 'UCProfession'
 
-local _ProfessionIDs = { 794, 171, 164, 184, 333, 202, 129, 356, 182, 773, 755, 165, 186, 393, 197 }
+local _ProfessionIDs = { 182, 186, 197, 202, 171, 773, 165, 333, 164, 755, 393 }
 ProfessionCollection = {}
 
 function ProfessionCollection:new(inObject)
@@ -34,17 +34,12 @@ end
 
 function ProfessionCollection:Initialize()
 	if(self:IsInitialized() == false) then
-		-- Oddly enough there doesn't seem to be an API to get the super set of professions
-		-- Best I could find is an API that tells you all the professions of online guild members
-		for i = 1, GetNumGuildTradeSkill() do
-			local _ProfessionID, _, _IconID, _ProfessionName = GetGuildTradeSkillInfo(i)
-			local _Profession = Profession:new()
-			_Profession:SetKey(_ProfessionID)
-			_Profession:SetID(_ProfessionID)
-			_Profession:SetIconID(_IconID)
-			_Profession:SetName(_ProfessionName)
-			self:AddProfession(_Profession)
-		end
+		for _, _ProfessionID in pairs (C_TradeSkillUI.GetAllProfessionTradeSkillLines()) do
+			local _NewProfession = Profession:new()
+			_NewProfession:SetID(_ProfessionID)
+			_NewProfession:Initialize()
+			self:AddProfession(_NewProfession)
+		end	
 		self:IsInitialized(true)
 	end
 end

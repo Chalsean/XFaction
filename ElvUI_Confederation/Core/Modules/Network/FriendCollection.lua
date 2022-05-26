@@ -117,20 +117,25 @@ end
 function FriendCollection:GetRandomFriend(inRealm)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
 
+	-- Get all the IDs for a realm (connected realms have multiple IDs)
 	local _RealmFriends = {}
-	local _RealmIDs = _Realm:GetRealmIDs()
+	local _RealmIDs = inRealm:GetIDs()
 	
+	-- Find any BNet friend logged into that realm
 	for _, _Friend in pairs (self._Friends) do
-		if(_RealmIDs[_Friend:GetRealmID()] ~= nil) then
-			table.insert(_RealmFriends, _Friend)
+		for _, _RealmID in pairs (_RealmIDs) do
+			if(_RealmID == _Friend:GetRealmID()) then
+				table.insert(_RealmFriends, _Friend)
+			end
 		end
 	end
 
 	if(table.getn(_RealmFriends) == 0) then
-		CON:Info(LogCategory, "No friends are online connected to target realm [%d]", inRealmID)
+		CON:Info(LogCategory, "No friends are online connected to target realm [%s]", inRealm:GetName())
 		return
 	end
 	
+	-- Randomly select a friend as a communication bridge
 	local _Random = math.random(1, table.getn(_RealmFriends))
 	return _RealmFriends[_Random]
 end

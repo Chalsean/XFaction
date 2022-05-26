@@ -83,12 +83,23 @@ function Unit:Initialize(_Argument)
 
     self:SetClass(CON.Classes:GetClass(_class))
 
-    local _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
-    self:SetRace(CON.Races:GetRaceByName(_RaceName, CON.Player.Faction))
+    -- Sometimes this call fails, but retry logic seems to work
+    local _RaceName
+    for i = 1, 10 do
+        _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
+        if(_RaceName ~= nil) then
+            self:SetRace(CON.Races:GetRaceByName(_RaceName, CON.Player.Faction:GetName()))
+            break
+        end    
+    end
 
     local _SpecGroupID = GetSpecialization()
 	local _SpecID = GetSpecializationInfo(_SpecGroupID)
-    self:SetSpec(CON.Specs:GetSpec(_SpecID))
+    if(CON.Specs:Contains(_SpecID)) then
+        self:SetSpec(CON.Specs:GetSpec(_SpecID))
+    else
+        self:SetSpec(Spec:new())
+    end
 
     local _RankID = C_GuildInfo.GetGuildRankOrder(self:GetGUID())
     if(CON.Ranks:Contains(_RankID) == false) then
@@ -105,36 +116,30 @@ function Unit:Initialize(_Argument)
         if(CON.Covenants:Contains(_CovenantID)) then
             self:SetCovenant(CON.Covenants:GetCovenant(_CovenantID))
         else
-            CON:Error(LogCategory, "Active Covenant not found in CovenantCollection: " .. tostring(_CovenantID))
+            self:SetCovenant(Covenant:new())
         end
 
         local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
         if(CON.Soulbinds:Contains(_SoulbindID)) then
             self:SetSoulbind(CON.Soulbinds:GetSoulbind(_SoulbindID))
         else
-            CON:Error(LogCategory, "Active Soulbind not found in SoulbindCollection: " .. tostring(_SoulbindID))
+            self:SetSoulbind(Soulbind:new())
         end
 
         -- These profession IDs are local to the player, need to initialize object to get global ID
         local _Profession1ID, _Profession2ID = GetProfessions()
-        if(_Profession1ID ~= nil and _Profession1ID > 0) then
-            local _Profession1 = Profession:new()
-            _Profession1:SetID(_Profession1ID)
-            _Profession1:Initialize()
-            if(CON.Professions:Contains(_Profession1:GetKey()) == false) then
-                CON.Professions:AddProfession(_Profession1)
-            end
-            self:SetProfession1(CON.Professions:GetProfession(_Profession1:GetKey()))
+        if(_Profession1ID ~= nil) then
+            local _, _, _, _, _, _, _SkillLineID = GetProfessionInfo(_Profession1ID)
+            self:SetProfession1(CON.Professions:GetProfession(_SkillLineID))            
+        else
+            self:SetProfession1(Profession:new())
         end
 
-        if(_Profession2ID ~= nil and _Profession2ID > 0) then
-            local _Profession2 = Profession:new()
-            _Profession2:SetID(_Profession2ID)
-            _Profession2:Initialize()
-            if(CON.Professions:Contains(_Profession2:GetKey()) == false) then
-                CON.Professions:AddProfession(_Profession2)
-            end
-            self:SetProfession2(CON.Professions:GetProfession(_Profession2:GetKey()))
+        if(_Profession2ID ~= nil) then
+            local _, _, _, _, _, _, _SkillLineID = GetProfessionInfo(_Profession2ID)
+            self:SetProfession2(CON.Professions:GetProfession(_SkillLineID))        
+        else
+            self:SetProfession2(Profession:new())
         end
     end
     
@@ -210,7 +215,9 @@ function Unit:Print()
     CON:Debug(LogCategory, "  _Class (" .. type(self._Class) .. "): ")
     self._Class:Print()
     CON:Debug(LogCategory, "  _Spec (" .. type(self._Spec) .. "): ")
-    self._Spec:Print()
+    if(self._Spec ~= nil) then
+        self._Spec:Print()
+    end
     CON:Debug(LogCategory, "  _Covenant (" .. type(self._Covenant) .. "): ")
     if(self._Covenant ~= nil) then
         self._Covenant:Print()
@@ -409,7 +416,7 @@ function Unit:SetSpec(_Spec)
 end
 
 function Unit:HasCovenant()
-    return self._Covenant ~= nil
+    return self._Covenant ~= nil and self._Covenant:GetKey() ~= nil
 end
 
 function Unit:GetCovenant()
@@ -423,7 +430,7 @@ function Unit:SetCovenant(_Covenant)
 end
 
 function Unit:HasSoulbind()
-    return self._Covenant ~= nil
+    return self._Soulbind ~= nil and self._Soulbind:GetKey() ~= nil
 end
 
 function Unit:GetSoulbind()
@@ -437,7 +444,7 @@ function Unit:SetSoulbind(_Soulbind)
 end
 
 function Unit:HasProfession1()
-    return self._Profession1 ~= nil
+    return self._Profession1 ~= nil and self._Profession1:GetKey() ~= nil
 end
 
 function Unit:GetProfession1()
@@ -451,7 +458,7 @@ function Unit:SetProfession1(_Profession)
 end
 
 function Unit:HasProfession2()
-    return self._Profession2 ~= nil
+    return self._Profession2 ~= nil and self._Profession2:GetKey() ~= nil
 end
 
 function Unit:GetProfession2()

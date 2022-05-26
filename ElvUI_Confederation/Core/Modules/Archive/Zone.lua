@@ -1,14 +1,14 @@
 local CON, E, L, V, P, G = unpack(select(2, ...))
-local ObjectName = 'Profession'
-local LogCategory = 'UProfession'
+local ObjectName = 'Zone'
+local LogCategory = 'UZone'
 
-Profession = {}
+Zone = {}
 
-function Profession:new(inObject)
+function Zone:new(inObject)
     local _typeof = type(inObject)
     local _newObject = true
 
-	assert(inObject == nil or _typeof == 'number' or
+	assert(inObject == nil or 
 	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
 	      "argument must be nil, string or " .. ObjectName .. " object")
 
@@ -22,28 +22,32 @@ function Profession:new(inObject)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
+    if(_newObject) then
         self._Key = nil
-        self._ID = 0
+        self._ID = nil
 		self._Name = nil
-        self._IconID = nil
         self._Initialized = false
     end
 
     return Object
 end
 
-function Profession:Initialize()
-    if(self:IsInitialized() == false) then
-        local _Name = C_TradeSkillUI.GetTradeSkillLineInfoByID(self._ID)
-        self._Key = self._ID
-        self._Name = _Name
+function Zone:Initialize()
+    if(self:IsInitialized() == false) then        
+        if(self._Name ~= nil and self._ID == nil) then
+            self:SetKey(self._Name)
+            if(self._Name == "?") then
+                self:SetID(0)
+            else
+                local _, _ZoneID = CON.Lib.ZoneInfo:GetZoneInfoByName(self._Name)
+                self:SetID(tonumber(_ZoneID))
+            end
+        end
         self:IsInitialized(true)
     end
-    return self:IsInitialized()
 end
 
-function Profession:IsInitialized(inBoolean)
+function Zone:IsInitialized(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument needs to be nil or boolean")
     if(type(inBoolean) == 'boolean') then
         self._Initialized = inBoolean
@@ -51,59 +55,48 @@ function Profession:IsInitialized(inBoolean)
     return self._Initialized
 end
 
-function Profession:Print()
+function Zone:Print()
     CON:SingleLine(LogCategory)
     CON:Debug(LogCategory, ObjectName .. " Object")
     CON:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     CON:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
     CON:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
-    CON:Debug(LogCategory, "  _IconID (" .. type(self._IconID) .. "): ".. tostring(self._IconID))
     CON:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): " .. tostring(self._Initialized))
 end
 
-function Profession:GetKey()
+function Zone:GetKey()
     return self._Key
 end
 
-function Profession:SetKey(inKey)
-    assert(type(inKey) == 'number')
+function Zone:SetKey(inKey)
+    assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
 end
 
-function Profession:GetName()
+function Zone:GetName()
     return self._Name
 end
 
-function Profession:SetName(_Name)
-    assert(type(_Name) == 'string')
-    self._Name = _Name
+function Zone:SetName(inName)
+    assert(type(inName) == 'string')
+    self._Name = inName
     return self:GetName()
 end
 
-function Profession:GetID()
+function Zone:GetID()
     return self._ID
 end
 
-function Profession:SetID(_ProfessionID)
-    assert(type(_ProfessionID) == 'number')
-    self._ID = _ProfessionID
+function Zone:SetID(inID)
+    assert(type(inID) == 'number')
+    self._ID = inID
     return self:GetID()
 end
 
-function Profession:GetIconID()
-    return self._IconID
-end
-
-function Profession:SetIconID(_IconID)
-    assert(type(_IconID) == 'number')
-    self._IconID = _IconID
-    return self:GetIconID()
-end
-
-function Profession:Equals(inProfession)
-    if(inProfession == nil) then return false end
-    if(type(inProfession) ~= 'table' or inProfession.__name == nil or inProfession.__name ~= 'Profession') then return false end
-    if(self:GetKey() ~= inProfession:GetKey()) then return false end
+function Zone:Equals(inZone)
+    if(inZone == nil) then return false end
+    if(type(inZone) ~= 'table' or inZone.__name == nil or inZone.__name ~= 'Zone') then return false end
+    if(self:GetKey() ~= inZone:GetKey()) then return false end
     return true
 end

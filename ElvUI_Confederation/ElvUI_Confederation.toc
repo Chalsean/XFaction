@@ -10,9 +10,10 @@
 Libraries\Load_Libraries.xml
 Core\Libraries\Load_Libraries.xml
 
-Initialize.lua
+Initialize.lua 
 Core\Developer\Load_Developer.xml
 Core\Functions\Load_Functions.xml
 ##Core\Configuration\Load_Configurations.xml
 Core\Modules\Load_Modules.xml
+Core\Frames\Load_Frames.xml
 ##Core\DataText\Load_DataText.xml

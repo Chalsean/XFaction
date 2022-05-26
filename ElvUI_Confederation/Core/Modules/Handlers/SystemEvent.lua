@@ -34,6 +34,10 @@ function SystemEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		CON:RegisterEvent('PLAYER_ENTERING_WORLD', self.CallbackEnterWorld)
         CON:Info(LogCategory, "Registered for PLAYER_ENTERING_WORLD events")
+        CON:RegisterEvent('PLAYER_LOGOUT', self.CallbackLogout)
+        CON:Info(LogCategory, "Registered for PLAYER_LOGOUT events")
+        CON:Hook('ReloadUI', self.CallbackReloadUI, true)
+        CON:Info(LogCategory, "Created hook for pre-ReloadUI")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -54,5 +58,17 @@ function SystemEvent:Print()
 end
 
 function SystemEvent:CallbackEnterWorld(inInitialLogin, inReloadUI)
+    if(inInitialLogin) then
+        CON.UIReload = false
+    end
+end
 
+function SystemEvent:CallbackLogout()
+    if(CON.UIReload) then return end
+    CON.Player.Unit:IsOnline(false)
+    CON.Network.Sender:BroadcastUnitData(CON.Player.Unit)
+end
+
+function SystemEvent:CallbackReloadUI()
+    CON.UIReload = true
 end

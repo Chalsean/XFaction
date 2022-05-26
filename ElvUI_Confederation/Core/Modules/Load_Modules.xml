@@ -7,6 +7,7 @@
     <Script file='Handlers\ProfessionEvent.lua'/>
     <Script file='Handlers\SoulbindEvent.lua'/>
     <Script file='Handlers\SpecEvent.lua'/>
+    <Script file='Handlers\SystemEvent.lua'/>
     <Script file='Handlers\TimerEvent.lua'/>
 
     <Script file='Network\Sender.lua'/>
@@ -14,6 +15,7 @@
     <Script file='Network\Encode.lua'/>
     <Script file='Network\Decode.lua'/>
     <Script file='Network\Message.lua'/>
+    <Script file='Network\MessageCollection.lua'/>
     <Script file='Network\Channel.lua'/>
     <Script file='Network\ChannelCollection.lua'/>
     <Script file='Network\Friend.lua'/>
@@ -27,15 +29,17 @@
     <Script file='Unit\ClassCollection.lua'/>    
     <Script file='Unit\Race.lua'/>    
     <Script file='Unit\RaceCollection.lua'/>
+    <Script file='Unit\Faction.lua'/>    
+    <Script file='Unit\FactionCollection.lua'/>
     <Script file='Unit\Soulbind.lua'/>
     <Script file='Unit\SoulbindCollection.lua'/>
     <Script file='Unit\Covenant.lua'/>
     <Script file='Unit\CovenantCollection.lua'/>    
     <Script file='Unit\Unit.lua'/>
 
-    <Script file='Guild\Rank.lua'/>
-    <Script file='Guild\RankCollection.lua'/>
-    <Script file='Guild\Realm.lua'/>
-    <Script file='Guild\RealmCollection.lua'/>
-    <Script file='Guild\Confederate.lua'/>
+    <Script file='Confederate\Rank.lua'/>
+    <Script file='Confederate\RankCollection.lua'/>
+    <Script file='Confederate\Realm.lua'/>
+    <Script file='Confederate\RealmCollection.lua'/>
+    <Script file='Confederate\Confederate.lua'/>
 </Ui>

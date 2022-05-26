@@ -110,6 +110,7 @@ end
 function Realm:SetIDs(inIDs)
     assert(type(inIDs) == 'table')
     self._IDs = inIDs
+    self._IDCount = table.getn(self._IDs)
     return self:GetIDs()
 end
 

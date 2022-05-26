@@ -59,6 +59,7 @@ function ChannelEvent:Print()
 end
 
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelType, inChannelNumber, inChannelName)
+	-- Fires when player leaves a channel
 	if(inAction == 'YOU_LEFT') then
 		if(CON.Channels:RemoveChannel(inChannelName)) then
 			CON:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelName)
@@ -67,6 +68,8 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelTy
 				CON:Error(LogCategory, "Removed channel was the addon channel")
 			end			
 		end
+
+	-- Fires when player joins a channel
 	elseif(inAction == 'YOU_CHANGED') then
 		local _NewChannel = Channel:new()
 		_NewChannel:SetKey(inChannelName)
@@ -92,6 +95,8 @@ function ChannelEvent:CallbackChannelChange(inIndex)
 		-- This event spams, so lets check before updating
 		local _Channel = CON.Network.Channels:GetChannel(_ChannelInfo.shortcut)
 		if(_Channel:GetID() ~= _ChannelInfo.localID or _Channel:GetName() ~= _ChannelInfo.name or _Channel:GetShortName() ~= _ChannelInfo.shortcut) then
+			CON:Debug(LogCategory, "Passed [%d] [%s] [%s]", _ChannelInfo.localID, _ChannelInfo.name, _ChannelInfo.shortcut)
+			_Channel:Print()
 			_Channel:SetID(_ChannelInfo.localID)
 			_Channel:SetName(_ChannelInfo.name)
 			_Channel:SetShortName(_ChannelInfo.shortcut)

@@ -15,6 +15,7 @@ _G[addon] = Engine
 
 CON.Category = 'Confederation'
 CON.Config = {}
+CON.Config.BroadcastNonAddon = false
 CON.Title = format('|cff33ccff%s|r', 'Confederation')
 CON["RegisteredModules"] = {}
 CON.Version = tonumber(GetAddOnMetadata(addon, "Version"))
@@ -33,28 +34,25 @@ function CON:Init()
 	CON.Confederate:SetKey('EK')
 	CON.Confederate:SetMainRealmName('Proudmoore')
 	CON.Confederate:SetMainGuildName('Eternal Kingdom')
-	CON.Realms = RealmCollection:new(); CON.Realms:Initialize()
-	CON.Ranks = RankCollection:new(); CON.Ranks:Initialize()
+	CON.Cache = {}
 	
-	CON.Player = {}
-	CON.Player.GUID = UnitGUID('player')
-	CON.Player.Faction = UnitFactionGroup('player')
-	CON.Player.GuildName = GetGuildInfo('player')
-	CON.Player.RealmName = GetRealmName()
-
 	CON.Network = {}
 	CON.Network.ChannelName = 'EKConfederate'
 	CON.Network.Message = {}
-	CON.Network.Message.Tag = 'EKCon'
+	CON.Network.Message.Tag = {
+		LOCAL = 'EKCon',
+		BNET = 'EKBNet'
+	}
 	CON.Network.Message.Subject = {
 		DATA = 'DATA',
-		REQUEST = 'REQUEST'
+		GUILD_CHAT = 'GCHAT'
 	}
 	CON.Network.Type = {
 		BROADCAST = 'BROADCAST',
-		WHISPER = 'WHISPER',
-		BNET = 'BNET'
+		WHISPER = 'WHISPER'
 	}	
+	
+	CON.Network.Mailbox = MessageCollection:new(); CON.Network.Mailbox:Initialize()
 	CON.Network.Sender = Sender:new()
 	CON.Network.Receiver = Receiver:new(); CON.Network.Receiver:Initialize()
 	CON.Network.Channels = ChannelCollection:new(); CON.Network.Channels:Initialize()
@@ -62,51 +60,37 @@ function CON:Init()
 	CON.Network.BNet.Friends = FriendCollection:new(); CON.Network.BNet.Friends:Initialize()
 	CON.Network.BNet.Realms = { 'Proudmoore', 'Area 52' } -- config
 	CON.Handlers.BNetEvent = BNetEvent:new(); CON.Handlers.BNetEvent:Initialize()
-	
-	-- This handler will register additional handlers
+
+	-- Globals are lua's version of static variables
+	CON.Player = {}
+	CON.Player.GUID = UnitGUID('player')	
+	CON.Player.RealmName = GetRealmName()
+	CON.Player.LastBroadcast = 0
+	CON.Realms = RealmCollection:new(); CON.Realms:Initialize()
+	CON.Factions = FactionCollection:new(); CON.Factions:Initialize()
+	CON.Player.Faction = CON.Factions:GetFactionByName(UnitFactionGroup('player'))
+	CON.Races = RaceCollection:new(); CON.Races:Initialize()
+	CON.Ranks = RankCollection:new(); CON.Ranks:Initialize()
+    CON.Classes = ClassCollection:new(); CON.Classes:Initialize()
+    CON.Specs = SpecCollection:new(); CON.Specs:Initialize()
+    CON.Covenants = CovenantCollection:new(); CON.Covenants:Initialize()
+    CON.Soulbinds = SoulbindCollection:new(); CON.Soulbinds:Initialize()
+    CON.Professions = ProfessionCollection:new(); CON.Professions:Initialize()
+
+	-- These handlers will register additional handlers
 	CON.Handlers.TimerEvent = TimerEvent:new(); CON.Handlers.TimerEvent:Initialize()
+	CON.Handlers.SystemEvent = SystemEvent:new(); CON.Handlers.SystemEvent:Initialize()
 
-	-- Lua doesn't have static variables, so need global caches to reduce memory footprint
-	CON.Races = RaceCollection:new(); CON.Races:Initialize()	
-	CON.Classes = ClassCollection:new(); CON.Classes:Initialize()
-	CON.Specs = SpecCollection:new(); CON.Specs:Initialize()
-	CON.Covenants = CovenantCollection:new(); CON.Covenants:Initialize()
-	CON.Soulbinds = SoulbindCollection:new(); CON.Soulbinds:Initialize()
-	CON.Professions = ProfessionCollection:new(); CON.Professions:Initialize()	
+	CON.Frames = {}
+	CON.Frames.Chat = ChatFrame:new(); CON.Frames.Chat:Initialize()
+	CON.Frames.ChatType = {
+		GUILD = 'GUILD',
+		ONLINE = 'ONLINE',
+		OFFLINE = 'OFFLINE'
+	}
 
-	CON:Info(LogCategory, "Initializing local guild roster cache")
-	local _TotalMembers, _, _OnlineMembers = GetNumGuildMembers()
-	
-	for i = 1, _TotalMembers do
-		-- Until I can figure out how to hook the constructors, will have to call init explicitly
-		local _UnitData = Unit:new()
-		_UnitData:Initialize(i)		
-		CON.Confederate:AddUnit(_UnitData)
-
-		if(_UnitData:IsPlayer()) then
-			CON.Player.Unit = _UnitData
-			CON.Player.Unit:Print()
-
-			-- If player is on main realm/guild, this guild is source for motd
-			if(CON.Confederate:GetMainRealmName() == CON.Player.Unit:GetRealmName() and 
-			   CON.Confederate:GetMainGuildName() == CON.Player.Unit:GetGuildName()) then
-				CON.Confederate:SetMOTD(GetGuildRosterMOTD())
-			end
-
-			CON.Network.Sender:BroadcastUnitData(_UnitData)
-		end
-	end
-
-	-- These event handlers have a dependency on player data being populated
-	CON.Handlers.SpecEvent = SpecEvent:new(); CON.Handlers.SpecEvent:Initialize()
-	CON.Handlers.CovenantEvent = CovenantEvent:new(); CON.Handlers.CovenantEvent:Initialize()
-	CON.Handlers.SoulbindEvent = SoulbindEvent:new(); CON.Handlers.SoulbindEvent:Initialize()
-	CON.Handlers.ProfessionEvent = ProfessionEvent:new(); CON.Handlers.ProfessionEvent:Initialize()
-	CON.Handlers.GuildEvent = GuildEvent:new(); CON.Handlers.GuildEvent:Initialize()
-	CON.Handlers.ChatEvent = ChatEvent:new(); CON.Handlers.ChatEvent:Initialize()
-
-	CON.Realms:Print()
-
+	CON.DataText = {}
+	CON.DataText.XGuild = {}
 	EP:RegisterPlugin(addon, CON.ConfigCallback)
 end
 

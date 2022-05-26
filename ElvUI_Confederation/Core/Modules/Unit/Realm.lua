@@ -7,13 +7,13 @@ local Initialized = false
 local function Initialize()
 	if(Initialized == false) then
 		CON:Info(LogCategory, "Caching realm information")
-		-- if(DB.Realm == nil) then
-		-- 	DB.Realm = {
-		-- 		Region = nil,
-		-- 		RealmsByName = {},
-		-- 		RealmsByID = {}
-		-- 	}
-		-- end
+		if(DB.Realm == nil) then
+			DB.Realm = {
+				Region = nil,
+				RealmsByName = {},
+				RealmsByID = {}
+			}
+		end
 --		DB.Realm.Region = REALM:GetCurrentRegion()
 		Initialized = true
 	end
@@ -37,11 +37,11 @@ function CON:GetRealmID(RealmName)
 	-- return DB.Realm.RealmsByName[RealmName].RealmID
 end
 
-function CON:GetRealmNameFromID(RealmID)
-	--Initialize()
-	if(RealmID == 5 or RealmID == "5") then
+function CON:GetRealmName(RealmID)
+	Initialize()
+	if(RealmID == 5) then
 		return "Proudmoore"
-	elseif(RealmID == 3676 or RealmID == "3676") then
+	elseif(RealmID == 3676) then
 		return "Area 52"
 	end
 	-- if(DB.Realm.RealmsByID[RealmID] == nil) then

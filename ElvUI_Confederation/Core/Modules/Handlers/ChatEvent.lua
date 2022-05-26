@@ -33,6 +33,8 @@ function ChatEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		CON:RegisterEvent('CHAT_MSG_GUILD', self.CallbackGuildMessage)
         CON:Info(LogCategory, "Registered for CHAT_MSG_GUILD events")
+        CON:RegisterEvent('CHAT_MSG_CHANNEL', self.CallbackChannelMessage)
+        CON:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -52,7 +54,26 @@ function ChatEvent:Print()
     CON:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
--- The event doesn't tell you what has changed, only that something has changed
-function ChatEvent:CallbackGuildMessage(inText, inSenderName, _, _ChannelName, _, _, _, _, _, _, inSenderGUID, inBNetFriendID)
-    CON:Debug(LogCategory, "Guild message [%s][%s][%s][%s]", inText, inSenderName, _ChannelName, inSenderGUID)
+function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
+    CON:Debug(LogCategory, "Guild message [%s][%s]", inText, inSenderName)
+
+    -- If you are the sender, broadcast to other realms/factions
+    --if(CON.Player.GUID == inSenderGUID) then
+        local _NewMessage = Message:new()
+        _NewMessage:Initialize()
+        _NewMessage:SetFrom(CON.Player.GuildName)
+        _NewMessage:SetFromGUID(inSenderGUID)
+        _NewMessage:SetType(CON.Network.Type.BROADCAST)
+        _NewMessage:SetSubject(CON.Network.Message.Subject.GUILD_CHAT)
+        _NewMessage:SetFlags(inFlags)
+        _NewMessage:SetLineID(inLineID)
+        _NewMessage:SetFaction(CON.Player.Faction)
+        _NewMessage:SetData(inText)
+        _NewMessage:Print()
+        CON:Debug(LogCategory, inText)
+        CON.Network.Sender:SendMessage(_NewMessage)
+    --end
+end
+
+function ChatEvent:CallbackChannelMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
 end

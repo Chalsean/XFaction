@@ -128,17 +128,10 @@ function Confederate:AddUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', "argument must be Unit object")
 
     if(self:Contains(inUnit:GetKey())) then 
+        -- Data might be coming from server in another timezone, make sure to compare apples to apples
         local _CachedUnitData = self:GetUnit(inUnit:GetKey())       
-        -- if(inUnit:GetTimeStamp() < _CachedUnitData:GetTimeStamp()) then
-        --     return false
-        -- end
-        CON:Debug(LogCategory, "got here 1")
-        if(inUnit:IsOnline() and _CachedUnitData:IsOnline() == false) then
-            CON:Debug(LogCategory, "got here 2")
-            CON.Frames.Chat:DisplayChat('ONLINE', '', inUnit:GetUnitName(), inUnit:GetFaction(), '', nil, inUnit:GetGUID())
-        elseif(inUnit:IsOnline() == false and _CachedUnitData:IsOnline()) then
-            CON:Debug(LogCategory, "got here 3")
-            CON.Frames.Chat:DisplayChat('OFFLINE', '', inUnit:GetUnitName(), inUnit:GetFaction(), '', nil, inUnit:GetGUID())
+        if(inUnit:GetTimeStamp() < _CachedUnitData:GetTimeStamp()) then
+            return false
         end
     else
         self._NumberOfUnits = self._NumberOfUnits + 1

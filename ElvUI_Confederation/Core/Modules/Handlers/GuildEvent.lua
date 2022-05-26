@@ -70,26 +70,24 @@ function GuildEvent:CallbackRosterUpdate()
         -- If cache doesn't have unit, process
         if(CON.Confederate:Contains(_UnitData:GetKey()) == false) then
             CON.Confederate:AddUnit(_UnitData)
-            CON.Network.Sender:BroadcastUnitData(_UnitData)
-        end
+        else
+            local _CachedUnitData = CON.Confederate:GetUnit(_UnitData:GetKey())
 
-        local _CachedUnitData = CON.Confederate:GetUnit(_UnitData:GetKey())
+            -- Detect members going offline
+            if(_CachedUnitData:IsOnline() and _UnitData:IsOffline()) then
+                CON.Confederate:AddUnit(_UnitData)
 
-        -- Detect members going offline
-        if(_CachedUnitData:IsOnline() and _UnitData:IsOffline()) then
-            CON.Confederate:AddUnit(_UnitData)
-            CON.Network.Sender:BroadcastUnitData(_UnitData)
+            -- Detect members coming online
+            elseif(_CachedUnitData:IsOffline() and _UnitData:IsOnline()) then
+                CON.Confederate:AddUnit(_UnitData)
 
-        -- Detect members coming online
-        elseif(_CachedUnitData:IsOffline() and _UnitData:IsOnline()) then
-            CON.Confederate:AddUnit(_UnitData)
-            CON.Network.Sender:BroadcastUnitData(_UnitData)
-
-       -- Detect members staying online, need to check for changes for broadcast to peer guilds
-        elseif(_UnitData:IsOnline() and _UnitData:IsRunningAddon() == false) then            
-            if(_CachedUnitData:Equals(_UnitData) == false) then
+            -- Detect staying online, need to check for changes for broadcast to peer guilds
+            elseif(_UnitData:IsPlayer() and _CachedUnitData:Equals(_UnitData) == false) then
                 CON.Confederate:AddUnit(_UnitData)
                 CON.Network.Sender:BroadcastUnitData(_UnitData)
+
+            elseif(_UnitData:IsOnline() and _UnitData:IsRunningAddon() == false and _CachedUnitData:Equals(_UnitData) == false) then         
+                CON.Confederate:AddUnit(_UnitData)
             end
         end
     end

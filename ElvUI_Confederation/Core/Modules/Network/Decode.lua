@@ -15,6 +15,7 @@ function CON:DecodeMessage(inMessage)
 	if(_MessageData.F ~= nil) then _Message:SetFrom(_MessageData.F)	end
 	if(_MessageData.S ~= nil) then _Message:SetSubject(_MessageData.S) end
 	if(_MessageData.Ty ~= nil) then	_Message:SetType(_MessageData.Ty) end
+	if(_MessageData.FN ~= nil) then _Message:SetFaction(CON.Factions:GetFaction(_MessageData.FN)) end
 
 	if(_Message:GetSubject() == CON.Network.Message.Subject.DATA) then
 		local _UnitData = Unit:new()
@@ -33,18 +34,28 @@ function CON:DecodeMessage(inMessage)
 		_UnitData:IsRunningAddon(_MessageData.RA == 1)
 		_UnitData:SetUnitName(_MessageData.U)
 		_UnitData:SetRealmName(_MessageData.RN)
-		--_UnitData:SetZone(_MessageData[Z])
+		_UnitData:SetZone(_MessageData.Z)
 
 		_UnitData:SetClass(CON.Classes:GetClass(_MessageData.C))
 		_UnitData:SetRace(CON.Races:GetRace(_MessageData.R))
-		_UnitData:SetCovenant(CON.Covenants:GetCovenant(_MessageData.Co))
-		_UnitData:SetSoulbind(CON.Soulbinds:GetSoulbind(_MessageData.So))
-		-- _UnitData:SetProfession1(CON.Professions:GetProfession(_MessageData.P1))
-		-- _UnitData:SetProfession2(CON.Professions:GetProfession(_MessageData.P2))
-		_UnitData:SetSpec(CON.Specs:GetSpec(_MessageData.X))
+		if(_MessageData.Co ~= nil) then
+			_UnitData:SetCovenant(CON.Covenants:GetCovenant(_MessageData.Co))
+		end
+		if(_MessageData.So ~= nil) then
+			_UnitData:SetSoulbind(CON.Soulbinds:GetSoulbind(_MessageData.So))
+		end
+		if(_MessageData.P1 ~= nil) then
+			_UnitData:SetProfession1(CON.Professions:GetProfession(_MessageData.P1))
+		end
+		if(_MessageData.P2 ~= nil) then
+			_UnitData:SetProfession2(CON.Professions:GetProfession(_MessageData.P2))
+		end
+		if(_MessageData.X ~= nil) then
+			_UnitData:SetSpec(CON.Specs:GetSpec(_MessageData.X))
+		end
 		_Message:SetData(_UnitData)
 	else
-		_Message:SetData(_MessageData.Z)
+		_Message:SetData(_MessageData.Y)
 	end
 
 	return _Message

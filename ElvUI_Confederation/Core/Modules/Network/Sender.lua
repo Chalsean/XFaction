@@ -114,26 +114,26 @@ function Sender:SetLocalChannel(inChannel)
     return self:HasLocalChannel()
 end
 
-function Sender:SendMessage(inMessage)
+function Sender:SendMessage(inMessage, inSendBNet)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
     if(inMessage:IsInitialized() == false) then
         inMessage:Initialize()
     end
 
-    local _OutgoingData = CON:EncodeMessage(inMessage)
+    local _OutgoingData = CON:EncodeMessage(inMessage)    
 
     if(inMessage:GetType() == CON.Network.Type.BROADCAST) then
-        -- Anyone listening?
+        -- Anyone listening locally?
         local _Realm = CON.Realms:GetCurrentRealm()
         if(_Realm:GetNumberRunningAddon() > 1) then
-            self:BroadcastLocally(_OutgoingData)
+           self:BroadcastLocally(_OutgoingData)            
 
         -- If only 1 player, switch to whisper
         elseif(_Realm:GetNumberRunningAddon() == 1) then
-            local _Unit = _Realm:GetUnitRunningAddon()
-            inMessage:SetTo(_Unit:GetKey())
-            inMessage:SetType(CON.Network.Type.WHISPER)
-            self:Whisper(inMessage:GetTo(), _OutgoingData)  
+           local _Unit = _Realm:GetUnitRunningAddon()
+           inMessage:SetTo(_Unit:GetKey())
+           inMessage:SetType(CON.Network.Type.WHISPER)
+           self:Whisper(inMessage:GetTo(), _OutgoingData)  
 
         else
             -- Nobody listening, so sad
@@ -141,37 +141,54 @@ function Sender:SendMessage(inMessage)
     elseif(inMessage:GetType() == CON.Network.Type.WHISPER) then
         self:Whisper(inMessage:GetTo(), _OutgoingData)
     end
+
+    if(inSendBNet == true) then
+        self:BNet(_OutgoingData)
+    end
 end
 
 function Sender:BroadcastLocally(inData)
     if(self:CanBroadcast()) then
         local _Channel = self:GetLocalChannel()
         CON:Debug(LogCategory, "Broadcasting on channel [%d] with tag [%s]", _Channel:GetID(), CON.Network.Message.Tag)
-        CON:SendCommMessage(CON.Network.Message.Tag, inData, "CHANNEL", _Channel:GetID())
+        CON:SendCommMessage(CON.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
     end
 end
 
 function Sender:Whisper(inTo, inData)
     if(self:CanWhisper()) then
         CON:Debug(LogCategory, "Whispering [%s] with tag [%s]", inTo, CON.Network.Message.Tag)
-        CON:SendCommMessage(CON.Network.Message.Tag, inData, "WHISPER", inTo)
+        CON:SendCommMessage(CON.Network.Message.Tag.LOCAL, inData, "WHISPER", inTo)
     end
 end
 
 function Sender:BroadcastUnitData(inUnitData)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
-    local _Message = Message:new(); _Message:Initialize()
+    if(inUnitData:IsPlayer()) then
+        inUnitData:SetTimeStamp(GetServerTime())
+        CON.Player.LastBroadcast = inUnitData:GetTimeStamp()
+    end
+    local _Message = Message:new()
+    _Message:Initialize()
     _Message:SetType(CON.Network.Type.BROADCAST)
     _Message:SetSubject(CON.Network.Message.Subject.DATA)
     _Message:SetData(inUnitData)
-    self:SendMessage(_Message)
+    _Message:Print()
+    self:SendMessage(_Message, true)
 end
 
-function Sender:BNet(inData)
+function Sender:BNet(inEncodedMessage)
     if(self:CanBNet()) then
+        -- For all the realms associated with the confederate
         for _, _RealmName in pairs (CON.Network.BNet.Realms) do
-            -- if(_RealmName ~= CON.Player.RealmName and CON.Realms:) then
-            --     local _Bridger = CON.Friends:GetRandomFriend(CON.Realms:GetCurrentRealm())
+            if(_RealmName ~= CON.Player.RealmName and CON.Realms:Contains(_RealmName)) then
+                -- Identify a passthru BNet friend to whisper
+                local _Bridger = CON.Network.BNet.Friends:GetRandomFriend(CON.Realms:GetRealm(_RealmName))
+                if(_Bridger ~= nil) then
+                    CON:Debug(LogCategory, "Whispering BNet bridge [%s] with tag [%s]", _Bridger:GetName(), CON.Network.Message.Tag.BNET)
+                    BNSendGameData(_Bridger:GetID(), CON.Network.Message.Tag.BNET, inEncodedMessage)
+                end
+            end
         end
     end
 end

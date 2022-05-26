@@ -46,6 +46,7 @@ end
 function BNetEvent:IsInitialized(inBoolean)
 	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
 	if(inBoolean ~= nil) then
+        CON.Network.Sender:CanBNet(true)
 		self._Initialized = inBoolean
 	end
 	return self._Initialized
