@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'CovenantEvent'
 local LogCategory = 'HECovenant'
 
@@ -31,8 +31,8 @@ end
 
 function CovenantEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		EKX:RegisterEvent('COVENANT_CHOSEN', self.CallbackCovenantChosen)
-        EKX:Info(LogCategory, "Registered for COVENANT_CHOSEN events")
+		XFG:RegisterEvent('COVENANT_CHOSEN', self.CallbackCovenantChosen)
+        XFG:Info(LogCategory, "Registered for COVENANT_CHOSEN events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -47,15 +47,16 @@ function CovenantEvent:IsInitialized(inBoolean)
 end
 
 function CovenantEvent:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function CovenantEvent:CallbackCovenantChosen(event)
 	local _NewCovenantID = C_Covenants.GetActiveCovenantID()
-	if(_NewCovenantID > 0 and EKX.Covenants:Contains(_NewCovenantID)) then
-		EKX.Player.Unit:SetCovenant(EKX.Covenants:GetCovenant(_NewCovenantID))
-		EKX:Info(LogCategory, "Updated player covenant information based on COVENANT_CHOSEN event")
+	if(_NewCovenantID > 0 and XFG.Covenants:Contains(_NewCovenantID)) then
+		XFG.Player.Unit:SetCovenant(XFG.Covenants:GetCovenant(_NewCovenantID))
+		XFG:Info(LogCategory, "Updated player covenant information based on COVENANT_CHOSEN event")
+        DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
 	end
 end

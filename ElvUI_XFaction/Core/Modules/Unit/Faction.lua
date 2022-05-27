@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Faction'
 local LogCategory = 'UFaction'
 
@@ -58,12 +58,12 @@ function Faction:IsInitialized(inBoolean)
 end
 
 function Faction:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    EKX:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    EKX:Debug(LogCategory, "  _IconID (" ..type(self._IconID) .. "): ".. tostring(self._IconID))
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): " .. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
+    XFG:Debug(LogCategory, "  _IconID (" ..type(self._IconID) .. "): ".. tostring(self._IconID))
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): " .. tostring(self._Initialized))
 end
 
 function Faction:GetKey()

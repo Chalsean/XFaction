@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Message'
 local LogCategory = 'NMessage'
 
@@ -51,8 +51,8 @@ end
 function Message:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
-        self:SetFrom(EKX.Player.Unit:GetKey())
-        self:SetFaction(EKX.Player.Faction)
+        self:SetFrom(XFG.Player.Unit:GetKey())
+        self:SetFaction(XFG.Player.Faction)
         self:SetTimeStamp(GetServerTime())
         self:IsInitialized(true)
     end
@@ -60,20 +60,20 @@ function Message:Initialize()
 end
 
 function Message:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    EKX:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
-    EKX:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
-    EKX:Debug(LogCategory, "  _FromGUID (" ..type(self._FromGUID) .. "): ".. tostring(self._FromGUID))
-    EKX:Debug(LogCategory, "  _Flags (" ..type(self._Flags) .. "): ".. tostring(self._Flags))
-    EKX:Debug(LogCategory, "  _LineID (" ..type(self._LineID) .. "): ".. tostring(self._LineID))
-    EKX:Debug(LogCategory, "  _Faction (" ..type(self._Faction) .. "): ".. tostring(self._Faction))
-    EKX:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
-    EKX:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
-    EKX:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-    EKX:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
-    EKX:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
+    XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+    XFG:Debug(LogCategory, "  _FromGUID (" ..type(self._FromGUID) .. "): ".. tostring(self._FromGUID))
+    XFG:Debug(LogCategory, "  _Flags (" ..type(self._Flags) .. "): ".. tostring(self._Flags))
+    XFG:Debug(LogCategory, "  _LineID (" ..type(self._LineID) .. "): ".. tostring(self._LineID))
+    XFG:Debug(LogCategory, "  _Faction (" ..type(self._Faction) .. "): ".. tostring(self._Faction))
+    XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
+    XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
+    XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
+    XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
+    XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function Message:GetKey()

@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'FriendCollection'
 local LogCategory = 'OCFriend'
 
@@ -66,11 +66,11 @@ function FriendCollection:IsInitialized(inBoolean)
 end
 
 function FriendCollection:Print()
-	EKX:DoubleLine(LogCategory)
-	EKX:Debug(LogCategory, ObjectName .. " Object")
-	EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	EKX:Debug(LogCategory, "  _FriendCount (" .. type(self._FriendCount) .. "): ".. tostring(self._FriendCount))
-	EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+	XFG:Debug(LogCategory, "  _FriendCount (" .. type(self._FriendCount) .. "): ".. tostring(self._FriendCount))
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Friend in pairs (self._Friends) do
 		_Friend:Print()
 	end
@@ -131,7 +131,7 @@ function FriendCollection:GetRandomFriend(inRealm)
 	end
 
 	if(table.getn(_RealmFriends) == 0) then
-		EKX:Info(LogCategory, "No friends are online connected to target realm [%s]", inRealm:GetName())
+		XFG:Info(LogCategory, "No friends are online connected to target realm [%s]", inRealm:GetName())
 		return
 	end
 	

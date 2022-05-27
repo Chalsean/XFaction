@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'SpecEvent'
 local LogCategory = 'HESpec'
 
@@ -31,8 +31,8 @@ end
 
 function SpecEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		EKX:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED', self.CallbackSpecChanged)
-        EKX:Info(LogCategory, "Registered for ACTIVE_TALENT_GROUP_CHANGED events")
+		XFG:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED', self.CallbackSpecChanged)
+        XFG:Info(LogCategory, "Registered for ACTIVE_TALENT_GROUP_CHANGED events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -47,20 +47,20 @@ function SpecEvent:IsInitialized(inBoolean)
 end
 
 function SpecEvent:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function SpecEvent:CallbackSpecChanged()
     local _SpecGroupID = GetSpecialization()
 	local _SpecID = GetSpecializationInfo(_SpecGroupID)
-    local _NewSpec = EKX.Specs:GetSpec(_SpecID)
-    local _CurrentSpec = EKX.Player.Unit:GetSpec(_SpecID)
+    local _NewSpec = XFG.Specs:GetSpec(_SpecID)
+    local _CurrentSpec = XFG.Player.Unit:GetSpec(_SpecID)
 
     -- For whatever reason the event fires twice in succession when a player changes specs
     if(_NewSpec:GetKey() ~= _CurrentSpec:GetKey()) then
-        EKX.Player.Unit:SetSpec(_NewSpec)
-        EKX:Info(LogCategory, "Updated player spec information to %s based on ACTIVE_TALENT_GROUP_CHANGED event", _NewSpec:GetName())
+        XFG.Player.Unit:SetSpec(_NewSpec)
+        XFG:Info(LogCategory, "Updated player spec information to %s based on ACTIVE_TALENT_GROUP_CHANGED event", _NewSpec:GetName())
     end
 end

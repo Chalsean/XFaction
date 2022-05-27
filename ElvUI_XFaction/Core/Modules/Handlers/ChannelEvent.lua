@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ChannelEvent'
 local LogCategory = 'H' .. ObjectName
 
@@ -31,14 +31,14 @@ end
 
 function ChannelEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		EKX:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', self.CallbackChannelNotice)
-        EKX:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL_NOTICE events")
-		EKX:RegisterEvent('CHANNEL_FLAGS_UPDATED', self.CallbackChannelChange)
-        EKX:Info(LogCategory, "Registered for CHANNEL_FLAGS_UPDATED events")
-		EKX:RegisterEvent('CHAT_SERVER_DISCONNECTED', self.CallbackDisconnect)
-		EKX:Info(LogCategory, "Registered for CHAT_SERVER_DISCONNECTED events")
-		EKX:RegisterEvent('CHAT_SERVER_RECONNECTED', self.CallbackReconnect)
-		EKX:Info(LogCategory, "Registered for CHAT_SERVER_RECONNECTED events")		
+		XFG:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', self.CallbackChannelNotice)
+        XFG:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL_NOTICE events")
+		XFG:RegisterEvent('CHANNEL_FLAGS_UPDATED', self.CallbackChannelChange)
+        XFG:Info(LogCategory, "Registered for CHANNEL_FLAGS_UPDATED events")
+		XFG:RegisterEvent('CHAT_SERVER_DISCONNECTED', self.CallbackDisconnect)
+		XFG:Info(LogCategory, "Registered for CHAT_SERVER_DISCONNECTED events")
+		XFG:RegisterEvent('CHAT_SERVER_RECONNECTED', self.CallbackReconnect)
+		XFG:Info(LogCategory, "Registered for CHAT_SERVER_RECONNECTED events")		
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -53,19 +53,19 @@ function ChannelEvent:IsInitialized(inBoolean)
 end
 
 function ChannelEvent:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelType, inChannelNumber, inChannelName)
 	-- Fires when player leaves a channel
 	if(inAction == 'YOU_LEFT') then
-		if(EKX.Channels:RemoveChannel(inChannelName)) then
-			EKX:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelName)
-			if(EKX.Channels:GetAddonKey() == inChannelName) then
-				EKX.Network.Sender:CanBroadcast(false)
-				EKX:Error(LogCategory, "Removed channel was the addon channel")
+		if(XFG.Channels:RemoveChannel(inChannelName)) then
+			XFG:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelName)
+			if(XFG.Channels:GetAddonKey() == inChannelName) then
+				XFG.Network.Sender:CanBroadcast(false)
+				XFG:Error(LogCategory, "Removed channel was the addon channel")
 			end			
 		end
 
@@ -77,42 +77,42 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelTy
 		_NewChannel:SetName(inChannelName)
 		_NewChannel:SetShortName(inChannelName)
 		_NewChannel:SetType(inChannelType)
-		if(EKX.Network.Channels:AddChannel(_NewChannel)) then
-			EKX:Info(LogCategory, "Added channel [%d:%s] due to system event", inChannelNumber, inChannelName)
-			if(_NewChannel:GetShortName() == EKX.ChannelName) then
-				EKX.Network.Sender:SetLocalChannel(_NewChannel)
-				EKX.Network.Sender:CanBroadcast(true)
+		if(XFG.Network.Channels:AddChannel(_NewChannel)) then
+			XFG:Info(LogCategory, "Added channel [%d:%s] due to system event", inChannelNumber, inChannelName)
+			if(_NewChannel:GetShortName() == XFG.ChannelName) then
+				XFG.Network.Sender:SetLocalChannel(_NewChannel)
+				XFG.Network.Sender:CanBroadcast(true)
 			end
 		end
 	else
-		EKX:Warn(LogCategory, "Received unhandled channel system event [%s]", inAction)
+		XFG:Warn(LogCategory, "Received unhandled channel system event [%s]", inAction)
 	end
 end
 
 function ChannelEvent:CallbackChannelChange(inIndex)
 	local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(inIndex)
-	if(_ChannelInfo ~= nil and EKX.Network.Channels:Contains(_ChannelInfo.shortcut)) then
+	if(_ChannelInfo ~= nil and XFG.Network.Channels:Contains(_ChannelInfo.shortcut)) then
 		-- This event spams, so lets check before updating
-		local _Channel = EKX.Network.Channels:GetChannel(_ChannelInfo.shortcut)
+		local _Channel = XFG.Network.Channels:GetChannel(_ChannelInfo.shortcut)
 		if(_Channel:GetID() ~= _ChannelInfo.localID or _Channel:GetName() ~= _ChannelInfo.name or _Channel:GetShortName() ~= _ChannelInfo.shortcut) then
-			EKX:Debug(LogCategory, "Passed [%d] [%s] [%s]", _ChannelInfo.localID, _ChannelInfo.name, _ChannelInfo.shortcut)
+			XFG:Debug(LogCategory, "Passed [%d] [%s] [%s]", _ChannelInfo.localID, _ChannelInfo.name, _ChannelInfo.shortcut)
 			_Channel:Print()
 			_Channel:SetID(_ChannelInfo.localID)
 			_Channel:SetName(_ChannelInfo.name)
 			_Channel:SetShortName(_ChannelInfo.shortcut)
-			EKX:Info(LogCategory, "Changed channel information due to CHANNEL_FLAGS_UPDATED event [%d:%s]", _Channel:GetID(), _Channel:GetShortName())
+			XFG:Info(LogCategory, "Changed channel information due to CHANNEL_FLAGS_UPDATED event [%d:%s]", _Channel:GetID(), _Channel:GetShortName())
 		end
 	end
 end
 
 function ChannelEvent:CallbackDisconnect()
-	EKX:Info(LogCategory, "Received CHAT_SERVER_DISCONNECTED system event")
-	EKX.Network.Sender:CanBroadcast(false)
-	EKX.Network.Sender:CanWhisper(false)
+	XFG:Info(LogCategory, "Received CHAT_SERVER_DISCONNECTED system event")
+	XFG.Network.Sender:CanBroadcast(false)
+	XFG.Network.Sender:CanWhisper(false)
 end
 
 function ChannelEvent:CallbackReconnect()
-	EKX:Info(LogCategory, "Received CHAT_SERVER_RECONNECTED system event")
-	EKX.Network.Sender:CanBroadcast(true)
-	EKX.Network.Sender:CanWhisper(true)
+	XFG:Info(LogCategory, "Received CHAT_SERVER_RECONNECTED system event")
+	XFG.Network.Sender:CanBroadcast(true)
+	XFG.Network.Sender:CanWhisper(true)
 end

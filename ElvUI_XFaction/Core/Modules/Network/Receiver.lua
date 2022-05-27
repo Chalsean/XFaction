@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Receiver'
 local LogCategory = 'NReceiver'
 
@@ -41,24 +41,24 @@ end
 function Receiver:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
-        EKX:Info(LogCategory, "Registering to receive [%s] messages", EKX.Network.Message.Tag)
-        EKX:RegisterComm(EKX.Network.Message.Tag.LOCAL, function(inMessageType, inMessage, inDistribution, inSender) 
-                                                           EKX.Network.Receiver:ReceiveMessage(inMessageType, inMessage, inDistribution, inSender)
+        XFG:Info(LogCategory, "Registering to receive [%s] messages", XFG.Network.Message.Tag.LOCAL)
+        XFG:RegisterComm(XFG.Network.Message.Tag.LOCAL, function(inMessageType, inMessage, inDistribution, inSender) 
+                                                           XFG.Network.Receiver:ReceiveMessage(inMessageType, inMessage, inDistribution, inSender)
                                                         end)
 
         -- Technically this should be with the other handlers but wanted to keep the BNet logic together
-        EKX:RegisterEvent('BN_CHAT_MSG_ADDON', self.ReceiveMessage)
-        EKX:Info(LogCategory, "Registered for BN_CHAT_MSG_ADDON events")
+        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', self.ReceiveMessage)
+        XFG:Info(LogCategory, "Registered for BN_CHAT_MSG_ADDON events")
         self:IsInitialized(true)
     end
     return self:IsInitialized()
 end
 
 function Receiver:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function Receiver:GetKey()
@@ -75,7 +75,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
 
     -- If not a message from this addon, ignore
     local _AddonTag = false
-    for _, _Tag in pairs (EKX.Network.Message.Tag) do
+    for _, _Tag in pairs (XFG.Network.Message.Tag) do
         if(inMessageTag == _Tag) then
             _AddonTag = true
             break
@@ -84,52 +84,48 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
     if(_AddonTag == false) then
         return
     end
-	
-    local _Message = EKX:DecodeMessage(inEncodedMessage)  
-    _Message:Print()  
+
+    local _Message = XFG:DecodeMessage(inEncodedMessage)
 
     -- Have you seen this message before?
-    if(EKX.Network.Mailbox:Contains(_Message:GetKey())) then
-        EKX:Debug(LogCategory, "This message has already been processed %s", _Message:GetKey())
+    if(XFG.Network.Mailbox:Contains(_Message:GetKey())) then
+        XFG:Debug(LogCategory, "This message has already been processed %s", _Message:GetKey())
         return
     else
-        EKX.Network.Mailbox:AddMessage(_Message)
-    end
-
-    if(_Message:GetSubject() == EKX.Network.Message.Subject.EVENT) then
-        EKX:Debug(LogCategory, "got event message")
-        return
+        XFG.Network.Mailbox:AddMessage(_Message)
     end
 
     -- Ignore if it's your own message
     -- Due to startup timing, use GUID directly rather than Unit object
-	if(_Message:GetFrom() == EKX.Player.GUID) then
+	if(_Message:GetFrom() == XFG.Player.GUID) then
         return
-	end    
+	end   
+          
+    _Message:Print() 
 
     -- If BNet comm bridge for a whisper, simply forward
-    if(inMessageTag == EKX.Network.Message.Tag.BNET and 
-       _Message:GetType() == EKX.Network.Type.WHISPER and 
-       _Message:GetTo() ~= EKX.Player.Unit:GetKey()) then
+    if(inMessageTag == XFG.Network.Message.Tag.BNET and 
+       _Message:GetType() == XFG.Network.Type.WHISPER and 
+       _Message:GetTo() ~= XFG.Player.Unit:GetKey()) then
 
-        EKX.Network.Sender:Whisper(_Message:GetTo(), inEncodedMessage)
+        XFG.Network.Sender:Whisper(_Message:GetTo(), inEncodedMessage)
         return
     end
 
     -- If sent via BNet, broadcast to your local realm
-    if(inMessageTag == EKX.Network.Message.Tag.BNET and _Message:GetType() == EKX.Network.Type.BROADCAST) then
-        EKX.Network.Sender:SendMessage(_Message)
+    if(inMessageTag == XFG.Network.Message.Tag.BNET and _Message:GetType() == XFG.Network.Type.BROADCAST) then
+        XFG.Network.Sender:SendMessage(_Message)
     end
 
     -- Ignore if it's your own message
     -- Due to startup timing, use GUID directly rather than Unit object
-	-- if(_Message:GetFrom() == EKX.Player.GUID) then
+	-- if(_Message:GetFrom() == XFG.Player.GUID) then
 	-- 	return
 	-- end
 
     -- Process GUILD_CHAT message
-    if(_Message:GetSubject() == EKX.Network.Message.Subject.GUILD_CHAT) then
-        EKX.Frames.Chat:DisplayChat(EKX.Frames.ChatType.GUILD,
+    if(_Message:GetSubject() == XFG.Network.Message.Subject.GUILD_CHAT) then
+        XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.GUILD,
                                     _Message:GetData(),
                                     _Message:GetFrom(), 
                                     _Message:GetFaction(), 
@@ -140,12 +136,12 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
     end
 
     -- Process DATA message
-    if(_Message:GetSubject() == EKX.Network.Message.Subject.DATA) then
+    if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA) then
         local _UnitData = _Message:GetData()
         _UnitData:IsPlayer(false)
-        if(EKX.Guild:AddUnit(_UnitData)) then
-            EKX:Info(LogCategory, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
-            --EKX.DataText.Guild:OnEnable()
+        if(XFG.Guild:AddUnit(_UnitData)) then
+            XFG:Info(LogCategory, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
+            --XFG.DataText.Guild:OnEnable()
         end
     end
 end

@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'CSoulbind'
 local LogCategory = 'U' .. ObjectName
 
@@ -33,7 +33,7 @@ end
 
 function SoulbindCollection:Initialize()
 	if(self:IsInitialized() == false) then
-		for _, _Covenant in pairs (EKX.Covenants:GetCovenants()) do
+		for _, _Covenant in pairs (XFG.Covenants:GetCovenants()) do
 			for _, _SoulbindID in pairs (_Covenant:GetSoulbindIDs()) do
 				local _Soulbind = Soulbind:new()
 				_Soulbind:SetKey(_SoulbindID)
@@ -58,9 +58,9 @@ function SoulbindCollection:IsInitialized(_Argument)
 end
 
 function SoulbindCollection:Print()
-	EKX:DoubleLine(LogCategory)
-	EKX:Debug(LogCategory, "SoulbindCollection Object")
-	EKX:Debug(LogCategory, "  _SoulbindCount (" .. type(self._SoulbindCount) .. "): ".. tostring(self._SoulbindCount))
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, "SoulbindCollection Object")
+	XFG:Debug(LogCategory, "  _SoulbindCount (" .. type(self._SoulbindCount) .. "): ".. tostring(self._SoulbindCount))
 	for _, _Soulbind in pairs (self._Soulbinds) do
 		_Soulbind:Print()
 	end

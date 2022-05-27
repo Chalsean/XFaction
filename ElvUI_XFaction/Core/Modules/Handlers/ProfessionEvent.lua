@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ProfessionEvent'
 local LogCategory = 'HEProfession'
 
@@ -31,8 +31,8 @@ end
 
 function ProfessionEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		EKX:RegisterEvent('TRADE_SKILL_NAME_UPDATE', self.CallbackProfessionChanged)
-        EKX:Info(LogCategory, "Registered for TRADE_SKILL_NAME_UPDATE events")
+		XFG:RegisterEvent('TRADE_SKILL_NAME_UPDATE', self.CallbackProfessionChanged)
+        XFG:Info(LogCategory, "Registered for TRADE_SKILL_NAME_UPDATE events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -47,11 +47,11 @@ function ProfessionEvent:IsInitialized(inBoolean)
 end
 
 function ProfessionEvent:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function ProfessionEvent:CallbackProfessionChanged()
-    EKX:Debug(LogCategory, "Received profession change event")
+    XFG:Debug(LogCategory, "Received profession change event")
 end

@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ChannelCollection'
 local LogCategory = 'OCChannel'
 local TotalChannels = 10
@@ -43,9 +43,9 @@ function ChannelCollection:Initialize()
 				_NewChannel:SetName(_ChannelInfo.name)
 				_NewChannel:SetShortName(_ChannelInfo.shortcut)
 				_NewChannel:SetType(_ChannelInfo.channelType)
-				if(self:AddChannel(_NewChannel) and _NewChannel:GetKey() == EKX.Network.ChannelName) then
-					EKX.Network.Sender:SetLocalChannel(_NewChannel)
-					EKX.Network.Sender:CanBroadcast(true)
+				if(self:AddChannel(_NewChannel) and _NewChannel:GetKey() == XFG.Network.ChannelName) then
+					XFG.Network.Sender:SetLocalChannel(_NewChannel)
+					XFG.Network.Sender:CanBroadcast(true)
 				end				
 			end
 		end
@@ -63,11 +63,11 @@ function ChannelCollection:IsInitialized(inBoolean)
 end
 
 function ChannelCollection:Print()
-	EKX:DoubleLine(LogCategory)
-	EKX:Debug(LogCategory, ObjectName .. " Object")
-	EKX:Debug(LogCategory, "  _ChannelCount (" .. type(self._ChannelCount) .. "): ".. tostring(self._ChannelCount))
-	EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-	EKX:Debug(LogCategory, "  _AddonKey (" .. type(self._AddonKey) .. "): ".. tostring(self._AddonKey))
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, "  _ChannelCount (" .. type(self._ChannelCount) .. "): ".. tostring(self._ChannelCount))
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:Debug(LogCategory, "  _AddonKey (" .. type(self._AddonKey) .. "): ".. tostring(self._AddonKey))
 	for _, _Channel in pairs (self._Channels) do
 		_Channel:Print()
 	end

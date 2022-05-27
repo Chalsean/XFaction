@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ChatEvent'
 local LogCategory = 'HEChat'
 
@@ -31,10 +31,10 @@ end
 
 function ChatEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		EKX:RegisterEvent('CHAT_MSG_GUILD', self.CallbackGuildMessage)
-        EKX:Info(LogCategory, "Registered for CHAT_MSG_GUILD events")
-        EKX:RegisterEvent('CHAT_MSG_CHANNEL', self.CallbackChannelMessage)
-        EKX:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL events")
+		XFG:RegisterEvent('CHAT_MSG_GUILD', self.CallbackGuildMessage)
+        XFG:Info(LogCategory, "Registered for CHAT_MSG_GUILD events")
+        XFG:RegisterEvent('CHAT_MSG_CHANNEL', self.CallbackChannelMessage)
+        XFG:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -49,27 +49,27 @@ function ChatEvent:IsInitialized(inBoolean)
 end
 
 function ChatEvent:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
     -- If you are the sender, broadcast to other realms/factions
-    if(EKX.Player.GUID == inSenderGUID) then
+    if(XFG.Player.GUID == inSenderGUID) then
         local _NewMessage = Message:new()
         _NewMessage:Initialize()
-        _NewMessage:SetTo(EKX.Player.GuildName .. ":" .. EKX.Player.RealmName)
+        _NewMessage:SetTo(XFG.Player.GuildName .. ":" .. XFG.Player.RealmName)
         _NewMessage:SetFrom(inSenderName)
         _NewMessage:SetFromGUID(inSenderGUID)
-        _NewMessage:SetType(EKX.Network.Type.BROADCAST)
-        _NewMessage:SetSubject(EKX.Network.Message.Subject.GUILD_CHAT)
+        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
+        _NewMessage:SetSubject(XFG.Network.Message.Subject.GUILD_CHAT)
         _NewMessage:SetFlags(inFlags)
         _NewMessage:SetLineID(inLineID)
-        _NewMessage:SetFaction(EKX.Player.Faction)
+        _NewMessage:SetFaction(XFG.Player.Faction)
         _NewMessage:SetData(inText)
         _NewMessage:Print()
-        EKX.Network.Sender:SendMessage(_NewMessage, true)
+        XFG.Network.Sender:SendMessage(_NewMessage, true)
     end
 end
 

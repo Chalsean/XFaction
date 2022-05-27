@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'CCovenant'
 local LogCategory = 'U' .. ObjectName
 local MaxRaces = 37
@@ -49,10 +49,10 @@ function CovenantCollection:Initialize()
 end
 
 function CovenantCollection:Print()
-	EKX:DoubleLine(LogCategory)
-	EKX:Debug(LogCategory, "CovenantCollection Object")
-	EKX:Debug(LogCategory, "  _CovenantCount (" .. type(self._CovenantCount) .. "): ".. tostring(self._CovenantCount))
-	EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, "CovenantCollection Object")
+	XFG:Debug(LogCategory, "  _CovenantCount (" .. type(self._CovenantCount) .. "): ".. tostring(self._CovenantCount))
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Covenant in pairs (self._Covenants) do
 		_Covenant:Print()
 	end

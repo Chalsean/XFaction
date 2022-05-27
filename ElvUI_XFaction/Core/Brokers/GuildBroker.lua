@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'GuildBroker'
 local LogCategory = 'BGuild'
 
@@ -32,7 +32,7 @@ function GuildBroker:new(inObject)
 end
 
 function GuildBroker:RegisterLDBCallback()
-    EKX:Debug(LogCategory, "do something 2")
+    XFG:Debug(LogCategory, "do something 2")
 end
 
 function GuildBroker:Initialize()
@@ -52,9 +52,9 @@ function GuildBroker:IsInitialized(inBoolean)
 end
 
 function GuildBroker:Print()
-	EKX:SingleLine(LogCategory)
-	EKX:Debug(LogCategory, ObjectName .. " Object")
-	EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+	XFG:SingleLine(LogCategory)
+	XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
 end
 
 function GuildBroker:GetKey()
@@ -69,10 +69,10 @@ end
 
 function GuildBroker:RefreshDT()
     
-    --if(EKX.DataText.Guild:IsEnabled()) then
-        -- local _OnlineUnits = EKX.Guild:GetOnlineUnits()
+    --if(XFG.DataText.Guild:IsEnabled()) then
+        -- local _OnlineUnits = XFG.Guild:GetOnlineUnits()
         -- wipe(self._BrokerData)
-        -- EKX:Debug(LogCategory, "got here")
+        -- XFG:Debug(LogCategory, "got here")
         -- for _, _Unit in pairs (_OnlineUnits) do
         --     table.insert(self._BrokerData, _Unit)
         -- end

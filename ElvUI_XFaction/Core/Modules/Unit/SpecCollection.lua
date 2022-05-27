@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'SpecCollection'
 local LogCategory = 'UCSpec'
 
@@ -93,11 +93,11 @@ function SpecCollection:IsInitialized(inBoolean)
 end
 
 function SpecCollection:Print()
-	EKX:DoubleLine(LogCategory)
-	EKX:Debug(LogCategory, "SpecCollection Object")
-	EKX:Debug(LogCategory, "  _SpecCount (" .. type(self._SpecCount) .. "): ".. tostring(self._SpecCount))
-	EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-	EKX:Debug(LogCategory, "  _Specs (" .. type(self._Specs) .. "): ")
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, "SpecCollection Object")
+	XFG:Debug(LogCategory, "  _SpecCount (" .. type(self._SpecCount) .. "): ".. tostring(self._SpecCount))
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:Debug(LogCategory, "  _Specs (" .. type(self._Specs) .. "): ")
 	for _, _Spec in pairs (self._Specs) do
 		_Spec:Print()
 	end

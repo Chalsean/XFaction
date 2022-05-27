@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Unit'
 local LogCategory = 'U' .. ObjectName
 
@@ -68,80 +68,89 @@ function Unit:Initialize(_Argument)
 	self:SetNote(_note)
 	self:IsOnline(_online)
 	self:IsMobile(_isMobile)
-    self:SetFaction(EKX.Player.Faction)
+    self:SetFaction(XFG.Player.Faction)
     
-	if(_zone == nil) then
+	if(_zone == nil and self:IsPlayer()) then
+        _zone = GetZoneText()
+    end
+
+    if(_zone == nil) then
         self:SetZone("?")
     else
         self:SetZone(_zone)
     end
 
-    self:SetGuildName(EKX.Player.GuildName)
-    self:SetRealmName(EKX.Player.RealmName)
+    self:SetGuildName(XFG.Player.GuildName)
+    self:SetRealmName(XFG.Player.RealmName)
     self:SetTimeStamp(GetServerTime())
 
     local _ParsedName = string.Split(_unit, "-")
     self:SetName(_ParsedName[1])
 
-    self:SetClass(EKX.Classes:GetClass(_class))
+    self:SetClass(XFG.Classes:GetClass(_class))
 
     -- Sometimes this call fails, but retry logic seems to work
     local _RaceName
     for i = 1, 10 do
         _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
         if(_RaceName ~= nil) then
-            self:SetRace(EKX.Races:GetRaceByName(_RaceName, EKX.Player.Faction:GetName()))
+            self:SetRace(XFG.Races:GetRaceByName(_RaceName, XFG.Player.Faction:GetName()))
             break
         end    
     end
 
     local _RankID = C_GuildInfo.GetGuildRankOrder(self:GetGUID())
-    if(EKX.Ranks:Contains(_RankID) == false) then
+    if(XFG.Ranks:Contains(_RankID) == false) then
         local _NewRank = Rank:new()
         _NewRank:SetKey(_RankID)
         _NewRank:SetID(_RankID)
         _NewRank:SetName(_rank)
-        EKX.Ranks:AddRank(_NewRank)
+        XFG.Ranks:AddRank(_NewRank)
     end
-    self:SetRank(EKX.Ranks:GetRank(_RankID))
+    self:SetRank(XFG.Ranks:GetRank(_RankID))
 
     if(self:IsPlayer()) then
         local _CovenantID = C_Covenants.GetActiveCovenantID()
-        if(EKX.Covenants:Contains(_CovenantID)) then
-            self:SetCovenant(EKX.Covenants:GetCovenant(_CovenantID))
+        if(XFG.Covenants:Contains(_CovenantID)) then
+            self:SetCovenant(XFG.Covenants:GetCovenant(_CovenantID))
         end
 
         local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
-        if(EKX.Soulbinds:Contains(_SoulbindID)) then
-            self:SetSoulbind(EKX.Soulbinds:GetSoulbind(_SoulbindID))
+        if(XFG.Soulbinds:Contains(_SoulbindID)) then
+            self:SetSoulbind(XFG.Soulbinds:GetSoulbind(_SoulbindID))
         end
 
         -- These profession IDs are local to the player, need to initialize object to get global ID
         local _Profession1ID, _Profession2ID = GetProfessions()
         if(_Profession1ID ~= nil) then
             local _, _, _, _, _, _, _SkillLineID = GetProfessionInfo(_Profession1ID)
-            self:SetProfession1(EKX.Professions:GetProfession(_SkillLineID))            
+            self:SetProfession1(XFG.Professions:GetProfession(_SkillLineID))            
         end
 
         if(_Profession2ID ~= nil) then
             local _, _, _, _, _, _, _SkillLineID = GetProfessionInfo(_Profession2ID)
-            self:SetProfession2(EKX.Professions:GetProfession(_SkillLineID))        
+            self:SetProfession2(XFG.Professions:GetProfession(_SkillLineID))        
         end
 
         local _SpecGroupID = GetSpecialization()
 	    local _SpecID = GetSpecializationInfo(_SpecGroupID)
-        if(EKX.Specs:Contains(_SpecID)) then
-            self:SetSpec(EKX.Specs:GetSpec(_SpecID))
+        if(XFG.Specs:Contains(_SpecID)) then
+            self:SetSpec(XFG.Specs:GetSpec(_SpecID))
         end
     end
     
-    local _UpperNote = string.upper(self:GetNote())
+    local _Note = self:GetNote()
+    local _UpperNote = string.upper(_Note)
 	if(string.match(_UpperNote, "%[EN?KA%]")) then
 		self:IsAlt(true)
+        local _MainName = string.match(_Note, "(%w+)$") 
+        if(_MainName ~= nil) then
+            self:SetMainName(_MainName)
+        end
 	end
     
     if(string.match(_UpperNote, "%[ENKA%]")) then
-		self:SetTeamName('NonRaid')
+		self:SetTeamName('Non-Raid')
 	elseif(string.match(_UpperNote, "%[A%]")) then
 		self:SetTeamName('Acheron')
 	elseif(string.match(_UpperNote, "%[C%]")) then
@@ -172,6 +181,8 @@ function Unit:Initialize(_Argument)
 		self:SetTeamName('Gravity')
 	elseif(string.match(_UpperNote, "%[R%]")) then
 		self:SetTeamName('Reckoning')
+    elseif(string.match(_UpperNote, "%[M%]")) then
+		self:SetTeamName('Mercenary')
 	elseif(string.match(_UpperNote, "%[BANK%]")) then
 		self:SetTeamName('Management')
 	else
@@ -180,53 +191,53 @@ function Unit:Initialize(_Argument)
 end
 
 function Unit:Print()
-	EKX:DoubleLine(LogCategory)
-	EKX:Debug(LogCategory, "Unit Object")
-    EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    EKX:Debug(LogCategory, "  _GUID (" .. type(self._GUID) .. "): ".. tostring(self._GUID))
-	EKX:Debug(LogCategory, "  _UnitName (" .. type(self._UnitName) .. "): ".. tostring(self._UnitName))
-    EKX:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))    
-    EKX:Debug(LogCategory, "  _GuildIndex (" .. type(self._GuildIndex) .. "): ".. tostring(self._GuildIndex))
-    EKX:Debug(LogCategory, "  _Level (" .. type(self._Level) .. "): ".. tostring(self._Level))
-    EKX:Debug(LogCategory, "  _Zone (" .. type(self._Zone) .. "): ".. tostring(self._Zone))
-    EKX:Debug(LogCategory, "  _Note (" .. type(self._Note) .. "): ".. tostring(self._Note))
-    EKX:Debug(LogCategory, "  _Online (" .. type(self._Online) .. "): ".. tostring(self._Online))
-    EKX:Debug(LogCategory, "  _Status (" .. type(self._Status) .. "): ".. tostring(self._Status))
-    EKX:Debug(LogCategory, "  _Mobile (" .. type(self._Mobile) .. "): ".. tostring(self._Mobile))
-    EKX:Debug(LogCategory, "  _TimeStamp (" .. type(self._TimeStamp) .. "): ".. tostring(self._TimeStamp))
-    EKX:Debug(LogCategory, "  _RunningAddon (" .. type(self._RunningAddon) .. "): ".. tostring(self._RunningAddon))
-    EKX:Debug(LogCategory, "  _Alt (" .. type(self._Alt) .. "): ".. tostring(self._Alt))
-    EKX:Debug(LogCategory, "  _MainName (" .. type(self._MainName) .. "): ".. tostring(self._MainName))
-    EKX:Debug(LogCategory, "  _IsPlayer (" .. type(self._IsPlayer) .. "): ".. tostring(self._IsPlayer))
-    EKX:Debug(LogCategory, "  _IsOnMainGuild (" .. type(self._IsOnMainGuild) .. "): ".. tostring(self._IsOnMainGuild))
-    EKX:Debug(LogCategory, "  _GuildName (" .. type(self._GuildName) .. "): ".. tostring(self._GuildName))
-    EKX:Debug(LogCategory, "  _RealmName (" .. type(self._RealmName) .. "): ".. tostring(self._RealmName))
-    EKX:Debug(LogCategory, "  _TeamName (" .. type(self._TeamName) .. "): ".. tostring(self._TeamName))
-    EKX:Debug(LogCategory, "  _Race (" .. type(self._Race) .. "): ")
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, "Unit Object")
+    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _GUID (" .. type(self._GUID) .. "): ".. tostring(self._GUID))
+	XFG:Debug(LogCategory, "  _UnitName (" .. type(self._UnitName) .. "): ".. tostring(self._UnitName))
+    XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))    
+    XFG:Debug(LogCategory, "  _GuildIndex (" .. type(self._GuildIndex) .. "): ".. tostring(self._GuildIndex))
+    XFG:Debug(LogCategory, "  _Level (" .. type(self._Level) .. "): ".. tostring(self._Level))
+    XFG:Debug(LogCategory, "  _Zone (" .. type(self._Zone) .. "): ".. tostring(self._Zone))
+    XFG:Debug(LogCategory, "  _Note (" .. type(self._Note) .. "): ".. tostring(self._Note))
+    XFG:Debug(LogCategory, "  _Online (" .. type(self._Online) .. "): ".. tostring(self._Online))
+    XFG:Debug(LogCategory, "  _Status (" .. type(self._Status) .. "): ".. tostring(self._Status))
+    XFG:Debug(LogCategory, "  _Mobile (" .. type(self._Mobile) .. "): ".. tostring(self._Mobile))
+    XFG:Debug(LogCategory, "  _TimeStamp (" .. type(self._TimeStamp) .. "): ".. tostring(self._TimeStamp))
+    XFG:Debug(LogCategory, "  _RunningAddon (" .. type(self._RunningAddon) .. "): ".. tostring(self._RunningAddon))
+    XFG:Debug(LogCategory, "  _Alt (" .. type(self._Alt) .. "): ".. tostring(self._Alt))
+    XFG:Debug(LogCategory, "  _MainName (" .. type(self._MainName) .. "): ".. tostring(self._MainName))
+    XFG:Debug(LogCategory, "  _IsPlayer (" .. type(self._IsPlayer) .. "): ".. tostring(self._IsPlayer))
+    XFG:Debug(LogCategory, "  _IsOnMainGuild (" .. type(self._IsOnMainGuild) .. "): ".. tostring(self._IsOnMainGuild))
+    XFG:Debug(LogCategory, "  _GuildName (" .. type(self._GuildName) .. "): ".. tostring(self._GuildName))
+    XFG:Debug(LogCategory, "  _RealmName (" .. type(self._RealmName) .. "): ".. tostring(self._RealmName))
+    XFG:Debug(LogCategory, "  _TeamName (" .. type(self._TeamName) .. "): ".. tostring(self._TeamName))
+    XFG:Debug(LogCategory, "  _Race (" .. type(self._Race) .. "): ")
     self._Race:Print()
-    EKX:Debug(LogCategory, "  _Class (" .. type(self._Class) .. "): ")
+    XFG:Debug(LogCategory, "  _Class (" .. type(self._Class) .. "): ")
     self._Class:Print()
-    EKX:Debug(LogCategory, "  _Spec (" .. type(self._Spec) .. "): ")
+    XFG:Debug(LogCategory, "  _Spec (" .. type(self._Spec) .. "): ")
     if(self._Spec ~= nil) then
         self._Spec:Print()
     end
-    EKX:Debug(LogCategory, "  _Covenant (" .. type(self._Covenant) .. "): ")
+    XFG:Debug(LogCategory, "  _Covenant (" .. type(self._Covenant) .. "): ")
     if(self._Covenant ~= nil) then
         self._Covenant:Print()
     end
-    EKX:Debug(LogCategory, "  _Soulbind (" .. type(self._Soulbind) .. "): ")
+    XFG:Debug(LogCategory, "  _Soulbind (" .. type(self._Soulbind) .. "): ")
     if(self._Soulbind ~= nil) then
         self._Soulbind:Print()
     end
-    EKX:Debug(LogCategory, "  _Profession1 (" .. type(self._Profession1) .. "): ")
+    XFG:Debug(LogCategory, "  _Profession1 (" .. type(self._Profession1) .. "): ")
     if(self._Profession1 ~= nil) then
         self._Profession1:Print()
     end
-    EKX:Debug(LogCategory, "  _Profession2 (" .. type(self._Profession2) .. "): ")
+    XFG:Debug(LogCategory, "  _Profession2 (" .. type(self._Profession2) .. "): ")
     if(self._Profession2 ~= nil) then
         self._Profession2:Print()
     end
-    EKX:Debug(LogCategory, "  _Rank (" .. type(self._Rank) .. "): ")
+    XFG:Debug(LogCategory, "  _Rank (" .. type(self._Rank) .. "): ")
     if(self._Rank ~= nil) then
         self._Rank:Print()
     end
@@ -257,7 +268,7 @@ end
 function Unit:SetGUID(_GUID)
     assert(type(_GUID) == 'string')
     self._GUID = _GUID
-    self:IsPlayer(self:GetGUID() == EKX.Player.GUID)
+    self:IsPlayer(self:GetGUID() == XFG.Player.GUID)
     return self:GetGUID()
 end
 

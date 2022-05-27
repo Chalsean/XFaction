@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Sender'
 local LogCategory = 'NSender'
 
@@ -52,14 +52,14 @@ function Sender:Initialize()
 end
 
 function Sender:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    EKX:Debug(LogCategory, "  _CanBroadcast (" .. type(self._CanBroadcast) .. "): ".. tostring(self._CanBroadcast))
-    EKX:Debug(LogCategory, "  _CanWhisper (" .. type(self._CanWhisper) .. "): ".. tostring(self._CanWhisper))
-    EKX:Debug(LogCategory, "  _CanBNet (" .. type(self._CanBNet) .. "): ".. tostring(self._CanBNet))
-    EKX:Debug(LogCategory, "  _LocalChannel (" .. type(self._LocalChannel) .. ")")
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:Debug(LogCategory, "  _CanBroadcast (" .. type(self._CanBroadcast) .. "): ".. tostring(self._CanBroadcast))
+    XFG:Debug(LogCategory, "  _CanWhisper (" .. type(self._CanWhisper) .. "): ".. tostring(self._CanWhisper))
+    XFG:Debug(LogCategory, "  _CanBNet (" .. type(self._CanBNet) .. "): ".. tostring(self._CanBNet))
+    XFG:Debug(LogCategory, "  _LocalChannel (" .. type(self._LocalChannel) .. ")")
     if(self._LocalChannel ~= nil) then
         self._LocalChannel:Print()
     end
@@ -120,11 +120,11 @@ function Sender:SendMessage(inMessage, inSendBNet)
         inMessage:Initialize()
     end
 
-    local _OutgoingData = EKX:EncodeMessage(inMessage)    
+    local _OutgoingData = XFG:EncodeMessage(inMessage)    
 
-    if(inMessage:GetType() == EKX.Network.Type.BROADCAST) then
+    if(inMessage:GetType() == XFG.Network.Type.BROADCAST) then
         -- Anyone listening locally?
-        local _Realm = EKX.Realms:GetCurrentRealm()
+        local _Realm = XFG.Realms:GetCurrentRealm()
         if(_Realm:GetNumberRunningAddon() > 1) then
            self:BroadcastLocally(_OutgoingData)            
 
@@ -132,13 +132,13 @@ function Sender:SendMessage(inMessage, inSendBNet)
         elseif(_Realm:GetNumberRunningAddon() == 1) then
            local _Unit = _Realm:GetUnitRunningAddon()
            inMessage:SetTo(_Unit:GetKey())
-           inMessage:SetType(EKX.Network.Type.WHISPER)
+           inMessage:SetType(XFG.Network.Type.WHISPER)
            self:Whisper(inMessage:GetTo(), _OutgoingData)  
 
         else
             -- Nobody listening, so sad
         end
-    elseif(inMessage:GetType() == EKX.Network.Type.WHISPER) then
+    elseif(inMessage:GetType() == XFG.Network.Type.WHISPER) then
         self:Whisper(inMessage:GetTo(), _OutgoingData)
     end
 
@@ -150,15 +150,15 @@ end
 function Sender:BroadcastLocally(inData)
     if(self:CanBroadcast()) then
         local _Channel = self:GetLocalChannel()
-        EKX:Debug(LogCategory, "Broadcasting on channel [%d] with tag [%s]", _Channel:GetID(), EKX.Network.Message.Tag)
-        EKX:SendCommMessage(EKX.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
+        XFG:Debug(LogCategory, "Broadcasting on channel [%d] with tag [%s]", _Channel:GetID(), XFG.Network.Message.Tag)
+        XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
     end
 end
 
 function Sender:Whisper(inTo, inData)
     if(self:CanWhisper()) then
-        EKX:Debug(LogCategory, "Whispering [%s] with tag [%s]", inTo, EKX.Network.Message.Tag)
-        EKX:SendCommMessage(EKX.Network.Message.Tag.LOCAL, inData, "WHISPER", inTo)
+        XFG:Debug(LogCategory, "Whispering [%s] with tag [%s]", inTo, XFG.Network.Message.Tag)
+        XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "WHISPER", inTo)
     end
 end
 
@@ -166,12 +166,12 @@ function Sender:BroadcastUnitData(inUnitData)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
     if(inUnitData:IsPlayer()) then
         inUnitData:SetTimeStamp(GetServerTime())
-        EKX.Player.LastBroadcast = inUnitData:GetTimeStamp()
+        XFG.Player.LastBroadcast = inUnitData:GetTimeStamp()
     end
     local _Message = Message:new()
     _Message:Initialize()
-    _Message:SetType(EKX.Network.Type.BROADCAST)
-    _Message:SetSubject(EKX.Network.Message.Subject.DATA)
+    _Message:SetType(XFG.Network.Type.BROADCAST)
+    _Message:SetSubject(XFG.Network.Message.Subject.DATA)
     _Message:SetData(inUnitData)
     _Message:Print()
     self:SendMessage(_Message, true)
@@ -180,13 +180,13 @@ end
 function Sender:BNet(inEncodedMessage)
     if(self:CanBNet()) then
         -- For all the realms associated with the confederate
-        for _, _RealmName in pairs (EKX.Network.BNet.Realms) do
-            if(_RealmName ~= EKX.Player.RealmName and EKX.Realms:Contains(_RealmName)) then
+        for _, _RealmName in pairs (XFG.Network.BNet.Realms) do
+            if(_RealmName ~= XFG.Player.RealmName and XFG.Realms:Contains(_RealmName)) then
                 -- Identify a passthru BNet friend to whisper
-                local _Bridger = EKX.Network.BNet.Friends:GetRandomFriend(EKX.Realms:GetRealm(_RealmName))
+                local _Bridger = XFG.Network.BNet.Friends:GetRandomFriend(XFG.Realms:GetRealm(_RealmName))
                 if(_Bridger ~= nil) then
-                    EKX:Debug(LogCategory, "Whispering BNet bridge [%s] with tag [%s]", _Bridger:GetName(), EKX.Network.Message.Tag.BNET)
-                    BNSendGameData(_Bridger:GetID(), EKX.Network.Message.Tag.BNET, inEncodedMessage)
+                    XFG:Debug(LogCategory, "Whispering BNet bridge [%s] with tag [%s]", _Bridger:GetName(), XFG.Network.Message.Tag.BNET)
+                    BNSendGameData(_Bridger:GetID(), XFG.Network.Message.Tag.BNET, inEncodedMessage)
                 end
             end
         end

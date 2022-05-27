@@ -1,6 +1,6 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local LogCategory = 'CSoulbind'
-local ARG = EKX.Config.Soulbind.args
+local ARG = XFG.Config.Soulbind.args
 local DB = E.db.Confederation.Soulbind
 
 local function ImportantColorString(string)

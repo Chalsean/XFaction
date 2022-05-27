@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'BNetEvent'
 local LogCategory = 'HEBNet'
 local TotalChannels = 10
@@ -32,12 +32,12 @@ end
 
 function BNetEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		EKX:RegisterEvent('BN_CONNECTED', self.CallbackBNetConnected)
-        EKX:Info(LogCategory, "Registered for BN_CONNECTED events")
-        EKX:RegisterEvent('BN_DISCONNECTED', self.CallbackBNetDisconnected)
-        EKX:Info(LogCategory, "Registered for BN_DISCONNECTED events")
-        EKX:RegisterEvent('BN_FRIEND_INFO_CHANGED', self.CallbackFriendInfo)
-        EKX:Info(LogCategory, "Registered for BN_FRIEND_INFO_CHANGED events")
+		XFG:RegisterEvent('BN_CONNECTED', self.CallbackBNetConnected)
+        XFG:Info(LogCategory, "Registered for BN_CONNECTED events")
+        XFG:RegisterEvent('BN_DISCONNECTED', self.CallbackBNetDisconnected)
+        XFG:Info(LogCategory, "Registered for BN_DISCONNECTED events")
+        XFG:RegisterEvent('BN_FRIEND_INFO_CHANGED', self.CallbackFriendInfo)
+        XFG:Info(LogCategory, "Registered for BN_FRIEND_INFO_CHANGED events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -46,31 +46,31 @@ end
 function BNetEvent:IsInitialized(inBoolean)
 	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
 	if(inBoolean ~= nil) then
-        EKX.Network.Sender:CanBNet(true)
+        XFG.Network.Sender:CanBNet(true)
 		self._Initialized = inBoolean
 	end
 	return self._Initialized
 end
 
 function BNetEvent:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function BNetEvent:CallbackBNetConnected()
-    EKX:Info(LogCategory, "Enabling BNet due to BN_CONNECTED")
-    EKX.Network.Sender:CanBNet(true)
+    XFG:Info(LogCategory, "Enabling BNet due to BN_CONNECTED")
+    XFG.Network.Sender:CanBNet(true)
 end
 
 function BNetEvent:CallbackBNetDisconnected()
-    EKX:Info(LogCategory, "Disabling BNet due to BN_DISCONNECTED")
-    EKX.Network.Sender:CanBNet(false)
+    XFG:Info(LogCategory, "Disabling BNet due to BN_DISCONNECTED")
+    XFG.Network.Sender:CanBNet(false)
 end
 
 -- The friend API leaves much to be desired, you essentially have to keep scanning
 function BNetEvent:CallbackFriendInfo(inFriendIndex)
-    EKX:Debug(LogCategory, "Scanning BNet friends due to BN_FRIEND_INFO_CHANGED")
-    EKX.Network.BNet.Friends:Reset()
-    EKX.Network.BNet.Friends:Initialize()
+    XFG:Debug(LogCategory, "Scanning BNet friends due to BN_FRIEND_INFO_CHANGED")
+    XFG.Network.BNet.Friends:Reset()
+    XFG.Network.BNet.Friends:Initialize()
 end

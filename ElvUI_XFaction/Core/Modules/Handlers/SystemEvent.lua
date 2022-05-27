@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'SystemEvent'
 local LogCategory = 'HESystem'
 local TotalChannels = 10
@@ -32,12 +32,12 @@ end
 
 function SystemEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		EKX:RegisterEvent('PLAYER_ENTERING_WORLD', self.CallbackEnterWorld)
-        EKX:Info(LogCategory, "Registered for PLAYER_ENTERING_WORLD events")
-        EKX:RegisterEvent('PLAYER_LOGOUT', self.CallbackLogout)
-        EKX:Info(LogCategory, "Registered for PLAYER_LOGOUT events")
-        EKX:Hook('ReloadUI', self.CallbackReloadUI, true)
-        EKX:Info(LogCategory, "Created hook for pre-ReloadUI")
+		XFG:RegisterEvent('PLAYER_ENTERING_WORLD', self.CallbackEnterWorld)
+        XFG:Info(LogCategory, "Registered for PLAYER_ENTERING_WORLD events")
+        XFG:RegisterEvent('PLAYER_LOGOUT', self.CallbackLogout)
+        XFG:Info(LogCategory, "Registered for PLAYER_LOGOUT events")
+        XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
+        XFG:Info(LogCategory, "Created hook for pre-ReloadUI")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -52,23 +52,21 @@ function SystemEvent:IsInitialized(inBoolean)
 end
 
 function SystemEvent:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function SystemEvent:CallbackEnterWorld(inInitialLogin, inReloadUI)
-    if(inInitialLogin) then
-        EKX.UIReload = false
-    end
+    
 end
 
 function SystemEvent:CallbackLogout()
-    if(EKX.UIReload) then return end
-    EKX.Player.Unit:IsOnline(false)
-    EKX.Network.Sender:BroadcastUnitData(EKX.Player.Unit)
+    if(XFG.UIReload) then return end
+    XFG.Player.Unit:IsOnline(false)
+    XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
 end
 
 function SystemEvent:CallbackReloadUI()
-    EKX.UIReload = true
+    XFG.UIReload = true
 end

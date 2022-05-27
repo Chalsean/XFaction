@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'CClass'
 local LogCategory = 'U' .. ObjectName
 local MaxRaces = 37
@@ -50,10 +50,10 @@ function ClassCollection:Initialize()
 end
 
 function ClassCollection:Print()
-	EKX:DoubleLine(LogCategory)
-	EKX:Debug(LogCategory, "ClassCollection Object")
-	EKX:Debug(LogCategory, "  _ClassCount (" .. type(self._ClassCount) .. "): ".. tostring(self._ClassCount))
-	EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, "ClassCollection Object")
+	XFG:Debug(LogCategory, "  _ClassCount (" .. type(self._ClassCount) .. "): ".. tostring(self._ClassCount))
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Class in pairs (self._Classes) do
 		_Class:Print()
 	end

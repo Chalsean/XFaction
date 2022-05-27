@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ChatFrame'
 local LogCategory = 'FChat'
 local IconTokenString = '|T%d:16:16:0:0:64:64:4:60:4:60|t'
@@ -42,13 +42,13 @@ function ChatFrame:Initialize()
                 return ElvUI[1].private.chat.enable
             end)
             if _Status and _Enabled then
-                EKX:Info(LogCategory, "Using ElvUI chat handler")
+                XFG:Info(LogCategory, "Using ElvUI chat handler")
                 self:IsElvUI(true)
                 self._ElvUIModule = ElvUI[1]:GetModule('Chat')
                 self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
             end
         else
-            EKX:Info(LogCategory, "Using default chat handler")
+            XFG:Info(LogCategory, "Using default chat handler")
             self._ChatFrameHandler = ChatFrame_MessageEventHandler
         end
 
@@ -66,10 +66,10 @@ function ChatFrame:IsInitialized(inBoolean)
 end
 
 function ChatFrame:Print()
-	EKX:SingleLine(LogCategory)
-	EKX:Debug(LogCategory, ObjectName .. " Object")
-	EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	EKX:Debug(LogCategory, "  _ElvUI (" .. type(self._ElvUI) .. "): ".. tostring(self._ElvUI))
+	XFG:SingleLine(LogCategory)
+	XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+	XFG:Debug(LogCategory, "  _ElvUI (" .. type(self._ElvUI) .. "): ".. tostring(self._ElvUI))
 end
 
 function ChatFrame:GetKey()
@@ -92,6 +92,10 @@ end
 
 function ChatFrame:DisplayChat(inEvent, inText, inSenderName, inFaction, inFlags, inLineID, inSenderGUID)
     local _FrameTable
+    XFG:DataDumper(LogCategory, inSenderName)
+    XFG:DataDumper(LogCategory, inSenderGUID)
+    XFG:DataDumper(LogCategory, inFlags)
+    XFG:DataDumper(LogCategory, inLineID)
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
     for i = 1, NUM_CHAT_WINDOWS do
@@ -102,7 +106,7 @@ function ChatFrame:DisplayChat(inEvent, inText, inSenderName, inFaction, inFlags
                 local _Frame = 'ChatFrame' .. i
                 if _G[_Frame] then
                     local _SenderName = format('%s %s', format(IconTokenString, inFaction:GetIconID()), inSenderName)
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_GUILD', inText, _SenderName, 'Common', '', '', inFlags, 0, 0, '', 0, inLineID, inSenderGUID)
+                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_GUILD', inText, _SenderName, 'Common', '', inSenderName, inFlags, 0, 0, '', 0, _, inSenderGUID)
                 end
                 break
             end

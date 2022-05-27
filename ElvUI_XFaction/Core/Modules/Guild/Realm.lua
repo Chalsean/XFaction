@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Realm'
 local LogCategory = 'GRealm'
 
@@ -49,37 +49,37 @@ function Realm:Initialize()
             self:SetKey(GetRealmName())
             self:SetName(GetRealmName())
         end
-        local _, _, _, _, _, _, _, _, _RealmIDs = EKX.Lib.Realm:GetRealmInfo(self:GetName())
+        local _, _, _, _, _, _, _, _, _RealmIDs = XFG.Lib.Realm:GetRealmInfo(self:GetName())
         self:SetIDs(_RealmIDs)
 	end
 	return self:IsInitialized()
 end
 
 function Realm:Print(inPrintOffline)
-    EKX:DoubleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    EKX:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    EKX:Debug(LogCategory, "  _IDCount (" .. type(self._IDCount) .. "): ".. tostring(self._IDCount))
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    EKX:Debug(LogCategory, "  _NumberRunningAddon (" .. type(self._NumberRunningAddon) .. "): ".. tostring(self._NumberRunningAddon))
-    EKX:Debug(LogCategory, "  _IDs (" .. type(self._IDs) .. "): ")
+    XFG:DoubleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
+    XFG:Debug(LogCategory, "  _IDCount (" .. type(self._IDCount) .. "): ".. tostring(self._IDCount))
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:Debug(LogCategory, "  _NumberRunningAddon (" .. type(self._NumberRunningAddon) .. "): ".. tostring(self._NumberRunningAddon))
+    XFG:Debug(LogCategory, "  _IDs (" .. type(self._IDs) .. "): ")
     for _, _Value in pairs (self._IDs) do
-        EKX:Debug(LogCategory, "  ID (" .. type(_Value) .. ") " .. tostring(_Value))
+        XFG:Debug(LogCategory, "  ID (" .. type(_Value) .. ") " .. tostring(_Value))
     end
 end
 
 function Realm:ShallowPrint()
-    EKX:DoubleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    EKX:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    EKX:Debug(LogCategory, "  _IDCount (" .. type(self._IDCount) .. "): ".. tostring(self._IDCount))
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    EKX:Debug(LogCategory, "  _NumberRunningAddon (" .. type(self._NumberRunningAddon) .. "): ".. tostring(self._NumberRunningAddon))
-    EKX:Debug(LogCategory, "  _IDs (" .. type(self._IDs) .. "): ")
+    XFG:DoubleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
+    XFG:Debug(LogCategory, "  _IDCount (" .. type(self._IDCount) .. "): ".. tostring(self._IDCount))
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:Debug(LogCategory, "  _NumberRunningAddon (" .. type(self._NumberRunningAddon) .. "): ".. tostring(self._NumberRunningAddon))
+    XFG:Debug(LogCategory, "  _IDs (" .. type(self._IDs) .. "): ")
     for _, _Value in pairs (self._IDs) do
-        EKX:Debug(LogCategory, "  ID (" .. type(_Value) .. ") " .. tostring(_Value))
+        XFG:Debug(LogCategory, "  ID (" .. type(_Value) .. ") " .. tostring(_Value))
     end
 end
 

@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Covenant'
 local LogCategory = 'UCovenant'
 
@@ -55,14 +55,14 @@ function Covenant:Initialize()
 end
 
 function Covenant:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    EKX:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    EKX:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): " .. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
+    XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): " .. tostring(self._Initialized))
     for _Index, _SoulbindID in PairsByKeys (self._SoulbindIDs) do
-        EKX:Debug(LogCategory, "  _SoulbindID[" .. tostring(_Index) .. "] (" ..type(_SoulbindID) .. "): ".. tostring(_SoulbindID))
+        XFG:Debug(LogCategory, "  _SoulbindID[" .. tostring(_Index) .. "] (" ..type(_SoulbindID) .. "): ".. tostring(_SoulbindID))
     end
 end
 

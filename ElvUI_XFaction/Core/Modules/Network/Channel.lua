@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Channel'
 local LogCategory = 'NChannel'
 
@@ -34,13 +34,13 @@ function Channel:new(inObject)
 end
 
 function Channel:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    EKX:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    EKX:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
-    EKX:Debug(LogCategory, "  _ShortName (" ..type(self._ShortName) .. "): ".. tostring(self._ShortName))
-    EKX:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
+    XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
+    XFG:Debug(LogCategory, "  _ShortName (" ..type(self._ShortName) .. "): ".. tostring(self._ShortName))
+    XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
 end
 
 function Channel:GetKey()

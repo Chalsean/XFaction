@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DT = E:GetModule('DataTexts')
 local ObjectName = 'GuildEvent'
 local LogCategory = 'HEGuild'
@@ -32,10 +32,10 @@ end
 
 function GuildEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		EKX:RegisterEvent('GUILD_MOTD', self.CallbackMOTD)
-        EKX:Info(LogCategory, "Registered for GUILD_MOTD events")
-        EKX:RegisterEvent('GUILD_ROSTER_UPDATE', self.CallbackRosterUpdate)
-        EKX:Info(LogCategory, "Registered for GUILD_ROSTER_UPDATE events")
+		XFG:RegisterEvent('GUILD_MOTD', self.CallbackMOTD)
+        XFG:Info(LogCategory, "Registered for GUILD_MOTD events")
+        XFG:RegisterEvent('GUILD_ROSTER_UPDATE', self.CallbackRosterUpdate)
+        XFG:Info(LogCategory, "Registered for GUILD_ROSTER_UPDATE events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -50,14 +50,14 @@ function GuildEvent:IsInitialized(inBoolean)
 end
 
 function GuildEvent:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function GuildEvent:CallbackMOTD(inMOTD)
-    if(EKX.Guild:GetMOTD() ~= inMOTD) then
-        EKX.Guild:SetMOTD(inMOTD)
+    if(XFG.Guild:GetMOTD() ~= inMOTD) then
+        XFG.Guild:SetMOTD(inMOTD)
     end
 end
 
@@ -70,23 +70,23 @@ function GuildEvent:CallbackRosterUpdate()
         if(_UnitData:IsOnline()) then
 
             -- If cache doesn't have unit, process
-            if(EKX.Guild:Contains(_UnitData:GetKey()) == false) then
-                EKX.Guild:AddUnit(_UnitData)
+            if(XFG.Guild:Contains(_UnitData:GetKey()) == false) then
+                XFG.Guild:AddUnit(_UnitData)
             else
-                local _CachedUnitData = EKX.Guild:GetUnit(_UnitData:GetKey())
+                local _CachedUnitData = XFG.Guild:GetUnit(_UnitData:GetKey())
 
                 -- Detect staying online, need to check for changes for broadcast to peer guilds
                 if(_UnitData:IsPlayer() and _CachedUnitData:Equals(_UnitData) == false) then
-                    EKX.Guild:AddUnit(_UnitData)
-                    EKX.Network.Sender:BroadcastUnitData(_UnitData)
+                    XFG.Guild:AddUnit(_UnitData)
+                    XFG.Network.Sender:BroadcastUnitData(_UnitData)
 
                 elseif(_UnitData:IsRunningAddon() == false and _CachedUnitData:Equals(_UnitData) == false) then         
-                    EKX.Guild:AddUnit(_UnitData)
+                    XFG.Guild:AddUnit(_UnitData)
                 end
             end
-        elseif(EKX.Guild:Contains(_UnitData:GetKey())) then
-            EKX.Guild:RemoveUnit(_UnitData)
+        elseif(XFG.Guild:Contains(_UnitData:GetKey())) then
+            XFG.Guild:RemoveUnit(_UnitData)
         end
     end
-    DT:ForceUpdate_DataText(EKX.DataText.Guild.Name)
+    DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
 end

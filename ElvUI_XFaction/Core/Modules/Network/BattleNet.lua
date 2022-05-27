@@ -1,15 +1,15 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DB = E.db.Confederation
 local LogCategory = 'MBnet'
 local Initialized = false
 
 local function CallbackBNet(Event, MessageType, ...)
 	local EncodedMessage = {...}
-	EKX:Error(LogCategory, "event trigger [%s][%s]", event, sender)
+	XFG:Error(LogCategory, "event trigger [%s][%s]", event, sender)
 
-	-- if(MessageType == EKX.Network.Message.BNet) then
-	-- 	local UnitData = EKX:DecodeUnitData(EncodedMessage)
-	-- 	EKX:DataDumper(LogCategory, UnitData)
+	-- if(MessageType == XFG.Network.Message.BNet) then
+	-- 	local UnitData = XFG:DecodeUnitData(EncodedMessage)
+	-- 	XFG:DataDumper(LogCategory, UnitData)
 	-- end
 end
 
@@ -18,11 +18,11 @@ local function Initialize()
 		if(DB.Data.Friends == nil) then
 			DB.Data.Friends = {}
 		end
-		EKX:RegisterEvent('BN_CHAT_MSG_ADDON', CallbackBNet)
+		XFG:RegisterEvent('BN_CHAT_MSG_ADDON', CallbackBNet)
 	end
 end
 
-function EKX:ScanFriends()
+function XFG:ScanFriends()
 	Initialize()
 	local friends = BNGetNumFriends()
 	wipe(DB.Data.Friends)
@@ -47,29 +47,29 @@ function EKX:ScanFriends()
 end
 
 local function IdentifyPassthru(TargetRealmID)
-	EKX:ScanFriends()
-	EKX:DataDumper(LogCategory, DB.Data.Friends)
+	XFG:ScanFriends()
+	XFG:DataDumper(LogCategory, DB.Data.Friends)
 
 	if(TargetRealmID == nil or DB.Data.Friends[TargetRealmID] == nil or table.getn(DB.Data.Friends[TargetRealmID]) == 0) then
-		EKX:Warn(LogCategory, "No friends are online connected to target realm [%d]", TargetRealmID)
+		XFG:Warn(LogCategory, "No friends are online connected to target realm [%d]", TargetRealmID)
 		return
 	end
 	
 	local FriendsOnRealm = DB.Data.Friends[TargetRealmID]
 	local RandomNumber = math.random(1, table.getn(FriendsOnRealm))
-	EKX:Debug(LogCategory, "Chose friend [%d] out of [%d]", RandomNumber, table.getn(FriendsOnRealm))
+	XFG:Debug(LogCategory, "Chose friend [%d] out of [%d]", RandomNumber, table.getn(FriendsOnRealm))
 
 	return DB.Data.Friends[TargetRealmID][RandomNumber]
 end
 
-function EKX:BnetUnitData(UnitData)
+function XFG:BnetUnitData(UnitData)
 	for _, TargetRealmID in pairs (DB.RealmIDs) do
 		if(TargetRealmID ~= DB.Data.CurrentRealm.ID) then
 			local TargetAccount = IdentifyPassthru(TargetRealmID)	
 			if(TargetAccount ~= nil) then		
-				EKX:Info(LogCategory, "BNet whispering data for [%s] to [%d:%s] for broadcast on realm [%d]", UnitData.Unit, TargetAccount.AccountID, TargetAccount.BattleTag, TargetRealmID)
-				local MessageData = EKX:EncodeUnitData(UnitData)
-				BNSendGameData(TargetAccount.AccountID, 'EKX_BNET_DATA', "test")
+				XFG:Info(LogCategory, "BNet whispering data for [%s] to [%d:%s] for broadcast on realm [%d]", UnitData.Unit, TargetAccount.AccountID, TargetAccount.BattleTag, TargetRealmID)
+				local MessageData = XFG:EncodeUnitData(UnitData)
+				BNSendGameData(TargetAccount.AccountID, 'XFG_BNET_DATA', "test")
 			end
 		end
 	end

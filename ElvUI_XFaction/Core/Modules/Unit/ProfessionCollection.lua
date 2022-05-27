@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ProfessionCollection'
 local LogCategory = 'UCProfession'
 
@@ -53,10 +53,10 @@ function ProfessionCollection:IsInitialized(inBoolean)
 end
 
 function ProfessionCollection:Print()
-	EKX:DoubleLine(LogCategory)
-	EKX:Debug(LogCategory, ObjectName .. " Object")
-	EKX:Debug(LogCategory, "  _ProfessionCount (" .. type(self._ProfessionCount) .. "): ".. tostring(self._ProfessionCount))
-	EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, "  _ProfessionCount (" .. type(self._ProfessionCount) .. "): ".. tostring(self._ProfessionCount))
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Profession in pairs (self._Professions) do
 		_Profession:Print()
 	end

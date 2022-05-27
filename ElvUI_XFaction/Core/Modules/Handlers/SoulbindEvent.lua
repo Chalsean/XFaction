@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'SoulbindEvent'
 local LogCategory = 'HESoulbind'
 
@@ -31,8 +31,8 @@ end
 
 function SoulbindEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		EKX:RegisterEvent('SOULBIND_ACTIVATED', self.CallbackSoulbindActivated)
-        EKX:Info(LogCategory, "Registered for SOULBIND_ACTIVATED events")
+		XFG:RegisterEvent('SOULBIND_ACTIVATED', self.CallbackSoulbindActivated)
+        XFG:Info(LogCategory, "Registered for SOULBIND_ACTIVATED events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -47,18 +47,19 @@ function SoulbindEvent:IsInitialized(inBoolean)
 end
 
 function SoulbindEvent:Print()
-    EKX:SingleLine(LogCategory)
-    EKX:Debug(LogCategory, ObjectName .. " Object")
-    EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:SingleLine(LogCategory)
+    XFG:Debug(LogCategory, ObjectName .. " Object")
+    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function SoulbindEvent:CallbackSoulbindActivated()
     local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
-    if(EKX.Soulbinds:Contains(_SoulbindID)) then
-        local _Soulbind = EKX.Soulbinds:GetSoulbind(_SoulbindID)
-        EKX.Player.Unit:SetSoulbind(_Soulbind)
-        EKX:Info(LogCategory, "Updated player soulbind to %s based on SOULBIND_ACTIVATED event", _Soulbind:GetName())
+    if(XFG.Soulbinds:Contains(_SoulbindID)) then
+        local _Soulbind = XFG.Soulbinds:GetSoulbind(_SoulbindID)
+        XFG.Player.Unit:SetSoulbind(_Soulbind)
+        XFG:Info(LogCategory, "Updated player soulbind to %s based on SOULBIND_ACTIVATED event", _Soulbind:GetName())
+        DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
     elseif(_SoulbindID ~= 0) then -- 0 is some kind of special timing state value
-        EKX:Error(LogCategory, "Active Soulbind not found in SoulbindCollection: " .. tostring(_SoulbindID))
+        XFG:Error(LogCategory, "Active Soulbind not found in SoulbindCollection: " .. tostring(_SoulbindID))
     end
 end

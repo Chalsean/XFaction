@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'MessageCollection'
 local LogCategory = 'NCMessage'
 
@@ -49,11 +49,11 @@ function MessageCollection:IsInitialized(inBoolean)
 end
 
 function MessageCollection:Print()
-	EKX:DoubleLine(LogCategory)
-	EKX:Debug(LogCategory, ObjectName .. " Object")
-	EKX:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	EKX:Debug(LogCategory, "  _MessageCount (" .. type(self._FriendCount) .. "): ".. tostring(self._FriendCount))
-	EKX:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+	XFG:Debug(LogCategory, "  _MessageCount (" .. type(self._FriendCount) .. "): ".. tostring(self._FriendCount))
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Message in pairs (self._Messages) do
 		_Message:Print()
 	end

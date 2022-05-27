@@ -1,4 +1,4 @@
-local EKX, E, L, V, P, G = unpack(select(2, ...))
+local XFG, E, L, V, P, G = unpack(select(2, ...))
 local Initialized = false
 --local math_seed = math.randomseed
 
@@ -11,7 +11,7 @@ local function Initialize()
 end
 
 function math.Random(Modulo)
-	EKX:Debug('Random', "modulo [%d]", Modulo)
+	XFG:Debug('Random', "modulo [%d]", Modulo)
 	Initialize()
 	local RandomNumber = math.random() 
 	if(Modulo ~= nil) then
