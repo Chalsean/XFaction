@@ -33,14 +33,16 @@ function XFG:EncodeMessage(inMessage)
 		--_MessageUnitData.S = _UnitData:GetStatus()
 		_MessageData.M = (_UnitData:IsMobile() == true) and 1 or 0
 		_MessageData.G = _UnitData:GetGUID()
-		_MessageData.TS = _UnitData:GetTimeStamp()
-		_MessageData.T = _UnitData:GetTeamName()
+		_MessageData.TS = _UnitData:GetTimeStamp()		
 		_MessageData.A = (_UnitData:IsAlt() == true) and 1 or 0
 		_MessageData.RA = (_UnitData:IsRunningAddon() == true) and 1 or 0
 		_MessageData.U = _UnitData:GetUnitName()
 		_MessageData.RN = _UnitData:GetRealmName()
 		_MessageData.Z = _UnitData:GetZone()
 		_MessageData.MN = _UnitData:GetMainName()
+
+		local _Team = _UnitData:GetTeam()
+		_MessageData.T = _Team:GetKey()
 
 		local _Faction = _UnitData:GetFaction()
 		_MessageData.Fa = _Faction:GetKey()

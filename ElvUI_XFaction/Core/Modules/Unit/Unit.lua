@@ -45,11 +45,11 @@ function Unit:new(_Argument)
         self._IsPlayer = false
         self._IsOnMainGuild = false
         self._Faction = false
+        self._Team = nil
 
-        -- These three will be redundant but necessary when marshaling data
+        -- These two will be redundant but necessary when marshaling data
         self._GuildName = nil
-        self._RealmName = nil
-        self._TeamName = nil
+        self._RealmName = nil        
     end
 
     return Object
@@ -148,46 +148,19 @@ function Unit:Initialize(_Argument)
             self:SetMainName(_MainName)
         end
 	end
-    
-    if(string.match(_UpperNote, "%[ENKA%]")) then
-		self:SetTeamName('Non-Raid')
-	elseif(string.match(_UpperNote, "%[A%]")) then
-		self:SetTeamName('Acheron')
-	elseif(string.match(_UpperNote, "%[C%]")) then
-		self:SetTeamName('Chivalry')
-	elseif(string.match(_UpperNote, "%[D%]")) then
-		self:SetTeamName('Duelist')
-	elseif(string.match(_UpperNote, "%[E%]")) then
-		self:SetTeamName('Empire')
-	elseif(string.match(_UpperNote, "%[F%]")) then
-		self:SetTeamName('Fireforged')
-	elseif(string.match(_UpperNote, "%[G%]")) then
-		self:SetTeamName('Gallant')
-	elseif(string.match(_UpperNote, "%[H%]")) then
-		self:SetTeamName('Harbinger')
-	elseif(string.match(_UpperNote, "%[K%]")) then
-		self:SetTeamName('Kismet')
-	elseif(string.match(_UpperNote, "%[L%]")) then
-		self:SetTeamName('Legacy')
-	elseif(string.match(_UpperNote, "%[O%]")) then
-		self:SetTeamName('Olympus')
-	elseif(string.match(_UpperNote, "%[S%]")) then
-		self:SetTeamName('Sellswords')
-	elseif(string.match(_UpperNote, "%[T%]")) then
-		self:SetTeamName('Tsunami')
-	elseif(string.match(_UpperNote, "%[T%]")) then
-		self:SetTeamName('Tsunami')
-	elseif(string.match(_UpperNote, "%[Y%]")) then
-		self:SetTeamName('Gravity')
-	elseif(string.match(_UpperNote, "%[R%]")) then
-		self:SetTeamName('Reckoning')
-    elseif(string.match(_UpperNote, "%[M%]")) then
-		self:SetTeamName('Mercenary')
-	elseif(string.match(_UpperNote, "%[BANK%]")) then
-		self:SetTeamName('Management')
-	else
-		self:SetTeamName('Unknown')
-	end
+
+    for _Key, _Team in XFG.Teams:Iterator() do
+        local _Regex = '%[' .. _Team:GetShortName() .. '%]'
+        if(string.match(_UpperNote, _Regex)) then
+            self:SetTeam(_Team)
+            break
+        end
+    end
+
+    if(self:HasTeam() == false) then
+        local _Team = XFG.Teams:GetTeam('U')
+        self:SetTeam(_Team)
+    end
 end
 
 function Unit:Print()
@@ -212,7 +185,8 @@ function Unit:Print()
     XFG:Debug(LogCategory, "  _IsOnMainGuild (" .. type(self._IsOnMainGuild) .. "): ".. tostring(self._IsOnMainGuild))
     XFG:Debug(LogCategory, "  _GuildName (" .. type(self._GuildName) .. "): ".. tostring(self._GuildName))
     XFG:Debug(LogCategory, "  _RealmName (" .. type(self._RealmName) .. "): ".. tostring(self._RealmName))
-    XFG:Debug(LogCategory, "  _TeamName (" .. type(self._TeamName) .. "): ".. tostring(self._TeamName))
+    XFG:Debug(LogCategory, "  _Team (" .. type(self._Team) .. "): ")
+    self._Team:Print()
     XFG:Debug(LogCategory, "  _Race (" .. type(self._Race) .. "): ")
     self._Race:Print()
     XFG:Debug(LogCategory, "  _Class (" .. type(self._Class) .. "): ")
@@ -510,14 +484,18 @@ function Unit:SetMainName(_MainName)
     return self:GetMainName()
 end
 
-function Unit:GetTeamName()
-    return self._TeamName
+function Unit:HasTeam()
+    return self._Team ~= nil
 end
 
-function Unit:SetTeamName(_TeamName)
-    assert(type(_TeamName) == 'string')
-    self._TeamName = _TeamName
-    return self:GetTeamName()
+function Unit:GetTeam()
+    return self._Team
+end
+
+function Unit:SetTeam(inTeam)
+    assert(type(inTeam) == 'table' and inTeam.__name ~= nil and inTeam.__name == 'Team', "argument must be Team object")
+    self._Team = inTeam
+    return self:GetTeam()
 end
 
 function Unit:GetRealmName()

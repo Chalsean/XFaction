@@ -55,6 +55,8 @@ end
 function SpecEvent:CallbackSpecChanged()
     local _SpecGroupID = GetSpecialization()
 	local _SpecID = GetSpecializationInfo(_SpecGroupID)
+    if(_SpecID == nil) then return end -- This fires at <lvl 10 even though theres no spec to choose
+
     local _NewSpec = XFG.Specs:GetSpec(_SpecID)
     local _CurrentSpec = XFG.Player.Unit:GetSpec(_SpecID)
 

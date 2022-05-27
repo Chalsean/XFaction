@@ -113,6 +113,10 @@ function XFG:Init()
 	
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()	
 
+	for _Key, _Team in XFG.Teams:Iterator() do
+		--_Team:Print()
+	end
+
 	EP:RegisterPlugin(addon, XFG.ConfigCallback)
 end
 

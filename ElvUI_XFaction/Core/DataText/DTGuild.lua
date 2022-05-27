@@ -141,7 +141,8 @@ local function OnEnter(self)
 			local _GuildName = _UnitData:GetGuildName()
 			tooltip:SetCell(line, 8, format("|cffffffff%s|r", _GuildName))
 
-			local _TeamName = _UnitData:GetTeamName()
+			local _Team = _UnitData:GetTeam()
+			local _TeamName = _Team:GetName()
 			tooltip:SetCell(line, 9, format("|cffffffff%s|r", _TeamName))
 
 			if(_UnitData:HasRank()) then
