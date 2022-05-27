@@ -80,3 +80,7 @@ end
 function CovenantCollection:GetCovenants()
 	return self._Covenants
 end
+
+function CovenantCollection:Iterator()
+	return next, self._Covenants, nil
+end

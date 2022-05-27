@@ -105,3 +105,7 @@ function MessageCollection:Purge()
 		end
 	end
 end
+
+function MessageCollection:Iterator()
+	return next, self._Messages, nil
+end

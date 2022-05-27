@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file='Shard.lua'/>
-    <Script file='Soulbind.lua'/>
-    <Script file='WoWToken.lua'/>
-    <Script file='XFactionGuild.lua'/>
+    <Script file='DTShard.lua'/>
+    <Script file='DTSoulbind.lua'/>
+    <Script file='DTWoWToken.lua'/>
+    <Script file='DTGuild.lua'/>
 </Ui>

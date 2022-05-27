@@ -41,5 +41,7 @@
     <Script file='Guild\RankCollection.lua'/>
     <Script file='Guild\Realm.lua'/>
     <Script file='Guild\RealmCollection.lua'/>
+    <Script file='Guild\Team.lua'/>
+    <Script file='Guild\TeamCollection.lua'/>
     <Script file='Guild\Guild.lua'/>
 </Ui>

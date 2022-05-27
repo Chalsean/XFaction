@@ -93,3 +93,7 @@ function RaceCollection:AddRace(inRace)
 	self._Races[inRace:GetKey()] = inRace
     return self:Contains(inRace:GetKey())
 end
+
+function RaceCollection:Iterator()
+	return next, self._Races, nil
+end

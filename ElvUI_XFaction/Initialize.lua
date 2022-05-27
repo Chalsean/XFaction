@@ -35,7 +35,6 @@ XFG.DataText.Soulbind.Name = 'Soulbind (X)'
 
 XFG.Player = {}
 XFG.Player.LastBroadcast = 0
-XFG.Cache = {}
 
 XFG.Network = {}
 XFG.Network.BNet = {}
@@ -60,7 +59,29 @@ XFG.Frames.ChatType = {
 	GUILD = 'GUILD',
 	ONLINE = 'ONLINE',
 	OFFLINE = 'OFFLINE'
-}	
+}
+
+XFG.Cache = {}
+XFG.Cache.Teams = {
+	A = 'Acheron',
+	C = 'Chivalry',
+	D = 'Duelist',
+	E = 'Empire',
+	F = 'Fireforged',
+	G = 'Gallant',
+	H = 'Harbinger',
+	K = 'Kismet',
+	L = 'Legacy',
+	M = 'Mercenary',
+	O = 'Olympus',
+	R = 'Reckoning',
+	S = 'Sellswords',
+	T = 'Tsunami',
+	Y = 'Gravity',
+	BANK = 'Management',
+	U = 'Unknown',
+	ENKA = 'Social'
+}
 
 function XFG:Init()
 	self.initialized = true
@@ -81,6 +102,7 @@ function XFG:Init()
 	XFG.Player.GUID = UnitGUID('player')
 	XFG.Player.RealmName = GetRealmName()	
 	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
+	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Player.Faction = XFG.Factions:GetFactionByName(UnitFactionGroup('player'))
 	XFG.Ranks = RankCollection:new(); XFG.Ranks:Initialize()

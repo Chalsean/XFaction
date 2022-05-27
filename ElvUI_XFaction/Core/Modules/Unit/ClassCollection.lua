@@ -87,3 +87,7 @@ function ClassCollection:AddClass(inClass)
 	self._Classes[inClass:GetKey()] = inClass
 	return self:Contains(inClass:GetKey())
 end
+
+function ClassCollection:Iterator()
+	return next, self._Classes, nil
+end

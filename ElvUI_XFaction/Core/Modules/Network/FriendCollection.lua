@@ -145,3 +145,7 @@ function FriendCollection:Reset()
 	self._FriendCount = 0
 	self._Initialized = false
 end
+
+function FriendCollection:Iterator()
+	return next, self._Friends, nil
+end

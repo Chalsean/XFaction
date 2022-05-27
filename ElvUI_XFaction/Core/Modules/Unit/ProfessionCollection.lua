@@ -82,3 +82,7 @@ function ProfessionCollection:AddProfession(inProfession)
 
 	return self:Contains(inProfession:GetKey())
 end
+
+function ProfessionCollection:Iterator()
+	return next, self._Professions, nil
+end

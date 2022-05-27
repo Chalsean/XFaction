@@ -112,3 +112,7 @@ function SpecCollection:GetSpec(inKey)
 	assert(type(inKey) == 'number')
     return self._Specs[inKey]
 end
+
+function SpecCollection:Iterator()
+	return next, self._Specs, nil
+end

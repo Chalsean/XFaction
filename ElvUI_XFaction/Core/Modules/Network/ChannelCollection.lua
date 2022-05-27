@@ -100,3 +100,7 @@ function ChannelCollection:RemoveChannel(inKey)
 	end
 	return self:Contains(inKey) == false
 end
+
+function ChannelCollection:Iterator()
+	return next, self._Channels, nil
+end

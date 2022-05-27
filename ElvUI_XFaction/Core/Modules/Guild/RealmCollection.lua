@@ -127,3 +127,7 @@ function RealmCollection:AddUnit(inUnit)
 
     return true
 end
+
+function RealmCollection:Iterator()
+	return next, self._Realms, nil
+end

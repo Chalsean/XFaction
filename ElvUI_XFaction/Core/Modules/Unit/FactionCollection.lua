@@ -105,3 +105,7 @@ function FactionCollection:AddFaction(inFaction)
 	self._Factions[inFaction:GetKey()] = inFaction
 	return self:Contains(inFaction:GetKey())
 end
+
+function FactionCollection:Iterator()
+	return next, self._Factions, nil
+end

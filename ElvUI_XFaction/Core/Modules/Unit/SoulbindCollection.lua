@@ -87,3 +87,7 @@ function SoulbindCollection:AddSoulbind(inSoulbind)
 
 	return self:Contains(inSoulbind:GetKey())
 end
+
+function SoulbindCollection:Iterator()
+	return next, self._Soulbinds, nil
+end

@@ -164,8 +164,8 @@ function Guild:RemoveUnit(inUnit)
     self._NumberOfUnits = self._NumberOfUnits - 1
 end
 
-function Guild:GetUnits()
-    return self._Units
+function Guild:Iterator()
+	return next, self._Units, nil
 end
 
 function Guild:GetNumberOfUnits()
