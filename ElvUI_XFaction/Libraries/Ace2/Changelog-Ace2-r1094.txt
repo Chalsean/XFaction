@@ -1,0 +1,29 @@
+------------------------------------------------------------------------
+r1094 | nevcairiel | 2009-01-06 21:28:44 +0000 (Tue, 06 Jan 2009) | 1 line
+Changed paths:
+   M /trunk/AceAddon-2.0/AceAddon-2.0.lua
+   M /trunk/AceConsole-2.0/AceConsole-2.0.lua
+   M /trunk/AceDB-2.0/AceDB-2.0.lua
+   M /trunk/AceLocale-2.2/AceLocale-2.2.lua
+
+ruRU updates from Tickets
+------------------------------------------------------------------------
+r1093 | arrowmaster | 2008-10-15 00:05:47 +0000 (Wed, 15 Oct 2008) | 1 line
+Changed paths:
+   M /trunk
+   M /trunk/.pkgmeta
+   M /trunk/AceAddon-2.0/AceAddon-2.0.toc
+   M /trunk/AceComm-2.0/AceComm-2.0.toc
+   M /trunk/AceConsole-2.0/AceConsole-2.0.toc
+   M /trunk/AceDB-2.0/AceDB-2.0.toc
+   M /trunk/AceDebug-2.0/AceDebug-2.0.toc
+   M /trunk/AceEvent-2.0/AceEvent-2.0.toc
+   M /trunk/AceHook-2.1/AceHook-2.1.toc
+   M /trunk/AceLibrary/AceLibrary.toc
+   M /trunk/AceLocale-2.2/AceLocale-2.2.toc
+   M /trunk/AceModuleCore-2.0/AceModuleCore-2.0.toc
+   M /trunk/AceOO-2.0/AceOO-2.0.toc
+   M /trunk/AceTab-2.0/AceTab-2.0.toc
+
+Update the rest of the toc's to 30000
+------------------------------------------------------------------------

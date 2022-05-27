@@ -1,0 +1,10 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+    <Script file="Ace3\LibStub\LibStub.lua"/>
+    <Script file="Ace3\AceComm-3.0\AceComm-3.0.lua"/>
+    <Script file="Ace3\AceSerializer-3.0\AceSerializer-3.0.lua"/>
+    <Script file="Ace3\AceEvent-3.0\AceEvent-3.0.lua"/>
+    <Include file="LibCompress\lib.xml"/>    
+    <Script file='LibRealmInfo\LibRealmInfo.lua'/>
+    <Script file='LibDataBroker-1.1\LibDataBroker-1.1.lua'/>
+    <Include file="LibQTip-1.0\lib.xml"/>
+</Ui>
