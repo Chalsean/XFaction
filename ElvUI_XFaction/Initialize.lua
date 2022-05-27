@@ -113,9 +113,11 @@ function XFG:Init()
 	
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()	
 
-	for _Key, _Team in XFG.Teams:Iterator() do
-		--_Team:Print()
-	end
+	local _GChat = GuildMessage:new()
+	_GChat:SetKey("d;afja")
+	_GChat:SetFromGUID('blargh')
+	XFG:DataDumper(LogCategory, _GChat)
+	_GChat:Print()
 
 	EP:RegisterPlugin(addon, XFG.ConfigCallback)
 end

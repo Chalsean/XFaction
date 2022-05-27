@@ -21,18 +21,15 @@ function Message:new(inObject)
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
+    self.__parent = self
 
     if(_newObject == true) then
         self._Key = nil
         self._To = nil
         self._From = nil
-        self._FromGUID = nil
         self._Type = nil
         self._Subject = nil
         self._EpochTime = nil
-        self._Flags = nil
-        self._LineID = nil
-        self._Faction = nil
         self._Data = nil
         self._Initialized = false
     end
@@ -52,7 +49,6 @@ function Message:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
         self:SetFrom(XFG.Player.Unit:GetKey())
-        self:SetFaction(XFG.Player.Faction)
         self:SetTimeStamp(GetServerTime())
         self:IsInitialized(true)
     end
@@ -65,10 +61,6 @@ function Message:Print()
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
-    XFG:Debug(LogCategory, "  _FromGUID (" ..type(self._FromGUID) .. "): ".. tostring(self._FromGUID))
-    XFG:Debug(LogCategory, "  _Flags (" ..type(self._Flags) .. "): ".. tostring(self._Flags))
-    XFG:Debug(LogCategory, "  _LineID (" ..type(self._LineID) .. "): ".. tostring(self._LineID))
-    XFG:Debug(LogCategory, "  _Faction (" ..type(self._Faction) .. "): ".. tostring(self._Faction))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
@@ -143,44 +135,4 @@ end
 function Message:SetData(inData)
     self._Data = inData
     return self:GetData()
-end
-
-function Message:GetFromGUID()
-    return self._FromGUID
-end
-
-function Message:SetFromGUID(inFromGUID)
-    assert(type(inFromGUID) == 'string')
-    self._FromGUID = inFromGUID
-    return self:GetFromGUID()
-end
-
-function Message:GetFlags()
-    return self._Flags
-end
-
-function Message:SetFlags(inFlags)
-    assert(type(inFlags) == 'string')
-    self._Flags = inFlags
-    return self:GetFlags()
-end
-
-function Message:GetLineID()
-    return self._LineID
-end
-
-function Message:SetLineID(inLineID)
-    assert(type(inLineID) == 'number')
-    self._LineID = inLineID
-    return self:GetLineID()
-end
-
-function Message:GetFaction()
-    return self._Faction
-end
-
-function Message:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
-    self._Faction = inFaction
-    return self:GetFaction()
 end

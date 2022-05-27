@@ -33,8 +33,8 @@ end
 
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		--XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
-        --XFG:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
+		XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
+        XFG:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
         XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", 60)
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
         XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", 60 * 5)
@@ -42,8 +42,8 @@ function TimerEvent:Initialize()
         XFG:Info(LogCategory, "Scheduled initialization to occur once guild information is available")
         XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineDelta) -- config
         XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineDelta)
-        XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, 30) -- config
-        XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", 30)
+        XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, 60) -- config
+        XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", 60)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -84,7 +84,7 @@ function TimerEvent:CallbackMailboxTimer()
 end
 
 -- WoW has funky timing about getting guild info on first login, its not before PLAYER_ENTERING_WORLD so have to poll
-function TimerEvent:CallbackLogin(arg1)
+function TimerEvent:CallbackLogin()
     XFG.Player.GuildName = GetGuildInfo('player')
 
     if(XFG.Player.GuildName ~= nil) then
@@ -144,7 +144,7 @@ end
 
 -- Periodically send update to avoid other considering you offline
 function TimerEvent:CallbackHeartbeat()
-    if(XFG.Player.Unit:GetTimeStamp() + 30 < GetServerTime()) then
+    if(XFG.Player.Unit:GetTimeStamp() + 60 < GetServerTime()) then
         XFG:Debug(LogCategory, "Sending heartbeat")
         XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
     end

@@ -10,15 +10,18 @@ function XFG:EncodeMessage(inMessage)
 	local _MessageData = {}
 	_MessageData.K = inMessage:GetKey()
 	_MessageData.To = inMessage:GetTo()
-	_MessageData.F = inMessage:GetFrom()
-	_MessageData.FG = inMessage:GetFromGUID()
+	_MessageData.F = inMessage:GetFrom()	
 	_MessageData.S = inMessage:GetSubject()
-	_MessageData.Ty = inMessage:GetType()
-	local _Faction = inMessage:GetFaction()
-	_MessageData.FN = _Faction:GetKey()
+	_MessageData.Ty = inMessage:GetType()	
 	_MessageData.TS = inMessage:GetTimeStamp()
-	_MessageData.Fl = inMessage:GetFlags()
-	_MessageData.LI = inMessage:GetLineID()
+
+	if(inMessage.__name == 'GuildMessage') then
+		_MessageData.FG = inMessage:GetFromGUID()
+		local _Faction = inMessage:GetFaction()
+		_MessageData.FN = _Faction:GetKey()
+		_MessageData.Fl = inMessage:GetFlags()
+		_MessageData.LI = inMessage:GetLineID()
+	end
 
 	if(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA) then
 		local _UnitData = inMessage:GetData()

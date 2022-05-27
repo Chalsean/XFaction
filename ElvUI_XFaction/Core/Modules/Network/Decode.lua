@@ -9,17 +9,27 @@ function XFG:DecodeMessage(inMessage)
 	local _Decompressed = XFG.Lib.Compress:DecompressHuffman(_Decoded)
 	local _, _MessageData = XFG:Deserialize(_Decompressed)
 
-	local _Message = Message:new(); _Message:Initialize()
+	local _Message
+	if(_MessageData.FG ~= nil) then
+		_Message = GuildMessage:new()
+	else
+		_Message = Message:new()
+	end	
+	_Message:Initialize()
+	
 	if(_MessageData.K ~= nil) then	_Message:SetKey(_MessageData.K)	end
 	if(_MessageData.To ~= nil) then	_Message:SetTo(_MessageData.To)	end
-	if(_MessageData.F ~= nil) then _Message:SetFrom(_MessageData.F)	end
-	if(_MessageData.FG ~= nil) then _Message:SetFromGUID(_MessageData.FG)	end
+	if(_MessageData.F ~= nil) then _Message:SetFrom(_MessageData.F)	end	
 	if(_MessageData.S ~= nil) then _Message:SetSubject(_MessageData.S) end
-	if(_MessageData.Ty ~= nil) then	_Message:SetType(_MessageData.Ty) end
-	if(_MessageData.FN ~= nil) then _Message:SetFaction(XFG.Factions:GetFaction(_MessageData.FN)) end
-	if(_MessageData.TS ~= nil) then	_Message:SetTimeStamp(_MessageData.TS) end
-	if(_MessageData.Fl ~= nil) then	_Message:SetFlags(_MessageData.Fl) end
-	if(_MessageData.LI ~= nil) then	_Message:SetLineID(_MessageData.LI) end
+	if(_MessageData.Ty ~= nil) then	_Message:SetType(_MessageData.Ty) end	
+	if(_MessageData.TS ~= nil) then	_Message:SetTimeStamp(_MessageData.TS) end	
+
+	if(_Message.__name == 'GuildMessage') then
+		if(_MessageData.FG ~= nil) then _Message:SetFromGUID(_MessageData.FG) end
+		if(_MessageData.FN ~= nil) then _Message:SetFaction(XFG.Factions:GetFaction(_MessageData.FN)) end
+		if(_MessageData.Fl ~= nil) then	_Message:SetFlags(_MessageData.Fl) end
+		if(_MessageData.LI ~= nil) then	_Message:SetLineID(_MessageData.LI) end
+	end
 
 	if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA) then
 		local _UnitData = Unit:new()

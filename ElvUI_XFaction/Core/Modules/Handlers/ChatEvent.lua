@@ -57,7 +57,7 @@ end
 function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
     -- If you are the sender, broadcast to other realms/factions
     if(XFG.Player.GUID == inSenderGUID) then
-        local _NewMessage = Message:new()
+        local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
         _NewMessage:SetTo(XFG.Player.GuildName .. ":" .. XFG.Player.RealmName)
         _NewMessage:SetFrom(inSenderName)
