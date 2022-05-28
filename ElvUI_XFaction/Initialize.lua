@@ -47,11 +47,13 @@ XFG.Network.Message.Tag = {
 XFG.Network.Message.Subject = {
 	DATA = 'DATA',
 	GUILD_CHAT = 'GCHAT',
-	EVENT = 'EVENT'
+	EVENT = 'EVENT',
+	LOGOUT = 'LOGOUT'
 }
 XFG.Network.Type = {
 	BROADCAST = 'BROADCAST',
-	WHISPER = 'WHISPER'
+	WHISPER = 'WHISPER',
+	LOCAL = 'LOCAL'
 }	
 
 XFG.Frames = {}
@@ -95,6 +97,7 @@ function XFG:Init()
 	-- Globals are lua's version of static variables
 	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
 	XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
+	XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
 	
 	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
 	XFG.Network.BNet.Realms = { 'Proudmoore', 'Area 52' } -- config	
@@ -112,12 +115,6 @@ function XFG:Init()
 	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 	
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()	
-
-	local _GChat = GuildMessage:new()
-	_GChat:SetKey("d;afja")
-	_GChat:SetFromGUID('blargh')
-	XFG:DataDumper(LogCategory, _GChat)
-	_GChat:Print()
 
 	EP:RegisterPlugin(addon, XFG.ConfigCallback)
 end

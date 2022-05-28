@@ -135,6 +135,12 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         return
     end
 
+    -- Process LOGOUT message
+    if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
+        XFG.Guild:RemoveUnit(_Message:GetFrom())
+        return
+    end
+
     -- Process DATA message
     if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA) then
         local _UnitData = _Message:GetData()

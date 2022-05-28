@@ -75,11 +75,12 @@ function GuildEvent:CallbackRosterUpdate()
             else
                 local _CachedUnitData = XFG.Guild:GetUnit(_UnitData:GetKey())
 
-                -- Detect staying online, need to check for changes for broadcast to peer guilds
+                -- If its the player and something has changed
                 if(_UnitData:IsPlayer() and _CachedUnitData:Equals(_UnitData) == false) then
                     XFG.Guild:AddUnit(_UnitData)
                     XFG.Network.Sender:BroadcastUnitData(_UnitData)
 
+                -- If its a unit not running the addon and something has changed
                 elseif(_UnitData:IsRunningAddon() == false and _CachedUnitData:Equals(_UnitData) == false) then         
                     XFG.Guild:AddUnit(_UnitData)
                 end

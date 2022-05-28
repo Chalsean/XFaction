@@ -63,8 +63,11 @@ end
 
 function SystemEvent:CallbackLogout()
     if(XFG.UIReload) then return end
-    XFG.Player.Unit:IsOnline(false)
-    XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
+    local _NewMessage = Message:new()
+    _NewMessage:Initiate()
+    _NewMessage:SetType(XFG.Network.Type.BROADCAST)
+    _NewMessage:SetSubject(XFG.Network.Message.Subject.LOGOUT)
+    XFG.Network.Sender:SendMessage(_NewMessage, true)
 end
 
 function SystemEvent:CallbackReloadUI()

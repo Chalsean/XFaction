@@ -43,6 +43,7 @@ end
 function Team:Initialize()
 	if(self:IsInitialized() == false) then
         self:SetKey(self:GetShortName())
+        self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end

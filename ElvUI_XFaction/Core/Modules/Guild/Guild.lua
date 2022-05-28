@@ -153,15 +153,17 @@ function Guild:OfflineUnits(inDelta)
     for _, _Unit in pairs (self._Units) do
         if(_Unit:IsPlayer() == false) then
             if(_Unit:GetTimeStamp() + inDelta < _ServerEpochTime) then
-                self:RemoveUnit(_Unit)
+                self:RemoveUnit(_Unit:GetKey())
             end
         end
     end
 end
 
-function Guild:RemoveUnit(inUnit)
-    table.RemoveKey(self._Units, inUnit:GetGUID())
-    self._NumberOfUnits = self._NumberOfUnits - 1
+function Guild:RemoveUnit(inKey)
+    if(Guild:Contains(inKey)) then
+        table.RemoveKey(self._Units, inKey)
+        self._NumberOfUnits = self._NumberOfUnits - 1
+    end
 end
 
 function Guild:Iterator()

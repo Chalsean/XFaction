@@ -2,7 +2,8 @@ local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DT = E:GetModule('DataTexts')
 local ObjectName = 'TimerEvent'
 local LogCategory = 'HETimer'
-local _OfflineDelta = 70  -- Seconds before you consider another unit offline
+local _OfflineDelta = 120  -- Seconds before you consider another unit offline
+local _HeartbeatDelta = 60
 
 TimerEvent = {}
 
@@ -33,7 +34,7 @@ end
 
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
+		--XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
         XFG:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
         XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", 60)
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
@@ -42,8 +43,8 @@ function TimerEvent:Initialize()
         XFG:Info(LogCategory, "Scheduled initialization to occur once guild information is available")
         XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineDelta) -- config
         XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineDelta)
-        XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, 60) -- config
-        XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", 60)
+        XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, _HeartbeatDelta) -- config
+        XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", _HeartbeatDelta)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -83,12 +84,13 @@ function TimerEvent:CallbackMailboxTimer()
     XFG.Network.Mailbox:Purge()
 end
 
--- WoW has funky timing about getting guild info on first login, its not before PLAYER_ENTERING_WORLD so have to poll
+-- WoW has funky timing about getting guild and race info on first login, its not before PLAYER_ENTERING_WORLD so have to poll
 function TimerEvent:CallbackLogin()
     XFG.Player.GuildName = GetGuildInfo('player')
+    local _, _, _RaceName = GetPlayerInfoByGUID(XFG.Player.GUID)
 
-    if(XFG.Player.GuildName ~= nil) then
-        XFG:Info(LogCategory, "Successfully got guild info, disabling poller and continuing setup")
+    if(XFG.Player.GuildName ~= nil and _RaceName ~= nil) then
+        XFG:Info(LogCategory, "Successfully got guild and race info, disabling poller and continuing setup")
         XFG:CancelTimer(XFG.Cache.CallbackTimerID)
         table.RemoveKey(XFG.Cache, 'CallbackTimerID')
 
@@ -98,6 +100,7 @@ function TimerEvent:CallbackLogin()
         XFG.Covenants = CovenantCollection:new(); XFG.Covenants:Initialize()
         XFG.Soulbinds = SoulbindCollection:new(); XFG.Soulbinds:Initialize()
         XFG.Professions = ProfessionCollection:new(); XFG.Professions:Initialize()
+        XFG.Professions:Print()
 
         XFG:Info(LogCategory, "Initializing local guild roster cache")
 	    local _TotalMembers, _, _OnlineMembers = GetNumGuildMembers()
@@ -144,7 +147,7 @@ end
 
 -- Periodically send update to avoid other considering you offline
 function TimerEvent:CallbackHeartbeat()
-    if(XFG.Player.Unit:GetTimeStamp() + 60 < GetServerTime()) then
+    if(XFG.Initialized and XFG.Player.Unit:GetTimeStamp() + _HeartbeatDelta < GetServerTime()) then
         XFG:Debug(LogCategory, "Sending heartbeat")
         XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
     end

@@ -2,7 +2,53 @@ local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ProfessionCollection'
 local LogCategory = 'UCProfession'
 
-local _ProfessionIDs = { 182, 186, 197, 202, 171, 773, 165, 333, 164, 755, 393 }
+local _ProfessionData = { 
+	Herbalism = {
+		ID = 182,
+		Icon = 136065
+	}, 
+	Mining = {
+		ID = 186,
+		Icon = 136248
+	}, 
+	Tailoring = {
+		ID = 197,
+		Icon = 136249
+	}, 
+	Engineering = {
+		ID = 202,
+		Icon = 136243
+	}, 
+	Alchemy = {
+		ID = 171,
+		Icon = 136240
+	}, 
+	Inscription = {
+		ID = 773,
+		Icon = 237171
+	}, 
+	Leatherworking = {
+		ID = 165,
+		Icon = 133611
+	}, 
+	Enchanting = {
+		ID = 333,
+		Icon = 136244
+	}, 
+	Blacksmithing = {
+		ID = 164,
+		Icon = 136241
+	}, 
+	Jewelcrafting = {
+		ID = 755,
+		Icon = 134071
+	}, 
+	Skinning = {
+		ID = 393,
+		Icon = 134366
+	}
+}
+
 ProfessionCollection = {}
 
 function ProfessionCollection:new(inObject)
@@ -34,9 +80,10 @@ end
 
 function ProfessionCollection:Initialize()
 	if(self:IsInitialized() == false) then
-		for _, _ProfessionID in pairs (C_TradeSkillUI.GetAllProfessionTradeSkillLines()) do
+		for _ProfessionName, _ProfessionIDs in pairs (_ProfessionData) do
 			local _NewProfession = Profession:new()
-			_NewProfession:SetID(_ProfessionID)
+			_NewProfession:SetID(_ProfessionIDs.ID)
+			_NewProfession:SetIconID(_ProfessionIDs.Icon)
 			_NewProfession:Initialize()
 			self:AddProfession(_NewProfession)
 		end	
@@ -86,3 +133,4 @@ end
 function ProfessionCollection:Iterator()
 	return next, self._Professions, nil
 end
+

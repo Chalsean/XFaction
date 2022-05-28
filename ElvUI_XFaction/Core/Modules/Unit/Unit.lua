@@ -46,6 +46,7 @@ function Unit:new(_Argument)
         self._IsOnMainGuild = false
         self._Faction = false
         self._Team = nil
+        self._Initialized = false
 
         -- These two will be redundant but necessary when marshaling data
         self._GuildName = nil
@@ -69,6 +70,10 @@ function Unit:Initialize(_Argument)
 	self:IsOnline(_online)
 	self:IsMobile(_isMobile)
     self:SetFaction(XFG.Player.Faction)
+
+    if(self:IsOffline()) then
+        return
+    end
     
 	if(_zone == nil and self:IsPlayer()) then
         _zone = GetZoneText()
@@ -90,13 +95,16 @@ function Unit:Initialize(_Argument)
     self:SetClass(XFG.Classes:GetClass(_class))
 
     -- Sometimes this call fails, but retry logic seems to work
-    local _RaceName
-    for i = 1, 10 do
-        _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
-        if(_RaceName ~= nil) then
-            self:SetRace(XFG.Races:GetRaceByName(_RaceName, XFG.Player.Faction:GetName()))
-            break
-        end    
+
+    _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
+    if(_RaceName ~= nil) then
+        self:SetRace(XFG.Races:GetRaceByName(_RaceName, XFG.Player.Faction:GetName()))
+    else
+        local _GUID = self:GetGUID()
+        local _Name = self:GetUnitName()
+        local _Index = self:GetGuildIndex()
+        XFG:Error(LogCategory, "Failed to get race [%s][%s][%d]", _GUID, _Name, _Index)
+        return
     end
 
     local _RankID = C_GuildInfo.GetGuildRankOrder(self:GetGUID())
@@ -141,7 +149,7 @@ function Unit:Initialize(_Argument)
     
     local _Note = self:GetNote()
     local _UpperNote = string.upper(_Note)
-	if(string.match(_UpperNote, "%[EN?KA%]")) then
+	if(string.match(_UpperNote, "%[EN?KA?H?%]")) then
 		self:IsAlt(true)
         local _MainName = string.match(_Note, "(%w+)$") 
         if(_MainName ~= nil) then
@@ -161,6 +169,16 @@ function Unit:Initialize(_Argument)
         local _Team = XFG.Teams:GetTeam('U')
         self:SetTeam(_Team)
     end
+
+    self:IsInitialized(true)
+end
+
+function Unit:IsInitialized(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument needs to be nil or boolean")
+    if(type(inBoolean) == 'boolean') then
+        self._Initialized = inBoolean
+    end
+    return self._Initialized
 end
 
 function Unit:Print()
