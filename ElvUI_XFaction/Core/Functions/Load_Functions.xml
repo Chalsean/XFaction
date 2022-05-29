@@ -1,7 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file='Class\ColorString.lua'/>
-    <Script file='String\Split.lua'/>
+    <!--<Script file='Exception\TryCatch.lua'/>-->
     <Script file='Math\UID.lua'/>
+    <Script file='String\Split.lua'/>
     <Script file='Table\PairsByKeys.lua'/>
     <Script file='Table\RemoveKey.lua'/>
 </Ui>

@@ -13,9 +13,10 @@ Engine[5] = P
 Engine[6] = G
 _G[addon] = Engine
 
+XFG.AddonName = addon
 XFG.Category = 'XFaction'
-XFG.XFGfig = {}
-XFG.XFGfig.BroadcastNonAddon = false
+XFG.Config = {}
+XFG.Config.BroadcastNonAddon = false
 XFG.Title = format('|cff33ccff%s|r', 'XFaction')
 XFG["RegisteredModules"] = {}
 XFG.Version = tonumber(GetAddOnMetadata(addon, "Version"))
@@ -47,11 +48,14 @@ XFG.Network.Message.Tag = {
 XFG.Network.Message.Subject = {
 	DATA = 'DATA',
 	GUILD_CHAT = 'GCHAT',
-	EVENT = 'EVENT'
+	EVENT = 'EVENT',
+	LOGOUT = 'LOGOUT',
+	WHISPER = 'WHISPER'
 }
 XFG.Network.Type = {
 	BROADCAST = 'BROADCAST',
-	WHISPER = 'WHISPER'
+	WHISPER = 'WHISPER',
+	LOCAL = 'LOCAL'
 }	
 
 XFG.Frames = {}
@@ -84,17 +88,12 @@ XFG.Cache.Teams = {
 }
 
 function XFG:Init()
-	self.initialized = true
-	
-	XFG.Guild = Guild:new()
-	XFG.Guild:SetName('Eternal Kingdom')
-	XFG.Guild:SetKey('EK')
-	XFG.Guild:SetMainRealmName('Proudmoore')
-	XFG.Guild:SetMainGuildName('Eternal Kingdom')	
+	self.initialized = true	
 	
 	-- Globals are lua's version of static variables
 	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
 	XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
+	XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
 	
 	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
 	XFG.Network.BNet.Realms = { 'Proudmoore', 'Area 52' } -- config	
@@ -112,12 +111,6 @@ function XFG:Init()
 	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 	
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()	
-
-	local _GChat = GuildMessage:new()
-	_GChat:SetKey("d;afja")
-	_GChat:SetFromGUID('blargh')
-	XFG:DataDumper(LogCategory, _GChat)
-	_GChat:Print()
 
 	EP:RegisterPlugin(addon, XFG.ConfigCallback)
 end

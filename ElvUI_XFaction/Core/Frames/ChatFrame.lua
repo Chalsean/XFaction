@@ -100,6 +100,7 @@ function ChatFrame:DisplayChat(inEvent, inText, inSenderName, inFaction, inFlags
     -- Thus GUILD can be on multiple chat windows and we need to display on all
     for i = 1, NUM_CHAT_WINDOWS do
         _FrameTable = { GetChatWindowMessages(i) }
+        XFG:DataDumper(LogCategory, _FrameTable)
         local v
         for _, _Name in ipairs(_FrameTable) do
             if _Name == 'GUILD' then

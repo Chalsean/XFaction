@@ -131,3 +131,7 @@ end
 function RealmCollection:Iterator()
 	return next, self._Realms, nil
 end
+
+function RealmCollection:GetNumberOfRealms()
+	return self._RealmCount
+end

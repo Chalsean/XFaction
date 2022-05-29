@@ -122,7 +122,11 @@ function Sender:SendMessage(inMessage, inSendBNet)
 
     local _OutgoingData = XFG:EncodeMessage(inMessage)    
 
-    if(inMessage:GetType() == XFG.Network.Type.BROADCAST) then
+    if(inSendBNet == true and self:BNet(_OutgoingData)) then
+        inMessage:SetType(XFG.Network.Type.LOCAL)
+    end
+
+    if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCALb) then
         -- Anyone listening locally?
         local _Realm = XFG.Realms:GetCurrentRealm()
         if(_Realm:GetNumberRunningAddon() > 1) then
@@ -140,10 +144,6 @@ function Sender:SendMessage(inMessage, inSendBNet)
         end
     elseif(inMessage:GetType() == XFG.Network.Type.WHISPER) then
         self:Whisper(inMessage:GetTo(), _OutgoingData)
-    end
-
-    if(inSendBNet == true) then
-        self:BNet(_OutgoingData)
     end
 end
 
@@ -179,6 +179,7 @@ end
 
 function Sender:BNet(inEncodedMessage)
     if(self:CanBNet()) then
+        local _RealmCount = XFG.Realms:GetNumberOfRealms() - 1
         -- For all the realms associated with the confederate
         for _, _RealmName in pairs (XFG.Network.BNet.Realms) do
             if(_RealmName ~= XFG.Player.RealmName and XFG.Realms:Contains(_RealmName)) then
@@ -187,6 +188,10 @@ function Sender:BNet(inEncodedMessage)
                 if(_Bridger ~= nil) then
                     XFG:Debug(LogCategory, "Whispering BNet bridge [%s] with tag [%s]", _Bridger:GetName(), XFG.Network.Message.Tag.BNET)
                     BNSendGameData(_Bridger:GetID(), XFG.Network.Message.Tag.BNET, inEncodedMessage)
+                    _RealmCount = _RealmCount - 1
+                    if(_RealmCount < 1) then
+                        return true
+                    end
                 end
             end
         end

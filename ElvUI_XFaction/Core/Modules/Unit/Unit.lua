@@ -46,6 +46,7 @@ function Unit:new(_Argument)
         self._IsOnMainGuild = false
         self._Faction = false
         self._Team = nil
+        self._Initialized = false
 
         -- These two will be redundant but necessary when marshaling data
         self._GuildName = nil
@@ -69,6 +70,10 @@ function Unit:Initialize(_Argument)
 	self:IsOnline(_online)
 	self:IsMobile(_isMobile)
     self:SetFaction(XFG.Player.Faction)
+
+    if(self:IsOffline()) then
+        return
+    end
     
 	if(_zone == nil and self:IsPlayer()) then
         _zone = GetZoneText()
@@ -89,14 +94,18 @@ function Unit:Initialize(_Argument)
 
     self:SetClass(XFG.Classes:GetClass(_class))
 
-    -- Sometimes this call fails, but retry logic seems to work
-    local _RaceName
-    for i = 1, 10 do
-        _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
-        if(_RaceName ~= nil) then
-            self:SetRace(XFG.Races:GetRaceByName(_RaceName, XFG.Player.Faction:GetName()))
-            break
-        end    
+    -- This call fails a lot on startup but have been unable to find a replacement
+    -- After given timeframe, assuredly after some unknown event fires, the call is much more stable
+    local _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
+    if(_RaceName ~= nil) then
+        self:SetRace(XFG.Races:GetRaceByName(_RaceName, XFG.Player.Faction:GetName()))
+    end
+
+    if(self:HasRace() == false) then
+        local _GUID = self:GetGUID()
+        local _Name = self:GetUnitName()
+        local _Index = self:GetGuildIndex()
+        XFG:Warn(LogCategory, "Failed to get race [%s][%s][%d]", _GUID, _Name, _Index)
     end
 
     local _RankID = C_GuildInfo.GetGuildRankOrder(self:GetGUID())
@@ -110,6 +119,7 @@ function Unit:Initialize(_Argument)
     self:SetRank(XFG.Ranks:GetRank(_RankID))
 
     if(self:IsPlayer()) then
+        self:IsRunningAddon(true)
         local _CovenantID = C_Covenants.GetActiveCovenantID()
         if(XFG.Covenants:Contains(_CovenantID)) then
             self:SetCovenant(XFG.Covenants:GetCovenant(_CovenantID))
@@ -141,7 +151,7 @@ function Unit:Initialize(_Argument)
     
     local _Note = self:GetNote()
     local _UpperNote = string.upper(_Note)
-	if(string.match(_UpperNote, "%[EN?KA%]")) then
+	if(string.match(_UpperNote, "%[EN?KA?H?%]")) then
 		self:IsAlt(true)
         local _MainName = string.match(_Note, "(%w+)$") 
         if(_MainName ~= nil) then
@@ -161,6 +171,16 @@ function Unit:Initialize(_Argument)
         local _Team = XFG.Teams:GetTeam('U')
         self:SetTeam(_Team)
     end
+
+    self:IsInitialized(true)
+end
+
+function Unit:IsInitialized(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument needs to be nil or boolean")
+    if(type(inBoolean) == 'boolean') then
+        self._Initialized = inBoolean
+    end
+    return self._Initialized
 end
 
 function Unit:Print()
@@ -186,9 +206,9 @@ function Unit:Print()
     XFG:Debug(LogCategory, "  _GuildName (" .. type(self._GuildName) .. "): ".. tostring(self._GuildName))
     XFG:Debug(LogCategory, "  _RealmName (" .. type(self._RealmName) .. "): ".. tostring(self._RealmName))
     XFG:Debug(LogCategory, "  _Team (" .. type(self._Team) .. "): ")
-    self._Team:Print()
+    if(self:HasTeam()) then self._Team:Print() end
     XFG:Debug(LogCategory, "  _Race (" .. type(self._Race) .. "): ")
-    self._Race:Print()
+    if(self:HasRace()) then self._Race:Print() end
     XFG:Debug(LogCategory, "  _Class (" .. type(self._Class) .. "): ")
     self._Class:Print()
     XFG:Debug(LogCategory, "  _Spec (" .. type(self._Spec) .. "): ")

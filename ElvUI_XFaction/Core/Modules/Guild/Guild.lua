@@ -150,18 +150,22 @@ end
 function Guild:OfflineUnits(inDelta)
     assert(type(inDelta) == 'number')
     local _ServerEpochTime = GetServerTime()
-    for _, _Unit in pairs (self._Units) do
+    for _, _Unit in self:Iterator() do
         if(_Unit:IsPlayer() == false) then
             if(_Unit:GetTimeStamp() + inDelta < _ServerEpochTime) then
-                self:RemoveUnit(_Unit)
+                --XFG:DataDumper(LogCategory, _Unit)
+                self:RemoveUnit(_Unit:GetKey())
             end
         end
     end
 end
 
-function Guild:RemoveUnit(inUnit)
-    table.RemoveKey(self._Units, inUnit:GetGUID())
-    self._NumberOfUnits = self._NumberOfUnits - 1
+function Guild:RemoveUnit(inKey)
+    assert(type(inKey) == 'string')
+    if(Guild:Contains(inKey)) then
+        table.RemoveKey(self._Units, inKey)
+        self._NumberOfUnits = self._NumberOfUnits - 1
+    end
 end
 
 function Guild:Iterator()
@@ -170,4 +174,26 @@ end
 
 function Guild:GetNumberOfUnits()
     return self._NumberOfUnits
+end
+
+function Guild:CreateBackup()
+    XFG.DB.Backup = {}
+    for _UnitKey, _Unit in self:Iterator() do
+        if(_Unit:IsRunningAddon() and _Unit:IsPlayer() == false) then
+            XFG.DB.Backup[_UnitKey] = {}
+            local _Tarball = XFG:TarballUnitData(_Unit)
+            for _Key, _Value in pairs (_Tarball) do
+                XFG.DB.Backup[_UnitKey][_Key] = _Value
+            end
+        end
+    end
+end
+
+function Guild:RestoreBackup()
+    for _, _Tarball in pairs (XFG.DB.Backup) do
+        local _UnitData = XFG:ExtractTarball(_Tarball)
+        if(self:AddUnit(_UnitData)) then
+            XFG:Info(LogCategory, "  Restored %s information from backup", _UnitData:GetUnitName())
+        end
+    end
 end
