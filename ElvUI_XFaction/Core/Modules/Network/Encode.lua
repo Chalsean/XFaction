@@ -5,15 +5,9 @@ local Initialized = false
 -- To reduce payload, strip out unnecessary key characters, replace text with ids, compress, etc.
 -- The message will get reconstructed to original state on receiving end
 function XFG:EncodeMessage(inMessage)
-	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be a Message object")
 
+	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be a Message object")
 	local _MessageData = {}
-	_MessageData.K = inMessage:GetKey()
-	_MessageData.To = inMessage:GetTo()
-	_MessageData.F = inMessage:GetFrom()	
-	_MessageData.S = inMessage:GetSubject()
-	_MessageData.Ty = inMessage:GetType()	
-	_MessageData.TS = inMessage:GetTimeStamp()
 
 	if(inMessage.__name == 'GuildMessage') then
 		_MessageData.FG = inMessage:GetFromGUID()
@@ -21,73 +15,80 @@ function XFG:EncodeMessage(inMessage)
 		_MessageData.FN = _Faction:GetKey()
 		_MessageData.Fl = inMessage:GetFlags()
 		_MessageData.LI = inMessage:GetLineID()
-	end
-
-	if(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA) then
-		local _UnitData = inMessage:GetData()
-
-		_MessageData.GI = _UnitData:GetGuildIndex()
-		_MessageData.N = _UnitData:GetName()
-		_MessageData.GN = _UnitData:GetGuildName()
-		--_MessageUnitData.GR = _UnitData:GetGuildRank()
-		_MessageData.L = _UnitData:GetLevel()
-		_MessageData.No = _UnitData:GetNote()
-		_MessageData.O = (_UnitData:IsOnline() == true) and 1 or 0
-		--_MessageUnitData.S = _UnitData:GetStatus()
-		_MessageData.M = (_UnitData:IsMobile() == true) and 1 or 0
-		_MessageData.G = _UnitData:GetGUID()
-		_MessageData.TS = _UnitData:GetTimeStamp()		
-		_MessageData.A = (_UnitData:IsAlt() == true) and 1 or 0
-		_MessageData.RA = (_UnitData:IsRunningAddon() == true) and 1 or 0
-		_MessageData.U = _UnitData:GetUnitName()
-		_MessageData.RN = _UnitData:GetRealmName()
-		_MessageData.Z = _UnitData:GetZone()
-		_MessageData.MN = _UnitData:GetMainName()
-
-		local _Team = _UnitData:GetTeam()
-		_MessageData.T = _Team:GetKey()
-
-		local _Faction = _UnitData:GetFaction()
-		_MessageData.Fa = _Faction:GetKey()
-
-		local _Class = _UnitData:GetClass()
-		_MessageData.C = _Class:GetKey()
-		
-		local _Race = _UnitData:GetRace()
-		_MessageData.R = _Race:GetKey()
-
-		if(_UnitData:HasCovenant()) then
-			local _Covenant = _UnitData:GetCovenant()
-			_MessageData.Co = _Covenant:GetKey()
-		 end
-
-		if(_UnitData:HasSoulbind()) then
-			local _Soulbind = _UnitData:GetSoulbind()
-			_MessageData.So = _Soulbind:GetKey()
-		end
-		
-		if(_UnitData:HasProfession1()) then
-			local _Profession = _UnitData:GetProfession1()
-			_MessageData.P1 = _Profession:GetKey()
-		end
-
-		if(_UnitData:HasProfession2()) then
-			local _Profession = _UnitData:GetProfession2()
-			_MessageData.P2 = _Profession:GetKey()
-		end
-
-		if(_UnitData:HasSpec()) then
-			local _Spec = _UnitData:GetSpec()
-			_MessageData.X = _Spec:GetKey()
-		end
-
-		-- Rare instance where whole object is sent, receiver may not have seen this rank yet
-		--_MessageData.GR = _UnitData:GetRank()
-	else
 		_MessageData.Y = inMessage:GetData()
+	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA) then
+		--_MessageData = XFG:TarballUnitData(inMessage:GetData())
 	end
+
+	_MessageData.K = inMessage:GetKey()
+	_MessageData.To = inMessage:GetTo()
+	_MessageData.F = inMessage:GetFrom()	
+	_MessageData.S = inMessage:GetSubject()
+	_MessageData.Ty = inMessage:GetType()
+	_MessageData.TS = inMessage:GetTimeStamp()
 
 	local _Serialized = XFG:Serialize(_MessageData)
 	local _Compressed = XFG.Lib.Compress:Compress(_Serialized)
 	return XFG.Lib.Encode:Encode(_Compressed)
+end
+
+function XFG:TarballUnitData(inUnitData)
+	local _MessageData = {}
+
+	_MessageData.GI = inUnitData:GetGuildIndex()
+	_MessageData.N = inUnitData:GetName()
+	_MessageData.GN = inUnitData:GetGuildName()
+	--_MessageUnitData.GR = _UnitData:GetGuildRank()
+	_MessageData.L = inUnitData:GetLevel()
+	_MessageData.No = inUnitData:GetNote()
+	_MessageData.O = (inUnitData:IsOnline() == true) and 1 or 0
+	--_MessageUnitData.S = _UnitData:GetStatus()
+	_MessageData.M = (inUnitData:IsMobile() == true) and 1 or 0
+	_MessageData.G = inUnitData:GetGUID()
+	_MessageData.TS = inUnitData:GetTimeStamp()		
+	_MessageData.A = (inUnitData:IsAlt() == true) and 1 or 0
+	_MessageData.RA = (inUnitData:IsRunningAddon() == true) and 1 or 0
+	_MessageData.U = inUnitData:GetUnitName()
+	_MessageData.RN = inUnitData:GetRealmName()
+	_MessageData.Z = inUnitData:GetZone()
+	_MessageData.MN = inUnitData:GetMainName()
+
+	local _Team = inUnitData:GetTeam()
+	_MessageData.T = _Team:GetKey()
+
+	local _Faction = inUnitData:GetFaction()
+	_MessageData.Fa = _Faction:GetKey()
+
+	local _Class = inUnitData:GetClass()
+	_MessageData.C = _Class:GetKey()
+	
+	local _Race = inUnitData:GetRace()
+	_MessageData.R = _Race:GetKey()
+
+	if(inUnitData:HasCovenant()) then
+		local _Covenant = inUnitData:GetCovenant()
+		_MessageData.Co = _Covenant:GetKey()
+	 end
+
+	if(inUnitData:HasSoulbind()) then
+		local _Soulbind = inUnitData:GetSoulbind()
+		_MessageData.So = _Soulbind:GetKey()
+	end
+	
+	if(inUnitData:HasProfession1()) then
+		local _Profession = inUnitData:GetProfession1()
+		_MessageData.P1 = _Profession:GetKey()
+	end
+
+	if(inUnitData:HasProfession2()) then
+		local _Profession = inUnitData:GetProfession2()
+		_MessageData.P2 = _Profession:GetKey()
+	end
+
+	if(inUnitData:HasSpec()) then
+		local _Spec = inUnitData:GetSpec()
+		_MessageData.X = _Spec:GetKey()
+	end	
+
+	return _MessageData
 end

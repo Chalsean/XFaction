@@ -13,9 +13,10 @@ Engine[5] = P
 Engine[6] = G
 _G[addon] = Engine
 
+XFG.AddonName = addon
 XFG.Category = 'XFaction'
-XFG.XFGfig = {}
-XFG.XFGfig.BroadcastNonAddon = false
+XFG.Config = {}
+XFG.Config.BroadcastNonAddon = false
 XFG.Title = format('|cff33ccff%s|r', 'XFaction')
 XFG["RegisteredModules"] = {}
 XFG.Version = tonumber(GetAddOnMetadata(addon, "Version"))
@@ -86,13 +87,7 @@ XFG.Cache.Teams = {
 }
 
 function XFG:Init()
-	self.initialized = true
-	
-	XFG.Guild = Guild:new()
-	XFG.Guild:SetName('Eternal Kingdom')
-	XFG.Guild:SetKey('EK')
-	XFG.Guild:SetMainRealmName('Proudmoore')
-	XFG.Guild:SetMainGuildName('Eternal Kingdom')	
+	self.initialized = true	
 	
 	-- Globals are lua's version of static variables
 	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	

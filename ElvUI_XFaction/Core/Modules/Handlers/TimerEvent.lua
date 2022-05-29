@@ -4,6 +4,7 @@ local ObjectName = 'TimerEvent'
 local LogCategory = 'HETimer'
 local _OfflineDelta = 120  -- Seconds before you consider another unit offline
 local _HeartbeatDelta = 60
+local _GuildRosterDelta = 5
 
 TimerEvent = {}
 
@@ -45,7 +46,9 @@ function TimerEvent:Initialize()
         XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineDelta)
         XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, _HeartbeatDelta) -- config
         XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", _HeartbeatDelta)
-		self:IsInitialized(true)
+        XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, _GuildRosterDelta) -- config
+        XFG:Info(LogCategory, "Scheduled forcing guild roster updates for %d seconds", _GuildRosterDelta)
+        self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
@@ -86,13 +89,15 @@ end
 
 -- WoW has funky timing about getting guild and race info on first login, its not before PLAYER_ENTERING_WORLD so have to poll
 function TimerEvent:CallbackLogin()
-    XFG.Player.GuildName = GetGuildInfo('player')
+
     local _, _, _RaceName = GetPlayerInfoByGUID(XFG.Player.GUID)
 
-    if(XFG.Player.GuildName ~= nil and _RaceName ~= nil) then
-        XFG:Info(LogCategory, "Successfully got guild and race info, disabling poller and continuing setup")
+    if(IsAddOnLoaded(XFG.AddonName) and _RaceName ~= nil) then
+        XFG:Info(LogCategory, "Addon is loaded, disabling poller and continuing setup")
         XFG:CancelTimer(XFG.Cache.CallbackTimerID)
         table.RemoveKey(XFG.Cache, 'CallbackTimerID')
+
+        XFG.Player.GuildName = GetGuildInfo('player')
 
         XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
         XFG.Classes = ClassCollection:new(); XFG.Classes:Initialize()
@@ -100,8 +105,22 @@ function TimerEvent:CallbackLogin()
         XFG.Covenants = CovenantCollection:new(); XFG.Covenants:Initialize()
         XFG.Soulbinds = SoulbindCollection:new(); XFG.Soulbinds:Initialize()
         XFG.Professions = ProfessionCollection:new(); XFG.Professions:Initialize()
-        XFG.Professions:Print()
+        
+        -- Leverage AceDB is persist remote unit information
+        XFG.DataDB = LibStub("AceDB-3.0"):New("XFactionDataDB", defaults, true)
+        XFG.DB = XFG.DataDB.global
 
+        XFG.Guild = Guild:new()
+        XFG.Guild:SetName('Eternal Kingdom')
+        XFG.Guild:SetKey('EK')
+        XFG.Guild:SetMainRealmName('Proudmoore')
+        XFG.Guild:SetMainGuildName('Eternal Kingdom')
+
+        -- If this is a reload, restore backup
+        if(XFG.DB.UIReload) then
+            XFG.Guild:RestoreBackup()
+        end
+  
         XFG:Info(LogCategory, "Initializing local guild roster cache")
 	    local _TotalMembers, _, _OnlineMembers = GetNumGuildMembers()
 	
@@ -115,6 +134,8 @@ function TimerEvent:CallbackLogin()
                     XFG.Player.Unit = _UnitData                    
                     XFG.Player.Unit:Print()                    
                 end
+            elseif(XFG.Guild:Contains(_UnitData:GetKey())) then
+                XFG.Guild:RemoveUnit(_UnitData:GetKey())
             end
         end
 
@@ -130,10 +151,10 @@ function TimerEvent:CallbackLogin()
         XFG.Handlers.ProfessionEvent = ProfessionEvent:new(); XFG.Handlers.ProfessionEvent:Initialize()
         XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
 
-        if(XFG.UIReload == false) then
+        if(XFG.DB.UIReload == false) then
             XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
         end
-        XFG.UIReload = false
+        XFG.DB.UIReload = false
         XFG.Initialized = true
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
@@ -150,5 +171,15 @@ function TimerEvent:CallbackHeartbeat()
     if(XFG.Initialized and XFG.Player.Unit:GetTimeStamp() + _HeartbeatDelta < GetServerTime()) then
         XFG:Debug(LogCategory, "Sending heartbeat")
         XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
+    end
+end
+
+-- Double check that information is kosher, if not, force a refresh
+function TimerEvent:CallbackGuildRoster()
+    for _, _Unit in XFG.Guild:Iterator() do
+        if(_Unit:HasRace() == false) then
+            C_GuildInfo.GuildRoster()
+            break
+        end
     end
 end

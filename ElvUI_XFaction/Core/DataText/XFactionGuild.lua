@@ -145,11 +145,9 @@ local function OnEnter(self)
 			local _TeamName = _UnitData:GetTeamName()
 			tooltip:SetCell(line, 9, format("|cffffffff%s|r", _TeamName))
 
-			if(_UnitData:HasRank()) then
-				local _Rank = _UnitData:GetRank()
-				local _RankName = _Rank:GetAltName()
-				tooltip:SetCell(line, 10, format("|cffffffff%s|r", _RankName))
-			end
+			local _Rank = _UnitData:GetRank()
+			local _RankName = _Rank:GetAltName()
+			tooltip:SetCell(line, 10, format("|cffffffff%s|r", _RankName))
 
 			local _Zone = _UnitData:GetZone()
 			tooltip:SetCell(line, 11, format("|cffffffff%s|r", _Zone))

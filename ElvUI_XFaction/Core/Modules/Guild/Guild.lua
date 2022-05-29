@@ -173,3 +173,25 @@ end
 function Guild:GetNumberOfUnits()
     return self._NumberOfUnits
 end
+
+function Guild:CreateBackup()
+    XFG.DB.Backup = {}
+    for _UnitKey, _Unit in self:Iterator() do
+        --if(_Unit:IsRunningAddon() and _Unit:IsPlayer() == false) then
+            XFG.DB.Backup[_UnitKey] = {}
+            local _Tarball = XFG:TarballUnitData(_Unit)
+            for _Key, _Value in pairs (_Tarball) do
+                XFG.DB.Backup[_UnitKey][_Key] = _Value
+            end
+        --end
+    end
+end
+
+function Guild:RestoreBackup()
+    for _, _Tarball in pairs (XFG.DB.Backup) do
+        local _UnitData = XFG:ExtractTarball(_Tarball)
+        if(self:AddUnit(_UnitData)) then
+            XFG:Info(LogCategory, "  Restored %s information from backup", _UnitData:GetUnitName())
+        end
+    end
+end

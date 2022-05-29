@@ -34,7 +34,7 @@ function SystemEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		XFG:RegisterEvent('PLAYER_ENTERING_WORLD', self.CallbackEnterWorld)
         XFG:Info(LogCategory, "Registered for PLAYER_ENTERING_WORLD events")
-        XFG:RegisterEvent('PLAYER_LOGOUT', self.CallbackLogout)
+        XFG:RegisterEvent('PLAYER_LEAVING_WORLD', self.CallbackLogout)
         XFG:Info(LogCategory, "Registered for PLAYER_LOGOUT events")
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
         XFG:Info(LogCategory, "Created hook for pre-ReloadUI")
@@ -62,14 +62,18 @@ function SystemEvent:CallbackEnterWorld(inInitialLogin, inReloadUI)
 end
 
 function SystemEvent:CallbackLogout()
-    if(XFG.UIReload) then return end
-    local _NewMessage = Message:new()
-    _NewMessage:Initiate()
-    _NewMessage:SetType(XFG.Network.Type.BROADCAST)
-    _NewMessage:SetSubject(XFG.Network.Message.Subject.LOGOUT)
-    XFG.Network.Sender:SendMessage(_NewMessage, true)
+    if(XFG.DB.UIReload) then 
+        -- Backup information on reload to be restored
+        XFG.Guild:CreateBackup()
+    else
+        local _NewMessage = Message:new()
+        _NewMessage:Initiate()
+        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
+        _NewMessage:SetSubject(XFG.Network.Message.Subject.LOGOUT)
+        XFG.Network.Sender:SendMessage(_NewMessage, true)
+    end    
 end
 
 function SystemEvent:CallbackReloadUI()
-    XFG.UIReload = true
+    XFG.DB.UIReload = true
 end

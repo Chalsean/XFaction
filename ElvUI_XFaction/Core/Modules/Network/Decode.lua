@@ -32,56 +32,54 @@ function XFG:DecodeMessage(inMessage)
 	end
 
 	if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA) then
-		local _UnitData = Unit:new()
-		_UnitData:SetKey(_Message:GetFrom())
-		_UnitData:SetGuildIndex(_MessageData.GI)
-		_UnitData:SetName(_MessageData.N)
-		_UnitData:SetGuildName(_MessageData.GN)
-		_UnitData:SetLevel(_MessageData.L)
-		_UnitData:SetNote(_MessageData.No)
-		_UnitData:IsOnline(_MessageData.O == 1)
-		_UnitData:IsMobile(_MessageData.M == 1)
-		_UnitData:SetGUID(_MessageData.G)
-		_UnitData:SetTimeStamp(_MessageData.TS)
-		_UnitData:SetTeam(XFG.Teams:GetTeam(_MessageData.T))
-		_UnitData:IsAlt(_MessageData.A == 1)
-		_UnitData:IsRunningAddon(_MessageData.RA == 1)
-		_UnitData:SetUnitName(_MessageData.U)
-		_UnitData:SetRealmName(_MessageData.RN)
-		_UnitData:SetZone(_MessageData.Z)
-		_UnitData:SetFaction(XFG.Factions:GetFaction(_MessageData.Fa))
-		_UnitData:SetClass(XFG.Classes:GetClass(_MessageData.C))
-		_UnitData:SetRace(XFG.Races:GetRace(_MessageData.R))
-		
-		if(_MessageData.MN ~= nil) then 
-			_UnitData:SetMainName(_MessageData.MN)
-		end
-		if(_MessageData.Co ~= nil) then
-			_UnitData:SetCovenant(XFG.Covenants:GetCovenant(_MessageData.Co))
-		end
-		if(_MessageData.So ~= nil) then
-			_UnitData:SetSoulbind(XFG.Soulbinds:GetSoulbind(_MessageData.So))
-		end
-		if(_MessageData.P1 ~= nil) then
-			_UnitData:SetProfession1(XFG.Professions:GetProfession(_MessageData.P1))
-		end
-		if(_MessageData.P2 ~= nil) then
-			_UnitData:SetProfession2(XFG.Professions:GetProfession(_MessageData.P2))
-		end
-		if(_MessageData.X ~= nil) then
-			_UnitData:SetSpec(XFG.Specs:GetSpec(_MessageData.X))
-		end
-		-- if(_MessageData.GR ~= nil) then
-		-- 	XFG:DataDumper(LogCategory, _MessageData.GR)
-		-- 	if(XFG.Ranks:Contains(_MessageData.GR:GetKey()) == false) then
-		-- 		XFG.Ranks:AddRank(_MessageData.GR)
-		-- 	end
-		-- 	_UnitData:SetRank(_MessageData.GR)
-		-- end
+		local _UnitData = XFG:ExtractTarball(_MessageData)
 		_Message:SetData(_UnitData)
 	else
 		_Message:SetData(_MessageData.Y)
 	end
 
 	return _Message
+end
+
+function XFG:ExtractTarball(inTarball)
+	local _UnitData = Unit:new()
+	_UnitData:SetKey(inTarball.G)
+	_UnitData:SetGuildIndex(inTarball.GI)
+	_UnitData:SetName(inTarball.N)
+	_UnitData:SetGuildName(inTarball.GN)
+	_UnitData:SetLevel(inTarball.L)
+	_UnitData:SetNote(inTarball.No)
+	_UnitData:IsOnline(inTarball.O == 1)
+	_UnitData:IsMobile(inTarball.M == 1)
+	_UnitData:SetGUID(inTarball.G)
+	_UnitData:SetTimeStamp(inTarball.TS)
+	_UnitData:SetTeam(XFG.Teams:GetTeam(inTarball.T))
+	_UnitData:IsAlt(inTarball.A == 1)
+	_UnitData:IsRunningAddon(inTarball.RA == 1)
+	_UnitData:SetUnitName(inTarball.U)
+	_UnitData:SetRealmName(inTarball.RN)
+	_UnitData:SetZone(inTarball.Z)
+	_UnitData:SetFaction(XFG.Factions:GetFaction(inTarball.Fa))
+	_UnitData:SetClass(XFG.Classes:GetClass(inTarball.C))
+	_UnitData:SetRace(XFG.Races:GetRace(inTarball.R))
+	
+	if(inTarball.MN ~= nil) then 
+		_UnitData:SetMainName(inTarball.MN)
+	end
+	if(inTarball.Co ~= nil) then
+		_UnitData:SetCovenant(XFG.Covenants:GetCovenant(inTarball.Co))
+	end
+	if(inTarball.So ~= nil) then
+		_UnitData:SetSoulbind(XFG.Soulbinds:GetSoulbind(inTarball.So))
+	end
+	if(inTarball.P1 ~= nil) then
+		_UnitData:SetProfession1(XFG.Professions:GetProfession(inTarball.P1))
+	end
+	if(inTarball.P2 ~= nil) then
+		_UnitData:SetProfession2(XFG.Professions:GetProfession(inTarball.P2))
+	end
+	if(inTarball.X ~= nil) then
+		_UnitData:SetSpec(XFG.Specs:GetSpec(inTarball.X))
+	end
+	return _UnitData
 end

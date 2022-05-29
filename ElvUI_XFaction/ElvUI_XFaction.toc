@@ -6,6 +6,7 @@
 ## RequiredDeps: ElvUI
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
+## SavedVariables: XFactionDataDB
 
 Libraries\Load_Libraries.xml
 Core\Libraries\Load_Libraries.xml

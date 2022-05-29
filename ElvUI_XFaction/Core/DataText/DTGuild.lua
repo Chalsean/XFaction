@@ -107,12 +107,16 @@ local function OnEnter(self)
 				tooltip:SetCell(line, 5, format('%s', format(IconTokenString, _CovenantIconID)))
 			end
 
-			-- if(UnitData.Profession1 ~= nil and UnitData.Profession1.Icon ~= nil) then
-			-- 	tooltip:SetCell(line, 12, format('%s', format(IconTokenString, UnitData.Profession1.Icon)))
-			-- end
-			-- if(UnitData.Profession2 ~= nil and UnitData.Profession2.Icon ~= nil) then
-			-- 	tooltip:SetCell(line, 13, format('%s', format(IconTokenString, UnitData.Profession2.Icon)))
-			-- end
+			if(_UnitData:HasProfession1()) then
+				local _Profession = _UnitData:GetProfession1()
+				local _IconID = _Profession:GetIconID()
+				tooltip:SetCell(line, 12, format('%s', format(IconTokenString, _IconID)))
+			end
+			if(_UnitData:HasProfession2()) then
+				local _Profession = _UnitData:GetProfession2()
+				local _IconID = _Profession:GetIconID()
+				tooltip:SetCell(line, 13, format('%s', format(IconTokenString, _IconID)))
+			end
 
 			if(_UnitData:HasSpec()) then
 				local _Spec = _UnitData:GetSpec()
@@ -128,8 +132,11 @@ local function OnEnter(self)
 			local _ClassName = _Class:GetAPIName()
 			tooltip:SetCell(line, 4, ClassColorString(_Name, _ClassName))	
 
-			local _Race = _UnitData:GetRace()
-			local _RaceName = _Race:GetName()
+			local _RaceName = "?"
+			if(_UnitData:HasRace()) then
+				local _Race = _UnitData:GetRace()
+				_RaceName = _Race:GetName()
+			end
 			tooltip:SetCell(line, 6, format("|cffffffff%s|r", _RaceName))
 
 			local _Level = _UnitData:GetLevel()
@@ -145,11 +152,11 @@ local function OnEnter(self)
 			local _TeamName = _Team:GetName()
 			tooltip:SetCell(line, 9, format("|cffffffff%s|r", _TeamName))
 
-			if(_UnitData:HasRank()) then
-				local _Rank = _UnitData:GetRank()
-				local _RankName = _Rank:GetAltName()
-				tooltip:SetCell(line, 10, format("|cffffffff%s|r", _RankName))
-			end
+			-- if(_UnitData:HasRank()) then
+			-- 	local _Rank = _UnitData:GetRank()
+			-- 	local _RankName = _Rank:GetAltName()
+			-- 	tooltip:SetCell(line, 10, format("|cffffffff%s|r", _RankName))
+			-- end
 
 			local _Zone = _UnitData:GetZone()
 			tooltip:SetCell(line, 11, format("|cffffffff%s|r", _Zone))
