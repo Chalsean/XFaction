@@ -92,10 +92,6 @@ end
 
 function ChatFrame:DisplayChat(inEvent, inText, inSenderName, inFaction, inFlags, inLineID, inSenderGUID)
     local _FrameTable
-    XFG:DataDumper(LogCategory, inSenderName)
-    XFG:DataDumper(LogCategory, inSenderGUID)
-    XFG:DataDumper(LogCategory, inFlags)
-    XFG:DataDumper(LogCategory, inLineID)
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
     for i = 1, NUM_CHAT_WINDOWS do

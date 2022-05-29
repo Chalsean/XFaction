@@ -16,7 +16,6 @@ _G[addon] = Engine
 XFG.AddonName = addon
 XFG.Category = 'XFaction'
 XFG.Config = {}
-XFG.Config.BroadcastNonAddon = false
 XFG.Title = format('|cff33ccff%s|r', 'XFaction')
 XFG["RegisteredModules"] = {}
 XFG.Version = tonumber(GetAddOnMetadata(addon, "Version"))
@@ -30,7 +29,10 @@ XFG.Lib.Realm = LibStub:GetLibrary('LibRealmInfo')
 
 XFG.DataText = {}
 XFG.DataText.Guild = {}
-XFG.DataText.Guild.Name = 'Guild (X)'
+
+--return function(a, b) if(XFG.DataText.Guild.ReverseSort) then return a[inColumnName] > b[inColumnName] 
+--else return a[inColumnName] < b[inColumnName] end
+
 XFG.DataText.Soulbind = {}
 XFG.DataText.Soulbind.Name = 'Soulbind (X)'
 

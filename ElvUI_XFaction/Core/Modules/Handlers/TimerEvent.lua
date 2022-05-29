@@ -42,8 +42,8 @@ function TimerEvent:Initialize()
         XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", 60 * 5)
         XFG.Cache.CallbackTimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, 1) -- config
         XFG:Info(LogCategory, "Scheduled initialization to occur once guild information is available")
-        --XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineDelta) -- config
-        --XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineDelta)
+        XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineDelta) -- config
+        XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineDelta)
         XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, _HeartbeatDelta) -- config
         XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", _HeartbeatDelta)
         XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, _GuildRosterDelta) -- config
