@@ -50,6 +50,7 @@ local function PreSort()
 		_UnitData[XFG.DataText.Guild.ColumnNames.GUILD] = _Unit:GetGuildName()
 		_UnitData[XFG.DataText.Guild.ColumnNames.ZONE] = _Unit:GetZone()
 		_UnitData[XFG.DataText.Guild.ColumnNames.NAME] = _Unit:GetName()
+		_UnitData.UnitName = _Unit:GetUnitName()
 		if(_Unit:IsAlt() and _Unit:HasMainName()) then
 			_UnitData[XFG.DataText.Guild.ColumnNames.NAME] = _Unit:GetName() .. " (" .. _Unit:GetMainName() .. ")"
 		end
@@ -104,6 +105,26 @@ local function SetSortColumn(_, inColumnName)
 		XFG.DataText.Guild.ReverseSort = false
 	end
 	OnEnter(LDB_ANCHOR)
+end
+
+local function LineClick(_, inUnitName, inMouseButton)
+	if inMouseButton == "LeftButton" then
+		if IsShiftKeyDown() then
+			-- Who
+			SetItemRef("player:"..inUnitName, format("|Hplayer:%1$s|h[%1$s]|h", inUnitName), "LeftButton" ) 
+		else	
+			-- Whisper		
+			SetItemRef("player:"..inUnitName, format("|Hplayer:%1$s|h[%1$s]|h", inUnitName), "LeftButton" ) 
+		end		
+	elseif inMouseButton == "RightButton" then
+		if IsShiftKeyDown() then
+			-- Invite
+			C_PartyInfo.InviteUnit(inUnitName)
+		else
+			-- Menu
+			SetItemRef("player:"..inUnitName, format("|Hplayer:%1$s|h[%1$s]|h", inUnitName), "RightButton" )
+		end
+	end
 end
 
 local function OnEvent(self, event, ...)
@@ -190,6 +211,8 @@ function OnEnter(self)
 			tooltip:SetCell(line, 11, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.ZONE]))
 			if(_UnitData.Profession1 ~= nil) then tooltip:SetCell(line, 12, format('%s', format(IconTokenString, _UnitData.Profession1))) end
 			if(_UnitData.Profession2 ~= nil) then tooltip:SetCell(line, 13, format('%s', format(IconTokenString, _UnitData.Profession2))) end
+
+			tooltip:SetLineScript(line, "OnMouseUp", LineClick, _UnitData.UnitName)
 		end
 	end
 

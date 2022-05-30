@@ -86,7 +86,7 @@ function GuildEvent:CallbackRosterUpdate()
                 end
             end
         elseif(XFG.Guild:Contains(_UnitData:GetKey())) then
-            XFG.Guild:RemoveUnit(_UnitData)
+            XFG.Guild:RemoveUnit(_UnitData:GetKey())
         end
     end
     DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
