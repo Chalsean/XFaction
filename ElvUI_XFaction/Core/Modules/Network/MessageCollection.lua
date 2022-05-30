@@ -101,7 +101,7 @@ function MessageCollection:Purge()
 	local _ServerEpochTime = GetServerTime()
 	for _, _Message in pairs(self._Messages) do
 		if(_Message:GetTimeStamp() < _ServerEpochTime - 60 * 5) then -- config
-			self:RemoveMessage(_Message)
+			self:RemoveMessage(_Message:GetKey())
 		end
 	end
 end

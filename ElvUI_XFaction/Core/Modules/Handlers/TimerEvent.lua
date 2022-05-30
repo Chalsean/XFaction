@@ -2,9 +2,9 @@ local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DT = E:GetModule('DataTexts')
 local ObjectName = 'TimerEvent'
 local LogCategory = 'HETimer'
-local _OfflineDelta = 120  -- Seconds before you consider another unit offline
-local _HeartbeatDelta = 60
-local _GuildRosterDelta = 5
+local _OfflineDelta = 60 * 5   -- Seconds before you consider another unit offline
+local _HeartbeatDelta = 60 * 2 -- Seconds between sending your own status, regardless if things have changed
+local _GuildRosterDelta = 30   -- Seconds between local guild scans
 
 TimerEvent = {}
 
@@ -35,7 +35,7 @@ end
 
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
+		--XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
         XFG:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
         XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", 60)
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
@@ -154,13 +154,14 @@ function TimerEvent:CallbackLogin()
         XFG.Handlers.ProfessionEvent = ProfessionEvent:new(); XFG.Handlers.ProfessionEvent:Initialize()
         XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
 
-        if(XFG.DB.UIReload == false) then
-            XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
-        end
+        -- Broadcast login, refresh DTs and ready to roll
+        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
         XFG.DB.UIReload = false
         XFG.Initialized = true
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
+
+        --XFG.Frames.Whisper = WhisperFrame:new(); XFG.Frames.Whisper:Initialize()
     end
 end
 
@@ -177,14 +178,9 @@ function TimerEvent:CallbackHeartbeat()
     end
 end
 
--- Double check that information is kosher, if not, force a refresh
+-- Periodically force a refresh
 function TimerEvent:CallbackGuildRoster()
     if(XFG.Initialized) then
-        for _, _Unit in XFG.Guild:Iterator() do
-            if(_Unit:HasRace() == false) then
-                C_GuildInfo.GuildRoster()
-                break
-            end
-        end
+        C_GuildInfo.GuildRoster()
     end
 end

@@ -29,9 +29,6 @@ XFG.Lib.Realm = LibStub:GetLibrary('LibRealmInfo')
 XFG.DataText = {}
 XFG.DataText.Guild = {}
 
---return function(a, b) if(XFG.DataText.Guild.ReverseSort) then return a[inColumnName] > b[inColumnName] 
---else return a[inColumnName] < b[inColumnName] end
-
 XFG.DataText.Soulbind = {}
 XFG.DataText.Soulbind.Name = 'Soulbind (X)'
 
@@ -43,7 +40,7 @@ XFG.Network.BNet = {}
 XFG.Network.Message = {}
 XFG.Network.ChannelName = 'XFGFaction'
 XFG.Network.Message.Tag = {
-	LOCAL = 'XFG',
+	LOCAL = 'EKXF',
 	BNET = 'EKBNet'
 }
 XFG.Network.Message.Subject = {
@@ -51,7 +48,8 @@ XFG.Network.Message.Subject = {
 	GUILD_CHAT = 'GCHAT',
 	EVENT = 'EVENT',
 	LOGOUT = 'LOGOUT',
-	WHISPER = 'WHISPER'
+	WHISPER = 'WHISPER',
+	LOGIN = 'LOGIN'
 }
 XFG.Network.Type = {
 	BROADCAST = 'BROADCAST',

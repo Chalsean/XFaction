@@ -1,4 +1,5 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
+local DT = E:GetModule('DataTexts')
 local ObjectName = 'Receiver'
 local LogCategory = 'NReceiver'
 
@@ -117,12 +118,6 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         XFG.Network.Sender:SendMessage(_Message)
     end
 
-    -- Ignore if it's your own message
-    -- Due to startup timing, use GUID directly rather than Unit object
-	-- if(_Message:GetFrom() == XFG.Player.GUID) then
-	-- 	return
-	-- end
-
     -- Process GUILD_CHAT message
     if(_Message:GetSubject() == XFG.Network.Message.Subject.GUILD_CHAT) then
         XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.GUILD,
@@ -147,7 +142,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         _UnitData:IsPlayer(false)
         if(XFG.Guild:AddUnit(_UnitData)) then
             XFG:Info(LogCategory, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
-            --XFG.DataText.Guild:OnEnable()
+            DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         end
     end
 end

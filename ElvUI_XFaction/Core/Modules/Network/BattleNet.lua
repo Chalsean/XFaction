@@ -3,15 +3,15 @@ local DB = E.db.Confederation
 local LogCategory = 'NBnet'
 local Initialized = false
 
-local function CallbackBNet(Event, MessageType, ...)
-	local EncodedMessage = {...}
-	XFG:Error(LogCategory, "event trigger [%s][%s]", event, sender)
+-- local function CallbackBNet(Event, MessageType, ...)
+-- 	local EncodedMessage = {...}
+-- 	XFG:Error(LogCategory, "event trigger [%s][%s]", event, sender)
 
-	-- if(MessageType == XFG.Network.Message.BNet) then
-	-- 	local UnitData = XFG:DecodeUnitData(EncodedMessage)
-	-- 	XFG:DataDumper(LogCategory, UnitData)
-	-- end
-end
+-- 	-- if(MessageType == XFG.Network.Message.BNet) then
+-- 	-- 	local UnitData = XFG:DecodeUnitData(EncodedMessage)
+-- 	-- 	XFG:DataDumper(LogCategory, UnitData)
+-- 	-- end
+-- end
 
 local function Initialize()
 	if(Initialized == false) then

@@ -126,7 +126,7 @@ function Sender:SendMessage(inMessage, inSendBNet)
         inMessage:SetType(XFG.Network.Type.LOCAL)
     end
 
-    if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCALb) then
+    if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCAL) then
         -- Anyone listening locally?
         local _Realm = XFG.Realms:GetCurrentRealm()
         if(_Realm:GetNumberRunningAddon() > 1) then

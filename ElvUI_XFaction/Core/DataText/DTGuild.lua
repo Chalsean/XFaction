@@ -50,7 +50,7 @@ local function PreSort()
 		_UnitData[XFG.DataText.Guild.ColumnNames.GUILD] = _Unit:GetGuildName()
 		_UnitData[XFG.DataText.Guild.ColumnNames.ZONE] = _Unit:GetZone()
 		_UnitData[XFG.DataText.Guild.ColumnNames.NAME] = _Unit:GetName()
-		_UnitData.UnitName = _Unit:GetUnitName()
+		_UnitData.GUID = _Unit:GetGUID()
 		if(_Unit:IsAlt() and _Unit:HasMainName()) then
 			_UnitData[XFG.DataText.Guild.ColumnNames.NAME] = _Unit:GetName() .. " (" .. _Unit:GetMainName() .. ")"
 		end
@@ -107,22 +107,28 @@ local function SetSortColumn(_, inColumnName)
 	OnEnter(LDB_ANCHOR)
 end
 
-local function LineClick(_, inUnitName, inMouseButton)
-	if inMouseButton == "LeftButton" then
+local function LineClick(_, inUnitGUID, inMouseButton)
+	local _Unit = XFG.Guild:GetUnit(inUnitGUID)
+	local _UnitName = _Unit:GetUnitName()
+
+	local _UnitFaction = _Unit:GetFaction()
+	local _PlayerFaction = XFG.Player.Unit:GetFaction()
+
+	if inMouseButton == 'LeftButton' then
 		if IsShiftKeyDown() then
 			-- Who
-			SetItemRef("player:"..inUnitName, format("|Hplayer:%1$s|h[%1$s]|h", inUnitName), "LeftButton" ) 
-		else	
+			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton') 
+		elseif(_UnitFaction:Equals(_PlayerFaction)) then
 			-- Whisper		
-			SetItemRef("player:"..inUnitName, format("|Hplayer:%1$s|h[%1$s]|h", inUnitName), "LeftButton" ) 
+			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
 		end		
-	elseif inMouseButton == "RightButton" then
+	elseif inMouseButton == 'RightButton' then
 		if IsShiftKeyDown() then
 			-- Invite
 			C_PartyInfo.InviteUnit(inUnitName)
 		else
 			-- Menu
-			SetItemRef("player:"..inUnitName, format("|Hplayer:%1$s|h[%1$s]|h", inUnitName), "RightButton" )
+			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
 		end
 	end
 end
@@ -212,7 +218,7 @@ function OnEnter(self)
 			if(_UnitData.Profession1 ~= nil) then tooltip:SetCell(line, 12, format('%s', format(IconTokenString, _UnitData.Profession1))) end
 			if(_UnitData.Profession2 ~= nil) then tooltip:SetCell(line, 13, format('%s', format(IconTokenString, _UnitData.Profession2))) end
 
-			tooltip:SetLineScript(line, "OnMouseUp", LineClick, _UnitData.UnitName)
+			tooltip:SetLineScript(line, "OnMouseUp", LineClick, _UnitData.GUID)
 		end
 	end
 
