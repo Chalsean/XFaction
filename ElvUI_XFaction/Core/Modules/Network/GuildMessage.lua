@@ -2,18 +2,18 @@ local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'GuildMessage'
 local LogCategory = 'NGMessage'
 
-GuildMessage = Message:new()
+GuildMessage = Message:newChildConstructor()
 
 function GuildMessage:new()
-    local _MessageObject = GuildMessage.__parent.new(self)
+    local _Object = GuildMessage.parent.new(self)
 
-    _MessageObject.__name = 'GuildMessage'
-    _MessageObject._FromGUID = nil
-    _MessageObject._Flags = nil
-    _MessageObject._LineID = nil
-    _MessageObject._Faction = nil
+    _Object.__name = 'GuildMessage'
+    _Object._FromGUID = nil
+    _Object._Flags = nil
+    _Object._LineID = nil
+    _Object._Faction = nil
 
-    return _MessageObject
+    return _Object
 end
 
 function GuildMessage:Print()

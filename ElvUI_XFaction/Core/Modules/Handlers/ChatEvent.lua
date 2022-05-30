@@ -74,4 +74,19 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
 end
 
 function ChatEvent:CallbackChannelMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
+    if(XFG.Player.GUID == inSenderGUID) then
+        local _NewMessage = GuildMessage:new()
+        _NewMessage:Initialize()
+        _NewMessage:SetTo(XFG.Player.GuildName .. ":" .. XFG.Player.RealmName)
+        _NewMessage:SetFrom(inSenderName)
+        _NewMessage:SetFromGUID(inSenderGUID)
+        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
+        _NewMessage:SetSubject(XFG.Network.Message.Subject.GUILD_CHAT)
+        _NewMessage:SetFlags(inFlags)
+        _NewMessage:SetLineID(inLineID)
+        _NewMessage:SetFaction(XFG.Player.Faction)
+        _NewMessage:SetData(inText)
+        _NewMessage:Print()
+        XFG.Network.Sender:SendMessage(_NewMessage, true)
+    end
 end

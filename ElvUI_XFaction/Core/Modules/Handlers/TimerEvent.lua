@@ -35,7 +35,7 @@ end
 
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		--XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
+		XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
         XFG:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
         XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", 60)
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
@@ -69,7 +69,6 @@ end
 
 -- Wait for General chat to grab #1
 function TimerEvent:CallbackChannelTimer()
-    XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
     if(XFG.Network.Sender:GetLocalChannel() == nil) then
         -- This will fire an event that ChannelEvent handler catches and updates
         JoinChannelByName(XFG.Network.ChannelName)
@@ -145,6 +144,8 @@ function TimerEvent:CallbackLogin()
 	    XFG.Network.Receiver = Receiver:new(); XFG.Network.Receiver:Initialize()
         XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
         XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()
+        XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
+	    XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
 
         -- These event handlers have a dependency on player data being populated
         XFG.Handlers.SpecEvent = SpecEvent:new(); XFG.Handlers.SpecEvent:Initialize()

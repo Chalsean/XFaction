@@ -92,9 +92,6 @@ function XFG:Init()
 	
 	-- Globals are lua's version of static variables
 	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
-	XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
-	XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
-	
 	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
 	XFG.Network.BNet.Realms = { 'Proudmoore', 'Area 52' } -- config	
 	

@@ -4,37 +4,41 @@ local LogCategory = 'NMessage'
 
 Message = {}
 
-function Message:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function Message:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
-    self.__parent = self
+    
+    self._Key = nil
+    self._To = nil
+    self._From = nil
+    self._Type = nil
+    self._Subject = nil
+    self._EpochTime = nil
+    self._Data = nil
+    self._Initialized = false
 
-    if(_newObject == true) then
-        self._Key = nil
-        self._To = nil
-        self._From = nil
-        self._Type = nil
-        self._Subject = nil
-        self._EpochTime = nil
-        self._Data = nil
-        self._Initialized = false
-    end
+    return _Object
+end
 
-    return Object
+function Message:newChildConstructor()
+    _Object = {}
+    setmetatable(_Object, self)
+    self.__index = self
+    self.__name = ObjectName
+    self.parent = self
+    
+    self._Key = nil
+    self._To = nil
+    self._From = nil
+    self._Type = nil
+    self._Subject = nil
+    self._EpochTime = nil
+    self._Data = nil
+    self._Initialized = false
+
+    return _Object
 end
 
 function Message:IsInitialized(inBoolean)
