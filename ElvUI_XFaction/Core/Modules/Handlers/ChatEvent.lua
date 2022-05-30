@@ -31,8 +31,8 @@ end
 
 function ChatEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:RegisterEvent('CHAT_MSG_GUILD', self.CallbackGuildMessage)
-        XFG:Info(LogCategory, "Registered for CHAT_MSG_GUILD events")
+		--XFG:RegisterEvent('CHAT_MSG_GUILD', self.CallbackGuildMessage)
+        --XFG:Info(LogCategory, "Registered for CHAT_MSG_GUILD events")
         XFG:RegisterEvent('CHAT_MSG_CHANNEL', self.CallbackChannelMessage)
         XFG:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL events")
 		self:IsInitialized(true)
@@ -74,5 +74,20 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
 end
 
 function ChatEvent:CallbackChannelMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
-   
+   local _Channel = XFG.Network.Sender:GetLocalChannel()
+   if(_Channel:GetID() == inChannelID and XFG.Player.Unit:GetGUID() == inSenderGUID) then
+        local _NewMessage = GuildMessage:new()
+        _NewMessage:Initialize()
+        _NewMessage:SetTo(XFG.Player.GuildName .. ":" .. XFG.Player.RealmName)
+        _NewMessage:SetFrom(inSenderName)
+        _NewMessage:SetFromGUID(inSenderGUID)
+        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
+        _NewMessage:SetSubject(XFG.Network.Message.Subject.GUILD_CHAT)
+        _NewMessage:SetFlags(inFlags)
+        _NewMessage:SetLineID(inLineID)
+        _NewMessage:SetFaction(XFG.Player.Faction)
+        _NewMessage:SetData(inText)
+        _NewMessage:Print()
+        XFG.Network.Sender:SendMessage(_NewMessage, true)
+   end
 end

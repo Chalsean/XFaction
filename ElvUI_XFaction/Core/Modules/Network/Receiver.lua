@@ -136,13 +136,23 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         return
     end
 
-    -- Process DATA message
-    if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA) then
+    -- Process DATA/LOGIN messages
+    if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA or _Message:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
         local _UnitData = _Message:GetData()
         _UnitData:IsPlayer(false)
         if(XFG.Confederate:AddUnit(_UnitData)) then
             XFG:Info(LogCategory, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
             DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
+        end
+
+        -- Player has just logged in, whisper back latest info if same faction
+        local _UnitFaction = _UnitData:GetFaction()
+        if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGIN and _UnitFaction:Equals(XFG.Player.Unit:GetFaction())) then
+            XFG.Network.Sender:WhisperUnitData(_Message:GetFrom(), XFG.Player.Unit)
+
+        -- If opposite faction, broadcast to trigger BNet communication
+        elseif(_Message:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+            XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
         end
     end
 end

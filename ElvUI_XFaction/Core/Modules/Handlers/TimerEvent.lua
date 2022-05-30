@@ -35,7 +35,7 @@ end
 
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		--XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
+		XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
         XFG:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
         XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", 60)
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
@@ -47,7 +47,7 @@ function TimerEvent:Initialize()
         XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, _HeartbeatDelta) -- config
         XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", _HeartbeatDelta)
         XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, _GuildRosterDelta) -- config
-        XFG:Info(LogCategory, "Scheduled forcing guild roster updates for %d seconds", _GuildRosterDelta)
+        XFG:Info(LogCategory, "Scheduled forcing local guild roster updates for %d seconds", _GuildRosterDelta)
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -155,7 +155,7 @@ function TimerEvent:CallbackLogin()
         XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
 
         -- Broadcast login, refresh DTs and ready to roll
-        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
+        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
         XFG.DB.UIReload = false
         XFG.Initialized = true
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
@@ -174,7 +174,7 @@ end
 function TimerEvent:CallbackHeartbeat()
     if(XFG.Initialized and XFG.Player.Unit:GetTimeStamp() + _HeartbeatDelta < GetServerTime()) then
         XFG:Debug(LogCategory, "Sending heartbeat")
-        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
+        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.DATA)
     end
 end
 

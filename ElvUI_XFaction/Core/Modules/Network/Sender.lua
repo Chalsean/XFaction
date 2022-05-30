@@ -156,14 +156,7 @@ function Sender:BroadcastLocally(inData)
     end
 end
 
-function Sender:Whisper(inTo, inData)
-    if(self:CanWhisper()) then
-        XFG:Debug(LogCategory, "Whispering [%s] with tag [%s]", inTo, XFG.Network.Message.Tag)
-        XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "WHISPER", inTo)
-    end
-end
-
-function Sender:BroadcastUnitData(inUnitData)
+function Sender:BroadcastUnitData(inUnitData, inSubject)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
     if(inUnitData:IsPlayer()) then
         inUnitData:SetTimeStamp(GetServerTime())
@@ -172,6 +165,30 @@ function Sender:BroadcastUnitData(inUnitData)
     local _Message = Message:new()
     _Message:Initialize()
     _Message:SetType(XFG.Network.Type.BROADCAST)
+    _Message:SetSubject(inSubject)
+    _Message:SetData(inUnitData)
+    _Message:Print()
+    self:SendMessage(_Message, true)
+end
+
+function Sender:Whisper(inTo, inData)
+    if(self:CanWhisper()) then
+        XFG:Debug(LogCategory, "Whispering [%s] with tag [%s]", inTo, XFG.Network.Message.Tag)
+        XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "WHISPER", inTo)
+    end
+end
+
+function Sender:WhisperUnitData(inTo, inUnitData)
+    assert(type(inTo) == 'string')
+    assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
+    if(inUnitData:IsPlayer()) then
+        inUnitData:SetTimeStamp(GetServerTime())
+        XFG.Player.LastBroadcast = inUnitData:GetTimeStamp()
+    end
+    local _Message = Message:new()
+    _Message:Initialize()
+    _Message:SetType(XFG.Network.Type.WHISPER)
+    _Message:SetTo(inTo)
     _Message:SetSubject(XFG.Network.Message.Subject.DATA)
     _Message:SetData(inUnitData)
     _Message:Print()

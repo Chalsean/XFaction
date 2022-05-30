@@ -78,7 +78,7 @@ function GuildEvent:CallbackRosterUpdate()
                 -- If its the player and something has changed
                 if(_UnitData:IsPlayer() and _CachedUnitData:Equals(_UnitData) == false) then
                     XFG.Confederate:AddUnit(_UnitData)
-                    XFG.Network.Sender:BroadcastUnitData(_UnitData)
+                    XFG.Network.Sender:BroadcastUnitData(_UnitData, XFG.Network.Message.Subject.DATA)
 
                 -- If its a unit not running the addon and something has changed
                 elseif(_UnitData:IsRunningAddon() == false and _CachedUnitData:Equals(_UnitData) == false) then         

@@ -47,7 +47,7 @@ XFG.Network.BNet.Realms['Area 52'] = {
 	Horde = {'Eternal Kingdom'}
 }
 XFG.Network.Message = {}
-XFG.Network.ChannelName = 'XFGFaction'
+XFG.Network.ChannelName = 'EKXFactionChat'
 XFG.Network.Message.Tag = {
 	LOCAL = 'EKXF',
 	BNET = 'EKBNet'

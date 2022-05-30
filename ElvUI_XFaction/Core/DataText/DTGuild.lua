@@ -44,10 +44,12 @@ local function PreSort()
 	local _List = {}
 	for _, _Unit in XFG.Confederate:Iterator() do
 		local _UnitData = {}
+		local _UnitRealm = _Unit:GetRealm()
+		local _UnitGuild = _Unit:GetGuild()
 
 		_UnitData[XFG.DataText.Guild.ColumnNames.LEVEL] = _Unit:GetLevel()
-		_UnitData[XFG.DataText.Guild.ColumnNames.REALM] = _Unit:GetRealmName()
-		_UnitData[XFG.DataText.Guild.ColumnNames.GUILD] = _Unit:GetGuildName()
+		_UnitData[XFG.DataText.Guild.ColumnNames.REALM] = _UnitRealm:GetName()
+		_UnitData[XFG.DataText.Guild.ColumnNames.GUILD] = _UnitGuild:GetName()
 		_UnitData[XFG.DataText.Guild.ColumnNames.ZONE] = _Unit:GetZone()
 		_UnitData[XFG.DataText.Guild.ColumnNames.NAME] = _Unit:GetName()
 		_UnitData.GUID = _Unit:GetGUID()
