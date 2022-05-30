@@ -12,12 +12,17 @@ https://github.com/dcwick/XFaction/issues is being used as the central place for
 >Other users not recognizing you logged off.
 
 >BNet whispers going to users not running addon.
+
 >Guild chat being duplicated if you are in guild of origin.
+
 >The first chat from opposite faction has funky formatting. Followup chats are normal formatting. This might be caused by another addon.
 
 - Planned enhancements
 
 >Enable whispering between factions.
+
 >Add configuration dashboard.
+
 >Forward guild message of the day (MOTD).
+
 >Track and display current known bridges.
