@@ -42,11 +42,9 @@ You can log your bugs/enhancement ideas here: https://github.com/dcwick/XFaction
 
 The easiest way is to use WowUp client.
 
-1 - Go to "Get Addons"
-
-2 - Click on "Install from URL"
-
-3 - Enter the following URL: https://github.com/dcwick/XFaction
+1. Go to "Get Addons"
+2. Click on "Install from URL"
+3. Enter the following URL: https://github.com/dcwick/XFaction
 
 If not using WowUp client, you can download the .zip file from the repository and install manually to your Addons folder.
 
