@@ -5,8 +5,6 @@ Purpose: Enable better roster visibility and communication between guilds of a c
 
 - Testers: I greatly appreciate your personal time and effort in testing out my idea. Please keep in mind that this is still an alpha build. I am definitely looking forward to and open to your ideas on how to make this better! You can log your bugs/enhancement ideas here: https://github.com/dcwick/XFaction/issues or by sending me Discord DM.
 
-https://github.com/dcwick/XFaction/issues is being used as the central place for issue tracking.  The following is a highlevel list:
-
 - Known bugs
 
 >Other users not recognizing you logged off.
