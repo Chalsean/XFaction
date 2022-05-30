@@ -69,6 +69,26 @@ local function PreSort()
 		local _Faction = _Unit:GetFaction()
 		_UnitData.Faction = _Faction:GetIconID()
 
+		if(_Unit:HasSpec()) then
+			local _Spec = _Unit:GetSpec()
+			_UnitData.Spec = _Spec:GetIconID()
+		end
+
+		if(_Unit:HasCovenant()) then
+			local _Covenant = _Unit:GetCovenant()
+			_UnitData.Covenant = _Covenant:GetIconID()
+		end
+
+		if(_Unit:HasProfession1()) then
+			local _Profession = _Unit:GetProfession1()
+			_UnitData.Profession1 = _Profession:GetIconID()
+		end
+
+		if(_Unit:HasProfession2()) then
+			local _Profession = _Unit:GetProfession2()
+			_UnitData.Profession2 = _Profession:GetIconID()
+		end
+
 		table.insert(_List, _UnitData)
 	end
 	return _List
@@ -159,17 +179,17 @@ function OnEnter(self)
 			-- Team, Level, Faction, Covenant, Name, Race, Realm, Guild, Zone, Note, Rank		
 			tooltip:SetCell(line, 1, format('%s', format(IconTokenString, _UnitData.Faction)))
 			tooltip:SetCell(line, 2, format("|cffffffff%d|r", _UnitData[XFG.DataText.Guild.ColumnNames.LEVEL]))
-			--tooltip:SetCell(line, 3, format('%s', format(IconTokenString, _SpecIconID)))
+			if(_UnitData.Spec ~= nil) then tooltip:SetCell(line, 3, format('%s', format(IconTokenString, _UnitData.Spec))) end
 			tooltip:SetCell(line, 4, ClassColorString(_UnitData[XFG.DataText.Guild.ColumnNames.NAME], _UnitData.Class))			
-			--tooltip:SetCell(line, 5, format('%s', format(IconTokenString, _CovenantIconID)))
+			if(_UnitData.Covenant ~= nil) then tooltip:SetCell(line, 5, format('%s', format(IconTokenString, _UnitData.Covenant))) end
 			tooltip:SetCell(line, 6, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.RACE]))
 			tooltip:SetCell(line, 7, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.REALM]))
 			tooltip:SetCell(line, 8, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.GUILD]))
 			tooltip:SetCell(line, 9, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.TEAM]))			
 			tooltip:SetCell(line, 10, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.RANK]))
 			tooltip:SetCell(line, 11, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.ZONE]))
-			--tooltip:SetCell(line, 12, format('%s', format(IconTokenString, _IconID)))
-			--tooltip:SetCell(line, 13, format('%s', format(IconTokenString, _IconID)))
+			if(_UnitData.Profession1 ~= nil) then tooltip:SetCell(line, 12, format('%s', format(IconTokenString, _UnitData.Profession1))) end
+			if(_UnitData.Profession2 ~= nil) then tooltip:SetCell(line, 13, format('%s', format(IconTokenString, _UnitData.Profession2))) end
 		end
 	end
 

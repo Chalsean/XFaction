@@ -494,6 +494,10 @@ function Unit:IsAlt(_Alt)
     return self._Alt
 end
 
+function Unit:HasMainName()
+    return self._MainName ~= nil
+end
+
 function Unit:GetMainName()
     return self._MainName
 end

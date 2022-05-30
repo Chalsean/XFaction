@@ -2,287 +2,90 @@ local XFG, E, _, V, P, G = unpack(select(2, ...))
 local L = E.Libs.ACL:GetLocale('ElvUI', E.global.general.locale or 'enUS');
 local tinsert = table.insert
 
-local colorValues = {
-	[1] = L.CLASS_COLORS,
-	[2] = CUSTOM,
-	[3] = L['Value Color'],
-	[4] = DEFAULT,
-	[5] = L['Covenant Color']
-}
+-- local colorValues = {
+-- 	[1] = L.CLASS_COLORS,
+-- 	[2] = CUSTOM,
+-- 	[3] = L['Value Color'],
+-- 	[4] = DEFAULT,
+-- 	[5] = L['Covenant Color']
+-- }
 
-local function Core()
-	E.Options.args.benikui = {
-		order = 6,
+local function BuildBaseDTOption(name)
+	return {
+		order = 1,
+		name = L[name],
 		type = 'group',
-		name = BUI.Title,
-		childGroups = "tree",
-		args = {
-			name = {
-				order = 1,
-				type = 'header',
-				name = format('%s%s%s', BUI.Title, BUI:cOption('v'..BUI.Version, "orange"), L['by Benik (EU-Emerald Dream)']),
-			},
-			logo = {
-				order = 2,
-				type = 'description',
-				name = L['BenikUI is a completely external ElvUI mod. More available options can be found in ElvUI options (e.g. Actionbars, Unitframes, Player and Target Portraits), marked with ']..BUI:cOption(L['light blue color.'], "blue"),
-				fontSize = 'medium',
-				image = function() return 'Interface\\AddOns\\ElvUI_BenikUI\\media\\textures\\logo_benikui.tga', 384, 96 end,
-			},
-			install = {
-				order = 3,
-				type = 'execute',
-				name = L['Install'],
-				desc = L['Run the installation process.'],
-				func = function() E:GetModule("PluginInstaller"):Queue(BUI.installTable); E:ToggleOptionsUI() end,
-			},
-			spacer2 = {
-				order = 4,
-				type = 'header',
-				name = '',
-			},
-			general = {
-				order = 10,
-				type = 'group',
-				name = BUI:cOption(L['General'], "orange"),
-				get = function(info) return E.db.benikui.general[ info[#info] ] end,
-				set = function(info, value) E.db.benikui.general[ info[#info] ] = value; end,
-				args = {
-					benikuiStyle = {
-						order = 2,
-						type = 'toggle',
-						name = L['BenikUI Style'],
-						desc = L['Enable/Disable the decorative bars from UI elements'],
-						get = function(info) return E.db.benikui.general[ info[#info] ] end,
-						set = function(info, value) E.db.benikui.general[ info[#info] ] = value; E:StaticPopup_Show('PRIVATE_RL'); end,
-					},
-					hideStyle = {
-						order = 3,
-						type = 'toggle',
-						name = L['Hide BenikUI Style'],
-						desc = L['Show/Hide the decorative bars from UI elements. Usefull when applying Shadows, because BenikUI Style must be enabled. |cff00c0faNote: Some elements like the Actionbars, Databars or BenikUI Datatexts have their own Style visibility options.|r'],
-						disabled = function() return E.db.benikui.general.benikuiStyle ~= true end,
-						get = function(info) return E.db.benikui.general[ info[#info] ] end,
-						set = function(info, value) E.db.benikui.general[ info[#info] ] = value; BUI:UpdateStyleVisibility(); end,
-					},
-					spacer = {
-						order = 10,
-						type = 'header',
-						name = '',
-					},
-					shadows = {
-						order = 11,
-						type = 'toggle',
-						name = L['Shadows'],
-						disabled = function() return E.db.benikui.general.benikuiStyle ~= true end,
-						get = function(info) return E.db.benikui.general[ info[#info] ] end,
-						set = function(info, value) E.db.benikui.general[ info[#info] ] = value; E:StaticPopup_Show('PRIVATE_RL'); end,
-					},
-					shadowSize = {
-						order = 12,
-						type = "range",
-						name = L['Shadow Size'],
-						min = 3, max = 10, step = 1,
-						disabled = function() return E.db.benikui.general.benikuiStyle ~= true or E.db.benikui.general.shadows ~= true end,
-						get = function(info) return E.db.benikui.general[ info[#info] ] end,
-						set = function(info, value) E.db.benikui.general[ info[#info] ] = value; BUI:UpdateShadows(); end,
-					},
-					shadowAlpha = {
-						order = 13,
-						type = "range",
-						name = L['Shadow Alpha'],
-						min = 0.1, max = 1, step = 0.1,
-						disabled = function() return E.db.benikui.general.benikuiStyle ~= true or E.db.benikui.general.shadows ~= true end,
-						get = function(info) return E.db.benikui.general[ info[#info] ] end,
-						set = function(info, value) E.db.benikui.general[ info[#info] ] = value; BUI:UpdateShadows(); end,
-					},
-					spacer2 = {
-						order = 20,
-						type = 'header',
-						name = '',
-					},
-					loginMessage = {
-						order = 21,
-						type = 'toggle',
-						name = L['Login Message'],
-					},
-					splashScreen = {
-						order = 22,
-						type = 'toggle',
-						name = L['Splash Screen'],
-					},
-				},
-			},
-			colors = {
-				order = 20,
-				type = 'group',
-				name = BUI:cOption(L["Colors"], "orange"),
-				args = {
-					themes = {
-						order = 2,
-						type = 'group',
-						name = L['Color Themes'],
-						guiInline = true,
-						args = {
-							colorTheme = {
-								order = 1,
-								type = 'select',
-								name = "",
-								values = {
-									['Elv'] = L['ElvUI'],
-									['Diablo'] = L['Diablo'],
-									['Hearthstone'] = L['Hearthstone'],
-									['Mists'] = L['Mists'],
-								},
-								get = function(info) return E.db.benikui.colors[ info[#info] ] end,
-								set = function(info, color) E.db.benikui.colors[ info[#info] ] = color; BUI:SetupColorThemes(color); end,
-							},
-							customThemeColor = {
-								order = 2,
-								type = 'color',
-								name = L.EDIT,
-								hasAlpha = true,
-								get = function(info)
-									local t = E.db.general.backdropfadecolor
-									local d = P.general.backdropfadecolor
-									return t.r, t.g, t.b, t.a, d.r, d.g, d.b, d.a
-								end,
-								set = function(info, r, g, b, a)
-									E.db.general.backdropfadecolor = {}
-									local t = E.db.general.backdropfadecolor
-									t.r, t.g, t.b, t.a = r, g, b, a
-									E:UpdateMedia()
-									E:UpdateBackdropColors()
-								end,
-							},
-						},
-					},
-					style = {
-						order = 3,
-						type = 'group',
-						name = L['Style Color'],
-						guiInline = true,
-						args = {
-							StyleColor = {
-								order = 1,
-								type = "select",
-								name = "",
-								values = colorValues,
-								disabled = function() return E.db.benikui.general.benikuiStyle ~= true end,
-								get = function(info) return E.db.benikui.colors[ info[#info] ] end,
-								set = function(info, value) E.db.benikui.colors[ info[#info] ] = value; BUI:UpdateStyleColors(); end,
-							},
-							customStyleColor = {
-								order = 2,
-								type = "color",
-								name = L.COLOR_PICKER,
-								disabled = function() return E.db.benikui.colors.StyleColor ~= 2 or E.db.benikui.general.benikuiStyle ~= true end,
-								get = function(info)
-									local t = E.db.benikui.colors[ info[#info] ]
-									local d = P.benikui.colors[info[#info]]
-									return t.r, t.g, t.b, t.a, d.r, d.g, d.b, d.a
-									end,
-								set = function(info, r, g, b)
-									E.db.benikui.colors[ info[#info] ] = {}
-									local t = E.db.benikui.colors[ info[#info] ]
-									t.r, t.g, t.b, t.a = r, g, b, a
-									BUI:UpdateStyleColors();
-								end,
-							},
-							styleAlpha = {
-								order = 3,
-								type = "range",
-								name = L["Alpha"],
-								min = .2, max = 1, step = 0.05,
-								disabled = function() return E.db.benikui.general.benikuiStyle ~= true end,
-								get = function(info) return E.db.benikui.colors[ info[#info] ] end,
-								set = function(info, value) E.db.benikui.colors[ info[#info] ] = value; BUI:UpdateStyleColors(); end,
-							},
-						},
-					},
-					abStyle = {
-						order = 4,
-						type = 'group',
-						name = L['ActionBar Style Color'],
-						guiInline = true,
-						args = {
-							abStyleColor = {
-								order = 1,
-								type = "select",
-								name = "",
-								values = colorValues,
-								disabled = function() return E.db.benikui.general.benikuiStyle ~= true end,
-								get = function(info) return E.db.benikui.colors[ info[#info] ] end,
-								set = function(info, value) E.db.benikui.colors[ info[#info] ] = value; BAB:StyleColor(); end,
-							},
-							customAbStyleColor = {
-								order = 2,
-								type = "color",
-								name = L.COLOR_PICKER,
-								disabled = function() return E.db.benikui.colors.abStyleColor ~= 2 or E.db.benikui.general.benikuiStyle ~= true end,
-								get = function(info)
-									local t = E.db.benikui.colors[ info[#info] ]
-									local d = P.benikui.colors[info[#info]]
-									return t.r, t.g, t.b, t.a, d.r, d.g, d.b
-									end,
-								set = function(info, r, g, b)
-									E.db.benikui.colors[ info[#info] ] = {}
-									local t = E.db.benikui.colors[ info[#info] ]
-									t.r, t.g, t.b, t.a = r, g, b, a
-									BAB:StyleColor();
-								end,
-							},
-							abAlpha = {
-								order = 3,
-								type = "range",
-								name = L["Alpha"],
-								min = .2, max = 1, step = 0.05,
-								disabled = function() return E.db.benikui.general.benikuiStyle ~= true end,
-								get = function(info) return E.db.benikui.colors[ info[#info] ] end,
-								set = function(info, value) E.db.benikui.colors[ info[#info] ] = value; BAB:StyleColor(); end,
-							},
-						},
-					},
-					gameMenu = {
-						order = 5,
-						type = 'group',
-						name = L['Game Menu Color'],
-						guiInline = true,
-						args = {
-							gameMenuColor = {
-								order = 1,
-								type = "select",
-								name = "",
-								values = {
-									[1] = L.CLASS_COLORS,
-									[2] = L.CUSTOM,
-									[3] = L["Value Color"],
-									[4] = L['Covenant Color'],
-								},
-								get = function(info) return E.db.benikui.colors[ info[#info] ] end,
-								set = function(info, value) E.db.benikui.colors[ info[#info] ] = value; end,
-							},
-							customGameMenuColor = {
-								order = 2,
-								type = "color",
-								name = L.COLOR_PICKER,
-								disabled = function() return E.db.benikui.colors.gameMenuColor ~= 2 end,
-								get = function(info)
-									local t = E.db.benikui.colors[ info[#info] ]
-									local d = P.benikui.colors[info[#info]]
-									return t.r, t.g, t.b, t.a, d.r, d.g, d.b
-									end,
-								set = function(info, r, g, b)
-									E.db.benikui.colors[ info[#info] ] = {}
-									local t = E.db.benikui.colors[ info[#info] ]
-									t.r, t.g, t.b, t.a = r, g, b, a
-								end,
-							},
-						},
-					},
-				},
-			},
-		},
+		inline = false,
+		get = function(info) return E.db.xfaction.datatexts[strlower(name)][info[#info]] end,
+		set = function(info, value) E.db.xfaction.datatexts[strlower(name)][info[#info]] = value DT:ForceUpdate_DataText(name) end,
+		args = {}
 	}
 end
-tinsert(XFG.Config, Core)
+
+function XFG:GeneralSetup()
+	local ACH = E.Libs.ACH
+	local version = 'v0.1'--format('|cff1784d1v%s|r', GetAddOnMetadata(XFG.Addon, 'Version'))
+
+	E.Options.args.xfaction = {
+		name = XFG.Title,
+		order = 6,
+		type = 'group',
+		childGroups = "tab",
+		args = {
+			title = {
+				order = 1,
+				name = format('|cff1784d1ElvUI|r_|cffFF4700X|rcFFffffffFaction|r [%s] by |cfffc7f03Chalsean (US-Proudmoore)|r', version),
+				type = 'header'
+			},
+			datatexts = {
+				order = 2,
+				name = L["DataText Customization"],
+				type = 'group',
+				childGroups = 'tree',
+				args = {}
+			}
+		}
+	}
+
+	local opts = E.Options.args.xfaction.args.datatexts.args
+
+	opts.guild = BuildBaseDTOption('Guild')
+
+	opts.guild.args = {
+				showContinent = {
+					order = 1,
+					name = 'Show Continent',
+					type = 'toggle'
+				},
+				showZone = {
+					order = 2,
+					name = 'Show Zone',
+					type = 'toggle'
+				},
+				showSubZone = {
+					order = 3,
+					name = 'Show Sub Zone',
+					type = 'toggle'
+				},
+				space1 = ACH:Spacer(5),
+				color = {
+					order = 6,
+					name = 'Text Coloring',
+					type = 'select',
+					sortByValue = false,
+					values = {
+						['REACTION'] = 'Reaction',
+						['CLASS'] = 'Class',
+						['CUSTOM'] = 'Custom'
+					}
+				},
+				space1 = ACH:Spacer(10),
+				disableBlizzZoneText = {
+					order = 11,
+					name = 'Disable Blizzard Zone Text',
+					type = 'toggle',
+					set = function(_, value) E.db.xfaction.datatexts.location.disableBlizzZoneText = value E:StaticPopup_Show('CONFIG_RL') end
+				}
+	}
+end
+--tinsert(XFG.Config, Core)
