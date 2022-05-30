@@ -15,8 +15,7 @@ _G[addon] = Engine
 
 XFG.AddonName = addon
 XFG.Category = 'XFaction'
-XFG.Config = {}
-XFG.Title = format('|cff33ccff%s|r', 'XFaction')
+XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XFG["RegisteredModules"] = {}
 XFG.Version = tonumber(GetAddOnMetadata(addon, "Version"))
 XFG.Handlers = {}
@@ -90,7 +89,6 @@ XFG.Cache.Teams = {
 }
 
 function XFG:Init()
-	self.initialized = true	
 	
 	-- Globals are lua's version of static variables
 	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
@@ -114,7 +112,7 @@ function XFG:Init()
 	
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()	
 
-	EP:RegisterPlugin(addon, XFG.ConfigCallback)
+	EP:RegisterPlugin(addon, XFG.InitializeConfig)
 end
 
 E.Libs.EP:HookInitialize(XFG, XFG.Init)

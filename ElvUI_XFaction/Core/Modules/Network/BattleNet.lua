@@ -1,6 +1,6 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DB = E.db.Confederation
-local LogCategory = 'MBnet'
+local LogCategory = 'NBnet'
 local Initialized = false
 
 local function CallbackBNet(Event, MessageType, ...)

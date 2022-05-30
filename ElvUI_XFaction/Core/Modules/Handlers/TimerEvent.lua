@@ -109,6 +109,8 @@ function TimerEvent:CallbackLogin()
         -- Leverage AceDB is persist remote unit information
         XFG.DataDB = LibStub("AceDB-3.0"):New("XFactionDataDB", defaults, true)
         XFG.DB = XFG.DataDB.char
+        XFG.ConfigDB = LibStub("AceDB-3.0"):New("XFactionConfigDB", defaults, true)
+        XFG.Config = XFG.ConfigDB.profile
 
         XFG.Guild = Guild:new()
         XFG.Guild:SetName('Eternal Kingdom')
