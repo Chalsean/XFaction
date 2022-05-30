@@ -11,6 +11,7 @@ This addon is in very early stages (alpha) and currently only Eternal Kingdom (E
 > Proudmoore
 - Eternal Kingdom
 - Endless Kingdom
+- Enduring Kingdom
 - Alternal Kingdom One
 - Alternal Kingdom Two
 - Alternal Kingdom Three
@@ -19,6 +20,7 @@ This addon is in very early stages (alpha) and currently only Eternal Kingdom (E
 ## What is included
 The addon should provide the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederation
+- This particular build will route merged guild chat to #xchat-test to prevent cluttering of guild chat for testers. The addon will automatically join testers to this channel upon loading.  
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
 - Full guild roster view across guilds/realms/factions
@@ -51,8 +53,11 @@ If not using WowUp client, you can download the .zip file from the repository an
 ### How It Works
 
 Most addons use an API that goes over an invisible (to the user) channel for communication. However, channels are realm isolated, which is why GreenWall only provides visiblity to other members on the same realm.
+
 Community channels are cross-realm/faction but do not have the "invisible" API calls. Battle.Net (BNet) does though. This addon leverages BNet to send communication back-and-forth between realms/factions invisible to the user.
+
 This dependency on BNet means users will need BNet friends online and logged into the realm(s) in question to form a bridge of communication. The addon will leverage other guild member's bridges to enable communication. You do not need to have a friend of your own logged in to the connected guild/realm, just someone online running the addon does.
+
 For the addon to "work" from an EK member perspective, there needs to be a user actively logged onto a guild representing each faction on a given realm, e.g., AK3-Proudmoore (A Proudmoore), AK4-Proudmoore (H Proudmoore), EK-Area52 (H Area 52). These three online users will need to be Bnet friends with at least one of the three. Anyone running the addon (without being friends with the three "bridge" users) will then see messages regardless of what EK guild toon they are currently logged into.
 
 ## Misc
