@@ -60,6 +60,18 @@ This dependency on BNet means users will need BNet friends online and logged int
 
 For the addon to "work" from an EK member perspective, there needs to be a user actively logged onto a guild representing each faction on a given realm, e.g., AK3-Proudmoore (A Proudmoore), AK4-Proudmoore (H Proudmoore), EK-Area52 (H Area 52). These three online users will need to be Bnet friends with at least one of the three. Anyone running the addon (without being friends with the three "bridge" users) will then see messages regardless of what EK guild toon they are currently logged into.
 
+### Debugging addons
+
+Three addons will be critical to collecting meaningful information to troubleshoot issues. 
+
+>BugSack/BugGrabber
+
+Although technically two different addons (and installed separately), they function as essentially one addon. They will grab any/all Lua exceptions and store the call stack. This will look like a bag icon on your world map. Green means no exceptions, red means an exception. However, be aware that other addons will throw exceptions as well. If red, look for entries where XFaction is in the filepath. If so, you can send to me by copy/paste all or clicking the Send Bug button.
+
+>_DebugLog
+
+This is a logging utility leveraged by XFaction. (XFaction will not log or throw errors if _DebugLog is not installed.)  This will look like a yellow fist after install. When you launch the UI, you should see a XFaction tab that contains all log information from the addon. Currently the addon appears to have an issue with exporting logs, but I may ask for information in the logs to help diagnose an issue if I cannot reproduce on my own.
+
 ## Misc
 
 ### Dependencies
