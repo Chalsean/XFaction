@@ -1,13 +1,12 @@
 # XFaction
-Enable better roster visibility and communication between guilds of a confederation. Including guilds on other realms and faction.
+Enable better roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.
 
 ## Disclaimer
 
-This addon is in very early stages (alpha) and currently only guild Eternal Kingdom (EK) is being supported. There are many hardcoded settings for EK, thus only the following guilds are supported at this time:
+This addon is in very early stages (alpha) and currently only Eternal Kingdom (EK) is being supported. There are many hardcoded settings for EK, thus only the following guilds are supported at this time:
 
 > Area 52
 - Eternal Kingdom
-- Alternal Kingdom Four
 
 > Proudmoore
 - Eternal Kingdom
@@ -15,18 +14,19 @@ This addon is in very early stages (alpha) and currently only guild Eternal King
 - Alternal Kingdom One
 - Alternal Kingdom Two
 - Alternal Kingdom Three
-
+- Alternal Kingdom Four
+- 
 ## What is included
-The addon should provide the follow functionality:
+The addon should provide the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederation
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
 - Full guild roster view across guilds/realms/factions
-- View guild members faction, level, spec, class, name, covenant, race, realm, guild, team, guild rank, zone and professions
-- View guild member team affiliation
+- View guild members' faction, level, spec, class, name, covenant, race, realm, guild, team, guild rank, zone and professions
+- View guild members' team affiliation
 - If on an alt, displays the main character name as well
-- The DT frame should be scrollable and sortable by column headers, default sort is by team
-- Left click performs "who", shift left click performs "whisper" (not working for cross faction yet), right click performs "menu dropdown" and shift right click performs "invite"
+- The DT frame should be scrollable and sortable by column headers, with team being the default sort
+- Left click performs "who", shift left click performs "whisper" (not working for cross faction yet), right click performs "menu dropdown", and shift right click performs "invite"
 > 3 misc DTs: Soulbind (X), WoW Token (X), Shard (X)
 - Soulbind: left click opens Soulbind frame, right click to change Soulbinds
 - WoW Token: Simply displays the current WoW token market price
@@ -48,11 +48,11 @@ The easiest way is to use WowUp client.
 
 If not using WowUp client, you can download the .zip file from the repository and install manually to your Addons folder.
 
-### How it Works
+### How It Works
 
-Most addons use an API that goes over an invisible (to the user) channel for communication. However, channels are realm isolated. Thus why GreenWall only provides visiblity to other members on the same realm.
-Community channels are cross realms/factions but do not have the "invisible" API calls. Battle.Net (BNet) does though. This addon leverages BNet to send communication back-and-forth between realms/factions invisible to the user.
-This dependency on BNet means having BNet friends online and logged into the realm(s) in question to form a bridge of communication. The addon will leverage other guild member's bridges to enable communication. You do not need to have a friend of your own logged in to the connected guild/realm, just someone online running the addon does.
+Most addons use an API that goes over an invisible (to the user) channel for communication. However, channels are realm isolated, which is why GreenWall only provides visiblity to other members on the same realm.
+Community channels are cross-realm/faction but do not have the "invisible" API calls. Battle.Net (BNet) does though. This addon leverages BNet to send communication back-and-forth between realms/factions invisible to the user.
+This dependency on BNet means users will need BNet friends online and logged into the realm(s) in question to form a bridge of communication. The addon will leverage other guild member's bridges to enable communication. You do not need to have a friend of your own logged in to the connected guild/realm, just someone online running the addon does.
 
 ## Misc
 
