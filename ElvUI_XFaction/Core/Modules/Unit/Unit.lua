@@ -47,10 +47,8 @@ function Unit:new(_Argument)
         self._Faction = false
         self._Team = nil
         self._Initialized = false
-
-        -- These two will be redundant but necessary when marshaling data
-        self._GuildName = nil
-        self._RealmName = nil        
+        self._Guild = nil
+        self._Realm = nil        
     end
 
     return Object
@@ -85,8 +83,8 @@ function Unit:Initialize(_Argument)
         self:SetZone(_zone)
     end
 
-    self:SetGuildName(XFG.Player.GuildName)
-    self:SetRealmName(XFG.Player.RealmName)
+    self:SetGuild(XFG.Player.Guild)
+    self:SetRealm(XFG.Player.Realm)
     self:SetTimeStamp(GetServerTime())
 
     local _ParsedName = string.Split(_unit, "-")
@@ -522,24 +520,24 @@ function Unit:SetTeam(inTeam)
     return self:GetTeam()
 end
 
-function Unit:GetRealmName()
-    return self._RealmName
+function Unit:GetRealm()
+    return self._Realm
 end
 
-function Unit:SetRealmName(_RealmName)
-    assert(type(_RealmName) == 'string')
-    self._RealmName = _RealmName
-    return self:GetRealmName()
+function Unit:SetRealm(inRealm)
+    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
+    self._Realm = inRealm
+    return self:GetRealm()
 end
 
-function Unit:GetGuildName()
-    return self._GuildName
+function Unit:GetGuild()
+    return self._Guild
 end
 
-function Unit:SetGuildName(_GuildName)
-    assert(type(_GuildName) == 'string')
-    self._GuildName = _GuildName
-    return self:GetGuildName()
+function Unit:SetGuild(inGuild)
+    assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', "argument must be Guild object")
+    self._Guild = inGuild
+    return self:GetGuild()
 end
 
 function Unit:IsOnMainGuild(inBoolean)
@@ -571,8 +569,8 @@ function Unit:Equals(inUnit)
     if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
     if(self:IsOnMainGuild() ~= inUnit:IsOnMainGuild()) then return false end
     if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
-    if(self:GetGuildName() ~= inUnit:GetGuildName()) then return false end
-    if(self:GetRealmName() ~= inUnit:GetRealmName()) then return false end
+    --if(self:GetGuildName() ~= inUnit:GetGuildName()) then return false end
+    --if(self:GetRealmName() ~= inUnit:GetRealmName()) then return false end
 
     if(self:HasCovenant() == false and inUnit:HasCovenant()) then return false end
     if(self:HasCovenant()) then

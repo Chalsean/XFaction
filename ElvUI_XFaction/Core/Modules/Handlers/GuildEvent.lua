@@ -56,8 +56,8 @@ function GuildEvent:Print()
 end
 
 function GuildEvent:CallbackMOTD(inMOTD)
-    if(XFG.Guild:GetMOTD() ~= inMOTD) then
-        XFG.Guild:SetMOTD(inMOTD)
+    if(XFG.Confederate:GetMOTD() ~= inMOTD) then
+        XFG.Confederate:SetMOTD(inMOTD)
     end
 end
 
@@ -70,23 +70,23 @@ function GuildEvent:CallbackRosterUpdate()
         if(_UnitData:IsOnline()) then
 
             -- If cache doesn't have unit, process
-            if(XFG.Guild:Contains(_UnitData:GetKey()) == false) then
-                XFG.Guild:AddUnit(_UnitData)
+            if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
+                XFG.Confederate:AddUnit(_UnitData)
             else
-                local _CachedUnitData = XFG.Guild:GetUnit(_UnitData:GetKey())
+                local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
 
                 -- If its the player and something has changed
                 if(_UnitData:IsPlayer() and _CachedUnitData:Equals(_UnitData) == false) then
-                    XFG.Guild:AddUnit(_UnitData)
+                    XFG.Confederate:AddUnit(_UnitData)
                     XFG.Network.Sender:BroadcastUnitData(_UnitData)
 
                 -- If its a unit not running the addon and something has changed
                 elseif(_UnitData:IsRunningAddon() == false and _CachedUnitData:Equals(_UnitData) == false) then         
-                    XFG.Guild:AddUnit(_UnitData)
+                    XFG.Confederate:AddUnit(_UnitData)
                 end
             end
-        elseif(XFG.Guild:Contains(_UnitData:GetKey())) then
-            XFG.Guild:RemoveUnit(_UnitData:GetKey())
+        elseif(XFG.Confederate:Contains(_UnitData:GetKey())) then
+            XFG.Confederate:RemoveUnit(_UnitData:GetKey())
         end
     end
     DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)

@@ -132,7 +132,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
 
     -- Process LOGOUT message
     if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
-        XFG.Guild:RemoveUnit(_Message:GetFrom())
+        XFG.Confederate:RemoveUnit(_Message:GetFrom())
         return
     end
 
@@ -140,7 +140,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
     if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA) then
         local _UnitData = _Message:GetData()
         _UnitData:IsPlayer(false)
-        if(XFG.Guild:AddUnit(_UnitData)) then
+        if(XFG.Confederate:AddUnit(_UnitData)) then
             XFG:Info(LogCategory, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
             DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         end

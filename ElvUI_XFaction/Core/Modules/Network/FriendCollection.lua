@@ -49,6 +49,7 @@ function FriendCollection:Initialize()
 				_NewFriend:SetTag(AccountInfo.battleTag)
 				_NewFriend:SetRealmID(AccountInfo.gameAccountInfo.realmID)
 				_NewFriend:SetUnitName(AccountInfo.gameAccountInfo.characterName)
+				_NewFriend:SetFaction(XFG.Factions:GetFactionByName(AccountInfo.gameAccountInfo.factionName))
 				self:AddFriend(_NewFriend)
 			end
 		end
@@ -114,30 +115,33 @@ function FriendCollection:RemoveFriend(inKey)
 	return self:Contains(inKey) == false
 end
 
-function FriendCollection:GetRandomFriend(inRealm)
+function FriendCollection:GetRandomFriend(inRealm , inFaction)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
+	assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
 
 	-- Get all the IDs for a realm (connected realms have multiple IDs)
-	local _RealmFriends = {}
+	local _PossibleTargets = {}
 	local _RealmIDs = inRealm:GetIDs()
 	
-	-- Find any BNet friend logged into that realm
-	for _, _Friend in pairs (self._Friends) do
-		for _, _RealmID in pairs (_RealmIDs) do
-			if(_RealmID == _Friend:GetRealmID()) then
-				table.insert(_RealmFriends, _Friend)
+	-- Find any BNet friend logged into that realm/faction
+	for _, _Friend in self:Iterator() do
+		if(inFaction:Equals(_Friend:GetFaction())) then
+			for _, _RealmID in pairs (_RealmIDs) do
+				if(_RealmID == _Friend:GetRealmID()) then
+					table.insert(_PossibleTargets, _Friend)
+				end
 			end
 		end
 	end
 
-	if(table.getn(_RealmFriends) == 0) then
-		XFG:Info(LogCategory, "No friends are online connected to target realm [%s]", inRealm:GetName())
+	if(table.getn(_PossibleTargets) == 0) then
+		XFG:Info(LogCategory, "No friends are online connected to target realm [%s] of [%s] faction", inRealm:GetName(), inFaction:GetName())
 		return
 	end
 	
 	-- Randomly select a friend as a communication bridge
-	local _Random = math.random(1, table.getn(_RealmFriends))
-	return _RealmFriends[_Random]
+	local _Random = math.random(1, table.getn(_PossibleTargets))
+	return _PossibleTargets[_Random]
 end
 
 function FriendCollection:Reset()

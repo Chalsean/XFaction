@@ -37,6 +37,15 @@ XFG.Player.LastBroadcast = 0
 
 XFG.Network = {}
 XFG.Network.BNet = {}
+XFG.Network.BNet.Realms = {} -- config	
+XFG.Network.BNet.Realms.Proudmoore = {
+	Alliance = {'Eternal Kingdom', 'Endless Kingdom', 'Alternal Kingdom One', 'Alternal Kingdom Two', 'Alternal Kingdom Three'},
+	Horde = {'Alternal Kingdom Four', 'Enduring Kingdom'}
+}
+XFG.Network.BNet.Realms['Area 52'] = {
+	Alliance = {},
+	Horde = {'Eternal Kingdom'}
+}
 XFG.Network.Message = {}
 XFG.Network.ChannelName = 'XFGFaction'
 XFG.Network.Message.Tag = {
@@ -52,9 +61,9 @@ XFG.Network.Message.Subject = {
 	LOGIN = 'LOGIN'
 }
 XFG.Network.Type = {
-	BROADCAST = 'BROADCAST',
-	WHISPER = 'WHISPER',
-	LOCAL = 'LOCAL'
+	BROADCAST = 'BROADCAST', -- BNet + Local Channel
+	WHISPER = 'WHISPER',     -- Whisper Local
+	LOCAL = 'LOCAL'          -- Local Channel only
 }	
 
 XFG.Frames = {}
@@ -88,19 +97,41 @@ XFG.Cache.Teams = {
 
 function XFG:Init()
 	
-	-- Globals are lua's version of static variables
-	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
-	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
-	XFG.Network.BNet.Realms = { 'Proudmoore', 'Area 52' } -- config	
-	
 	XFG.Player.GUID = UnitGUID('player')
-	XFG.Player.RealmName = GetRealmName()	
 	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
 	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Player.Faction = XFG.Factions:GetFactionByName(UnitFactionGroup('player'))
+
+	-- Globals are lua's version of static variables
+	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
+	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
+
 	XFG.Ranks = RankCollection:new(); XFG.Ranks:Initialize()
-    
+	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
+
+	-- Make sure we have all the realm/guild combinations accounted for
+	for _RealmName, _FactionGuilds in pairs(XFG.Network.BNet.Realms) do
+		local _NewRealm = Realm:new()
+		_NewRealm:SetKey(_RealmName)
+		_NewRealm:SetName(_RealmName)
+		_NewRealm:Initialize()
+		XFG.Realms:AddRealm(_NewRealm)
+		for _FactionName, _Guilds in pairs(_FactionGuilds) do
+			local _Faction = XFG.Factions:GetFactionByName(_FactionName)
+			for _, _GuildName in ipairs (_Guilds) do
+				local _NewGuild = Guild:new()
+				_NewGuild:Initialize()
+				_NewGuild:SetName(_GuildName)
+				_NewGuild:SetFaction(_Faction)
+				_NewGuild:SetRealm(_NewRealm)
+				XFG.Guilds:AddGuild(_NewGuild)
+			end
+		end
+	end
+
+	XFG.Player.Realm = XFG.Realms:GetRealm(GetRealmName())
+
 	-- These handlers will register additional handlers
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
 	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()

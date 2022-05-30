@@ -37,7 +37,8 @@ function XFG:TarballUnitData(inUnitData)
 
 	_MessageData.GI = inUnitData:GetGuildIndex()
 	_MessageData.N = inUnitData:GetName()
-	_MessageData.GN = inUnitData:GetGuildName()
+	local _Guild = inUnitData:GetGuild()
+	_MessageData.GN = _Guild:GetName()
 	_MessageData.L = inUnitData:GetLevel()
 	_MessageData.No = inUnitData:GetNote()
 	_MessageData.O = (inUnitData:IsOnline() == true) and 1 or 0
@@ -48,7 +49,8 @@ function XFG:TarballUnitData(inUnitData)
 	_MessageData.A = (inUnitData:IsAlt() == true) and 1 or 0
 	_MessageData.RA = (inUnitData:IsRunningAddon() == true) and 1 or 0
 	_MessageData.U = inUnitData:GetUnitName()
-	_MessageData.RN = inUnitData:GetRealmName()
+	local _Realm = inUnitData:GetRealm()
+	_MessageData.RN = _Realm:GetName()
 	_MessageData.Z = inUnitData:GetZone()
 	_MessageData.MN = inUnitData:GetMainName()
 

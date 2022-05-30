@@ -38,11 +38,13 @@
     <Script file='Unit\CovenantCollection.lua'/>    
     <Script file='Unit\Unit.lua'/>
 
-    <Script file='Guild\Rank.lua'/>
-    <Script file='Guild\RankCollection.lua'/>
-    <Script file='Guild\Realm.lua'/>
-    <Script file='Guild\RealmCollection.lua'/>
-    <Script file='Guild\Team.lua'/>
-    <Script file='Guild\TeamCollection.lua'/>
-    <Script file='Guild\Guild.lua'/>
+    <Script file='Confederate\Rank.lua'/>
+    <Script file='Confederate\RankCollection.lua'/>
+    <Script file='Confederate\Realm.lua'/>
+    <Script file='Confederate\RealmCollection.lua'/>
+    <Script file='Confederate\Team.lua'/>
+    <Script file='Confederate\TeamCollection.lua'/>
+    <Script file='Confederate\Guild.lua'/>
+    <Script file='Confederate\GuildCollection.lua'/>
+    <Script file='Confederate\Confederate.lua'/>
 </Ui>

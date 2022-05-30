@@ -96,7 +96,7 @@ function TimerEvent:CallbackLogin()
         XFG:CancelTimer(XFG.Cache.CallbackTimerID)
         table.RemoveKey(XFG.Cache, 'CallbackTimerID')
 
-        XFG.Player.GuildName = GetGuildInfo('player')
+        XFG.Player.Guild = XFG.Guilds:GetGuildByFactionGuildName(XFG.Player.Faction, GetGuildInfo('player'))
 
         XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
         XFG.Classes = ClassCollection:new(); XFG.Classes:Initialize()
@@ -111,15 +111,15 @@ function TimerEvent:CallbackLogin()
         XFG.ConfigDB = LibStub("AceDB-3.0"):New("XFactionConfigDB", defaults, true)
         XFG.Config = XFG.ConfigDB.profile
 
-        XFG.Guild = Guild:new()
-        XFG.Guild:SetName('Eternal Kingdom')
-        XFG.Guild:SetKey('EK')
-        XFG.Guild:SetMainRealmName('Proudmoore')
-        XFG.Guild:SetMainGuildName('Eternal Kingdom')
+        XFG.Confederate = Confederate:new()
+        XFG.Confederate:SetName('Eternal Kingdom')
+        XFG.Confederate:SetKey('EK')
+        XFG.Confederate:SetMainRealmName('Proudmoore')
+        XFG.Confederate:SetMainGuildName('Eternal Kingdom')
 
         -- If this is a reload, restore backup
         if(XFG.DB.UIReload) then
-            XFG.Guild:RestoreBackup()
+            XFG.Confederate:RestoreBackup()
         end
   
         XFG:Info(LogCategory, "Initializing local guild roster cache")
@@ -129,14 +129,14 @@ function TimerEvent:CallbackLogin()
             local _UnitData = Unit:new()
             _UnitData:Initialize(i)
             if(_UnitData:IsOnline()) then
-                XFG.Guild:AddUnit(_UnitData)
+                XFG.Confederate:AddUnit(_UnitData)
 
                 if(_UnitData:IsPlayer()) then
                     XFG.Player.Unit = _UnitData                    
                     XFG.Player.Unit:Print()                    
                 end
-            elseif(XFG.Guild:Contains(_UnitData:GetKey())) then
-                XFG.Guild:RemoveUnit(_UnitData:GetKey())
+            elseif(XFG.Confederate:Contains(_UnitData:GetKey())) then
+                XFG.Confederate:RemoveUnit(_UnitData:GetKey())
             end
         end
 
@@ -167,7 +167,7 @@ end
 
 -- If you haven't heard from a unit in X minutes, set them to offline
 function TimerEvent:CallbackOffline()
-    XFG.Guild:OfflineUnits(_OfflineDelta)
+    XFG.Confederate:OfflineUnits(_OfflineDelta)
 end
 
 -- Periodically send update to avoid other considering you offline

@@ -42,7 +42,7 @@ end
 
 local function PreSort()
 	local _List = {}
-	for _, _Unit in XFG.Guild:Iterator() do
+	for _, _Unit in XFG.Confederate:Iterator() do
 		local _UnitData = {}
 
 		_UnitData[XFG.DataText.Guild.ColumnNames.LEVEL] = _Unit:GetLevel()
@@ -108,7 +108,7 @@ local function SetSortColumn(_, inColumnName)
 end
 
 local function LineClick(_, inUnitGUID, inMouseButton)
-	local _Unit = XFG.Guild:GetUnit(inUnitGUID)
+	local _Unit = XFG.Confederate:GetUnit(inUnitGUID)
 	local _UnitName = _Unit:GetUnitName()
 
 	local _UnitFaction = _Unit:GetFaction()
@@ -142,7 +142,7 @@ local function OnEvent(self, event, ...)
 			self.text = text
 		end
 
-		local _UnitCount = XFG.Guild:GetNumberOfUnits()
+		local _UnitCount = XFG.Confederate:GetNumberOfUnits()
 		self.text:SetFormattedText(format('|cff3CE13F%d', _UnitCount))
 	end
 end
@@ -168,7 +168,7 @@ function OnEnter(self)
 	end
 
 	local line = tooltip:AddLine()
-	local _GuildName = XFG.Guild:GetName()
+	local _GuildName = XFG.Confederate:GetName()
 	tooltip:SetCell(line, 1, format("Guild: |cffffffff%s|r", _GuildName), ttHeaderFont, "LEFT", 4)
 
 	line = tooltip:AddLine()

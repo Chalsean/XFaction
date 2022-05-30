@@ -122,6 +122,7 @@ function Sender:SendMessage(inMessage, inSendBNet)
 
     local _OutgoingData = XFG:EncodeMessage(inMessage)    
 
+    -- If you messaged all possible realm/faction combinations, can switch to local broadcast
     if(inSendBNet == true and self:BNet(_OutgoingData)) then
         inMessage:SetType(XFG.Network.Type.LOCAL)
     end
@@ -179,21 +180,27 @@ end
 
 function Sender:BNet(inEncodedMessage)
     if(self:CanBNet()) then
-        local _RealmCount = XFG.Realms:GetNumberOfRealms() - 1
-        -- For all the realms associated with the confederate
-        for _, _RealmName in pairs (XFG.Network.BNet.Realms) do
-            if(_RealmName ~= XFG.Player.RealmName and XFG.Realms:Contains(_RealmName)) then
+        local _BNetCount = 0
+        -- For all the realms/guilds associated with the confederate
+        for _, _Guild in XFG.Guilds:Iterator() do
+
+            local _Realm = _Guild:GetRealm()
+            local _Faction = _Guild:GetFaction()
+
+            -- If the guild is on your realm and same faction, no need to use BNet
+            if(XFG.Player.Realm:Equals(_Guild:GetRealm()) == false or XFG.Player.Faction:Equals(_Guild:GetFaction()) == false) then
+                XFG:Debug(LogCategory, "Should BNet to [%s][%s]", _Realm:GetName(), _Faction:GetName())
+                _BNetCount = _BNetCount + 1
                 -- Identify a passthru BNet friend to whisper
-                local _Bridger = XFG.Network.BNet.Friends:GetRandomFriend(XFG.Realms:GetRealm(_RealmName))
+                local _Bridger = XFG.Network.BNet.Friends:GetRandomFriend(_Guild:GetRealm(), _Guild:GetFaction())
                 if(_Bridger ~= nil) then
                     XFG:Debug(LogCategory, "Whispering BNet bridge [%s] with tag [%s]", _Bridger:GetName(), XFG.Network.Message.Tag.BNET)
                     BNSendGameData(_Bridger:GetID(), XFG.Network.Message.Tag.BNET, inEncodedMessage)
-                    _RealmCount = _RealmCount - 1
-                    if(_RealmCount < 1) then
-                        return true
-                    end
+                    _BNetCount = _BNetCount - 1
                 end
             end
         end
+        return _BNetCount == 0
     end
+    return false
 end

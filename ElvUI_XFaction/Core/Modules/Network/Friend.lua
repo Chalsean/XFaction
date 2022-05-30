@@ -29,6 +29,7 @@ function Friend:new(inObject)
         self._Tag = nil
         self._RealmID = nil
         self._UnitName = nil
+        self._Faction = nil
     end
 
     return Object
@@ -43,6 +44,7 @@ function Friend:Print()
     XFG:Debug(LogCategory, "  _Tag (" ..type(self._ShortName) .. "): ".. tostring(self._Tag))
     XFG:Debug(LogCategory, "  _RealmID (" ..type(self._RealmID) .. "): ".. tostring(self._RealmID))
     XFG:Debug(LogCategory, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
+    self._Faction:Print()
 end
 
 function Friend:GetKey()
@@ -103,4 +105,14 @@ function Friend:SetUnitName(inUnitName)
     assert(type(inUnitName) == 'string')
     self._UnitName = inUnitName
     return self:GetUnitName()
+end
+
+function Friend:GetFaction()
+    return self._Faction
+end
+
+function Friend:SetFaction(inFaction)
+    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
+    self._Faction = inFaction
+    return self:GetFaction()
 end
