@@ -66,5 +66,7 @@ function XFG:InitializeConfig()
 			}
 		}
 	}
+
+	
 end
 --tinsert(XFG.Config, Core)

@@ -115,7 +115,7 @@ function Sender:SetLocalChannel(inChannel)
 end
 
 function Sender:SendMessage(inMessage, inSendBNet)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(inMessage:IsInitialized() == false) then
         inMessage:Initialize()
     end

@@ -80,11 +80,11 @@ function MessageCollection:GetMessage(inKey)
 end
 
 function MessageCollection:AddMessage(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 	if(self:Contains(inMessage:GetKey()) == false) then
 		self._MessageCount = self._MessageCount + 1
 	end
-	self._Messages[inMessage:GetKey()] = inFriend
+	self._Messages[inMessage:GetKey()] = inMessage
 	return self:Contains(inMessage:GetKey())
 end
 

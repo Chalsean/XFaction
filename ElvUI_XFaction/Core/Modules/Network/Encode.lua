@@ -6,7 +6,7 @@ local Initialized = false
 -- The message will get reconstructed to original state on receiving end
 function XFG:EncodeMessage(inMessage)
 
-	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be a Message object")
+	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
 	local _MessageData = {}
 
 	if(inMessage.__name == 'GuildMessage') then
