@@ -4,35 +4,21 @@ local LogCategory = 'NFriend'
 
 Friend = {}
 
-function Friend:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function Friend:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Key = nil
-        self._ID = nil
-        self._Name = nil
-        self._Tag = nil
-        self._RealmID = nil
-        self._UnitName = nil
-        self._Faction = nil
-    end
+    self._Key = nil
+    self._ID = nil
+    self._Name = nil
+    self._Tag = nil
+    self._RealmID = nil
+    self._UnitName = nil
+    self._Faction = nil
 
-    return Object
+    return _Object
 end
 
 function Friend:Print()
