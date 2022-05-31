@@ -96,7 +96,7 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 ### Known bugs
 
-> Area 52 communication not working.
+> Area 52 communication not working (this is intentional).
 
 > BNet whispers going to users not running addon.
 
