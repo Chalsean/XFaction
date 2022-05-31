@@ -102,6 +102,8 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 > Communicating player status is inconsistent.
 
+> Not parsing main names with funky characters properly.
+
 ### Planned enhancements
 
 > Enable whispering between factions.
