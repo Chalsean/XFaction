@@ -96,15 +96,16 @@ function ChatFrame:DisplayChat(inEvent, inText, inSenderName, inFaction, inFlags
     -- Thus GUILD can be on multiple chat windows and we need to display on all
     for i = 1, NUM_CHAT_WINDOWS do
         _FrameTable = { GetChatWindowMessages(i) }
-        XFG:DataDumper(LogCategory, _FrameTable)
         local v
         for _, _Name in ipairs(_FrameTable) do
-            if _Name == 'GUILD' then
+            if _Name == 'CHANNEL' then
                 local _Frame = 'ChatFrame' .. i
                 if _G[_Frame] then
-                    local _SenderName = format('%s %s', format(IconTokenString, inFaction:GetIconID()), inSenderName)
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_GUILD', inText, _SenderName, 'Common', '', inSenderName, inFlags, 0, 0, '', 0, _, inSenderGUID)
-                end
+                    local _Text = format('%s %s', format(IconTokenString, inFaction:GetIconID()), inText)
+                    local _Channel = XFG.Network.Sender:GetLocalChannel()
+                    local _ChannelName = _Channel:GetName()
+                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inEvent, _Text, inSenderName, 'Common', _ChannelName, inSenderName, inFlags, 0, _Channel:GetID(), _Channel:GetShortName(), 0, _, inSenderGUID)
+                end                                                              --1       2           3             4               5             6      7  8   9  10  11    12 
                 break
             end
         end

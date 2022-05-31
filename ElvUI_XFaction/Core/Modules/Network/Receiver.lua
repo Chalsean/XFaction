@@ -88,6 +88,12 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
 
     local _Message = XFG:DecodeMessage(inEncodedMessage)
 
+    -- Ignore if it's your own message
+    -- Due to startup timing, use GUID directly rather than Unit object
+	if(_Message:GetFrom() == XFG.Player.GUID) then
+        return
+	end   
+
     -- Have you seen this message before?
     if(XFG.Network.Mailbox:Contains(_Message:GetKey())) then
         XFG:Debug(LogCategory, "This message has already been processed %s", _Message:GetKey())
@@ -95,32 +101,25 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
     else
         XFG.Network.Mailbox:AddMessage(_Message)
     end
-
-    -- Ignore if it's your own message
-    -- Due to startup timing, use GUID directly rather than Unit object
-	if(_Message:GetFrom() == XFG.Player.GUID) then
-        return
-	end   
-          
+      
     _Message:Print() 
-
-    -- If BNet comm bridge for a whisper, simply forward
-    if(inMessageTag == XFG.Network.Message.Tag.BNET and 
-       _Message:GetType() == XFG.Network.Type.WHISPER and 
-       _Message:GetTo() ~= XFG.Player.Unit:GetKey()) then
-
-        XFG.Network.Sender:Whisper(_Message:GetTo(), inEncodedMessage)
-        return
-    end
 
     -- If sent via BNet, broadcast to your local realm
     if(inMessageTag == XFG.Network.Message.Tag.BNET and _Message:GetType() == XFG.Network.Type.BROADCAST) then
-        XFG.Network.Sender:SendMessage(_Message)
+        XFG.Network.Sender:SendMessage(_Message, true)
     end
 
     -- Process GUILD_CHAT message
     if(_Message:GetSubject() == XFG.Network.Message.Subject.GUILD_CHAT) then
-        XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.GUILD,
+        --if(_Message:Get)  // Need to check for realm/faction
+        local _Text = format('%s ', format(IconTokenString, inFaction:GetIconID()))
+        if(_Message:GetMainName() ~= nil) then
+            _Text = _Text .. "(" .. _Message:GetMainName() .. ") "
+        end
+        if(_Message:GetGuildShortName() ~= nil) then
+            _Text = _Text .. "<" .. _Message:GetGuildShortName() .. "> "
+        end
+        XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.CHANNEL,
                                     _Message:GetData(),
                                     _Message:GetFrom(), 
                                     _Message:GetFaction(), 

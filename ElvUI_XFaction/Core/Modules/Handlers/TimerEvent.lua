@@ -156,6 +156,7 @@ function TimerEvent:CallbackLogin()
 
         -- Broadcast login, refresh DTs and ready to roll
         --XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
+        wipe(XFG.Cache)
         XFG.DB.UIReload = false
         XFG.Initialized = true
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)

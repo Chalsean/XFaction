@@ -58,12 +58,12 @@ function ChannelEvent:Print()
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
-function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelType, inChannelNumber, inChannelName)
+function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _, inChannelType, inChannelNumber, inChannelShortName)
 	-- Fires when player leaves a channel
 	if(inAction == 'YOU_LEFT') then
-		if(XFG.Channels:RemoveChannel(inChannelName)) then
-			XFG:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelName)
-			if(XFG.Channels:GetAddonKey() == inChannelName) then
+		if(XFG.Channels:RemoveChannel(inChannelShortName)) then
+			XFG:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
+			if(XFG.Channels:GetAddonKey() == inChannelShortName) then
 				XFG.Network.Sender:CanBroadcast(false)
 				XFG:Error(LogCategory, "Removed channel was the addon channel")
 			end			
@@ -72,13 +72,18 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelTy
 	-- Fires when player joins a channel
 	elseif(inAction == 'YOU_CHANGED') then
 		local _NewChannel = Channel:new()
-		_NewChannel:SetKey(inChannelName)
-		_NewChannel:SetID(inChannelNumber)
-		_NewChannel:SetName(inChannelName)
-		_NewChannel:SetShortName(inChannelName)
+		_NewChannel:SetKey(inChannelShortName)
+		_NewChannel:SetID(inChannelNumber)		
+		_NewChannel:SetShortName(inChannelShortName)
 		_NewChannel:SetType(inChannelType)
+		-- Because the ElvUI and Blizzard APIs don't like each other
+		if(inChannelType == 0) then
+			_NewChannel:SetName(tostring(inChannelNumber) .. ". " .. inChannelShortName)
+		else
+			_NewChannel:SetName(inChannelName)
+		end
 		if(XFG.Network.Channels:AddChannel(_NewChannel)) then
-			XFG:Info(LogCategory, "Added channel [%d:%s] due to system event", inChannelNumber, inChannelName)
+			XFG:Info(LogCategory, "Added channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
 			if(_NewChannel:GetShortName() == XFG.ChannelName) then
 				XFG.Network.Sender:SetLocalChannel(_NewChannel)
 				XFG.Network.Sender:CanBroadcast(true)
@@ -94,12 +99,15 @@ function ChannelEvent:CallbackChannelChange(inIndex)
 	if(_ChannelInfo ~= nil and XFG.Network.Channels:Contains(_ChannelInfo.shortcut)) then
 		-- This event spams, so lets check before updating
 		local _Channel = XFG.Network.Channels:GetChannel(_ChannelInfo.shortcut)
-		if(_Channel:GetID() ~= _ChannelInfo.localID or _Channel:GetName() ~= _ChannelInfo.name or _Channel:GetShortName() ~= _ChannelInfo.shortcut) then
-			XFG:Debug(LogCategory, "Passed [%d] [%s] [%s]", _ChannelInfo.localID, _ChannelInfo.name, _ChannelInfo.shortcut)
-			_Channel:Print()
+		if(_Channel:GetID() ~= _ChannelInfo.localID or _Channel:GetShortName() ~= _ChannelInfo.shortcut) then
 			_Channel:SetID(_ChannelInfo.localID)
-			_Channel:SetName(_ChannelInfo.name)
 			_Channel:SetShortName(_ChannelInfo.shortcut)
+			-- Because the ElvUI and Blizzard APIs don't like each other
+			if(_ChannelInfo.channelType == 0) then
+				_NewChannel:SetName(tostring(_ChannelInfo.localID) .. ". " .. _ChannelInfo.shortcut)
+			else
+				_NewChannel:SetName(_ChannelInfo.name)
+			end
 			XFG:Info(LogCategory, "Changed channel information due to CHANNEL_FLAGS_UPDATED event [%d:%s]", _Channel:GetID(), _Channel:GetShortName())
 		end
 	end

@@ -29,6 +29,8 @@ function XFG:DecodeMessage(inMessage)
 		if(_MessageData.FN ~= nil) then _Message:SetFaction(XFG.Factions:GetFaction(_MessageData.FN)) end
 		if(_MessageData.Fl ~= nil) then	_Message:SetFlags(_MessageData.Fl) end
 		if(_MessageData.LI ~= nil) then	_Message:SetLineID(_MessageData.LI) end
+		if(_MessageData.GSN ~= nil) then _Message:SetGuildShortName(_MessageData.GSN) end
+		if(_MessageData.MN ~= nil) then	_Message:SetMainName(_MessageData.MN) end
 	end
 
 	if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA) then

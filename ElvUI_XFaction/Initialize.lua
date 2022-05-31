@@ -37,15 +37,6 @@ XFG.Player.LastBroadcast = 0
 
 XFG.Network = {}
 XFG.Network.BNet = {}
-XFG.Network.BNet.Realms = {} -- config	
-XFG.Network.BNet.Realms.Proudmoore = {
-	Alliance = {'Eternal Kingdom', 'Endless Kingdom', 'Alternal Kingdom One', 'Alternal Kingdom Two', 'Alternal Kingdom Three'},
-	Horde = {'Alternal Kingdom Four', 'Enduring Kingdom'}
-}
-XFG.Network.BNet.Realms['Area 52'] = {
-	Alliance = {},
-	Horde = {'Eternal Kingdom'}
-}
 XFG.Network.Message = {}
 XFG.Network.ChannelName = 'EKXFactionChat'
 XFG.Network.Message.Tag = {
@@ -69,8 +60,7 @@ XFG.Network.Type = {
 XFG.Frames = {}
 XFG.Frames.ChatType = {
 	GUILD = 'GUILD',
-	ONLINE = 'ONLINE',
-	OFFLINE = 'OFFLINE'
+	CHANNEL = 'CHANNEL'
 }
 
 XFG.Cache = {}
@@ -94,6 +84,24 @@ XFG.Cache.Teams = {
 	U = 'Unknown',
 	ENKA = 'Social'
 }
+XFG.Cache.Guilds = {}
+XFG.Cache.Guilds['Eternal Kingdom'] = 'EK'
+XFG.Cache.Guilds['Endless Kingdom'] = 'ENK'
+XFG.Cache.Guilds['Enduring Kingdom'] = 'EDK'
+XFG.Cache.Guilds['Alternal Kingdom'] = 'AK'
+XFG.Cache.Guilds['Alternal Kingdom Two'] = 'AK2'
+XFG.Cache.Guilds['Alternal Kingdom Three'] = 'AK3'
+XFG.Cache.Guilds['Alternal Kingdom Four'] = 'AK4'
+
+XFG.Cache.Realms = {}
+XFG.Cache.Realms.Proudmoore = {
+	Alliance = {'Eternal Kingdom', 'Endless Kingdom', 'Alternal Kingdom One', 'Alternal Kingdom Two', 'Alternal Kingdom Three'},
+	Horde = {'Alternal Kingdom Four', 'Enduring Kingdom'}
+}
+XFG.Cache.Realms['Area 52'] = {
+	Alliance = {},
+	Horde = {'Eternal Kingdom'}
+}
 
 function XFG:Init()
 	
@@ -111,7 +119,7 @@ function XFG:Init()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
 
 	-- Make sure we have all the realm/guild combinations accounted for
-	for _RealmName, _FactionGuilds in pairs(XFG.Network.BNet.Realms) do
+	for _RealmName, _FactionGuilds in pairs(XFG.Cache.Realms) do
 		local _NewRealm = Realm:new()
 		_NewRealm:SetKey(_RealmName)
 		_NewRealm:SetName(_RealmName)
@@ -125,6 +133,9 @@ function XFG:Init()
 				_NewGuild:SetName(_GuildName)
 				_NewGuild:SetFaction(_Faction)
 				_NewGuild:SetRealm(_NewRealm)
+				if(XFG.Cache.Guilds[_GuildName] ~= nil) then
+					_NewGuild:SetShortName(XFG.Cache.Guilds[_GuildName])
+				end
 				XFG.Guilds:AddGuild(_NewGuild)
 			end
 		end

@@ -40,9 +40,14 @@ function ChannelCollection:Initialize()
 				local _NewChannel = Channel:new()
 				_NewChannel:SetKey(_ChannelInfo.shortcut)
 				_NewChannel:SetID(_ChannelInfo.localID)
-				_NewChannel:SetName(_ChannelInfo.name)
 				_NewChannel:SetShortName(_ChannelInfo.shortcut)
 				_NewChannel:SetType(_ChannelInfo.channelType)
+				-- Because the ElvUI and Blizzard APIs don't like each other
+				if(_ChannelInfo.channelType == 0) then
+					_NewChannel:SetName(tostring(_ChannelInfo.localID) .. ". " .. _ChannelInfo.shortcut)
+				else
+					_NewChannel:SetName(_ChannelInfo.name)
+				end
 				if(self:AddChannel(_NewChannel) and _NewChannel:GetKey() == XFG.Network.ChannelName) then
 					XFG.Network.Sender:SetLocalChannel(_NewChannel)
 					XFG.Network.Sender:CanBroadcast(true)
