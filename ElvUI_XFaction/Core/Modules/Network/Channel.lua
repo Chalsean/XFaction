@@ -4,33 +4,19 @@ local LogCategory = 'NChannel'
 
 Channel = {}
 
-function Channel:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function Channel:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Key = nil
-        self._ID = nil
-        self._Name = nil
-        self._ShortName = nil
-        self._Type = nil
-    end
-
-    return Object
+    self._Key = nil
+    self._ID = nil
+    self._Name = nil
+    self._ShortName = nil
+    self._Type = nil
+    
+    return _Object
 end
 
 function Channel:Print()
@@ -87,24 +73,4 @@ function Channel:SetType(inType)
     assert(type(inType) == 'number')
     self._Type = inType
     return true
-end
-
-function Channel:IsSystem()
-    return self._Type == 1
-end
-
-function Channel:IsCommunity()
-    return self._Type == 2
-end
-
-function Channel:IsCustom()
-    return self._Type == 3
-end
-
-function Channel:IsAddonChannel(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self._IsAddonChannel = inBoolean
-    end
-    return self._IsAddonChannel
 end
