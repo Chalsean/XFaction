@@ -62,7 +62,7 @@ For the addon to "work" from an EK member perspective, there needs to be a user 
 
 ### Debugging addons
 
-Three addons will be critical to collecting meaningful information to troubleshoot issues. 
+Three addons will be critical for collecting meaningful information to troubleshoot issues. 
 
 >BugSack/BugGrabber
 
@@ -70,7 +70,7 @@ Although technically two different addons (and installed separately), they funct
 
 >_DebugLog
 
-This is a logging utility leveraged by XFaction. (XFaction will not log or throw errors if _DebugLog is not installed.)  This will look like a yellow fist after install. When you launch the UI, you should see a XFaction tab that contains all log information from the addon. Currently the addon appears to have an issue with exporting logs, but I may ask for information in the logs to help diagnose an issue if I cannot reproduce on my own.
+This is a logging utility leveraged by XFaction. (XFaction will not log or throw errors if _DebugLog is not installed.)  This will look like a yellow fist after install. When you launch the UI, you should see a XFaction tab that contains all log information from the addon. Currently the utility appears to have an issue with exporting logs, but I may ask for information in the logs to help diagnose an issue if I cannot reproduce on my own.
 
 ## Misc
 
