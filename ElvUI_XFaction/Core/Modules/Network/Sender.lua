@@ -214,6 +214,7 @@ function Sender:BNet(inEncodedMessage)
                     XFG:Debug(LogCategory, "Whispering BNet bridge [%s] with tag [%s]", _Bridger:GetName(), XFG.Network.Message.Tag.BNET)
                     BNSendGameData(_Bridger:GetID(), XFG.Network.Message.Tag.BNET, inEncodedMessage)
                     _BNetCount = _BNetCount - 1
+                    return
                 end
             end
         end

@@ -67,7 +67,7 @@ function SystemEvent:CallbackLogout()
         XFG.Confederate:CreateBackup()
     else
         local _NewMessage = Message:new()
-        _NewMessage:Initiate()
+        _NewMessage:Initialize()
         _NewMessage:SetType(XFG.Network.Type.BROADCAST)
         _NewMessage:SetSubject(XFG.Network.Message.Subject.LOGOUT)
         XFG.Network.Sender:SendMessage(_NewMessage, true)

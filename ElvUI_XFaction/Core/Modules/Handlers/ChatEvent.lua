@@ -74,20 +74,22 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
 end
 
 function ChatEvent:CallbackChannelMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
-   local _Channel = XFG.Network.Sender:GetLocalChannel()
-   if(_Channel:GetID() == inChannelID and XFG.Player.Unit:GetGUID() == inSenderGUID) then
-        local _NewMessage = GuildMessage:new()
-        _NewMessage:Initialize()
-        _NewMessage:SetTo(XFG.Player.GuildName .. ":" .. XFG.Player.RealmName)
-        _NewMessage:SetFrom(inSenderName)
-        _NewMessage:SetFromGUID(inSenderGUID)
-        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
-        _NewMessage:SetSubject(XFG.Network.Message.Subject.GUILD_CHAT)
-        _NewMessage:SetFlags(inFlags)
-        _NewMessage:SetLineID(inLineID)
-        _NewMessage:SetFaction(XFG.Player.Faction)
-        _NewMessage:SetData(inText)
-        _NewMessage:Print()
-        XFG.Network.Sender:SendMessage(_NewMessage, true)
-   end
+    if(XFG.Network.Sender:HasLocalChannel()) then
+        local _Channel = XFG.Network.Sender:GetLocalChannel()
+        if(_Channel:GetID() == inChannelID and XFG.Player.Unit:GetGUID() == inSenderGUID) then
+            local _NewMessage = GuildMessage:new()
+            _NewMessage:Initialize()
+            _NewMessage:SetTo(XFG.Player.Guild:GetName() .. ":" .. XFG.Player.Realm:GetName())
+            _NewMessage:SetFrom(inSenderName)
+            _NewMessage:SetFromGUID(inSenderGUID)
+            _NewMessage:SetType(XFG.Network.Type.BROADCAST)
+            _NewMessage:SetSubject(XFG.Network.Message.Subject.GUILD_CHAT)
+            _NewMessage:SetFlags(inFlags)
+            _NewMessage:SetLineID(inLineID)
+            _NewMessage:SetFaction(XFG.Player.Faction)
+            _NewMessage:SetData(inText)
+            _NewMessage:Print()
+            XFG.Network.Sender:SendMessage(_NewMessage, true)
+        end
+    end
 end

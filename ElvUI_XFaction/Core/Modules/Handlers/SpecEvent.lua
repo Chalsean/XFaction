@@ -59,6 +59,7 @@ function SpecEvent:CallbackSpecChanged()
 
     local _NewSpec = XFG.Specs:GetSpec(_SpecID)
     local _CurrentSpec = XFG.Player.Unit:GetSpec(_SpecID)
+    if(_NewSpec == nil or _CurrentSpec == nil) then return end
 
     -- For whatever reason the event fires twice in succession when a player changes specs
     if(_NewSpec:GetKey() ~= _CurrentSpec:GetKey()) then

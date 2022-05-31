@@ -155,7 +155,7 @@ function TimerEvent:CallbackLogin()
         XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
 
         -- Broadcast login, refresh DTs and ready to roll
-        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
+        --XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
         XFG.DB.UIReload = false
         XFG.Initialized = true
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
