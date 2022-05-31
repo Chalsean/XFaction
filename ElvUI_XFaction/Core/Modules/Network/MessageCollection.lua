@@ -4,32 +4,18 @@ local LogCategory = 'NCMessage'
 
 MessageCollection = {}
 
-function MessageCollection:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or 
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function MessageCollection:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-		self._Key = nil
-        self._Messages = {}
-		self._MessageCount = 0
-		self._Initialized = false
-    end
+    self._Key = nil
+    self._Messages = {}
+    self._MessageCount = 0
+    self._Initialized = false
 
-    return Object
+    return _Object
 end
 
 function MessageCollection:Initialize()
@@ -54,7 +40,7 @@ function MessageCollection:Print()
 	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
 	XFG:Debug(LogCategory, "  _MessageCount (" .. type(self._FriendCount) .. "): ".. tostring(self._FriendCount))
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-	for _, _Message in pairs (self._Messages) do
+	for _, _Message in self:Iterator() do
 		_Message:Print()
 	end
 end
@@ -97,10 +83,11 @@ function MessageCollection:RemoveMessage(inKey)
 	return self:Contains(inKey) == false
 end
 
+-- Review: Should back the epoch time an argument
 function MessageCollection:Purge()
 	local _ServerEpochTime = GetServerTime()
-	for _, _Message in pairs(self._Messages) do
-		if(_Message:GetTimeStamp() < _ServerEpochTime - 60 * 5) then -- config
+	for _, _Message in self:Iterator() do
+		if(_Message:GetTimeStamp() + 60 * 5 < _ServerEpochTime) then -- config
 			self:RemoveMessage(_Message:GetKey())
 		end
 	end
