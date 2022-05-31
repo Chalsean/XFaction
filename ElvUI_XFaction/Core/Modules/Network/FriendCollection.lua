@@ -1,55 +1,41 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'FriendCollection'
-local LogCategory = 'OCFriend'
+local LogCategory = 'NCFriend'
 
 FriendCollection = {}
 
-function FriendCollection:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or 
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function FriendCollection:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-		self._Key = nil
-        self._Friends = {}
-		self._FriendCount = 0
-		self._Initialized = false
-    end
+    self._Key = nil
+    self._Friends = {}
+    self._FriendCount = 0
+    self._Initialized = false
 
-    return Object
+    return _Object
 end
 
 function FriendCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
 		for i = 1, BNGetNumFriends() do
-			local AccountInfo = C_BattleNet.GetFriendAccountInfo(i)
-			if(AccountInfo ~= nil and
-			   AccountInfo.isFriend == true and 
-			   AccountInfo.gameAccountInfo.isOnline == true and 
-			   AccountInfo.gameAccountInfo.clientProgram == "WoW") then
+			local _AccountInfo = C_BattleNet.GetFriendAccountInfo(i)
+			if(_AccountInfo ~= nil and
+			   _AccountInfo.isFriend == true and 
+			   _AccountInfo.gameAccountInfo.isOnline == true and 
+			   _AccountInfo.gameAccountInfo.clientProgram == "WoW") then
 
 				local _NewFriend = Friend:new()
-				_NewFriend:SetKey(AccountInfo.gameAccountInfo.gameAccountID)
-				_NewFriend:SetID(AccountInfo.gameAccountInfo.gameAccountID)
-				_NewFriend:SetName(AccountInfo.accountName)
-				_NewFriend:SetTag(AccountInfo.battleTag)
-				_NewFriend:SetRealmID(AccountInfo.gameAccountInfo.realmID)
-				_NewFriend:SetUnitName(AccountInfo.gameAccountInfo.characterName)
-				_NewFriend:SetFaction(XFG.Factions:GetFactionByName(AccountInfo.gameAccountInfo.factionName))
+				_NewFriend:SetKey(_AccountInfo.gameAccountInfo.gameAccountID)
+				_NewFriend:SetID(_AccountInfo.gameAccountInfo.gameAccountID)
+				_NewFriend:SetName(_AccountInfo.accountName)
+				_NewFriend:SetTag(_AccountInfo.battleTag)
+				_NewFriend:SetRealmID(_AccountInfo.gameAccountInfo.realmID)
+				_NewFriend:SetUnitName(_AccountInfo.gameAccountInfo.characterName)
+				_NewFriend:SetFaction(XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName))
 				self:AddFriend(_NewFriend)
 			end
 		end
@@ -72,7 +58,7 @@ function FriendCollection:Print()
 	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
 	XFG:Debug(LogCategory, "  _FriendCount (" .. type(self._FriendCount) .. "): ".. tostring(self._FriendCount))
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-	for _, _Friend in pairs (self._Friends) do
+	for _, _Friend in self:Iterator() do
 		_Friend:Print()
 	end
 end
@@ -126,6 +112,7 @@ function FriendCollection:GetRandomFriend(inRealm , inFaction)
 	-- Find any BNet friend logged into that realm/faction
 	for _, _Friend in self:Iterator() do
 		if(inFaction:Equals(_Friend:GetFaction())) then
+			-- Loop through all the connected realm IDs
 			for _, _RealmID in pairs (_RealmIDs) do
 				if(_RealmID == _Friend:GetRealmID()) then
 					table.insert(_PossibleTargets, _Friend)
@@ -135,7 +122,7 @@ function FriendCollection:GetRandomFriend(inRealm , inFaction)
 	end
 
 	if(table.getn(_PossibleTargets) == 0) then
-		XFG:Info(LogCategory, "No friends are online connected to target realm [%s] of [%s] faction", inRealm:GetName(), inFaction:GetName())
+		XFG:Debug(LogCategory, "No friends are online connected to target realm [%s] of [%s] faction", inRealm:GetName(), inFaction:GetName())
 		return
 	end
 	
