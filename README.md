@@ -114,4 +114,6 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 > Remove ElvUI dependencies for non-ElvUI users.
 
+> DT that displays all active BNet bridges.
+
 
