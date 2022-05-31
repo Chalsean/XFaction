@@ -1,36 +1,24 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ChannelEvent'
-local LogCategory = 'H' .. ObjectName
+local LogCategory = 'HEChannel'
 
 ChannelEvent = {}
 
-function ChannelEvent:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function ChannelEvent:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Initialized = false
-    end
+	self._Key = nil
+    self._Initialized = false
 
-    return Object
+    return _Object
 end
 
 function ChannelEvent:Initialize()
 	if(self:IsInitialized() == false) then
+		self:SetKey(math.generateUID())
 		XFG:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', self.CallbackChannelNotice)
         XFG:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL_NOTICE events")
 		XFG:RegisterEvent('CHANNEL_FLAGS_UPDATED', self.CallbackChannelChange)
@@ -55,7 +43,18 @@ end
 function ChannelEvent:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+end
+
+function ChannelEvent:GetKey()
+    return self._Key
+end
+
+function ChannelEvent:SetKey(inKey)
+    assert(type(inKey) == 'string')
+    self._Key = inKey
+    return self:GetKey()
 end
 
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _, inChannelType, inChannelNumber, inChannelShortName)
@@ -63,7 +62,8 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
 	if(inAction == 'YOU_LEFT') then
 		if(XFG.Channels:RemoveChannel(inChannelShortName)) then
 			XFG:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
-			if(XFG.Channels:GetAddonKey() == inChannelShortName) then
+			local _Channel = XFG.Network.Sender:GetLocalChannel()
+			if(_Channel:GetShortName() == inChannelShortName) then
 				XFG.Network.Sender:CanBroadcast(false)
 				XFG:Error(LogCategory, "Removed channel was the addon channel")
 			end			
@@ -84,7 +84,7 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
 		end
 		if(XFG.Network.Channels:AddChannel(_NewChannel)) then
 			XFG:Info(LogCategory, "Added channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
-			if(_NewChannel:GetShortName() == XFG.ChannelName) then
+			if(_NewChannel:GetShortName() == XFG.Network.ChannelName) then
 				XFG.Network.Sender:SetLocalChannel(_NewChannel)
 				XFG.Network.Sender:CanBroadcast(true)
 			end
@@ -104,7 +104,7 @@ function ChannelEvent:CallbackChannelChange(inIndex)
 			_Channel:SetShortName(_ChannelInfo.shortcut)
 			-- Because the ElvUI and Blizzard APIs don't like each other
 			if(_ChannelInfo.channelType == 0) then
-				_NewChannel:SetName(tostring(_ChannelInfo.localID) .. ". " .. _ChannelInfo.shortcut)
+				_NewChannel:SetName(tostring(_ChannelInfo.localID) .. '. ' .. _ChannelInfo.shortcut)
 			else
 				_NewChannel:SetName(_ChannelInfo.name)
 			end
