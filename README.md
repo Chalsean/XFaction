@@ -96,6 +96,8 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 ### Known bugs
 
+> Area 52 communication not working.
+
 > BNet whispers going to users not running addon.
 
 > Guild chat being duplicated if you are in guild of origin.
