@@ -1,6 +1,5 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local LogCategory = 'NDecode'
-local Initialized = false
 
 -- Reconstruct a Unit object from the message
 function XFG:DecodeMessage(inMessage)	
@@ -46,8 +45,7 @@ end
 function XFG:ExtractTarball(inTarball)
 	local _UnitData = Unit:new()	
 	_UnitData:SetGuildIndex(inTarball.GI)
-	_UnitData:SetName(inTarball.N)
-	
+	_UnitData:SetName(inTarball.N)	
 	_UnitData:SetLevel(inTarball.L)
 	_UnitData:SetNote(inTarball.No)
 	_UnitData:IsOnline(inTarball.O == 1)
@@ -88,12 +86,12 @@ function XFG:ExtractTarball(inTarball)
 	-- There is no API to query for all guild ranks+names, so have to add them as you see them
 	if(inTarball.GR) then
 		if(XFG.Ranks:Contains(inTarball.GR) == false) then
-        	local _NewRank = Rank:new()
-        	_NewRank:SetKey(inTarball.GR)
-        	_NewRank:SetID(inTarball.GR)
-        	_NewRank:SetName(inTarball.GRN)
-        	XFG.Ranks:AddRank(_NewRank)
-    	end
+        		local _NewRank = Rank:new()
+        		_NewRank:SetKey(inTarball.GR)
+        		_NewRank:SetID(inTarball.GR)
+        		_NewRank:SetName(inTarball.GRN)
+        		XFG.Ranks:AddRank(_NewRank)
+    		end
 		_UnitData:SetRank(XFG.Ranks:GetRank(inTarball.GR))
 	end
 
