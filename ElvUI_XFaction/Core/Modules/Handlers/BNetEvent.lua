@@ -1,37 +1,24 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'BNetEvent'
 local LogCategory = 'HEBNet'
-local TotalChannels = 10
 
 BNetEvent = {}
 
-function BNetEvent:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function BNetEvent:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Initialized = false
-    end
+	self._Key = nil
+    self._Initialized = false
 
-    return Object
+    return _Object
 end
 
 function BNetEvent:Initialize()
 	if(self:IsInitialized() == false) then
+		self:SetKey(math.GenerateUID())
 		XFG:RegisterEvent('BN_CONNECTED', self.CallbackBNetConnected)
         XFG:Info(LogCategory, "Registered for BN_CONNECTED events")
         XFG:RegisterEvent('BN_DISCONNECTED', self.CallbackBNetDisconnected)
@@ -56,6 +43,16 @@ function BNetEvent:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+end
+
+function BNetEvent:GetKey()
+    return self._Key
+end
+
+function BNetEvent:SetKey(inKey)
+    assert(type(inKey) == 'string')
+    self._Key = inKey
+    return self:GetKey()
 end
 
 function BNetEvent:CallbackBNetConnected()
