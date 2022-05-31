@@ -48,7 +48,7 @@ The easiest way is to use WowUp client.
 2. Click on "Install from URL"
 3. Enter the following URL: https://github.com/chalsean/XFaction
 
-If not using WowUp client, you can download the .zip file from the repository and install manually to your Addons folder.
+Like any other addon displayed in WowUp, the application will recognize when a new build is made available via Github. To install a newer version, you will only need to click on "Upgrade". If not using WowUp client, you can download the .zip file from the repository and install manually to your Addons folder.
 
 ### How It Works
 
