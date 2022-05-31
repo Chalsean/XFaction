@@ -5,30 +5,16 @@ local LogCategory = 'NReceiver'
 
 Receiver = {}
 
-function Receiver:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function Receiver:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Key = nil
-        self._Initialized = false
-    end
+    self._Key = nil
+    self._Initialized = false
 
-    return Object
+    return _Object
 end
 
 function Receiver:IsInitialized(inBoolean)
@@ -47,7 +33,7 @@ function Receiver:Initialize()
                                                            XFG.Network.Receiver:ReceiveMessage(inMessageType, inMessage, inDistribution, inSender)
                                                         end)
 
-        -- Technically this should be with the other handlers but wanted to keep the BNet logic together
+        -- Technically this should be with the other handlers but wanted to keep the receiving logic together
         XFG:RegisterEvent('BN_CHAT_MSG_ADDON', self.ReceiveMessage)
         XFG:Info(LogCategory, "Registered for BN_CHAT_MSG_ADDON events")
         self:IsInitialized(true)
@@ -89,7 +75,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
     local _Message = XFG:DecodeMessage(inEncodedMessage)
 
     -- Ignore if it's your own message
-    -- Due to startup timing, use GUID directly rather than Unit object
+    -- Due to startup timing, use GUID directly rather than from Unit object
 	if(_Message:GetFrom() == XFG.Player.GUID) then
         return
 	end   
@@ -106,7 +92,8 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
 
     -- If sent via BNet, broadcast to your local realm
     if(inMessageTag == XFG.Network.Message.Tag.BNET and _Message:GetType() == XFG.Network.Type.BROADCAST) then
-        XFG.Network.Sender:SendMessage(_Message, true)
+		-- Review: Change type to LOCAL and change the Tag, its already made it across the BNet bridge
+        XFG.Network.Sender:SendMessage(_Message)
     end
 
     -- Process GUILD_CHAT message
@@ -119,6 +106,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         if(_Message:GetGuildShortName() ~= nil) then
             _Text = _Text .. "<" .. _Message:GetGuildShortName() .. "> "
         end
+		-- Visual sugar to make it appear as if the message came through the channel
         XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.CHANNEL,
                                     _Message:GetData(),
                                     _Message:GetFrom(), 
@@ -131,6 +119,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
 
     -- Process LOGOUT message
     if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
+		-- BNet?
         XFG.Confederate:RemoveUnit(_Message:GetFrom())
         return
     end
