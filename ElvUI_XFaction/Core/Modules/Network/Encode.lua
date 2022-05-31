@@ -1,6 +1,5 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local LogCategory = 'NEncode'
-local Initialized = false
 
 -- To reduce payload, strip out unnecessary key characters, replace text with ids, compress, etc.
 -- The message will get reconstructed to original state on receiving end
@@ -15,6 +14,7 @@ function XFG:EncodeMessage(inMessage)
 		_MessageData.FN = _Faction:GetKey()
 		_MessageData.Fl = inMessage:GetFlags()
 		_MessageData.LI = inMessage:GetLineID()
+		-- Review: Should be transferring guild ID
 		_MessageData.GSN = inMessage:GetGuildShortName()
 		_MessageData.MN = inMessage:GetMainName()
 		_MessageData.Y = inMessage:GetData()
@@ -44,7 +44,6 @@ function XFG:TarballUnitData(inUnitData)
 	_MessageData.L = inUnitData:GetLevel()
 	_MessageData.No = inUnitData:GetNote()
 	_MessageData.O = (inUnitData:IsOnline() == true) and 1 or 0
-	--_MessageUnitData.S = _UnitData:GetStatus()
 	_MessageData.M = (inUnitData:IsMobile() == true) and 1 or 0
 	_MessageData.G = inUnitData:GetGUID()
 	_MessageData.TS = inUnitData:GetTimeStamp()		
@@ -52,6 +51,7 @@ function XFG:TarballUnitData(inUnitData)
 	_MessageData.RA = (inUnitData:IsRunningAddon() == true) and 1 or 0
 	_MessageData.U = inUnitData:GetUnitName()
 	local _Realm = inUnitData:GetRealm()
+	-- Review: Should transfer realm ID
 	_MessageData.RN = _Realm:GetName()
 	_MessageData.Z = inUnitData:GetZone()
 	_MessageData.MN = inUnitData:GetMainName()
