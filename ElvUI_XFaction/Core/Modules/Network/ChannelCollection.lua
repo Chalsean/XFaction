@@ -1,39 +1,27 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'ChannelCollection'
-local LogCategory = 'OCChannel'
+local LogCategory = 'NCChannel'
 local TotalChannels = 10
 
 ChannelCollection = {}
 
-function ChannelCollection:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or 
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function ChannelCollection:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Channels = {}
-		self._ChannelCount = 0
-		self._Initialized = false
-    end
-
-    return Object
+    self._Key = nil
+    self._Channels = {}
+    self._ChannelCount = 0
+    self._Initialized = false
+    
+    return _Object
 end
 
 function ChannelCollection:Initialize()
 	if(self:IsInitialized() == false) then
+		self:SetKey(math.GenerateUID())
 		for i = 1, TotalChannels do
 			local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(i)
 			if(_ChannelInfo ~= nil) then
@@ -70,12 +58,22 @@ end
 function ChannelCollection:Print()
 	XFG:DoubleLine(LogCategory)
 	XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
 	XFG:Debug(LogCategory, "  _ChannelCount (" .. type(self._ChannelCount) .. "): ".. tostring(self._ChannelCount))
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-	XFG:Debug(LogCategory, "  _AddonKey (" .. type(self._AddonKey) .. "): ".. tostring(self._AddonKey))
-	for _, _Channel in pairs (self._Channels) do
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))	
+	for _, _Channel in self:Iterator() do
 		_Channel:Print()
 	end
+end
+
+function ChannelCollection:GetKey()
+    return self._Key
+end
+
+function ChannelCollection:SetKey(inKey)
+    assert(type(inKey) == 'string')
+    self._Key = inKey
+    return self:GetKey()
 end
 
 function ChannelCollection:Contains(inKey)
