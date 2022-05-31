@@ -52,7 +52,7 @@ Like any other addon displayed in WowUp, the application will recognize when a n
 
 ### How It Works
 
-Most addons use an API that goes over an invisible (to the user) channel for communication. However, channels are realm isolated, which is why GreenWall only provides visiblity to other members on the same realm.
+Most addons use an API that goes over an invisible (to the user) channel for communication. However, channels are realm and faction isolated, which is why GreenWall only provides visiblity to other Alliance members on the same realm.
 
 Community channels are cross-realm/faction but do not have the "invisible" API calls. Battle.Net (BNet) does though. This addon leverages BNet to send communication back-and-forth between realms/factions invisible to the user.
 
