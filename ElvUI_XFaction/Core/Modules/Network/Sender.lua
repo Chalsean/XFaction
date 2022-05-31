@@ -4,35 +4,21 @@ local LogCategory = 'NSender'
 
 Sender = {}
 
-function Sender:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function Sender:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Key = nil
-        self._Initialized = false
-        self._LocalChannel = nil
-        self._CanBroadcast = false
-        self._CanWhisper = true
-        self._CanBNet = false
-        self._BroadcastQueue = {}
-    end
+    self._Key = nil
+    self._Initialized = false
+    self._LocalChannel = nil
+    self._CanBroadcast = false
+    self._CanWhisper = true
+    self._CanBNet = false
+    self._BroadcastQueue = {}
 
-    return Object
+    return _Object
 end
 
 function Sender:IsInitialized(inBoolean)
@@ -99,8 +85,7 @@ function Sender:CanBNet(inBoolean)
     return self._CanBNet
 end
 
-function Sender:HasLocalChannel(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean')
+function Sender:HasLocalChannel()
     return self._LocalChannel ~= nil
 end
 
@@ -117,13 +102,14 @@ end
 function Sender:SendMessage(inMessage, inSendBNet)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(inMessage:IsInitialized() == false) then
+		-- Review: double check this isn't overriding the timestamp of the message
         inMessage:Initialize()
     end
 
     local _OutgoingData = XFG:EncodeMessage(inMessage)    
 
     -- If you messaged all possible realm/faction combinations, can switch to local broadcast
-    if(inSendBNet == true and self:BNet(_OutgoingData)) then
+    if(inSendBNet and self:BNet(_OutgoingData)) then
         inMessage:SetType(XFG.Network.Type.LOCAL)
     end
 
@@ -136,7 +122,7 @@ function Sender:SendMessage(inMessage, inSendBNet)
         -- If only 1 player, switch to whisper
         elseif(_Realm:GetNumberRunningAddon() == 1) then
            local _Unit = _Realm:GetUnitRunningAddon()
-           inMessage:SetTo(_Unit:GetKey())
+           inMessage:SetTo(_Unit:GetGUID())
            inMessage:SetType(XFG.Network.Type.WHISPER)
            self:Whisper(inMessage:GetTo(), _OutgoingData)  
 
@@ -158,6 +144,7 @@ end
 
 function Sender:BroadcastUnitData(inUnitData, inSubject)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
+	assert(type(inSubject) == 'string')
     if(inUnitData:IsPlayer()) then
         inUnitData:SetTimeStamp(GetServerTime())
         XFG.Player.LastBroadcast = inUnitData:GetTimeStamp()
@@ -197,7 +184,6 @@ end
 
 function Sender:BNet(inEncodedMessage)
     if(self:CanBNet()) then
-        local _BNetCount = 0
         -- For all the realms/guilds associated with the confederate
         for _, _Guild in XFG.Guilds:Iterator() do
 
@@ -207,18 +193,15 @@ function Sender:BNet(inEncodedMessage)
             -- If the guild is on your realm and same faction, no need to use BNet
             if(XFG.Player.Realm:Equals(_Guild:GetRealm()) == false or XFG.Player.Faction:Equals(_Guild:GetFaction()) == false) then
                 XFG:Debug(LogCategory, "Should BNet to [%s][%s]", _Realm:GetName(), _Faction:GetName())
-                _BNetCount = _BNetCount + 1
                 -- Identify a passthru BNet friend to whisper
                 local _Bridger = XFG.Network.BNet.Friends:GetRandomFriend(_Guild:GetRealm(), _Guild:GetFaction())
                 if(_Bridger ~= nil) then
                     XFG:Debug(LogCategory, "Whispering BNet bridge [%s] with tag [%s]", _Bridger:GetName(), XFG.Network.Message.Tag.BNET)
                     BNSendGameData(_Bridger:GetID(), XFG.Network.Message.Tag.BNET, inEncodedMessage)
-                    _BNetCount = _BNetCount - 1
-                    return
+                    return true
                 end
             end
         end
-        return _BNetCount == 0
     end
     return false
 end
