@@ -9,7 +9,7 @@ function XFG:DecodeMessage(inMessage)
 	local _, _MessageData = XFG:Deserialize(_Decompressed)
 
 	local _Message
-	if(_MessageData.FG ~= nil) then
+	if(_MessageData.W ~= nil) then
 		_Message = GuildMessage:new()
 	else
 		_Message = Message:new()
@@ -24,12 +24,12 @@ function XFG:DecodeMessage(inMessage)
 	if(_MessageData.K ~= nil) then	_Message:SetTimeStamp(_MessageData.K) end	
 
 	if(_Message.__name == 'GuildMessage') then
-		if(_MessageData.FG ~= nil) then _Message:SetFromGUID(_MessageData.FG) end
-		if(_MessageData.FN ~= nil) then _Message:SetFaction(XFG.Factions:GetFaction(_MessageData.FN)) end
-		if(_MessageData.Fl ~= nil) then	_Message:SetFlags(_MessageData.Fl) end
-		if(_MessageData.LI ~= nil) then	_Message:SetLineID(_MessageData.LI) end
-		if(_MessageData.GSN ~= nil) then _Message:SetGuildShortName(_MessageData.GSN) end
-		if(_MessageData.MN ~= nil) then	_Message:SetMainName(_MessageData.MN) end
+		if(_MessageData.W ~= nil) then _Message:SetFromGUID(_MessageData.W) end
+		if(_MessageData.F ~= nil) then _Message:SetFaction(XFG.Factions:GetFaction(_MessageData.F)) end
+		if(_MessageData.H ~= nil) then	_Message:SetFlags(_MessageData.H) end
+		if(_MessageData.L ~= nil) then	_Message:SetLineID(_MessageData.L) end
+		if(_MessageData.S ~= nil) then _Message:SetGuildShortName(_MessageData.S) end
+		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
 	end
 
 	if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA or _Message:GetSubject() == XFG.Network.Message.Subject.LOGIN) then

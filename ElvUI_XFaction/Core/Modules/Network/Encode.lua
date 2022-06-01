@@ -9,14 +9,14 @@ function XFG:EncodeMessage(inMessage)
 	local _MessageData = {}
 
 	if(inMessage.__name == 'GuildMessage') then
-		_MessageData.GUID = inMessage:GetFromGUID()
+		_MessageData.W = inMessage:GetFromGUID()
 		local _Faction = inMessage:GetFaction()
-		_MessageData.Faction = _Faction:GetKey()
-		_MessageData.Flags = inMessage:GetFlags()
-		_MessageData.LineID = inMessage:GetLineID()
+		_MessageData.F = _Faction:GetKey()
+		_MessageData.H = inMessage:GetFlags()
+		_MessageData.L = inMessage:GetLineID()
 		-- Review: Should be transferring guild ID
-		_MessageData.GuildShortName = inMessage:GetGuildShortName()
-		_MessageData.MainName = inMessage:GetMainName()
+		_MessageData.S = inMessage:GetGuildShortName()
+		_MessageData.M = inMessage:GetMainName()
 		_MessageData.Y = inMessage:GetData()
 	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
 		_MessageData = XFG:TarballUnitData(inMessage:GetData())
