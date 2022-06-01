@@ -100,6 +100,8 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 > Not parsing main names with funky characters properly.
 
+> Inconsistent communication over BNet from alts. This might be due to BNet instability post 9.2.5 launch.
+
 ### Planned enhancements
 
 > Enable whispering between factions.
