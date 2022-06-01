@@ -98,12 +98,6 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 > Area 52 communication not working (this is intentional).
 
-> BNet whispers going to users not running addon.
-
-> Guild chat being duplicated if you are in guild of origin.
-
-> Communicating player status is inconsistent.
-
 > Not parsing main names with funky characters properly.
 
 ### Planned enhancements
