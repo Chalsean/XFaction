@@ -96,7 +96,7 @@ XFG.Cache.Guilds['Alternal Kingdom Four'] = 'AK4'
 
 XFG.Cache.Realms = {}
 XFG.Cache.Realms.Proudmoore = {
-	Alliance = {'Eternal Kingdom', 'Endless Kingdom', 'Alternal Kingdom One', 'Alternal Kingdom Two', 'Alternal Kingdom Three'},
+	Alliance = {'Eternal Kingdom', 'Endless Kingdom', 'Alternal Kingdom', 'Alternal Kingdom Two', 'Alternal Kingdom Three'},
 	Horde = {'Alternal Kingdom Four', 'Enduring Kingdom'}
 }
 XFG.Cache.Realms['Area 52'] = {

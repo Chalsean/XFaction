@@ -197,7 +197,7 @@ function Sender:BNet(inEncodedMessage)
                 -- Identify a passthru BNet friend to whisper
                 local _Bridger = XFG.Network.BNet.Friends:GetRandomFriend(_Guild:GetRealm(), _Guild:GetFaction())
                 if(_Bridger ~= nil) then
-                    XFG:Debug(LogCategory, "Whispering BNet bridge [%s] with tag [%s]", _Bridger:GetName(), XFG.Network.Message.Tag.BNET)
+                    XFG:Debug(LogCategory, "Whispering BNet bridge [%s:%d] with tag [%s]", _Bridger:GetUnitName(), _Bridger:GetID(), XFG.Network.Message.Tag.BNET)
                     BNSendGameData(_Bridger:GetID(), XFG.Network.Message.Tag.BNET, inEncodedMessage)
                     return true
                 end

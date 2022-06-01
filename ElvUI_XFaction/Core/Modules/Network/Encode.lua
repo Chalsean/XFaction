@@ -37,6 +37,7 @@ end
 function XFG:TarballUnitData(inUnitData)
 	local _MessageData = {}
 
+	_MessageData.A = (inUnitData:IsAlt() == true) and 1 or 0
 	_MessageData.GI = inUnitData:GetGuildIndex()
 	_MessageData.N = inUnitData:GetName()
 	local _Guild = inUnitData:GetGuild()
@@ -47,7 +48,7 @@ function XFG:TarballUnitData(inUnitData)
 	_MessageData.M = (inUnitData:IsMobile() == true) and 1 or 0
 	_MessageData.G = inUnitData:GetGUID()
 	_MessageData.TS = inUnitData:GetTimeStamp()		
-	_MessageData.A = (inUnitData:IsAlt() == true) and 1 or 0
+	
 	_MessageData.RA = (inUnitData:IsRunningAddon() == true) and 1 or 0
 	_MessageData.U = inUnitData:GetUnitName()
 	local _Realm = inUnitData:GetRealm()
