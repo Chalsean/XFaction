@@ -79,6 +79,16 @@ function GuildCollection:GetGuild(inKey)
 	return self._Guilds[inKey]
 end
 
+function GuildCollection:GetGuildByID(inID)
+	assert(type(inID) == 'number')
+	
+	for _, _Guild in self:Iterator() do
+		if(_Guild:GetID() == inID) then
+			return _Guild
+		end
+	end
+end
+
 function GuildCollection:GetGuildByFactionGuildName(inFaction, inGuildName)
 	assert(type(inFaction) == 'table' and type(inGuildName) == 'string')
 

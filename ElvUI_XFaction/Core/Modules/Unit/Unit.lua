@@ -90,13 +90,13 @@ function Unit:Initialize(_Argument)
     local _ParsedName = string.Split(_unit, "-")
     self:SetName(_ParsedName[1])
 
-    self:SetClass(XFG.Classes:GetClass(_class))
+    self:SetClass(XFG.Classes:GetClassByName(_class))
 
     -- This call fails a lot on startup but have been unable to find a replacement
     -- After given timeframe, assuredly after some unknown event fires, the call is much more stable
     local _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
     if(_RaceName ~= nil) then
-        self:SetRace(XFG.Races:GetRaceByName(_RaceName, XFG.Player.Faction:GetName()))
+        self:SetRace(XFG.Races:GetRaceByName(_RaceName, XFG.Player.Faction))
     end
 
     if(self:HasRace() == false) then

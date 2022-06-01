@@ -55,7 +55,7 @@ function RealmCollection:Print()
 	XFG:Debug(LogCategory, "  _RealmCount (" .. type(self._RealmCount) .. "): ".. tostring(self._RealmCount))
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Realm in pairs (self._Realms) do
-		_Realm:ShallowPrint()
+		_Realm:Print()
 	end
 end
 

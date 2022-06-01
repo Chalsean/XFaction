@@ -65,18 +65,28 @@ function ClassCollection:Contains(inKey)
 end
 
 function ClassCollection:GetClass(inKey)
-	local _typeof = type(inKey)
-	assert(_typeof == 'number' or _typeof == 'string', "argument must be number or string")
+	assert(type(inKey) == 'number')
+	return self._Classes[inKey]
+end
 
-	if(_typeof == 'string') then
-		for _, _Class in pairs (self._Classes) do
-			if(_Class:GetName() == inKey) then
-				return _Class
-			end
+function ClassCollection:GetClassByAPIName(inAPIName)
+	assert(type(inAPIName) == 'string')
+
+	for _, _Class in self:Iterator() do
+		if(_Class:GetAPIName() == inAPIName) then
+			return _Class
 		end
 	end
+end
 
-	return self._Classes[inKey]
+function ClassCollection:GetClassByName(inName)
+	assert(type(inName) == 'string')
+
+	for _, _Class in self:Iterator() do
+		if(_Class:GetName() == inName) then
+			return _Class
+		end
+	end
 end
 
 function ClassCollection:AddClass(inClass)

@@ -44,18 +44,18 @@ XFG.Network.Message.Tag = {
 	BNET = 'EKBNet'
 }
 XFG.Network.Message.Subject = {
-	DATA = 'DATA',
-	GUILD_CHAT = 'GCHAT',
-	EVENT = 'EVENT',
-	LOGOUT = 'LOGOUT',
-	WHISPER = 'WHISPER',
-	LOGIN = 'LOGIN'
+	DATA = '1',
+	GUILD_CHAT = '2',
+	EVENT = '3',
+	LOGOUT = '4',
+	WHISPER = '5',
+	LOGIN = '6'
 }
 XFG.Network.Type = {
-	BROADCAST = 'BROADCAST', -- BNet + Local Channel
-	WHISPER = 'WHISPER',     -- Whisper Local
-	LOCAL = 'LOCAL',         -- Local Channel only
-	BNET = 'BNET'            -- BNet only
+	BROADCAST = '1', -- BNet + Local Channel
+	WHISPER = '2',     -- Whisper Local
+	LOCAL = '3',         -- Local Channel only
+	BNET = '4'            -- BNet only
 }	
 
 XFG.Frames = {}
@@ -120,6 +120,7 @@ function XFG:Init()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
 
 	-- Make sure we have all the realm/guild combinations accounted for
+	local i = 1
 	for _RealmName, _FactionGuilds in pairs(XFG.Cache.Realms) do
 		local _NewRealm = Realm:new()
 		_NewRealm:SetKey(_RealmName)
@@ -131,6 +132,7 @@ function XFG:Init()
 			for _, _GuildName in ipairs (_Guilds) do
 				local _NewGuild = Guild:new()
 				_NewGuild:Initialize()
+				_NewGuild:SetID(i)
 				_NewGuild:SetName(_GuildName)
 				_NewGuild:SetFaction(_Faction)
 				_NewGuild:SetRealm(_NewRealm)
@@ -138,11 +140,16 @@ function XFG:Init()
 					_NewGuild:SetShortName(XFG.Cache.Guilds[_GuildName])
 				end
 				XFG.Guilds:AddGuild(_NewGuild)
+				i = i + 1
 			end
 		end
 	end
 
 	XFG.Player.Realm = XFG.Realms:GetRealm(GetRealmName())
+
+	local _, _Class, _Race2, _Race, _, _Name, _Realm = GetPlayerInfoByGUID('Player-3676-0DD742E6')
+	XFG:Debug(LogCategory, "class [%s] race [%s] race2 [%s] name [%s] realm [%s]", _Class, _Race, _Race2, _Name, _Realm)
+	XFG.Realms:Print()
 
 	-- These handlers will register additional handlers
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()

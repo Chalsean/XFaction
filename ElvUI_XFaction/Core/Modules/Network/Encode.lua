@@ -1,33 +1,33 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local LogCategory = 'NEncode'
 
--- To reduce payload, strip out unnecessary key characters, replace text with ids, compress, etc.
--- The message will get reconstructed to original state on receiving end
+-- BNet seems to have a cap of around 300 characters and there is no BNet support from AceComm/ChatThrottle
+-- So have to strip down to bare essentials and reconstruct as much as we can on receiving end
 function XFG:EncodeMessage(inMessage)
 
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
 	local _MessageData = {}
 
 	if(inMessage.__name == 'GuildMessage') then
-		_MessageData.FG = inMessage:GetFromGUID()
+		_MessageData.GUID = inMessage:GetFromGUID()
 		local _Faction = inMessage:GetFaction()
-		_MessageData.FN = _Faction:GetKey()
-		_MessageData.Fl = inMessage:GetFlags()
-		_MessageData.LI = inMessage:GetLineID()
+		_MessageData.Faction = _Faction:GetKey()
+		_MessageData.Flags = inMessage:GetFlags()
+		_MessageData.LineID = inMessage:GetLineID()
 		-- Review: Should be transferring guild ID
-		_MessageData.GSN = inMessage:GetGuildShortName()
-		_MessageData.MN = inMessage:GetMainName()
+		_MessageData.GuildShortName = inMessage:GetGuildShortName()
+		_MessageData.MainName = inMessage:GetMainName()
 		_MessageData.Y = inMessage:GetData()
 	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
 		_MessageData = XFG:TarballUnitData(inMessage:GetData())
 	end
 
-	_MessageData.K = inMessage:GetKey()
-	_MessageData.To = inMessage:GetTo()
-	_MessageData.F = inMessage:GetFrom()	
-	_MessageData.S = inMessage:GetSubject()
-	_MessageData.Ty = inMessage:GetType()
-	_MessageData.Ts = inMessage:GetTimeStamp()
+	_MessageData.A = inMessage:GetKey()
+	--_MessageData.To = inMessage:GetTo()
+	_MessageData.B = inMessage:GetFrom()	
+	_MessageData.D = inMessage:GetSubject()
+	_MessageData.E = inMessage:GetType()
+	_MessageData.K = inMessage:GetTimeStamp()
 
 	local _Serialized = XFG:Serialize(_MessageData)
 	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
@@ -35,34 +35,26 @@ function XFG:EncodeMessage(inMessage)
 end
 
 function XFG:TarballUnitData(inUnitData)
+	
 	local _MessageData = {}
 
-	_MessageData.A = (inUnitData:IsAlt() == true) and 1 or 0
-	local _Class = inUnitData:GetClass()
-	_MessageData.C = _Class:GetKey()
 	if(inUnitData:HasCovenant()) then
 		local _Covenant = inUnitData:GetCovenant()
-		_MessageData.Co = _Covenant:GetKey()
+		_MessageData.C = _Covenant:GetKey()
 	end
 	local _Faction = inUnitData:GetFaction()
-	_MessageData.Fa = _Faction:GetKey()
+	_MessageData.F = _Faction:GetKey()
 	_MessageData.G = inUnitData:GetGUID()
-	_MessageData.GI = inUnitData:GetGuildIndex()
 	local _Guild = inUnitData:GetGuild()
-	_MessageData.GN = _Guild:GetName()
+	_MessageData.H = _Guild:GetID()
 	if(inUnitData:HasRank()) then
 		local _Rank = inUnitData:GetRank()
-		_MessageData.GR = _Rank:GetKey()
-		_MessageData.GRN = _Rank:GetName()
+		_MessageData.I = _Rank:GetKey()
+		_MessageData.J = _Rank:GetName()
 	end
 	_MessageData.L = inUnitData:GetLevel()
 	_MessageData.M = (inUnitData:IsMobile() == true) and 1 or 0
-	if(inUnitData:HasMainName()) then
-		_MessageData.MN = inUnitData:GetMainName()
-	end
-	_MessageData.N = inUnitData:GetName()
-	_MessageData.No = inUnitData:GetNote()
-	_MessageData.O = (inUnitData:IsOnline() == true) and 1 or 0	
+	_MessageData.Q = inUnitData:GetNote()
 	if(inUnitData:HasProfession1()) then
 		local _Profession = inUnitData:GetProfession1()
 		_MessageData.P1 = _Profession:GetKey()
@@ -71,21 +63,10 @@ function XFG:TarballUnitData(inUnitData)
 		local _Profession = inUnitData:GetProfession2()
 		_MessageData.P2 = _Profession:GetKey()
 	end
-	if(inUnitData:HasRace()) then
-		local _Race = inUnitData:GetRace()
-		_MessageData.R = _Race:GetKey()
-	end
-	_MessageData.RA = (inUnitData:IsRunningAddon() == true) and 1 or 0
-	-- Review: Should transfer realm ID
-	local _Realm = inUnitData:GetRealm()	
-	_MessageData.RN = _Realm:GetName()
-	local _Team = inUnitData:GetTeam()
 	if(inUnitData:HasSoulbind()) then
 		local _Soulbind = inUnitData:GetSoulbind()
-		_MessageData.So = _Soulbind:GetKey()
+		_MessageData.S = _Soulbind:GetKey()
 	end
-	_MessageData.T = _Team:GetKey()
-	_MessageData.TS = inUnitData:GetTimeStamp()			
 	_MessageData.U = inUnitData:GetUnitName()	
 	if(inUnitData:HasSpec()) then
 		local _Spec = inUnitData:GetSpec()

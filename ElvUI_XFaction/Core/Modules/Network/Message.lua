@@ -140,3 +140,15 @@ function Message:SetData(inData)
     self._Data = inData
     return self:GetData()
 end
+
+function Message:Copy(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
+    self:SetKey(inMessage:GetKey())
+    self:SetTo(inMessage:GetTo())
+    self:SetFrom(inMessage:GetFrom())
+    self:SetType(inMessage:GetType())
+    self:SetSubject(inMessage:GetSubject())
+    self:SetTimeStamp(inMessage:GetTimeStamp())
+    self:SetData(inMessage:GetData())
+    self:IsInitialized(inMessage:IsInitialized())
+end
