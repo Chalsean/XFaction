@@ -2,6 +2,7 @@ local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DT = E:GetModule('DataTexts')
 local ObjectName = 'Receiver'
 local LogCategory = 'NReceiver'
+local IconTokenString = '|T%d:16:16:0:0:64:64:4:60:4:60|t'
 
 Receiver = {}
 
@@ -58,7 +59,10 @@ function Receiver:SetKey(inKey)
     return self:GetKey()
 end
 
+-- Channel, whisper and BNet traffic is received by this function
 function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution, inSender)
+
+    XFG:Debug(LogCategory, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
 
     -- If not a message from this addon, ignore
     local _AddonTag = false
@@ -91,35 +95,29 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
     _Message:Print() 
 
     -- If sent via BNet, broadcast to your local realm
-    if(inMessageTag == XFG.Network.Message.Tag.BNET and _Message:GetType() == XFG.Network.Type.BROADCAST) then
-		-- Review: Change type to LOCAL and change the Tag, its already made it across the BNet bridge
+    if(inMessageTag == XFG.Network.Message.Tag.BNET) then
+        _Message:SetType(XFG.Network.Type.LOCAL)
         XFG.Network.Sender:SendMessage(_Message)
+
+    -- If not sent via BNet but is flagged for broadcast, forward to BNet
+    elseif(_Message:GetType() == XFG.Network.Type.BROADCAST) then
+        _Message:SetType(XFG.Network.Type.BNET)
+        XFG.Network.Sender:SendMessage(_Message, true)
     end
 
     -- Process GUILD_CHAT message
     if(_Message:GetSubject() == XFG.Network.Message.Subject.GUILD_CHAT) then
-        --if(_Message:Get)  // Need to check for realm/faction
-        local _Text = format('%s ', format(IconTokenString, inFaction:GetIconID()))
-        if(_Message:GetMainName() ~= nil) then
-            _Text = _Text .. "(" .. _Message:GetMainName() .. ") "
+        -- For alpha testing, only Proudmoore so just need to check faction
+        local _Faction = _Message:GetFaction()
+        if(_Faction:Equals(XFG.Player.Unit:GetFaction()) == false) then
+            -- Visual sugar to make it appear as if the message came through the channel
+            XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.CHANNEL, _Message)
         end
-        if(_Message:GetGuildShortName() ~= nil) then
-            _Text = _Text .. "<" .. _Message:GetGuildShortName() .. "> "
-        end
-		-- Visual sugar to make it appear as if the message came through the channel
-        XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.CHANNEL,
-                                    _Message:GetData(),
-                                    _Message:GetFrom(), 
-                                    _Message:GetFaction(), 
-                                    _Message:GetFlags(), 
-                                    _Message:GetLineID(),
-                                    _Message:GetFromGUID())
         return
     end
 
     -- Process LOGOUT message
     if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
-		-- BNet?
         XFG.Confederate:RemoveUnit(_Message:GetFrom())
         return
     end
@@ -133,14 +131,16 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
             DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         end
 
-        -- Player has just logged in, whisper back latest info if same faction
-        local _UnitFaction = _UnitData:GetFaction()
-        if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGIN and _UnitFaction:Equals(XFG.Player.Unit:GetFaction())) then
-            XFG.Network.Sender:WhisperUnitData(_Message:GetFrom(), XFG.Player.Unit)
+        if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+            -- Player has just logged in, whisper back latest info if same faction
+            local _UnitFaction = _UnitData:GetFaction()
+            if(_UnitFaction:Equals(XFG.Player.Unit:GetFaction())) then
+                XFG.Network.Sender:WhisperUnitData(_Message:GetFrom(), XFG.Player.Unit)
 
-        -- If opposite faction, broadcast to trigger BNet communication
-        elseif(_Message:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
-            XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
+            -- If opposite faction, broadcast to trigger BNet communication
+            else
+                XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
+            end
         end
     end
 end

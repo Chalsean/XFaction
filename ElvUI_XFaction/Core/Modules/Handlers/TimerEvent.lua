@@ -142,27 +142,23 @@ function TimerEvent:CallbackLogin()
 
         XFG.Network.Sender = Sender:new()
 	    XFG.Network.Receiver = Receiver:new(); XFG.Network.Receiver:Initialize()
-        XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
-        XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()
         XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
+        XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
+        XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()        
 	    XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
-
-        -- These event handlers have a dependency on player data being populated
         XFG.Handlers.SpecEvent = SpecEvent:new(); XFG.Handlers.SpecEvent:Initialize()
         XFG.Handlers.CovenantEvent = CovenantEvent:new(); XFG.Handlers.CovenantEvent:Initialize()
         XFG.Handlers.SoulbindEvent = SoulbindEvent:new(); XFG.Handlers.SoulbindEvent:Initialize()
         XFG.Handlers.ProfessionEvent = ProfessionEvent:new(); XFG.Handlers.ProfessionEvent:Initialize()
         XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
 
-        -- Broadcast login, refresh DTs and ready to roll
-        --XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
+        -- Broadcast login, refresh DTs and ready to roll        
         wipe(XFG.Cache)
         XFG.DB.UIReload = false
         XFG.Initialized = true
+        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
-
-        --XFG.Frames.Whisper = WhisperFrame:new(); XFG.Frames.Whisper:Initialize()
     end
 end
 

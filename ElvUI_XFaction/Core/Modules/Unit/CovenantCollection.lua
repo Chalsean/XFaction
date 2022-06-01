@@ -1,6 +1,6 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'CCovenant'
-local LogCategory = 'U' .. ObjectName
+local LogCategory = 'UCCovenant'
 local MaxRaces = 37
 
 CovenantCollection = {}
@@ -50,7 +50,7 @@ end
 
 function CovenantCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, "CovenantCollection Object")
+	XFG:Debug(LogCategory, ObjectName .. " Object")
 	XFG:Debug(LogCategory, "  _CovenantCount (" .. type(self._CovenantCount) .. "): ".. tostring(self._CovenantCount))
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Covenant in pairs (self._Covenants) do

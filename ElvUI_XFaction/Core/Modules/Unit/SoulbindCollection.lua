@@ -1,6 +1,6 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'CSoulbind'
-local LogCategory = 'U' .. ObjectName
+local LogCategory = 'UCSoulbind'
 
 SoulbindCollection = {}
 
@@ -59,7 +59,7 @@ end
 
 function SoulbindCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, "SoulbindCollection Object")
+	XFG:Debug(LogCategory, ObjectName .. " Object")
 	XFG:Debug(LogCategory, "  _SoulbindCount (" .. type(self._SoulbindCount) .. "): ".. tostring(self._SoulbindCount))
 	for _, _Soulbind in pairs (self._Soulbinds) do
 		_Soulbind:Print()

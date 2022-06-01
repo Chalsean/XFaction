@@ -32,7 +32,7 @@ function XFG:DecodeMessage(inMessage)
 		if(_MessageData.MN ~= nil) then	_Message:SetMainName(_MessageData.MN) end
 	end
 
-	if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA) then
+	if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA or _Message:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
 		local _UnitData = XFG:ExtractTarball(_MessageData)
 		_Message:SetData(_UnitData)
 	else

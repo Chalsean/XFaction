@@ -94,7 +94,7 @@ end
 
 function SpecCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, "SpecCollection Object")
+	XFG:Debug(LogCategory, ObjectName .. " Object")
 	XFG:Debug(LogCategory, "  _SpecCount (" .. type(self._SpecCount) .. "): ".. tostring(self._SpecCount))
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	XFG:Debug(LogCategory, "  _Specs (" .. type(self._Specs) .. "): ")

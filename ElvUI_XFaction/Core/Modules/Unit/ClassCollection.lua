@@ -1,6 +1,6 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'CClass'
-local LogCategory = 'U' .. ObjectName
+local LogCategory = 'UCClass'
 local MaxRaces = 37
 
 ClassCollection = {}
@@ -51,7 +51,7 @@ end
 
 function ClassCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, "ClassCollection Object")
+	XFG:Debug(LogCategory, ObjectName .. " Object")
 	XFG:Debug(LogCategory, "  _ClassCount (" .. type(self._ClassCount) .. "): ".. tostring(self._ClassCount))
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Class in pairs (self._Classes) do

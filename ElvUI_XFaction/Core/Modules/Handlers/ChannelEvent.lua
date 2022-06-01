@@ -18,7 +18,7 @@ end
 
 function ChannelEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		self:SetKey(math.generateUID())
+		self:SetKey(math.GenerateUID())
 		XFG:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', self.CallbackChannelNotice)
         XFG:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL_NOTICE events")
 		XFG:RegisterEvent('CHANNEL_FLAGS_UPDATED', self.CallbackChannelChange)
@@ -60,7 +60,7 @@ end
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _, inChannelType, inChannelNumber, inChannelShortName)
 	-- Fires when player leaves a channel
 	if(inAction == 'YOU_LEFT') then
-		if(XFG.Channels:RemoveChannel(inChannelShortName)) then
+		if(XFG.Network.Channels:RemoveChannel(inChannelShortName)) then
 			XFG:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
 			local _Channel = XFG.Network.Sender:GetLocalChannel()
 			if(_Channel:GetShortName() == inChannelShortName) then

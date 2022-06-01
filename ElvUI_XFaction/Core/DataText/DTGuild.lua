@@ -57,8 +57,12 @@ local function PreSort()
 			_UnitData[XFG.DataText.Guild.ColumnNames.NAME] = _Unit:GetName() .. " (" .. _Unit:GetMainName() .. ")"
 		end
 
-		local _Race = _Unit:GetRace()
-		_UnitData[XFG.DataText.Guild.ColumnNames.RACE] = _Race:GetName()
+		if(_Unit:HasRace()) then
+			local _Race = _Unit:GetRace()
+			_UnitData[XFG.DataText.Guild.ColumnNames.RACE] = _Race:GetName()
+		else
+			_UnitData[XFG.DataText.Guild.ColumnNames.RACE] = '?'
+		end
 
 		local _Team = _Unit:GetTeam()
 		_UnitData[XFG.DataText.Guild.ColumnNames.TEAM] = _Team:GetName()

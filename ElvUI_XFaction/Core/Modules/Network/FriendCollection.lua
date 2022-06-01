@@ -36,7 +36,18 @@ function FriendCollection:Initialize()
 				_NewFriend:SetRealmID(_AccountInfo.gameAccountInfo.realmID)
 				_NewFriend:SetUnitName(_AccountInfo.gameAccountInfo.characterName)
 				_NewFriend:SetFaction(XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName))
-				self:AddFriend(_NewFriend)
+
+				-- Temporary code for alpha testing
+				if(_NewFriend:GetTag() == 'Arono#11651' or
+				   _NewFriend:GetTag() == 'Chalsean#1172' or
+				   _NewFriend:GetTag() == 'Ironstones#1683' or
+			       _NewFriend:GetTag() == 'Franklinator#1539' or
+				   _NewFriend:GetTag() == 'hantevirus#1921' or
+				   _NewFriend:GetTag() == 'mightyowl#111899' or
+				   _NewFriend:GetTag() == 'Bicc#11211' or
+				   _NewFriend:GetTag() == 'Rysal#1525') then
+					self:AddFriend(_NewFriend)
+				end
 			end
 		end
 		self:IsInitialized(true)

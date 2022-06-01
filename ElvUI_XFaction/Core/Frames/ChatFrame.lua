@@ -90,7 +90,7 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
-function ChatFrame:DisplayChat(inEvent, inText, inSenderName, inFaction, inFlags, inLineID, inSenderGUID)
+function ChatFrame:DisplayChat(inEvent, inMessage)
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
@@ -101,11 +101,19 @@ function ChatFrame:DisplayChat(inEvent, inText, inSenderName, inFaction, inFlags
             if _Name == 'CHANNEL' then
                 local _Frame = 'ChatFrame' .. i
                 if _G[_Frame] then
-                    local _Text = format('%s %s', format(IconTokenString, inFaction:GetIconID()), inText)
+                    local _Faction = inMessage:GetFaction()
+                    local _Text = format('%s ', format(IconTokenString, _Faction:GetIconID()))
+                    if(inMessage:GetMainName() ~= nil) then
+                        _Text = _Text .. "(" .. inMessage:GetMainName() .. ") "
+                    end
+                    if(inMessage:GetGuildShortName() ~= nil) then
+                        _Text = _Text .. "<" .. inMessage:GetGuildShortName() .. "> "
+                    end
+                    _Text = _Text .. inMessage:GetData()
                     local _Channel = XFG.Network.Sender:GetLocalChannel()
                     local _ChannelName = _Channel:GetName()
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inEvent, _Text, inSenderName, 'Common', _ChannelName, inSenderName, inFlags, 0, _Channel:GetID(), _Channel:GetShortName(), 0, _, inSenderGUID)
-                end                                                              --1       2           3             4               5             6      7  8   9  10  11    12 
+                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inEvent, _Text, inMessage:GetFrom(), 'Common', _ChannelName, inMessage:GetFrom(), inMessage:GetFlags(), 0, _Channel:GetID(), _Channel:GetShortName(), 0, _, inMessage:GetFromGUID())
+                end                                   
                 break
             end
         end

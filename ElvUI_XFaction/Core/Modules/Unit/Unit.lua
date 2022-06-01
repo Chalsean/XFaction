@@ -1,6 +1,6 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Unit'
-local LogCategory = 'U' .. ObjectName
+local LogCategory = 'UUnit'
 
 Unit = {}
 
@@ -183,7 +183,7 @@ end
 
 function Unit:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, "Unit Object")
+	XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _GUID (" .. type(self._GUID) .. "): ".. tostring(self._GUID))
 	XFG:Debug(LogCategory, "  _UnitName (" .. type(self._UnitName) .. "): ".. tostring(self._UnitName))

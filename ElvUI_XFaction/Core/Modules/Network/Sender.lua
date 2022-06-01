@@ -16,7 +16,6 @@ function Sender:new()
     self._CanBroadcast = false
     self._CanWhisper = true
     self._CanBNet = false
-    self._BroadcastQueue = {}
 
     return _Object
 end
@@ -110,7 +109,14 @@ function Sender:SendMessage(inMessage, inSendBNet)
 
     -- If you messaged all possible realm/faction combinations, can switch to local broadcast
     if(inSendBNet and self:BNet(_OutgoingData)) then
-        inMessage:SetType(XFG.Network.Type.LOCAL)
+        if(inMessage:GetType() == XFG.Network.Type.BROADCAST) then
+            inMessage:SetType(XFG.Network.Type.LOCAL)
+        end
+    end
+
+    -- If we were only supposed to do BNet
+    if(inMessage:GetType() == XFG.Network.Type.BNET) then
+        return
     end
 
     if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCAL) then
@@ -144,7 +150,7 @@ end
 
 function Sender:BroadcastUnitData(inUnitData, inSubject)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
-	assert(type(inSubject) == 'string')
+	if(inSubject == nil) then inSubject = XFG.Network.Message.Subject.DATA end
     if(inUnitData:IsPlayer()) then
         inUnitData:SetTimeStamp(GetServerTime())
         XFG.Player.LastBroadcast = inUnitData:GetTimeStamp()
@@ -168,10 +174,6 @@ end
 function Sender:WhisperUnitData(inTo, inUnitData)
     assert(type(inTo) == 'string')
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
-    if(inUnitData:IsPlayer()) then
-        inUnitData:SetTimeStamp(GetServerTime())
-        XFG.Player.LastBroadcast = inUnitData:GetTimeStamp()
-    end
     local _Message = Message:new()
     _Message:Initialize()
     _Message:SetType(XFG.Network.Type.WHISPER)
@@ -192,7 +194,6 @@ function Sender:BNet(inEncodedMessage)
 
             -- If the guild is on your realm and same faction, no need to use BNet
             if(XFG.Player.Realm:Equals(_Guild:GetRealm()) == false or XFG.Player.Faction:Equals(_Guild:GetFaction()) == false) then
-                XFG:Debug(LogCategory, "Should BNet to [%s][%s]", _Realm:GetName(), _Faction:GetName())
                 -- Identify a passthru BNet friend to whisper
                 local _Bridger = XFG.Network.BNet.Friends:GetRandomFriend(_Guild:GetRealm(), _Guild:GetFaction())
                 if(_Bridger ~= nil) then

@@ -18,7 +18,7 @@ function XFG:EncodeMessage(inMessage)
 		_MessageData.GSN = inMessage:GetGuildShortName()
 		_MessageData.MN = inMessage:GetMainName()
 		_MessageData.Y = inMessage:GetData()
-	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA) then
+	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
 		_MessageData = XFG:TarballUnitData(inMessage:GetData())
 	end
 

@@ -1,4 +1,4 @@
-## Interface: 90200
+## Interface: 90205
 ## Author: Chalsean (US-Proudmoore)
 ## Version: 0.1
 ## Title: |cff1784d1ElvUI|r |cffFF4700X|r|cff33ccffFaction|r
