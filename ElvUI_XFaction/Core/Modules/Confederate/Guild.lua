@@ -4,34 +4,20 @@ local LogCategory = 'CGuild'
 
 Guild = {}
 
-function Guild:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or _typeof == 'string' or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil, string or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function Guild:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject) then
-        self._Key = nil
-        self._Name = nil
-        self._ShortName = nil
-        self._Faction = nil
-        self._Realm = nil
-        self._Initialized = false
-    end
+    self._Key = nil
+    self._Name = nil
+    self._ShortName = nil
+    self._Faction = nil
+    self._Realm = nil
+    self._Initialized = false
 
-    return Object
+    return _Object
 end
 
 function Guild:IsInitialized(inInitialized)

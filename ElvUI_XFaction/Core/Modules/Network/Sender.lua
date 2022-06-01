@@ -110,11 +110,12 @@ function Sender:SendMessage(inMessage, inSendBNet)
     -- If you messaged all possible realm/faction combinations, can switch to local broadcast
     if(inSendBNet and self:BNet(_OutgoingData)) then
         if(inMessage:GetType() == XFG.Network.Type.BROADCAST) then
+            XFG:Debug(LogCategory, "Successfully sent BNet, switching to local broadcast so others know not to BNet")
             inMessage:SetType(XFG.Network.Type.LOCAL)
         end
     end
 
-    -- If we were only supposed to do BNet
+    -- If we were only supposed to do BNet, we're done
     if(inMessage:GetType() == XFG.Network.Type.BNET) then
         return
     end
@@ -157,11 +158,13 @@ function Sender:BroadcastUnitData(inUnitData, inSubject)
     end
     local _Message = Message:new()
     _Message:Initialize()
+    _Message:SetTo(XFG.Player.Guild:GetName() .. ":" .. XFG.Player.Realm:GetName())
+    _Message:SetFrom(XFG.Player.Unit:GetName())
     _Message:SetType(XFG.Network.Type.BROADCAST)
     _Message:SetSubject(inSubject)
     _Message:SetData(inUnitData)
     _Message:Print()
-    self:SendMessage(_Message, true)
+    self:SendMessage(_Message, true)    
 end
 
 function Sender:Whisper(inTo, inData)
@@ -197,7 +200,7 @@ function Sender:BNet(inEncodedMessage)
                 -- Identify a passthru BNet friend to whisper
                 local _Bridger = XFG.Network.BNet.Friends:GetRandomFriend(_Guild:GetRealm(), _Guild:GetFaction())
                 if(_Bridger ~= nil) then
-                    XFG:Debug(LogCategory, "Whispering BNet bridge [%s:%d] with tag [%s]", _Bridger:GetUnitName(), _Bridger:GetID(), XFG.Network.Message.Tag.BNET)
+                    XFG:Debug(LogCategory, "Whispering BNet bridge [%s:%d] with tag [%s] of length [%d]", _Bridger:GetUnitName(), _Bridger:GetID(), XFG.Network.Message.Tag.BNET, strlen(tostring(inEncodedMessage)))
                     BNSendGameData(_Bridger:GetID(), XFG.Network.Message.Tag.BNET, inEncodedMessage)
                     return true
                 end

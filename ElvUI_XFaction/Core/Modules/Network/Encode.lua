@@ -27,10 +27,10 @@ function XFG:EncodeMessage(inMessage)
 	_MessageData.F = inMessage:GetFrom()	
 	_MessageData.S = inMessage:GetSubject()
 	_MessageData.Ty = inMessage:GetType()
-	_MessageData.TS = inMessage:GetTimeStamp()
+	_MessageData.Ts = inMessage:GetTimeStamp()
 
 	local _Serialized = XFG:Serialize(_MessageData)
-	local _Compressed = XFG.Lib.Compress:Compress(_Serialized)
+	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
 	return XFG.Lib.Encode:Encode(_Compressed)
 end
 
@@ -38,67 +38,60 @@ function XFG:TarballUnitData(inUnitData)
 	local _MessageData = {}
 
 	_MessageData.A = (inUnitData:IsAlt() == true) and 1 or 0
-	_MessageData.GI = inUnitData:GetGuildIndex()
-	_MessageData.N = inUnitData:GetName()
-	local _Guild = inUnitData:GetGuild()
-	_MessageData.GN = _Guild:GetName()
-	_MessageData.L = inUnitData:GetLevel()
-	_MessageData.No = inUnitData:GetNote()
-	_MessageData.O = (inUnitData:IsOnline() == true) and 1 or 0
-	_MessageData.M = (inUnitData:IsMobile() == true) and 1 or 0
-	_MessageData.G = inUnitData:GetGUID()
-	_MessageData.TS = inUnitData:GetTimeStamp()		
-	
-	_MessageData.RA = (inUnitData:IsRunningAddon() == true) and 1 or 0
-	_MessageData.U = inUnitData:GetUnitName()
-	local _Realm = inUnitData:GetRealm()
-	-- Review: Should transfer realm ID
-	_MessageData.RN = _Realm:GetName()
-	_MessageData.Z = inUnitData:GetZone()
-	_MessageData.MN = inUnitData:GetMainName()
-
-	local _Team = inUnitData:GetTeam()
-	_MessageData.T = _Team:GetKey()
-
-	local _Faction = inUnitData:GetFaction()
-	_MessageData.Fa = _Faction:GetKey()
-
 	local _Class = inUnitData:GetClass()
 	_MessageData.C = _Class:GetKey()
-	
-	local _Race = inUnitData:GetRace()
-	_MessageData.R = _Race:GetKey()
-
 	if(inUnitData:HasCovenant()) then
 		local _Covenant = inUnitData:GetCovenant()
 		_MessageData.Co = _Covenant:GetKey()
-	 end
-
-	if(inUnitData:HasSoulbind()) then
-		local _Soulbind = inUnitData:GetSoulbind()
-		_MessageData.So = _Soulbind:GetKey()
 	end
-	
-	if(inUnitData:HasProfession1()) then
-		local _Profession = inUnitData:GetProfession1()
-		_MessageData.P1 = _Profession:GetKey()
-	end
-
-	if(inUnitData:HasProfession2()) then
-		local _Profession = inUnitData:GetProfession2()
-		_MessageData.P2 = _Profession:GetKey()
-	end
-
-	if(inUnitData:HasSpec()) then
-		local _Spec = inUnitData:GetSpec()
-		_MessageData.X = _Spec:GetKey()
-	end	
-
+	local _Faction = inUnitData:GetFaction()
+	_MessageData.Fa = _Faction:GetKey()
+	_MessageData.G = inUnitData:GetGUID()
+	_MessageData.GI = inUnitData:GetGuildIndex()
+	local _Guild = inUnitData:GetGuild()
+	_MessageData.GN = _Guild:GetName()
 	if(inUnitData:HasRank()) then
 		local _Rank = inUnitData:GetRank()
 		_MessageData.GR = _Rank:GetKey()
 		_MessageData.GRN = _Rank:GetName()
 	end
+	_MessageData.L = inUnitData:GetLevel()
+	_MessageData.M = (inUnitData:IsMobile() == true) and 1 or 0
+	if(inUnitData:HasMainName()) then
+		_MessageData.MN = inUnitData:GetMainName()
+	end
+	_MessageData.N = inUnitData:GetName()
+	_MessageData.No = inUnitData:GetNote()
+	_MessageData.O = (inUnitData:IsOnline() == true) and 1 or 0	
+	if(inUnitData:HasProfession1()) then
+		local _Profession = inUnitData:GetProfession1()
+		_MessageData.P1 = _Profession:GetKey()
+	end
+	if(inUnitData:HasProfession2()) then
+		local _Profession = inUnitData:GetProfession2()
+		_MessageData.P2 = _Profession:GetKey()
+	end
+	if(inUnitData:HasRace()) then
+		local _Race = inUnitData:GetRace()
+		_MessageData.R = _Race:GetKey()
+	end
+	_MessageData.RA = (inUnitData:IsRunningAddon() == true) and 1 or 0
+	-- Review: Should transfer realm ID
+	local _Realm = inUnitData:GetRealm()	
+	_MessageData.RN = _Realm:GetName()
+	local _Team = inUnitData:GetTeam()
+	if(inUnitData:HasSoulbind()) then
+		local _Soulbind = inUnitData:GetSoulbind()
+		_MessageData.So = _Soulbind:GetKey()
+	end
+	_MessageData.T = _Team:GetKey()
+	_MessageData.TS = inUnitData:GetTimeStamp()			
+	_MessageData.U = inUnitData:GetUnitName()	
+	if(inUnitData:HasSpec()) then
+		local _Spec = inUnitData:GetSpec()
+		_MessageData.X = _Spec:GetKey()
+	end	
+	_MessageData.Z = inUnitData:GetZone()
 
 	return _MessageData
 end
