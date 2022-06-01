@@ -38,7 +38,7 @@ The addon should provide the following functionalities:
 
 I greatly appreciate your personal time and effort in testing out my idea. Please keep in mind that this is still an alpha build. I am definitely looking forward to and open to your ideas on how to make this better! The better I can make this addon work for you, the better the adoption rate will be. You do not need to test the misc DTs, they are included because they are dependent upon the addon framework and thus I don't want to deploy separately. But you are free to use them if you wish.
 
-You can log your bugs/enhancement ideas here: https://github.com/chalsean/XFaction/issues. You can also Discord DM me (Chalsean#7679) or in-game (Chalsean#1172). There is also a discussion board here: https://github.com/chalsean/XFaction/discussions
+You can log your bugs/enhancement ideas here: https://github.com/Chalsean/XFaction/issues. You can also Discord DM me (Chalsean#7679) or in-game (Chalsean#1172). There is also a discussion board here: https://github.com/Chalsean/XFaction/discussions
 
 ### Getting Started
 
@@ -46,7 +46,7 @@ The easiest way is to use WowUp client.
 
 1. Go to "Get Addons"
 2. Click on "Install from URL"
-3. Enter the following URL: https://github.com/chalsean/XFaction
+3. Enter the following URL: https://github.com/Chalsean/XFaction
 
 Like any other addon displayed in WowUp, the application will recognize when a new build is made available via Github. To install a newer version, you will only need to click on "Upgrade". If not using WowUp client, you can download the .zip file from the repository and install manually to your Addons folder.
 
