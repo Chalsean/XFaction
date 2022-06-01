@@ -44,7 +44,7 @@ function RaceCollection:Initialize()
 			_NewRace:SetID(_RaceInfo.raceID)
 			_NewRace:SetName(_RaceInfo.raceName)
 			local _FactionInfo = C_CreatureInfo.GetFactionInfo(_NewRace:GetID())
-			_NewRace:SetFaction(_FactionInfo.groupTag)
+			_NewRace:SetFaction(XFG.Factions:GetFactionByName(_FactionInfo.groupTag))
 
 			self:AddRace(_NewRace)
 		end
@@ -74,10 +74,10 @@ function RaceCollection:GetRace(inKey)
 end
 
 function RaceCollection:GetRaceByName(inName, inFaction)
-	assert(type(inName) == 'string' and type(inFaction) == 'string')
+	assert(type(inName) == 'string' and type(inFaction) == 'table')
 	
 	for _, _Race in pairs (self._Races) do
-		if(_Race:GetName() == inName and _Race:GetFaction() == inFaction) then
+		if(_Race:GetName() == inName and inFaction:Equals(_Race:GetFaction())) then
 			return _Race
 		end
 	end

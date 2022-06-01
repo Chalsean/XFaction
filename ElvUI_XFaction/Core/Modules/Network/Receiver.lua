@@ -33,7 +33,6 @@ function Receiver:Initialize()
         XFG:RegisterComm(XFG.Network.Message.Tag.LOCAL, function(inMessageType, inMessage, inDistribution, inSender) 
                                                            XFG.Network.Receiver:ReceiveMessage(inMessageType, inMessage, inDistribution, inSender)
                                                         end)
-
         -- Technically this should be with the other handlers but wanted to keep the receiving logic together
         XFG:RegisterEvent('BN_CHAT_MSG_ADDON', self.ReceiveMessage)
         XFG:Info(LogCategory, "Registered for BN_CHAT_MSG_ADDON events")

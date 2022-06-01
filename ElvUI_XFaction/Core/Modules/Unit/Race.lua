@@ -76,7 +76,7 @@ function Race:GetFaction()
 end
 
 function Race:SetFaction(inFaction)
-    assert(type(inFaction) == 'string' and (inFaction == "Horde" or inFaction == "Alliance" or inFaction == "Neutral"), "argument must be Horde, Alliance or Neutral")
+    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
     self._Faction = inFaction
     return self:GetFaction()
 end
