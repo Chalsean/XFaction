@@ -60,18 +60,24 @@ function Unit:Initialize(_Argument)
     assert(type(_Argument) == 'number')
     self:SetGuildIndex(_Argument)
     local _unit, _rank, _, _level, _class, _zone, _note, _officernote, _online, _status, _, _, _, _isMobile, _, _, _GUID = GetGuildRosterInfo(self:GetGuildIndex())
+    -- Rare but the previous call can fail, we'll pick the unit up on next refresh
+    if(_GUID == nil) then
+        XFG:Debug(LogCategory, "GetGuildRosterInfo call failed for [%d]", _Argument)
+        return
+    end
+
     self:SetGUID(_GUID)
     self:SetKey(self:GetGUID())
-    self:SetUnitName(_unit)
-	self:SetLevel(_level)
-	self:SetNote(_note)
-	self:IsOnline(_online)
-	self:IsMobile(_isMobile)
-    self:SetFaction(XFG.Player.Faction)
-
+    self:IsOnline(_online)
     if(self:IsOffline()) then
         return
     end
+   
+    self:SetUnitName(_unit)
+	self:SetLevel(_level)
+	self:SetNote(_note)	
+	self:IsMobile(_isMobile)
+    self:SetFaction(XFG.Player.Faction)    
     
 	if(_zone == nil and self:IsPlayer()) then
         _zone = GetZoneText()
@@ -151,7 +157,7 @@ function Unit:Initialize(_Argument)
     local _UpperNote = string.upper(_Note)
 	if(string.match(_UpperNote, "%[EN?KA?H?%]")) then
 		self:IsAlt(true)
-        local _MainName = string.match(_Note, "(%w+)$") 
+        local _MainName = string.match(_Note, "[^%s%d]*$") 
         if(_MainName ~= nil) then
             self:SetMainName(_MainName)
         end

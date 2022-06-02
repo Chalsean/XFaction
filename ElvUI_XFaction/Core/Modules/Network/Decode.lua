@@ -98,7 +98,7 @@ function XFG:ExtractTarball(inTarball)
     local _UpperNote = string.upper(_Note)
 	if(string.match(_UpperNote, "%[EN?KA?H?%]")) then
 		_UnitData:IsAlt(true)
-        local _MainName = string.match(_Note, "(%w+)$") 
+        local _MainName = string.match(_Note, "[^%s%d]*$") 
         if(_MainName ~= nil) then
             _UnitData:SetMainName(_MainName)
         end
