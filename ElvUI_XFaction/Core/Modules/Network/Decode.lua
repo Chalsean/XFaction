@@ -9,26 +9,28 @@ function XFG:DecodeMessage(inMessage)
 	local _, _MessageData = XFG:Deserialize(_Decompressed)
 
 	local _Message
-	if(_MessageData.W ~= nil) then
+	if(_MessageData.X == XFG.Network.Message.Type.GUILD) then
 		_Message = GuildMessage:new()
+	elseif(_MessageData.X == XFG.Network.Message.Type.LOGOUT) then
+		_Message = LogoutMessage:new()
 	else
 		_Message = Message:new()
 	end	
 	_Message:Initialize()
 	
 	if(_MessageData.A ~= nil) then	_Message:SetKey(_MessageData.A)	end
-	--if(_MessageData.To ~= nil) then	_Message:SetTo(_MessageData.To)	end
+	if(_MessageData.T ~= nil) then	_Message:SetTo(_MessageData.T)	end
 	if(_MessageData.B ~= nil) then _Message:SetFrom(_MessageData.B)	end	
 	if(_MessageData.D ~= nil) then _Message:SetSubject(_MessageData.D) end
 	if(_MessageData.E ~= nil) then	_Message:SetType(_MessageData.E) end	
 	if(_MessageData.K ~= nil) then	_Message:SetTimeStamp(_MessageData.K) end	
+	if(_MessageData.G ~= nil) then	_Message:SetGuildID(_MessageData.G) end
 
-	if(_Message.__name == 'GuildMessage') then
-		if(_MessageData.W ~= nil) then _Message:SetFromGUID(_MessageData.W) end
-		if(_MessageData.F ~= nil) then _Message:SetFaction(XFG.Factions:GetFaction(_MessageData.F)) end
+	if(_MessageData.X == XFG.Network.Message.Type.GUILD) then
 		if(_MessageData.H ~= nil) then	_Message:SetFlags(_MessageData.H) end
 		if(_MessageData.L ~= nil) then	_Message:SetLineID(_MessageData.L) end
-		if(_MessageData.S ~= nil) then _Message:SetGuildShortName(_MessageData.S) end
+		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
+	elseif(_MessageData.X == XFG.Network.Message.Type.LOGOUT) then
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
 	end
 
@@ -48,19 +50,17 @@ function XFG:ExtractTarball(inTarball)
 		_UnitData:SetCovenant(XFG.Covenants:GetCovenant(inTarball.C))
 	end
 	_UnitData:SetFaction(XFG.Factions:GetFaction(inTarball.F))
-	_UnitData:SetGUID(inTarball.G)
-	_UnitData:SetKey(inTarball.G)
-	_UnitData:SetGuild(XFG.Guilds:GetGuildByID(inTarball.H))	
-	
-	local _, _ClassAPIName, _RaceName, _, _, _Name, _RealmAPIName = GetPlayerInfoByGUID(_UnitData:GetGUID())
+	_UnitData:SetGUID(inTarball.H)
+	_UnitData:SetKey(inTarball.H)
+	_UnitData:SetGuild(XFG.Guilds:GetGuildByID(inTarball.G))	
+
+	local _, _ClassAPIName, _RaceName, _, _, _Name, _RealmAPIName = GetPlayerInfoByGUID(inTarball.H)
 	_UnitData:SetClass(XFG.Classes:GetClassByAPIName(_ClassAPIName))
 	_UnitData:SetRace(XFG.Races:GetRaceByName(_RaceName, _UnitData:GetFaction()))
 	_UnitData:SetName(_Name)
 	_UnitData:SetUnitName(_Name .. '-' .. _RealmAPIName)
 	_RealmName = (_RealmAPIName == 'Area52') and 'Area 52' or 'Proudmoore'
 	_UnitData:SetRealm(XFG.Realms:GetRealm(_RealmName))
-
-	_UnitData:Print()
 
 	-- There is no API to query for all guild ranks+names, so have to add them as you see them
 	if(inTarball.I ~= nil) then
@@ -89,8 +89,8 @@ function XFG:ExtractTarball(inTarball)
 		_UnitData:SetSoulbind(XFG.Soulbinds:GetSoulbind(inTarball.S))
 	end
 	_UnitData:SetTimeStamp(GetServerTime())
-	if(inTarball.X ~= nil) then
-		_UnitData:SetSpec(XFG.Specs:GetSpec(inTarball.X))
+	if(inTarball.V ~= nil) then
+		_UnitData:SetSpec(XFG.Specs:GetSpec(inTarball.V))
 	end
 	_UnitData:SetZone(inTarball.Z)
 

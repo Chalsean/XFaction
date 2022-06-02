@@ -154,7 +154,7 @@ local function OnEvent(self, event, ...)
 end
 
 function OnEnter(self)
-	LDB_ANCHOR = self
+	LDB_ANCHOR = self	
 
 	if QT:IsAcquired(ObjectName) then
 		tooltip:Clear()

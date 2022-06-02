@@ -79,6 +79,18 @@ function RealmCollection:GetRealm(inKey)
 	return self._Realms[inKey]
 end
 
+function RealmCollection:GetRealmByID(inID)
+	assert(type(inID) == 'number')
+	for _, _Realm in self:Iterator() do
+		local _IDs = _Realm:GetIDs()
+		for _, _ID in pairs (_IDs) do
+			if(_ID == inID) then
+				return _Realm
+			end
+		end
+	end
+end
+
 function RealmCollection:GetCurrentRealm()
 	return self._Realms[GetRealmName()]
 end

@@ -66,10 +66,14 @@ function SystemEvent:CallbackLogout()
         -- Backup information on reload to be restored
         XFG.Confederate:CreateBackup()
     else
-        local _NewMessage = Message:new()
+        local _NewMessage = LogoutMessage:new()
         _NewMessage:Initialize()
         _NewMessage:SetType(XFG.Network.Type.BROADCAST)
         _NewMessage:SetSubject(XFG.Network.Message.Subject.LOGOUT)
+        if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+            _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+        end
+        _NewMessage:SetGuildID(XFG.Player.Guild:GetID())
         XFG.Network.Sender:SendMessage(_NewMessage, true)
     end    
 end

@@ -9,25 +9,31 @@ function XFG:EncodeMessage(inMessage)
 	local _MessageData = {}
 
 	if(inMessage.__name == 'GuildMessage') then
-		_MessageData.W = inMessage:GetFromGUID()
-		local _Faction = inMessage:GetFaction()
-		_MessageData.F = _Faction:GetKey()
+		_MessageData.X = XFG.Network.Message.Type.GUILD
+	elseif(inMessage.__name == 'LogoutMessage') then
+		_MessageData.X = XFG.Network.Message.Type.LOGOUT
+	else
+		_MessageData.X = XFG.Network.Message.Type.MESSAGE
+	end
+
+	if(_MessageData.X == XFG.Network.Message.Type.GUILD) then
 		_MessageData.H = inMessage:GetFlags()
 		_MessageData.L = inMessage:GetLineID()
-		-- Review: Should be transferring guild ID
-		_MessageData.S = inMessage:GetGuildShortName()
 		_MessageData.M = inMessage:GetMainName()
 		_MessageData.Y = inMessage:GetData()
+	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
+		_MessageData.M = inMessage:GetMainName()		
 	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
 		_MessageData = XFG:TarballUnitData(inMessage:GetData())
 	end
 
 	_MessageData.A = inMessage:GetKey()
-	--_MessageData.To = inMessage:GetTo()
+	_MessageData.T = inMessage:GetTo()
 	_MessageData.B = inMessage:GetFrom()	
 	_MessageData.D = inMessage:GetSubject()
 	_MessageData.E = inMessage:GetType()
 	_MessageData.K = inMessage:GetTimeStamp()
+	_MessageData.G = inMessage:GetGuildID() -- Realm and Faction can be extrapolated from GuildID
 
 	local _Serialized = XFG:Serialize(_MessageData)
 	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
@@ -35,7 +41,7 @@ function XFG:EncodeMessage(inMessage)
 end
 
 function XFG:TarballUnitData(inUnitData)
-	
+
 	local _MessageData = {}
 
 	if(inUnitData:HasCovenant()) then
@@ -44,9 +50,9 @@ function XFG:TarballUnitData(inUnitData)
 	end
 	local _Faction = inUnitData:GetFaction()
 	_MessageData.F = _Faction:GetKey()
-	_MessageData.G = inUnitData:GetGUID()
 	local _Guild = inUnitData:GetGuild()
-	_MessageData.H = _Guild:GetID()
+	_MessageData.G = _Guild:GetID()
+	_MessageData.H = inUnitData:GetGUID()
 	if(inUnitData:HasRank()) then
 		local _Rank = inUnitData:GetRank()
 		_MessageData.I = _Rank:GetKey()
@@ -70,7 +76,7 @@ function XFG:TarballUnitData(inUnitData)
 	_MessageData.U = inUnitData:GetUnitName()	
 	if(inUnitData:HasSpec()) then
 		local _Spec = inUnitData:GetSpec()
-		_MessageData.X = _Spec:GetKey()
+		_MessageData.V = _Spec:GetKey()
 	end	
 	_MessageData.Z = inUnitData:GetZone()
 

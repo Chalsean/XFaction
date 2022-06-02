@@ -109,3 +109,10 @@ function Guild:SetRealm(inRealm)
     self._Realm = inRealm
     return self:GetRealm()
 end
+
+function Guild:Equals(inGuild)
+    if(inGuild == nil) then return false end
+    if(type(inGuild) ~= 'table' or inGuild.__name == nil or inGuild.__name ~= 'Guild') then return false end
+    if(self:GetKey() ~= inGuild:GetKey()) then return false end
+    return true
+end

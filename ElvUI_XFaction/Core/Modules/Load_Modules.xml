@@ -16,7 +16,7 @@
     <Script file='Network\Decode.lua'/>
     <Script file='Network\Message.lua'/>
     <Script file='Network\GuildMessage.lua'/>
-    <Script file='Network\MessageUnitData.lua'/>
+    <Script file='Network\LogoutMessage.lua'/>
     <Script file='Network\MessageCollection.lua'/>
     <Script file='Network\Channel.lua'/>
     <Script file='Network\ChannelCollection.lua'/>
