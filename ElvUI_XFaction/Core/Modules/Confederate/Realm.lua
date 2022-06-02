@@ -89,6 +89,12 @@ function Realm:SetName(inName)
     return self:GetName()
 end
 
+function Realm:GetID()
+    if(self._IDCount > 0) then
+        return self._IDs[1]
+    end
+end
+
 function Realm:GetIDs()
     return self._IDs
 end

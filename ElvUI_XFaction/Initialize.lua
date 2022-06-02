@@ -45,11 +45,16 @@ XFG.Network.Message.Tag = {
 }
 XFG.Network.Message.Subject = {
 	DATA = '1',
-	GUILD_CHAT = '2',
+	GCHAT = '2',
 	EVENT = '3',
 	LOGOUT = '4',
 	WHISPER = '5',
 	LOGIN = '6'
+}
+XFG.Network.Message.Type = {
+	MESSAGE = '1',
+	GUILD = '2',
+	LOGOUT = '3'
 }
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel
@@ -61,7 +66,8 @@ XFG.Network.Type = {
 XFG.Frames = {}
 XFG.Frames.ChatType = {
 	GUILD = 'GUILD',
-	CHANNEL = 'CHANNEL'
+	CHANNEL = 'CHANNEL',
+	SYSTEM = 'SYSTEM'
 }
 
 XFG.Cache = {}
@@ -147,15 +153,12 @@ function XFG:Init()
 
 	XFG.Player.Realm = XFG.Realms:GetRealm(GetRealmName())
 
-	local _, _Class, _Race2, _Race, _, _Name, _Realm = GetPlayerInfoByGUID('Player-3676-0DD742E6')
-	XFG:Debug(LogCategory, "class [%s] race [%s] race2 [%s] name [%s] realm [%s]", _Class, _Race, _Race2, _Name, _Realm)
-	XFG.Realms:Print()
-
 	-- These handlers will register additional handlers
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
 	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 	
-	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()	
+	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
+	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
 
 	EP:RegisterPlugin(addon, XFG.InitializeConfig)
 end

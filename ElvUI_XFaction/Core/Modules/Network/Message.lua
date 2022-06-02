@@ -32,6 +32,7 @@ function Message:newChildConstructor()
     self._Key = nil
     self._To = nil
     self._From = nil
+    self._GuildID = nil
     self._Type = nil
     self._Subject = nil
     self._EpochTime = nil
@@ -53,6 +54,7 @@ function Message:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
         self:SetFrom(XFG.Player.Unit:GetKey())
+        self:SetGuildID(XFG.Player.Guild:GetID())
         self:SetTimeStamp(GetServerTime())
         self:IsInitialized(true)
     end
@@ -65,6 +67,7 @@ function Message:Print()
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+    XFG:Debug(LogCategory, "  _GuildID (" ..type(self._GuildID) .. "): ".. tostring(self._GuildID))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
@@ -100,6 +103,16 @@ function Message:SetFrom(inFrom)
     assert(type(inFrom) == 'string')
     self._From = inFrom
     return self:GetFrom()
+end
+
+function Message:GetGuildID()
+    return self._GuildID
+end
+
+function Message:SetGuildID(inGuildID)
+    assert(type(inGuildID) == 'number')
+    self._GuildID = inGuildID
+    return self:GetGuildID()
 end
 
 function Message:GetType()
