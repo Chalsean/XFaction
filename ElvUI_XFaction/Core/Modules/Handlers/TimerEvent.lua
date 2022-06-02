@@ -135,7 +135,7 @@ function TimerEvent:CallbackLogin()
                     XFG.Player.Unit = _UnitData                    
                     XFG.Player.Unit:Print()                    
                 end
-            elseif(XFG.Confederate:Contains(_UnitData:GetKey())) then
+            elseif(_UnitData:GetKey() ~= nil and XFG.Confederate:Contains(_UnitData:GetKey())) then
                 XFG.Confederate:RemoveUnit(_UnitData:GetKey())
             end
         end
