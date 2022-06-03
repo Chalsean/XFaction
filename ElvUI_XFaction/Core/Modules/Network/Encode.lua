@@ -8,15 +8,7 @@ function XFG:EncodeMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
 	local _MessageData = {}
 
-	if(inMessage.__name == 'GuildMessage') then
-		_MessageData.X = XFG.Network.Message.Type.GUILD
-	elseif(inMessage.__name == 'LogoutMessage') then
-		_MessageData.X = XFG.Network.Message.Type.LOGOUT
-	else
-		_MessageData.X = XFG.Network.Message.Type.MESSAGE
-	end
-
-	if(_MessageData.X == XFG.Network.Message.Type.GUILD) then
+	if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
 		_MessageData.H = inMessage:GetFlags()
 		_MessageData.L = inMessage:GetLineID()
 		_MessageData.M = inMessage:GetMainName()

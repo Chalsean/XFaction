@@ -1,6 +1,6 @@
 ## Interface: 90205
 ## Author: Chalsean (US-Proudmoore)
-## Version: 1.8
+## Version: 1.8.1
 ## Title: |cff1784d1ElvUI|r |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: an ElvUI add-on to assist with cross faction guild communication
 ## RequiredDeps: ElvUI
