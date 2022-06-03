@@ -85,7 +85,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
 
     -- Have you seen this message before?
     if(XFG.Network.Mailbox:Contains(_Message:GetKey())) then
-        XFG:Debug(LogCategory, "This message has already been processed %s", _Message:GetKey())
+        --XFG:Debug(LogCategory, "This message has already been processed %s", _Message:GetKey())
         return
     else
         XFG.Network.Mailbox:AddMessage(_Message)
