@@ -65,7 +65,6 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
         _NewMessage:SetFlags(inFlags)
         _NewMessage:SetLineID(inLineID)
         _NewMessage:SetData(inText)
-        _NewMessage:Print()
         XFG.Network.Sender:SendMessage(_NewMessage, true)
     end
 end
@@ -81,11 +80,11 @@ function ChatEvent:CallbackChannelMessage(inText, inSenderName, inLanguageName, 
             _NewMessage:SetSubject(XFG.Network.Message.Subject.GCHAT)
             _NewMessage:SetFlags(inFlags)
             _NewMessage:SetLineID(inLineID)
+            _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
             if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
                 _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
             end
             _NewMessage:SetData(inText)
-            _NewMessage:Print()
             XFG.Network.Sender:SendMessage(_NewMessage, true)
         end
     end

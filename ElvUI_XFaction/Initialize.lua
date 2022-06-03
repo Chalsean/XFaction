@@ -24,13 +24,16 @@ XFG.Initialized = false
 XFG.Lib = {}
 XFG.Lib.Compress = LibStub:GetLibrary("LibCompress")
 XFG.Lib.Encode = XFG.Lib.Compress:GetAddonEncodeTable()
+XFG.Lib.QT = LibStub('LibQTip-1.0')
 XFG.Lib.Realm = LibStub:GetLibrary('LibRealmInfo')
 
 XFG.DataText = {}
 XFG.DataText.Guild = {}
-
+XFG.DataText.Guild.Name = 'Guild (X)'
 XFG.DataText.Soulbind = {}
 XFG.DataText.Soulbind.Name = 'Soulbind (X)'
+XFG.DataText.Bridge = {}
+XFG.DataText.Bridge.Name = 'Bridge (X)'
 
 XFG.Player = {}
 XFG.Player.LastBroadcast = 0
@@ -49,7 +52,8 @@ XFG.Network.Message.Subject = {
 	EVENT = '3',
 	LOGOUT = '4',
 	WHISPER = '5',
-	LOGIN = '6'
+	LOGIN = '6',
+	BRIDGE = '7'
 }
 XFG.Network.Message.Type = {
 	MESSAGE = '1',
@@ -58,9 +62,9 @@ XFG.Network.Message.Type = {
 }
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel
-	WHISPER = '2',     -- Whisper Local
-	LOCAL = '3',         -- Local Channel only
-	BNET = '4'            -- BNet only
+	WHISPER = '2',   -- Whisper Local
+	LOCAL = '3',     -- Local Channel only
+	BNET = '4'       -- BNet only
 }	
 
 XFG.Frames = {}
@@ -105,10 +109,10 @@ XFG.Cache.Realms.Proudmoore = {
 	Alliance = {'Eternal Kingdom', 'Endless Kingdom', 'Alternal Kingdom', 'Alternal Kingdom Two', 'Alternal Kingdom Three'},
 	Horde = {'Alternal Kingdom Four', 'Enduring Kingdom'}
 }
--- XFG.Cache.Realms['Area 52'] = {
--- 	Alliance = {},
--- 	Horde = {'Eternal Kingdom'}
--- }
+XFG.Cache.Realms['Area 52'] = {
+	Alliance = {},
+	Horde = {'Eternal Kingdom'}
+}
 
 function XFG:Init()
 	
@@ -117,10 +121,6 @@ function XFG:Init()
 	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Player.Faction = XFG.Factions:GetFactionByName(UnitFactionGroup('player'))
-
-	-- Globals are lua's version of static variables
-	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
-	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
 
 	XFG.Ranks = RankCollection:new(); XFG.Ranks:Initialize()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
@@ -152,6 +152,15 @@ function XFG:Init()
 	end
 
 	XFG.Player.Realm = XFG.Realms:GetRealm(GetRealmName())
+	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
+	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()
+	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
+	
+	for _, _Target in XFG.Network.BNet.Targets:Iterator() do
+		local _Realm = _Target:GetRealm()
+		local _Faction = _Target:GetFaction()
+		XFG:Info(LogCategory, "Established BNet target [%s:%s]", _Realm:GetName(), _Faction:GetName())
+	end
 
 	-- These handlers will register additional handlers
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()

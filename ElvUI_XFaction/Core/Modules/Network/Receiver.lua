@@ -91,17 +91,22 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         XFG.Network.Mailbox:AddMessage(_Message)
     end
       
-    _Message:Print() 
+    --_Message:Print()
 
-    -- If sent via BNet, broadcast to your local realm
-    if(inMessageTag == XFG.Network.Message.Tag.BNET) then
-        _Message:SetType(XFG.Network.Type.LOCAL)
-        XFG.Network.Sender:SendMessage(_Message)
-
-    -- If not sent via BNet but is flagged for broadcast, forward to BNet
-    elseif(_Message:GetType() == XFG.Network.Type.BROADCAST) then
+    -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
+    if(_Message:HasTargets() and _Message:GetType() == XFG.Network.Message.Tag.LOCAL) then
         _Message:SetType(XFG.Network.Type.BNET)
         XFG.Network.Sender:SendMessage(_Message, true)
+
+    -- If there are still BNet targets remaining and came via BNet, broadcast
+    elseif(_Message:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
+        _Message:SetType(XFG.Network.Type.BROADCAST)
+        XFG.Network.Sender:SendMessage(_Message, true)
+
+    -- If came via BNet and no more targets, message locally only
+    elseif(_Message:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
+        _Message:SetType(XFG.Network.Type.LOCAL)
+        XFG.Network.Sender:SendMessage(_Message)
     end
 
     -- Process guild chat message

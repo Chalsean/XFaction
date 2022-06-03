@@ -96,6 +96,7 @@ function TimerEvent:CallbackLogin()
         XFG:CancelTimer(XFG.Cache.CallbackTimerID)
         table.RemoveKey(XFG.Cache, 'CallbackTimerID')
 
+        XFG.Player.Account = C_BattleNet.GetAccountInfoByGUID(XFG.Player.GUID)
         XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, GetGuildInfo('player'))
 
         XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
@@ -161,6 +162,7 @@ function TimerEvent:CallbackLogin()
         XFG.DB.UIReload = false
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
+        DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
     end
 end
 
