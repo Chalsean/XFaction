@@ -34,6 +34,7 @@ function XFG:DecodeMessage(inMessage)
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
 	elseif(_MessageData.X == XFG.Network.Message.Type.LOGOUT) then
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
+		if(_MessageData.W ~= nil) then	_Message:SetUnitName(_MessageData.W) end
 	end
 
 	if(_Message:GetSubject() == XFG.Network.Message.Subject.DATA or _Message:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
