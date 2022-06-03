@@ -96,11 +96,9 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 ### Known bugs
 
-> Area 52 communication not working (this is intentional).
+> Addon wigs out when used on character not in supported guild/realm
 
-> Not parsing main names with funky characters properly.
-
-> Inconsistent communication over BNet from alts. This might be due to BNet instability post 9.2.5 launch.
+> DTSoulbind throws exception when player does not have active covenant
 
 ### Planned enhancements
 
@@ -111,7 +109,3 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 > Forward guild message of the day (MOTD).
 
 > Remove ElvUI dependencies for non-ElvUI users.
-
-> DT that displays all active BNet bridges.
-
-
