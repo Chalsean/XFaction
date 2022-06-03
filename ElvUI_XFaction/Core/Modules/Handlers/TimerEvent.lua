@@ -8,29 +8,15 @@ local _GuildRosterDelta = 30   -- Seconds between local guild scans
 
 TimerEvent = {}
 
-function TimerEvent:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function TimerEvent:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Initialized = false
-    end
+    self._Initialized = false
 
-    return Object
+    return _Object
 end
 
 function TimerEvent:Initialize()
@@ -97,7 +83,35 @@ function TimerEvent:CallbackLogin()
         table.RemoveKey(XFG.Cache, 'CallbackTimerID')
 
         XFG.Player.Account = C_BattleNet.GetAccountInfoByGUID(XFG.Player.GUID)
-        XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, GetGuildInfo('player'))
+        local _GuildName = GetGuildInfo('player')
+        if(_GuildName == nil) then
+            XFG:Error(LogCategory, "You are not in a guild, cancelling all timers")
+            XFG.ValidUser = false
+            XFG:CancelAllTimers()
+            return
+        end
+        XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
+        if(XFG.Player.Guild == nil) then
+            XFG:Error(LogCategory, "You are not in a supported guild, cancelling all timers")
+            XFG.ValidUser = false
+            XFG:CancelAllTimers()
+            return
+        end
+
+        XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
+        XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()
+        XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
+        
+        for _, _Target in XFG.Network.BNet.Targets:Iterator() do
+            local _Realm = _Target:GetRealm()
+            local _Faction = _Target:GetFaction()
+            XFG:Info(LogCategory, "Established BNet target [%s:%s]", _Realm:GetName(), _Faction:GetName())
+        end
+
+        XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
+	
+	    XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
+	    XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
 
         XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
         XFG.Classes = ClassCollection:new(); XFG.Classes:Initialize()

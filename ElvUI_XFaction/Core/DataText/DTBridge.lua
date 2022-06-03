@@ -35,11 +35,13 @@ local function OnEvent(self, event, ...)
 			_BridgeCount = _BridgeCount + 1
 		end
 		self.text:SetFormattedText(_BridgeCount)
+	else
+		self.text:SetFormattedText('N/A')
 	end
 end
 
 local function OnEnter(self)
-
+	if(XFG.ValidUser == false) then return end
 	LDB_ANCHOR = self	
 
 	if XFG.Lib.QT:IsAcquired(ObjectName) then

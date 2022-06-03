@@ -20,6 +20,7 @@ XFG["RegisteredModules"] = {}
 XFG.Version = tonumber(GetAddOnMetadata(addon, "Version"))
 XFG.Handlers = {}
 XFG.Initialized = false
+XFG.ValidUser = true
 
 XFG.Lib = {}
 XFG.Lib.Compress = LibStub:GetLibrary("LibCompress")
@@ -54,6 +55,11 @@ XFG.Network.Message.Subject = {
 	WHISPER = '5',
 	LOGIN = '6',
 	BRIDGE = '7'
+}
+XFG.Network.Message.Type = {
+	MESSAGE = '1',
+	GUILD = '2',
+	LOGOUT = '3'
 }
 XFG.Network.Message.Type = {
 	MESSAGE = '1',
@@ -121,7 +127,7 @@ function XFG:Init()
 	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Player.Faction = XFG.Factions:GetFactionByName(UnitFactionGroup('player'))
-
+	
 	XFG.Ranks = RankCollection:new(); XFG.Ranks:Initialize()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
 
@@ -152,23 +158,14 @@ function XFG:Init()
 	end
 
 	XFG.Player.Realm = XFG.Realms:GetRealm(GetRealmName())
-	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
-	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()
-	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
-	
-	for _, _Target in XFG.Network.BNet.Targets:Iterator() do
-		local _Realm = _Target:GetRealm()
-		local _Faction = _Target:GetFaction()
-		XFG:Info(LogCategory, "Established BNet target [%s:%s]", _Realm:GetName(), _Faction:GetName())
+	if(XFG.Player.Realm == nil) then
+		XFG:Error(LogCategory, "You are not playing on a support realm")
+		XFG.ValidUser = false
+		return
 	end
 
-	-- These handlers will register additional handlers
+	-- Setup is continued in TimerEvent
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
-	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
-	
-	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
-	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
-
 	EP:RegisterPlugin(addon, XFG.InitializeConfig)
 end
 

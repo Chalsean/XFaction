@@ -149,10 +149,13 @@ local function OnEvent(self, event, ...)
 
 		local _UnitCount = XFG.Confederate:GetNumberOfUnits()
 		self.text:SetFormattedText(format('|cff3CE13F%d', _UnitCount))
+	else
+		self.text:SetFormattedText('N/A')
 	end
 end
 
 function OnEnter(self)
+	if(XFG.ValidUser == false) then return end
 	LDB_ANCHOR = self	
 
 	if XFG.Lib.QT:IsAcquired(ObjectName) then

@@ -35,11 +35,13 @@ local function OnEvent(self, event, ...)
 		else
 			self.text:SetFormattedText('No Covenant')
 		end
+	else
+		self.text:SetFormattedText('N/A')
 	end
 end
 
 local function OnEnter(self)
-
+	if(XFG.Initialized == false) then return end
 	local ActiveCovenant = XFG.Player.Unit:GetCovenant()
 	local ActiveSoulbind = XFG.Player.Unit:GetSoulbind()
 
