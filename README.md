@@ -23,7 +23,7 @@ The addon should provide the following functionalities:
 - This particular build will route merged guild chat to #EKXFactionChat to prevent cluttering of guild chat for testers. The addon will automatically join testers to this channel upon loading, but you may need to enable seeing messages from the channel.
 
 > Merged system messages across guilds/realms/factions in the confederate
-- When another player using the addon logs in/out, you should see a system message as if they were local guild online/offline
+- When another player using the addon comes online/offline, you should see a system message as if they were local guild member
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
 - Full guild roster view across guilds/realms/factions
@@ -116,5 +116,3 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 > Forward guild message of the day (MOTD).
 
 > Remove ElvUI dependencies for non-ElvUI users.
-
-
