@@ -9,9 +9,9 @@ function XFG:DecodeMessage(inMessage)
 	local _, _MessageData = XFG:Deserialize(_Decompressed)
 
 	local _Message
-	if(_MessageData.X == XFG.Network.Message.Type.GUILD) then
+	if(_MessageData.D == XFG.Network.Message.Subject.GCHAT) then
 		_Message = GuildMessage:new()
-	elseif(_MessageData.X == XFG.Network.Message.Type.LOGOUT) then
+	elseif(_MessageData.D == XFG.Network.Message.Subject.LOGOUT) then
 		_Message = LogoutMessage:new()
 	else
 		_Message = Message:new()
@@ -27,12 +27,12 @@ function XFG:DecodeMessage(inMessage)
 	if(_MessageData.G ~= nil) then	_Message:SetGuildID(_MessageData.G) end
 	if(_MessageData.Q ~= nil) then _Message:SetRemainingTargets(_MessageData.Q) end
 
-	if(_MessageData.X == XFG.Network.Message.Type.GUILD) then
+	if(_Message:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
 		if(_MessageData.H ~= nil) then	_Message:SetFlags(_MessageData.H) end
 		if(_MessageData.L ~= nil) then	_Message:SetLineID(_MessageData.L) end
 		if(_MessageData.W ~= nil) then	_Message:SetUnitName(_MessageData.W) end
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
-	elseif(_MessageData.X == XFG.Network.Message.Type.LOGOUT) then
+	elseif(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
 		if(_MessageData.W ~= nil) then	_Message:SetUnitName(_MessageData.W) end
 	end

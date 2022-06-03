@@ -67,8 +67,9 @@ function BNetEvent:CallbackBNetDisconnected()
 end
 
 -- The friend API leaves much to be desired, you essentially have to keep scanning
+-- This also spams, so only uncomment the logging to troubleshoot
 function BNetEvent:CallbackFriendInfo(inFriendIndex)
-    XFG:Debug(LogCategory, "Scanning BNet friends due to BN_FRIEND_INFO_CHANGED")
+    --XFG:Debug(LogCategory, "Scanning BNet friends due to BN_FRIEND_INFO_CHANGED")
     XFG.Network.BNet.Friends:Reset()
     XFG.Network.BNet.Friends:Initialize()
     DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)

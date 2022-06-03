@@ -91,7 +91,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         XFG.Network.Mailbox:AddMessage(_Message)
     end
       
-    --_Message:Print()
+    _Message:ShallowPrint()
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(_Message:HasTargets() and _Message:GetType() == XFG.Network.Message.Tag.LOCAL) then

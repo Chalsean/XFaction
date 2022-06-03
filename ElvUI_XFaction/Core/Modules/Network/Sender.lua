@@ -105,6 +105,9 @@ function Sender:SendMessage(inMessage, inSendBNet)
         inMessage:Initialize()
     end
 
+    XFG:Debug(LogCategory, "Sending message")
+    inMessage:ShallowPrint()
+
     local _OutgoingData = XFG:EncodeMessage(inMessage)    
 
     -- If you messaged all possible realm/faction combinations, can switch to local broadcast    
