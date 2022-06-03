@@ -157,7 +157,7 @@ function Unit:Initialize(_Argument)
     local _UpperNote = string.upper(_Note)
 	if(string.match(_UpperNote, "%[EN?KA?H?%]")) then
 		self:IsAlt(true)
-        local _MainName = string.match(_Note, "[^%s%d]*$") 
+        local _MainName = string.match(_Note, "([^%s%d]*)%s*$") 
         if(_MainName ~= nil) then
             self:SetMainName(_MainName)
         end

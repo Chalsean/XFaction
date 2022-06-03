@@ -96,7 +96,7 @@ function TimerEvent:CallbackLogin()
         XFG:CancelTimer(XFG.Cache.CallbackTimerID)
         table.RemoveKey(XFG.Cache, 'CallbackTimerID')
 
-        XFG.Player.Guild = XFG.Guilds:GetGuildByFactionGuildName(XFG.Player.Faction, GetGuildInfo('player'))
+        XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, GetGuildInfo('player'))
 
         XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
         XFG.Classes = ClassCollection:new(); XFG.Classes:Initialize()
@@ -153,12 +153,15 @@ function TimerEvent:CallbackLogin()
         XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
 
         -- Broadcast login, refresh DTs and ready to roll        
-        wipe(XFG.Cache)
-        XFG.DB.UIReload = false
+        wipe(XFG.Cache)        
         XFG.Initialized = true
-        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
+        if(XFG.DB.UIReload == false) then
+            XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
+        end
+        XFG.DB.UIReload = false
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
+        DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
     end
 end
 

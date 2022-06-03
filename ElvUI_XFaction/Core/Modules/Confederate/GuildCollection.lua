@@ -89,16 +89,14 @@ function GuildCollection:GetGuildByID(inID)
 	end
 end
 
-function GuildCollection:GetGuildByFactionGuildName(inFaction, inGuildName)
-	assert(type(inFaction) == 'table' and type(inGuildName) == 'string')
-
+function GuildCollection:GetGuildByRealmGuildName(inRealm, inGuildName)
+	assert(type(inGuildName) == 'string' and type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "arguments must be a Realm object and a string")
+	
 	for _, _Guild in self:Iterator() do
-		if(inFaction:Equals(_Guild:GetFaction()) and inGuildName == _Guild:GetName()) then
+		if(inRealm:Equals(_Guild:GetRealm()) and _Guild:GetName() == inGuildName) then
 			return _Guild
 		end
 	end
-
-	return nil
 end
 
 function GuildCollection:AddGuild(inGuild)

@@ -91,23 +91,29 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         XFG.Network.Mailbox:AddMessage(_Message)
     end
       
-    _Message:Print() 
+    --_Message:Print()
 
-    -- If sent via BNet, broadcast to your local realm
-    if(inMessageTag == XFG.Network.Message.Tag.BNET) then
-        _Message:SetType(XFG.Network.Type.LOCAL)
-        XFG.Network.Sender:SendMessage(_Message)
-
-    -- If not sent via BNet but is flagged for broadcast, forward to BNet
-    elseif(_Message:GetType() == XFG.Network.Type.BROADCAST) then
+    -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
+    if(_Message:HasTargets() and _Message:GetType() == XFG.Network.Message.Tag.LOCAL) then
         _Message:SetType(XFG.Network.Type.BNET)
         XFG.Network.Sender:SendMessage(_Message, true)
+
+    -- If there are still BNet targets remaining and came via BNet, broadcast
+    elseif(_Message:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
+        _Message:SetType(XFG.Network.Type.BROADCAST)
+        XFG.Network.Sender:SendMessage(_Message, true)
+
+    -- If came via BNet and no more targets, message locally only
+    elseif(_Message:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
+        _Message:SetType(XFG.Network.Type.LOCAL)
+        XFG.Network.Sender:SendMessage(_Message)
     end
 
-    -- Process GUILD_CHAT message
-    if(_Message:GetSubject() == XFG.Network.Message.Subject.GUILD_CHAT) then
+    -- Process guild chat message
+    if(_Message:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
         -- For alpha testing, only Proudmoore so just need to check faction
-        local _Faction = _Message:GetFaction()
+        local _Guild = XFG.Guilds:GetGuildByID(_Message:GetGuildID())
+        local _Faction = _Guild:GetFaction()
         if(_Faction:Equals(XFG.Player.Unit:GetFaction()) == false) then
             -- Visual sugar to make it appear as if the message came through the channel
             XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.CHANNEL, _Message)
@@ -115,9 +121,18 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         return
     end
 
-    -- Process LOGOUT message
+    -- Display system message that unit has logged on/off
+    if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT or
+       _Message:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+        local _Guild = XFG.Guilds:GetGuildByID(_Message:GetGuildID())
+        if(XFG.Player.Realm:Equals(_Guild:GetRealm()) == false or XFG.Player.Guild:Equals(_Guild) == false) then
+            XFG.Frames.System:DisplaySystemMessage(_Message)
+        end
+    end
+
     if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
         XFG.Confederate:RemoveUnit(_Message:GetFrom())
+        DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         return
     end
 
@@ -130,8 +145,9 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
             DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         end
 
+        -- If unit has just logged in, reply with latest information
         if(_Message:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
-            -- Player has just logged in, whisper back latest info if same faction
+            -- Whisper back if same faction
             local _UnitFaction = _UnitData:GetFaction()
             if(_UnitFaction:Equals(XFG.Player.Unit:GetFaction())) then
                 XFG.Network.Sender:WhisperUnitData(_Message:GetFrom(), XFG.Player.Unit)

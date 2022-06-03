@@ -2,13 +2,12 @@ local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DT = E:GetModule('DataTexts')
 local ObjectName = 'DTGuild'
 local LogCategory = 'DTGuild'
-local QT = LibStub('LibQTip-1.0')
 
 local IconTokenString = '|T%d:16:16:0:0:64:64:4:60:4:60|t'
 
 local tooltip
 local LDB_ANCHOR
-XFG.DataText.Guild.Name = 'Guild (X)'
+
 XFG.DataText.Guild.ColumnNames = {
 	NAME = 'Name',
 	RACE = 'Race',
@@ -154,13 +153,13 @@ local function OnEvent(self, event, ...)
 end
 
 function OnEnter(self)
-	LDB_ANCHOR = self
+	LDB_ANCHOR = self	
 
-	if QT:IsAcquired(ObjectName) then
+	if XFG.Lib.QT:IsAcquired(ObjectName) then
 		tooltip:Clear()
 	else
 		-- Faction, Covenant, Prof1, Prof2, Spec, Name, Race, Level, Realm, Guild, Team, Zone, Note, Rank
-		tooltip = QT:Acquire(ObjectName, 13, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "RIGHT", "LEFT")
+		tooltip = XFG.Lib.QT:Acquire(ObjectName, 13, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "RIGHT", "LEFT")
 
 		ttHeaderFont:SetFont(GameTooltipHeaderText:GetFont())
 		ttRegFont:SetFont(GameTooltipText:GetFont())

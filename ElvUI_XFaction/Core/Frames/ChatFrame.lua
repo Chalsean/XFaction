@@ -97,22 +97,24 @@ function ChatFrame:DisplayChat(inEvent, inMessage)
     for i = 1, NUM_CHAT_WINDOWS do
         _FrameTable = { GetChatWindowMessages(i) }
         local v
-        for _, _Name in ipairs(_FrameTable) do
-            if _Name == 'CHANNEL' then
+        for _, _FrameName in ipairs(_FrameTable) do
+            if _FrameName == 'CHANNEL' then
                 local _Frame = 'ChatFrame' .. i
                 if _G[_Frame] then
-                    local _Faction = inMessage:GetFaction()
+
+                    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
+                    local _Faction = _Guild:GetFaction()
+                    
                     local _Text = format('%s ', format(IconTokenString, _Faction:GetIconID()))
                     if(inMessage:GetMainName() ~= nil) then
                         _Text = _Text .. "(" .. inMessage:GetMainName() .. ") "
                     end
-                    if(inMessage:GetGuildShortName() ~= nil) then
-                        _Text = _Text .. "<" .. inMessage:GetGuildShortName() .. "> "
-                    end
-                    _Text = _Text .. inMessage:GetData()
+                    _Text = _Text .. "<" .. _Guild:GetShortName() .. "> " .. inMessage:GetData()
+
                     local _Channel = XFG.Network.Sender:GetLocalChannel()
                     local _ChannelName = _Channel:GetName()
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inEvent, _Text, inMessage:GetFrom(), 'Common', _ChannelName, inMessage:GetFrom(), inMessage:GetFlags(), 0, _Channel:GetID(), _Channel:GetShortName(), 0, _, inMessage:GetFromGUID())
+                    
+                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inEvent, _Text, inMessage:GetUnitName(), 'Common', _ChannelName, inMessage:GetUnitName(), inMessage:GetFlags(), 0, _Channel:GetID(), _Channel:GetShortName(), 0, _, inMessage:GetFrom())
                 end                                   
                 break
             end

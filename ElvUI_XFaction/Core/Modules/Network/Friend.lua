@@ -14,9 +14,8 @@ function Friend:new()
     self._ID = nil
     self._Name = nil
     self._Tag = nil
-    self._RealmID = nil
+    self._Target = nil
     self._UnitName = nil
-    self._Faction = nil
 
     return _Object
 end
@@ -28,9 +27,10 @@ function Friend:Print()
     XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
     XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
     XFG:Debug(LogCategory, "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
-    XFG:Debug(LogCategory, "  _RealmID (" ..type(self._RealmID) .. "): ".. tostring(self._RealmID))
     XFG:Debug(LogCategory, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
-    self._Faction:Print()
+    if(self:HasTarget()) then
+        self._Target:Print()
+    end
 end
 
 function Friend:GetKey()
@@ -73,14 +73,18 @@ function Friend:SetTag(inTag)
     return self:GetTag()
 end
 
-function Friend:GetRealmID()
-    return self._RealmID
+function Friend:HasTarget()
+    return self._Target ~= nil
 end
 
-function Friend:SetRealmID(inRealmID)
-    assert(type(inRealmID) == 'number')
-    self._RealmID = inRealmID
-    return self:GetRealmID()
+function Friend:GetTarget()
+    return self._Target
+end
+
+function Friend:SetTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', "argument must be Target object")
+    self._Target = inTarget
+    return self:GetTarget()
 end
 
 function Friend:GetUnitName()
@@ -91,14 +95,4 @@ function Friend:SetUnitName(inUnitName)
     assert(type(inUnitName) == 'string')
     self._UnitName = inUnitName
     return self:GetUnitName()
-end
-
-function Friend:GetFaction()
-    return self._Faction
-end
-
-function Friend:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
-    self._Faction = inFaction
-    return self:GetFaction()
 end

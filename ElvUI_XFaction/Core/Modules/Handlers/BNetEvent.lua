@@ -1,4 +1,5 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
+local DT = E:GetModule('DataTexts')
 local ObjectName = 'BNetEvent'
 local LogCategory = 'HEBNet'
 
@@ -70,4 +71,5 @@ function BNetEvent:CallbackFriendInfo(inFriendIndex)
     XFG:Debug(LogCategory, "Scanning BNet friends due to BN_FRIEND_INFO_CHANGED")
     XFG.Network.BNet.Friends:Reset()
     XFG.Network.BNet.Friends:Initialize()
+    DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
 end

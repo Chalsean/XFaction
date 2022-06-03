@@ -128,7 +128,6 @@ function Confederate:AddUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', "argument must be Unit object")
 
     if(self:Contains(inUnit:GetKey())) then 
-        -- Data might be coming from server in another timezone, make sure to compare apples to apples
         local _CachedUnitData = self:GetUnit(inUnit:GetKey())       
         if(inUnit:GetTimeStamp() < _CachedUnitData:GetTimeStamp()) then
             return false
