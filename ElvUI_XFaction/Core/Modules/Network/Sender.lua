@@ -105,8 +105,8 @@ function Sender:SendMessage(inMessage, inSendBNet)
         inMessage:Initialize()
     end
 
-    XFG:Debug(LogCategory, "Sending message")
-    inMessage:ShallowPrint()
+    --XFG:Debug(LogCategory, "Sending message")
+    --inMessage:ShallowPrint()
 
     local _OutgoingData = XFG:EncodeMessage(inMessage)    
 
@@ -125,20 +125,19 @@ function Sender:SendMessage(inMessage, inSendBNet)
     end
 
     if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCAL) then
-        -- Anyone listening locally?
         local _Realm = XFG.Realms:GetCurrentRealm()
-        if(_Realm:GetNumberRunningAddon() > 1) then
-           self:BroadcastLocally(_OutgoingData)            
-
         -- If only 1 player, switch to whisper
-        elseif(_Realm:GetNumberRunningAddon() == 1) then
-           local _Unit = _Realm:GetUnitRunningAddon()
-           inMessage:SetTo(_Unit:GetGUID())
-           inMessage:SetType(XFG.Network.Type.WHISPER)
-           self:Whisper(inMessage:GetTo(), _OutgoingData)  
-
+        if(_Realm:GetNumberRunningAddon() == 1) then
+            local _Unit = _Realm:GetUnitRunningAddon()
+            inMessage:SetTo(_Unit:GetGUID())
+            inMessage:SetType(XFG.Network.Type.WHISPER)
+            self:Whisper(inMessage:GetTo(), _OutgoingData)
+        
+        -- If multiple people, need to broadcast
         else
-            -- Nobody listening, so sad
+           self:BroadcastLocally(_OutgoingData) 
+
+            -- There could be nobody, but right now I'm not confident that I've covered all corner cases
         end
     elseif(inMessage:GetType() == XFG.Network.Type.WHISPER) then
         self:Whisper(inMessage:GetTo(), _OutgoingData)
@@ -148,7 +147,7 @@ end
 function Sender:BroadcastLocally(inData)
     if(self:CanBroadcast()) then
         local _Channel = self:GetLocalChannel()
-        XFG:Debug(LogCategory, "Broadcasting on channel [%d] with tag [%s]", _Channel:GetID(), XFG.Network.Message.Tag)
+        XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Network.Message.Tag.LOCAL)
         XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
     end
 end
