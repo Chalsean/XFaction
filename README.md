@@ -19,8 +19,11 @@ This addon is in very early stages (alpha) and currently only Eternal Kingdom (E
  
 ## What is included
 The addon should provide the following functionalities:
-> Merged guild chat across guilds/realms/factions in the confederation
+> Merged guild chat across guilds/realms/factions in the confederate
 - This particular build will route merged guild chat to #EKXFactionChat to prevent cluttering of guild chat for testers. The addon will automatically join testers to this channel upon loading, but you may need to enable seeing messages from the channel.
+
+> Merged system messages across guilds/realms/factions in the confederate
+- When another player using the addon comes online/offline, you should see a system message as if they were local guild member
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
 - Full guild roster view across guilds/realms/factions
