@@ -125,20 +125,20 @@ function Sender:SendMessage(inMessage, inSendBNet)
     end
 
     if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCAL) then
-        local _Realm = XFG.Realms:GetCurrentRealm()
-        -- If only 1 player, switch to whisper
-        if(_Realm:GetNumberRunningAddon() == 1) then
-            local _Unit = _Realm:GetUnitRunningAddon()
-            inMessage:SetTo(_Unit:GetGUID())
-            inMessage:SetType(XFG.Network.Type.WHISPER)
-            self:Whisper(inMessage:GetTo(), _OutgoingData)
+        -- local _Realm = XFG.Realms:GetCurrentRealm()
+        -- -- If only 1 player, switch to whisper
+        -- if(_Realm:GetNumberRunningAddon() == 1) then
+        --     local _Unit = _Realm:GetUnitRunningAddon()
+        --     inMessage:SetTo(_Unit:GetGUID())
+        --     inMessage:SetType(XFG.Network.Type.WHISPER)
+        --     self:Whisper(inMessage:GetTo(), _OutgoingData)
         
         -- If multiple people, need to broadcast
-        else
+        -- else
            self:BroadcastLocally(_OutgoingData) 
 
             -- There could be nobody, but right now I'm not confident that I've covered all corner cases
-        end
+        --end
     elseif(inMessage:GetType() == XFG.Network.Type.WHISPER) then
         self:Whisper(inMessage:GetTo(), _OutgoingData)
     end
