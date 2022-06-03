@@ -60,6 +60,11 @@ XFG.Network.Message.Type = {
 	GUILD = '2',
 	LOGOUT = '3'
 }
+XFG.Network.Message.Type = {
+	MESSAGE = '1',
+	GUILD = '2',
+	LOGOUT = '3'
+}
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel
 	WHISPER = '2',   -- Whisper Local
