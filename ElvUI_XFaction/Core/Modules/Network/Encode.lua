@@ -20,6 +20,7 @@ function XFG:EncodeMessage(inMessage)
 		_MessageData.H = inMessage:GetFlags()
 		_MessageData.L = inMessage:GetLineID()
 		_MessageData.M = inMessage:GetMainName()
+		_MessageData.W = inMessage:GetUnitName()
 		_MessageData.Y = inMessage:GetData()
 	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
 		_MessageData.M = inMessage:GetMainName()		
@@ -34,6 +35,7 @@ function XFG:EncodeMessage(inMessage)
 	_MessageData.E = inMessage:GetType()
 	_MessageData.K = inMessage:GetTimeStamp()
 	_MessageData.G = inMessage:GetGuildID() -- Realm and Faction can be extrapolated from GuildID
+	_MessageData.Q = inMessage:GetRemainingTargets()
 
 	local _Serialized = XFG:Serialize(_MessageData)
 	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
@@ -60,7 +62,9 @@ function XFG:TarballUnitData(inUnitData)
 	end
 	_MessageData.L = inUnitData:GetLevel()
 	_MessageData.M = (inUnitData:IsMobile() == true) and 1 or 0
-	_MessageData.Q = inUnitData:GetNote()
+	_MessageData.N = inUnitData:GetNote()
+	local _Class = inUnitData:GetClass()
+	_MessageData.O = _Class:GetKey()
 	if(inUnitData:HasProfession1()) then
 		local _Profession = inUnitData:GetProfession1()
 		_MessageData.P1 = _Profession:GetKey()
@@ -68,6 +72,10 @@ function XFG:TarballUnitData(inUnitData)
 	if(inUnitData:HasProfession2()) then
 		local _Profession = inUnitData:GetProfession2()
 		_MessageData.P2 = _Profession:GetKey()
+	end
+	if(inUnitData:HasRace()) then
+		local _Race = inUnitData:GetRace()
+		_MessageData.R = _Race:GetKey()
 	end
 	if(inUnitData:HasSoulbind()) then
 		local _Soulbind = inUnitData:GetSoulbind()
@@ -77,7 +85,8 @@ function XFG:TarballUnitData(inUnitData)
 	if(inUnitData:HasSpec()) then
 		local _Spec = inUnitData:GetSpec()
 		_MessageData.V = _Spec:GetKey()
-	end	
+	end
+	_MessageData.W = inUnitData:GetUnitName()
 	_MessageData.Z = inUnitData:GetZone()
 
 	return _MessageData

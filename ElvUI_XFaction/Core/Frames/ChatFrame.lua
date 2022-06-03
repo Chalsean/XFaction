@@ -104,8 +104,7 @@ function ChatFrame:DisplayChat(inEvent, inMessage)
 
                     local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
                     local _Faction = _Guild:GetFaction()
-                    local _, _, _, _, _, _Name = GetPlayerInfoByGUID(inMessage:GetFrom())
-
+                    
                     local _Text = format('%s ', format(IconTokenString, _Faction:GetIconID()))
                     if(inMessage:GetMainName() ~= nil) then
                         _Text = _Text .. "(" .. inMessage:GetMainName() .. ") "
@@ -115,7 +114,7 @@ function ChatFrame:DisplayChat(inEvent, inMessage)
                     local _Channel = XFG.Network.Sender:GetLocalChannel()
                     local _ChannelName = _Channel:GetName()
                     
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inEvent, _Text, _Name, 'Common', _ChannelName, _Name, inMessage:GetFlags(), 0, _Channel:GetID(), _Channel:GetShortName(), 0, _, inMessage:GetFrom())
+                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inEvent, _Text, inMessage:GetUnitName(), 'Common', _ChannelName, inMessage:GetUnitName(), inMessage:GetFlags(), 0, _Channel:GetID(), _Channel:GetShortName(), 0, _, inMessage:GetFrom())
                 end                                   
                 break
             end

@@ -22,6 +22,8 @@
     <Script file='Network\ChannelCollection.lua'/>
     <Script file='Network\Friend.lua'/>
     <Script file='Network\FriendCollection.lua'/>
+    <Script file='Network\Target.lua'/>
+    <Script file='Network\TargetCollection.lua'/>
 
     <Script file='Unit\Profession.lua'/>
     <Script file='Unit\ProfessionCollection.lua'/>   

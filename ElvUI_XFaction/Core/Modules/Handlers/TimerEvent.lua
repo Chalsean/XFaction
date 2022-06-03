@@ -161,6 +161,7 @@ function TimerEvent:CallbackLogin()
         XFG.DB.UIReload = false
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
+        DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
     end
 end
 

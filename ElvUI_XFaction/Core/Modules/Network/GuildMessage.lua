@@ -10,6 +10,7 @@ function GuildMessage:new()
     _Object.__name = 'GuildMessage'
     _Object._Flags = nil
     _Object._LineID = nil
+    _Object._UnitName = nil
     _Object._MainName = nil
 
     return _Object
@@ -23,12 +24,17 @@ function GuildMessage:Print()
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
     XFG:Debug(LogCategory, "  _Flags (" ..type(self._Flags) .. "): ".. tostring(self._Flags))
     XFG:Debug(LogCategory, "  _LineID (" ..type(self._LineID) .. "): ".. tostring(self._LineID))
+    XFG:Debug(LogCategory, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
     XFG:Debug(LogCategory, "  _MainName (" ..type(self._MainName) .. "): ".. tostring(self._MainName))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
+    for _, _Target in self:TargetIterator() do
+        _Target:Print()
+    end
 end
 
 function GuildMessage:GetFlags()
@@ -49,6 +55,20 @@ function GuildMessage:SetLineID(inLineID)
     assert(type(inLineID) == 'number')
     self._LineID = inLineID
     return self:GetLineID()
+end
+
+function GuildMessage:GetUnitName()
+    return self._UnitName
+end
+
+function GuildMessage:SetUnitName(inUnitName)
+    assert(type(inUnitName) == 'string')
+    self._UnitName = inUnitName
+    return self:GetUnitName()
+end
+
+function GuildMessage:HasMainName()
+    return self._MainName ~= nil
 end
 
 function GuildMessage:GetMainName()
