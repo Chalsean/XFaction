@@ -19,8 +19,11 @@ This addon is in very early stages (alpha) and currently only Eternal Kingdom (E
  
 ## What is included
 The addon should provide the following functionalities:
-> Merged guild chat across guilds/realms/factions in the confederation
+> Merged guild chat across guilds/realms/factions in the confederate
 - This particular build will route merged guild chat to #EKXFactionChat to prevent cluttering of guild chat for testers. The addon will automatically join testers to this channel upon loading, but you may need to enable seeing messages from the channel.
+
+> Merged system messages across guilds/realms/factions in the confederate
+- When another player using the addon logs in/out, you should see a system message as if they were local guild online/offline
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
 - Full guild roster view across guilds/realms/factions
@@ -29,6 +32,10 @@ The addon should provide the following functionalities:
 - If on an alt, displays the main character name as well
 - The DT frame should be scrollable and sortable by column headers, with team being the default sort
 - Left click performs "who", shift left click performs "whisper" (not working for cross faction yet), right click performs "menu dropdown", and shift right click performs "invite"
+
+> Bridge (X) DT that provides visibility into your active connections between realms
+- This does not show all the confederate's active connections, did not want to share account information. It will only show your active connections
+
 > 3 misc DTs: Soulbind (X), WoW Token (X), Shard (X)
 - Soulbind: left click opens Soulbind frame, right click to change Soulbinds
 - WoW Token: Simply displays the current WoW token market price
@@ -96,11 +103,9 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 ### Known bugs
 
-> Area 52 communication not working (this is intentional).
+> Addon wigs out when logged into character not in supported realm/guild
 
-> Not parsing main names with funky characters properly.
-
-> Inconsistent communication over BNet from alts. This might be due to BNet instability post 9.2.5 launch.
+> DTSoulbind throws exception if player does not have active covenant
 
 ### Planned enhancements
 
@@ -111,7 +116,5 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 > Forward guild message of the day (MOTD).
 
 > Remove ElvUI dependencies for non-ElvUI users.
-
-> DT that displays all active BNet bridges.
 
 
