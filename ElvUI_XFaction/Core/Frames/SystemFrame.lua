@@ -69,8 +69,7 @@ function SystemFrame:DisplaySystemMessage(inMessage)
 
     local _Message
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
-        local _, _, _, _, _, _Name = GetPlayerInfoByGUID(inMessage:GetFrom())
-        _Message = _Name
+        _Message = inMessage:GetUnitName()
         if(inMessage:HasMainName()) then
             _Message = _Message .. ' (' .. inMessage:GetMainName() .. ')'
         end

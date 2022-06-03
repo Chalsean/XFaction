@@ -24,6 +24,7 @@ function XFG:EncodeMessage(inMessage)
 		_MessageData.Y = inMessage:GetData()
 	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
 		_MessageData.M = inMessage:GetMainName()		
+		_MessageData.W = inMessage:GetUnitName()
 	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
 		_MessageData = XFG:TarballUnitData(inMessage:GetData())
 	end

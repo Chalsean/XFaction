@@ -9,6 +9,7 @@ function LogoutMessage:new()
 
     _Object.__name = 'LogoutMessage'
     _Object._MainName = nil
+    _Object._UnitName = nil
     
     return _Object
 end
@@ -20,6 +21,7 @@ function LogoutMessage:Print()
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
     XFG:Debug(LogCategory, "  _GuildID (" ..type(self._GuildID) .. "): ".. tostring(self._GuildID))
     XFG:Debug(LogCategory, "  _MainName (" ..type(self._MainName) .. "): ".. tostring(self._MainName))
+    XFG:Debug(LogCategory, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
@@ -42,4 +44,18 @@ function LogoutMessage:SetMainName(inMainName)
     assert(type(inMainName) == 'string')
     self._MainName = inMainName
     return self:GetMainName()
+end
+
+function LogoutMessage:HasUnitName()
+    return self._UnitName ~= nil
+end
+
+function LogoutMessage:GetUnitName()
+    return self._UnitName
+end
+
+function LogoutMessage:SetUnitName(inUnitName)
+    assert(type(inUnitName) == 'string')
+    self._UnitName = inUnitName
+    return self:GetUnitName()
 end
