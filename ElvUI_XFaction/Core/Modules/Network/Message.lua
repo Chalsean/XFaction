@@ -21,6 +21,8 @@ function Message:new()
     self._TargetCount = 0
     self._Data = nil
     self._Initialized = false
+    self._PacketNumber = 1
+    self._TotalPackets = 1
 
     return _Object
 end
@@ -43,6 +45,8 @@ function Message:newChildConstructor()
     self._TargetCount = 0
     self._Data = nil
     self._Initialized = false
+    self._PacketNumber = 1
+    self._TotalPackets = 1
 
     return _Object
 end
@@ -73,6 +77,8 @@ function Message:Print()
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+    XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
+    XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
     XFG:Debug(LogCategory, "  _GuildID (" ..type(self._GuildID) .. "): ".. tostring(self._GuildID))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
@@ -91,6 +97,8 @@ function Message:ShallowPrint()
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+    XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
+    XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
     XFG:Debug(LogCategory, "  _GuildID (" ..type(self._GuildID) .. "): ".. tostring(self._GuildID))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
@@ -179,6 +187,26 @@ function Message:SetData(inData)
     return self:GetData()
 end
 
+function Message:GetPacketNumber()
+    return self._PacketNumber
+end
+
+function Message:SetPacketNumber(inPacketNumber)
+    assert(type(inPacketNumber) == 'number')
+    self._PacketNumber = inPacketNumber
+    return self:GetPacketNumber()
+end
+
+function Message:GetTotalPackets()
+    return self._TotalPackets
+end
+
+function Message:SetTotalPackets(inTotalPackets)
+    assert(type(inTotalPackets) == 'number')
+    self._TotalPackets = inTotalPackets
+    return self:GetTotalPackets()
+end
+
 function Message:ContainsTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', "argument must be Target object")
     return self._Targets[inTarget:GetKey()] ~= nil
@@ -212,6 +240,14 @@ function Message:HasTargets()
     return self._TargetCount > 0
 end
 
+function Message:GetTargets()
+    return self._Targets
+end
+
+function Message:GetTargetCount()
+    return self._TargetCount
+end
+
 function Message:TargetIterator()
     return next, self._Targets, nil
 end
@@ -233,4 +269,21 @@ function Message:SetRemainingTargets(inTargetString)
             self:AddTarget(XFG.Network.BNet.Targets:GetTargetByKey(_TargetKey))
         end
     end
+end
+
+function Message:Copy(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
+    self._Key = inMessage:GetKey()
+    self._To = inMessage:GetTo()
+    self._From = inMessage:GetFrom()
+    self._Type = inMessage:GetType()
+    self._GuildID = inMessage:GetGuildID()
+    self._Subject = inMessage:GetSubject()
+    self._EpochTime = inMessage:GetTimeStamp()
+    self._Targets = inMessage:GetTargets()
+    self._TargetCount = inMessage:GetTargetCount()
+    self._Data = inMessage:GetData()
+    self._Initialized = inMessage:IsInitialized()
+    self._PacketNumber = inMessage:GetPacketNumber()
+    self._TotalPackets = inMessage:GetTotalPackets()
 end

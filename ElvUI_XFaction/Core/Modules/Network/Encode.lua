@@ -35,6 +35,40 @@ function XFG:EncodeMessage(inMessage)
 	return XFG.Lib.Encode:Encode(_Compressed)
 end
 
+-- With packets the data is already serialized
+function XFG:EncodePacket(inMessage)
+	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
+	local _MessageData = {}
+
+	if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
+		_MessageData.H = inMessage:GetFlags()
+		_MessageData.L = inMessage:GetLineID()
+		_MessageData.M = inMessage:GetMainName()
+		_MessageData.W = inMessage:GetUnitName()
+		_MessageData.Y = inMessage:GetData()
+	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
+		_MessageData.M = inMessage:GetMainName()		
+		_MessageData.W = inMessage:GetUnitName()	
+	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+		_MessageData.Y = inMessage:GetData()
+	end
+
+	_MessageData.A = inMessage:GetKey()
+	_MessageData.T = inMessage:GetTo()
+	_MessageData.B = inMessage:GetFrom()	
+	_MessageData.D = inMessage:GetSubject()
+	_MessageData.E = inMessage:GetType()
+	_MessageData.K = inMessage:GetTimeStamp()
+	_MessageData.G = inMessage:GetGuildID() -- Realm and Faction can be extrapolated from GuildID
+	_MessageData.Q = inMessage:GetRemainingTargets()
+	_MessageData.PN = inMessage:GetPacketNumber()
+	_MessageData.TP = inMessage:GetTotalPackets()
+
+	local _Serialized = XFG:Serialize(_MessageData)
+	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
+	return XFG.Lib.Encode:Encode(_Compressed)
+end
+
 function XFG:TarballUnitData(inUnitData)
 
 	local _MessageData = {}
@@ -83,4 +117,10 @@ function XFG:TarballUnitData(inUnitData)
 	_MessageData.Z = inUnitData:GetZone()
 
 	return _MessageData
+end
+
+function XFG:SerializeUnitData(inUnitData)
+	assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and string.find(inUnitData.__name, 'Unit'), "argument must be a Unit object")
+	local _Tarball = XFG:TarballUnitData(inUnitData)
+	return XFG:Serialize(_Tarball)
 end

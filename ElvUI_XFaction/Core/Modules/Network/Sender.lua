@@ -105,14 +105,12 @@ function Sender:SendMessage(inMessage, inSendBNet)
         inMessage:Initialize()
     end
 
-    --XFG:Debug(LogCategory, "Sending message")
-    --inMessage:ShallowPrint()
-
-    local _OutgoingData = XFG:EncodeMessage(inMessage)    
+    XFG:Debug(LogCategory, "Sending message")
+    inMessage:ShallowPrint()
 
     -- If you messaged all possible realm/faction combinations, can switch to local broadcast    
-    if(inSendBNet) then
-        self:BNetWhisper(inMessage, _OutgoingData)
+    if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.BNET) then
+        XFG.Network.BNet.Comm:SendMessage(inMessage)
         if(inMessage:HasTargets() == false and inMessage:GetType() == XFG.Network.Type.BROADCAST) then
             XFG:Debug(LogCategory, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
             inMessage:SetType(XFG.Network.Type.LOCAL)
@@ -124,21 +122,10 @@ function Sender:SendMessage(inMessage, inSendBNet)
         return
     end
 
-    if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCAL) then
-        -- local _Realm = XFG.Realms:GetCurrentRealm()
-        -- -- If only 1 player, switch to whisper
-        -- if(_Realm:GetNumberRunningAddon() == 1) then
-        --     local _Unit = _Realm:GetUnitRunningAddon()
-        --     inMessage:SetTo(_Unit:GetGUID())
-        --     inMessage:SetType(XFG.Network.Type.WHISPER)
-        --     self:Whisper(inMessage:GetTo(), _OutgoingData)
-        
-        -- If multiple people, need to broadcast
-        -- else
-           self:BroadcastLocally(_OutgoingData) 
+    local _OutgoingData = XFG:EncodeMessage(inMessage)
 
-            -- There could be nobody, but right now I'm not confident that I've covered all corner cases
-        --end
+    if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCAL) then
+        self:BroadcastLocally(_OutgoingData) 
     elseif(inMessage:GetType() == XFG.Network.Type.WHISPER) then
         self:Whisper(inMessage:GetTo(), _OutgoingData)
     end
@@ -185,23 +172,4 @@ function Sender:WhisperUnitData(inTo, inUnitData)
     _Message:SetSubject(XFG.Network.Message.Subject.DATA)
     _Message:SetData(inUnitData)
     self:SendMessage(_Message, true)
-end
-
-function Sender:BNetWhisper(inMessage, inEncodedMessage)
-    for _, _Target in inMessage:TargetIterator() do
-        local _Bridges = {}
-        for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
-            if(_Target:Equals(_Friend:GetTarget())) then
-                table.insert(_Bridges, _Friend)
-            end
-        end
-
-        if(table.getn(_Bridges) > 0) then
-            local _Random = math.random(1, table.getn(_Bridges))
-            local _Bridger = _Bridges[_Random]
-            XFG:Debug(LogCategory, "Whispering BNet bridge [%s:%d] with tag [%s] of length [%d]", _Bridger:GetUnitName(), _Bridger:GetID(), XFG.Network.Message.Tag.BNET, strlen(tostring(inEncodedMessage)))
-            BNSendGameData(_Bridger:GetID(), XFG.Network.Message.Tag.BNET, inEncodedMessage)
-            inMessage:RemoveTarget(_Target)
-        end
-    end
 end

@@ -47,6 +47,47 @@ function XFG:DecodeMessage(inMessage)
 	return _Message
 end
 
+function XFG:DecodePacket(inMessage)
+	local _Decoded = XFG.Lib.Encode:Decode(inMessage)
+	local _Decompressed = XFG.Lib.Compress:DecompressHuffman(_Decoded)
+	local _, _MessageData = XFG:Deserialize(_Decompressed)
+
+	local _Message
+	if(_MessageData.D == XFG.Network.Message.Subject.GCHAT) then
+		_Message = GuildMessage:new()
+	elseif(_MessageData.D == XFG.Network.Message.Subject.LOGOUT) then
+		_Message = LogoutMessage:new()
+	else
+		_Message = Message:new()
+	end	
+	_Message:Initialize()
+	
+	if(_MessageData.A ~= nil) then	_Message:SetKey(_MessageData.A)	end
+	if(_MessageData.T ~= nil) then	_Message:SetTo(_MessageData.T)	end
+	if(_MessageData.B ~= nil) then _Message:SetFrom(_MessageData.B)	end	
+	if(_MessageData.D ~= nil) then _Message:SetSubject(_MessageData.D) end
+	if(_MessageData.E ~= nil) then	_Message:SetType(_MessageData.E) end	
+	if(_MessageData.K ~= nil) then	_Message:SetTimeStamp(_MessageData.K) end	
+	if(_MessageData.G ~= nil) then	_Message:SetGuildID(_MessageData.G) end
+	if(_MessageData.Q ~= nil) then _Message:SetRemainingTargets(_MessageData.Q) end
+	if(_MessageData.PN ~= nil) then _Message:SetPacketNumber(_MessageData.PN) end
+	if(_MessageData.TP ~= nil) then _Message:SetTotalPackets(_MessageData.TP) end
+
+	if(_Message:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
+		if(_MessageData.H ~= nil) then	_Message:SetFlags(_MessageData.H) end
+		if(_MessageData.L ~= nil) then	_Message:SetLineID(_MessageData.L) end
+		if(_MessageData.W ~= nil) then	_Message:SetUnitName(_MessageData.W) end
+		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
+	elseif(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
+		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
+		if(_MessageData.W ~= nil) then	_Message:SetUnitName(_MessageData.W) end
+	end
+
+	_Message:SetData(_MessageData.Y)
+
+	return _Message
+end
+
 function XFG:ExtractTarball(inTarball)
 	local _UnitData = Unit:new()
 	if(inTarball.C ~= nil) then

@@ -10,6 +10,7 @@
     <Script file='Handlers\SystemEvent.lua'/>
     <Script file='Handlers\TimerEvent.lua'/>
 
+    <Script file='Network\BNet.lua'/>
     <Script file='Network\Sender.lua'/>
     <Script file='Network\Receiver.lua'/>
     <Script file='Network\Encode.lua'/>

@@ -58,12 +58,12 @@ end
 
 function BNetEvent:CallbackBNetConnected()
     XFG:Info(LogCategory, "Enabling BNet due to BN_CONNECTED")
-    XFG.Network.Sender:CanBNet(true)
+    XFG.Network.BNet.Comm:CanBNet(true)
 end
 
 function BNetEvent:CallbackBNetDisconnected()
     XFG:Info(LogCategory, "Disabling BNet due to BN_DISCONNECTED")
-    XFG.Network.Sender:CanBNet(false)
+    XFG.Network.BNet.Comm:CanBNet(false)
 end
 
 -- The friend API leaves much to be desired, you essentially have to keep scanning
