@@ -114,7 +114,8 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
         -- For alpha testing, only Proudmoore so just need to check faction
         local _Guild = XFG.Guilds:GetGuildByID(_Message:GetGuildID())
         local _Faction = _Guild:GetFaction()
-        if(_Faction:Equals(XFG.Player.Unit:GetFaction()) == false) then
+        local _Realm = _Guild:GetRealm()
+        if(_Faction:Equals(XFG.Player.Faction) == false or _Realm:Equals(XFG.Player.Realm) == false) then
             -- Visual sugar to make it appear as if the message came through the channel
             XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.CHANNEL, _Message)
         end
