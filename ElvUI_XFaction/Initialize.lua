@@ -49,16 +49,8 @@ XFG.Network.Message.Tag = {
 XFG.Network.Message.Subject = {
 	DATA = '1',
 	GCHAT = '2',
-	EVENT = '3',
-	LOGOUT = '4',
-	WHISPER = '5',
-	LOGIN = '6',
-	BRIDGE = '7'
-}
-XFG.Network.Message.Type = {
-	MESSAGE = '1',
-	GUILD = '2',
-	LOGOUT = '3'
+	LOGOUT = '3',
+	LOGIN = '4'
 }
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel

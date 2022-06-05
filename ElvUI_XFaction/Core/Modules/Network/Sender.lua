@@ -98,7 +98,7 @@ function Sender:SetLocalChannel(inChannel)
     return self:HasLocalChannel()
 end
 
-function Sender:SendMessage(inMessage, inSendBNet)
+function Sender:SendMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(inMessage:IsInitialized() == false) then
 		-- Review: double check this isn't overriding the timestamp of the message
@@ -122,7 +122,7 @@ function Sender:SendMessage(inMessage, inSendBNet)
         return
     end
 
-    local _OutgoingData = XFG:EncodeMessage(inMessage)
+    local _OutgoingData = XFG:EncodeMessage(inMessage, true)
 
     if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCAL) then
         self:BroadcastLocally(_OutgoingData) 

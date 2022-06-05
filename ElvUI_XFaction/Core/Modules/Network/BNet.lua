@@ -13,8 +13,7 @@ function BNet:new()
 
     self._Key = nil
     self._Initialized = false
-    self._Queue = {}
-    self._QueueCount = 0
+    self._Packets = {}
     self._CanBNet = true   
 
     return _Object
@@ -45,9 +44,8 @@ function BNet:Print()
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _CanBNet (" .. type(self._CanBNet) .. "): ".. tostring(self._CanBNet))
-    XFG:Debug(LogCategory, "  _QueueCount (" .. type(self._QueueCount) .. "): ".. tostring(self._QueueCount))
-    if(self._LocalChannel ~= nil) then
-        self._LocalChannel:Print()
+    for _, _Packet in self:Iterator() do
+        _Packet:Print()
     end
 end
 
@@ -70,62 +68,83 @@ function BNet:CanBNet(inBoolean)
 end
 
 function BNet:Iterator()
-    return next, self._Queue, nil
+    return next, self._Packets, nil
 end
 
 function BNet:SendMessage(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(self:CanBNet() == false) then return end
     -- Before we do work, lets make sure there are targets and we can message those targets
+    local _Bridges = {}
     for _, _Target in inMessage:TargetIterator() do
-        local _Bridges = {}
+        local _Friends = {}
         for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
             if(_Target:Equals(_Friend:GetTarget())) then
-                table.insert(_Bridges, _Friend)
+                table.insert(_Friends, _Friend)
             end
         end
         
-        if(table.getn(_Bridges) > 0) then
-            local _Random = math.random(1, table.getn(_Bridges))
-            local _Bridger = _Bridges[_Random]
-            local _Packets = {}
-            local _PacketCount = 0            
+        if(table.getn(_Friends) > 0) then
+            local _Random = math.random(1, table.getn(_Friends))
+            local _Bridge = _Friends[_Random]
+            table.insert(_Bridges, _Bridge)
+        end
+    end
 
-            -- Now that we know we can send a BNet, time to split the message into packets
-            local _SerializedData = XFG:SerializeUnitData(inMessage:GetData())
-            local _MessageSize = strlen(_SerializedData)
-            if(_MessageSize <= MaxPacketSize) then
-                table.insert(_Packets, inMessage)
-                _PacketCount = 0
-            else                
-                local _SegmentStart = 1
-                local _SegmentEnd = MaxPacketSize
+    if(table.getn(_Bridges) > 0) then
+        local _Packets = {}
+        local _PacketCount = 0            
 
-                while(_SegmentStart <= _MessageSize) do
+        -- Now that we know we need to send a BNet whisper, time to split the message into packets
+        -- Split once and then message all the targets
+        local _SerializedData
+        if(inMessage:HasUnitData()) then
+            _SerializedData = XFG:SerializeUnitData(inMessage:GetData())
+        else
+            _SerializedData = inMessage:GetData()
+        end
+        local _MessageSize = strlen(_SerializedData)
+        if(_MessageSize <= MaxPacketSize) then
+            table.insert(_Packets, inMessage)
+            _PacketCount = 1
+        else                
+            local _SegmentStart = 1
+            local _SegmentEnd = MaxPacketSize
 
-                    _PacketCount = _PacketCount + 1
+            while(_SegmentStart <= _MessageSize) do
 
-                    local _NewMessage = Message:new()
-                    _NewMessage:Copy(inMessage)
-                    _NewMessage:SetPacketNumber(_PacketCount)
+                _PacketCount = _PacketCount + 1
 
-                    local _DataSegment = strsub(_SerializedData, _SegmentStart, _SegmentEnd)
-                    _NewMessage:SetData(_DataSegment)
-                    table.insert(_Packets, _NewMessage)
-                    
-                    _SegmentStart = _SegmentEnd + 1
-                    _SegmentEnd = _SegmentStart + MaxPacketSize
-                end
+                local _NewMessage = Message:new()
+                if(inMessage.__name == 'GuildMessage') then
+                    _NewMessage = GuildMessage:new()
+                elseif(inMessage.__name == 'LogoutMessage') then
+                    _NewMessage = LogoutMessage:new()
+                else
+                    _NewMessage = Message:new()
+                end	
+                _NewMessage:Copy(inMessage)
+                _NewMessage:SetPacketNumber(_PacketCount)
+
+                local _DataSegment = strsub(_SerializedData, _SegmentStart, _SegmentEnd)
+                _NewMessage:SetData(_DataSegment)
+                table.insert(_Packets, _NewMessage)
+                
+                _SegmentStart = _SegmentEnd + 1
+                _SegmentEnd = _SegmentStart + MaxPacketSize
             end
+        end
 
+        -- Make sure all packets go to each target
+        for _, _Friend in pairs (_Bridges) do
             for _, _Packet in pairs (_Packets) do
                 _Packet:SetTotalPackets(_PacketCount)
-                local _EncodedPacket = XFG:EncodePacket(_Packet)
-                XFG:Debug(LogCategory, "Whispering BNet bridge [%s:%d] package [%d:%d] with tag [%s] of length [%d]", _Bridger:GetUnitName(), _Bridger:GetID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
-                -- The whole point of packets is that this call will only let so many characters get sent
-                -- It won't fail or throw an exception, it just silently does nothing
-                BNSendGameData(_Bridger:GetID(), XFG.Network.Message.Tag.BNET, _EncodedPacket)
+                local _EncodedPacket = XFG:EncodeMessage(_Packet)
+                XFG:Debug(LogCategory, "Whispering BNet bridge [%s:%d] package [%d:%d] with tag [%s] of length [%d]", _Friend:GetUnitName(), _Friend:GetID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
+                -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
+                BNSendGameData(_Friend:GetID(), XFG.Network.Message.Tag.BNET, _EncodedPacket)
             end
-            inMessage:RemoveTarget(_Target)
+            inMessage:RemoveTarget(_Friend:GetTarget())
         end
     end
 end
@@ -145,7 +164,7 @@ function BNet:ReceivePacket(inMessageTag, inEncodedMessage, inDistribution, inSe
     end
 
     XFG:Debug(LogCategory, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
-    local _Message = XFG:DecodePacket(inEncodedMessage)
+    local _Message = XFG:DecodeMessage(inEncodedMessage)
 
     -- Have you seen this message before?
     if(XFG.Network.Mailbox:Contains(_Message:GetKey())) then
@@ -156,15 +175,13 @@ function BNet:ReceivePacket(inMessageTag, inEncodedMessage, inDistribution, inSe
 
     -- Data was sent in one packet, okay to process
     if(_Message:GetTotalPackets() == 1) then
-        local _, _MessageData = XFG:Deserialize(_Message:GetData())
-        local _UnitData = XFG:ExtractTarball(_MessageData)
-        _Message:SetData(XFG:ExtractTarball(_UnitData))
         XFG.Network.Receiver:ProcessMessage(_Message)
     else
-        XFG.Network.BNet.Comm:Enqueue(_Message)
+        -- Going to have to stitch the data back together again
+        XFG.Network.BNet.Comm:AddPacket(_Message)
         if(XFG.Network.BNet.Comm:HasAllPackets(_Message:GetKey())) then
             XFG:Debug(LogCategory, "Received all packets for message [%s]", _Message:GetKey())
-            local _FullMessage = XFG.Network.BNet.Comm:Dequeue(_Message:GetKey())
+            local _FullMessage = XFG.Network.BNet.Comm:RebuildMessage(_Message:GetKey())
             XFG.Network.Receiver:ProcessMessage(_FullMessage)
         end
     end    
@@ -172,31 +189,30 @@ end
 
 function BNet:Contains(inKey)
     assert(type(inKey) == 'string')
-    return self._Queue[inKey] ~= nil
+    return self._Packets[inKey] ~= nil
 end
 
-function BNet:Enqueue(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be a Message object")
+function BNet:AddPacket(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
     if(self:Contains(inMessage:GetKey()) == false) then
-        self._Queue[inMessage:GetKey()] = {}
-        self._QueueCount = self._QueueCount + 1
+        self._Packets[inMessage:GetKey()] = {}
     end
-    self._Queue[inMessage:GetKey()][inMessage:GetPacketNumber()] = inMessage
+    self._Packets[inMessage:GetKey()][inMessage:GetPacketNumber()] = inMessage
 end
 
 function BNet:HasAllPackets(inMessageKey)
     assert(type(inMessageKey) == 'string')
-    if(self._Queue[inMessageKey] == nil) then return false end
-    for _, _Packet in pairs (self._Queue[inMessageKey]) do
-        return table.getn(self._Queue[inMessageKey]) == _Packet:GetTotalPackets()
+    if(self._Packets[inMessageKey] == nil) then return false end
+    for _, _Packet in pairs (self._Packets[inMessageKey]) do
+        return table.getn(self._Packets[inMessageKey]) == _Packet:GetTotalPackets()
     end
 end
 
-function BNet:Dequeue(inMessageKey)
+function BNet:RebuildMessage(inMessageKey)
     assert(type(inMessageKey) == 'string')
     local _Message = Message:new()
     -- Stitch the data back together again
-    for _, _Packet in ipairs (self._Queue[inMessageKey]) do
+    for _, _Packet in ipairs (self._Packets[inMessageKey]) do
         if(_Message:IsInitialized() == false) then
             _Message:Copy(_Packet)
         else
@@ -204,8 +220,6 @@ function BNet:Dequeue(inMessageKey)
             _Message:SetData(_Data)
         end
     end
-    local _, _MessageData = XFG:Deserialize(_Message:GetData())
-    local _UnitData = XFG:ExtractTarball(_MessageData)
-    _Message:SetData(_UnitData)
+    self._Packets[inMessageKey] = nil
     return _Message
 end 

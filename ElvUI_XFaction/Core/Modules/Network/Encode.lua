@@ -3,53 +3,24 @@ local LogCategory = 'NEncode'
 
 -- BNet seems to have a cap of around 300 characters and there is no BNet support from AceComm/ChatThrottle
 -- So have to strip down to bare essentials and reconstruct as much as we can on receiving end
-function XFG:EncodeMessage(inMessage)
-
+-- I'm sure there's a cooler way of doing this :)
+function XFG:EncodeMessage(inMessage, inEncodeUnitData)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
 	local _MessageData = {}
 
-	if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
+	if(inMessage.__name == 'GuildMessage') then
 		_MessageData.H = inMessage:GetFlags()
 		_MessageData.L = inMessage:GetLineID()
 		_MessageData.M = inMessage:GetMainName()
-		_MessageData.W = inMessage:GetUnitName()
-		_MessageData.Y = inMessage:GetData()
-	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
+		_MessageData.W = inMessage:GetUnitName()		
+	elseif(inMessage.__name == 'LogoutMessage') then
 		_MessageData.M = inMessage:GetMainName()		
-		_MessageData.W = inMessage:GetUnitName()	
-	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
-		_MessageData = XFG:TarballUnitData(inMessage:GetData())
+		_MessageData.W = inMessage:GetUnitName()
 	end
 
-	_MessageData.A = inMessage:GetKey()
-	_MessageData.T = inMessage:GetTo()
-	_MessageData.B = inMessage:GetFrom()	
-	_MessageData.D = inMessage:GetSubject()
-	_MessageData.E = inMessage:GetType()
-	_MessageData.K = inMessage:GetTimeStamp()
-	_MessageData.G = inMessage:GetGuildID() -- Realm and Faction can be extrapolated from GuildID
-	_MessageData.Q = inMessage:GetRemainingTargets()
-
-	local _Serialized = XFG:Serialize(_MessageData)
-	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
-	return XFG.Lib.Encode:Encode(_Compressed)
-end
-
--- With packets the data is already serialized
-function XFG:EncodePacket(inMessage)
-	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
-	local _MessageData = {}
-
-	if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
-		_MessageData.H = inMessage:GetFlags()
-		_MessageData.L = inMessage:GetLineID()
-		_MessageData.M = inMessage:GetMainName()
-		_MessageData.W = inMessage:GetUnitName()
-		_MessageData.Y = inMessage:GetData()
-	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
-		_MessageData.M = inMessage:GetMainName()		
-		_MessageData.W = inMessage:GetUnitName()	
-	elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+	if(inMessage:HasUnitData() and inEncodeUnitData) then
+		_MessageData.Y = XFG:SerializeUnitData(inMessage:GetData())
+	else
 		_MessageData.Y = inMessage:GetData()
 	end
 
@@ -69,8 +40,7 @@ function XFG:EncodePacket(inMessage)
 	return XFG.Lib.Encode:Encode(_Compressed)
 end
 
-function XFG:TarballUnitData(inUnitData)
-
+function XFG:SerializeUnitData(inUnitData)
 	local _MessageData = {}
 
 	if(inUnitData:HasCovenant()) then
@@ -116,11 +86,5 @@ function XFG:TarballUnitData(inUnitData)
 	_MessageData.W = inUnitData:GetUnitName()
 	_MessageData.Z = inUnitData:GetZone()
 
-	return _MessageData
-end
-
-function XFG:SerializeUnitData(inUnitData)
-	assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and string.find(inUnitData.__name, 'Unit'), "argument must be a Unit object")
-	local _Tarball = XFG:TarballUnitData(inUnitData)
-	return XFG:Serialize(_Tarball)
+	return XFG:Serialize(_MessageData)
 end

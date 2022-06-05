@@ -78,7 +78,7 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
 end
 
 function Receiver:ProcessMessage(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be a Message type object")
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 
     -- Ignore if it's your own message
     -- Due to startup timing, use GUID directly rather than from Unit object
@@ -93,21 +93,30 @@ function Receiver:ProcessMessage(inMessage)
     else
         XFG.Network.Mailbox:AddMessage(inMessage)
     end
+
+    if(inMessage:HasUnitData()) then
+        XFG:Debug(LogCategory, "got here")
+        local _UnitData = XFG:DeserializeUnitData(inMessage:GetData())
+        inMessage:SetData(_UnitData)
+    end
       
     inMessage:ShallowPrint()
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessage:GetType() == XFG.Network.Message.Tag.LOCAL) then
+        XFG:Debug(LogCategory, "got here 1")
         inMessage:SetType(XFG.Network.Type.BNET)
-        XFG.Network.Sender:SendMessage(inMessage, true)
+        XFG.Network.Sender:SendMessage(inMessage)
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
     elseif(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
+        XFG:Debug(LogCategory, "got here 2")
         inMessage:SetType(XFG.Network.Type.BROADCAST)
-        XFG.Network.Sender:SendMessage(inMessage, true)
+        XFG.Network.Sender:SendMessage(inMessage)
 
     -- If came via BNet and no more targets, message locally only
     elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
+        XFG:Debug(LogCategory, "got here 3")
         inMessage:SetType(XFG.Network.Type.LOCAL)
         XFG.Network.Sender:SendMessage(inMessage)
     end

@@ -287,3 +287,7 @@ function Message:Copy(inMessage)
     self._PacketNumber = inMessage:GetPacketNumber()
     self._TotalPackets = inMessage:GetTotalPackets()
 end
+
+function Message:HasUnitData()
+    return self:GetSubject() == XFG.Network.Message.Subject.DATA or self:GetSubject() == XFG.Network.Message.Subject.LOGIN
+end

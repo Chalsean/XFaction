@@ -180,17 +180,15 @@ function Confederate:CreateBackup()
     for _UnitKey, _Unit in self:Iterator() do
         if(_Unit:IsRunningAddon() and _Unit:IsPlayer() == false) then
             XFG.DB.Backup[_UnitKey] = {}
-            local _Tarball = XFG:TarballUnitData(_Unit)
-            for _Key, _Value in pairs (_Tarball) do
-                XFG.DB.Backup[_UnitKey][_Key] = _Value
-            end
+            local _SerializedData = XFG:SerializeUnitData(_Unit)
+            XFG.DB.Backup[_UnitKey] = _SerializedData
         end
     end
 end
 
 function Confederate:RestoreBackup()
-    for _, _Tarball in pairs (XFG.DB.Backup) do
-        local _UnitData = XFG:ExtractTarball(_Tarball)
+    for _, _Data in pairs (XFG.DB.Backup) do
+        local _UnitData = XFG:DeserializeUnitData(_Data)
         if(self:AddUnit(_UnitData)) then
             XFG:Info(LogCategory, "  Restored %s information from backup", _UnitData:GetUnitName())
         end
