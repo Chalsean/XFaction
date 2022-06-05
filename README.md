@@ -103,7 +103,7 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 ### Known bugs
 
-> 
+> Parsing ENK notes incorrectly to identify alts
 
 ### Planned enhancements
 
