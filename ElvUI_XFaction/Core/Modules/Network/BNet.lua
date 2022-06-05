@@ -1,5 +1,4 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
-local DT = E:GetModule('DataTexts')
 local ObjectName = 'BNet'
 local LogCategory = 'NBNet'
 local MaxPacketSize = 100
@@ -171,7 +170,6 @@ function BNet:ReceivePacket(inMessageTag, inEncodedMessage, inDistribution, inSe
         _Friend:IsRunningAddon(true)
         if(inEncodedMessage == 'RE:PING') then
             XFG:Debug(LogCategory, "Received ping response [%s:%d]", _Friend:GetTag(), _Friend:GetGameID())
-            DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
         end
     end
 

@@ -1,4 +1,5 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
+local DT = E:GetModule('DataTexts')
 local ObjectName = 'Friend'
 local LogCategory = 'NFriend'
 
@@ -128,6 +129,9 @@ function Friend:IsRunningAddon(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
     if(inBoolean ~= nil) then
         self._IsRunningAddon = inBoolean
+        if(self._IsRunningAddon) then
+            DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
+        end
     end
     return self._IsRunningAddon
 end

@@ -36,7 +36,7 @@ end
 
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
+		XFG:ScheduleTimer(self.CallbackDelayedStartTimer, 15) -- config
         XFG:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
         XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", 60)
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
@@ -70,12 +70,14 @@ function TimerEvent:Print()
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
--- Wait for General chat to grab #1
-function TimerEvent:CallbackChannelTimer()
+function TimerEvent:CallbackDelayedStartTimer()
     if(XFG.Initialized and XFG.Network.Sender:GetLocalChannel() == nil) then
         -- This will fire an event that ChannelEvent handler catches and updates
         JoinChannelByName(XFG.Network.ChannelName)
     end
+
+    -- This is here as to get ping responses first and know who is running addon
+    XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
 end
 
 -- Force garbage cleanup
@@ -164,8 +166,7 @@ function TimerEvent:CallbackLogin()
         wipe(XFG.DB.Backup)
         XFG.Initialized = true
         if(XFG.DB.UIReload == false) then
-            XFG.Network.BNet.Comm:PingFriends()
-            XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
+            XFG.Network.BNet.Comm:PingFriends()            
         end
         XFG.DB.UIReload = false
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)

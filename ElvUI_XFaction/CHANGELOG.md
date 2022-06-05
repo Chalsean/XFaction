@@ -1,12 +1,10 @@
-### Version 1.0 [ 05.31.2022 ]
+### Version 1.10.0 [ 06.05.2022 ]
 
-**New Additions:**  
-[XFaction] Alpha build that enables cross-faction guild chat and roster visibility on Proudmoore.
-[Guild (X)] Alpha build that displays roster of all EK members running the addon on Proudmoore.
-[Soulbind (X)] Alpha build, misc DT
-[Shard (X)] Alpha build, misc DT
-[WoWToken (X)] Alpha build, misc DT
+**Enhancements**  
+[XFaction] 
+- Addon automatically figures out which friends are running addon
 
-**Bug Fixes:**  
+**Bug Fixes**  
+- Rewrote BNet comm logic to split message into packets if too long
 
-**Misc. Changes:**  
+**Misc Changes**  
