@@ -150,11 +150,8 @@ function Confederate:OfflineUnits(inDelta)
     assert(type(inDelta) == 'number')
     local _ServerEpochTime = GetServerTime()
     for _, _Unit in self:Iterator() do
-        if(_Unit:IsPlayer() == false) then
-            if(_Unit:GetTimeStamp() + inDelta < _ServerEpochTime) then
-                --XFG:DataDumper(LogCategory, _Unit)
-                self:RemoveUnit(_Unit:GetKey())
-            end
+        if(_Unit:IsPlayer() == false and _Unit:GetTimeStamp() + inDelta < _ServerEpochTime) then
+            self:RemoveUnit(_Unit:GetKey())
         end
     end
 end

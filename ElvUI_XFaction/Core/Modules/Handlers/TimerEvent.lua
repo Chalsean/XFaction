@@ -122,6 +122,9 @@ function TimerEvent:CallbackLogin()
         XFG.Confederate:SetKey('EK')
         XFG.Confederate:SetMainRealmName('Proudmoore')
         XFG.Confederate:SetMainGuildName('Eternal Kingdom')
+        local _MOTD = GetGuildRosterMOTD()
+        XFG:DataDumper(LogCategory, _MOTD)
+        XFG.Confederate:SetMOTD(_MOTD)
 
         -- If this is a reload, restore backup
         if(XFG.DB.UIReload) then

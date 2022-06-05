@@ -134,6 +134,15 @@ function Receiver:ProcessMessage(inMessage)
         return
     end
 
+    -- Process MOTD message
+    if(inMessage:GetSubject() == XFG.Network.Message.Subject.MOTD) then
+        if(XFG.Player.Guild:IsSourceMOTD() == false) then
+            XFG.Confederate:SetMOTD(inMessage:GetData())
+            DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
+        end
+        return
+    end
+
     -- Display system message that unit has logged on/off
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
         local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
