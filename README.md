@@ -103,7 +103,7 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 ### Known bugs
 
-> Need a way to identify which friends are running addon
+> 
 
 ### Planned enhancements
 
