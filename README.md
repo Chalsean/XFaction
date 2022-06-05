@@ -103,9 +103,7 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 ### Known bugs
 
-> Addon wigs out when used on character not in supported guild/realm
-
-> DTSoulbind throws exception when player does not have active covenant
+> Need a way to identify which friends are running addon
 
 ### Planned enhancements
 
@@ -116,3 +114,5 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 > Forward guild message of the day (MOTD).
 
 > Remove ElvUI dependencies for non-ElvUI users.
+
+> Forward guild achievements.
