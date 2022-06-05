@@ -40,6 +40,7 @@ XFG.Player.LastBroadcast = 0
 
 XFG.Network = {}
 XFG.Network.BNet = {}
+XFG.Network.BNet.PingTimer = 60 * 5
 XFG.Network.Message = {}
 XFG.Network.ChannelName = 'EKXFactionChat'
 XFG.Network.Message.Tag = {
@@ -50,7 +51,8 @@ XFG.Network.Message.Subject = {
 	DATA = '1',
 	GCHAT = '2',
 	LOGOUT = '3',
-	LOGIN = '4'
+	LOGIN = '4',
+	PING = '5'
 }
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel

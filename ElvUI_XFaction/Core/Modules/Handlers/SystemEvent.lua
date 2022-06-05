@@ -65,6 +65,7 @@ function SystemEvent:CallbackLogout()
     if(XFG.DB.UIReload) then 
         -- Backup information on reload to be restored
         XFG.Confederate:CreateBackup()
+        XFG.Network.BNet.Friends:CreateBackup()
     else
         local _NewMessage = LogoutMessage:new()
         _NewMessage:Initialize()

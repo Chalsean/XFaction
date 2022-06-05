@@ -32,7 +32,9 @@ local function OnEvent(self, event, ...)
 	if(XFG.Initialized and event == 'ELVUI_FORCE_UPDATE') then
 		local _BridgeCount = 0
 		for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
-			_BridgeCount = _BridgeCount + 1
+			if(_Friend:IsRunningAddon()) then
+				_BridgeCount = _BridgeCount + 1
+			end
 		end
 		self.text:SetFormattedText(_BridgeCount)
 	end
@@ -76,16 +78,18 @@ local function OnEnter(self)
 
 	if(XFG.Initialized) then
 		for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
-			local _Target = _Friend:GetTarget()
-			local _TargetRealm = _Target:GetRealm()
-			local _Name = _Friend:GetTag() ~= nil and _Friend:GetTag() or _Friend:GetName()
-			tooltip:SetCell(line, 2, format("|cffffffff%s|r", XFG.Player.Account.battleTag))
-			if(_TargetRealm:GetName() == 'Area 52') then
-				tooltip:SetCell(line, 1, format("|cffffffff%s|r", _Name))
-			else
-				tooltip:SetCell(line, 3, format("|cffffffff%s|r", _Name))
+			if(_Friend:IsRunningAddon()) then
+				local _Target = _Friend:GetTarget()
+				local _TargetRealm = _Target:GetRealm()
+				local _Name = _Friend:GetTag() ~= nil and _Friend:GetTag() or _Friend:GetName()
+				tooltip:SetCell(line, 2, format("|cffffffff%s|r", XFG.Player.Account.battleTag))
+				if(_TargetRealm:GetName() == 'Area 52') then
+					tooltip:SetCell(line, 1, format("|cffffffff%s|r", _Name))
+				else
+					tooltip:SetCell(line, 3, format("|cffffffff%s|r", _Name))
+				end
+				line = tooltip:AddLine()
 			end
-			line = tooltip:AddLine()
 		end
 	end
 

@@ -18,6 +18,7 @@
     <Script file='Network\Message.lua'/>
     <Script file='Network\GuildMessage.lua'/>
     <Script file='Network\LogoutMessage.lua'/>
+    <Script file='Network\PingMessage.lua'/>
     <Script file='Network\MessageCollection.lua'/>
     <Script file='Network\Channel.lua'/>
     <Script file='Network\ChannelCollection.lua'/>

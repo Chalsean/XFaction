@@ -1,4 +1,5 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
+local DT = E:GetModule('DataTexts')
 local ObjectName = 'FriendCollection'
 local LogCategory = 'NCFriend'
 
@@ -22,39 +23,7 @@ function FriendCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
 		for i = 1, BNGetNumFriends() do
-			local _AccountInfo = C_BattleNet.GetFriendAccountInfo(i)
-			if(_AccountInfo ~= nil and
-			   _AccountInfo.isFriend == true and 
-			   _AccountInfo.gameAccountInfo.isOnline == true and 
-			   _AccountInfo.gameAccountInfo.clientProgram == "WoW") then
-
-				-- There's no need to store if they are not logged into realm/faction we care about
-				local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
-				local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
-				if(_Realm ~= nil and XFG.Network.BNet.Targets:Contains(_Realm, _Faction)) then
-					local _Target = XFG.Network.BNet.Targets:GetTarget(_Realm, _Faction)
-					local _NewFriend = Friend:new()
-					_NewFriend:SetKey(_AccountInfo.gameAccountInfo.gameAccountID)
-					_NewFriend:SetID(_AccountInfo.gameAccountInfo.gameAccountID)
-					_NewFriend:SetName(_AccountInfo.accountName)
-					_NewFriend:SetTag(_AccountInfo.battleTag)
-					_NewFriend:SetUnitName(_AccountInfo.gameAccountInfo.characterName)
-					_NewFriend:SetTarget(_Target)
-	
-					-- Temporary code for alpha testing
-					if(_NewFriend:GetTag() == 'Arono#11651' or
-						_NewFriend:GetTag() == 'Chalsean#1172' or
-						_NewFriend:GetTag() == 'Ironstones#1683' or
-						_NewFriend:GetTag() == 'Franklinator#1539' or
-						_NewFriend:GetTag() == 'hantevirus#1921' or
-						_NewFriend:GetTag() == 'mightyowl#111899' or
-						_NewFriend:GetTag() == 'Bicc#11211' or
-						_NewFriend:GetTag() == 'Rysal#1525') then
-						self:AddFriend(_NewFriend)
-						XFG:Debug(LogCategory, "Friend [%s] is bridge to BNet target [%s:%s]", _NewFriend:GetName(), _Realm:GetName(), _Faction:GetName())
-					end
-				end				
-			end
+			self:CheckFriend(i)
 		end
 		self:IsInitialized(true)
 	end
@@ -73,7 +42,7 @@ function FriendCollection:Print()
 	XFG:DoubleLine(LogCategory)
 	XFG:Debug(LogCategory, ObjectName .. " Object")
 	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _FriendCount (" .. type(self._FriendCount) .. "): ".. tostring(self._FriendCount))
+	XFG:Debug(LogCategory, "  _FriendsCount (" .. type(self._FriendsCount) .. "): ".. tostring(self._FriendsCount))
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 	for _, _Friend in self:Iterator() do
 		_Friend:Print()
@@ -95,9 +64,38 @@ function FriendCollection:Contains(inKey)
 	return self._Friends[inKey] ~= nil
 end
 
+function FriendCollection:ContainsByFriendIndex(inFriendIndex)
+	assert(type(inFriendIndex) == 'number')
+	for _, _Friend in self:Iterator() do
+		if(_Friend:GetID() == inFriendIndex) then
+			return true
+		end
+	end
+	return false
+end
+
+function FriendCollection:ContainsByGameID(inGameID)
+	assert(type(inGameID) == 'number')
+	for _, _Friend in self:Iterator() do
+		if(_Friend:GetGameID() == inGameID) then
+			return true
+		end
+	end
+	return false
+end
+
 function FriendCollection:GetFriend(inKey)
 	assert(type(inKey) == 'number')
     return self._Friends[inKey]
+end
+
+function FriendCollection:GetFriendByGameID(inGameID)
+	assert(type(inGameID) == 'number')
+	for _, _Friend in self:Iterator() do
+		if(_Friend:GetGameID() == inGameID) then
+			return _Friend
+		end
+	end
 end
 
 function FriendCollection:AddFriend(inFriend)
@@ -109,10 +107,12 @@ function FriendCollection:AddFriend(inFriend)
 	return self:Contains(inFriend:GetKey())
 end
 
-function FriendCollection:Reset()
-	wipe(self._Friends)
-	self._FriendsCount = 0
-	self._Initialized = false
+function FriendCollection:RemoveFriend(inKey)
+	assert(type(inKey) == 'number')
+	if(self:Contains(inKey)) then
+		self._FriendsCount = self._FriendsCount - 1
+		self._Friends[inKey] = nil
+	end
 end
 
 function FriendCollection:Iterator()
@@ -121,4 +121,103 @@ end
 
 function FriendCollection:HasFriends()
     return self._FriendsCount > 0
+end
+
+local function CanBeBridge(inAccountInfo)
+	if(inAccountInfo.isFriend == true and 
+	   inAccountInfo.gameAccountInfo.isOnline == true and 
+	   inAccountInfo.gameAccountInfo.clientProgram == "WoW") then
+
+	   	-- There's no need to store if they are not logged into realm/faction we care about
+		local _Realm = XFG.Realms:GetRealmByID(inAccountInfo.gameAccountInfo.realmID)
+		local _Faction = XFG.Factions:GetFactionByName(inAccountInfo.gameAccountInfo.factionName)
+		if(_Realm ~= nil and XFG.Network.BNet.Targets:Contains(_Realm, _Faction)) then
+			return true
+		end
+	end
+	return false
+end
+
+function FriendCollection:CheckFriend(inKey)
+	local _AccountInfo = C_BattleNet.GetFriendAccountInfo(inKey)
+	if(_AccountInfo == nil) then
+		XFG:Warn(LogCategory, "Received nothing for [%d]", inKey)
+	end
+
+	-- Did they come online?
+    if(self:Contains(_AccountInfo.bnetAccountID) == false) then
+		if(CanBeBridge(_AccountInfo)) then
+			local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
+			local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
+			local _Target = XFG.Network.BNet.Targets:GetTarget(_Realm, _Faction)
+			local _NewFriend = Friend:new()
+			_NewFriend:SetKey(_AccountInfo.bnetAccountID)
+			_NewFriend:SetID(inKey)
+			_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
+			_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
+			_NewFriend:SetName(_AccountInfo.accountName)
+			_NewFriend:SetTag(_AccountInfo.battleTag)
+			_NewFriend:SetUnitName(_AccountInfo.gameAccountInfo.characterName)
+			_NewFriend:SetTarget(_Target)
+			self:AddFriend(_NewFriend)
+			XFG:Info(LogCategory, "Friend logged into supported guild [%s:%d:%d:%d]", _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())
+			-- Ping them to see if they're running the addon
+			if(XFG.Initialized) then 
+				XFG.Network.BNet.Comm:PingFriend(_NewFriend) 
+			end
+		end	
+	else
+		local _Friend = XFG.Network.BNet.Friends:GetFriend(_AccountInfo.bnetAccountID)
+
+		-- Did they go offline?
+		if(CanBeBridge(_AccountInfo) == false) then
+			self:RemoveFriend(_Friend:GetKey())
+			XFG:Info(LogCategory, "Friend went offline or to unsupported guild [%s:%d:%d:%d]", _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
+		
+		-- Update other data
+		else			
+			local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
+			local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
+			local _Target = XFG.Network.BNet.Targets:GetTarget(_Realm, _Faction)
+			if(_Target:Equals(_Friend:GetTarget()) == false) then
+				_Friend:SetTarget(_Target)
+			end
+			if(_Friend:GetName() ~= _AccountInfo.accountName) then
+				_Friend:SetName(_AccountInfo.accountName)
+			end
+			if(_Friend:GetTag() ~= _AccountInfo.battleTag) then
+				_Friend:SetTag(_AccountInfo.battleTag)
+			end
+			if(_Friend:GetUnitName() ~= _AccountInfo.gameAccountInfo.characterName) then
+				_Friend:SetUnitName(_AccountInfo.gameAccountInfo.characterName)
+			end
+		end
+	end
+	DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
+end
+
+function FriendCollection:CheckFriends()
+	for i = 1, BNGetNumFriends() do
+		self:CheckFriend(i)
+	end
+end
+
+function FriendCollection:CreateBackup()
+    XFG.DB.Backup.Friends = {}
+    for _, _Friend in self:Iterator() do
+        if(_Friend:IsRunningAddon()) then
+			table.insert(XFG.DB.Backup.Friends, _Friend:GetKey())
+        end
+    end
+end
+
+function FriendCollection:RestoreBackup()
+	if(XFG.DB.Backup == nil or XFG.DB.Backup.Friends == nil) then return end
+    for _, _Key in pairs (XFG.DB.Backup.Friends) do
+		if(XFG.Network.BNet.Friends:Contains(_Key)) then
+			local _Friend = XFG.Network.BNet.Friends:GetFriend(_Key)
+			_Friend:IsRunningAddon(true)
+			XFG:Info(LogCategory, "  Restored %s friend information from backup", _Friend:GetTag())
+		end
+    end
 end

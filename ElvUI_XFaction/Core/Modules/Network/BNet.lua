@@ -1,4 +1,5 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
+local DT = E:GetModule('DataTexts')
 local ObjectName = 'BNet'
 local LogCategory = 'NBNet'
 local MaxPacketSize = 100
@@ -79,7 +80,7 @@ function BNet:SendMessage(inMessage)
     for _, _Target in inMessage:TargetIterator() do
         local _Friends = {}
         for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
-            if(_Target:Equals(_Friend:GetTarget())) then
+            if(_Friend:IsRunningAddon() and _Target:Equals(_Friend:GetTarget())) then
                 table.insert(_Friends, _Friend)
             end
         end
@@ -140,9 +141,9 @@ function BNet:SendMessage(inMessage)
             for _, _Packet in pairs (_Packets) do
                 _Packet:SetTotalPackets(_PacketCount)
                 local _EncodedPacket = XFG:EncodeMessage(_Packet)
-                XFG:Debug(LogCategory, "Whispering BNet bridge [%s:%d] package [%d:%d] with tag [%s] of length [%d]", _Friend:GetUnitName(), _Friend:GetID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
+                XFG:Debug(LogCategory, "Whispering BNet bridge [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetUnitName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-                BNSendGameData(_Friend:GetID(), XFG.Network.Message.Tag.BNET, _EncodedPacket)
+                BNSendGameData(_Friend:GetGameID(), XFG.Network.Message.Tag.BNET, _EncodedPacket)
             end
             inMessage:RemoveTarget(_Friend:GetTarget())
         end
@@ -160,6 +161,27 @@ function BNet:ReceivePacket(inMessageTag, inEncodedMessage, inDistribution, inSe
         end
     end
     if(_AddonTag == false) then
+        return
+    end
+
+    -- If you get it from BNet, they should be in your friend list
+    if(XFG.Network.BNet.Friends:ContainsByGameID(tonumber(inSender))) then
+        local _Friend = XFG.Network.BNet.Friends:GetFriendByGameID(tonumber(inSender))
+        _Friend:SetDateTime(GetServerTime())
+        _Friend:IsRunningAddon(true)
+        if(inEncodedMessage == 'RE:PING') then
+            XFG:Debug(LogCategory, "Received ping response [%s:%d]", _Friend:GetTag(), _Friend:GetGameID())
+            DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
+        end
+    end
+
+    if(inEncodedMessage == 'PING') then
+        XFG:Debug(LogCategory, "Responding to ping from %s", inSender)
+        BNSendGameData(tonumber(inSender), XFG.Network.Message.Tag.BNET, 'RE:PING')
+        return
+    end
+
+    if(inEncodedMessage == 'RE:PING') then
         return
     end
 
@@ -220,4 +242,22 @@ function BNet:RebuildMessage(inMessageKey)
     end
     self._Packets[inMessageKey] = nil
     return _Message
-end 
+end
+
+-- Designed to identify who is running addon
+function BNet:PingFriends()
+    for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
+        -- If we haven't heard from friend in so long, ping them
+        if(_Friend:GetDateTime() + XFG.Network.BNet.PingTimer < GetServerTime()) then
+            _Friend:IsRunningAddon(false)
+            self:PingFriend(_Friend)
+        end
+    end
+end
+
+-- Designed to identify who is running addon
+function BNet:PingFriend(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', "argument must be a Friend object")
+    XFG:Debug(LogCategory, "Sending ping [%s:%d]", inFriend:GetTag(), inFriend:GetGameID())
+    BNSendGameData(inFriend:GetGameID(), XFG.Network.Message.Tag.BNET, 'PING')
+end
