@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Handlers\AchievementEvent.lua'/>
     <Script file='Handlers\BNetEvent.lua'/>
     <Script file='Handlers\ChannelEvent.lua'/>
     <Script file='Handlers\ChatEvent.lua'/>
@@ -18,7 +19,6 @@
     <Script file='Network\Message.lua'/>
     <Script file='Network\GuildMessage.lua'/>
     <Script file='Network\LogoutMessage.lua'/>
-    <Script file='Network\PingMessage.lua'/>
     <Script file='Network\MessageCollection.lua'/>
     <Script file='Network\Channel.lua'/>
     <Script file='Network\ChannelCollection.lua'/>

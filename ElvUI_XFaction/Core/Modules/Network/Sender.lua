@@ -15,7 +15,6 @@ function Sender:new()
     self._LocalChannel = nil
     self._CanBroadcast = false
     self._CanWhisper = true
-    self._CanBNet = false
 
     return _Object
 end
@@ -43,7 +42,6 @@ function Sender:Print()
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _CanBroadcast (" .. type(self._CanBroadcast) .. "): ".. tostring(self._CanBroadcast))
     XFG:Debug(LogCategory, "  _CanWhisper (" .. type(self._CanWhisper) .. "): ".. tostring(self._CanWhisper))
-    XFG:Debug(LogCategory, "  _CanBNet (" .. type(self._CanBNet) .. "): ".. tostring(self._CanBNet))
     XFG:Debug(LogCategory, "  _LocalChannel (" .. type(self._LocalChannel) .. ")")
     if(self._LocalChannel ~= nil) then
         self._LocalChannel:Print()
@@ -74,14 +72,6 @@ function Sender:CanWhisper(inBoolean)
         self._CanWhisper = inBoolean
     end
     return self._CanWhisper
-end
-
-function Sender:CanBNet(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self._CanBNet = inBoolean
-    end
-    return self._CanBNet
 end
 
 function Sender:HasLocalChannel()

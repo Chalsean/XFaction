@@ -52,7 +52,8 @@ XFG.Network.Message.Subject = {
 	GCHAT = '2',
 	LOGOUT = '3',
 	LOGIN = '4',
-	PING = '5'
+	PING = '5',
+	ACHIEVEMENT = '6'
 }
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel
@@ -65,7 +66,8 @@ XFG.Frames = {}
 XFG.Frames.ChatType = {
 	GUILD = 'GUILD',
 	CHANNEL = 'CHANNEL',
-	SYSTEM = 'SYSTEM'
+	SYSTEM = 'SYSTEM',
+	ACHIEVEMENT = 'ACHIEVEMENT'
 }
 
 XFG.Cache = {}

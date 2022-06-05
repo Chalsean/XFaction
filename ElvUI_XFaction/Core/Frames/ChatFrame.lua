@@ -5,33 +5,18 @@ local IconTokenString = '|T%d:16:16:0:0:64:64:4:60:4:60|t'
 
 ChatFrame = {}
 
-function ChatFrame:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or 
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil, string or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
-    setmetatable(Object, self)
+function ChatFrame:new()
+    _Object = {}
+    setmetatable(_Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject) then
-        self._Key = nil
-        self._Initialized = false
-        self._ElvUI = false     
-        self._ElvUIModule = nil 
-        self._ChatFrameHandler = nil  
-    end
-
-    return Object
+    self._Key = nil
+    self._Initialized = false
+    self._ElvUI = false     
+    self._ElvUIModule = nil  
+    
+    return _Object
 end
 
 function ChatFrame:Initialize()
@@ -90,7 +75,8 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
-function ChatFrame:DisplayChat(inEvent, inMessage)
+function ChatFrame:Display(inEvent, inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be a Message object")
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
@@ -98,7 +84,7 @@ function ChatFrame:DisplayChat(inEvent, inMessage)
         _FrameTable = { GetChatWindowMessages(i) }
         local v
         for _, _FrameName in ipairs(_FrameTable) do
-            if _FrameName == 'CHANNEL' then
+            if _FrameName == inEvent then
                 local _Frame = 'ChatFrame' .. i
                 if _G[_Frame] then
 

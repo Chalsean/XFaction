@@ -66,16 +66,18 @@ end
 
 function SystemFrame:DisplaySystemMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
-
-    local _Message
+    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
+    local _Faction = _Guild:GetFaction()
+                    
+    local _Message = format('%s ', format(IconTokenString, _Faction:GetIconID()))
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
-        _Message = inMessage:GetUnitName()
+        _Message = _Message .. inMessage:GetUnitName()
         if(inMessage:HasMainName()) then
             _Message = _Message .. ' (' .. inMessage:GetMainName() .. ')'
         end
     elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
         local _UnitData = inMessage:GetData()
-        _Message = _UnitData:GetName()
+        _Message = _Message .. _UnitData:GetName()
         if(_UnitData:HasMainName()) then
             _Message = _Message .. ' (' .. _UnitData:GetMainName() .. ')'
         end

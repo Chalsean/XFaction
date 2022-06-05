@@ -21,6 +21,7 @@ This addon is in very early stages (alpha) and currently only Eternal Kingdom (E
 The addon should provide the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederate
 - This particular build will route merged guild chat to #EKXFactionChat to prevent cluttering of guild chat for testers. The addon will automatically join testers to this channel upon loading, but you may need to enable seeing messages from the channel.
+- Personal achievements forwarded to non-guild members
 
 > Merged system messages across guilds/realms/factions in the confederate
 - When another player using the addon comes online/offline, you should see a system message as if they were local guild member
@@ -107,12 +108,8 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 
 ### Planned enhancements
 
-> Enable whispering between factions.
-
 > Add configuration dashboard.
 
 > Forward guild message of the day (MOTD).
 
 > Remove ElvUI dependencies for non-ElvUI users.
-
-> Forward guild achievements.

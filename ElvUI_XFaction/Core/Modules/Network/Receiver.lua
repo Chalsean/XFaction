@@ -2,7 +2,6 @@ local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DT = E:GetModule('DataTexts')
 local ObjectName = 'Receiver'
 local LogCategory = 'NReceiver'
-local IconTokenString = '|T%d:16:16:0:0:64:64:4:60:4:60|t'
 
 Receiver = {}
 
@@ -119,19 +118,24 @@ function Receiver:ProcessMessage(inMessage)
 
     -- Process guild chat message
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
-        -- For alpha testing, only Proudmoore so just need to check faction
         local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
-        local _Faction = _Guild:GetFaction()
-        if(_Faction:Equals(XFG.Player.Unit:GetFaction()) == false) then
-            -- Visual sugar to make it appear as if the message came through the channel
-            XFG.Frames.Chat:DisplayChat(XFG.Frames.ChatType.CHANNEL, inMessage)
+        if(XFG.Player.Guild:Equals(_Guild) == false) then
+            XFG.Frames.Chat:Display('CHANNEL', inMessage)
+        end
+        return
+    end
+
+    -- Process achievement message
+    if(inMessage:GetSubject() == XFG.Network.Message.Subject.ACHIEVEMENT) then
+        local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
+        if(XFG.Player.Guild:Equals(_Guild) == false) then
+            XFG.Frames.Chat:Display('ACHIEVEMENT', inMessage)
         end
         return
     end
 
     -- Display system message that unit has logged on/off
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT or
-    inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
         local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
         if(XFG.Player.Realm:Equals(_Guild:GetRealm()) == false or XFG.Player.Guild:Equals(_Guild) == false) then
             XFG.Frames.System:DisplaySystemMessage(inMessage)
@@ -145,7 +149,7 @@ function Receiver:ProcessMessage(inMessage)
     end
 
     -- Process DATA/LOGIN messages
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.DATA or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+    if(inMessage:HasUnitData()) then
         local _UnitData = inMessage:GetData()
         _UnitData:IsPlayer(false)
         if(XFG.Confederate:AddUnit(_UnitData)) then

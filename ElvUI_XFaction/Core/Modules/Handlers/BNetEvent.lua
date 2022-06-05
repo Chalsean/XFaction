@@ -33,7 +33,7 @@ end
 function BNetEvent:IsInitialized(inBoolean)
 	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
 	if(inBoolean ~= nil) then
-        XFG.Network.Sender:CanBNet(true)
+        XFG.Network.BNet.Comm:CanBNet(true)
 		self._Initialized = inBoolean
 	end
 	return self._Initialized
