@@ -75,6 +75,7 @@ function SystemEvent:CallbackLogout()
         end
         _NewMessage:SetGuildID(XFG.Player.Guild:GetID())
         _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+        _NewMessage:SetData(' ')
         XFG.Network.Sender:SendMessage(_NewMessage, true)
     end    
 end

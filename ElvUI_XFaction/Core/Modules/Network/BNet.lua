@@ -171,8 +171,6 @@ function BNet:ReceivePacket(inMessageTag, inEncodedMessage, inDistribution, inSe
         return
     end
 
-    _Message:ShallowPrint()
-
     -- Data was sent in one packet, okay to process
     if(_Message:GetTotalPackets() == 1) then
         XFG.Network.Receiver:ProcessMessage(_Message)

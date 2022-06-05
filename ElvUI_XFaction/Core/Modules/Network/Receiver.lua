@@ -95,7 +95,6 @@ function Receiver:ProcessMessage(inMessage)
     end
 
     if(inMessage:HasUnitData()) then
-        XFG:Debug(LogCategory, "got here")
         local _UnitData = XFG:DeserializeUnitData(inMessage:GetData())
         inMessage:SetData(_UnitData)
     end
@@ -104,19 +103,16 @@ function Receiver:ProcessMessage(inMessage)
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessage:GetType() == XFG.Network.Message.Tag.LOCAL) then
-        XFG:Debug(LogCategory, "got here 1")
         inMessage:SetType(XFG.Network.Type.BNET)
         XFG.Network.Sender:SendMessage(inMessage)
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
     elseif(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
-        XFG:Debug(LogCategory, "got here 2")
         inMessage:SetType(XFG.Network.Type.BROADCAST)
         XFG.Network.Sender:SendMessage(inMessage)
 
     -- If came via BNet and no more targets, message locally only
     elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
-        XFG:Debug(LogCategory, "got here 3")
         inMessage:SetType(XFG.Network.Type.LOCAL)
         XFG.Network.Sender:SendMessage(inMessage)
     end
