@@ -77,7 +77,7 @@ end
 function Mailbox:RemoveMessage(inKey)
 	assert(type(inKey) == 'string')
 	if(self:Contains(inKey)) then
-		table.RemoveKey(self._Messages, inKey)
+		self._Messages[inKey] = nil
 		self._MessageCount = self._MessageCount - 1
 	end
 	return self:Contains(inKey) == false
@@ -87,7 +87,7 @@ end
 function Mailbox:Purge()
 	local _ServerEpochTime = GetServerTime()
 	for _, _Message in self:Iterator() do
-		if(_Message:GetTimeStamp() + 60 * 5 < _ServerEpochTime) then -- config
+		if(_Message:GetTimeStamp() + 60 * 6 < _ServerEpochTime) then -- config
 			self:RemoveMessage(_Message:GetKey())
 		end
 	end

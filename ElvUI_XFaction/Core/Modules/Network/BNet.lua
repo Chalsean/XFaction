@@ -261,3 +261,13 @@ function BNet:PingFriend(inFriend)
     XFG:Debug(LogCategory, "Sending ping [%s:%d]", inFriend:GetTag(), inFriend:GetGameID())
     BNSendGameData(inFriend:GetGameID(), XFG.Network.Message.Tag.BNET, 'PING')
 end
+
+-- Review: Should back the epoch time an argument
+function BNet:Purge()
+	local _ServerEpochTime = GetServerTime()
+	for _, _Packet in self:Iterator() do
+		if(_Packet:GetTimeStamp() + 60 * 6 < _ServerEpochTime) then -- config
+			self:RemoveMessage(_Packet:GetKey())
+		end
+	end
+end
