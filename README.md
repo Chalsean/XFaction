@@ -122,10 +122,19 @@ A lot of the test cases are going to focus on validating this BNet communication
 
 This portion will continue to get iterated upon. Right now just get thoughts out.
 
-Test Cases
-> XFaction
+### XFaction
+> Debugging
 - There are no exceptions being thrown (red fist).
-> Bridges (X) 
+- You're able to open _DebugLog and see a tab called XFaction.
+- Clicking on the tab should show you all the active logging being done.
+
+> Guild Chat
+
+> System Messages
+
+> Achievements
+
+### Bridges (X) 
 - Shows your currently active bridges.
 - Shows your btag in the appropriate column. If your character is on Alliance Proudmoore, your btag should show up in Alliance Proudmoore column.
 - Friends running addon logged into same faction/realm should not show up.
@@ -133,17 +142,128 @@ Test Cases
 - Friends running addon logged into different realm and different faction (Horde Area 52), their btag should show up in appropriate column.
 - Friends running addon logged into different realm and same faction (Horde Proudmoore/Area 52), their btag should show up in appropriate column.
 - The number of friend rows should match the number shown by the DT.
-> Guild (X) 
-- Shows your local guild, even those not running addon.
-- Shows your currently active bridge characters.
-- Shows people running addon when you have an active bridge on the same realm/faction.
-- Shows all information it should: faction, level, name, race, class, spec, covenant, realm, guild, alt name, rank, zone, professions.
-> Soulbind (X) DT
+### Guild (X) 
+> Confederate Name
+- Shows the confederate name at the top (Eternal Kingdom) when logged into Eternal Kingdom guild Area 52.
+- Shows the confederate name at the top (Eternal Kingdom) when logged into Eternal Kingdom guild Proudmoore.
+- Shows the confederate name at the top (Eternal Kingdom) when logged into Alternal Kingdom guild Proudmoore.
+- Shows the confederate name at the top (Eternal Kingdom) when logged into Endless Kingdom guild Proudmoore.
+> Action Buttons
+- Left clicking on any of the column headers (i.e. Name) should sort the guild roster by that column. A-Z first. If clicked again, Z-A. Validate you can sort forwards/reverse by any of the columns.
+- Left clicking on anyone of the same faction should start a whisper dialogue.
+- Right clicking on anyone should open a standard character menu.
+- Shift right clicking on anyone should invite them to your party/raid.
+> Local Guild Roster
+- For this section of tests, ignore any character not logged into the same guild as you.
+- The communication for this scenario is (invisible) local channel, so BNet friendship should not make a difference.
+- Compare the list of logged in characters to a known good guild source (Blizz Guild UI, another Guild DT, etc.) Every logged in character should be accounted for.
+- Validate all the information is accurate for the local guild members: name, race, if it's an alt that the correct alt name is shown, correct team name is shown, etc.
+- Characters not running the addon will show up without spec, covenant or profession icons. These 2-4 icons help identify who is (not) running the addon because in the example of spec or covenant, Blizzard API only lets you query for your own. So if you are showing spec or covenenat information for characters not your own, that means that player's addon shared the information with you.
+- BNet friends that are running the addon should show spec, covenant and profession icons. 
+- Non-BNet friends that are running the addon should still show spec, covenant and profession icons.
+> Same Realm/Faction But Not Same Guild
+- For this section of tests, ignore any character logged into the same guild as you and any character from different realm or different faction.
+- The communication for this scenario is (invisible) local channel, so BNet friendship should not make a difference.
+- BNet friends that are running the addon should show spec, covenant and profession icons. 
+- Non-BNet friends that are running the addon should still show spec, covenant and profession icons.
+- Players not running the addon on same realm/faction but not same guild will not show up in Guild Roster view.
+- Validate all the information is accurate: name, race, if it's an alt that the correct alt name is shown, correct team name is shown, etc.
+> Two-way BNet Testing
+- BNet communication is used whenever participants are on different factions or different realms. It is "invisible" to the participants much like the channels.
+- This testing requires at least two testing participants.
+- Your BNet friends that are running the addon should always show spec, covenant and profession icons if you are both logged into supported guilds.
+- Test when you're both logged into the same realm but different factions.
+- Test when you're both logged into same faction but different realms.
+- Test when you're both logged into different faction and different realms.
+- Non-BNet fall into the three and four way testing.
+> Three-way BNet Testing
+- This testing requires at least three testing participants.
+1) You (person A) have a BNet friend (person B) logged into the same guild as the non-BNet friend (person C). You are not logged into that realm/faction.
+
+        Person A is friends with Person B. Person A is logged into say EDK.
+    
+        Person B and Person C are logged into say EK.
+    
+        Person A is not friends with Person C.
+        
+        Test both Person B and C being friends, as well as Person B and C not being friends.
+    
+    Expected Outcome: All three participants should still see each other's characters in the guild roster view with spec, covenant and profession icons.
+    
+2) You (person A) have a BNet friend (person B) logged into the same realm/faction as the non-BNet friend (person C). You are not logged into that realm/faction.
+
+        Person A is friends with Person B. Person A is logged into say EDK.
+    
+        Person B is logged into say AK2 and Person C is logged into say AK3.
+    
+        Person A is not friends with Person C.
+        
+        Test both Person B and C being friends, as well as Person B and C not being friends.
+    
+    Expected Outcome: All three participants should still see each other's characters in the guild roster view with spec, covenant and profession icons.
+    
+3) You (person A) have a BNet friend (person B) logged into the same realm but opposite faction as the non-BNet friend (person C). You are not logged into that realm/faction.
+
+        Person A is friends with Person B. Person A is logged into say EKH.
+    
+        Person B is logged into say AK2 and Person C is logged into say EDK.
+    
+        Person A is not friends with Person C.
+        
+        Person B is friends with Person C.
+    
+    Expected Outcome: All three participants should still see each other's characters in the guild roster view with spec, covenant and profession icons. If Person B and Person C are not friends, only Person A/B will see each other. Person C will only see themselves.
+    
+4) You (person A) have a BNet friend (person B) logged into the different realm same faction as the non-BNet friend (person C). You are not logged into that realm/faction.
+
+        Person A is friends with Person B. Person A is logged into say AK2.
+    
+        Person B is logged into say EDK and Person C is logged into say EKH.
+    
+        Person A is not friends with Person C.
+        
+        Person B is friends with Person C.
+    
+    Expected Outcome: All three participants should still see each other's characters in the guild roster view with spec, covenant and profession icons. If Person B and Person C are not friends, only Person A/B will see each other. Person C will only see themselves.
+    
+5) You (person A) have a BNet friend (person B) logged into the different realm different faction as the non-BNet friend (person C). You are not logged into that realm/faction.
+
+        Person A is friends with Person B. Person A is logged into say EDK.
+    
+        Person B is logged into say EKH and Person C is logged into say EKA.
+    
+        Person A is not friends with Person C.
+        
+        Person B is friends with Person C.
+    
+    Expected Outcome: All three participants should still see each other's characters in the guild roster view with spec, covenant and profession icons. If Person B and Person C are not friends, only Person A/B will see each other. Person C will only see themselves
+    
+> Four-way BNet Testing
+- This testing requires at least four testing participants.
+1) You (person A) are not friends with any of the other participants but are logged into same realm/faction as person B.  Person B is friends with Person C. They are not logged into the same realm or faction. Person D is not friends with any of the participants but is logged into same realm/faction as person C.
+
+        Person A is not friends with Person B/C/D. Person A is logged into say AK4.
+    
+        Person B and Person C are friends. Person B is logged into say EDK.
+    
+        Person C is logged into say AK2.
+        
+        Person D is not friends with Person A/B/C. Person D is logged into say AK3.
+        
+        Test both Person B and C being friends, as well as Person B and C not being friends.
+    
+    Expected Outcome: All four participants should still see each other's characters in the guild roster view with spec, covenant and profession icons.
+        
+### Soulbind (X) DT
+> DT Text
 - Shows the name of your currently active soulbind.
 - Should show "No Covenant" if you have no covenant yet.
-- On hover shows your currently active soulbind and the other inactive soulbinds for your covenant.
-- On hover with no covenant should show nothing.
+- DT should auto update the text whenever you switch covenants or soulbinds.
+> Hover Cursor Over DT
+- Shows your currently active soulbind and the other inactive soulbinds for your covenant.
+- No covenant should show nothing.
+- DT should auto update the text whenever you switch covenants or soulbinds.
+> On Click
 - Left click opens/closes the soulbind frame.
 - Right click shows a menu of soulbinds for your current covenant.
 - Selecting a soulbind from the menu should switch soulbinds.
-- DT should auto update the text whenever you switch covenants or soulbinds.
