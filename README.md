@@ -118,16 +118,22 @@ For the addon to "work" from an EK member perspective, there needs to be a user 
 
 A lot of the test cases are going to focus on validating this BNet communication works as intended, which is going to require coordination between the testers.
 
-## Testing Guide
+## Testing Status
 
-This portion will continue to get iterated upon. Right now just get thoughts out.
+| ID  | Part | Title | Description | Status | # Testers | Tester A | Tester B | Tester C | Tester D |
+|-----|------|-------|-------------|--------|-----------|----------|----------|----------|----------|
+| 001 | XFaction | Exceptions | Ensure BugGrabber/BugSack have no exceptions from XFaction | Not Assigned | 1 | | | |
+| 002 | XFaction | Logging | Ensure addon is successfully logging to DebugLog | Not Assigned | 1 | | | |
+| 003 | Guild (X) | Confederate Name | Shows the confederate name at the top (Eternal Kingdom) when logged into Eternal Kingdom guild Area 52. | Not Assigned | 1 ||||
+| 004 | Guild (X) | Confederate Name | Shows the confederate name at the top (Eternal Kingdom) when logged into Eternal Kingdom guild Proudmoore. | Not Assigned | 1 ||||
+| 005 | Guild (X) | Confederate Name | Shows the confederate name at the top (Eternal Kingdom) when logged into Alternal Kingdom guild Proudmoore. | Not Assigned | 1 ||||
+| 006 | Guild (X) | Confederate Name | Shows the confederate name at the top (Eternal Kingdom) when logged into Endless Kingdom guild Proudmoore. | Not Assigned | 1 ||||
+| 007 | Guild (X) | Action Buttons | Left clicking on any of the column headers (i.e. Name) should sort the guild roster by that column. A-Z first. If clicked again, Z-A. Validate you can sort forwards/reverse by any of the columns. | Not Assigned | 1 ||||
+| 008 | Guild (X) | Action Buttons | Left clicking on anyone of the same faction should start a whisper dialogue. | Not Assigned | 1 ||||
+| 009 | Guild (X) | Action Buttons | Right clicking on anyone should open a standard character menu. | Not Assigned | 1 ||||
+| 010 | Guild (X) | Action Buttons | Shift right clicking on anyone should invite them to your party/raid. | Not Assigned | 1 ||||
 
 ### XFaction
-> Debugging
-- There are no exceptions being thrown (red fist).
-- You're able to open _DebugLog and see a tab called XFaction.
-- Clicking on the tab should show you all the active logging being done.
-
 > Guild Chat
 
 > System Messages
@@ -143,16 +149,8 @@ This portion will continue to get iterated upon. Right now just get thoughts out
 - Friends running addon logged into different realm and same faction (Horde Proudmoore/Area 52), their btag should show up in appropriate column.
 - The number of friend rows should match the number shown by the DT.
 ### Guild (X) 
-> Confederate Name
-- Shows the confederate name at the top (Eternal Kingdom) when logged into Eternal Kingdom guild Area 52.
-- Shows the confederate name at the top (Eternal Kingdom) when logged into Eternal Kingdom guild Proudmoore.
-- Shows the confederate name at the top (Eternal Kingdom) when logged into Alternal Kingdom guild Proudmoore.
-- Shows the confederate name at the top (Eternal Kingdom) when logged into Endless Kingdom guild Proudmoore.
-> Action Buttons
-- Left clicking on any of the column headers (i.e. Name) should sort the guild roster by that column. A-Z first. If clicked again, Z-A. Validate you can sort forwards/reverse by any of the columns.
-- Left clicking on anyone of the same faction should start a whisper dialogue.
-- Right clicking on anyone should open a standard character menu.
-- Shift right clicking on anyone should invite them to your party/raid.
+- 
+- 
 > Local Guild Roster
 - For this section of tests, ignore any character not logged into the same guild as you.
 - The communication for this scenario is (invisible) local channel, so BNet friendship should not make a difference.
