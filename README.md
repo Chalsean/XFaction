@@ -42,44 +42,6 @@ The addon should provide the following functionalities:
 - WoW Token: Simply displays the current WoW token market price
 - Shard: Simply displays the shard # you are currently on (helpful for rare mob hunting)
 
-## Testers
-
-I greatly appreciate your personal time and effort in testing out my idea. Please keep in mind that this is still an alpha build. I am definitely looking forward to and open to your ideas on how to make this better! The better I can make this addon work for you, the better the adoption rate will be. You do not need to test the misc DTs, they are included because they are dependent upon the addon framework and thus I don't want to deploy separately. But you are free to use them if you wish.
-
-You can log your bugs/enhancement ideas here: https://github.com/Chalsean/XFaction/issues. You can also Discord DM me (Chalsean#7679) or in-game (Chalsean#1172). There is also a discussion board here: https://github.com/Chalsean/XFaction/discussions
-
-### Getting Started
-
-The easiest way is to use WowUp client.
-
-1. Go to "Get Addons"
-2. Click on "Install from URL"
-3. Enter the following URL: https://github.com/Chalsean/XFaction
-
-Like any other addon displayed in WowUp, the application will recognize when a new build is made available via Github. To install a newer version, you will only need to click on "Upgrade". If not using WowUp client, you can download the .zip file from the repository and install manually to your Addons folder.
-
-### How It Works
-
-Most addons use an API that goes over an invisible (to the user) channel for communication. However, channels are realm and faction isolated, which is why GreenWall only provides visiblity to other Alliance members on the same realm.
-
-Community channels are cross-realm/faction but do not have the "invisible" API calls. Battle.Net (BNet) does though. This addon leverages BNet to send communication back-and-forth between realms/factions invisible to the user.
-
-This dependency on BNet means users will need BNet friends online and logged into the realm(s) in question to form a bridge of communication. The addon will leverage other guild member's bridges to enable communication. You do not need to have a friend of your own logged in to the connected guild/realm, just someone online running the addon does.
-
-For the addon to "work" from an EK member perspective, there needs to be a user actively logged onto a guild representing each faction on a given realm, e.g., AK3-Proudmoore (A Proudmoore), AK4-Proudmoore (H Proudmoore), EK-Area52 (H Area 52). These three online users will need to be Bnet friends with at least one of the three. Anyone running the addon (without being friends with the three "bridge" users) will then see messages regardless of what EK guild toon they are currently logged into.
-
-### Debugging addons
-
-Three addons will be critical for collecting meaningful information to troubleshoot issues. 
-
->BugSack/BugGrabber
-
-Although technically two different addons (and installed separately), they function as essentially one addon. They will grab any/all Lua exceptions and store the call stack. This will look like a bag icon on your world map. Green means no exceptions, red means an exception. However, be aware that other addons will throw exceptions as well. If red, look for entries where XFaction is in the filepath. If so, you can send to me by copy/paste all or clicking the Send Bug button.
-
->_DebugLog
-
-This is a logging utility leveraged by XFaction. (XFaction will not log or throw errors if _DebugLog is not installed.)  This will look like a yellow fist after install. When you launch the UI, you should see a XFaction tab that contains all log information from the addon. Currently the utility appears to have an issue with exporting logs, but I may ask for information in the logs to help diagnose an issue if I cannot reproduce on my own.
-
 ## Misc
 
 ### Dependencies
@@ -113,3 +75,75 @@ This is a logging utility leveraged by XFaction. (XFaction will not log or throw
 > Forward guild message of the day (MOTD).
 
 > Remove ElvUI dependencies for non-ElvUI users.
+
+## Testers
+
+I greatly appreciate your personal time and effort in testing out my idea. Please keep in mind that this is still an alpha build. I am definitely looking forward to and open to your ideas on how to make this better! The better I can make this addon work for you, the better the adoption rate will be. You do not need to test the misc DTs, they are included because they are dependent upon the addon framework and thus I don't want to deploy separately. But you are free to use them if you wish.
+
+You can log your bugs/enhancement ideas here: https://github.com/Chalsean/XFaction/issues. You can also Discord DM me (Chalsean#7679) or in-game (Chalsean#1172). There is also a discussion board here: https://github.com/Chalsean/XFaction/discussions
+
+### Installing
+
+The easiest way is to use WowUp client.
+
+1. Go to "Get Addons"
+2. Click on "Install from URL"
+3. Enter the following URL: https://github.com/Chalsean/XFaction
+
+Like any other addon displayed in WowUp, the application will recognize when a new build is made available via Github. To install a newer version, you will only need to click on "Upgrade". If not using WowUp client, you can download the .zip file from the repository and install manually to your Addons folder.
+
+### Debugging addons
+
+Three addons will be critical for collecting meaningful information to troubleshoot issues. Please install them as well.
+
+>BugSack/BugGrabber
+
+Although technically two different addons (and installed separately), they function as essentially one addon. They will grab any/all Lua exceptions and store the call stack. This will look like a bag icon on your world map. Green means no exceptions, red means an exception. However, be aware that other addons will throw exceptions as well. If red, look for entries where XFaction is in the filepath. If so, you can send to me by copy/paste all or clicking the Send Bug button.
+
+>_DebugLog
+
+This is a logging utility leveraged by XFaction. (XFaction will not log or throw errors if _DebugLog is not installed.)  This will look like a yellow fist after install. When you launch the UI, you should see a XFaction tab that contains all log information from the addon. Currently the utility appears to have an issue with exporting logs, but I may ask for information in the logs to help diagnose an issue if I cannot reproduce on my own.
+
+By default, this addon will log at a verbosity level of 6. Most useful development information is at level 9. Right click on the yellow fist and set the max verbosity level to 9.
+
+### How It Works
+
+Most addons use an API that goes over an invisible (to the user) channel for communication. However, channels are realm and faction isolated, which is why GreenWall only provides visiblity to other Alliance members on the same realm.
+
+Community channels are cross-realm/faction but do not have the "invisible" API calls. Battle.Net (BNet) does though. This addon leverages BNet to send communication back-and-forth between realms/factions invisible to the user.
+
+This dependency on BNet means users will need BNet friends online and logged into the realm(s) in question to form a bridge of communication. The addon will leverage other guild member's bridges to enable communication. You do not need to have a friend of your own logged in to the connected guild/realm, just someone online running the addon does.
+
+For the addon to "work" from an EK member perspective, there needs to be a user actively logged onto a guild representing each faction on a given realm, e.g., AK3-Proudmoore (A Proudmoore), AK4-Proudmoore (H Proudmoore), EK-Area52 (H Area 52). These three online users will need to be Bnet friends with at least one of the three. Anyone running the addon (without being friends with the three "bridge" users) will then see messages regardless of what EK guild toon they are currently logged into.
+
+A lot of the test cases are going to focus on validating this BNet communication works as intended, which is going to require coordination between the testers.
+
+## Testing Guide
+
+This portion will continue to get iterated upon. Right now just get thoughts out.
+
+Test Cases
+> XFaction
+- There are no exceptions being thrown (red fist).
+> Bridges (X) 
+- Shows your currently active bridges.
+- Shows your btag in the appropriate column. If your character is on Alliance Proudmoore, your btag should show up in Alliance Proudmoore column.
+- Friends running addon logged into same faction/realm should not show up.
+- Friends running addon logged into same realm but different faction (Horde Proudmoore), their btag should show up in appropriate column.
+- Friends running addon logged into different realm and different faction (Horde Area 52), their btag should show up in appropriate column.
+- Friends running addon logged into different realm and same faction (Horde Proudmoore/Area 52), their btag should show up in appropriate column.
+- The number of friend rows should match the number shown by the DT.
+> Guild (X) 
+- Shows your local guild, even those not running addon.
+- Shows your currently active bridge characters.
+- Shows people running addon when you have an active bridge on the same realm/faction.
+- Shows all information it should: faction, level, name, race, class, spec, covenant, realm, guild, alt name, rank, zone, professions.
+> Soulbind (X) DT
+- Shows the name of your currently active soulbind.
+- Should show "No Covenant" if you have no covenant yet.
+- On hover shows your currently active soulbind and the other inactive soulbinds for your covenant.
+- On hover with no covenant should show nothing.
+- Left click opens/closes the soulbind frame.
+- Right click shows a menu of soulbinds for your current covenant.
+- Selecting a soulbind from the menu should switch soulbinds.
+- DT should auto update the text whenever you switch covenants or soulbinds.
