@@ -37,10 +37,10 @@ end
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		XFG:ScheduleTimer(self.CallbackDelayedStartTimer, 15) -- config
-        XFG:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
-        XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", 60)
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
         XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", 60 * 5)
+        XFG:ScheduleRepeatingTimer(self.CallbackBNetMailboxTimer, 60 * 5) -- config
+        XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", 60 * 5)
         XFG.Cache.CallbackTimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, 1) -- config
         XFG:Info(LogCategory, "Scheduled initialization to occur once guild information is available")
         XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineDelta) -- config
@@ -83,15 +83,14 @@ function TimerEvent:CallbackDelayedStartTimer()
     XFG.DB.UIReload = false
 end
 
--- Force garbage cleanup
-function TimerEvent:CallbackGarbageTimer()
-    collectgarbage() -- This identifies objects to clean and calls finalizers
-    collectgarbage() -- The second call actually deletes the objects
-end
-
--- Force garbage cleanup
+-- Cleanup mailbox
 function TimerEvent:CallbackMailboxTimer()
     XFG.Network.Mailbox:Purge()
+end
+
+-- Cleanup BNet mailbox
+function TimerEvent:CallbackBNetMailboxTimer()
+    XFG.Network.BNet.Comm:Purge()
 end
 
 -- WoW has funky timing about getting guild and race info on first login, its not before PLAYER_ENTERING_WORLD so have to poll
