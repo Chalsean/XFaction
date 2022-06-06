@@ -11,6 +11,8 @@ function XFG:DecodeMessage(inEncodedMessage)
 		_Message = GuildMessage:new()
 	elseif(_MessageData.D == XFG.Network.Message.Subject.LOGOUT) then
 		_Message = LogoutMessage:new()
+	elseif(_MessageData.D == XFG.Network.Message.Subject.ACHIEVEMENT) then
+		_Message = AchievementMessage:new()
 	else
 		_Message = Message:new()
 	end	
@@ -32,7 +34,7 @@ function XFG:DecodeMessage(inEncodedMessage)
 		if(_MessageData.L ~= nil) then	_Message:SetLineID(_MessageData.L) end		
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
 		if(_MessageData.W ~= nil) then	_Message:SetUnitName(_MessageData.W) end
-	elseif(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
+	elseif(_Message:GetSubject() == XFG.Network.Message.Subject.LOGOUT or _Message:GetSubject() == XFG.Network.Message.Subject.ACHIEVEMENT) then
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
 		if(_MessageData.W ~= nil) then	_Message:SetUnitName(_MessageData.W) end
 	end

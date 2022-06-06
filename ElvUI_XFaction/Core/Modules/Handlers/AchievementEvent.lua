@@ -40,11 +40,15 @@ end
 function AchievementEvent:CallbackAchievement(inID)
     local _, _, _, _, _, _, _, _, _, _, _, _IsGuild = GetAchievementInfo(inID)
     if(_IsGuild == false) then
-        local _NewMessage = Message:new()
+        local _NewMessage = AchievementMessage:new()
         _NewMessage:Initialize()
         _NewMessage:SetType(XFG.Network.Type.BROADCAST)
         _NewMessage:SetSubject(XFG.Network.Message.Subject.ACHIEVEMENT)
         _NewMessage:SetData('has earned the achievement ' .. GetAchievementLink(inID) .. '!')
-        XFG.Network.Sender:SendMessage(_NewMessage)
+        if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+            _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+        end
+        _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+        XFG.Network.Outbox:Send(_NewMessage)
     end
 end

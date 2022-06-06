@@ -65,13 +65,13 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
         _NewMessage:SetFlags(inFlags)
         _NewMessage:SetLineID(inLineID)
         _NewMessage:SetData(inText)
-        XFG.Network.Sender:SendMessage(_NewMessage, true)
+        XFG.Network.Outbox:Send(_NewMessage, true)
     end
 end
 
 function ChatEvent:CallbackChannelMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
-    if(XFG.Network.Sender:HasLocalChannel()) then
-        local _Channel = XFG.Network.Sender:GetLocalChannel()
+    if(XFG.Network.Outbox:HasLocalChannel()) then
+        local _Channel = XFG.Network.Outbox:GetLocalChannel()
         if(_Channel:GetID() == inChannelID and XFG.Player.Unit:GetGUID() == inSenderGUID) then
             local _NewMessage = GuildMessage:new()
             _NewMessage:Initialize()
@@ -85,7 +85,7 @@ function ChatEvent:CallbackChannelMessage(inText, inSenderName, inLanguageName, 
                 _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
             end
             _NewMessage:SetData(inText)
-            XFG.Network.Sender:SendMessage(_NewMessage, true)
+            XFG.Network.Outbox:Send(_NewMessage, true)
         end
     end
 end

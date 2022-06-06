@@ -76,7 +76,7 @@ function ChatFrame:IsElvUI(inBoolean)
 end
 
 function ChatFrame:Display(inEvent, inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be a Message object")
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
@@ -97,10 +97,10 @@ function ChatFrame:Display(inEvent, inMessage)
                     end
                     _Text = _Text .. "<" .. _Guild:GetShortName() .. "> " .. inMessage:GetData()
 
-                    local _Channel = XFG.Network.Sender:GetLocalChannel()
+                    local _Channel = XFG.Network.Outbox:GetLocalChannel()
                     local _ChannelName = _Channel:GetName()
                     
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inEvent, _Text, inMessage:GetUnitName(), 'Common', _ChannelName, inMessage:GetUnitName(), inMessage:GetFlags(), 0, _Channel:GetID(), _Channel:GetShortName(), 0, _, inMessage:GetFrom())
+                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inEvent, _Text, inMessage:GetUnitName(), 'Common', _ChannelName, inMessage:GetUnitName(), '', 0, _Channel:GetID(), _Channel:GetShortName(), 0, _, inMessage:GetFrom())
                 end                                   
                 break
             end

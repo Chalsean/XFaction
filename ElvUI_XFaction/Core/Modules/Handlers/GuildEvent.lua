@@ -63,7 +63,7 @@ function GuildEvent:CallbackMOTD(inMOTD)
         _NewMessage:SetSubject(XFG.Network.Message.Subject.MOTD)
         _NewMessage:SetType(XFG.Network.Type.BROADCAST)
         _NewMessage:SetData(XFG.Confederate:GetMOTD())
-        XFG.Network.Sender:SendMessage(_NewMessage)
+        XFG.Network.Outbox:Send(_NewMessage)
     end
 end
 

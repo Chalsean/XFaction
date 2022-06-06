@@ -71,13 +71,16 @@ function TimerEvent:Print()
 end
 
 function TimerEvent:CallbackDelayedStartTimer()
-    if(XFG.Initialized and XFG.Network.Sender:GetLocalChannel() == nil) then
+    if(XFG.Initialized and XFG.Network.Outbox:GetLocalChannel() == nil) then
         -- This will fire an event that ChannelEvent handler catches and updates
         JoinChannelByName(XFG.Network.ChannelName)
     end
 
     -- This is here as to get ping responses first and know who is running addon
-    XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
+    if(XFG.DB.UIReload == false) then
+        XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
+    end
+    XFG.DB.UIReload = false
 end
 
 -- Force garbage cleanup
@@ -150,8 +153,8 @@ function TimerEvent:CallbackLogin()
             end
         end
         
-        XFG.Network.Sender = Sender:new()
-	    XFG.Network.Receiver = Receiver:new(); XFG.Network.Receiver:Initialize()
+        XFG.Network.Outbox = Outbox:new()
+	    XFG.Network.Inbox = Inbox:new(); XFG.Network.Inbox:Initialize()
         XFG.Network.BNet.Comm = BNet:new(); BNet:Initialize()
 
         XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
@@ -171,8 +174,7 @@ function TimerEvent:CallbackLogin()
         XFG.Initialized = true
         if(XFG.DB.UIReload == false) then
             XFG.Network.BNet.Comm:PingFriends()            
-        end
-        XFG.DB.UIReload = false
+        end        
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)        
@@ -188,7 +190,7 @@ end
 function TimerEvent:CallbackHeartbeat()
     if(XFG.Initialized and XFG.Player.Unit:GetTimeStamp() + _HeartbeatDelta < GetServerTime()) then
         XFG:Debug(LogCategory, "Sending heartbeat")
-        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.DATA)
+        XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.DATA)
     end
 end
 

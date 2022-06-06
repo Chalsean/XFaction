@@ -31,7 +31,7 @@ function BNet:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
         -- Technically this should be with the other handlers but wanted to keep the BNet logic together
-        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', self.ReceivePacket)
+        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', self.Receive)
         XFG:Info(LogCategory, "Registered for BN_CHAT_MSG_ADDON events")
         self:IsInitialized(true)
     end
@@ -71,7 +71,7 @@ function BNet:Iterator()
     return next, self._Packets, nil
 end
 
-function BNet:SendMessage(inMessage)
+function BNet:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(self:CanBNet() == false) then return end
     -- Before we do work, lets make sure there are targets and we can message those targets
@@ -120,6 +120,8 @@ function BNet:SendMessage(inMessage)
                     _NewMessage = GuildMessage:new()
                 elseif(inMessage.__name == 'LogoutMessage') then
                     _NewMessage = LogoutMessage:new()
+                elseif(inMessage.__name == 'AchievementMessage') then
+                    _NewMessage = AchievementMessage:new()
                 else
                     _NewMessage = Message:new()
                 end	
@@ -149,7 +151,7 @@ function BNet:SendMessage(inMessage)
     end
 end
 
-function BNet:ReceivePacket(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     -- If not a message from this addon, ignore
     local _AddonTag = false
@@ -193,14 +195,14 @@ function BNet:ReceivePacket(inMessageTag, inEncodedMessage, inDistribution, inSe
 
     -- Data was sent in one packet, okay to process
     if(_Message:GetTotalPackets() == 1) then
-        XFG.Network.Receiver:ProcessMessage(_Message)
+        XFG.Network.Inbox:Process(_Message)
     else
         -- Going to have to stitch the data back together again
         XFG.Network.BNet.Comm:AddPacket(_Message)
         if(XFG.Network.BNet.Comm:HasAllPackets(_Message:GetKey())) then
             XFG:Debug(LogCategory, "Received all packets for message [%s]", _Message:GetKey())
             local _FullMessage = XFG.Network.BNet.Comm:RebuildMessage(_Message:GetKey())
-            XFG.Network.Receiver:ProcessMessage(_FullMessage)
+            XFG.Network.Inbox:Process(_FullMessage)
         end
     end    
 end
@@ -228,11 +230,11 @@ end
 
 function BNet:RebuildMessage(inMessageKey)
     assert(type(inMessageKey) == 'string')
-    local _Message = Message:new()
+    local _Message
     -- Stitch the data back together again
     for _, _Packet in ipairs (self._Packets[inMessageKey]) do
-        if(_Message:IsInitialized() == false) then
-            _Message:Copy(_Packet)
+        if(_Message == nil) then
+            _Message = _Packet
         else
             local _Data = _Message:GetData() .. _Packet:GetData()
             _Message:SetData(_Data)

@@ -12,14 +12,15 @@
     <Script file='Handlers\TimerEvent.lua'/>
 
     <Script file='Network\BNet.lua'/>
-    <Script file='Network\Sender.lua'/>
-    <Script file='Network\Receiver.lua'/>
+    <Script file='Network\Outbox.lua'/>
+    <Script file='Network\Inbox.lua'/>
     <Script file='Network\Encode.lua'/>
     <Script file='Network\Decode.lua'/>
     <Script file='Network\Message.lua'/>
+    <Script file='Network\AchievementMessage.lua'/>
     <Script file='Network\GuildMessage.lua'/>
     <Script file='Network\LogoutMessage.lua'/>
-    <Script file='Network\MessageCollection.lua'/>
+    <Script file='Network\Mailbox.lua'/>
     <Script file='Network\Channel.lua'/>
     <Script file='Network\ChannelCollection.lua'/>
     <Script file='Network\Friend.lua'/>

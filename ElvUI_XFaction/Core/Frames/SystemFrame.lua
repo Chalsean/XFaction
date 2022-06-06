@@ -64,7 +64,7 @@ function SystemFrame:SetKey(inKey)
     return self:GetKey()
 end
 
-function SystemFrame:DisplaySystemMessage(inMessage)
+function SystemFrame:Display(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
     local _Faction = _Guild:GetFaction()

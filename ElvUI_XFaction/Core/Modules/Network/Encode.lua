@@ -13,7 +13,7 @@ function XFG:EncodeMessage(inMessage, inEncodeUnitData)
 		_MessageData.L = inMessage:GetLineID()
 		_MessageData.M = inMessage:GetMainName()
 		_MessageData.W = inMessage:GetUnitName()		
-	elseif(inMessage.__name == 'LogoutMessage') then
+	elseif(inMessage.__name == 'LogoutMessage' or inMessage.__name == 'AchievementMessage') then
 		_MessageData.M = inMessage:GetMainName()		
 		_MessageData.W = inMessage:GetUnitName()
 	end

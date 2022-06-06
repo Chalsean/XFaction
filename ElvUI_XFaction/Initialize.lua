@@ -155,7 +155,7 @@ function XFG:Init()
 	end
 
 	XFG.Player.Realm = XFG.Realms:GetRealm(GetRealmName())
-	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
+	XFG.Network.Mailbox = Mailbox:new(); XFG.Network.Mailbox:Initialize()	
 	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()
 	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
 	
