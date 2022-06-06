@@ -56,8 +56,14 @@ function GuildEvent:Print()
 end
 
 function GuildEvent:CallbackMOTD(inMOTD)
-    if(XFG.Confederate:GetMOTD() ~= inMOTD) then
+    if(XFG.Player.Guild:IsSourceMOTD()) then
         XFG.Confederate:SetMOTD(inMOTD)
+        local _NewMessage = Message:new()
+        _NewMessage:Initialize()
+        _NewMessage:SetSubject(XFG.Network.Message.Subject.MOTD)
+        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
+        _NewMessage:SetData(XFG.Confederate:GetMOTD())
+        XFG.Network.Outbox:Send(_NewMessage)
     end
 end
 

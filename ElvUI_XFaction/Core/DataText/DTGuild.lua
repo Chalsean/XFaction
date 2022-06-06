@@ -172,9 +172,14 @@ function OnEnter(self)
 		tooltip:SetScript("OnShow", function(ttskinself) ttskinself:SetTemplate('Transparent') end)
 	end
 
+	XFG.Confederate:ShallowPrint()
+
 	local line = tooltip:AddLine()
 	local _GuildName = XFG.Confederate:GetName()
 	tooltip:SetCell(line, 1, format("Guild: |cffffffff%s|r", _GuildName), ttHeaderFont, "LEFT", 4)
+	line = tooltip:AddLine()
+	local _MOTD = XFG.Confederate:GetMOTD()
+	tooltip:SetCell(line, 1, format("MOTD: |cffffffff%s|r", _MOTD), ttHeaderFont, "LEFT", 13)
 
 	line = tooltip:AddLine()
 	line = tooltip:AddLine()

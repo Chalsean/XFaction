@@ -1,11 +1,11 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DT = E:GetModule('DataTexts')
-local ObjectName = 'Receiver'
-local LogCategory = 'NReceiver'
+local ObjectName = 'Inbox'
+local LogCategory = 'NInbox'
 
-Receiver = {}
+Inbox = {}
 
-function Receiver:new()
+function Inbox:new()
     _Object = {}
     setmetatable(_Object, self)
     self.__index = self
@@ -17,7 +17,7 @@ function Receiver:new()
     return _Object
 end
 
-function Receiver:IsInitialized(inBoolean)
+function Inbox:IsInitialized(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
     if(inBoolean ~= nil) then
         self._Initialized = inBoolean
@@ -25,30 +25,30 @@ function Receiver:IsInitialized(inBoolean)
     return self._Initialized
 end
 
-function Receiver:Initialize()
+function Inbox:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
         XFG:Info(LogCategory, "Registering to receive [%s] messages", XFG.Network.Message.Tag.LOCAL)
         XFG:RegisterComm(XFG.Network.Message.Tag.LOCAL, function(inMessageType, inMessage, inDistribution, inSender) 
-                                                           XFG.Network.Receiver:ReceiveMessage(inMessageType, inMessage, inDistribution, inSender)
+                                                           XFG.Network.Inbox:Receive(inMessageType, inMessage, inDistribution, inSender)
                                                         end)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
 end
 
-function Receiver:Print()
+function Inbox:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
-function Receiver:GetKey()
+function Inbox:GetKey()
     return self._Key
 end
 
-function Receiver:SetKey(inKey)
+function Inbox:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
@@ -56,7 +56,7 @@ end
 
 -- Channel and whisper traffic is received by this function
 -- BNet traffic is in the BNet class
-function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     XFG:Debug(LogCategory, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
 
@@ -73,10 +73,10 @@ function Receiver:ReceiveMessage(inMessageTag, inEncodedMessage, inDistribution,
     end
 
     local _Message = XFG:DecodeMessage(inEncodedMessage)
-    self:ProcessMessage(_Message)
+    self:Process(_Message)
 end
 
-function Receiver:ProcessMessage(inMessage)
+function Inbox:Process(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 
     -- Ignore if it's your own message
@@ -103,17 +103,17 @@ function Receiver:ProcessMessage(inMessage)
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessage:GetType() == XFG.Network.Message.Tag.LOCAL) then
         inMessage:SetType(XFG.Network.Type.BNET)
-        XFG.Network.Sender:SendMessage(inMessage)
+        XFG.Network.Outbox:Send(inMessage)
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
     elseif(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
         inMessage:SetType(XFG.Network.Type.BROADCAST)
-        XFG.Network.Sender:SendMessage(inMessage)
+        XFG.Network.Outbox:Send(inMessage)
 
     -- If came via BNet and no more targets, message locally only
     elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
         inMessage:SetType(XFG.Network.Type.LOCAL)
-        XFG.Network.Sender:SendMessage(inMessage)
+        XFG.Network.Outbox:Send(inMessage)
     end
 
     -- Process guild chat message
@@ -147,7 +147,7 @@ function Receiver:ProcessMessage(inMessage)
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
         local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
         if(XFG.Player.Realm:Equals(_Guild:GetRealm()) == false or XFG.Player.Guild:Equals(_Guild) == false) then
-            XFG.Frames.System:DisplaySystemMessage(inMessage)
+            XFG.Frames.System:Display(inMessage)
         end
     end
 
@@ -171,11 +171,11 @@ function Receiver:ProcessMessage(inMessage)
             -- Whisper back if same faction
             local _UnitFaction = _UnitData:GetFaction()
             if(_UnitFaction:Equals(XFG.Player.Unit:GetFaction())) then
-                XFG.Network.Sender:WhisperUnitData(inMessage:GetFrom(), XFG.Player.Unit)
+                XFG.Network.Outbox:WhisperUnitData(inMessage:GetFrom(), XFG.Player.Unit)
 
             -- If opposite faction, broadcast to trigger BNet communication
             else
-                XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit)
+                XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit)
             end
         end
     end

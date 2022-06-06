@@ -40,6 +40,7 @@ XFG.Player.LastBroadcast = 0
 
 XFG.Network = {}
 XFG.Network.BNet = {}
+XFG.Network.BNet.PingTimer = 60 * 5
 XFG.Network.Message = {}
 XFG.Network.ChannelName = 'EKXFactionChat'
 XFG.Network.Message.Tag = {
@@ -49,16 +50,11 @@ XFG.Network.Message.Tag = {
 XFG.Network.Message.Subject = {
 	DATA = '1',
 	GCHAT = '2',
-	EVENT = '3',
-	LOGOUT = '4',
-	WHISPER = '5',
-	LOGIN = '6',
-	BRIDGE = '7'
-}
-XFG.Network.Message.Type = {
-	MESSAGE = '1',
-	GUILD = '2',
-	LOGOUT = '3'
+	LOGOUT = '3',
+	LOGIN = '4',
+	PING = '5',
+	ACHIEVEMENT = '6',
+	MOTD = '7'
 }
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel
@@ -71,7 +67,8 @@ XFG.Frames = {}
 XFG.Frames.ChatType = {
 	GUILD = 'GUILD',
 	CHANNEL = 'CHANNEL',
-	SYSTEM = 'SYSTEM'
+	SYSTEM = 'SYSTEM',
+	ACHIEVEMENT = 'ACHIEVEMENT'
 }
 
 XFG.Cache = {}
@@ -113,6 +110,9 @@ XFG.Cache.Realms['Area 52'] = {
 	Alliance = {},
 	Horde = {'Eternal Kingdom'}
 }
+XFG.Cache.MOTD = {}
+XFG.Cache.MOTD.GuildName = 'Eternal Kingdom'
+XFG.Cache.MOTD.RealmName = 'Proudmoore'
 
 function XFG:Init()
 	
@@ -145,6 +145,9 @@ function XFG:Init()
 				if(XFG.Cache.Guilds[_GuildName] ~= nil) then
 					_NewGuild:SetShortName(XFG.Cache.Guilds[_GuildName])
 				end
+				if(XFG.Cache.MOTD.RealmName == _RealmName and XFG.Cache.MOTD.GuildName == _GuildName) then
+					_NewGuild:IsSourceMOTD(true)
+				end
 				XFG.Guilds:AddGuild(_NewGuild)
 				i = i + 1
 			end
@@ -152,7 +155,7 @@ function XFG:Init()
 	end
 
 	XFG.Player.Realm = XFG.Realms:GetRealm(GetRealmName())
-	XFG.Network.Mailbox = MessageCollection:new(); XFG.Network.Mailbox:Initialize()	
+	XFG.Network.Mailbox = Mailbox:new(); XFG.Network.Mailbox:Initialize()	
 	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()
 	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
 	

@@ -1,10 +1,10 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
-local ObjectName = 'Sender'
-local LogCategory = 'NSender'
+local ObjectName = 'Outbox'
+local LogCategory = 'NOutbox'
 
-Sender = {}
+Outbox = {}
 
-function Sender:new()
+function Outbox:new()
     _Object = {}
     setmetatable(_Object, self)
     self.__index = self
@@ -19,7 +19,7 @@ function Sender:new()
     return _Object
 end
 
-function Sender:IsInitialized(inBoolean)
+function Outbox:IsInitialized(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
     if(inBoolean ~= nil) then
         self._Initialized = inBoolean
@@ -27,7 +27,7 @@ function Sender:IsInitialized(inBoolean)
     return self._Initialized
 end
 
-function Sender:Initialize()
+function Outbox:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
         self:IsInitialized(true)
@@ -35,7 +35,7 @@ function Sender:Initialize()
     return self:IsInitialized()
 end
 
-function Sender:Print()
+function Outbox:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
@@ -48,17 +48,17 @@ function Sender:Print()
     end
 end
 
-function Sender:GetKey()
+function Outbox:GetKey()
     return self._Key
 end
 
-function Sender:SetKey(inKey)
+function Outbox:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
 end
 
-function Sender:CanBroadcast(inBoolean)
+function Outbox:CanBroadcast(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
     if(inBoolean ~= nil) then
         self._CanBroadcast = inBoolean
@@ -66,7 +66,7 @@ function Sender:CanBroadcast(inBoolean)
     return self._CanBroadcast
 end
 
-function Sender:CanWhisper(inBoolean)
+function Outbox:CanWhisper(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
     if(inBoolean ~= nil) then
         self._CanWhisper = inBoolean
@@ -74,21 +74,21 @@ function Sender:CanWhisper(inBoolean)
     return self._CanWhisper
 end
 
-function Sender:HasLocalChannel()
+function Outbox:HasLocalChannel()
     return self._LocalChannel ~= nil
 end
 
-function Sender:GetLocalChannel()
+function Outbox:GetLocalChannel()
     return self._LocalChannel
 end
 
-function Sender:SetLocalChannel(inChannel)
+function Outbox:SetLocalChannel(inChannel)
     assert(type(inChannel) == 'table' and inChannel.__name ~= nil and inChannel.__name == 'Channel', "argument must be Channel object")
     self._LocalChannel = inChannel
     return self:HasLocalChannel()
 end
 
-function Sender:SendMessage(inMessage)
+function Outbox:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(inMessage:IsInitialized() == false) then
 		-- Review: double check this isn't overriding the timestamp of the message
@@ -100,7 +100,7 @@ function Sender:SendMessage(inMessage)
 
     -- If you messaged all possible realm/faction combinations, can switch to local broadcast    
     if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.BNET) then
-        XFG.Network.BNet.Comm:SendMessage(inMessage)
+        XFG.Network.BNet.Comm:Send(inMessage)
         if(inMessage:HasTargets() == false and inMessage:GetType() == XFG.Network.Type.BROADCAST) then
             XFG:Debug(LogCategory, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
             inMessage:SetType(XFG.Network.Type.LOCAL)
@@ -121,7 +121,7 @@ function Sender:SendMessage(inMessage)
     end
 end
 
-function Sender:BroadcastLocally(inData)
+function Outbox:BroadcastLocally(inData)
     if(self:CanBroadcast()) then
         local _Channel = self:GetLocalChannel()
         XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Network.Message.Tag.LOCAL)
@@ -129,7 +129,7 @@ function Sender:BroadcastLocally(inData)
     end
 end
 
-function Sender:BroadcastUnitData(inUnitData, inSubject)
+function Outbox:BroadcastUnitData(inUnitData, inSubject)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
 	if(inSubject == nil) then inSubject = XFG.Network.Message.Subject.DATA end
     if(inUnitData:IsPlayer()) then
@@ -142,17 +142,17 @@ function Sender:BroadcastUnitData(inUnitData, inSubject)
     _Message:SetType(XFG.Network.Type.BROADCAST)
     _Message:SetSubject(inSubject)
     _Message:SetData(inUnitData)
-    self:SendMessage(_Message, true)    
+    self:Send(_Message)    
 end
 
-function Sender:Whisper(inTo, inData)
+function Outbox:Whisper(inTo, inData)
     if(self:CanWhisper()) then
         XFG:Debug(LogCategory, "Whispering [%s] with tag [%s]", inTo, XFG.Network.Message.Tag)
         XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "WHISPER", inTo)
     end
 end
 
-function Sender:WhisperUnitData(inTo, inUnitData)
+function Outbox:WhisperUnitData(inTo, inUnitData)
     assert(type(inTo) == 'string')
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
     local _Message = Message:new()
@@ -161,5 +161,5 @@ function Sender:WhisperUnitData(inTo, inUnitData)
     _Message:SetTo(inTo)
     _Message:SetSubject(XFG.Network.Message.Subject.DATA)
     _Message:SetData(inUnitData)
-    self:SendMessage(_Message, true)
+    self:Send(_Message)
 end

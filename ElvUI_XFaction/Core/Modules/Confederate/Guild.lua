@@ -14,6 +14,7 @@ function Guild:new()
     self._ID = nil
     self._Name = nil
     self._ShortName = nil
+    self._IsSourceMOTD = false
     self._Faction = nil
     self._Realm = nil
     self._Initialized = false
@@ -115,4 +116,12 @@ function Guild:Equals(inGuild)
     if(type(inGuild) ~= 'table' or inGuild.__name == nil or inGuild.__name ~= 'Guild') then return false end
     if(self:GetKey() ~= inGuild:GetKey()) then return false end
     return true
+end
+
+function Guild:IsSourceMOTD(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument needs to be nil or boolean")
+    if(inBoolean ~= nil) then
+        self._IsSourceMOTD = inBoolean
+    end
+	return self._IsSourceMOTD
 end

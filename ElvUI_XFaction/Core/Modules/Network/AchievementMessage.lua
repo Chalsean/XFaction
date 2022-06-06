@@ -1,37 +1,32 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
-local ObjectName = 'GuildMessage'
-local LogCategory = 'NGMessage'
+local ObjectName = 'AchievementMessage'
+local LogCategory = 'NAMessage'
 
-GuildMessage = Message:newChildConstructor()
+AchievementMessage = Message:newChildConstructor()
 
-function GuildMessage:new()
-    local _Object = GuildMessage.parent.new(self)
+function AchievementMessage:new()
+    local _Object = AchievementMessage.parent.new(self)
 
-    _Object.__name = 'GuildMessage'
-    _Object._Flags = nil
-    _Object._LineID = nil
-    _Object._UnitName = nil
+    _Object.__name = 'AchievementMessage'
     _Object._MainName = nil
-
+    _Object._UnitName = nil
+    
     return _Object
 end
 
-function GuildMessage:Print()
+function AchievementMessage:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
     XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
     XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
-    XFG:Debug(LogCategory, "  _Flags (" ..type(self._Flags) .. "): ".. tostring(self._Flags))
-    XFG:Debug(LogCategory, "  _LineID (" ..type(self._LineID) .. "): ".. tostring(self._LineID))
-    XFG:Debug(LogCategory, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
+    XFG:Debug(LogCategory, "  _GuildID (" ..type(self._GuildID) .. "): ".. tostring(self._GuildID))
     XFG:Debug(LogCategory, "  _MainName (" ..type(self._MainName) .. "): ".. tostring(self._MainName))
+    XFG:Debug(LogCategory, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-    XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
     for _, _Target in self:TargetIterator() do
@@ -39,52 +34,36 @@ function GuildMessage:Print()
     end
 end
 
-function GuildMessage:GetFlags()
-    return self._Flags
-end
-
-function GuildMessage:SetFlags(inFlags)
-    assert(type(inFlags) == 'string')
-    self._Flags = inFlags
-    return self:GetFlags()
-end
-
-function GuildMessage:GetLineID()
-    return self._LineID
-end
-
-function GuildMessage:SetLineID(inLineID)
-    assert(type(inLineID) == 'number')
-    self._LineID = inLineID
-    return self:GetLineID()
-end
-
-function GuildMessage:GetUnitName()
-    return self._UnitName
-end
-
-function GuildMessage:SetUnitName(inUnitName)
-    assert(type(inUnitName) == 'string')
-    self._UnitName = inUnitName
-    return self:GetUnitName()
-end
-
-function GuildMessage:HasMainName()
+function AchievementMessage:HasMainName()
     return self._MainName ~= nil
 end
 
-function GuildMessage:GetMainName()
+function AchievementMessage:GetMainName()
     return self._MainName
 end
 
-function GuildMessage:SetMainName(inMainName)
+function AchievementMessage:SetMainName(inMainName)
     assert(type(inMainName) == 'string')
     self._MainName = inMainName
     return self:GetMainName()
 end
 
-function GuildMessage:Copy(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', "argument must be GuildMessage object")
+function AchievementMessage:HasUnitName()
+    return self._UnitName ~= nil
+end
+
+function AchievementMessage:GetUnitName()
+    return self._UnitName
+end
+
+function AchievementMessage:SetUnitName(inUnitName)
+    assert(type(inUnitName) == 'string')
+    self._UnitName = inUnitName
+    return self:GetUnitName()
+end
+
+function AchievementMessage:Copy(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'AchievementMessage', "argument must be AchievementMessage object")
     self._Key = inMessage:GetKey()
     self._To = inMessage:GetTo()
     self._From = inMessage:GetFrom()
@@ -98,8 +77,6 @@ function GuildMessage:Copy(inMessage)
     self._Initialized = inMessage:IsInitialized()
     self._PacketNumber = inMessage:GetPacketNumber()
     self._TotalPackets = inMessage:GetTotalPackets()
-    self._Flags = inMessage:GetFlags()
-    self._LineID = inMessage:GetLineID()
-    self._UnitName = inMessage:GetUnitName()
     self._MainName = inMessage:GetMainName()
+    self._UnitName = inMessage:GetUnitName()
 end

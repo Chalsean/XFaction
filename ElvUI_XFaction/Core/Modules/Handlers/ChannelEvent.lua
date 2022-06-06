@@ -62,9 +62,9 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
 	if(inAction == 'YOU_LEFT') then
 		if(XFG.Network.Channels:RemoveChannel(inChannelShortName)) then
 			XFG:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
-			local _Channel = XFG.Network.Sender:GetLocalChannel()
+			local _Channel = XFG.Network.Outbox:GetLocalChannel()
 			if(_Channel:GetShortName() == inChannelShortName) then
-				XFG.Network.Sender:CanBroadcast(false)
+				XFG.Network.Outbox:CanBroadcast(false)
 				XFG:Error(LogCategory, "Removed channel was the addon channel")
 			end			
 		end
@@ -85,8 +85,8 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
 		if(XFG.Network.Channels:AddChannel(_NewChannel)) then
 			XFG:Info(LogCategory, "Added channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
 			if(_NewChannel:GetShortName() == XFG.Network.ChannelName) then
-				XFG.Network.Sender:SetLocalChannel(_NewChannel)
-				XFG.Network.Sender:CanBroadcast(true)
+				XFG.Network.Outbox:SetLocalChannel(_NewChannel)
+				XFG.Network.Outbox:CanBroadcast(true)
 			end
 		end
 	else
@@ -115,12 +115,12 @@ end
 
 function ChannelEvent:CallbackDisconnect()
 	XFG:Info(LogCategory, "Received CHAT_SERVER_DISCONNECTED system event")
-	XFG.Network.Sender:CanBroadcast(false)
-	XFG.Network.Sender:CanWhisper(false)
+	XFG.Network.Outbox:CanBroadcast(false)
+	XFG.Network.Outbox:CanWhisper(false)
 end
 
 function ChannelEvent:CallbackReconnect()
 	XFG:Info(LogCategory, "Received CHAT_SERVER_RECONNECTED system event")
-	XFG.Network.Sender:CanBroadcast(true)
-	XFG.Network.Sender:CanWhisper(true)
+	XFG.Network.Outbox:CanBroadcast(true)
+	XFG.Network.Outbox:CanWhisper(true)
 end

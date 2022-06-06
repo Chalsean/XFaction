@@ -5,6 +5,7 @@ local LogCategory = 'HETimer'
 local _OfflineDelta = 60 * 5   -- Seconds before you consider another unit offline
 local _HeartbeatDelta = 60 * 2 -- Seconds between sending your own status, regardless if things have changed
 local _GuildRosterDelta = 30   -- Seconds between local guild scans
+local _PingFriends = 60 * 5    -- Seconds between pinging friends
 
 TimerEvent = {}
 
@@ -35,7 +36,7 @@ end
 
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:ScheduleTimer(self.CallbackChannelTimer, 15) -- config
+		XFG:ScheduleTimer(self.CallbackDelayedStartTimer, 15) -- config
         XFG:ScheduleRepeatingTimer(self.CallbackGarbageTimer, 60) -- config
         XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", 60)
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
@@ -48,6 +49,8 @@ function TimerEvent:Initialize()
         XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", _HeartbeatDelta)
         XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, _GuildRosterDelta) -- config
         XFG:Info(LogCategory, "Scheduled forcing local guild roster updates for %d seconds", _GuildRosterDelta)
+        XFG:ScheduleRepeatingTimer(self.CallbackPingFriends, XFG.Network.BNet.PingTimer) -- config
+        XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", XFG.Network.BNet.PingTimer)
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -67,12 +70,17 @@ function TimerEvent:Print()
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
--- Wait for General chat to grab #1
-function TimerEvent:CallbackChannelTimer()
-    if(XFG.Network.Sender:GetLocalChannel() == nil) then
+function TimerEvent:CallbackDelayedStartTimer()
+    if(XFG.Initialized and XFG.Network.Outbox:GetLocalChannel() == nil) then
         -- This will fire an event that ChannelEvent handler catches and updates
         JoinChannelByName(XFG.Network.ChannelName)
     end
+
+    -- This is here as to get ping responses first and know who is running addon
+    if(XFG.DB.UIReload == false) then
+        XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
+    end
+    XFG.DB.UIReload = false
 end
 
 -- Force garbage cleanup
@@ -117,10 +125,14 @@ function TimerEvent:CallbackLogin()
         XFG.Confederate:SetKey('EK')
         XFG.Confederate:SetMainRealmName('Proudmoore')
         XFG.Confederate:SetMainGuildName('Eternal Kingdom')
+        local _MOTD = GetGuildRosterMOTD()
+        XFG:DataDumper(LogCategory, _MOTD)
+        XFG.Confederate:SetMOTD(_MOTD)
 
         -- If this is a reload, restore backup
         if(XFG.DB.UIReload) then
             XFG.Confederate:RestoreBackup()
+            XFG.Network.BNet.Friends:RestoreBackup()
         end
   
         XFG:Info(LogCategory, "Initializing local guild roster cache")
@@ -140,9 +152,11 @@ function TimerEvent:CallbackLogin()
                 XFG.Confederate:RemoveUnit(_UnitData:GetKey())
             end
         end
+        
+        XFG.Network.Outbox = Outbox:new()
+	    XFG.Network.Inbox = Inbox:new(); XFG.Network.Inbox:Initialize()
+        XFG.Network.BNet.Comm = BNet:new(); BNet:Initialize()
 
-        XFG.Network.Sender = Sender:new()
-	    XFG.Network.Receiver = Receiver:new(); XFG.Network.Receiver:Initialize()
         XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
         XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
         XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()        
@@ -152,17 +166,18 @@ function TimerEvent:CallbackLogin()
         XFG.Handlers.SoulbindEvent = SoulbindEvent:new(); XFG.Handlers.SoulbindEvent:Initialize()
         XFG.Handlers.ProfessionEvent = ProfessionEvent:new(); XFG.Handlers.ProfessionEvent:Initialize()
         XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
+        XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
 
         -- Broadcast login, refresh DTs and ready to roll        
-        wipe(XFG.Cache)        
+        wipe(XFG.Cache)
+        wipe(XFG.DB.Backup)
         XFG.Initialized = true
         if(XFG.DB.UIReload == false) then
-            XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
-        end
-        XFG.DB.UIReload = false
+            XFG.Network.BNet.Comm:PingFriends()            
+        end        
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
-        DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
+        DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)        
     end
 end
 
@@ -175,7 +190,7 @@ end
 function TimerEvent:CallbackHeartbeat()
     if(XFG.Initialized and XFG.Player.Unit:GetTimeStamp() + _HeartbeatDelta < GetServerTime()) then
         XFG:Debug(LogCategory, "Sending heartbeat")
-        XFG.Network.Sender:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.DATA)
+        XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.DATA)
     end
 end
 
@@ -184,4 +199,9 @@ function TimerEvent:CallbackGuildRoster()
     if(XFG.Initialized) then
         C_GuildInfo.GuildRoster()
     end
+end
+
+-- Periodically ping friends to see who is running addon
+function TimerEvent:CallbackPingFriends()
+    XFG.Network.BNet.Comm:PingFriends()
 end

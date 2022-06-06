@@ -65,6 +65,7 @@ function SystemEvent:CallbackLogout()
     if(XFG.DB.UIReload) then 
         -- Backup information on reload to be restored
         XFG.Confederate:CreateBackup()
+        XFG.Network.BNet.Friends:CreateBackup()
     else
         local _NewMessage = LogoutMessage:new()
         _NewMessage:Initialize()
@@ -75,7 +76,8 @@ function SystemEvent:CallbackLogout()
         end
         _NewMessage:SetGuildID(XFG.Player.Guild:GetID())
         _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
-        XFG.Network.Sender:SendMessage(_NewMessage, true)
+        _NewMessage:SetData(' ')
+        XFG.Network.Outbox:Send(_NewMessage)
     end    
 end
 

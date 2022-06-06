@@ -1,5 +1,4 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
-local DT = E:GetModule('DataTexts')
 local ObjectName = 'BNetEvent'
 local LogCategory = 'HEBNet'
 
@@ -34,7 +33,7 @@ end
 function BNetEvent:IsInitialized(inBoolean)
 	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
 	if(inBoolean ~= nil) then
-        XFG.Network.Sender:CanBNet(true)
+        XFG.Network.BNet.Comm:CanBNet(true)
 		self._Initialized = inBoolean
 	end
 	return self._Initialized
@@ -58,19 +57,16 @@ end
 
 function BNetEvent:CallbackBNetConnected()
     XFG:Info(LogCategory, "Enabling BNet due to BN_CONNECTED")
-    XFG.Network.Sender:CanBNet(true)
+    XFG.Network.BNet.Comm:CanBNet(true)
 end
 
 function BNetEvent:CallbackBNetDisconnected()
     XFG:Info(LogCategory, "Disabling BNet due to BN_DISCONNECTED")
-    XFG.Network.Sender:CanBNet(false)
+    XFG.Network.BNet.Comm:CanBNet(false)
 end
 
--- The friend API leaves much to be desired, you essentially have to keep scanning
--- This also spams, so only uncomment the logging to troubleshoot
+-- The friend API leaves much to be desired, it spams and will give you invalid indexes like 0
+-- Making the index kind of worthless, it's easier to just scan
 function BNetEvent:CallbackFriendInfo(inFriendIndex)
-    --XFG:Debug(LogCategory, "Scanning BNet friends due to BN_FRIEND_INFO_CHANGED")
-    XFG.Network.BNet.Friends:Reset()
-    XFG.Network.BNet.Friends:Initialize()
-    DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
+    XFG.Network.BNet.Friends:CheckFriends()
 end
