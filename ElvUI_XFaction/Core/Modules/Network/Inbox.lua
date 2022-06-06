@@ -73,10 +73,10 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end
 
     local _Message = XFG:DecodeMessage(inEncodedMessage)
-    self:Process(_Message)
+    self:Process(_Message, inMessageTag)
 end
 
-function Inbox:Process(inMessage)
+function Inbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 
     -- Ignore if it's your own message
@@ -101,7 +101,7 @@ function Inbox:Process(inMessage)
     inMessage:ShallowPrint()
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-    if(inMessage:HasTargets() and inMessage:GetType() == XFG.Network.Message.Tag.LOCAL) then
+    if(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.LOCAL) then
         inMessage:SetType(XFG.Network.Type.BNET)
         XFG.Network.Outbox:Send(inMessage)
 
