@@ -68,7 +68,7 @@ The addon should provide the following functionalities:
 
 > Parsing ENK notes incorrectly to identify alts
 
-> 4 way BNet communication broken due to Message constructor
+> 4 & 5 way BNet communication broken due to Message constructor
 
 ### Planned enhancements
 
@@ -77,6 +77,8 @@ The addon should provide the following functionalities:
 > Forward guild message of the day (MOTD).
 
 > Remove ElvUI dependencies for non-ElvUI users.
+
+> Find a reliable way of getting zone information.
 
 ## Testers
 
