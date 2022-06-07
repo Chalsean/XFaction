@@ -76,7 +76,7 @@ function BNet:Send(inMessage)
     if(self:CanBNet() == false) then return end
     -- Before we do work, lets make sure there are targets and we can message those targets
     local _Bridges = {}
-    for _, _Target in inMessage:TargetIterator() do
+    for _, _Target in pairs(inMessage:GetTargets()) do
         local _Friends = {}
         for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
             if(_Friend:IsRunningAddon() and _Target:Equals(_Friend:GetTarget())) then
@@ -115,7 +115,7 @@ function BNet:Send(inMessage)
 
                 _PacketCount = _PacketCount + 1
 
-                local _NewMessage = Message:new()
+                local _NewMessage = nil
                 if(inMessage.__name == 'GuildMessage') then
                     _NewMessage = GuildMessage:new()
                 elseif(inMessage.__name == 'LogoutMessage') then
@@ -125,6 +125,7 @@ function BNet:Send(inMessage)
                 else
                     _NewMessage = Message:new()
                 end	
+                _NewMessage:Initialize()
                 _NewMessage:Copy(inMessage)
                 _NewMessage:SetPacketNumber(_PacketCount)
 

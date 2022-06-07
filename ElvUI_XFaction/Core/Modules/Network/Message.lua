@@ -17,7 +17,6 @@ function Message:new()
     self._GuildID = nil
     self._Subject = nil
     self._EpochTime = nil
-    self._Targets = {}
     self._TargetCount = 0
     self._Data = nil
     self._Initialized = false
@@ -40,8 +39,7 @@ function Message:newChildConstructor()
     self._Type = nil
     self._GuildID = nil
     self._Subject = nil
-    self._EpochTime = nil
-    self._Targets = {}
+    self._EpochTime = nil    
     self._TargetCount = 0
     self._Data = nil
     self._Initialized = false
@@ -61,6 +59,7 @@ end
 
 function Message:Initialize()
     if(self:IsInitialized() == false) then
+        self._Targets = {}
         self:SetKey(math.GenerateUID())
         self:SetFrom(XFG.Player.Unit:GetKey())
         self:SetGuildID(XFG.Player.Guild:GetID())
@@ -86,7 +85,7 @@ function Message:Print()
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
-    for _, _Target in self:TargetIterator() do
+    for _, _Target in pairs (self:GetTargets()) do
         _Target:Print()
     end
 end
@@ -241,20 +240,17 @@ function Message:HasTargets()
 end
 
 function Message:GetTargets()
-    return self._Targets
+    if(self:HasTargets()) then return self._Targets end
+    return {}
 end
 
 function Message:GetTargetCount()
     return self._TargetCount
 end
 
-function Message:TargetIterator()
-    return next, self._Targets, nil
-end
-
 function Message:GetRemainingTargets()
     local _TargetsString = ''
-    for _, _Target in self:TargetIterator() do
+    for _, _Target in pairs (self:GetTargets()) do
         _TargetsString = _TargetsString .. '|' .. _Target:GetKey()
     end
     return _TargetsString
@@ -280,12 +276,16 @@ function Message:Copy(inMessage)
     self._GuildID = inMessage:GetGuildID()
     self._Subject = inMessage:GetSubject()
     self._EpochTime = inMessage:GetTimeStamp()
-    self._Targets = inMessage:GetTargets()
-    self._TargetCount = inMessage:GetTargetCount()
     self._Data = inMessage:GetData()
     self._Initialized = inMessage:IsInitialized()
     self._PacketNumber = inMessage:GetPacketNumber()
     self._TotalPackets = inMessage:GetTotalPackets()
+    for _, _Target in pairs (self:GetTargets()) do
+        self:RemoveTarget(_Target)
+    end
+    for _, _Target in pairs (inMessage:GetTargets()) do
+        self:AddTarget(_Target)
+    end
 end
 
 function Message:HasUnitData()
