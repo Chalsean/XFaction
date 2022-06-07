@@ -68,6 +68,8 @@ The addon should provide the following functionalities:
 
 > Parsing ENK notes incorrectly to identify alts
 
+> 4 way BNet communication broken due to Message constructor
+
 ### Planned enhancements
 
 > Add configuration dashboard.
