@@ -79,22 +79,27 @@ local function OnEnter(self)
 			local _ToRealm = _Link:GetToRealm()
 			local _ToFaction = _Link:GetToFaction()
 
+			local _FromName = format("|cffffffff%s|r", _Link:GetFromName())
+			if(_Link:IsMyLink()) then
+				_FromName = format("|cffffff00%s|r", _Link:GetFromName())
+			end
+
 			if(_FromRealm:GetName() == 'Area 52') then
-				tooltip:SetCell(line, 1, format("|cffffffff%s|r", _Link:GetFromUnitName()))
+				tooltip:SetCell(line, 1, _FromName)
 			elseif(_ToRealm:GetName() == 'Area 52') then
-				tooltip:SetCell(line, 1, format("|cffffffff%s|r", _Link:GetToUnitName()))
+				tooltip:SetCell(line, 1, format("|cffffffff%s|r", _Link:GetToName()))
 			end
 
 			if(_FromRealm:GetName() == 'Proudmoore' and _FromFaction:GetName() == 'Alliance') then
-				tooltip:SetCell(line, 2, format("|cffffffff%s|r", _Link:GetFromUnitName()))
+				tooltip:SetCell(line, 2, _FromName)
 			elseif(_ToRealm:GetName() == 'Proudmoore' and _ToFaction:GetName() == 'Alliance') then
-				tooltip:SetCell(line, 2, format("|cffffffff%s|r", _Link:GetToUnitName()))
+				tooltip:SetCell(line, 2, format("|cffffffff%s|r", _Link:GetToName()))
 			end
 
 			if(_FromRealm:GetName() == 'Proudmoore' and _FromFaction:GetName() == 'Horde') then
-				tooltip:SetCell(line, 3, format("|cffffffff%s|r", _Link:GetFromUnitName()))
+				tooltip:SetCell(line, 3, _FromName)
 			elseif(_ToRealm:GetName() == 'Proudmoore' and _ToFaction:GetName() == 'Horde') then
-				tooltip:SetCell(line, 3, format("|cffffffff%s|r", _Link:GetToUnitName()))
+				tooltip:SetCell(line, 3, format("|cffffffff%s|r", _Link:GetToName()))
 			end
 			
 			line = tooltip:AddLine()

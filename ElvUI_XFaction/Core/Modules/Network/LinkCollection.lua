@@ -24,7 +24,7 @@ function LinkCollection:Initialize()
 		for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
 			local _Target = _Friend:GetTarget()
 			local _NewLink = Link:new()
-			_NewLink:SetToUnitName(_Friend:GetUnitName())
+			_NewLink:SetToName(_Friend:GetName())
 			_NewLink:SetToRealm(_Target:GetRealm())
 			_NewLink:SetToFaction(_Target:GetFaction())
 			_NewLink:Initialize()
@@ -104,7 +104,7 @@ function LinkCollection:ProcessMessage(inMessage)
     for _, _Link in pairs (_Links) do
 		local _NewLink = Link:new()
 		_NewLink:SetObjectFromString(_Link)
-		self:RemoveNode(_NewLink:GetFromUnitName())
+		self:RemoveNode(_NewLink:GetFromName())
 		break
     end
 	-- Then add the new links
@@ -119,20 +119,20 @@ function LinkCollection:GetCount()
 	return self._LinkCount
 end
 
-function LinkCollection:IsNode(inUnitName)
-	assert(type(inUnitName) == 'string')
+function LinkCollection:IsNode(inName)
+	assert(type(inName) == 'string')
 	for _, _Link in self:Iterator() do
-		if(_Link:GetFromUnitName() == inUnitName or _Link:GetToUnitName() == inUnitName) then
+		if(_Link:GetFromName() == inName or _Link:GetToName() == inName) then
 			return true
 		end
 	end
 	return false
 end
 
-function LinkCollection:RemoveNode(inUnitName)
-	assert(type(inUnitName) == 'string')
+function LinkCollection:RemoveNode(inName)
+	assert(type(inName) == 'string')
 	for _, _Link in self:Iterator() do
-		if(_Link:GetFromUnitName() == inUnitName or _Link:GetToUnitName() == inUnitName) then
+		if(_Link:GetFromName() == inName or _Link:GetToName() == inName) then
 			self:RemoveLink(_Link)
 		end
 	end

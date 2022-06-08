@@ -111,7 +111,7 @@ function FriendCollection:RemoveFriend(inKey)
 	assert(type(inKey) == 'number')
 	if(self:Contains(inKey)) then
 		local _Friend = self:GetFriend(inKey)
-		XFG.Network.BNet.Links:RemoveNode(_Friend:GetUnitName())
+		XFG.Network.BNet.Links:RemoveNode(_Friend:GetName())
 		self._FriendsCount = self._FriendsCount - 1
 		self._Friends[inKey] = nil		
 	end
@@ -166,9 +166,9 @@ function FriendCollection:CheckFriend(inKey)
 		_NewFriend:SetID(inKey)
 		_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
 		_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
-		_NewFriend:SetName(_AccountInfo.accountName)
+		_NewFriend:SetAccountName(_AccountInfo.accountName)
 		_NewFriend:SetTag(_AccountInfo.battleTag)
-		_NewFriend:SetUnitName(_AccountInfo.gameAccountInfo.characterName)
+		_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
 		_NewFriend:SetTarget(_Target)
 		self:AddFriend(_NewFriend)
 		XFG:Info(LogCategory, "Friend logged into supported guild [%s:%d:%d:%d]", _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())

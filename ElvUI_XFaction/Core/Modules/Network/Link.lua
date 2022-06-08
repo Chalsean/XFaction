@@ -11,10 +11,10 @@ function Link:new()
     self.__name = ObjectName
 
     self._Key = nil
-    self._FromUnitName = nil
+    self._FromName = nil
     self._FromRealm = nil
     self._FromFaction = nil
-    self._ToUnitName = nil
+    self._ToName = nil
     self._ToRealm = nil
     self._ToFaction = nil
     self._Initialized = false
@@ -23,10 +23,10 @@ function Link:new()
 end
 
 -- Key is important here because it helps us avoid duplicate entries when both nodes broadcast the link
-local function GetLinkKey(inFromUnitName, inToUnitName)
-	assert(type(inFromUnitName) == 'string')
-    assert(type(inToUnitName) == 'string')
-    local _Key = (inFromUnitName < inToUnitName) and inFromUnitName .. ':' .. inToUnitName or inToUnitName .. ':' .. inFromUnitName
+local function GetLinkKey(inFromName, inToName)
+	assert(type(inFromName) == 'string')
+    assert(type(inToName) == 'string')
+    local _Key = (inFromName < inToName) and inFromName .. ':' .. inToName or inToName .. ':' .. inFromName
 	return _Key
 end
 
@@ -40,10 +40,10 @@ end
 
 function Link:Initialize()
     if(self:IsInitialized() == false) then
-        self:SetFromUnitName(XFG.Player.Unit:GetName())
+        self:SetFromName(XFG.Player.Unit:GetName())
         self:SetFromRealm(XFG.Player.Realm)
         self:SetFromFaction(XFG.Player.Faction)
-        self:SetKey(GetLinkKey(self:GetFromUnitName(), self:GetToUnitName()))
+        self:SetKey(GetLinkKey(self:GetFromName(), self:GetToName()))
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -54,8 +54,8 @@ function Link:Print()
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(LogCategory, "  _FromUnitName (" .. type(self._FromUnitName) .. "): ".. tostring(self._FromUnitName))
-    XFG:Debug(LogCategory, "  _ToUnitName (" .. type(self._ToUnitName) .. "): ".. tostring(self._ToUnitName))
+    XFG:Debug(LogCategory, "  _FromName (" .. type(self._FromName) .. "): ".. tostring(self._FromName))
+    XFG:Debug(LogCategory, "  _ToName (" .. type(self._ToName) .. "): ".. tostring(self._ToName))
     XFG:Debug(LogCategory, "  _FromRealm (" .. type(self._FromRealm) .. ")")
     if(self:HasFromRealm()) then
         self._FromRealm:Print()
@@ -85,21 +85,21 @@ function Link:SetKey(inKey)
 end
 
 function Link:IsMyLink()
-    return self:HasFromUnitName() and self:GetFromUnitName() == XFG.Player.Unit:GetUnitName()
+    return self:HasFromName() and self:GetFromName() == XFG.Player.Unit:GetName()
 end
 
-function Link:HasFromUnitName()
-    return self._FromUnitName ~= nil
+function Link:HasFromName()
+    return self._FromName ~= nil
 end
 
-function Link:GetFromUnitName()
-    return self._FromUnitName
+function Link:GetFromName()
+    return self._FromName
 end
 
-function Link:SetFromUnitName(inUnitName)
-    assert(type(inUnitName) == 'string')
-    self._FromUnitName = inUnitName
-    return self:GetFromUnitName()
+function Link:SetFromName(inName)
+    assert(type(inName) == 'string')
+    self._FromName = inName
+    return self:GetFromName()
 end
 
 function Link:HasFromRealm()
@@ -131,18 +131,18 @@ function Link:SetFromFaction(inFaction)
     return self:GetFromFaction()
 end
 
-function Link:HasToUnitName()
-    return self._ToUnitName ~= nil
+function Link:HasToName()
+    return self._ToName ~= nil
 end
 
-function Link:GetToUnitName()
-    return self._ToUnitName
+function Link:GetToName()
+    return self._ToName
 end
 
-function Link:SetToUnitName(inUnitName)
-    assert(type(inUnitName) == 'string')
-    self._ToUnitName = inUnitName
-    return self:GetToUnitName()
+function Link:SetToName(inName)
+    assert(type(inName) == 'string')
+    self._ToName = inName
+    return self:GetToName()
 end
 
 function Link:HasToRealm()
@@ -179,7 +179,7 @@ function Link:GetString()
     local _ToRealm = self:GetToRealm()
     local _FromFaction = self:GetFromFaction()
     local _ToFaction = self:GetToFaction()
-    return self:GetFromUnitName() .. ':' .. _FromRealm:GetID() .. ':' .. _FromFaction:GetID() .. ';' .. self:GetToUnitName() .. ':' .. _ToRealm:GetID() .. ':' .. _ToFaction:GetID()
+    return self:GetFromName() .. ':' .. _FromRealm:GetID() .. ':' .. _FromFaction:GetID() .. ';' .. self:GetToName() .. ':' .. _ToRealm:GetID() .. ':' .. _ToFaction:GetID()
 end
 
 function Link:SetObjectFromString(inLinkString)
@@ -187,16 +187,16 @@ function Link:SetObjectFromString(inLinkString)
     local _Nodes = string.Split(inLinkString, ';')
 
     local _FromNodeIDs = string.Split(_Nodes[1], ':')    
-    self:SetFromUnitName(_FromNodeIDs[1])
+    self:SetFromName(_FromNodeIDs[1])
     self:SetFromRealm(XFG.Realms:GetRealmByID(_FromNodeIDs[2]))
     self:SetFromFaction(XFG.Factions:GetFaction(_FromNodeIDs[3]))
 
     local _ToNodeIDs = string.Split(_Nodes[2], ':')
-    self:SetToUnitName(_ToNodeIDs[1])
+    self:SetToName(_ToNodeIDs[1])
     self:SetToRealm(XFG.Realms:GetRealmByID(_ToNodeIDs[2]))
     self:SetToFaction(XFG.Factions:GetFaction(_ToNodeIDs[3]))
 
-    local _Key = GetLinkKey(self:GetFromUnitName(), self:GetToUnitName())
+    local _Key = GetLinkKey(self:GetFromName(), self:GetToName())
     self:SetKey(_Key)
     self:IsInitialized(true)
     return self:IsInitialized()

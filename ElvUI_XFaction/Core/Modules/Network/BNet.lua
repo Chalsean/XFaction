@@ -143,7 +143,7 @@ function BNet:Send(inMessage)
             for _, _Packet in pairs (_Packets) do
                 _Packet:SetTotalPackets(_PacketCount)
                 local _EncodedPacket = XFG:EncodeMessage(_Packet)
-                XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetUnitName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
+                XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 BNSendGameData(_Friend:GetGameID(), XFG.Network.Message.Tag.BNET, _EncodedPacket)
             end
