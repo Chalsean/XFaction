@@ -34,7 +34,7 @@ function GuildMessage:Print()
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
-    for _, _Target in self:TargetIterator() do
+    for _, _Target in pairs (self:GetTargets()) do
         _Target:Print()
     end
 end
@@ -92,8 +92,6 @@ function GuildMessage:Copy(inMessage)
     self._GuildID = inMessage:GetGuildID()
     self._Subject = inMessage:GetSubject()
     self._EpochTime = inMessage:GetTimeStamp()
-    self._Targets = inMessage:GetTargets()
-    self._TargetCount = inMessage:GetTargetCount()
     self._Data = inMessage:GetData()
     self._Initialized = inMessage:IsInitialized()
     self._PacketNumber = inMessage:GetPacketNumber()
@@ -102,4 +100,10 @@ function GuildMessage:Copy(inMessage)
     self._LineID = inMessage:GetLineID()
     self._UnitName = inMessage:GetUnitName()
     self._MainName = inMessage:GetMainName()
+    for _, _Target in pairs (self:GetTargets()) do
+        self:RemoveTarget(_Target)
+    end
+    for _, _Target in pairs (inMessage:GetTargets()) do
+        self:AddTarget(_Target)
+    end
 end

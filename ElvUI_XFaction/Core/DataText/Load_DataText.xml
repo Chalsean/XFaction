@@ -3,5 +3,5 @@
     <Script file='DTSoulbind.lua'/>
     <Script file='DTWoWToken.lua'/>
     <Script file='DTGuild.lua'/>
-    <Script file='DTBridge.lua'/>
+    <Script file='DTLinks.lua'/>
 </Ui>

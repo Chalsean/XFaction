@@ -130,7 +130,15 @@ function Friend:IsRunningAddon(inBoolean)
     if(inBoolean ~= nil) then
         self._IsRunningAddon = inBoolean
         if(self._IsRunningAddon) then
-            DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
+            -- New link has been established
+            local _Target = self:GetTarget()
+		    local _NewLink = Link:new()
+		    _NewLink:SetToUnitName(self:GetUnitName())
+		    _NewLink:SetToRealm(_Target:GetRealm())
+		    _NewLink:SetToFaction(_Target:GetFaction())
+		    _NewLink:Initialize()
+		    XFG.Network.BNet.Links:AddLink(_NewLink)
+            DT:ForceUpdate_DataText(XFG.DataText.Links.Name)
         end
     end
     return self._IsRunningAddon

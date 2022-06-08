@@ -179,16 +179,18 @@ function OnEnter(self)
 	line = tooltip:AddLine()
 
 	local _MOTD = XFG.Confederate:GetMOTD()
-	local _Words = string.Split(_MOTD, ' ')
 	local _LineWords = ''
 	local _LineLength = 150
-	for _, _Word in pairs (_Words) do
-		if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
-			_LineWords = _LineWords .. ' ' .. _Word
-		else
-			tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), ttHeaderFont, "LEFT", 13)
-			line = tooltip:AddLine()
-			_LineWords = ''				
+	if(_MOTD ~= nil) then
+		local _Words = string.Split(_MOTD, ' ')		
+		for _, _Word in pairs (_Words) do
+			if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
+				_LineWords = _LineWords .. ' ' .. _Word
+			else
+				tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), ttHeaderFont, "LEFT", 13)
+				line = tooltip:AddLine()
+				_LineWords = ''				
+			end
 		end
 	end
 
