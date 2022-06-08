@@ -134,12 +134,10 @@ function Inbox:Process(inMessage, inMessageTag)
         return
     end
 
-    -- Process MOTD message
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.MOTD) then
-        if(XFG.Player.Guild:IsSourceMOTD() == false) then
-            XFG.Confederate:SetMOTD(inMessage:GetData())
-            DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
-        end
+    -- Process link message
+    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LINK) then
+        XFG.Network.BNet.Links:ProcessMessage(inMessage)
+        DT:ForceUpdate_DataText(XFG.DataText.Links.Name)
         return
     end
 

@@ -50,7 +50,7 @@ function TimerEvent:Initialize()
         XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, _GuildRosterDelta) -- config
         XFG:Info(LogCategory, "Scheduled forcing local guild roster updates for %d seconds", _GuildRosterDelta)
         XFG:ScheduleRepeatingTimer(self.CallbackPingFriends, XFG.Network.BNet.PingTimer) -- config
-        XFG:Info(LogCategory, "Scheduled memory garbage collection to occur every %d seconds", XFG.Network.BNet.PingTimer)
+        XFG:Info(LogCategory, "Scheduled to ping friends every %d seconds", XFG.Network.BNet.PingTimer)
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -77,9 +77,9 @@ function TimerEvent:CallbackDelayedStartTimer()
     end
 
     -- This is here as to get ping responses first and know who is running addon
-    if(XFG.DB.UIReload == false) then
+    --if(XFG.DB.UIReload == false) then
         XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
-    end
+    --end
     XFG.DB.UIReload = false
 end
 
@@ -124,14 +124,10 @@ function TimerEvent:CallbackLogin()
         XFG.Confederate:SetKey('EK')
         XFG.Confederate:SetMainRealmName('Proudmoore')
         XFG.Confederate:SetMainGuildName('Eternal Kingdom')
-        local _MOTD = GetGuildRosterMOTD()
-        XFG:DataDumper(LogCategory, _MOTD)
-        XFG.Confederate:SetMOTD(_MOTD)
 
-        -- If this is a reload, restore backup
+        -- If this is a reload, restore non-local guild members
         if(XFG.DB.UIReload) then
             XFG.Confederate:RestoreBackup()
-            XFG.Network.BNet.Friends:RestoreBackup()
         end
   
         XFG:Info(LogCategory, "Initializing local guild roster cache")
@@ -155,6 +151,13 @@ function TimerEvent:CallbackLogin()
         XFG.Network.Outbox = Outbox:new()
 	    XFG.Network.Inbox = Inbox:new(); XFG.Network.Inbox:Initialize()
         XFG.Network.BNet.Comm = BNet:new(); BNet:Initialize()
+        XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
+        XFG.Network.BNet.Links = LinkCollection:new(); XFG.Network.BNet.Links:Initialize()
+
+        -- If this is a reload, restore friends addon flag
+        if(XFG.DB.UIReload) then
+            XFG.Network.BNet.Friends:RestoreBackup()
+        end
 
         XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
         XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
@@ -176,7 +179,7 @@ function TimerEvent:CallbackLogin()
         end        
         DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
         DT:ForceUpdate_DataText(XFG.DataText.Soulbind.Name)
-        DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)        
+        DT:ForceUpdate_DataText(XFG.DataText.Links.Name)        
     end
 end
 

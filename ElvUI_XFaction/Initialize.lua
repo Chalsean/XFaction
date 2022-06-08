@@ -32,8 +32,8 @@ XFG.DataText.Guild = {}
 XFG.DataText.Guild.Name = 'Guild (X)'
 XFG.DataText.Soulbind = {}
 XFG.DataText.Soulbind.Name = 'Soulbind (X)'
-XFG.DataText.Bridge = {}
-XFG.DataText.Bridge.Name = 'Bridge (X)'
+XFG.DataText.Links = {}
+XFG.DataText.Links.Name = 'Links (X)'
 
 XFG.Player = {}
 XFG.Player.LastBroadcast = 0
@@ -41,6 +41,7 @@ XFG.Player.LastBroadcast = 0
 XFG.Network = {}
 XFG.Network.BNet = {}
 XFG.Network.BNet.PingTimer = 60 * 5
+XFG.Network.BNet.LinksTimer = 60 * 10
 XFG.Network.Message = {}
 XFG.Network.ChannelName = 'EKXFactionChat'
 XFG.Network.Message.Tag = {
@@ -54,7 +55,7 @@ XFG.Network.Message.Subject = {
 	LOGIN = '4',
 	PING = '5',
 	ACHIEVEMENT = '6',
-	MOTD = '7'
+	LINK = '7'
 }
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel
@@ -110,10 +111,6 @@ XFG.Cache.Realms['Area 52'] = {
 	Alliance = {},
 	Horde = {'Eternal Kingdom'}
 }
-XFG.Cache.MOTD = {}
-XFG.Cache.MOTD.GuildName = 'Eternal Kingdom'
-XFG.Cache.MOTD.RealmName = 'Proudmoore'
-
 function XFG:Init()
 	
 	XFG.Player.GUID = UnitGUID('player')
@@ -145,9 +142,6 @@ function XFG:Init()
 				if(XFG.Cache.Guilds[_GuildName] ~= nil) then
 					_NewGuild:SetShortName(XFG.Cache.Guilds[_GuildName])
 				end
-				if(XFG.Cache.MOTD.RealmName == _RealmName and XFG.Cache.MOTD.GuildName == _GuildName) then
-					_NewGuild:IsSourceMOTD(true)
-				end
 				XFG.Guilds:AddGuild(_NewGuild)
 				i = i + 1
 			end
@@ -156,8 +150,7 @@ function XFG:Init()
 
 	XFG.Player.Realm = XFG.Realms:GetRealm(GetRealmName())
 	XFG.Network.Mailbox = Mailbox:new(); XFG.Network.Mailbox:Initialize()	
-	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()
-	XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
+	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()	
 	
 	for _, _Target in XFG.Network.BNet.Targets:Iterator() do
 		local _Realm = _Target:GetRealm()

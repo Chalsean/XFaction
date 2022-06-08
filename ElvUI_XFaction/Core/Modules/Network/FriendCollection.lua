@@ -110,8 +110,10 @@ end
 function FriendCollection:RemoveFriend(inKey)
 	assert(type(inKey) == 'number')
 	if(self:Contains(inKey)) then
+		local _Friend = self:GetFriend(inKey)
+		XFG.Network.BNet.Links:RemoveNode(_Friend:GetName())
 		self._FriendsCount = self._FriendsCount - 1
-		self._Friends[inKey] = nil
+		self._Friends[inKey] = nil		
 	end
 end
 
@@ -123,7 +125,7 @@ function FriendCollection:HasFriends()
     return self._FriendsCount > 0
 end
 
-local function CanBeBridge(inAccountInfo)
+local function IsLink(inAccountInfo)
 	if(inAccountInfo.isFriend == true and 
 	   inAccountInfo.gameAccountInfo.isOnline == true and 
 	   inAccountInfo.gameAccountInfo.clientProgram == "WoW") then
@@ -142,63 +144,54 @@ function FriendCollection:CheckFriend(inKey)
 	local _AccountInfo = C_BattleNet.GetFriendAccountInfo(inKey)
 	if(_AccountInfo == nil) then
 		XFG:Warn(LogCategory, "Received nothing for [%d]", inKey)
+		return
 	end
 
-	-- Did they come online?
-    if(self:Contains(_AccountInfo.bnetAccountID) == false) then
-		if(CanBeBridge(_AccountInfo)) then
-			local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
-			local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
-			local _Target = XFG.Network.BNet.Targets:GetTarget(_Realm, _Faction)
-			local _NewFriend = Friend:new()
-			_NewFriend:SetKey(_AccountInfo.bnetAccountID)
-			_NewFriend:SetID(inKey)
-			_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
-			_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
-			_NewFriend:SetName(_AccountInfo.accountName)
-			_NewFriend:SetTag(_AccountInfo.battleTag)
-			_NewFriend:SetUnitName(_AccountInfo.gameAccountInfo.characterName)
-			_NewFriend:SetTarget(_Target)
-			self:AddFriend(_NewFriend)
-			XFG:Info(LogCategory, "Friend logged into supported guild [%s:%d:%d:%d]", _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())
-			-- Ping them to see if they're running the addon
-			if(XFG.Initialized) then 
-				XFG.Network.BNet.Comm:PingFriend(_NewFriend) 
-			end
-		end	
-	else
-		local _Friend = XFG.Network.BNet.Friends:GetFriend(_AccountInfo.bnetAccountID)
-
-		-- Did they go offline?
-		if(CanBeBridge(_AccountInfo) == false) then
+	-- Did they go offline?
+    if(self:Contains(_AccountInfo.bnetAccountID)) then
+		if(IsLink(_AccountInfo) == false) then
+			local _Friend = XFG.Network.BNet.Friends:GetFriend(_AccountInfo.bnetAccountID)
 			self:RemoveFriend(_Friend:GetKey())
 			XFG:Info(LogCategory, "Friend went offline or to unsupported guild [%s:%d:%d:%d]", _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
-		
-		-- Update other data
-		else			
-			local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
-			local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
-			local _Target = XFG.Network.BNet.Targets:GetTarget(_Realm, _Faction)
-			if(_Target:Equals(_Friend:GetTarget()) == false) then
-				_Friend:SetTarget(_Target)
-			end
-			if(_Friend:GetName() ~= _AccountInfo.accountName) then
-				_Friend:SetName(_AccountInfo.accountName)
-			end
-			if(_Friend:GetTag() ~= _AccountInfo.battleTag) then
-				_Friend:SetTag(_AccountInfo.battleTag)
-			end
-			if(_Friend:GetUnitName() ~= _AccountInfo.gameAccountInfo.characterName) then
-				_Friend:SetUnitName(_AccountInfo.gameAccountInfo.characterName)
-			end
+			return true
 		end
+
+	-- Did they come online on a supported realm/faction?
+	elseif(IsLink(_AccountInfo)) then
+		local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
+		local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
+		local _Target = XFG.Network.BNet.Targets:GetTarget(_Realm, _Faction)
+		local _NewFriend = Friend:new()
+		_NewFriend:SetKey(_AccountInfo.bnetAccountID)
+		_NewFriend:SetID(inKey)
+		_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
+		_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
+		_NewFriend:SetAccountName(_AccountInfo.accountName)
+		_NewFriend:SetTag(_AccountInfo.battleTag)
+		_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
+		_NewFriend:SetTarget(_Target)
+		self:AddFriend(_NewFriend)
+		XFG:Info(LogCategory, "Friend logged into supported guild [%s:%d:%d:%d]", _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())
+		-- Ping them to see if they're running the addon
+		if(XFG.Initialized) then 
+			XFG.Network.BNet.Comm:PingFriend(_NewFriend) 
+		end
+		return true
 	end
-	DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
+	return false
 end
 
 function FriendCollection:CheckFriends()
+	local _LinksChanged = false
 	for i = 1, BNGetNumFriends() do
-		self:CheckFriend(i)
+		local _Changed = self:CheckFriend(i)
+		if(_Changed) then
+			_LinksChanged = true
+		end
+	end
+	if(_LinksChanged) then
+		XFG.Network.BNet.Links:BroadcastLinks()
+		DT:ForceUpdate_DataText(XFG.DataText.Links.Name)
 	end
 end
 

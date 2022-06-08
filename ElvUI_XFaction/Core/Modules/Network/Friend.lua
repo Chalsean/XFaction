@@ -15,10 +15,10 @@ function Friend:new()
     self._ID = nil         -- This the "friend index" you use to look things up
     self._AccountID = nil  -- This is the only constant ID
     self._GameID = nil     -- This is the game ID you use to send whispers
-    self._Name = nil
+    self._AccountName = nil
     self._Tag = nil
     self._Target = nil
-    self._UnitName = nil
+    self._Name = nil
     self._IsRunningAddon = false
     self._DateTime = 0  -- Last time we heard from them via addon
 
@@ -32,9 +32,9 @@ function Friend:Print()
     XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
     XFG:Debug(LogCategory, "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
     XFG:Debug(LogCategory, "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
-    XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
+    XFG:Debug(LogCategory, "  _AccountName (" ..type(self._AccountName) .. "): ".. tostring(self._AccountName))
     XFG:Debug(LogCategory, "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
-    XFG:Debug(LogCategory, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
+    XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
     XFG:Debug(LogCategory, "  _IsRunningAddon (" ..type(self._IsRunningAddon) .. "): ".. tostring(self._IsRunningAddon))
     if(self:HasTarget()) then
         self._Target:Print()
@@ -81,14 +81,14 @@ function Friend:SetGameID(inGameID)
     return self:GetGameID()
 end
 
-function Friend:GetName()
-    return self._Name
+function Friend:GetAccountName()
+    return self._AccountName
 end
 
-function Friend:SetName(inName)
-    assert(type(inName) == 'string')
-    self._Name = inName
-    return self:GetName()
+function Friend:SetAccountName(inAccountName)
+    assert(type(inAccountName) == 'string')
+    self._AccountName = inAccountName
+    return self:GetAccountName()
 end
 
 function Friend:GetTag()
@@ -115,14 +115,14 @@ function Friend:SetTarget(inTarget)
     return self:GetTarget()
 end
 
-function Friend:GetUnitName()
-    return self._UnitName
+function Friend:GetName()
+    return self._Name
 end
 
-function Friend:SetUnitName(inUnitName)
-    assert(type(inUnitName) == 'string')
-    self._UnitName = inUnitName
-    return self:GetUnitName()
+function Friend:SetName(inName)
+    assert(type(inName) == 'string')
+    self._Name = inName
+    return self:GetName()
 end
 
 function Friend:IsRunningAddon(inBoolean)
@@ -130,7 +130,15 @@ function Friend:IsRunningAddon(inBoolean)
     if(inBoolean ~= nil) then
         self._IsRunningAddon = inBoolean
         if(self._IsRunningAddon) then
-            DT:ForceUpdate_DataText(XFG.DataText.Bridge.Name)
+            -- New link has been established
+            local _Target = self:GetTarget()
+		    local _NewLink = Link:new()
+		    _NewLink:SetToName(self:GetName())
+		    _NewLink:SetToRealm(_Target:GetRealm())
+		    _NewLink:SetToFaction(_Target:GetFaction())
+		    _NewLink:Initialize()
+		    XFG.Network.BNet.Links:AddLink(_NewLink)
+            DT:ForceUpdate_DataText(XFG.DataText.Links.Name)
         end
     end
     return self._IsRunningAddon

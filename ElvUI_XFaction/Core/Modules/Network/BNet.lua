@@ -75,8 +75,8 @@ function BNet:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(self:CanBNet() == false) then return end
     -- Before we do work, lets make sure there are targets and we can message those targets
-    local _Bridges = {}
-    for _, _Target in inMessage:TargetIterator() do
+    local _Links = {}
+    for _, _Target in pairs(inMessage:GetTargets()) do
         local _Friends = {}
         for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
             if(_Friend:IsRunningAddon() and _Target:Equals(_Friend:GetTarget())) then
@@ -86,12 +86,12 @@ function BNet:Send(inMessage)
         
         if(table.getn(_Friends) > 0) then
             local _Random = math.random(1, table.getn(_Friends))
-            local _Bridge = _Friends[_Random]
-            table.insert(_Bridges, _Bridge)
+            local _Link = _Friends[_Random]
+            table.insert(_Links, _Link)
         end
     end
 
-    if(table.getn(_Bridges) > 0) then
+    if(table.getn(_Links) > 0) then
         local _Packets = {}
         local _PacketCount = 0            
 
@@ -115,7 +115,7 @@ function BNet:Send(inMessage)
 
                 _PacketCount = _PacketCount + 1
 
-                local _NewMessage = Message:new()
+                local _NewMessage = nil
                 if(inMessage.__name == 'GuildMessage') then
                     _NewMessage = GuildMessage:new()
                 elseif(inMessage.__name == 'LogoutMessage') then
@@ -125,6 +125,7 @@ function BNet:Send(inMessage)
                 else
                     _NewMessage = Message:new()
                 end	
+                _NewMessage:Initialize()
                 _NewMessage:Copy(inMessage)
                 _NewMessage:SetPacketNumber(_PacketCount)
 
@@ -138,11 +139,11 @@ function BNet:Send(inMessage)
         end
 
         -- Make sure all packets go to each target
-        for _, _Friend in pairs (_Bridges) do
+        for _, _Friend in pairs (_Links) do
             for _, _Packet in pairs (_Packets) do
                 _Packet:SetTotalPackets(_PacketCount)
                 local _EncodedPacket = XFG:EncodeMessage(_Packet)
-                XFG:Debug(LogCategory, "Whispering BNet bridge [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetUnitName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
+                XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 BNSendGameData(_Friend:GetGameID(), XFG.Network.Message.Tag.BNET, _EncodedPacket)
             end
@@ -249,7 +250,6 @@ function BNet:PingFriends()
     for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
         -- If we haven't heard from friend in so long, ping them
         if(_Friend:GetDateTime() + XFG.Network.BNet.PingTimer < GetServerTime()) then
-            _Friend:IsRunningAddon(false)
             self:PingFriend(_Friend)
         end
     end

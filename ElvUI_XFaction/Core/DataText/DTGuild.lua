@@ -172,18 +172,38 @@ function OnEnter(self)
 		tooltip:SetScript("OnShow", function(ttskinself) ttskinself:SetTemplate('Transparent') end)
 	end
 
-	XFG.Confederate:ShallowPrint()
-
 	local line = tooltip:AddLine()
-	local _GuildName = XFG.Confederate:GetName()
+	local _ConfederateName = XFG.Confederate:GetName()
+	local _GuildName = XFG.Player.Guild:GetName()
+	local _Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
+	_GuildName = _GuildName .. ' <' .. _Guild:GetShortName() .. '>'
 	tooltip:SetCell(line, 1, format("Guild: |cffffffff%s|r", _GuildName), ttHeaderFont, "LEFT", 4)
-	line = tooltip:AddLine()
-	local _MOTD = XFG.Confederate:GetMOTD()
-	tooltip:SetCell(line, 1, format("MOTD: |cffffffff%s|r", _MOTD), ttHeaderFont, "LEFT", 13)
-
+	tooltip:SetCell(line, 6, format("Confederate: |cffffffff%s|r", _ConfederateName), ttHeaderFont, "LEFT", 4)	
 	line = tooltip:AddLine()
 	line = tooltip:AddLine()
 
+	local _MOTD = GetGuildRosterMOTD()
+	local _LineWords = ''
+	local _LineLength = 150
+	if(_MOTD ~= nil) then
+		local _Words = string.Split(_MOTD, ' ')		
+		for _, _Word in pairs (_Words) do
+			if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
+				_LineWords = _LineWords .. ' ' .. _Word
+			else
+				tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), ttHeaderFont, "LEFT", 13)
+				line = tooltip:AddLine()
+				_LineWords = ''				
+			end
+		end
+	end
+
+	if(strlen(_LineWords) > 0) then
+		tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), ttHeaderFont, "LEFT", 13)
+		line = tooltip:AddLine()
+	end
+
+	line = tooltip:AddLine()
 	line = tooltip:AddHeader()
 	
 	line = tooltip:SetCell(line, 2, XFG.DataText.Guild.ColumnNames.LEVEL)
