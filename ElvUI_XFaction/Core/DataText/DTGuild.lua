@@ -173,12 +173,16 @@ function OnEnter(self)
 	end
 
 	local line = tooltip:AddLine()
-	local _GuildName = XFG.Confederate:GetName()
+	local _ConfederateName = XFG.Confederate:GetName()
+	local _GuildName = XFG.Player.Guild:GetName()
+	local _Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
+	_GuildName = _GuildName .. ' <' .. _Guild:GetShortName() .. '>'
 	tooltip:SetCell(line, 1, format("Guild: |cffffffff%s|r", _GuildName), ttHeaderFont, "LEFT", 4)
+	tooltip:SetCell(line, 6, format("Confederate: |cffffffff%s|r", _ConfederateName), ttHeaderFont, "LEFT", 4)	
 	line = tooltip:AddLine()
 	line = tooltip:AddLine()
 
-	local _MOTD = XFG.Confederate:GetMOTD()
+	local _MOTD = GetGuildRosterMOTD()
 	local _LineWords = ''
 	local _LineLength = 150
 	if(_MOTD ~= nil) then

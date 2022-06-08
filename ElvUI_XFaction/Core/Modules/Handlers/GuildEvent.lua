@@ -32,8 +32,6 @@ end
 
 function GuildEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:RegisterEvent('GUILD_MOTD', self.CallbackMOTD)
-        XFG:Info(LogCategory, "Registered for GUILD_MOTD events")
         XFG:RegisterEvent('GUILD_ROSTER_UPDATE', self.CallbackRosterUpdate)
         XFG:Info(LogCategory, "Registered for GUILD_ROSTER_UPDATE events")
 		self:IsInitialized(true)
@@ -53,18 +51,6 @@ function GuildEvent:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-end
-
-function GuildEvent:CallbackMOTD(inMOTD)
-    if(XFG.Player.Guild:IsSourceMOTD()) then
-        XFG.Confederate:SetMOTD(inMOTD)
-        local _NewMessage = Message:new()
-        _NewMessage:Initialize()
-        _NewMessage:SetSubject(XFG.Network.Message.Subject.MOTD)
-        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
-        _NewMessage:SetData(XFG.Confederate:GetMOTD())
-        XFG.Network.Outbox:Send(_NewMessage)
-    end
 end
 
 -- The event doesn't tell you what has changed, only that something has changed

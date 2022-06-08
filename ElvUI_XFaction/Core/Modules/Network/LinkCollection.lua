@@ -28,7 +28,6 @@ function LinkCollection:Initialize()
 			_NewLink:SetToRealm(_Target:GetRealm())
 			_NewLink:SetToFaction(_Target:GetFaction())
 			_NewLink:Initialize()
-			_NewLink:Print()
 			self:AddLink(_NewLink)
 		end
 		self:IsInitialized(true)
@@ -116,7 +115,7 @@ function LinkCollection:ProcessMessage(inMessage)
     end
 end
 
-function LinkCollection:GetLinkCount()
+function LinkCollection:GetCount()
 	return self._LinkCount
 end
 

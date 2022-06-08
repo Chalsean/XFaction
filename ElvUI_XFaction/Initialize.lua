@@ -55,8 +55,7 @@ XFG.Network.Message.Subject = {
 	LOGIN = '4',
 	PING = '5',
 	ACHIEVEMENT = '6',
-	MOTD = '7',
-	LINK = '8'
+	LINK = '7'
 }
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel
@@ -112,10 +111,6 @@ XFG.Cache.Realms['Area 52'] = {
 	Alliance = {},
 	Horde = {'Eternal Kingdom'}
 }
-XFG.Cache.MOTD = {}
-XFG.Cache.MOTD.GuildName = 'Eternal Kingdom'
-XFG.Cache.MOTD.RealmName = 'Proudmoore'
-
 function XFG:Init()
 	
 	XFG.Player.GUID = UnitGUID('player')
@@ -146,9 +141,6 @@ function XFG:Init()
 				_NewGuild:SetRealm(_NewRealm)
 				if(XFG.Cache.Guilds[_GuildName] ~= nil) then
 					_NewGuild:SetShortName(XFG.Cache.Guilds[_GuildName])
-				end
-				if(XFG.Cache.MOTD.RealmName == _RealmName and XFG.Cache.MOTD.GuildName == _GuildName) then
-					_NewGuild:IsSourceMOTD(true)
 				end
 				XFG.Guilds:AddGuild(_NewGuild)
 				i = i + 1

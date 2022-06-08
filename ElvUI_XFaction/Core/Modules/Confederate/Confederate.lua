@@ -27,7 +27,6 @@ function Confederate:new(inObject)
         self._Name = nil
         self._MainRealmName = nil
         self._MainGuildName = nil
-        self._MOTD = nil
         self._Units = {}
         self._NumberOfUnits = 0
     end
@@ -42,7 +41,6 @@ function Confederate:Print(inPrintOffline)
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
     XFG:Debug(LogCategory, "  _MainRealmName (" .. type(self._MainRealmName) .. "): ".. tostring(self._MainRealmName))
     XFG:Debug(LogCategory, "  _MainGuildName (" .. type(self._MainGuildName) .. "): ".. tostring(self._MainGuildName))
-    XFG:Debug(LogCategory, "  _MOTD (" .. type(self._MOTD) .. "): ".. tostring(self._MOTD))
     XFG:Debug(LogCategory, "  _NumberOfUnits (" .. type(self._NumberOfUnits) .. "): ".. tostring(self._NumberOfUnits))
     XFG:Debug(LogCategory, "  _Units (" .. type(self._Units) .. "): ")
     for _Key, _Unit in pairs (self._Units) do
@@ -59,7 +57,6 @@ function Confederate:ShallowPrint()
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
     XFG:Debug(LogCategory, "  _MainRealmName (" .. type(self._MainRealmName) .. "): ".. tostring(self._MainRealmName))
     XFG:Debug(LogCategory, "  _MainGuildName (" .. type(self._MainGuildName) .. "): ".. tostring(self._MainGuildName))
-    XFG:Debug(LogCategory, "  _MOTD (" .. type(self._MOTD) .. "): ".. tostring(self._MOTD))
     XFG:Debug(LogCategory, "  _NumberOfUnits (" .. type(self._NumberOfUnits) .. "): ".. tostring(self._NumberOfUnits))
     XFG:Debug(LogCategory, "  _Units (" .. type(self._Units) .. ")")
 end
@@ -102,16 +99,6 @@ function Confederate:SetMainGuildName(inMainGuildName)
     assert(type(inMainGuildName) == 'string')
     self._MainGuildName = inMainGuildName
     return self:GetMainGuildName()
-end
-
-function Confederate:GetMOTD()
-    return self._MOTD
-end
-
-function Confederate:SetMOTD(inMOTD)
-    assert(type(inMOTD) == 'string')
-    self._MOTD = inMOTD
-    return self:GetMOTD()
 end
 
 function Confederate:Contains(inKey)

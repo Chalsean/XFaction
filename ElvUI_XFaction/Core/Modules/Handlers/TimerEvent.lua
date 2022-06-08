@@ -153,7 +153,6 @@ function TimerEvent:CallbackLogin()
         XFG.Network.BNet.Comm = BNet:new(); BNet:Initialize()
         XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
         XFG.Network.BNet.Links = LinkCollection:new(); XFG.Network.BNet.Links:Initialize()
-	    XFG.Network.BNet.Links:Print()
 
         -- If this is a reload, restore friends addon flag
         if(XFG.DB.UIReload) then

@@ -30,7 +30,7 @@ end
 
 local function OnEvent(self, event, ...)
 	if(XFG.Initialized and event == 'ELVUI_FORCE_UPDATE') then
-		self.text:SetFormattedText(XFG.Network.BNet.Links:GetLinkCount())
+		self.text:SetFormattedText(XFG.Network.BNet.Links:GetCount())
 	end
 end
 
@@ -41,7 +41,7 @@ local function OnEnter(self)
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
 		tooltip:Clear()
 	else
-		tooltip = XFG.Lib.QT:Acquire(ObjectName, 2, "LEFT", "LEFT")
+		tooltip = XFG.Lib.QT:Acquire(ObjectName, 3, "CENTER", "CENTER", "CENTER")
 
 		ttHeaderFont:SetFont(GameTooltipHeaderText:GetFont())
 		ttRegFont:SetFont(GameTooltipText:GetFont())
@@ -56,29 +56,47 @@ local function OnEnter(self)
 
 	local line = tooltip:AddLine()
 	local _GuildName = XFG.Confederate:GetName()
-	tooltip:SetCell(line, 1, format("Guild: |cffffffff%s|r", _GuildName), ttHeaderFont, "LEFT", 2)
+	local _LinksCount = XFG.Network.BNet.Links:GetCount()
+	tooltip:SetCell(line, 1, format("Confederate: |cffffffff%s|r", _GuildName), ttHeaderFont, "LEFT", 2)
+	line = tooltip:AddLine()
+	tooltip:SetCell(line, 1, format("Active BNet Links: |cffffffff%d|r", _LinksCount), ttHeaderFont, "LEFT", 2)
 
 	line = tooltip:AddLine()
 	line = tooltip:AddLine()
 	line = tooltip:AddHeader()
 
-	line = tooltip:SetCell(line, 1, format('%sProudmoore', format(IconTokenString, 2565243)))
-	line = tooltip:SetCell(line, 2, format('%sProudmoore', format(IconTokenString, 463451)))
+	line = tooltip:SetCell(line, 1, format('%sArea 52', format(IconTokenString, 463451)))
+	line = tooltip:SetCell(line, 2, format('%sProudmoore', format(IconTokenString, 2565243)))
+	line = tooltip:SetCell(line, 3, format('%sProudmoore', format(IconTokenString, 463451)))
 	line = tooltip:AddLine()
 	tooltip:AddSeparator()
 	line = tooltip:AddLine()
 
 	if(XFG.Initialized) then
 		for _, _Link in XFG.Network.BNet.Links:Iterator() do
+			local _FromRealm = _Link:GetFromRealm()
 			local _FromFaction = _Link:GetFromFaction()
+			local _ToRealm = _Link:GetToRealm()
 			local _ToFaction = _Link:GetToFaction()
-			if(_FromFaction:GetName() == 'Alliance') then
+
+			if(_FromRealm:GetName() == 'Area 52') then
 				tooltip:SetCell(line, 1, format("|cffffffff%s|r", _Link:GetFromUnitName()))
-				tooltip:SetCell(line, 2, format("|cffffffff%s|r", _Link:GetToUnitName()))
-			else
+			elseif(_ToRealm:GetName() == 'Area 52') then
 				tooltip:SetCell(line, 1, format("|cffffffff%s|r", _Link:GetToUnitName()))
-				tooltip:SetCell(line, 2, format("|cffffffff%s|r", _Link:GetFromUnitName()))
 			end
+
+			if(_FromRealm:GetName() == 'Proudmoore' and _FromFaction:GetName() == 'Alliance') then
+				tooltip:SetCell(line, 2, format("|cffffffff%s|r", _Link:GetFromUnitName()))
+			elseif(_ToRealm:GetName() == 'Proudmoore' and _ToFaction:GetName() == 'Alliance') then
+				tooltip:SetCell(line, 2, format("|cffffffff%s|r", _Link:GetToUnitName()))
+			end
+
+			if(_FromRealm:GetName() == 'Proudmoore' and _FromFaction:GetName() == 'Horde') then
+				tooltip:SetCell(line, 3, format("|cffffffff%s|r", _Link:GetFromUnitName()))
+			elseif(_ToRealm:GetName() == 'Proudmoore' and _ToFaction:GetName() == 'Horde') then
+				tooltip:SetCell(line, 3, format("|cffffffff%s|r", _Link:GetToUnitName()))
+			end
+			
 			line = tooltip:AddLine()
 		end
 	end

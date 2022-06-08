@@ -144,14 +144,17 @@ function FriendCollection:CheckFriend(inKey)
 	local _AccountInfo = C_BattleNet.GetFriendAccountInfo(inKey)
 	if(_AccountInfo == nil) then
 		XFG:Warn(LogCategory, "Received nothing for [%d]", inKey)
+		return
 	end
 
 	-- Did they go offline?
     if(self:Contains(_AccountInfo.bnetAccountID)) then
-		local _Friend = XFG.Network.BNet.Friends:GetFriend(_AccountInfo.bnetAccountID)
-		self:RemoveFriend(_Friend:GetKey())
-		XFG:Info(LogCategory, "Friend went offline or to unsupported guild [%s:%d:%d:%d]", _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
-		return true
+		if(IsLink(_AccountInfo) == false) then
+			local _Friend = XFG.Network.BNet.Friends:GetFriend(_AccountInfo.bnetAccountID)
+			self:RemoveFriend(_Friend:GetKey())
+			XFG:Info(LogCategory, "Friend went offline or to unsupported guild [%s:%d:%d:%d]", _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
+			return true
+		end
 
 	-- Did they come online on a supported realm/faction?
 	elseif(IsLink(_AccountInfo)) then
