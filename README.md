@@ -68,8 +68,6 @@ The addon should provide the following functionalities:
 
 > Parsing ENK notes incorrectly to identify alts
 
-> "No player named 'guid' is currently playing" system message when receiving login message
-
 > 3-way BNet communication not always working
 
 ### Planned enhancements
