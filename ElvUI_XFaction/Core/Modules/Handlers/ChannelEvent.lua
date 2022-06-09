@@ -116,11 +116,9 @@ end
 function ChannelEvent:CallbackDisconnect()
 	XFG:Info(LogCategory, "Received CHAT_SERVER_DISCONNECTED system event")
 	XFG.Network.Outbox:CanBroadcast(false)
-	XFG.Network.Outbox:CanWhisper(false)
 end
 
 function ChannelEvent:CallbackReconnect()
 	XFG:Info(LogCategory, "Received CHAT_SERVER_RECONNECTED system event")
 	XFG.Network.Outbox:CanBroadcast(true)
-	XFG.Network.Outbox:CanWhisper(true)
 end
