@@ -35,7 +35,7 @@ local function OnEvent(self, event, ...)
 end
 
 local function OnEnter(self)
-
+	if(XFG.Initialized == false) then return end
 	LDB_ANCHOR = self	
 
 	if XFG.Lib.QT:IsAcquired(ObjectName) then

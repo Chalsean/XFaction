@@ -108,6 +108,7 @@ function TimerEvent:CallbackLogin()
         -- Is the player in a guild?
         local _GuildName = GetGuildInfo('player')
         if(_GuildName == nil) then
+            XFG:Error(LogCategory, "Player is not in a guild")
             XFG:CancelAllTimers()
             return
         end
@@ -115,6 +116,7 @@ function TimerEvent:CallbackLogin()
 
         -- Is the player in a supported guild?
         if(XFG.Player.Guild == nil) then
+            XFG:Error(LogCategory, "Player is not in a supported guild")
             XFG:CancelAllTimers()
             return
         end

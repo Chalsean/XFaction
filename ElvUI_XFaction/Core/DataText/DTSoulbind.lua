@@ -39,7 +39,7 @@ local function OnEvent(self, event, ...)
 end
 
 local function OnEnter(self)
-
+	if(XFG.Initialized == false) then return end
 	local ActiveCovenant = XFG.Player.Unit:GetCovenant()
 	local ActiveSoulbind = XFG.Player.Unit:GetSoulbind()
 
