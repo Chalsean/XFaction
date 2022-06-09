@@ -34,8 +34,8 @@ The addon should provide the following functionalities:
 - The DT frame should be scrollable and sortable by column headers, with team being the default sort
 - Left click performs "who", shift left click performs "whisper" (not working for cross faction yet), right click performs "menu dropdown", and shift right click performs "invite"
 
-> Bridge (X) DT that provides visibility into your active connections between realms
-- This does not show all the confederate's active connections, did not want to share account information. It will only show your active connections
+> Links (X) DT
+- This will show all the active BNet links within the confederate
 
 > 3 misc DTs: Soulbind (X), WoW Token (X), Shard (X)
 - Soulbind: left click opens Soulbind frame, right click to change Soulbinds
