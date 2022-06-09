@@ -104,9 +104,16 @@ function TimerEvent:CallbackLogin()
         table.RemoveKey(XFG.Cache, 'CallbackTimerID')
 
         XFG.Player.Account = C_BattleNet.GetAccountInfoByGUID(XFG.Player.GUID)
-        XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, GetGuildInfo('player'))
 
-        -- Someone is running the addon that's not on a supported guild
+        -- Is the player in a guild?
+        local _GuildName = GetGuildInfo('player')
+        if(_GuildName == nil) then
+            XFG:CancelAllTimers()
+            return
+        end
+        XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
+
+        -- Is the player in a supported guild?
         if(XFG.Player.Guild == nil) then
             XFG:CancelAllTimers()
             return
@@ -122,6 +129,7 @@ function TimerEvent:CallbackLogin()
         -- Leverage AceDB is persist remote unit information
         XFG.DataDB = LibStub("AceDB-3.0"):New("XFactionDataDB", defaults, true)
         XFG.DB = XFG.DataDB.char
+        if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
         XFG.ConfigDB = LibStub("AceDB-3.0"):New("XFactionConfigDB", defaults, true)
         XFG.Config = XFG.ConfigDB.profile
 

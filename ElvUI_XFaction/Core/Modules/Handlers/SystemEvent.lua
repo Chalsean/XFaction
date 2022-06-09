@@ -82,5 +82,7 @@ function SystemEvent:CallbackLogout()
 end
 
 function SystemEvent:CallbackReloadUI()
-    XFG.DB.UIReload = true
+    if(XFG.DB ~= nil) then
+        XFG.DB.UIReload = true
+    end
 end
