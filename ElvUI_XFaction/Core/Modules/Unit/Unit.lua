@@ -62,7 +62,7 @@ function Unit:Initialize(_Argument)
     local _unit, _rank, _, _level, _class, _zone, _note, _officernote, _online, _status, _, _, _, _isMobile, _, _, _GUID = GetGuildRosterInfo(self:GetGuildIndex())
     -- Rare but the previous call can fail, we'll pick the unit up on next refresh
     if(_GUID == nil) then
-        XFG:Debug(LogCategory, "GetGuildRosterInfo call failed for [%d]", _Argument)
+        --XFG:Debug(LogCategory, "GetGuildRosterInfo call failed for [%d]", _Argument)
         return
     end
 

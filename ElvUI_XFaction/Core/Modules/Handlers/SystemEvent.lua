@@ -34,7 +34,7 @@ function SystemEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		XFG:RegisterEvent('PLAYER_ENTERING_WORLD', self.CallbackEnterWorld)
         XFG:Info(LogCategory, "Registered for PLAYER_ENTERING_WORLD events")
-        XFG:RegisterEvent('PLAYER_LEAVING_WORLD', self.CallbackLogout)
+        XFG:RegisterEvent('PLAYER_LOGOUT', self.CallbackLogout)
         XFG:Info(LogCategory, "Registered for PLAYER_LOGOUT events")
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
         XFG:Info(LogCategory, "Created hook for pre-ReloadUI")
