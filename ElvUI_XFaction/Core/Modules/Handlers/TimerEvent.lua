@@ -77,9 +77,9 @@ function TimerEvent:CallbackDelayedStartTimer()
     end
 
     -- This is here as to get ping responses first and know who is running addon
-    --if(XFG.DB.UIReload == false) then
+    if(XFG.DB.UIReload == false) then
         XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
-    --end
+    end
     XFG.DB.UIReload = false
 end
 
