@@ -59,7 +59,6 @@ XFG.Network.Message.Subject = {
 }
 XFG.Network.Type = {
 	BROADCAST = '1', -- BNet + Local Channel
-	WHISPER = '2',   -- Whisper Local
 	LOCAL = '3',     -- Local Channel only
 	BNET = '4'       -- BNet only
 }	

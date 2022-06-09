@@ -166,6 +166,8 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
+    if(XFG.Network.BNet.Comm:CanBNet() == false) then return end
+
     -- If you get it from BNet, they should be in your friend list
     if(XFG.Network.BNet.Friends:ContainsByGameID(tonumber(inSender))) then
         local _Friend = XFG.Network.BNet.Friends:GetFriendByGameID(tonumber(inSender))

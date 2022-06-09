@@ -72,6 +72,8 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
+    if(XFG.Network.Outbox:CanBroadcast() == false) then return end
+
     local _Message = XFG:DecodeMessage(inEncodedMessage)
     self:Process(_Message, inMessageTag)
 end
@@ -166,15 +168,8 @@ function Inbox:Process(inMessage, inMessageTag)
 
         -- If unit has just logged in, reply with latest information
         if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
-            -- Whisper back if same faction
-            local _UnitFaction = _UnitData:GetFaction()
-            if(_UnitFaction:Equals(XFG.Player.Unit:GetFaction())) then
-                XFG.Network.Outbox:WhisperUnitData(inMessage:GetFrom(), XFG.Player.Unit)
-
-            -- If opposite faction, broadcast to trigger BNet communication
-            else
-                XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit)
-            end
+            -- Used to whisper back but was running into Blizz API bug, so just broadcast
+            XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit)
         end
     end
 end

@@ -14,7 +14,6 @@ function Outbox:new()
     self._Initialized = false
     self._LocalChannel = nil
     self._CanBroadcast = false
-    self._CanWhisper = true
 
     return _Object
 end
@@ -41,7 +40,6 @@ function Outbox:Print()
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _CanBroadcast (" .. type(self._CanBroadcast) .. "): ".. tostring(self._CanBroadcast))
-    XFG:Debug(LogCategory, "  _CanWhisper (" .. type(self._CanWhisper) .. "): ".. tostring(self._CanWhisper))
     XFG:Debug(LogCategory, "  _LocalChannel (" .. type(self._LocalChannel) .. ")")
     if(self._LocalChannel ~= nil) then
         self._LocalChannel:Print()
@@ -64,14 +62,6 @@ function Outbox:CanBroadcast(inBoolean)
         self._CanBroadcast = inBoolean
     end
     return self._CanBroadcast
-end
-
-function Outbox:CanWhisper(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self._CanWhisper = inBoolean
-    end
-    return self._CanWhisper
 end
 
 function Outbox:HasLocalChannel()
@@ -113,12 +103,7 @@ function Outbox:Send(inMessage)
     end
 
     local _OutgoingData = XFG:EncodeMessage(inMessage, true)
-
-    if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.LOCAL) then
-        self:BroadcastLocally(_OutgoingData) 
-    elseif(inMessage:GetType() == XFG.Network.Type.WHISPER) then
-        self:Whisper(inMessage:GetTo(), _OutgoingData)
-    end
+    self:BroadcastLocally(_OutgoingData) 
 end
 
 function Outbox:BroadcastLocally(inData)
@@ -143,23 +128,4 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     _Message:SetSubject(inSubject)
     _Message:SetData(inUnitData)
     self:Send(_Message)    
-end
-
-function Outbox:Whisper(inTo, inData)
-    if(self:CanWhisper()) then
-        XFG:Debug(LogCategory, "Whispering [%s] with tag [%s]", inTo, XFG.Network.Message.Tag)
-        XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "WHISPER", inTo)
-    end
-end
-
-function Outbox:WhisperUnitData(inTo, inUnitData)
-    assert(type(inTo) == 'string')
-    assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
-    local _Message = Message:new()
-    _Message:Initialize()
-    _Message:SetType(XFG.Network.Type.WHISPER)
-    _Message:SetTo(inTo)
-    _Message:SetSubject(XFG.Network.Message.Subject.DATA)
-    _Message:SetData(inUnitData)
-    self:Send(_Message)
 end

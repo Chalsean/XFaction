@@ -2,7 +2,7 @@ local XFG, E, L, V, P, G = unpack(select(2, ...))
 local DT = E:GetModule('DataTexts')
 local ObjectName = 'TimerEvent'
 local LogCategory = 'HETimer'
-local _OfflineDelta = 60 * 5   -- Seconds before you consider another unit offline
+local _OfflineTimer = 60       -- Seconds between checks if someone is offline
 local _HeartbeatDelta = 60 * 2 -- Seconds between sending your own status, regardless if things have changed
 local _GuildRosterDelta = 30   -- Seconds between local guild scans
 local _PingFriends = 60 * 5    -- Seconds between pinging friends
@@ -43,8 +43,8 @@ function TimerEvent:Initialize()
         XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", 60 * 5)
         XFG.Cache.CallbackTimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, 1) -- config
         XFG:Info(LogCategory, "Scheduled initialization to occur once guild information is available")
-        XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineDelta) -- config
-        XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineDelta)
+        XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineTimer) -- config
+        XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineTimer)
         XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, _HeartbeatDelta) -- config
         XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", _HeartbeatDelta)
         XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, _GuildRosterDelta) -- config
@@ -105,6 +105,12 @@ function TimerEvent:CallbackLogin()
 
         XFG.Player.Account = C_BattleNet.GetAccountInfoByGUID(XFG.Player.GUID)
         XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, GetGuildInfo('player'))
+
+        -- Someone is running the addon that's not on a supported guild
+        if(XFG.Player.Guild == nil) then
+            XFG:CancelAllTimers()
+            return
+        end
 
         XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
         XFG.Classes = ClassCollection:new(); XFG.Classes:Initialize()
@@ -185,7 +191,8 @@ end
 
 -- If you haven't heard from a unit in X minutes, set them to offline
 function TimerEvent:CallbackOffline()
-    XFG.Confederate:OfflineUnits(_OfflineDelta)
+    local _EpochTime = GetServerTime()
+    XFG.Confederate:OfflineUnits(_EpochTime)
 end
 
 -- Periodically send update to avoid other considering you offline

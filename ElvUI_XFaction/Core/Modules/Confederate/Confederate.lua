@@ -1,6 +1,7 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
 local ObjectName = 'Confederate'
 local LogCategory = 'CConfederate'
+local _OfflineDelta = 60 * 5   -- Seconds before you consider another unit offline
 
 Confederate = {}
 
@@ -133,11 +134,10 @@ function Confederate:AddUnit(inUnit)
     return true
 end
 
-function Confederate:OfflineUnits(inDelta)
-    assert(type(inDelta) == 'number')
-    local _ServerEpochTime = GetServerTime()
+function Confederate:OfflineUnits(inEpochTime)
+    assert(type(inEpochTime) == 'number')
     for _, _Unit in self:Iterator() do
-        if(_Unit:IsPlayer() == false and _Unit:GetTimeStamp() + inDelta < _ServerEpochTime) then
+        if(_Unit:IsPlayer() == false and _Unit:GetTimeStamp() + _OfflineDelta < inEpochTime) then
             self:RemoveUnit(_Unit:GetKey())
         end
     end
