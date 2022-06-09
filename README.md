@@ -68,13 +68,13 @@ The addon should provide the following functionalities:
 
 > Parsing ENK notes incorrectly to identify alts
 
-> 4 & 5 way BNet communication broken due to Message constructor
+> "No player named 'guid' is currently playing" system message when receiving login message
+
+> 3-way BNet communication not always working
 
 ### Planned enhancements
 
 > Add configuration dashboard.
-
-> Forward guild message of the day (MOTD).
 
 > Remove ElvUI dependencies for non-ElvUI users.
 
