@@ -34,6 +34,8 @@ function GuildEvent:Initialize()
 	if(self:IsInitialized() == false) then
         XFG:RegisterEvent('GUILD_ROSTER_UPDATE', self.CallbackRosterUpdate)
         XFG:Info(LogCategory, "Registered for GUILD_ROSTER_UPDATE events")
+        XFG:RegisterEvent('PLAYER_GUILD_UPDATE', self.CallbackGQuit)
+        XFG:Info(LogCategory, "Registered for PLAYER_GUILD_UPDATE events")
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -76,4 +78,27 @@ function GuildEvent:CallbackRosterUpdate()
         end
     end
     DT:ForceUpdate_DataText(XFG.DataText.Guild.Name)
+end
+
+-- Fired when a player gets gkicked, gquits, etc.
+function GuildEvent:CallbackGQuit()
+    -- Notify users that you are "offline"
+    local _NewMessage = LogoutMessage:new()
+    _NewMessage:Initialize()
+    _NewMessage:SetType(XFG.Network.Type.BROADCAST)
+    _NewMessage:SetSubject(XFG.Network.Message.Subject.LOGOUT)
+    if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+        _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+    end
+    _NewMessage:SetGuildID(XFG.Player.Guild:GetID())
+    _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+    _NewMessage:SetData(' ')
+    XFG.Network.Outbox:Send(_NewMessage)
+
+    -- Lockdown addon
+    XFG:CancelAllTimers()
+    XFG.Network.Outbox:CanBroadcast(false)
+    XFG.Network.BNet.Comm:CanBNet(false)
+    XFG.Confederate:OfflineUnits(9999999999)
+    XFG.Initialized = false
 end

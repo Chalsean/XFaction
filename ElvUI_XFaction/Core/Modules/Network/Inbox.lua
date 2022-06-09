@@ -72,6 +72,8 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
+    if(XFG.Network.Outbox:CanBroadcast() == false) then return end
+
     local _Message = XFG:DecodeMessage(inEncodedMessage)
     self:Process(_Message, inMessageTag)
 end
