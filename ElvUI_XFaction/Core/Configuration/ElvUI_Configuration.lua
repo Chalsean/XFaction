@@ -75,14 +75,83 @@ function XFG:InitializeConfig()
 								get = function(info) return XFG.Config.General[ info[#info] ] end,
 								set = function(info, value) XFG.Config.General[ info[#info] ] = value; XFG.Confederate:SetName(value); end
 							},
-							CName = {
-								order = 1,
+							Line = {
+								order = 2,
+								type = 'header',
+								name = ''
+							},
+							AK = {
+								order = 3,
 								type = 'toggle',
 								name = 'Alternal Kingdom',
+								disabled = true,
 								desc = "Include guild in confederate communication",
 								get = function(info) return XFG.Config.General[ info[#info] ] end,
 								set = function(info, value) XFG.Config.General[ info[#info] ] = value; end
-							}
+							},
+							AK2 = {
+								order = 4,
+								type = 'toggle',
+								name = 'Alternal Kingdom Two',
+								disabled = true,
+								desc = "Include guild in confederate communication",
+								get = function(info) return XFG.Config.General[ info[#info] ] end,
+								set = function(info, value) XFG.Config.General[ info[#info] ] = value; end
+							},
+							AK3 = {
+								order = 5,
+								type = 'toggle',
+								name = 'Alternal Kingdom Three',
+								disabled = true,
+								desc = "Include guild in confederate communication",
+								get = function(info) return XFG.Config.General[ info[#info] ] end,
+								set = function(info, value) XFG.Config.General[ info[#info] ] = value; end
+							},
+							AK4 = {
+								order = 6,
+								type = 'toggle',
+								name = 'Alternal Kingdom Four',
+								disabled = true,
+								desc = "Include guild in confederate communication",
+								get = function(info) return XFG.Config.General[ info[#info] ] end,
+								set = function(info, value) XFG.Config.General[ info[#info] ] = value; end
+							},
+							EDK = {
+								order = 7,
+								type = 'toggle',
+								name = 'Enduring Kingdom',
+								disabled = true,
+								desc = "Include guild in confederate communication",
+								get = function(info) return XFG.Config.General[ info[#info] ] end,
+								set = function(info, value) XFG.Config.General[ info[#info] ] = value; end
+							},
+							EKA = {
+								order = 8,
+								type = 'toggle',
+								name = 'Eternal Kingdom (A)',
+								disabled = true,
+								desc = "Include guild in confederate communication",
+								get = function(info) return XFG.Config.General[ info[#info] ] end,
+								set = function(info, value) XFG.Config.General[ info[#info] ] = value; end
+							},
+							EKH = {
+								order = 9,
+								type = 'toggle',
+								name = 'Eternal Kingdom (H)',
+								disabled = true,
+								desc = "Include guild in confederate communication",
+								get = function(info) return XFG.Config.General[ info[#info] ] end,
+								set = function(info, value) XFG.Config.General[ info[#info] ] = value; end
+							},
+							ENK = {
+								order = 10,
+								type = 'toggle',
+								name = 'Endless Kingdom',
+								disabled = true,
+								desc = "Include guild in confederate communication",
+								get = function(info) return XFG.Config.General[ info[#info] ] end,
+								set = function(info, value) XFG.Config.General[ info[#info] ] = value; end
+							},
 						}
 					}
 				}
@@ -204,7 +273,7 @@ function XFG:InitializeConfig()
 								get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 								set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 							},
-							Space = {
+							Line = {
 								order = 2,
 								type = 'header',
 								name = ''
@@ -433,6 +502,14 @@ function XFG:DefaultConfigs()
 
 	if(XFG.Config.General == nil) then XFG.Config.General = {} end
 	if(XFG.Config.General.CName == nil) then XFG.Config.General.CName = 'Eternal Kingdom' end
+	if(XFG.Config.General.AK == nil) then XFG.Config.General.AK = true end
+	if(XFG.Config.General.AK2 == nil) then XFG.Config.General.AK2 = true end
+	if(XFG.Config.General.AK3 == nil) then XFG.Config.General.AK3 = true end
+	if(XFG.Config.General.AK4 == nil) then XFG.Config.General.AK4 = true end
+	if(XFG.Config.General.EDK == nil) then XFG.Config.General.EDK = true end
+	if(XFG.Config.General.EKA == nil) then XFG.Config.General.EKA = true end
+	if(XFG.Config.General.EKH == nil) then XFG.Config.General.EKH = true end
+	if(XFG.Config.General.ENK == nil) then XFG.Config.General.ENK = true end
 
 	if(XFG.Config.Network == nil) then XFG.Config.Network = {} end
 	if(XFG.Config.Network.BNet == nil) then XFG.Config.Network.BNet = true end

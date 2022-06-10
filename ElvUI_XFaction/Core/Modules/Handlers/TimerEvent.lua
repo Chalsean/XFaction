@@ -174,6 +174,7 @@ function TimerEvent:CallbackLogin()
         -- If this is a reload, restore friends addon flag
         if(XFG.DB.UIReload) then
             XFG.Network.BNet.Friends:RestoreBackup()
+            XFG.Network.BNet.Links:RestoreBackup()
         end
 
         XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
