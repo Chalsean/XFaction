@@ -64,7 +64,10 @@ function BNet:CanBNet(inBoolean)
     if(inBoolean ~= nil) then
         self._CanBNet = inBoolean
     end
-    return self._CanBNet
+    if(self._CanBNet and XFG.Config.Network.BNet) then
+        return true
+    end
+    return false
 end
 
 function BNet:Iterator()

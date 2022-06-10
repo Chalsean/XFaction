@@ -61,7 +61,10 @@ function Outbox:CanBroadcast(inBoolean)
     if(inBoolean ~= nil) then
         self._CanBroadcast = inBoolean
     end
-    return self._CanBroadcast
+    if(self._CanBroadcast and XFG.Config.Network.Channel) then
+        return true
+    end
+    return false
 end
 
 function Outbox:HasLocalChannel()

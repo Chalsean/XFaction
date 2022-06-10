@@ -76,6 +76,8 @@ function ChatFrame:IsElvUI(inBoolean)
 end
 
 function ChatFrame:Display(inEvent, inMessage)
+    if(inEvent == 'ACHIEVEMENT' and XFG.Config.System.Achievement == false) then return end
+    if(inEvent == 'GUILD' and XFG.Config.System.GChat == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
