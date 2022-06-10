@@ -104,9 +104,9 @@ function ChannelEvent:CallbackChannelChange(inIndex)
 			_Channel:SetShortName(_ChannelInfo.shortcut)
 			-- Because the ElvUI and Blizzard APIs don't like each other
 			if(_ChannelInfo.channelType == 0) then
-				_NewChannel:SetName(tostring(_ChannelInfo.localID) .. '. ' .. _ChannelInfo.shortcut)
+				_Channel:SetName(tostring(_ChannelInfo.localID) .. '. ' .. _ChannelInfo.shortcut)
 			else
-				_NewChannel:SetName(_ChannelInfo.name)
+				_Channel:SetName(_ChannelInfo.name)
 			end
 			XFG:Info(LogCategory, "Changed channel information due to CHANNEL_FLAGS_UPDATED event [%d:%s]", _Channel:GetID(), _Channel:GetShortName())
 		end

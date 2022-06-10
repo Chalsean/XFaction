@@ -1,11 +1,8 @@
 local XFG, E, L, V, P, G = unpack(select(2, ...))
-local DT = E:GetModule('DataTexts')
-
 local LogCategory = 'DTShard'
 local CheckShard = true
 local LastCheckTime = GetTime() -- millisecond precision but given in seconds
-local CheckTimer = 60
-local ShardID = 0
+XFG.ShardID = 0
 
 local function ParseGUID(guid)
 
@@ -33,10 +30,11 @@ local function OnEnable(self, event, ...)
 end
 
 local function OnEvent(self, event, ...)
+	if(XFG.Initialized == false) then return end
 
 	-- Try to catch Blizz migrating a player to another shard outside of normal events
-	if LastCheckTime + CheckTimer <= GetTime() then
-		XFG:Debug(LogCategory, format("Checking for shard migration due to timer [%ds]", CheckTimer))
+	if(CheckShard == false and LastCheckTime + XFG.Config.DataText.Shard.Timer <= GetTime())then
+		XFG:Debug(LogCategory, format("Checking for shard migration due to timer [%ds]", XFG.Config.DataText.Shard.Timer))
 		CheckShard = true
 	end
 
@@ -85,4 +83,4 @@ local events = {
 	'ELVUI_FORCE_UPDATE'
 }
 
-DT:RegisterDatatext('Shard (X)', XFG.Category, events, OnEvent, OnEnable)
+XFG.Lib.DT:RegisterDatatext(XFG.DataText.Shard.Name, XFG.Category, events, OnEvent, OnEnable)

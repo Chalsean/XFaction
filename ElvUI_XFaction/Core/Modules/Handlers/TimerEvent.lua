@@ -134,9 +134,10 @@ function TimerEvent:CallbackLogin()
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
         XFG.ConfigDB = LibStub("AceDB-3.0"):New("XFactionConfigDB", defaults, true)
         XFG.Config = XFG.ConfigDB.profile
+        XFG:DefaultConfigs()        
 
         XFG.Confederate = Confederate:new()
-        XFG.Confederate:SetName('Eternal Kingdom')
+        XFG.Confederate:SetName(XFG.Config.General.CName)
         XFG.Confederate:SetKey('EK')
         XFG.Confederate:SetMainRealmName('Proudmoore')
         XFG.Confederate:SetMainGuildName('Eternal Kingdom')
@@ -173,6 +174,7 @@ function TimerEvent:CallbackLogin()
         -- If this is a reload, restore friends addon flag
         if(XFG.DB.UIReload) then
             XFG.Network.BNet.Friends:RestoreBackup()
+            XFG.Network.BNet.Links:RestoreBackup()
         end
 
         XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
@@ -189,6 +191,8 @@ function TimerEvent:CallbackLogin()
         -- Broadcast login, refresh DTs and ready to roll        
         wipe(XFG.Cache)
         wipe(XFG.DB.Backup)
+        -- Register configurations with ElvUI
+        XFG.Lib.EP:RegisterPlugin(XFG.AddonName, XFG.InitializeConfig)
         XFG.Initialized = true
         if(XFG.DB.UIReload == false) then
             XFG.Network.BNet.Comm:PingFriends()            

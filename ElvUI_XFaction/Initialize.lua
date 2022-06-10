@@ -1,5 +1,4 @@
 local E, L, V, P, G = unpack(ElvUI)
-local EP = LibStub("LibElvUIPlugin-1.0")
 local addon, Engine = ...
 local LogCategory = 'Initialize'
 
@@ -17,7 +16,7 @@ XFG.AddonName = addon
 XFG.Category = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XFG["RegisteredModules"] = {}
-XFG.Version = tonumber(GetAddOnMetadata(addon, "Version"))
+XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Handlers = {}
 XFG.Initialized = false
 
@@ -26,6 +25,8 @@ XFG.Lib.Compress = LibStub:GetLibrary("LibCompress")
 XFG.Lib.Encode = XFG.Lib.Compress:GetAddonEncodeTable()
 XFG.Lib.QT = LibStub('LibQTip-1.0')
 XFG.Lib.Realm = LibStub:GetLibrary('LibRealmInfo')
+XFG.Lib.EP = LibStub("LibElvUIPlugin-1.0")
+XFG.Lib.DT = E:GetModule('DataTexts')
 
 XFG.DataText = {}
 XFG.DataText.Guild = {}
@@ -34,6 +35,8 @@ XFG.DataText.Soulbind = {}
 XFG.DataText.Soulbind.Name = 'Soulbind (X)'
 XFG.DataText.Links = {}
 XFG.DataText.Links.Name = 'Links (X)'
+XFG.DataText.Shard = {}
+XFG.DataText.Shard.Name = 'Shard (X)'
 
 XFG.Player = {}
 XFG.Player.LastBroadcast = 0
@@ -163,8 +166,6 @@ function XFG:Init()
 	
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
 	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
-
-	EP:RegisterPlugin(addon, XFG.InitializeConfig)
 end
 
 E.Libs.EP:HookInitialize(XFG, XFG.Init)

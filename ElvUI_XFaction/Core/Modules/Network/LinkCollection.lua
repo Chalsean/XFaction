@@ -155,3 +155,24 @@ function LinkCollection:BroadcastLinks()
         XFG.Network.Outbox:Send(_NewMessage)  
     end
 end
+
+function LinkCollection:CreateBackup()
+	local _LinksString = ''
+    for _, _Link in self:Iterator() do
+        if(_Link:IsMyLink()) then
+            _LinksString = _LinksString .. '|' .. _Link:GetString()
+        end
+    end
+	XFG.DB.Backup.Links = _LinksString
+end
+
+function LinkCollection:RestoreBackup()
+	if(XFG.DB.Backup.Links ~= nil and strlen(XFG.DB.Backup.Links) > 0) then
+		local _Links = string.Split(XFG.DB.Backup.Links, '|')
+		for _, _Link in pairs (_Links) do
+			local _NewLink = Link:new()
+			_NewLink:SetObjectFromString(_Link)
+			self:AddLink(_NewLink)
+		end
+	end
+end

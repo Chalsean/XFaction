@@ -66,6 +66,7 @@ function SystemEvent:CallbackLogout()
         -- Backup information on reload to be restored
         XFG.Confederate:CreateBackup()
         XFG.Network.BNet.Friends:CreateBackup()
+        XFG.Network.BNet.Links:CreateBackup()
     else
         local _NewMessage = LogoutMessage:new()
         _NewMessage:Initialize()

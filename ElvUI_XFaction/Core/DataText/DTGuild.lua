@@ -16,7 +16,8 @@ XFG.DataText.Guild.ColumnNames = {
 	GUILD = 'Guild',
 	TEAM = 'Team',
 	RANK = 'Rank',
-	ZONE = 'Zone'
+	ZONE = 'Zone',
+	NOTE = 'Note'
 }
 XFG.DataText.Guild.SortColumn = XFG.DataText.Guild.ColumnNames.TEAM
 XFG.DataText.Guild.ReverseSort = false
@@ -51,7 +52,9 @@ local function PreSort()
 		_UnitData[XFG.DataText.Guild.ColumnNames.GUILD] = _UnitGuild:GetName()
 		_UnitData[XFG.DataText.Guild.ColumnNames.ZONE] = _Unit:GetZone()
 		_UnitData[XFG.DataText.Guild.ColumnNames.NAME] = _Unit:GetName()
+		_UnitData[XFG.DataText.Guild.ColumnNames.NOTE] = _Unit:GetNote()
 		_UnitData.GUID = _Unit:GetGUID()
+
 		if(_Unit:IsAlt() and _Unit:HasMainName()) then
 			_UnitData[XFG.DataText.Guild.ColumnNames.NAME] = _Unit:GetName() .. " (" .. _Unit:GetMainName() .. ")"
 		end
@@ -159,8 +162,7 @@ function OnEnter(self)
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
 		tooltip:Clear()
 	else
-		-- Faction, Covenant, Prof1, Prof2, Spec, Name, Race, Level, Realm, Guild, Team, Zone, Note, Rank
-		tooltip = XFG.Lib.QT:Acquire(ObjectName, 13, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "RIGHT", "LEFT")
+		tooltip = XFG.Lib.QT:Acquire(ObjectName, 14, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "RIGHT", "LEFT", "LEFT")
 
 		ttHeaderFont:SetFont(GameTooltipHeaderText:GetFont())
 		ttRegFont:SetFont(GameTooltipText:GetFont())
@@ -174,55 +176,83 @@ function OnEnter(self)
 	end
 
 	local line = tooltip:AddLine()
-	local _ConfederateName = XFG.Confederate:GetName()
-	local _GuildName = XFG.Player.Guild:GetName()
-	local _Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
-	_GuildName = _GuildName .. ' <' .. _Guild:GetShortName() .. '>'
-	tooltip:SetCell(line, 1, format("Guild: |cffffffff%s|r", _GuildName), ttHeaderFont, "LEFT", 4)
-	tooltip:SetCell(line, 6, format("Confederate: |cffffffff%s|r", _ConfederateName), ttHeaderFont, "LEFT", 4)	
-	line = tooltip:AddLine()
-	line = tooltip:AddLine()
-
-	local _MOTD = GetGuildRosterMOTD()
-	local _LineWords = ''
-	local _LineLength = 150
-	if(_MOTD ~= nil) then
-		local _Words = string.Split(_MOTD, ' ')		
-		for _, _Word in pairs (_Words) do
-			if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
-				_LineWords = _LineWords .. ' ' .. _Word
-			else
-				tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), ttHeaderFont, "LEFT", 13)
-				line = tooltip:AddLine()
-				_LineWords = ''				
-			end
-		end
+	
+	if(XFG.Config.DataText.Guild.GuildName) then
+		local _GuildName = XFG.Player.Guild:GetName()
+		local _Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
+		_GuildName = _GuildName .. ' <' .. _Guild:GetShortName() .. '>'
+		tooltip:SetCell(line, 1, format("Guild: |cffffffff%s|r", _GuildName), ttHeaderFont, "LEFT", 4)
 	end
 
-	if(strlen(_LineWords) > 0) then
-		tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), ttHeaderFont, "LEFT", 13)
+	if(XFG.Config.DataText.Guild.Confederate) then
+		local _ConfederateName = XFG.Confederate:GetName()
+		tooltip:SetCell(line, 6, format("Confederate: |cffffffff%s|r", _ConfederateName), ttHeaderFont, "LEFT", 4)	
+	end
+
+	if(XFG.Config.DataText.Guild.GuildName or XFG.Config.DataText.Guild.Confederate) then
+		line = tooltip:AddLine()
 		line = tooltip:AddLine()
 	end
 
-	line = tooltip:AddLine()
+	if(XFG.Config.DataText.Guild.MOTD) then
+		local _MOTD = GetGuildRosterMOTD()
+		local _LineWords = ''
+		local _LineLength = 150
+		if(_MOTD ~= nil) then
+			local _Words = string.Split(_MOTD, ' ')		
+			for _, _Word in pairs (_Words) do
+				if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
+					_LineWords = _LineWords .. ' ' .. _Word
+				else
+					tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), ttHeaderFont, "LEFT", 13)
+					line = tooltip:AddLine()
+					_LineWords = ''				
+				end
+			end
+		end
+		if(strlen(_LineWords) > 0) then
+			tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), ttHeaderFont, "LEFT", 13)
+			line = tooltip:AddLine()
+		end
+		line = tooltip:AddLine()
+	end
+	
 	line = tooltip:AddHeader()
 	
-	line = tooltip:SetCell(line, 2, XFG.DataText.Guild.ColumnNames.LEVEL)
-	tooltip:SetCellScript(line, 2, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.LEVEL)
+	if(XFG.Config.DataText.Guild.Level) then
+		line = tooltip:SetCell(line, 2, XFG.DataText.Guild.ColumnNames.LEVEL)
+		tooltip:SetCellScript(line, 2, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.LEVEL)
+	end
 	line = tooltip:SetCell(line, 4, XFG.DataText.Guild.ColumnNames.NAME)	
 	tooltip:SetCellScript(line, 4, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.NAME)
-	line = tooltip:SetCell(line, 6, XFG.DataText.Guild.ColumnNames.RACE)	
-	tooltip:SetCellScript(line, 6, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.RACE)
-	line = tooltip:SetCell(line, 7, XFG.DataText.Guild.ColumnNames.REALM)
-	tooltip:SetCellScript(line, 7, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.REALM)
-	line = tooltip:SetCell(line, 8, XFG.DataText.Guild.ColumnNames.GUILD)
-	tooltip:SetCellScript(line, 8, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.GUILD)
-	line = tooltip:SetCell(line, 9, XFG.DataText.Guild.ColumnNames.TEAM)
-	tooltip:SetCellScript(line, 9, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.TEAM)
-	line = tooltip:SetCell(line, 10, XFG.DataText.Guild.ColumnNames.RANK)
-	tooltip:SetCellScript(line, 10, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.RANK)
-	line = tooltip:SetCell(line, 11, XFG.DataText.Guild.ColumnNames.ZONE)	
-	tooltip:SetCellScript(line, 11, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.ZONE)
+	if(XFG.Config.DataText.Guild.Race) then
+		line = tooltip:SetCell(line, 6, XFG.DataText.Guild.ColumnNames.RACE)	
+		tooltip:SetCellScript(line, 6, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.RACE)
+	end
+	if(XFG.Config.DataText.Guild.Realm) then
+		line = tooltip:SetCell(line, 7, XFG.DataText.Guild.ColumnNames.REALM)
+		tooltip:SetCellScript(line, 7, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.REALM)
+	end
+	if(XFG.Config.DataText.Guild.Guild) then
+		line = tooltip:SetCell(line, 8, XFG.DataText.Guild.ColumnNames.GUILD)
+		tooltip:SetCellScript(line, 8, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.GUILD)
+	end
+	if(XFG.Config.DataText.Guild.Team) then
+		line = tooltip:SetCell(line, 9, XFG.DataText.Guild.ColumnNames.TEAM)
+		tooltip:SetCellScript(line, 9, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.TEAM)
+	end
+	if(XFG.Config.DataText.Guild.Rank) then
+		line = tooltip:SetCell(line, 10, XFG.DataText.Guild.ColumnNames.RANK)
+		tooltip:SetCellScript(line, 10, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.RANK)
+	end
+	if(XFG.Config.DataText.Guild.Zone) then
+		line = tooltip:SetCell(line, 11, XFG.DataText.Guild.ColumnNames.ZONE)	
+		tooltip:SetCellScript(line, 11, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.ZONE)
+	end
+	if(XFG.Config.DataText.Guild.Note) then
+		line = tooltip:SetCell(line, 14, XFG.DataText.Guild.ColumnNames.NOTE)	
+		tooltip:SetCellScript(line, 14, 'OnMouseUp', SetSortColumn, XFG.DataText.Guild.ColumnNames.NOTE)
+	end
 	tooltip:AddSeparator()
 
 	if(XFG.Initialized) then
@@ -234,20 +264,46 @@ function OnEnter(self)
 		for _, _UnitData in ipairs (_List) do
 			line = tooltip:AddLine()
 
-			-- Team, Level, Faction, Covenant, Name, Race, Realm, Guild, Zone, Note, Rank		
-			tooltip:SetCell(line, 1, format('%s', format(IconTokenString, _UnitData.Faction)))
-			tooltip:SetCell(line, 2, format("|cffffffff%d|r", _UnitData[XFG.DataText.Guild.ColumnNames.LEVEL]))
-			if(_UnitData.Spec ~= nil) then tooltip:SetCell(line, 3, format('%s', format(IconTokenString, _UnitData.Spec))) end
+			-- Team, Level, Faction, Covenant, Name, Race, Realm, Guild, Zone, Note, Rank	
+			if(XFG.Config.DataText.Guild.Faction) then
+				tooltip:SetCell(line, 1, format('%s', format(IconTokenString, _UnitData.Faction)))
+			end
+			if(XFG.Config.DataText.Guild.Level) then
+				tooltip:SetCell(line, 2, format("|cffffffff%d|r", _UnitData[XFG.DataText.Guild.ColumnNames.LEVEL]))
+			end
+			if(XFG.Config.DataText.Guild.Spec and _UnitData.Spec ~= nil) then
+				tooltip:SetCell(line, 3, format('%s', format(IconTokenString, _UnitData.Spec))) 
+			end
 			tooltip:SetCell(line, 4, ClassColorString(_UnitData[XFG.DataText.Guild.ColumnNames.NAME], _UnitData.Class))			
-			if(_UnitData.Covenant ~= nil) then tooltip:SetCell(line, 5, format('%s', format(IconTokenString, _UnitData.Covenant))) end
-			tooltip:SetCell(line, 6, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.RACE]))
-			tooltip:SetCell(line, 7, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.REALM]))
-			tooltip:SetCell(line, 8, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.GUILD]))
-			tooltip:SetCell(line, 9, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.TEAM]))			
-			tooltip:SetCell(line, 10, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.RANK]))
-			tooltip:SetCell(line, 11, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.ZONE]))
-			if(_UnitData.Profession1 ~= nil) then tooltip:SetCell(line, 12, format('%s', format(IconTokenString, _UnitData.Profession1))) end
-			if(_UnitData.Profession2 ~= nil) then tooltip:SetCell(line, 13, format('%s', format(IconTokenString, _UnitData.Profession2))) end
+
+			if(XFG.Config.DataText.Guild.Covenant and _UnitData.Covenant ~= nil) then 
+				tooltip:SetCell(line, 5, format('%s', format(IconTokenString, _UnitData.Covenant))) 
+			end
+			if(XFG.Config.DataText.Guild.Race) then
+				tooltip:SetCell(line, 6, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.RACE]))
+			end
+			if(XFG.Config.DataText.Guild.Realm) then
+				tooltip:SetCell(line, 7, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.REALM]))
+			end
+			if(XFG.Config.DataText.Guild.Guild) then
+				tooltip:SetCell(line, 8, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.GUILD]))
+			end
+			if(XFG.Config.DataText.Guild.Team) then
+				tooltip:SetCell(line, 9, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.TEAM]))			
+			end
+			if(XFG.Config.DataText.Guild.Rank) then
+				tooltip:SetCell(line, 10, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.RANK]))
+			end
+			if(XFG.Config.DataText.Guild.Zone) then
+				tooltip:SetCell(line, 11, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.ZONE]))
+			end
+			if(XFG.Config.DataText.Guild.Profession) then
+				if(_UnitData.Profession1 ~= nil) then tooltip:SetCell(line, 12, format('%s', format(IconTokenString, _UnitData.Profession1))) end
+				if(_UnitData.Profession2 ~= nil) then tooltip:SetCell(line, 13, format('%s', format(IconTokenString, _UnitData.Profession2))) end
+			end
+			if(XFG.Config.DataText.Guild.Note) then
+				tooltip:SetCell(line, 14, format("|cffffffff%s|r", _UnitData[XFG.DataText.Guild.ColumnNames.NOTE]))
+			end
 
 			tooltip:SetLineScript(line, "OnMouseUp", LineClick, _UnitData.GUID)
 		end

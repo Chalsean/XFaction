@@ -72,6 +72,7 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
+    -- If user has disabled Channel
     if(XFG.Network.Outbox:CanBroadcast() == false) then return end
 
     local _Message = XFG:DecodeMessage(inEncodedMessage)

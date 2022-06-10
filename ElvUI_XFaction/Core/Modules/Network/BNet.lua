@@ -64,7 +64,10 @@ function BNet:CanBNet(inBoolean)
     if(inBoolean ~= nil) then
         self._CanBNet = inBoolean
     end
-    return self._CanBNet
+    if(self._CanBNet and XFG.Config.Network.BNet) then
+        return true
+    end
+    return false
 end
 
 function BNet:Iterator()
@@ -73,6 +76,7 @@ end
 
 function BNet:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
+    -- If player disabled bnet
     if(self:CanBNet() == false) then return end
     -- Before we do work, lets make sure there are targets and we can message those targets
     local _Links = {}
@@ -83,7 +87,7 @@ function BNet:Send(inMessage)
                 table.insert(_Friends, _Friend)
             end
         end
-        
+
         if(table.getn(_Friends) > 0) then
             local _Random = math.random(1, table.getn(_Friends))
             local _Link = _Friends[_Random]

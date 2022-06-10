@@ -19,10 +19,6 @@ end
 function BNetEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
-		XFG:RegisterEvent('BN_CONNECTED', self.CallbackBNetConnected)
-        XFG:Info(LogCategory, "Registered for BN_CONNECTED events")
-        XFG:RegisterEvent('BN_DISCONNECTED', self.CallbackBNetDisconnected)
-        XFG:Info(LogCategory, "Registered for BN_DISCONNECTED events")
         XFG:RegisterEvent('BN_FRIEND_INFO_CHANGED', self.CallbackFriendInfo)
         XFG:Info(LogCategory, "Registered for BN_FRIEND_INFO_CHANGED events")
 		self:IsInitialized(true)
@@ -53,16 +49,6 @@ function BNetEvent:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
-end
-
-function BNetEvent:CallbackBNetConnected()
-    XFG:Info(LogCategory, "Enabling BNet due to BN_CONNECTED")
-    XFG.Network.BNet.Comm:CanBNet(true)
-end
-
-function BNetEvent:CallbackBNetDisconnected()
-    XFG:Info(LogCategory, "Disabling BNet due to BN_DISCONNECTED")
-    XFG.Network.BNet.Comm:CanBNet(false)
 end
 
 -- The friend API leaves much to be desired, it spams and will give you invalid indexes like 0
