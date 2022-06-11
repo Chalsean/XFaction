@@ -108,8 +108,8 @@ function ChatFrame:DisplayGuild(inMessage)
 
                     _Text = _Text .. inMessage:GetData()
                     
-                    local _Hex = XFG:RGBPercToHex(XFG.Config.Chat.GChat.Color.Red, XFG.Config.Chat.GChat.Color.Green, XFG.Config.Chat.GChat.Color.Blue)
-                    _Text = format('|cff%s%s|r', _Hex, _Text)
+                    --local _Hex = XFG:RGBPercToHex(XFG.Config.Chat.GChat.Color.Red, XFG.Config.Chat.GChat.Color.Green, XFG.Config.Chat.GChat.Color.Blue)
+                    --_Text = format('|cff%s%s|r', _Hex, _Text)
 
                     local _Channel = XFG.Network.Outbox:GetLocalChannel()
                     local _ChannelName = _Channel:GetName()

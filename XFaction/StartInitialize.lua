@@ -145,7 +145,3 @@ XFG.Cache.Realms.Proudmoore = {
 	Alliance = {'Eternal Kingdom', 'Endless Kingdom', 'Alternal Kingdom', 'Alternal Kingdom Two', 'Alternal Kingdom Three'},
 	Horde = {'Alternal Kingdom Four', 'Enduring Kingdom'}
 }
-XFG.Cache.Realms['Area 52'] = {
-	Alliance = {},
-	Horde = {'Eternal Kingdom'}
-}

@@ -103,17 +103,19 @@ function Inbox:Process(inMessage, inMessageTag)
     inMessage:ShallowPrint()
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-    if(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.LOCAL) then
+    --if(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.LOCAL) then
+    if(inMessageTag == XFG.Network.Message.Tag.LOCAL) then    
         inMessage:SetType(XFG.Network.Type.BNET)
         XFG.Network.Outbox:Send(inMessage)
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
-    elseif(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
-        inMessage:SetType(XFG.Network.Type.BROADCAST)
-        XFG.Network.Outbox:Send(inMessage)
+    --elseif(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
+    --    inMessage:SetType(XFG.Network.Type.BROADCAST)
+    --    XFG.Network.Outbox:Send(inMessage)
 
     -- If came via BNet and no more targets, message locally only
-    elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
+    --elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
+    elseif(inMessageTag == XFG.Network.Message.Tag.BNET) then
         inMessage:SetType(XFG.Network.Type.LOCAL)
         XFG.Network.Outbox:Send(inMessage)
     end
