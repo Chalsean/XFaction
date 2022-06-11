@@ -70,16 +70,16 @@ function BNet:Send(inMessage)
         for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
             -- If its LOGIN, ignore the IsRunningAddon check because we havent had time to receive ping responses
             -- If theyre not running addon it will just ignore it anyway
-            if(_Target:Equals(_Friend:GetTarget()) and (_Friend:IsRunningAddon() or inMessage:GetSubject() ==  XFG.Network.Message.Subject.LOGIN)) then
-                table.insert(_Friends, _Friend)
+            if(_Target:Equals(_Friend:GetTarget())) then
+                table.insert(_Links, _Friend)
             end
         end
 
-        if(table.getn(_Friends) > 0) then
-            local _Random = math.random(1, table.getn(_Friends))
-            local _Link = _Friends[_Random]
-            table.insert(_Links, _Link)
-        end
+        -- if(table.getn(_Friends) > 0) then
+        --     local _Random = math.random(1, table.getn(_Friends))
+        --     local _Link = _Friends[_Random]
+        --     table.insert(_Links, _Link)
+        -- end
     end
 
     if(table.getn(_Links) > 0) then
