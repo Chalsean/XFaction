@@ -131,8 +131,13 @@ local function IsLink(inAccountInfo)
 
 	   	-- There's no need to store if they are not logged into realm/faction we care about
 		local _Realm = XFG.Realms:GetRealmByID(inAccountInfo.gameAccountInfo.realmID)
+
+		-- When a player is in Torghast, it will list realm as 0, no character name or faction
+		-- Bail out before it causes an exception
+		if(_Realm == nil) then return false end
+
 		local _Faction = XFG.Factions:GetFactionByName(inAccountInfo.gameAccountInfo.factionName)
-		if(_Realm ~= nil and XFG.Network.BNet.Targets:Contains(_Realm, _Faction)) then
+		if(XFG.Network.BNet.Targets:Contains(_Realm, _Faction)) then
 			return true
 		end
 	end
