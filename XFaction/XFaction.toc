@@ -1,0 +1,20 @@
+## Interface: 90205
+## Author: Chalsean (US-Proudmoore)
+## Version: 2.0.0
+## Title: |cffFF4700X|r|cff33ccffFaction|r
+## Notes: Cross realm/faction guild communication
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: XFactionDataDB, XFactionConfigDB
+
+Libraries\Load_Libraries.xml
+##Core\Libraries\Load_Libraries.xml
+
+StartInitialize.lua 
+Core\Developer\Load_Developer.xml
+Core\Functions\Load_Functions.xml
+Core\Configuration\Load_Configurations.xml
+Core\Modules\Load_Modules.xml
+Core\Frames\Load_Frames.xml
+Core\DataText\Load_DataText.xml
+FinishInitialize.lua

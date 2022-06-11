@@ -72,9 +72,7 @@ The addon should provide the following functionalities:
 
 ### Planned enhancements
 
-> Add configuration dashboard.
-
-> Remove ElvUI dependencies for non-ElvUI users.
+> Add profile logic for config settings.
 
 > Find a reliable way of getting zone information.
 
