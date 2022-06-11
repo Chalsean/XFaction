@@ -104,8 +104,9 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     --if(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.LOCAL) then
-    if(inMessageTag == XFG.Network.Message.Tag.LOCAL) then    
-        inMessage:SetType(XFG.Network.Type.BNET)
+    --if(inMessageTag == XFG.Network.Message.Tag.LOCAL) then    
+    --    inMessage:SetType(XFG.Network.Type.BNET)
+        inMessage:SetType(XFG.Network.Type.BROADCAST)
         XFG.Network.Outbox:Send(inMessage)
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
@@ -115,10 +116,10 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- If came via BNet and no more targets, message locally only
     --elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
-    elseif(inMessageTag == XFG.Network.Message.Tag.BNET) then
-        inMessage:SetType(XFG.Network.Type.LOCAL)
-        XFG.Network.Outbox:Send(inMessage)
-    end
+    --elseif(inMessageTag == XFG.Network.Message.Tag.BNET) then
+    --    inMessage:SetType(XFG.Network.Type.LOCAL)
+    --    XFG.Network.Outbox:Send(inMessage)
+    --end
 
     -- Process guild chat message
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
