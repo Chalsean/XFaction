@@ -13,7 +13,6 @@ function Outbox:new()
     self._Key = nil
     self._Initialized = false
     self._LocalChannel = nil
-    self._CanBroadcast = false
 
     return _Object
 end
@@ -39,7 +38,6 @@ function Outbox:Print()
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(LogCategory, "  _CanBroadcast (" .. type(self._CanBroadcast) .. "): ".. tostring(self._CanBroadcast))
     XFG:Debug(LogCategory, "  _LocalChannel (" .. type(self._LocalChannel) .. ")")
     if(self._LocalChannel ~= nil) then
         self._LocalChannel:Print()
@@ -54,17 +52,6 @@ function Outbox:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
-end
-
-function Outbox:CanBroadcast(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self._CanBroadcast = inBoolean
-    end
-    if(self._CanBroadcast) then
-        return true
-    end
-    return false
 end
 
 function Outbox:HasLocalChannel()
@@ -110,11 +97,9 @@ function Outbox:Send(inMessage)
 end
 
 function Outbox:BroadcastLocally(inData)
-    if(self:CanBroadcast()) then
-        local _Channel = self:GetLocalChannel()
-        XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Network.Message.Tag.LOCAL)
-        XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
-    end
+    local _Channel = self:GetLocalChannel()
+    XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Network.Message.Tag.LOCAL)
+    XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
 end
 
 function Outbox:BroadcastUnitData(inUnitData, inSubject)

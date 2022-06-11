@@ -187,14 +187,14 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     -- Data was sent in one packet, okay to process
     if(_Message:GetTotalPackets() == 1) then
-        XFG.Network.Inbox:Process(_Message)
+        XFG.Network.Inbox:Process(_Message, inMessageTag)
     else
         -- Going to have to stitch the data back together again
         XFG.Network.BNet.Comm:AddPacket(_Message)
         if(XFG.Network.BNet.Comm:HasAllPackets(_Message:GetKey())) then
             XFG:Debug(LogCategory, "Received all packets for message [%s]", _Message:GetKey())
             local _FullMessage = XFG.Network.BNet.Comm:RebuildMessage(_Message:GetKey())
-            XFG.Network.Inbox:Process(_FullMessage)
+            XFG.Network.Inbox:Process(_FullMessage, inMessageTag)
         end
     end    
 end

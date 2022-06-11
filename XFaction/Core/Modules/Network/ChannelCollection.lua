@@ -38,7 +38,6 @@ function ChannelCollection:Initialize()
 				end
 				if(self:AddChannel(_NewChannel) and _NewChannel:GetKey() == XFG.Network.ChannelName) then
 					XFG.Network.Outbox:SetLocalChannel(_NewChannel)
-					XFG.Network.Outbox:CanBroadcast(true)
 				end				
 			end
 		end

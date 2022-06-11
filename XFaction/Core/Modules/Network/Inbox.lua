@@ -71,9 +71,6 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-    -- If user has disabled Channel
-    if(XFG.Network.Outbox:CanBroadcast() == false) then return end
-
     local _Message = XFG:DecodeMessage(inEncodedMessage)
     self:Process(_Message, inMessageTag)
 end
@@ -95,6 +92,10 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.Network.Mailbox:AddMessage(inMessage)
     end
 
+    -- If the sender is a friend on another realm/faction, add link
+
+
+    -- Deserialize unit data
     if(inMessage:HasUnitData()) then
         local _UnitData = XFG:DeserializeUnitData(inMessage:GetData())
         inMessage:SetData(_UnitData)
@@ -103,23 +104,20 @@ function Inbox:Process(inMessage, inMessageTag)
     inMessage:ShallowPrint()
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-    --if(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.LOCAL) then
-    --if(inMessageTag == XFG.Network.Message.Tag.LOCAL) then    
-    --    inMessage:SetType(XFG.Network.Type.BNET)
-        inMessage:SetType(XFG.Network.Type.BROADCAST)
+    if(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.LOCAL) then
+        inMessage:SetType(XFG.Network.Type.BNET)
         XFG.Network.Outbox:Send(inMessage)
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
-    --elseif(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
-    --    inMessage:SetType(XFG.Network.Type.BROADCAST)
-    --    XFG.Network.Outbox:Send(inMessage)
+    elseif(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
+        inMessage:SetType(XFG.Network.Type.BROADCAST)
+        XFG.Network.Outbox:Send(inMessage)
 
     -- If came via BNet and no more targets, message locally only
-    --elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
-    --elseif(inMessageTag == XFG.Network.Message.Tag.BNET) then
-    --    inMessage:SetType(XFG.Network.Type.LOCAL)
-    --    XFG.Network.Outbox:Send(inMessage)
-    --end
+    elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
+        inMessage:SetType(XFG.Network.Type.LOCAL)
+        XFG.Network.Outbox:Send(inMessage)
+    end
 
     -- Process guild chat message
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT) then

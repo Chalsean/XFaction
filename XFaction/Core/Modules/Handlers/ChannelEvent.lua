@@ -64,8 +64,7 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
 			XFG:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
 			local _Channel = XFG.Network.Outbox:GetLocalChannel()
 			if(_Channel:GetShortName() == inChannelShortName) then
-				XFG.Network.Outbox:CanBroadcast(false)
-				XFG:Error(LogCategory, "Removed channel was the addon channel")
+				XFG:Warn(LogCategory, "Removed channel was the addon channel")
 			end			
 		end
 
@@ -86,7 +85,6 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
 			XFG:Info(LogCategory, "Added channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
 			if(_NewChannel:GetShortName() == XFG.Network.ChannelName) then
 				XFG.Network.Outbox:SetLocalChannel(_NewChannel)
-				XFG.Network.Outbox:CanBroadcast(true)
 			end
 		end
 	else
@@ -115,10 +113,8 @@ end
 
 function ChannelEvent:CallbackDisconnect()
 	XFG:Info(LogCategory, "Received CHAT_SERVER_DISCONNECTED system event")
-	XFG.Network.Outbox:CanBroadcast(false)
 end
 
 function ChannelEvent:CallbackReconnect()
 	XFG:Info(LogCategory, "Received CHAT_SERVER_RECONNECTED system event")
-	XFG.Network.Outbox:CanBroadcast(true)
 end
