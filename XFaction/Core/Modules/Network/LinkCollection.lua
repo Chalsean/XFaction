@@ -78,8 +78,9 @@ function LinkCollection:AddLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey()) == false) then
 		self._LinkCount = self._LinkCount + 1
+		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
 	end
-    self._Links[inLink:GetKey()] = inLink
+    self._Links[inLink:GetKey()] = inLink	
     return self:Contains(inLink:GetKey())
 end
 
@@ -88,7 +89,8 @@ function LinkCollection:RemoveLink(inLink)
 	if(self:Contains(inLink:GetKey())) then
 		self._LinkCount = self._LinkCount - 1
 		self._Links[inLink:GetKey()] = nil
-	end    
+		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
+	end
     return self:Contains(inLink:GetKey()) == false
 end
 
@@ -159,9 +161,7 @@ end
 function LinkCollection:CreateBackup()
 	local _LinksString = ''
     for _, _Link in self:Iterator() do
-        if(_Link:IsMyLink()) then
-            _LinksString = _LinksString .. '|' .. _Link:GetString()
-        end
+        _LinksString = _LinksString .. '|' .. _Link:GetString()
     end
 	XFG.DB.Backup.Links = _LinksString
 end

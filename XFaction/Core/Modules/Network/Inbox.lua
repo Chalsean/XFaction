@@ -72,10 +72,10 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end
 
     local _Message = XFG:DecodeMessage(inEncodedMessage)
-    self:Process(_Message, inMessageTag)
+    self:Process(_Message, inMessageTag, inSender)
 end
 
-function Inbox:Process(inMessage, inMessageTag)
+function Inbox:Process(inMessage, inMessageTag, inSender)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 
     -- Ignore if it's your own message
@@ -92,15 +92,12 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.Network.Mailbox:AddMessage(inMessage)
     end
 
-    -- If the sender is a friend on another realm/faction, add link
-
-
     -- Deserialize unit data
     if(inMessage:HasUnitData()) then
         local _UnitData = XFG:DeserializeUnitData(inMessage:GetData())
         inMessage:SetData(_UnitData)
     end
-      
+
     inMessage:ShallowPrint()
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets

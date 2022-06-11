@@ -4,7 +4,7 @@ local LogCategory = 'HETimer'
 local _OfflineTimer = 60       -- Seconds between checks if someone is offline
 local _HeartbeatDelta = 60 * 2 -- Seconds between sending your own status, regardless if things have changed
 local _GuildRosterDelta = 30   -- Seconds between local guild scans
-local _PingFriends = 60 * 5    -- Seconds between pinging friends
+local _PingFriends = 60 * 1    -- Seconds between pinging friends
 
 TimerEvent = {}
 
@@ -99,7 +99,7 @@ function TimerEvent:CallbackLogin()
         XFG.Player.Account = C_BattleNet.GetAccountInfoByGUID(XFG.Player.GUID)
 
         -- Need to find a safe way to query for guild and lockdown
-        local _GuildName = GetGuildInfo('player')
+        local _GuildName = 'Eternal Kingdom' --GetGuildInfo('player')
         XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
 
         XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
