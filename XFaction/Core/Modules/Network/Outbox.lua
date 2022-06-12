@@ -97,9 +97,11 @@ function Outbox:Send(inMessage)
 end
 
 function Outbox:BroadcastLocally(inData)
-    local _Channel = self:GetLocalChannel()
-    XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Network.Message.Tag.LOCAL)
-    XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
+    if(self:HasLocalChannel()) then
+        local _Channel = self:GetLocalChannel()
+        XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Network.Message.Tag.LOCAL)
+        XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
+    end
 end
 
 function Outbox:BroadcastUnitData(inUnitData, inSubject)
