@@ -72,10 +72,10 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end
 
     local _Message = XFG:DecodeMessage(inEncodedMessage)
-    self:Process(_Message, inMessageTag, inSender)
+    self:Process(_Message, inMessageTag)
 end
 
-function Inbox:Process(inMessage, inMessageTag, inSender)
+function Inbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 
     -- Ignore if it's your own message
@@ -168,6 +168,7 @@ function Inbox:Process(inMessage, inMessageTag, inSender)
         if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
             -- Used to whisper back but was running into Blizz API bug, so just broadcast
             XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit)
+            XFG.Network.BNet.Links:BroadcastLinks()
         end
     end
 end

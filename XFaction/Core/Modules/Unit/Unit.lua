@@ -163,13 +163,15 @@ function Unit:Initialize(_Argument)
         self:SetMainName(_Parts[2])
     end
 
-    -- The first team that matches wins
-    _Parts[1] = string.gsub(_Parts[1], '[%[%]]', '')    
-    local _Tags = string.Split(_Parts[1], '-')
-    for _, _Tag in pairs (_Tags) do
-        if(XFG.Teams:Contains(_Tag)) then
-            self:SetTeam(XFG.Teams:GetTeam(_Tag))
-            break
+    if(_Parts[1] ~= nil) then
+        -- The first team that matches wins
+        _Parts[1] = string.gsub(_Parts[1], '[%[%]]', '')    
+        local _Tags = string.Split(_Parts[1], '-')
+        for _, _Tag in pairs (_Tags) do
+            if(XFG.Teams:Contains(_Tag)) then
+                self:SetTeam(XFG.Teams:GetTeam(_Tag))
+                break
+            end
         end
     end
 

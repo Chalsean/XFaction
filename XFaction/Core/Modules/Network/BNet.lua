@@ -68,21 +68,27 @@ function BNet:Send(inMessage)
     for _, _Target in pairs(inMessage:GetTargets()) do
         local _Friends = {}
         for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
-            if(_Target:Equals(_Friend:GetTarget()) and 
-              (_Friend:IsRunningAddon() or 
-                -- If its login/logout message broadcast to everybody
-                inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN or 
-                inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT
-              )) then
+            if(_Target:Equals(_Friend:GetTarget()) and
+              -- At the time of login you may not have heard back on pings yet, so just broadcast
+              (_Friend:IsRunningAddon() or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN)) then
                 table.insert(_Friends, _Friend)
             end
         end
 
         -- You should only ever have to message one addon user per target
+        -- Something isnt working here
+        local _FriendCount = table.getn(_Friends)
+        if(_FriendCount > 0) then
+            local _RandomNumber = math.random(1, _FriendCount)
+            table.insert(_Links, _Friends[_RandomNumber])
+        else
+            local _Realm = _Target:GetRealm()
+            local _Faction = _Target:GetFaction()
+            XFG:Debug(LogCategory, 'Unable to identify friends on target [%s:%s]', _Realm:GetName(), _Faction:GetName())
+        end
     end
 
     if(table.getn(_Links) == 0) then
-        XFG:Debug(LogCategory, 'Unable to identify friends on target realm/faction')
         return
     end
 

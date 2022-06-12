@@ -13,6 +13,7 @@ function LinkCollection:new()
     self._Key = nil
     self._Links = {}
     self._LinkCount = 0
+	self._EpochTime = nil
     self._Initialized = false
 
     return _Object
@@ -21,6 +22,7 @@ end
 function LinkCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
+		self._EpochTime = 0
 		for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
 			local _Target = _Friend:GetTarget()
 			local _NewLink = Link:new()
@@ -141,21 +143,24 @@ function LinkCollection:RemoveNode(inName)
 end
 
 function LinkCollection:BroadcastLinks()
-	local _LinksString = ''
-    for _, _Link in self:Iterator() do
-        if(_Link:IsMyLink()) then
-            _LinksString = _LinksString .. '|' .. _Link:GetString()
-        end
-    end
+	if(self._EpochTime + 60 * 5 < GetServerTime()) then
+		self._EpochTime = GetServerTime()
+		local _LinksString = ''
+		for _, _Link in self:Iterator() do
+			if(_Link:IsMyLink()) then
+				_LinksString = _LinksString .. '|' .. _Link:GetString()
+			end
+		end
 
-    if(strlen(_LinksString) > 0) then
-        local _NewMessage = Message:new()
-        _NewMessage:Initialize()
-        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
-        _NewMessage:SetSubject(XFG.Network.Message.Subject.LINK)
-        _NewMessage:SetData(_LinksString)
-        XFG.Network.Outbox:Send(_NewMessage)  
-    end
+		if(strlen(_LinksString) > 0) then
+			local _NewMessage = Message:new()
+			_NewMessage:Initialize()
+			_NewMessage:SetType(XFG.Network.Type.BROADCAST)
+			_NewMessage:SetSubject(XFG.Network.Message.Subject.LINK)
+			_NewMessage:SetData(_LinksString)
+			XFG.Network.Outbox:Send(_NewMessage)  
+		end
+	end
 end
 
 function LinkCollection:CreateBackup()

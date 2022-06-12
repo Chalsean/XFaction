@@ -91,10 +91,10 @@ function ChatFrame:DisplayGuild(inMessage)
                 if _G[_Frame] then
 
                     local _Text = ''
-                    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
+                    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())                    
 
-                    if(XFG.Config.Chat.GChat.Faction) then
-                        local _Faction = _Guild:GetFaction()
+                    if(XFG.Config.Chat.GChat.Faction) then  
+                        local _Faction = _Guild:GetFaction()                      
                         _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
@@ -107,14 +107,11 @@ function ChatFrame:DisplayGuild(inMessage)
                     end
 
                     _Text = _Text .. inMessage:GetData()
-                    
-                    --local _Hex = XFG:RGBPercToHex(XFG.Config.Chat.GChat.Color.Red, XFG.Config.Chat.GChat.Color.Green, XFG.Config.Chat.GChat.Color.Blue)
-                    --_Text = format('|cff%s%s|r', _Hex, _Text)
 
-                    local _Channel = XFG.Network.Outbox:GetLocalChannel()
-                    local _ChannelName = _Channel:GetName()
-                    
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_GUILD', _Text, inMessage:GetUnitName(), 'Common', '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                    local _Hex = XFG:RGBPercToHex(XFG.Config.Chat.GChat.Color.Red, XFG.Config.Chat.GChat.Color.Green, XFG.Config.Chat.GChat.Color.Blue)
+                    _Text = format('|cff%s%s|r', _Hex, _Text)
+
+                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_GUILD', _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                 end                                   
                 break
             end
@@ -137,15 +134,15 @@ function ChatFrame:DisplayAchievement(inMessage)
                 if _G[_Frame] then
 
                     local _Text = ''
-                    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
+                    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())                    
 
                     if(XFG.Config.Chat.GChat.Faction) then
-                        local _Faction = _Guild:GetFaction()
+                        local _Faction = _Guild:GetFaction()                        
                         _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
                     if(XFG.Config.Chat.GChat.Main and inMessage:GetMainName() ~= nil) then
-                            _Text = _Text .. "(" .. inMessage:GetMainName() .. ") "
+                        _Text = _Text .. "(" .. inMessage:GetMainName() .. ") "
                     end
 
                     if(XFG.Config.Chat.GChat.Guild) then
@@ -157,10 +154,7 @@ function ChatFrame:DisplayAchievement(inMessage)
                     local _Hex = XFG:RGBPercToHex(XFG.Config.Chat.GChat.Color.Red, XFG.Config.Chat.GChat.Color.Green, XFG.Config.Chat.GChat.Color.Blue)
                     _Text = format('|cff%s%s|r', _Hex, _Text)
 
-                    local _Channel = XFG.Network.Outbox:GetLocalChannel()
-                    local _ChannelName = _Channel:GetName()
-                    
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_ACHIEVEMENT', _Text, inMessage:GetUnitName(), 'Common', '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_ACHIEVEMENT', _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                 end                                   
                 break
             end
