@@ -125,6 +125,7 @@ function TimerEvent:CallbackLogin()
         XFG.DataDB = LibStub("AceDB-3.0"):New("XFactionDataDB", nil, true)
         XFG.DB = XFG.DataDB.char
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
+        if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
         XFG.ConfigDB = LibStub("AceDB-3.0"):New("XFactionConfigDB", XFG.Options.Defaults)
         XFG.Config = XFG.ConfigDB.profile
 
@@ -200,9 +201,9 @@ function TimerEvent:CallbackLogin()
         if(XFG.DB.UIReload == false) then
             XFG.Network.BNet.Comm:PingFriends()                      
         end
-        XFG.DataText.Guild.Broker:RefreshBroker()
-        XFG.DataText.Soulbind.Broker:RefreshBroker()
-        XFG.DataText.Links.Broker:RefreshBroker()
+        XFG.DataText.Guild:RefreshBroker()
+        XFG.DataText.Soulbind:RefreshBroker()
+        XFG.DataText.Links:RefreshBroker()
     end
 end
 

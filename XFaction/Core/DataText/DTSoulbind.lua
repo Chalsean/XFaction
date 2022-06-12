@@ -38,12 +38,12 @@ function DTSoulbind:Initialize()
 		self._RegularFont = CreateFont('_RegularFont')
 		self._RegularFont:SetTextColor(255,255,255)
 
-		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.DataText.Soulbind.BrokerName, {
+		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTSOULBIND_NAME'], {
 			type = 'data source',
-			label = XFG.DataText.Soulbind.BrokerName,
-		    OnEnter = function(this) XFG.DataText.Soulbind.Broker:OnEnter(this) end,
-			OnLeave = function(this) XFG.DataText.Soulbind.Broker:OnLeave(this) end,
-			OnClick = function(this, button) XFG.DataText.Soulbind.Broker:OnClick(this, button) end,
+			label = XFG.Lib.Locale['DTSOULBIND_NAME'],
+		    OnEnter = function(this) XFG.DataText.Soulbind:OnEnter(this) end,
+			OnLeave = function(this) XFG.DataText.Soulbind:OnLeave(this) end,
+			OnClick = function(this, button) XFG.DataText.Soulbind:OnClick(this, button) end,
 		})
 
 		self:IsInitialized(true)
@@ -63,7 +63,11 @@ function DTSoulbind:Print()
 	XFG:SingleLine(LogCategory)
 	XFG:Debug(LogCategory, ObjectName .. " Object")
 	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _Price (" .. type(self._Price) .. "): ".. tostring(self._Price))
+	XFG:Debug(LogCategory, "  _HeaderFont (" .. type(self._HeaderFont) .. "): ".. tostring(self._HeaderFont))
+	XFG:Debug(LogCategory, "  _RegularFont (" .. type(self._RegularFont) .. "): ".. tostring(self._RegularFont))
+	XFG:Debug(LogCategory, "  _Count (" .. type(self._Count) .. "): ".. tostring(self._Count))
+	XFG:Debug(LogCategory, "  _LDBObject (" .. type(self._LDBObject) .. ")")
+	XFG:Debug(LogCategory, "  _Tooltip (" .. type(self._Tooltip) .. ")")
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
@@ -78,10 +82,10 @@ function DTSoulbind:RefreshBroker()
 				local _SoulbindName = ActiveSoulbind:GetName()
 				self._LDBObject.text = format('%s %s', format(XFG.Icons.String, _CovenantIconID), _SoulbindName)
 			else
-				self._LDBObject.text = format('%s No Soulbind', format(XFG.Icons.String, _CovenantIconID))
+				self._LDBObject.text = format(XFG.Lib.Locale['DTSOULBIND_NO_SOULBIND'], format(XFG.Icons.String, _CovenantIconID))
 			end
 		else
-			self._LDBObject.text = 'No Covenant'
+			self._LDBObject.text = XFG.Lib.Locale['DTSOULBIND_NO_COVENANT']
 		end
 	end
 end
@@ -116,9 +120,9 @@ function DTSoulbind:OnEnter(this)
 		local _Soulbind = XFG.Soulbinds:GetSoulbind(_SoulbindID)
 		local _SoulbindName = _Soulbind:GetName()
 		if(ActiveSoulbind:GetKey() == _Soulbind:GetKey()) then
-			self._Tooltip:AddLine(format('|cffFFFFFF%s: %s', _SoulbindName, ActiveString))
+			self._Tooltip:AddLine(format(XFG.Lib.Locale['DTSOULBIND_ACTIVE'], _SoulbindName))
 		else
-			self._Tooltip:AddLine(format('|cffFFFFFF%s: %s', _SoulbindName, InactiveString))
+			self._Tooltip:AddLine(format(XFG.Lib.Locale['DTSOULBIND_INACTIVE'], _SoulbindName))
 		end
 	end
 
@@ -137,8 +141,8 @@ function DTSoulbind:OnEnter(this)
 	self._Tooltip:AddLine(' ')
 	self._Tooltip:AddSeparator()
 	
-	self._Tooltip:AddLine("|cffFFFFFFLeft Click:|r Open Soulbind Frame")
-	self._Tooltip:AddLine("|cffFFFFFFRight Click:|r Change Soulbind")
+	self._Tooltip:AddLine(XFG.Lib.Locale['DTSOULBIND_LEFT_CLICK'])
+	self._Tooltip:AddLine(XFG.Lib.Locale['DTSOULBIND_RIGHT_CLICK'])
 
 	self._Tooltip:Show()
 end

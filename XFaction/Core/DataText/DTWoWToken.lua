@@ -3,6 +3,7 @@ local ObjectName = 'DTToken'
 local LogCategory = 'DTToken'
 
 DTToken = {}
+local Events = { 'PLAYER_ENTERING_WORLD', 'PLAYER_LOGIN', 'TOKEN_MARKET_PRICE_UPDATED' }
 
 function DTToken:new()
     _Object = {}
@@ -12,6 +13,7 @@ function DTToken:new()
 
     self._Key = nil
     self._Initialized = false
+	self._LDBObject = nil
 	self._Price = 0
     
     return _Object
@@ -19,9 +21,9 @@ end
 
 function DTToken:Initialize()
 	if(self:IsInitialized() == false) then
-		--self:SetKey(math.GenerateUID())      
-		XFG.Lib.Broker:NewDataObject(XFG.DataText.Token.BrokerName)
-		for _, _Event in ipairs (XFG.DataText.Token.Events) do
+		self:SetKey(math.GenerateUID())      
+		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTTOKEN_NAME'])
+		for _, _Event in ipairs (Events) do
 			XFG:RegisterEvent(_Event, self.OnEvent)
 			XFG:Info(LogCategory, "Registered for %s events", _Event)
 		end
@@ -44,7 +46,18 @@ function DTToken:Print()
 	XFG:Debug(LogCategory, ObjectName .. " Object")
 	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
 	XFG:Debug(LogCategory, "  _Price (" .. type(self._Price) .. "): ".. tostring(self._Price))
+	XFG:Debug(LogCategory, "  _LDBObject (" .. type(self._LDBObject) .. ")")
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+end
+
+function DTToken:GetKey()
+	return self._Key
+end
+
+function DTToken:SetKey(inKey)
+	assert(type(inKey) == 'string')
+	self._Key = inKey
+	return self:GetKey()
 end
 
 function DTToken:GetPrice()
@@ -58,13 +71,16 @@ function DTToken:SetPrice(inPrice)
 end
 
 function DTToken:OnEvent(inEvent)
-	local _Broker = XFG.Lib.Broker:GetDataObjectByName(XFG.DataText.Token.BrokerName)
+	local _Broker = XFG.Lib.Broker:GetDataObjectByName(XFG.Lib.Locale['DTTOKEN_NAME'])
 	local _Price = C_WowTokenPublic.GetCurrentMarketPrice()
-	if(_Price ~= nil and XFG.DataText.Token.Broker:GetPrice() ~= _Price) then
-		XFG.DataText.Token.Broker:SetPrice(floor(_Price / 10000))
- 		XFG:Info(LogCategory, format("New token price [%d]", XFG.DataText.Token.Broker:GetPrice()))
-	 	local _Text = format('%s %s', format(XFG.Icons.String, XFG.Icons.WoWToken), XFG.DataText.Token.Broker:GetPrice())
-		_Broker.text = _Text
+	if(_Price ~= nil) then
+		_Price = floor(_Price / 10000)
+		if(XFG.DataText.Token:GetPrice() ~= _Price) then
+			XFG.DataText.Token:SetPrice(_Price)
+ 			XFG:Info(LogCategory, format("New token price [%d]", XFG.DataText.Token:GetPrice()))
+	 		local _Text = format('%s %s %s', format(XFG.Icons.String, XFG.Icons.WoWToken), FormatCurrency(XFG.DataText.Token:GetPrice()), XFG.Icons.Gold)
+			_Broker.text = _Text
+		end
 	 end
 end
 

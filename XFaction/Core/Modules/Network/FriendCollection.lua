@@ -195,7 +195,7 @@ function FriendCollection:CheckFriends()
 	end
 	if(_LinksChanged) then
 		XFG.Network.BNet.Links:BroadcastLinks()
-		XFG.DataText.Links.Broker:RefreshBroker()
+		XFG.DataText.Links:RefreshBroker()
 	end
 end
 

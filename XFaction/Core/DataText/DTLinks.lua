@@ -28,11 +28,11 @@ function DTLinks:Initialize()
 		self._RegularFont = CreateFont('_RegularFont')
 		self._RegularFont:SetTextColor(255,255,255)
 
-		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.DataText.Links.BrokerName, {
+		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTLINKS_NAME'], {
 			type = 'data source',
-			label = XFG.DataText.Links.BrokerName,
-		    OnEnter = function(this) XFG.DataText.Links.Broker:OnEnter(this) end,
-			OnLeave = function(this) XFG.DataText.Links.Broker:OnLeave(this) end,
+			label = XFG.Lib.Locale['DTLINKS_NAME'],
+		    OnEnter = function(this) XFG.DataText.Links:OnEnter(this) end,
+			OnLeave = function(this) XFG.DataText.Links:OnLeave(this) end,
 		})
 
 		self:IsInitialized(true)
@@ -52,7 +52,11 @@ function DTLinks:Print()
 	XFG:SingleLine(LogCategory)
 	XFG:Debug(LogCategory, ObjectName .. " Object")
 	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _Price (" .. type(self._Price) .. "): ".. tostring(self._Price))
+	XFG:Debug(LogCategory, "  _HeaderFont (" .. type(self._HeaderFont) .. "): ".. tostring(self._HeaderFont))
+	XFG:Debug(LogCategory, "  _RegularFont (" .. type(self._RegularFont) .. "): ".. tostring(self._RegularFont))
+	XFG:Debug(LogCategory, "  _Count (" .. type(self._Count) .. "): ".. tostring(self._Count))
+	XFG:Debug(LogCategory, "  _LDBObject (" .. type(self._LDBObject) .. ")")
+	XFG:Debug(LogCategory, "  _Tooltip (" .. type(self._Tooltip) .. ")")
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
@@ -89,9 +93,9 @@ function DTLinks:OnEnter(this)
 
 	local line = self._Tooltip:AddLine()
 	local _GuildName = XFG.Confederate:GetName()
-	self._Tooltip:SetCell(line, 1, format("Confederate: |cffffffff%s|r", _GuildName), self._HeaderFont, "LEFT", _TargetCount)
+	self._Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _GuildName), self._HeaderFont, "LEFT", _TargetCount)
 	line = self._Tooltip:AddLine()
-	self._Tooltip:SetCell(line, 1, format("Active BNet Links: |cffffffff%d|r", self._Count), self._HeaderFont, "LEFT", _TargetCount)
+	self._Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DTLINKS_HEADER_LINKS'], self._Count), self._HeaderFont, "LEFT", _TargetCount)
 
 	line = self._Tooltip:AddLine()
 	line = self._Tooltip:AddLine()
