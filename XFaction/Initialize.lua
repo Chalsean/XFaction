@@ -1,5 +1,5 @@
 local XFG, G = unpack(select(2, ...))
-local LogCategory = 'FinishInitialize'
+local LogCategory = 'Initialize'
 
 function XFG:Init()	
 	XFG.Player.GUID = UnitGUID('player')
@@ -37,7 +37,13 @@ function XFG:Init()
 		end
 	end
 
-	XFG.Player.Realm = XFG.Realms:GetRealm(GetRealmName())
+	local _RealmName = GetRealmName()
+	XFG.Player.Realm = XFG.Realms:GetRealm(_RealmName)
+	if(XFG.Player.Realm == nil) then
+		XFG:Error(LogCategory, 'Player is not on a supported realm [%s]', _RealmName)
+		return
+	end
+
 	XFG.Network.Mailbox = Mailbox:new(); XFG.Network.Mailbox:Initialize()	
 	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()	
 	

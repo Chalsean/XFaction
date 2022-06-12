@@ -57,20 +57,7 @@ function DTLinks:Print()
 end
 
 function DTLinks:CountLinks()
---	if(XFG.Config.DataText.Links.Area52 and XFG.Config.DataText.Links.OnlyMine == false) then
-		self._Count =  XFG.Network.BNet.Links:GetCount()
-	-- else
-	-- 	self._Count = 0
-	-- 	for _, _Link in XFG.Network.BNet.Links:Iterator() do
-	-- 		if(XFG.Config.DataText.Links.OnlyMine == false or _Link:IsMyLink()) then
-	-- 			local _FromRealm = _Link:GetFromRealm()
-	-- 			local _ToRealm = _Link:GetToRealm()
-	-- 			if(XFG.Config.DataText.Links.Area52 or (_FromRealm:GetName() ~= 'Area 52' and _ToRealm:GetName() ~= 'Area 52')) then
-	-- 				self._Count = self._Count + 1
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
+	self._Count =  XFG.Network.BNet.Links:GetCount()
 end
 
 function DTLinks:RefreshBroker()

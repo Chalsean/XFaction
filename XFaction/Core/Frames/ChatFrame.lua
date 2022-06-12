@@ -141,6 +141,8 @@ function ChatFrame:DisplayAchievement(inMessage)
                         _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
+                    _Text = _Text .. inMessage:GetUnitName() .. ' '
+
                     if(XFG.Config.Chat.GChat.Main and inMessage:GetMainName() ~= nil) then
                         _Text = _Text .. "(" .. inMessage:GetMainName() .. ") "
                     end

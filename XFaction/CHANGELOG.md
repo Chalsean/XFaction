@@ -1,3 +1,12 @@
+### Version 2.0.9 [ 06.13.2022 ]
+
+**Bug Fixes**  
+[XFaction] 
+- Fixed issue with removing Area 52
+- Fixed achievements not having unit name
+- Fixed all friends being considered links
+- Fixed backup/restore of unit data
+
 ### Version 2.0.8 [ 06.12.2022 ]
 
 **Bug Fixes**  

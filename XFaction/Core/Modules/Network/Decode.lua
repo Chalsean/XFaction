@@ -47,6 +47,7 @@ end
 function XFG:DeserializeUnitData(inData)
 	local _, _DeserializedData = XFG:Deserialize(inData)
 	local _UnitData = Unit:new()
+	_UnitData:IsRunningAddon(true)
 	if(_DeserializedData.C ~= nil) then
 		_UnitData:SetCovenant(XFG.Covenants:GetCovenant(_DeserializedData.C))
 	end
