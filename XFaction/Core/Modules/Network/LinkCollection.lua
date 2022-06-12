@@ -23,15 +23,6 @@ function LinkCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
 		self._EpochTime = 0
-		for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
-			local _Target = _Friend:GetTarget()
-			local _NewLink = Link:new()
-			_NewLink:SetToName(_Friend:GetName())
-			_NewLink:SetToRealm(_Target:GetRealm())
-			_NewLink:SetToFaction(_Target:GetFaction())
-			_NewLink:Initialize()
-			self:AddLink(_NewLink)
-		end
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

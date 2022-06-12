@@ -101,9 +101,18 @@ function TimerEvent:CallbackLogin()
 
         XFG.Player.Account = C_BattleNet.GetAccountInfoByGUID(XFG.Player.GUID)
 
-        -- Need to find a safe way to query for guild and lockdown
         local _GuildName = GetGuildInfo('player')
+        if(_GuildName == nil) then
+            XFG.Error(LogCategory, 'Player is not in a guild')
+            XFG:CancelAllTimers()
+            return
+        end
         XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
+        if(XFG.Player.Guild == nil) then
+            XFG.Error(LogCategory, 'Player is not in supported guild ' .. tostring(_GuildName))
+            XFG:CancelAllTimers()
+            return
+        end
 
         XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
         XFG.Classes = ClassCollection:new(); XFG.Classes:Initialize()

@@ -163,11 +163,11 @@ function Confederate:CreateBackup()
     XFG.DB.Backup = {}
     XFG.DB.Backup.Confederate = {}
     for _UnitKey, _Unit in self:Iterator() do
-        --if(_Unit:IsRunningAddon() and _Unit:IsPlayer() == false) then
+        if(_Unit:IsRunningAddon() and _Unit:IsPlayer() == false) then
             XFG.DB.Backup.Confederate[_UnitKey] = {}
             local _SerializedData = XFG:SerializeUnitData(_Unit)
             XFG.DB.Backup.Confederate[_UnitKey] = _SerializedData
-        --end
+        end
     end
 end
 
