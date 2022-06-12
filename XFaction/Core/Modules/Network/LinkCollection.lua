@@ -13,6 +13,7 @@ function LinkCollection:new()
     self._Key = nil
     self._Links = {}
     self._LinkCount = 0
+	self._EpochTime = nil
     self._Initialized = false
 
     return _Object
@@ -21,6 +22,7 @@ end
 function LinkCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
+		self._EpochTime = 0
 		for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
 			local _Target = _Friend:GetTarget()
 			local _NewLink = Link:new()
@@ -78,8 +80,9 @@ function LinkCollection:AddLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey()) == false) then
 		self._LinkCount = self._LinkCount + 1
+		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
 	end
-    self._Links[inLink:GetKey()] = inLink
+    self._Links[inLink:GetKey()] = inLink	
     return self:Contains(inLink:GetKey())
 end
 
@@ -88,7 +91,8 @@ function LinkCollection:RemoveLink(inLink)
 	if(self:Contains(inLink:GetKey())) then
 		self._LinkCount = self._LinkCount - 1
 		self._Links[inLink:GetKey()] = nil
-	end    
+		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
+	end
     return self:Contains(inLink:GetKey()) == false
 end
 
@@ -139,29 +143,30 @@ function LinkCollection:RemoveNode(inName)
 end
 
 function LinkCollection:BroadcastLinks()
-	local _LinksString = ''
-    for _, _Link in self:Iterator() do
-        if(_Link:IsMyLink()) then
-            _LinksString = _LinksString .. '|' .. _Link:GetString()
-        end
-    end
+	if(self._EpochTime + 60 * 5 < GetServerTime()) then
+		self._EpochTime = GetServerTime()
+		local _LinksString = ''
+		for _, _Link in self:Iterator() do
+			if(_Link:IsMyLink()) then
+				_LinksString = _LinksString .. '|' .. _Link:GetString()
+			end
+		end
 
-    if(strlen(_LinksString) > 0) then
-        local _NewMessage = Message:new()
-        _NewMessage:Initialize()
-        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
-        _NewMessage:SetSubject(XFG.Network.Message.Subject.LINK)
-        _NewMessage:SetData(_LinksString)
-        XFG.Network.Outbox:Send(_NewMessage)  
-    end
+		if(strlen(_LinksString) > 0) then
+			local _NewMessage = Message:new()
+			_NewMessage:Initialize()
+			_NewMessage:SetType(XFG.Network.Type.BROADCAST)
+			_NewMessage:SetSubject(XFG.Network.Message.Subject.LINK)
+			_NewMessage:SetData(_LinksString)
+			XFG.Network.Outbox:Send(_NewMessage)  
+		end
+	end
 end
 
 function LinkCollection:CreateBackup()
 	local _LinksString = ''
     for _, _Link in self:Iterator() do
-        if(_Link:IsMyLink()) then
-            _LinksString = _LinksString .. '|' .. _Link:GetString()
-        end
+        _LinksString = _LinksString .. '|' .. _Link:GetString()
     end
 	XFG.DB.Backup.Links = _LinksString
 end

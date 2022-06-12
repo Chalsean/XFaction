@@ -1,18 +1,12 @@
-### Version 1.11.5 [ 06.09.2022 ]
+### Version 2.0.8 [ 06.12.2022 ]
 
 **Bug Fixes**  
 [XFaction] 
-- Removed all whisper logic, Blizz API was sometimes throwing a "player not found" error
-- Implemented lockdown logic if a player gquit/gkick
-- Fixed logout message getting fired during load screens (PLAYER_LEAVING_WORLD event firing). Switched to PLAYER_LOGOUT event
-
-[DTLinks]
-- Bug fix for when player is not in a guild
-
-[DTSoulbind]
-- Bug fix for when player is not in a guild
-
-[DTGuild]
-- Bug fix for when player is not in a guild
+- Fixed exception when player has no notes
+- Fixed Horde players seeing "Common" from gchat messages
+- Fixed some of the timing issues on login
+- Fixed some of the BNet and local channel bugs
+- Reimplemented ping and random target logic
+- Links are now broadcasting more frequently
 
 **Misc Changes** 
