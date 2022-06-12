@@ -58,13 +58,11 @@ function DTToken:SetPrice(inPrice)
 end
 
 function DTToken:OnEvent(inEvent)
-
 	local _Broker = XFG.Lib.Broker:GetDataObjectByName(XFG.DataText.Token.BrokerName)
-	XFG:Debug(LogCategory, 'Checking token price due to event ' .. tostring(inEvent))
 	local _Price = C_WowTokenPublic.GetCurrentMarketPrice()
-	if(_Price ~= nil and self._Price ~= _Price) then
+	if(_Price ~= nil and XFG.DataText.Token.Broker:GetPrice() ~= _Price) then
 		XFG.DataText.Token.Broker:SetPrice(floor(_Price / 10000))
- 		XFG:Info(LogCategory, format("New token price [%d]", self._Price))
+ 		XFG:Info(LogCategory, format("New token price [%d]", XFG.DataText.Token.Broker:GetPrice()))
 	 	local _Text = format('%s %s', format(XFG.Icons.String, XFG.Icons.WoWToken), XFG.DataText.Token.Broker:GetPrice())
 		_Broker.text = _Text
 	 end

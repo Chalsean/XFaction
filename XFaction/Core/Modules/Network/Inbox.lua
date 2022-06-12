@@ -92,15 +92,12 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.Network.Mailbox:AddMessage(inMessage)
     end
 
-    -- If the sender is a friend on another realm/faction, add link
-
-
     -- Deserialize unit data
     if(inMessage:HasUnitData()) then
         local _UnitData = XFG:DeserializeUnitData(inMessage:GetData())
         inMessage:SetData(_UnitData)
     end
-      
+
     inMessage:ShallowPrint()
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
@@ -171,6 +168,7 @@ function Inbox:Process(inMessage, inMessageTag)
         if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
             -- Used to whisper back but was running into Blizz API bug, so just broadcast
             XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit)
+            XFG.Network.BNet.Links:BroadcastLinks()
         end
     end
 end

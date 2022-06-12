@@ -68,78 +68,86 @@ function BNet:Send(inMessage)
     for _, _Target in pairs(inMessage:GetTargets()) do
         local _Friends = {}
         for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
-            -- If its LOGIN, ignore the IsRunningAddon check because we havent had time to receive ping responses
-            -- If theyre not running addon it will just ignore it anyway
-            if(_Target:Equals(_Friend:GetTarget())) then
-                table.insert(_Links, _Friend)
+            if(_Target:Equals(_Friend:GetTarget()) and
+              -- At the time of login you may not have heard back on pings yet, so just broadcast
+              (_Friend:IsRunningAddon() or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN)) then
+                table.insert(_Friends, _Friend)
             end
         end
 
-        -- if(table.getn(_Friends) > 0) then
-        --     local _Random = math.random(1, table.getn(_Friends))
-        --     local _Link = _Friends[_Random]
-        --     table.insert(_Links, _Link)
-        -- end
+        -- You should only ever have to message one addon user per target
+        -- Something isnt working here
+        local _FriendCount = table.getn(_Friends)
+        if(_FriendCount > 0) then
+            local _RandomNumber = math.random(1, _FriendCount)
+            table.insert(_Links, _Friends[_RandomNumber])
+        else
+            local _Realm = _Target:GetRealm()
+            local _Faction = _Target:GetFaction()
+            XFG:Debug(LogCategory, 'Unable to identify friends on target [%s:%s]', _Realm:GetName(), _Faction:GetName())
+        end
     end
 
-    if(table.getn(_Links) > 0) then
-        local _Packets = {}
-        local _PacketCount = 0            
+    if(table.getn(_Links) == 0) then
+        return
+    end
 
-        -- Now that we know we need to send a BNet whisper, time to split the message into packets
-        -- Split once and then message all the targets
-        local _SerializedData
-        if(inMessage:HasUnitData()) then
-            _SerializedData = XFG:SerializeUnitData(inMessage:GetData())
-        else
-            _SerializedData = inMessage:GetData()
+    local _Packets = {}
+    local _PacketCount = 0            
+
+    -- Now that we know we need to send a BNet whisper, time to split the message into packets
+    -- Split once and then message all the targets
+    local _SerializedData
+    if(inMessage:HasUnitData()) then
+        _SerializedData = XFG:SerializeUnitData(inMessage:GetData())
+    else
+        _SerializedData = inMessage:GetData()
+    end
+    local _MessageSize = strlen(_SerializedData)
+    if(_MessageSize <= MaxPacketSize) then
+        table.insert(_Packets, inMessage)
+        _PacketCount = 1
+    else                
+        local _SegmentStart = 1
+        local _SegmentEnd = MaxPacketSize
+
+        while(_SegmentStart <= _MessageSize) do
+
+            _PacketCount = _PacketCount + 1
+
+            local _NewMessage = nil
+            if(inMessage.__name == 'GuildMessage') then
+                _NewMessage = GuildMessage:new()
+            elseif(inMessage.__name == 'LogoutMessage') then
+                _NewMessage = LogoutMessage:new()
+            elseif(inMessage.__name == 'AchievementMessage') then
+                _NewMessage = AchievementMessage:new()
+            else
+                _NewMessage = Message:new()
+            end	
+            _NewMessage:Initialize()
+            _NewMessage:Copy(inMessage)
+            _NewMessage:SetPacketNumber(_PacketCount)
+
+            local _DataSegment = strsub(_SerializedData, _SegmentStart, _SegmentEnd)
+            _NewMessage:SetData(_DataSegment)
+            table.insert(_Packets, _NewMessage)
+            
+            _SegmentStart = _SegmentEnd + 1
+            _SegmentEnd = _SegmentStart + MaxPacketSize
         end
-        local _MessageSize = strlen(_SerializedData)
-        if(_MessageSize <= MaxPacketSize) then
-            table.insert(_Packets, inMessage)
-            _PacketCount = 1
-        else                
-            local _SegmentStart = 1
-            local _SegmentEnd = MaxPacketSize
+    end
 
-            while(_SegmentStart <= _MessageSize) do
-
-                _PacketCount = _PacketCount + 1
-
-                local _NewMessage = nil
-                if(inMessage.__name == 'GuildMessage') then
-                    _NewMessage = GuildMessage:new()
-                elseif(inMessage.__name == 'LogoutMessage') then
-                    _NewMessage = LogoutMessage:new()
-                elseif(inMessage.__name == 'AchievementMessage') then
-                    _NewMessage = AchievementMessage:new()
-                else
-                    _NewMessage = Message:new()
-                end	
-                _NewMessage:Initialize()
-                _NewMessage:Copy(inMessage)
-                _NewMessage:SetPacketNumber(_PacketCount)
-
-                local _DataSegment = strsub(_SerializedData, _SegmentStart, _SegmentEnd)
-                _NewMessage:SetData(_DataSegment)
-                table.insert(_Packets, _NewMessage)
-                
-                _SegmentStart = _SegmentEnd + 1
-                _SegmentEnd = _SegmentStart + MaxPacketSize
-            end
+    -- Make sure all packets go to each target
+    for _, _Friend in pairs (_Links) do
+        for _, _Packet in pairs (_Packets) do
+            _Packet:SetTotalPackets(_PacketCount)
+            local _EncodedPacket = XFG:EncodeMessage(_Packet)
+            XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
+            -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
+            BNSendGameData(_Friend:GetGameID(), XFG.Network.Message.Tag.BNET, _EncodedPacket)
         end
-
-        -- Make sure all packets go to each target
-        for _, _Friend in pairs (_Links) do
-            for _, _Packet in pairs (_Packets) do
-                _Packet:SetTotalPackets(_PacketCount)
-                local _EncodedPacket = XFG:EncodeMessage(_Packet)
-                XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
-                -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-                BNSendGameData(_Friend:GetGameID(), XFG.Network.Message.Tag.BNET, _EncodedPacket)
-            end
-            inMessage:RemoveTarget(_Friend:GetTarget())
-        end
+        inMessage:RemoveTarget(_Friend:GetTarget())
     end
 end
 
@@ -157,25 +165,25 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-    -- If you get it from BNet, they should be in your friend list
+    -- If you get it from BNet, they should be in your friend list and obviously they are running addon
     if(XFG.Network.BNet.Friends:ContainsByGameID(tonumber(inSender))) then
         local _Friend = XFG.Network.BNet.Friends:GetFriendByGameID(tonumber(inSender))
         _Friend:SetDateTime(GetServerTime())
         _Friend:IsRunningAddon(true)
-        if(inEncodedMessage == 'RE:PING') then
-            XFG:Debug(LogCategory, "Received ping response [%s:%d]", _Friend:GetTag(), _Friend:GetGameID())
+        if(inEncodedMessage == 'PING') then
+            XFG:Debug(LogCategory, 'Received ping from [%s]', _Friend:GetTag())
+        elseif(inEncodedMessage == 'RE:PING') then
+            XFG:Debug(LogCategory, '[%s] Responded to ping', _Friend:GetTag())
         end
     end
 
     if(inEncodedMessage == 'PING') then
-        XFG:Debug(LogCategory, "Responding to ping from %s", inSender)
-        BNSendGameData(tonumber(inSender), XFG.Network.Message.Tag.BNET, 'RE:PING')
+        BNSendGameData(inSender, XFG.Network.Message.Tag.BNET, 'RE:PING')
+        return
+    elseif(inEncodedMessage == 'RE:PING') then
         return
     end
 
-    if(inEncodedMessage == 'RE:PING') then
-        return
-    end
 
     XFG:Debug(LogCategory, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
     local _Message = XFG:DecodeMessage(inEncodedMessage)
@@ -236,23 +244,6 @@ function BNet:RebuildMessage(inMessageKey)
     return _Message
 end
 
--- Designed to identify who is running addon
-function BNet:PingFriends()
-    for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
-        -- If we haven't heard from friend in so long, ping them
---        if(_Friend:GetDateTime() + XFG.Network.BNet.PingTimer < GetServerTime()) then
-            self:PingFriend(_Friend)
---        end
-    end
-end
-
--- Designed to identify who is running addon
-function BNet:PingFriend(inFriend)
-    assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', "argument must be a Friend object")
-    XFG:Debug(LogCategory, "Sending ping [%s:%d]", inFriend:GetTag(), inFriend:GetGameID())
-    BNSendGameData(inFriend:GetGameID(), XFG.Network.Message.Tag.BNET, 'PING')
-end
-
 -- Review: Should back the epoch time an argument
 function BNet:Purge()
 	local _ServerEpochTime = GetServerTime()
@@ -261,4 +252,18 @@ function BNet:Purge()
 			self:RemoveMessage(_Packet:GetKey())
 		end
 	end
+end
+
+function BNet:PingFriends()
+    for _, _Friend in XFG.Network.BNet.Friends:Iterator() do
+        self:PingFriend(_Friend)
+    end
+end
+
+function BNet:PingFriend(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', 'argument must be a Friend object')
+    if(inFriend:IsRunningAddon() == false) then
+        XFG:Debug(LogCategory, 'Sending ping to [%s]', inFriend:GetTag())
+        BNSendGameData(inFriend:GetGameID(), XFG.Network.Message.Tag.BNET, 'PING')
+    end
 end

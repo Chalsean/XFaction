@@ -97,14 +97,18 @@ function Outbox:Send(inMessage)
 end
 
 function Outbox:BroadcastLocally(inData)
-    local _Channel = self:GetLocalChannel()
-    XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Network.Message.Tag.LOCAL)
-    XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
+    if(self:HasLocalChannel()) then
+        -- Most addons use guild or raid chat, because were trying to hit multiple guilds on the same faction side need an actual channel
+        local _Channel = self:GetLocalChannel()
+        XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Network.Message.Tag.LOCAL)
+        XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
+    end
 end
 
 function Outbox:BroadcastUnitData(inUnitData, inSubject)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
 	if(inSubject == nil) then inSubject = XFG.Network.Message.Subject.DATA end
+    -- Update the last sent time, dont need to heartbeat for awhile
     if(inUnitData:IsPlayer()) then
         inUnitData:SetTimeStamp(GetServerTime())
         XFG.Player.LastBroadcast = inUnitData:GetTimeStamp()

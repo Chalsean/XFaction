@@ -27,6 +27,7 @@ function Faction:new(inObject)
         self._ID = nil
         self._Name = nil
         self._IconID = nil
+        self._Language = nil
         self._Initialized = false
     end
 
@@ -38,10 +39,13 @@ function Faction:Initialize()
         if(self._Name ~= nil) then
             if(self._Name == 'Horde') then
                 self:SetIconID(463451)
+                self:SetLanguage('Orcish')
             elseif(self._Name == 'Alliance') then
                 self:SetIconID(2565243)
+                self:SetLanguage('Common')
             else
                 self:SetIconID(132311)
+                self:SetLanguage('Common')
             end
         end
         self:SetID(self._Key)
@@ -111,4 +115,14 @@ function Faction:Equals(inFaction)
     if(type(inFaction) ~= 'table' or inFaction.__name == nil or inFaction.__name ~= 'Faction') then return false end
     if(self:GetKey() ~= inFaction:GetKey()) then return false end
     return true
+end
+
+function Faction:GetLanguage()
+    return self._Language
+end
+
+function Faction:SetLanguage(inLanguage)
+    assert(type(inLanguage) == 'string')
+    self._Language = inLanguage
+    return self:GetLanguage()
 end
