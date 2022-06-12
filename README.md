@@ -46,35 +46,31 @@ The addon should provide the following functionalities:
 
 ### Dependencies
 
-> ElvUI (not included in install package)
-
-> Ace3 (included)
+> Ace3
 - Addon
 - Comm
+- Config
+- Console
 - DB
+- DBOptions
 - Event
+- GUI
 - Hook
 - Serializer
 - Timer
 - Stub
 
-> LibCompress (included)
+> LibCompress
 
-> LibQTip (included)
+> LibDataBroker
 
-> LibRealmInfo (included)
+> LibQTip
 
-### Known bugs
+> LibRealmInfo
 
-> Parsing ENK notes incorrectly to identify alts
+### Known bugs and planned enhancements
 
-> 3-way BNet communication not always working
-
-### Planned enhancements
-
-> Add profile logic for config settings.
-
-> Find a reliable way of getting zone information.
+https://github.com/Chalsean/XFaction/issues
 
 ## Testers
 
