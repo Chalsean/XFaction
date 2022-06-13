@@ -47,6 +47,7 @@ The addon should provide the following functionalities:
 - Addon
 - Comm
 - Config
+- ConfigDialog
 - Console
 - DB
 - DBOptions
