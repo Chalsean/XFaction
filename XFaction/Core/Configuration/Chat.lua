@@ -1,38 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Config'
 
-local function DefaultConfigs()
-	if(XFG.Options == nil) then XFG.Options = {} end
-	if(XFG.Config.Chat == nil) then XFG.Config.Chat = {} end
-	if(XFG.Config.Chat.GChat == nil) then XFG.Config.Chat.GChat = {} end
-	if(XFG.Config.Chat.GChat.Enable == nil) then XFG.Config.Chat.GChat.Enable = true end
-	if(XFG.Config.Chat.GChat.Faction == nil) then XFG.Config.Chat.GChat.Faction = true end
-	if(XFG.Config.Chat.GChat.Guild == nil) then XFG.Config.Chat.GChat.Guild = true end
-	if(XFG.Config.Chat.GChat.Main == nil) then XFG.Config.Chat.GChat.Main = true end
-	if(XFG.Config.Chat.GChat.Color == nil) then XFG.Config.Chat.GChat.Color = {} end
-	if(XFG.Config.Chat.GChat.Color.Red == nil) then XFG.Config.Chat.GChat.Color.Red = 0 end
-	if(XFG.Config.Chat.GChat.Color.Green == nil) then XFG.Config.Chat.GChat.Color.Green = 0 end
-	if(XFG.Config.Chat.GChat.Color.Blue == nil) then XFG.Config.Chat.GChat.Color.Blue = 0 end
-	
-	if(XFG.Config.Chat.OChat == nil) then XFG.Config.Chat.OChat = false end
-
-	if(XFG.Config.Chat.Achievement == nil) then XFG.Config.Chat.Achievement = {} end
-	if(XFG.Config.Chat.Achievement.Enable == nil) then XFG.Config.Chat.Achievement.Enable = true end
-	if(XFG.Config.Chat.Achievement.Faction == nil) then XFG.Config.Chat.Achievement.Faction = true end
-	if(XFG.Config.Chat.Achievement.Guild == nil) then XFG.Config.Chat.Achievement.Guild = true end
-	if(XFG.Config.Chat.Achievement.Main == nil) then XFG.Config.Chat.Achievement.Main = true end
-	if(XFG.Config.Chat.Achievement.Color == nil) then XFG.Config.Chat.Achievement.Color = {} end
-	if(XFG.Config.Chat.Achievement.Color.Red == nil) then XFG.Config.Chat.Achievement.Color.Red = 0 end
-	if(XFG.Config.Chat.Achievement.Color.Green == nil) then XFG.Config.Chat.Achievement.Color.Green = 0 end
-	if(XFG.Config.Chat.Achievement.Color.Blue == nil) then XFG.Config.Chat.Achievement.Color.Blue = 0 end
-
-	if(XFG.Config.Chat.Login == nil) then XFG.Config.Chat.Login = {} end
-	if(XFG.Config.Chat.Login.Enable == nil) then XFG.Config.Chat.Login.Enable = true end
-end
-
-function XFG:ChatConfig()
-	DefaultConfigs()
-	XFG.Options.Chat = {
+--function XFG:ChatConfig()
+	XFG.Options.args.Chat = {
 		name = 'XFaction - Chat',
 		order = 1,
 		type = 'group',
@@ -213,7 +183,4 @@ function XFG:ChatConfig()
 			}
 		}
 	}
-
-	XFG.Lib.Config:RegisterOptionsTable('XFaction Chat', XFG.Options.Chat)
-    XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction Chat', 'Chat', 'XFaction')
-end
+--end

@@ -14,9 +14,6 @@ XFG["RegisteredModules"] = {}
 XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Handlers = {}
 
-XFG.Options = {}
-XFG.Options.Defaults = {}
-XFG.Options.Defaults.profile = {}
 XFG.Initialized = false
 
 XFG.Icons = {}
@@ -38,7 +35,6 @@ XFG.Lib.Realm = LibStub:GetLibrary('LibRealmInfo')
 XFG.Lib.Broker = LibStub('LibDataBroker-1.1')
 XFG.Lib.Config = LibStub('AceConfig-3.0')
 XFG.Lib.ConfigDialog = LibStub('AceConfigDialog-3.0')
-XFG.Lib.Profiler = LibStub('AceDBOptions-3.0')
 XFG.Lib.Locale = LibStub('AceLocale-3.0'):GetLocale('XFaction')
 
 XFG.DataText = {}

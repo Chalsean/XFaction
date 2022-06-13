@@ -5,7 +5,7 @@
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariables: XFactionDataDB, XFactionConfigDB
+## SavedVariables: XFactionDB
 
 Libraries\Load_Libraries.xml
 ##Core\Libraries\Load_Libraries.xml

@@ -33,6 +33,7 @@ L['DT_HEADER_GUILD'] = 'Guild: |cffffffff%s|r'
 -- Broker name
 L['DTGUILD_NAME'] = 'Guild (X)'
 -- Config
+L['DTGUILD_CONFIG_SORT'] = 'Default Sort Column'
 L['DTGUILD_CONFIG_HEADER'] = '     Show Header Fields'
 L['DTGUILD_CONFIG_CONFEDERATE_TOOLTIP'] = 'Show name of the confederate'
 L['DTGUILD_CONFIG_GUILD_TOOLTIP'] = 'Show name of the current guild'

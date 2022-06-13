@@ -38,7 +38,7 @@ function DTGuild:Initialize()
 		})
 		LDB_ANCHOR = self._LDBObject
 
-		self:SetSortColumn(XFG.Lib.Locale['TEAM'])
+		self:SetSort('Team')
 
 		self:IsInitialized(true)
 	end
@@ -73,14 +73,14 @@ function DTGuild:IsReverseSort(inBoolean)
 	return self._ReverseSort
 end
 
-function DTGuild:GetSortColumn()
+function DTGuild:GetSort()
 	return self._SortColumn
 end
 
-function DTGuild:SetSortColumn(inColumnName)
+function DTGuild:SetSort(inColumnName)
 	assert(type(inColumnName) == 'string')
 	self._SortColumn = inColumnName
-	return self:GetSortColumn()
+	return self:GetSort()
 end
 
 local function PreSort()
@@ -147,12 +147,12 @@ local function PreSort()
 end
 
 local function SetSortColumn(_, inColumnName)
-	if(XFG.DataText.Guild:GetSortColumn() == inColumnName and XFG.DataText.Guild:IsReverseSort()) then
+	if(XFG.DataText.Guild:GetSort() == inColumnName and XFG.DataText.Guild:IsReverseSort()) then
 		XFG.DataText.Guild:IsReverseSort(false)
-	elseif(XFG.DataText.Guild:GetSortColumn() == inColumnName) then
+	elseif(XFG.DataText.Guild:GetSort() == inColumnName) then
 		XFG.DataText.Guild:IsReverseSort(true)
 	else
-		XFG.DataText.Guild:SetSortColumn(inColumnName)
+		XFG.DataText.Guild:SetSort(inColumnName)
 		XFG.DataText.Guild:IsReverseSort(false)
 	end
 	XFG.DataText.Guild:OnEnter(LDB_ANCHOR)
@@ -196,7 +196,7 @@ end
 
 function DTGuild:OnEnter(this)
 	if(XFG.Initialized == false) then return end
-	
+
 	local _Tooltip
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
 		self._Tooltip = XFG.Lib.QT:Acquire(ObjectName)		
@@ -257,45 +257,45 @@ function DTGuild:OnEnter(this)
 	
 	if(XFG.Config.DataText.Guild.Level) then
 		line = self._Tooltip:SetCell(line, 2, XFG.Lib.Locale['LEVEL'])
-		self._Tooltip:SetCellScript(line, 2, 'OnMouseUp', SetSortColumn, XFG.Lib.Locale['LEVEL'])
+		self._Tooltip:SetCellScript(line, 2, 'OnMouseUp', SetSortColumn, 'Level')
 	end
 	line = self._Tooltip:SetCell(line, 4, XFG.Lib.Locale['NAME'])	
-	self._Tooltip:SetCellScript(line, 4, 'OnMouseUp', SetSortColumn, XFG.Lib.Locale['NAME'])
+	self._Tooltip:SetCellScript(line, 4, 'OnMouseUp', SetSortColumn, 'Name')
 	if(XFG.Config.DataText.Guild.Race) then
 		line = self._Tooltip:SetCell(line, 6, XFG.Lib.Locale['RACE'])	
-		self._Tooltip:SetCellScript(line, 6, 'OnMouseUp', SetSortColumn, XFG.Lib.Locale['RACE'])
+		self._Tooltip:SetCellScript(line, 6, 'OnMouseUp', SetSortColumn, 'Race')
 	end
 	if(XFG.Config.DataText.Guild.Realm) then
 		line = self._Tooltip:SetCell(line, 7, XFG.Lib.Locale['REALM'])
-		self._Tooltip:SetCellScript(line, 7, 'OnMouseUp', SetSortColumn, XFG.Lib.Locale['REALM'])
+		self._Tooltip:SetCellScript(line, 7, 'OnMouseUp', SetSortColumn, 'Realm')
 	end
 	if(XFG.Config.DataText.Guild.Guild) then
 		line = self._Tooltip:SetCell(line, 8, XFG.Lib.Locale['GUILD'])
-		self._Tooltip:SetCellScript(line, 8, 'OnMouseUp', SetSortColumn, XFG.Lib.Locale['GUILD'])
+		self._Tooltip:SetCellScript(line, 8, 'OnMouseUp', SetSortColumn, 'Guild')
 	end
 	if(XFG.Config.DataText.Guild.Team) then
 		line = self._Tooltip:SetCell(line, 9, XFG.Lib.Locale['TEAM'])
-		self._Tooltip:SetCellScript(line, 9, 'OnMouseUp', SetSortColumn, XFG.Lib.Locale['TEAM'])
+		self._Tooltip:SetCellScript(line, 9, 'OnMouseUp', SetSortColumn, 'Team')
 	end
 	if(XFG.Config.DataText.Guild.Rank) then
 		line = self._Tooltip:SetCell(line, 10, XFG.Lib.Locale['RANK'])
-		self._Tooltip:SetCellScript(line, 10, 'OnMouseUp', SetSortColumn, XFG.Lib.Locale['RANK'])
+		self._Tooltip:SetCellScript(line, 10, 'OnMouseUp', SetSortColumn, 'Rank')
 	end
 	if(XFG.Config.DataText.Guild.Zone) then
 		line = self._Tooltip:SetCell(line, 11, XFG.Lib.Locale['ZONE'])	
-		self._Tooltip:SetCellScript(line, 11, 'OnMouseUp', SetSortColumn, XFG.Lib.Locale['ZONE'])
+		self._Tooltip:SetCellScript(line, 11, 'OnMouseUp', SetSortColumn, 'Zone')
 	end
 	if(XFG.Config.DataText.Guild.Note) then
 		line = self._Tooltip:SetCell(line, 14, XFG.Lib.Locale['NOTE'])	
-		self._Tooltip:SetCellScript(line, 14, 'OnMouseUp', SetSortColumn, XFG.Lib.Locale['NOTE'])
+		self._Tooltip:SetCellScript(line, 14, 'OnMouseUp', SetSortColumn, 'Note')
 	end
 	self._Tooltip:AddSeparator()
 
 	if(XFG.Initialized) then
 
 		local _List = PreSort()
-		sort(_List, function(a, b) if(XFG.DataText.Guild:IsReverseSort()) then return a[XFG.DataText.Guild:GetSortColumn()] > b[XFG.DataText.Guild:GetSortColumn()] 
-																	      else return a[XFG.DataText.Guild:GetSortColumn()] < b[XFG.DataText.Guild:GetSortColumn()] end end)
+		sort(_List, function(a, b) if(XFG.DataText.Guild:IsReverseSort()) then return a[XFG.DataText.Guild:GetSort()] > b[XFG.DataText.Guild:GetSort()] 
+																	      else return a[XFG.DataText.Guild:GetSort()] < b[XFG.DataText.Guild:GetSort()] end end)
 
 		for _, _UnitData in ipairs (_List) do
 			line = self._Tooltip:AddLine()

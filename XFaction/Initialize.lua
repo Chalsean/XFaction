@@ -60,6 +60,7 @@ function XFG:Init()
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
 	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
 
+	-- Initialize DTs
 	XFG.DataText.Guild = DTGuild:new(); XFG.DataText.Guild:Initialize()
 	XFG.DataText.Links = DTLinks:new(); XFG.DataText.Links:Initialize()
 	XFG.DataText.Shard = DTShard:new(); XFG.DataText.Shard:Initialize()
