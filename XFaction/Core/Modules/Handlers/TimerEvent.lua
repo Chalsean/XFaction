@@ -108,7 +108,7 @@ function TimerEvent:CallbackLogin()
             return
         end
         XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
-        if(XFG.Player.Guild == nil) then
+        if(XFG.Player.Guild == nil or XFG.Player.Guild:GetName() == 'Area 52') then
             XFG.Error(LogCategory, 'Player is not in supported guild ' .. tostring(_GuildName))
             XFG:CancelAllTimers()
             return
@@ -127,9 +127,7 @@ function TimerEvent:CallbackLogin()
         XFG.Config = XFG.DataDB.profile
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
         if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
-
-        XFG:DefaultConfigs()
-        
+        XFG:LoadConfigs()        
 
         XFG.Confederate = Confederate:new()
         --XFG.Confederate:SetName(XFG.Config.General.CName)

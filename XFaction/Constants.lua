@@ -10,7 +10,6 @@ _G[addon] = Engine
 XFG.AddonName = addon
 XFG.Category = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
-XFG["RegisteredModules"] = {}
 XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Handlers = {}
 
@@ -35,7 +34,7 @@ XFG.Lib.Realm = LibStub:GetLibrary('LibRealmInfo')
 XFG.Lib.Broker = LibStub('LibDataBroker-1.1')
 XFG.Lib.Config = LibStub('AceConfig-3.0')
 XFG.Lib.ConfigDialog = LibStub('AceConfigDialog-3.0')
-XFG.Lib.Locale = LibStub('AceLocale-3.0'):GetLocale('XFaction')
+XFG.Lib.Locale = LibStub('AceLocale-3.0'):GetLocale('XFaction', true)
 
 XFG.DataText = {}
 XFG.DataText.AutoHide = 2

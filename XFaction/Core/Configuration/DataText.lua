@@ -2,7 +2,7 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Config'
 
 XFG.Options.args.DataText = {
-	name = XFG.Lib.Locale['DT_HEADER'],
+	name = XFG.Lib.Locale['DATATEXT'],
 	order = 1,
 	type = 'group',
 	args = {
@@ -15,6 +15,7 @@ XFG.Options.args.DataText = {
 				Description1 = {
 					order = 1,
 					type = 'description',
+					fontSize = 'medium',
 					name = XFG.Lib.Locale['DTGUILD_CONFIG_HEADER']
 				},
 				Space3 = {
@@ -54,6 +55,7 @@ XFG.Options.args.DataText = {
 				Description2 = {
 					order = 7,
 					type = 'description',
+					fontSize = 'medium',
 					name = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_HEADER']
 				},
 				Space4 = {
@@ -184,15 +186,15 @@ XFG.Options.args.DataText = {
 				Timer = {
 					order = 1,
 					type = 'range',
-					name = XFG.Lib.Locale['DTLINKS_CONFIG_FORCE_CHECK'],
+					name = XFG.Lib.Locale['DTSHARD_CONFIG_FORCE_CHECK'],
 					min = 15, max = 300, step = 1,
-					desc = XFG.Lib.Locale['DTLINKS_CONFIG_FORCE_CHECK_TOOLTIP'],
+					desc = XFG.Lib.Locale['DTSHARD_CONFIG_FORCE_CHECK_TOOLTIP'],
 					get = function(info) return XFG.Config.DataText.Shard[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Shard[ info[#info] ] = value; end
 				},						
 			}
 		},
-		XSoulbind = {
+		Soulbind = {
 			order = 4,
 			type = 'group',
 			name = XFG.Lib.Locale['DTSOULBIND_NAME'],
