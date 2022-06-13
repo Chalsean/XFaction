@@ -108,7 +108,7 @@ function TimerEvent:CallbackLogin()
             return
         end
         XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
-        if(XFG.Player.Guild == nil or XFG.Player.Guild:GetName() == 'Area 52') then
+        if(XFG.Player.Guild == nil) then
             XFG.Error(LogCategory, 'Player is not in supported guild ' .. tostring(_GuildName))
             XFG:CancelAllTimers()
             return
