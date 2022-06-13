@@ -1,5 +1,5 @@
 # XFaction
-Enable better roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.
+Enable roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.
 
 ## Disclaimer
 
