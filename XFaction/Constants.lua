@@ -69,6 +69,7 @@ XFG.Network.Type = {
 }	
 
 XFG.Frames = {}
+-- Review: is this being used?
 XFG.Frames.ChatType = {
 	GUILD = 'GUILD',
 	CHANNEL = 'CHANNEL',
