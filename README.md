@@ -5,17 +5,14 @@ Enable better roster visibility and communication between guilds of a confederat
 
 This addon is in very early stages (alpha) and currently only Eternal Kingdom (EK) is being supported. There are many hardcoded settings for EK, thus only the following guilds are supported at this time:
 
-> Area 52
-- Eternal Kingdom
-
 > Proudmoore
-- Eternal Kingdom
-- Endless Kingdom
-- Enduring Kingdom
-- Alternal Kingdom One
-- Alternal Kingdom Two
-- Alternal Kingdom Three
-- Alternal Kingdom Four
+- Eternal Kingdom (EK)
+- Endless Kingdom (ENK)
+- Enduring Kingdom (EDK)
+- Alternal Kingdom (AK)
+- Alternal Kingdom Two (AK2)
+- Alternal Kingdom Three (AK3)
+- Alternal Kingdom Four (AK4)
  
 ## What is included
 The addon should provide the following functionalities:
