@@ -65,7 +65,7 @@ function SystemFrame:SetKey(inKey)
 end
 
 function SystemFrame:Display(inMessage)
---    if(XFG.Config.System.Login == false) then return end
+    if(XFG.Config.Chat.Login.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
     local _Faction = _Guild:GetFaction()

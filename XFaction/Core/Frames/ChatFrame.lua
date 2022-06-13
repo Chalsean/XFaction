@@ -77,7 +77,7 @@ function ChatFrame:IsElvUI(inBoolean)
 end
 
 function ChatFrame:DisplayGuild(inMessage)
-    --if(XFG.Config.Chat.GChat.Enable == false) then return end
+    if(XFG.Config.Chat.GChat.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
@@ -120,7 +120,7 @@ function ChatFrame:DisplayGuild(inMessage)
 end
 
 function ChatFrame:DisplayAchievement(inMessage)
-    --if(XFG.Config.System.Achievement == false) then return end
+    if(XFG.Config.Chat.Achievement.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display

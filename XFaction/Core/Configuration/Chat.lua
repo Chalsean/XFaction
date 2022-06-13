@@ -21,10 +21,10 @@ XFG.Options.args.Chat = {
 					set = function(info, value) 
 						XFG.Config.Chat.GChat[ info[#info] ] = value; 
 						local _Disabled = (value == false) and true or false
-						XFG.Options.Chat.args.GChat.args.Faction.disabled = _Disabled
-						XFG.Options.Chat.args.GChat.args.Guild.disabled = _Disabled
-						XFG.Options.Chat.args.GChat.args.Main.disabled = _Disabled
-						XFG.Options.Chat.args.GChat.args.Color.disabled = _Disabled
+						XFG.Options.args.Chat.args.GChat.args.Faction.disabled = _Disabled
+						XFG.Options.args.Chat.args.GChat.args.Guild.disabled = _Disabled
+						XFG.Options.args.Chat.args.GChat.args.Main.disabled = _Disabled
+						XFG.Options.args.Chat.args.GChat.args.Color.disabled = _Disabled
 					end
 				},
 				Space1 = {
@@ -108,10 +108,10 @@ XFG.Options.args.Chat = {
 					set = function(info, value) 
 						XFG.Config.Chat.Achievement[ info[#info] ] = value; 
 						local _Disabled = (value == false) and true or false
-						XFG.Options.Chat.args.Achievement.args.Faction.disabled = _Disabled
-						XFG.Options.Chat.args.Achievement.args.Guild.disabled = _Disabled
-						XFG.Options.Chat.args.Achievement.args.Main.disabled = _Disabled
-						XFG.Options.Chat.args.Achievement.args.Color.disabled = _Disabled
+						XFG.Options.args.Chat.args.Achievement.args.Faction.disabled = _Disabled
+						XFG.Options.args.Chat.args.Achievement.args.Guild.disabled = _Disabled
+						XFG.Options.args.Chat.args.Achievement.args.Main.disabled = _Disabled
+						XFG.Options.args.Chat.args.Achievement.args.Color.disabled = _Disabled
 					end
 				},
 				Space1 = {
