@@ -57,6 +57,6 @@ function CovenantEvent:CallbackCovenantChosen(event)
 	if(_NewCovenantID > 0 and XFG.Covenants:Contains(_NewCovenantID)) then
 		XFG.Player.Unit:SetCovenant(XFG.Covenants:GetCovenant(_NewCovenantID))
 		XFG:Info(LogCategory, "Updated player covenant information based on COVENANT_CHOSEN event")
-        XFG.DataText.Soulbind.Broker:RefreshBroker()
+        XFG.DataText.Soulbind:RefreshBroker()
 	end
 end

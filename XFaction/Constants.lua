@@ -10,13 +10,9 @@ _G[addon] = Engine
 XFG.AddonName = addon
 XFG.Category = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
-XFG["RegisteredModules"] = {}
 XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Handlers = {}
 
-XFG.Options = {}
-XFG.Options.Defaults = {}
-XFG.Options.Defaults.profile = {}
 XFG.Initialized = false
 
 XFG.Icons = {}
@@ -28,6 +24,7 @@ XFG.Icons['Night Fae'] = 3257750
 XFG.Icons.Necrolord = 3257749
 XFG.Icons.Alliance = 2565243
 XFG.Icons.Horde = 463451
+XFG.Icons.Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]]
 
 XFG.Lib = {}
 XFG.Lib.Compress = LibStub:GetLibrary("LibCompress")
@@ -37,43 +34,10 @@ XFG.Lib.Realm = LibStub:GetLibrary('LibRealmInfo')
 XFG.Lib.Broker = LibStub('LibDataBroker-1.1')
 XFG.Lib.Config = LibStub('AceConfig-3.0')
 XFG.Lib.ConfigDialog = LibStub('AceConfigDialog-3.0')
-XFG.Lib.Profiler = LibStub('AceDBOptions-3.0')
+XFG.Lib.Locale = LibStub('AceLocale-3.0'):GetLocale('XFaction', true)
 
 XFG.DataText = {}
 XFG.DataText.AutoHide = 2
-XFG.DataText.Soulbind = {}
-XFG.DataText.Soulbind.BrokerName = 'Soulbind (X)'
-XFG.DataText.Token = {}
-XFG.DataText.Token.BrokerName = 'WoW Token (X)'
-XFG.DataText.Token.Events = { 'PLAYER_ENTERING_WORLD', 'PLAYER_LOGIN', 'TOKEN_MARKET_PRICE_UPDATED' }
-XFG.DataText.Links = {}
-XFG.DataText.Links.BrokerName = 'Links (X)'
-XFG.DataText.Guild = {}
-XFG.DataText.Guild.BrokerName = 'Guild (X)'
-XFG.DataText.Guild.ColumnNames = {
-	NAME = 'Name',
-	RACE = 'Race',
-	LEVEL = 'Level',
-	REALM = 'Realm',
-	GUILD = 'Guild',
-	TEAM = 'Team',
-	RANK = 'Rank',
-	ZONE = 'Zone',
-	NOTE = 'Note'
-}
-XFG.DataText.Guild.SortColumn = XFG.DataText.Guild.ColumnNames.TEAM
-XFG.DataText.Guild.ReverseSort = false
-XFG.DataText.Shard = {}
-XFG.DataText.Shard.BrokerName = 'Shard (X)'
-XFG.DataText.Shard.Timer = 60
-XFG.DataText.Shard.Events = {
-	'PLAYER_ENTERING_WORLD',
-	'PLAYER_LOGIN',
-	'PARTY_LEADER_CHANGED',
-	'VIGNETTE_MINIMAP_UPDATED',
-	'ZONE_CHANGED',
-	'COMBAT_LOG_EVENT_UNFILTERED'
-}
 
 XFG.Player = {}
 XFG.Player.LastBroadcast = 0
@@ -104,6 +68,7 @@ XFG.Network.Type = {
 }	
 
 XFG.Frames = {}
+-- Review: is this being used?
 XFG.Frames.ChatType = {
 	GUILD = 'GUILD',
 	CHANNEL = 'CHANNEL',

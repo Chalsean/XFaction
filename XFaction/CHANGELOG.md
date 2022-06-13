@@ -1,4 +1,13 @@
-### Version 2.0.9 [ 06.13.2022 ]
+### Version 2.1.0 [ 06.12.2022 ]
+
+**Enhancements**
+[XFaction]
+- All DTs and config support localization
+
+[DTToken]
+- Properly formats gold price
+
+### Version 2.0.9 [ 06.12.2022 ]
 
 **Bug Fixes**  
 [XFaction] 
@@ -7,7 +16,7 @@
 - Fixed all friends being considered links
 - Fixed backup/restore of unit data
 
-### Version 2.0.8 [ 06.12.2022 ]
+### Version 2.0.8 [ 06.11.2022 ]
 
 **Bug Fixes**  
 [XFaction] 

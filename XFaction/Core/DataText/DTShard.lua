@@ -3,6 +3,14 @@ local ObjectName = 'DTShard'
 local LogCategory = 'DTShard'
 
 DTShard = {}
+local Events = {
+	'PLAYER_ENTERING_WORLD',
+	'PLAYER_LOGIN',
+	'PARTY_LEADER_CHANGED',
+	'VIGNETTE_MINIMAP_UPDATED',
+	'ZONE_CHANGED',
+	'COMBAT_LOG_EVENT_UNFILTERED'
+}
 
 function DTShard:new()
     _Object = {}
@@ -29,11 +37,11 @@ function DTShard:Initialize()
 		self._HeaderFont:SetTextColor(0.4,0.78,1)
 		self._RegularFont = CreateFont('_RegularFont')
 		self._RegularFont:SetTextColor(255,255,255)
-		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.DataText.Shard.BrokerName)
+		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTSHARD_NAME'])
 
 		self._EpochTime = GetServerTime()
 
-		for _, _EventName in pairs (XFG.DataText.Shard.Events) do
+		for _, _EventName in pairs (Events) do
 			XFG:RegisterEvent(_EventName, self.RefreshBroker)
 		end
 
@@ -107,32 +115,32 @@ end
 
 function DTShard:RefreshBroker(inSelf, inEvent, ...)
 	-- Try to catch Blizz migrating a player to another shard outside of normal events
-	if(XFG.DataText.Shard.Broker:ShouldCheckShard() == false and XFG.DataText.Shard.Broker:GetEpochTime() + XFG.DataText.Shard.Timer <= GetServerTime()) then
-		XFG:Debug(LogCategory, format("Checking for shard migration due to timer [%ds]", XFG.DataText.Shard.Timer))
-		XFG.DataText.Shard.Broker:ShouldCheckShard(true)
+	if(XFG.DataText.Shard:ShouldCheckShard() == false and XFG.DataText.Shard:GetEpochTime() + XFG.Config.DataText.Shard.Timer <= GetServerTime()) then
+		XFG:Debug(LogCategory, format("Checking for shard migration due to timer [%d]", XFG.Config.DataText.Shard.Timer))
+		XFG.DataText.Shard:ShouldCheckShard(true)
 	end
 
 	-- Shard information is only found in a couple locations, combat logs being primary source
 	-- In order to not impact performance, use CheckShard flag to indicate whether should parse log event
-	if XFG.DataText.Shard.Broker:ShouldCheckShard() and inEvent == 'COMBAT_LOG_EVENT_UNFILTERED' then
+	if XFG.DataText.Shard:ShouldCheckShard() and inEvent == 'COMBAT_LOG_EVENT_UNFILTERED' then
 		local _, _, _, _, _, _, _, _GUID, _, _, _ = CombatLogGetCurrentEventInfo()
-		if(XFG.DataText.Shard.Broker:ParseGUID(_GUID)) then
-			local _Broker = XFG.DataText.Shard.Broker:GetBroker()
-			_Broker.text = format('Shard: %d', self._ShardID)
+		if(XFG.DataText.Shard:ParseGUID(_GUID)) then
+			local _Broker = XFG.DataText.Shard:GetBroker()
+			_Broker.text = format(XFG.Lib.Locale['DTSHARD_SHARD_ID'], self._ShardID)
 		end	
-		XFG.DataText.Shard.Broker:ShouldCheckShard(false)
+		XFG.DataText.Shard:ShouldCheckShard(false)
 		return
 	end
 
 	-- Vignette is the rare spawns for a zone, their info contains shard id
-	if XFG.DataText.Shard.Broker:ShouldCheckShard() and inEvent == 'VIGNETTE_MINIMAP_UPDATED' then
+	if XFG.DataText.Shard:ShouldCheckShard() and inEvent == 'VIGNETTE_MINIMAP_UPDATED' then
 		local _GUID, _ = ...
 		local _VignetteInfo = C_VignetteInfo.GetVignetteInfo(_GUID)
-		if XFG.DataText.Shard.Broker:ParseGUID(_VignetteInfo.objectGUID) then
-			local _Broker = XFG.DataText.Shard.Broker:GetBroker()
-			_Broker.text = format('Shard: %d', self._ShardID)
+		if XFG.DataText.Shard:ParseGUID(_VignetteInfo.objectGUID) then
+			local _Broker = XFG.DataText.Shard:GetBroker()
+			_Broker.text = format(XFG.Lib.Locale['DTSHARD_SHARD_ID'], self._ShardID)
 		end
-		XFG.DataText.Shard.Broker:ShouldCheckShard(false)
+		XFG.DataText.Shard:ShouldCheckShard(false)
 		return
 	end
 	
@@ -141,7 +149,7 @@ function DTShard:RefreshBroker(inSelf, inEvent, ...)
 		inEvent == 'PARTY_MEMBERS_CHANGED' or inEvent == 'RAID_ROSTER_UPDATE' or inEvent == 'ZONE_CHANGED' then
 	
 		XFG:Debug(LogCategory, 'Checking for shard migration due to event [%s]', inEvent)
-		XFG.DataText.Shard.Broker:ShouldCheckShard(true)
+		XFG.DataText.Shard:ShouldCheckShard(true)
 		return
 	end
 end

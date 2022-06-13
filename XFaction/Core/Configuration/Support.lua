@@ -39,68 +39,76 @@ StaticPopupDialogs["LINKS"] = {
 	hideOnEscape = 1,
 }
 
-function XFG:SupportConfig()
-	local _Options = {
-		name = XFG.Title,
-		order = 1,
-		type = 'group',
-		args = {			
-			Bar = {
-				order = 1,
-				name = format("|cffffffff%s|r", XFG.Version),
-				type = 'header'
-			},	
-			Resources = {
-				order = 2,
-				type = 'group',
-				name = 'Resources',
-				guiInline = true,
-				args = {
-					Discord = {
-						order = 1,
-						type = 'execute',
-						name = 'Discord',
-						func = function() StaticPopup_Show("LINKS", nil, nil, 'https://discord.gg/eternalkingdom') end,
-					},
-					Git = {
-						order = 1,
-						type = 'execute',
-						name = 'GitHub',
-						func = function() StaticPopup_Show("LINKS", nil, nil, 'https://github.com/Chalsean/XFaction') end,
-					},					
+XFG.Options.args.Support = {
+	name = XFG.Lib.Locale['SUPPORT'],
+	type = 'group',
+	args = {
+		Bar = {
+			order = 1,
+			name = format("|cffffffff%s|r", XFG.Version),
+			type = 'header'
+		},	
+		Resources = {
+			order = 2,
+			type = 'group',
+			name = XFG.Lib.Locale['RESOURCES'],
+			guiInline = true,
+			args = {
+				Discord = {
+					order = 1,
+					type = 'execute',
+					name = XFG.Lib.Locale['DISCORD'],
+					func = function() StaticPopup_Show("LINKS", nil, nil, 'https://discord.gg/eternalkingdom') end,
+				},
+				Git = {
+					order = 1,
+					type = 'execute',
+					name = XFG.Lib.Locale['GITHUB'],
+					func = function() StaticPopup_Show("LINKS", nil, nil, 'https://github.com/Chalsean/XFaction') end,
+				},					
+			}
+		},
+		Development = {
+			order = 3,
+			type = 'group',
+			name = XFG.Lib.Locale['DEV'],
+			guiInline = true,
+			args = {
+				Development = {
+					order = 1,
+					type = 'description',
+					fontSize = 'medium',
+					name = 'Chalsean (US-Proudmoore)',
+				},
+			}
+		},
+		Translation = {
+			order = 4,
+			type = 'group',
+			name = XFG.Lib.Locale['TRANSLATIONS'],
+			guiInline = true,
+			args = {
+				-- Translators = {
+				-- 	order = 1,
+				-- 	type = 'description',
+				-- 	fontSize = 'medium',
+				-- 	name = 'Elskerdeg (Spanish)',
+				-- }
+			}
+		},
+		Testing = {
+			order = 5,
+			type = 'group',
+			name = XFG.Lib.Locale['SUPPORT_UAT'],
+			guiInline = true,
+			args = {
+				UAT = {
+					order = 1,
+					type = 'description',
+					fontSize = 'medium',
+					name = 'Bicc, Elskerdeg, FrankyV, Nyssa, Rysal',
 				}
-			},
-			Development = {
-				order = 3,
-				type = 'group',
-				name = 'Development',
-				guiInline = true,
-				args = {
-					Development = {
-						order = 1,
-						type = 'description',
-						fontSize = 'medium',
-						name = 'Chalsean (US-Proudmoore)',
-					},
-				}
-			},
-			Testing = {
-				order = 4,
-				type = 'group',
-				name = 'User Acceptance Testing',
-				guiInline = true,
-				args = {
-					UAT = {
-						order = 1,
-						type = 'description',
-						fontSize = 'medium',
-						name = 'Bicc, Branis, FrankyV, Hantevirus, Madrigosa, Nyssa, Rysal',
-					}
-				}
-			},
+			}
 		}
 	}
-	
-	XFG.Lib.Config:RegisterOptionsTable('XFaction', _Options)
-    XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'XFaction')
-end
+}

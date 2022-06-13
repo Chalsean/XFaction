@@ -108,7 +108,7 @@ function TimerEvent:CallbackLogin()
             return
         end
         XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
-        if(XFG.Player.Guild == nil) then
+        if(XFG.Player.Guild == nil or XFG.Player.Guild:GetName() == 'Area 52') then
             XFG.Error(LogCategory, 'Player is not in supported guild ' .. tostring(_GuildName))
             XFG:CancelAllTimers()
             return
@@ -122,11 +122,12 @@ function TimerEvent:CallbackLogin()
         XFG.Professions = ProfessionCollection:new(); XFG.Professions:Initialize()
         
         -- Leverage AceDB is persist remote unit information
-        XFG.DataDB = LibStub("AceDB-3.0"):New("XFactionDataDB", nil, true)
+        XFG.DataDB = LibStub("AceDB-3.0"):New("XFactionDB", XFG.Defaults, true)
         XFG.DB = XFG.DataDB.char
+        XFG.Config = XFG.DataDB.profile
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
-        XFG.ConfigDB = LibStub("AceDB-3.0"):New("XFactionConfigDB", XFG.Options.Defaults)
-        XFG.Config = XFG.ConfigDB.profile
+        if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
+        XFG:LoadConfigs()        
 
         XFG.Confederate = Confederate:new()
         --XFG.Confederate:SetName(XFG.Config.General.CName)
@@ -190,19 +191,14 @@ function TimerEvent:CallbackLogin()
         wipe(XFG.Cache)
         wipe(XFG.DB.Backup)
 
-        -- Register configurations
-        XFG:SupportConfig()
-        XFG:ChatConfig()
-        XFG:DataTextConfig()
-        --XFG:ProfileConfig()
-
         XFG.Initialized = true
         if(XFG.DB.UIReload == false) then
             XFG.Network.BNet.Comm:PingFriends()                      
         end
-        XFG.DataText.Guild.Broker:RefreshBroker()
-        XFG.DataText.Soulbind.Broker:RefreshBroker()
-        XFG.DataText.Links.Broker:RefreshBroker()
+        
+        XFG.DataText.Guild:RefreshBroker()
+        XFG.DataText.Soulbind:RefreshBroker()
+        XFG.DataText.Links:RefreshBroker()
     end
 end
 

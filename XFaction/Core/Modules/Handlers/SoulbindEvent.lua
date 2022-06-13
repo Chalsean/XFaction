@@ -58,7 +58,7 @@ function SoulbindEvent:CallbackSoulbindActivated()
         local _Soulbind = XFG.Soulbinds:GetSoulbind(_SoulbindID)
         XFG.Player.Unit:SetSoulbind(_Soulbind)
         XFG:Info(LogCategory, "Updated player soulbind to %s based on SOULBIND_ACTIVATED event", _Soulbind:GetName())
-        XFG.DataText.Soulbind.Broker:RefreshBroker()
+        XFG.DataText.Soulbind:RefreshBroker()
     elseif(_SoulbindID ~= 0) then -- 0 is some kind of special timing state value
         XFG:Error(LogCategory, "Active Soulbind not found in SoulbindCollection: " .. tostring(_SoulbindID))
     end

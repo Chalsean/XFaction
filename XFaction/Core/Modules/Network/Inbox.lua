@@ -137,7 +137,7 @@ function Inbox:Process(inMessage, inMessageTag)
     -- Process link message
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.LINK) then
         XFG.Network.BNet.Links:ProcessMessage(inMessage)
-        XFG.DataText.Links.Broker:RefreshBroker()
+        XFG.DataText.Links:RefreshBroker()
         return
     end
 
@@ -151,7 +151,7 @@ function Inbox:Process(inMessage, inMessageTag)
 
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
         XFG.Confederate:RemoveUnit(inMessage:GetFrom())
-        XFG.DataText.Guild.Broker:RefreshBroker()
+        XFG.DataText.Guild:RefreshBroker()
         return
     end
 
@@ -161,7 +161,7 @@ function Inbox:Process(inMessage, inMessageTag)
         _UnitData:IsPlayer(false)
         if(XFG.Confederate:AddUnit(_UnitData)) then
             XFG:Info(LogCategory, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
-            XFG.DataText.Guild.Broker:RefreshBroker()
+            XFG.DataText.Guild:RefreshBroker()
         end
 
         -- If unit has just logged in, reply with latest information

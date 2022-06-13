@@ -60,11 +60,12 @@ function XFG:Init()
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
 	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
 
-	XFG.DataText.Guild.Broker = DTGuild:new(); XFG.DataText.Guild.Broker:Initialize()
-	XFG.DataText.Links.Broker = DTLinks:new(); XFG.DataText.Links.Broker:Initialize()
-	XFG.DataText.Shard.Broker = DTShard:new(); XFG.DataText.Shard.Broker:Initialize()
-	XFG.DataText.Soulbind.Broker = DTSoulbind:new(); XFG.DataText.Soulbind.Broker:Initialize()
-	XFG.DataText.Token.Broker = DTToken:new(); XFG.DataText.Token.Broker:Initialize()
+	-- Initialize DTs
+	XFG.DataText.Guild = DTGuild:new(); XFG.DataText.Guild:Initialize()
+	XFG.DataText.Links = DTLinks:new(); XFG.DataText.Links:Initialize()
+	XFG.DataText.Shard = DTShard:new(); XFG.DataText.Shard:Initialize()
+	XFG.DataText.Soulbind = DTSoulbind:new(); XFG.DataText.Soulbind:Initialize()
+	XFG.DataText.Token = DTToken:new(); XFG.DataText.Token:Initialize()
 end
 
 do
