@@ -54,14 +54,20 @@ XFG.Options.args.Support = {
 			name = XFG.Lib.Locale['RESOURCES'],
 			guiInline = true,
 			args = {
-				Discord = {
+				FAQ = {
 					order = 1,
+					type = 'execute',
+					name = XFG.Lib.Locale['FAQ'],
+					func = function() StaticPopup_Show("LINKS", nil, nil, 'https://github.com/Chalsean/XFaction/wiki/FAQ') end,
+				},
+				Discord = {
+					order = 2,
 					type = 'execute',
 					name = XFG.Lib.Locale['DISCORD'],
 					func = function() StaticPopup_Show("LINKS", nil, nil, 'https://discord.gg/eternalkingdom') end,
 				},
 				Git = {
-					order = 1,
+					order = 3,
 					type = 'execute',
 					name = XFG.Lib.Locale['GITHUB'],
 					func = function() StaticPopup_Show("LINKS", nil, nil, 'https://github.com/Chalsean/XFaction') end,
