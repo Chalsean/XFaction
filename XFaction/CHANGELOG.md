@@ -1,3 +1,9 @@
+### Version 2.1.1 [ 06.13.2022 ]
+
+**Enhancements**
+[XFaction]
+- Spanish translations have been added thanks to Elskerdeg
+
 ### Version 2.1.0 [ 06.12.2022 ]
 
 **Enhancements**
