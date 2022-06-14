@@ -1,4 +1,4 @@
-### Version 2.1.1 [ 06.13.2022 ]
+### Version 2.1.2 [ 06.13.2022 ]
 
 **Enhancements**
 [XFaction]

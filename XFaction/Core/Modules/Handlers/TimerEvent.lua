@@ -35,7 +35,6 @@ end
 
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:ScheduleTimer(self.CallbackDelayedStartTimer, 5) -- config
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
         XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", 60 * 5)
         XFG:ScheduleRepeatingTimer(self.CallbackBNetMailboxTimer, 60 * 5) -- config
@@ -193,8 +192,9 @@ function TimerEvent:CallbackLogin()
 
         XFG.Initialized = true
         if(XFG.DB.UIReload == false) then
-            XFG.Network.BNet.Comm:PingFriends()                      
+            XFG.Network.BNet.Comm:PingFriends()                 
         end
+        XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 5)
         
         XFG.DataText.Guild:RefreshBroker()
         XFG.DataText.Soulbind:RefreshBroker()

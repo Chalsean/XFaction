@@ -135,6 +135,7 @@ end
 
 function LinkCollection:BroadcastLinks()
 	if(self._EpochTime + 60 * 5 < GetServerTime()) then
+		XFG:Debug(LogCategory, 'Broadcasting links')
 		self._EpochTime = GetServerTime()
 		local _LinksString = ''
 		for _, _Link in self:Iterator() do
