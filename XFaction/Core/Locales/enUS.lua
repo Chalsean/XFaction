@@ -31,6 +31,7 @@ L['DESCRIPTION'] = 'Description'
 L['GENERAL'] = 'General'
 L['DISCLAIMER'] = 'Disclaimer'
 L['TRANSLATIONS'] = 'Translations'
+L['FAQ'] = 'FAQ'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
