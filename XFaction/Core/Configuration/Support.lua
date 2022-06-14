@@ -88,12 +88,12 @@ XFG.Options.args.Support = {
 			name = XFG.Lib.Locale['TRANSLATIONS'],
 			guiInline = true,
 			args = {
-				-- Translators = {
-				-- 	order = 1,
-				-- 	type = 'description',
-				-- 	fontSize = 'medium',
-				-- 	name = 'Elskerdeg (Spanish)',
-				-- }
+				Translators = {
+					order = 1,
+					type = 'description',
+					fontSize = 'medium',
+					name = 'Elskerdeg (Spanish)',
+				}
 			}
 		},
 		Testing = {
