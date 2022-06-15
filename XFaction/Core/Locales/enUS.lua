@@ -64,6 +64,8 @@ L['CHAT_OFFICER_TOOLTIP'] = 'See cross realm/faction officer chat'
 L['CHAT_ACHIEVEMENT_TOOLTIP'] = 'See cross realm/faction individual achievements'
 L['CHAT_ONLINE'] = 'Online/Offline'
 L['CHAT_ONLINE_TOOLTIP'] = 'Show message for players logging in/out on other realms/faction'
+L['CHAT_ONLINE_SOUND'] = 'Play Sound'
+L['CHAT_ONLINE_SOUND_TOOLTIP'] = 'Play sound when any confederate member comes online'
 --=========================================================================
 -- DataText Specific
 --=========================================================================

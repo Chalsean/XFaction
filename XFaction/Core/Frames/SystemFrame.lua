@@ -91,6 +91,9 @@ function SystemFrame:Display(inMessage)
         _Message = _Message .. 'has gone offline.'
     elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
         _Message = _Message .. 'has come online.'
+        if(XFG.Config.Chat.Login.Sound) then
+            PlaySound(3332, 'Master')
+        end
     end
     SendSystemMessage(_Message) 
 end
