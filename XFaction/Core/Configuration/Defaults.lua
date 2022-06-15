@@ -27,7 +27,8 @@ XFG.Defaults = {
                 }
             },
             Login = {
-                Enable = true
+                Enable = true,
+                Sound = true
             }
         },
         DataText = {

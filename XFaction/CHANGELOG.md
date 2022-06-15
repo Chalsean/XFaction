@@ -1,3 +1,9 @@
+### Version 2.2.0 [ 06.14.2022 ]
+
+**Enhancements**
+[XFaction]
+- Plays sound when confederate member comes online
+
 ### Version 2.1.4 [ 06.14.2022 ]
 
 **Enhancements**

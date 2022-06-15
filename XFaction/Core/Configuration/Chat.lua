@@ -176,6 +176,19 @@ XFG.Options.args.Chat = {
 					name = XFG.Lib.Locale['ENABLE'],
 					desc = XFG.Lib.Locale['CHAT_ONLINE_TOOLTIP'],
 					get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
+					set = function(info, value) 
+						XFG.Config.Chat.Login[ info[#info] ] = value; 
+						local _Disabled = (value == false) and true or false
+						XFG.Options.args.Chat.args.Login.args.Sound.disabled = _Disabled
+					end
+				},
+				Sound = {
+					order = 2,
+					type = 'toggle',
+					disabled = false,
+					name = XFG.Lib.Locale['CHAT_ONLINE_SOUND'],
+					desc = XFG.Lib.Locale['CHAT_ONLINE_SOUND_TOOLTIP'],
+					get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
 				}
 			}
