@@ -168,12 +168,14 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     -- If you get it from BNet, they should be in your friend list and obviously they are running addon
     if(XFG.Network.BNet.Friends:ContainsByGameID(tonumber(inSender))) then
         local _Friend = XFG.Network.BNet.Friends:GetFriendByGameID(tonumber(inSender))
-        _Friend:SetDateTime(GetServerTime())
-        _Friend:IsRunningAddon(true)
-        if(inEncodedMessage == 'PING') then
-            XFG:Debug(LogCategory, 'Received ping from [%s]', _Friend:GetTag())
-        elseif(inEncodedMessage == 'RE:PING') then
-            XFG:Debug(LogCategory, '[%s] Responded to ping', _Friend:GetTag())
+        if(_Friend ~= nil) then
+            _Friend:SetDateTime(GetServerTime())
+            _Friend:IsRunningAddon(true)
+            if(inEncodedMessage == 'PING') then
+                XFG:Debug(LogCategory, 'Received ping from [%s]', _Friend:GetTag())
+            elseif(inEncodedMessage == 'RE:PING') then
+                XFG:Debug(LogCategory, '[%s] Responded to ping', _Friend:GetTag())
+            end
         end
     end
 

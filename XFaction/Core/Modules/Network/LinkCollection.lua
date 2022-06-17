@@ -98,9 +98,13 @@ function LinkCollection:ProcessMessage(inMessage)
 	-- First remove all links that contain sending node
     for _, _Link in pairs (_Links) do
 		local _NewLink = Link:new()
-		_NewLink:SetObjectFromString(_Link)
-		self:RemoveNode(_NewLink:GetFromName())
-		break
+		if(pcall(function () _NewLink:SetObjectFromString(_Link) end)) then
+			self:RemoveNode(_NewLink:GetFromName())
+			break
+		else
+			XFG:Warn(LogCategory, 'Failed to parse received links message')
+			return
+		end
     end
 	-- Then add the new links
 	for _, _Link in pairs (_Links) do

@@ -98,8 +98,13 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Deserialize unit data
     if(inMessage:HasUnitData()) then
-        local _UnitData = XFG:DeserializeUnitData(inMessage:GetData())
-        inMessage:SetData(_UnitData)
+        local _UnitData
+        if(pcall(function () _UnitData = XFG:DeserializeUnitData(inMessage:GetData()) end)) then
+            inMessage:SetData(_UnitData)
+        else
+            XFG:Warn(LogCategory, 'Failed to decode received unit data [%s]', inMessage:GetFrom())
+            return
+        end
     end
 
     inMessage:ShallowPrint()

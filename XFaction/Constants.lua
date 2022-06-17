@@ -68,11 +68,6 @@ XFG.Cache = {
 				EDK = 'EDK Bank'
 			}
 		},
-		['Area 52'] = {
-			Horde = {
-				EKH = 'Eternal Kingdom'
-			}
-		}
 	},
 	Teams = {
 		A = 'Acheron',

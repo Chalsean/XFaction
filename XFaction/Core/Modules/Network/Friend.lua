@@ -130,14 +130,16 @@ function Friend:IsRunningAddon(inBoolean)
         self._IsRunningAddon = inBoolean
         if(self._IsRunningAddon) then
             -- New link has been established
-            local _Target = self:GetTarget()
-		    local _NewLink = Link:new()
-		    _NewLink:SetToName(self:GetName())
-		    _NewLink:SetToRealm(_Target:GetRealm())
-		    _NewLink:SetToFaction(_Target:GetFaction())
-		    _NewLink:Initialize()
-		    XFG.Network.BNet.Links:AddLink(_NewLink)
-            XFG.DataText.Links:RefreshBroker()
+            if(self:HasTarget()) then
+                local _Target = self:GetTarget()
+                local _NewLink = Link:new()
+                _NewLink:SetToName(self:GetName())
+                _NewLink:SetToRealm(_Target:GetRealm())
+                _NewLink:SetToFaction(_Target:GetFaction())
+                _NewLink:Initialize()
+                XFG.Network.BNet.Links:AddLink(_NewLink)
+                XFG.DataText.Links:RefreshBroker()
+            end
         end
     end
     return self._IsRunningAddon
