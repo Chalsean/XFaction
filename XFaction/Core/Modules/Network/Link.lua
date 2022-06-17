@@ -85,7 +85,8 @@ function Link:SetKey(inKey)
 end
 
 function Link:IsMyLink()
-    return self:HasFromName() and self:GetFromName() == XFG.Player.Unit:GetName()
+    return (self:HasFromName() and self:GetFromName() == XFG.Player.Unit:GetName()) or
+           (self:HasToName() and self:GetToName() == XFG.Player.Unit:GetName())
 end
 
 function Link:HasFromName()

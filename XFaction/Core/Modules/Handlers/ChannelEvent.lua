@@ -61,54 +61,20 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
 	-- Fires when player leaves a channel
 	if(inAction == 'YOU_LEFT') then
 		if(XFG.Network.Channels:RemoveChannel(inChannelShortName)) then
-			XFG:Info(LogCategory, "Removed channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
 			local _Channel = XFG.Network.Outbox:GetLocalChannel()
 			if(_Channel:GetShortName() == inChannelShortName) then
-				XFG:Warn(LogCategory, "Removed channel was the addon channel")
-			end			
+				XFG:Error(LogCategory, "Removed channel was the addon channel")
+			end
 		end
 
 	-- Fires when player joins a channel
 	elseif(inAction == 'YOU_CHANGED') then
-		local _NewChannel = Channel:new()
-		_NewChannel:SetKey(inChannelShortName)
-		_NewChannel:SetID(inChannelNumber)		
-		_NewChannel:SetShortName(inChannelShortName)
-		_NewChannel:SetType(inChannelType)
-		-- Because the ElvUI and Blizzard APIs don't like each other
-		if(inChannelType == 0) then
-			_NewChannel:SetName(tostring(inChannelNumber) .. ". " .. inChannelShortName)
-		else
-			_NewChannel:SetName(inChannelName)
-		end
-		if(XFG.Network.Channels:AddChannel(_NewChannel)) then
-			XFG:Info(LogCategory, "Added channel [%d:%s] due to system event", inChannelNumber, inChannelShortName)
-			if(_NewChannel:GetShortName() == XFG.Network.ChannelName) then
-				XFG.Network.Outbox:SetLocalChannel(_NewChannel)
-			end
-		end
-	else
-		XFG:Warn(LogCategory, "Received unhandled channel system event [%s]", inAction)
+		XFG.Network.Channels:ScanChannels()
 	end
 end
 
 function ChannelEvent:CallbackChannelChange(inIndex)
-	local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(inIndex)
-	if(_ChannelInfo ~= nil and XFG.Network.Channels:Contains(_ChannelInfo.shortcut)) then
-		-- This event spams, so lets check before updating
-		local _Channel = XFG.Network.Channels:GetChannel(_ChannelInfo.shortcut)
-		if(_Channel:GetID() ~= _ChannelInfo.localID or _Channel:GetShortName() ~= _ChannelInfo.shortcut) then
-			_Channel:SetID(_ChannelInfo.localID)
-			_Channel:SetShortName(_ChannelInfo.shortcut)
-			-- Because the ElvUI and Blizzard APIs don't like each other
-			if(_ChannelInfo.channelType == 0) then
-				_Channel:SetName(tostring(_ChannelInfo.localID) .. '. ' .. _ChannelInfo.shortcut)
-			else
-				_Channel:SetName(_ChannelInfo.name)
-			end
-			XFG:Info(LogCategory, "Changed channel information due to CHANNEL_FLAGS_UPDATED event [%d:%s]", _Channel:GetID(), _Channel:GetShortName())
-		end
-	end
+	XFG.Network.Channels:ScanChannel(inIndex)
 end
 
 function ChannelEvent:CallbackDisconnect()

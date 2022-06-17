@@ -71,6 +71,7 @@ function TimerEvent:Print()
 end
 
 function TimerEvent:CallbackDelayedStartTimer()
+    XFG.Network.Channels:ScanChannels()
     if(XFG.DB.UIReload == false) then
         XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
         XFG.Network.BNet.Links:BroadcastLinks()
@@ -129,17 +130,14 @@ function TimerEvent:CallbackLogin()
         XFG:LoadConfigs()        
 
         XFG.Confederate = Confederate:new()
-        --XFG.Confederate:SetName(XFG.Config.General.CName)
-        XFG.Confederate:SetName('Eternal Kingdom')
-        XFG.Confederate:SetKey('EK')
-        XFG.Confederate:SetMainRealmName('Proudmoore')
-        XFG.Confederate:SetMainGuildName('Eternal Kingdom')
+        XFG.Confederate:SetName(XFG.Cache.Confederate.Name)
+        XFG.Confederate:SetKey(XFG.Cache.Confederate.Initials)
 
         -- If this is a reload, restore non-local guild members
         if(XFG.DB.UIReload) then
             XFG.Confederate:RestoreBackup()
         end
-  
+
         XFG:Info(LogCategory, "Initializing local guild roster cache")
 	    local _TotalMembers, _, _OnlineMembers = GetNumGuildMembers()
 	
@@ -157,7 +155,7 @@ function TimerEvent:CallbackLogin()
                 XFG.Confederate:RemoveUnit(_UnitData:GetKey())
             end
         end
-        
+
         XFG.Network.Outbox = Outbox:new()
 	    XFG.Network.Inbox = Inbox:new(); XFG.Network.Inbox:Initialize()
         XFG.Network.BNet.Comm = BNet:new(); BNet:Initialize()
@@ -181,13 +179,12 @@ function TimerEvent:CallbackLogin()
         XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
         XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
 
-        if(XFG.Network.Outbox:GetLocalChannel() == nil) then
-            -- This will fire an event that ChannelEvent handler catches and updates
-            JoinChannelByName(XFG.Network.ChannelName)
+        if(XFG.Network.Outbox:HasLocalChannel() == false) then
+            JoinTemporaryChannel(XFG.Network.Channel.Name)
         end
 
         -- Broadcast login, refresh DTs and ready to roll        
-        wipe(XFG.Cache)
+        --wipe(XFG.Cache)
         wipe(XFG.DB.Backup)
 
         XFG.Initialized = true

@@ -78,9 +78,9 @@ function ChatEvent:CallbackChannelMessage(inText, inSenderName, inLanguageName, 
             _NewMessage:SetFrom(XFG.Player.Unit:GetKey())
             _NewMessage:SetType(XFG.Network.Type.BROADCAST)
             _NewMessage:SetSubject(XFG.Network.Message.Subject.GCHAT)
-            _NewMessage:SetFlags(inFlags)
-            _NewMessage:SetLineID(inLineID)
             _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+            _NewMessage:SetGuild(XFG.Player.Guild)
+            _NewMessage:SetRealm(XFG.Player.Realm)
             if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
                 _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
             end

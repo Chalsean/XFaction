@@ -67,30 +67,37 @@ end
 function SystemFrame:Display(inMessage)
     if(XFG.Config.Chat.Login.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
-    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
-    local _Faction = _Guild:GetFaction()
-                    
-    local _Message = format('%s ', format(IconTokenString, _Faction:GetIconID()))
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
-        _Message = _Message .. inMessage:GetUnitName()
-        if(inMessage:HasMainName()) then
-            _Message = _Message .. ' (' .. inMessage:GetMainName() .. ')'
-        end
-    elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+
+    local _UnitName = nil
+    local _MainName = nil
+    local _Guild = nil
+
+    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
         local _UnitData = inMessage:GetData()
-        _Message = _Message .. _UnitData:GetName()
+        _UnitName = _UnitData:GetName()
         if(_UnitData:HasMainName()) then
-            _Message = _Message .. ' (' .. _UnitData:GetMainName() .. ')'
+            _MainName = _UnitData:GetMainName()
         end
+        _Guild = _UnitData:GetGuild()
+    else
+        _UnitName = inMessage:GetUnitName()
+        _MainName = inMessage:GetMainName()
+        _Guild = inMessage:GetGuild()
     end
 
-    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
-    _Message = _Message .. ' <' .. _Guild:GetShortName() .. '> '
+    local _Faction = _Guild:GetFaction()
+                    
+    local _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID())) .. _UnitName
+    if(_MainName ~= nil) then
+        _Message = _Message .. ' (' .. _MainName .. ')'
+    end
+
+    _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> '
     
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
-        _Message = _Message .. 'has gone offline.'
+        _Message = _Message .. XFG.Lib.Locale['CHAT_LOGOUT']
     elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
-        _Message = _Message .. 'has come online.'
+        _Message = _Message .. XFG.Lib.Locale['CHAT_LOGIN']
         if(XFG.Config.Chat.Login.Sound) then
             PlaySound(3332, 'Master')
         end

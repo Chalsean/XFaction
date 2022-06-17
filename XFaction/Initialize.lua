@@ -12,8 +12,7 @@ function XFG:Init()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
 
 	-- Make sure we have all the realm/guild combinations accounted for
-	local i = 1
-	for _RealmName, _FactionGuilds in pairs(XFG.Cache.Realms) do
+	for _RealmName, _FactionGuilds in pairs(XFG.Cache.Guilds) do
 		local _NewRealm = Realm:new()
 		_NewRealm:SetKey(_RealmName)
 		_NewRealm:SetName(_RealmName)
@@ -21,18 +20,14 @@ function XFG:Init()
 		XFG.Realms:AddRealm(_NewRealm)
 		for _FactionName, _Guilds in pairs(_FactionGuilds) do
 			local _Faction = XFG.Factions:GetFactionByName(_FactionName)
-			for _, _GuildName in ipairs (_Guilds) do
+			for _GuildInitials, _GuildName in pairs (_Guilds) do
 				local _NewGuild = Guild:new()
 				_NewGuild:Initialize()
-				_NewGuild:SetID(i)
 				_NewGuild:SetName(_GuildName)
 				_NewGuild:SetFaction(_Faction)
 				_NewGuild:SetRealm(_NewRealm)
-				if(XFG.Cache.Guilds[_GuildName] ~= nil) then
-					_NewGuild:SetShortName(XFG.Cache.Guilds[_GuildName])
-				end
+				_NewGuild:SetInitials(_GuildInitials)
 				XFG.Guilds:AddGuild(_NewGuild)
-				i = i + 1
 			end
 		end
 	end
@@ -57,6 +52,7 @@ function XFG:Init()
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
 	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 
+	--XFG.Frames.Channel = XChannelFrame:new(); XFG.Frames.Channel:Initialize()
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
 	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
 

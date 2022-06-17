@@ -25,7 +25,7 @@ function Team:new(inObject)
     if(_newObject) then
         self._Key = nil
         self._Name = nil
-        self._ShortName = nil
+        self._Initials = nil
         self._Initialized = false
     end
 
@@ -42,7 +42,7 @@ end
 
 function Team:Initialize()
 	if(self:IsInitialized() == false) then
-        self:SetKey(self:GetShortName())
+        self:SetKey(self:GetInitials())
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -53,7 +53,7 @@ function Team:Print(inPrintOffline)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _ShortName (" .. type(self._ShortName) .. "): ".. tostring(self._ShortName))
+    XFG:Debug(LogCategory, "  _Initials (" .. type(self._Initials) .. "): ".. tostring(self._Initials))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
@@ -77,12 +77,12 @@ function Team:SetName(inName)
     return self:GetName()
 end
 
-function Team:GetShortName()
-    return self._ShortName
+function Team:GetInitials()
+    return self._Initials
 end
 
-function Team:SetShortName(inShortName)
-    assert(type(inShortName) == 'string')
-    self._ShortName = inShortName
-    return self:GetShortName()
+function Team:SetInitials(inInitials)
+    assert(type(inInitials) == 'string')
+    self._Initials = inInitials
+    return self:GetInitials()
 end

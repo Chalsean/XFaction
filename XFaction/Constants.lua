@@ -15,102 +15,112 @@ XFG.Handlers = {}
 
 XFG.Initialized = false
 
-XFG.Icons = {}
-XFG.Icons.String = '|T%d:16:16:0:0:64:64:4:60:4:60|t'
-XFG.Icons.WoWToken = 1121394
-XFG.Icons.Kyrian = 3257748
-XFG.Icons.Venthyr = 3257751
-XFG.Icons['Night Fae'] = 3257750
-XFG.Icons.Necrolord = 3257749
-XFG.Icons.Alliance = 2565243
-XFG.Icons.Horde = 463451
-XFG.Icons.Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]]
+XFG.Icons = {
+	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
+	WoWToken = 1121394,
+	Kyrian = 3257748,
+	Venthyr = 3257751,
+	['Night Fae'] = 3257750,
+	Necrolord = 3257749,
+	Alliance = 2565243,
+	Horde = 463451,
+	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
+}
 
-XFG.Lib = {}
-XFG.Lib.Compress = LibStub:GetLibrary("LibCompress")
+XFG.Lib = {
+	Compress = LibStub:GetLibrary("LibCompress"),	
+	QT = LibStub('LibQTip-1.0'),
+	Realm = LibStub:GetLibrary('LibRealmInfo'),
+	Broker = LibStub('LibDataBroker-1.1'),
+	Config = LibStub('AceConfig-3.0'),
+	ConfigDialog = LibStub('AceConfigDialog-3.0'),
+	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
+}
 XFG.Lib.Encode = XFG.Lib.Compress:GetAddonEncodeTable()
-XFG.Lib.QT = LibStub('LibQTip-1.0')
-XFG.Lib.Realm = LibStub:GetLibrary('LibRealmInfo')
-XFG.Lib.Broker = LibStub('LibDataBroker-1.1')
-XFG.Lib.Config = LibStub('AceConfig-3.0')
-XFG.Lib.ConfigDialog = LibStub('AceConfigDialog-3.0')
-XFG.Lib.Locale = LibStub('AceLocale-3.0'):GetLocale('XFaction', true)
 
-XFG.DataText = {}
-XFG.DataText.AutoHide = 2
-
-XFG.Player = {}
-XFG.Player.LastBroadcast = 0
-
-XFG.Network = {}
-XFG.Network.BNet = {}
-XFG.Network.BNet.PingTimer = 60 * 5
-XFG.Network.BNet.LinksTimer = 60 * 10
-XFG.Network.Message = {}
-XFG.Network.ChannelName = 'EKXFactionChat'
-XFG.Network.Message.Tag = {
-	LOCAL = 'EKXF',
-	BNET = 'EKBNet'
+XFG.DataText = {
+	AutoHide = 2
 }
-XFG.Network.Message.Subject = {
-	DATA = '1',
-	GCHAT = '2',
-	LOGOUT = '3',
-	LOGIN = '4',
-	PING = '5',
-	ACHIEVEMENT = '6',
-	LINK = '7'
+
+XFG.Player = {
+	LastBroadcast = 0
 }
-XFG.Network.Type = {
-	BROADCAST = '1', -- BNet + Local Channel
-	LOCAL = '3',     -- Local Channel only
-	BNET = '4'       -- BNet only
-}	
 
 XFG.Frames = {}
--- Review: is this being used?
-XFG.Frames.ChatType = {
-	GUILD = 'GUILD',
-	CHANNEL = 'CHANNEL',
-	SYSTEM = 'SYSTEM',
-	ACHIEVEMENT = 'ACHIEVEMENT'
+
+XFG.Cache = {
+	Confederate = {
+		Name = 'Eternal Kingdom',
+		Initials = 'EK'
+	},
+	Guilds = {
+		Proudmoore = {
+			Alliance = {
+				EKA = 'Eternal Kingdom', 
+				ENK = 'Endless Kingdom', 
+				AK  = 'Alternal Kingdom', 
+				AK2 = 'Alternal Kingdom Two', 
+				AK3 = 'Alternal Kingdom Three'
+			},
+			Horde = {
+				AK4 = 'Alternal Kingdom Four', 
+				EKH = 'Eternal Kingdom Horde',
+				EDK = 'EDK Bank'
+			}
+		},
+		['Area 52'] = {
+			Horde = {
+				EKH = 'Eternal Kingdom'
+			}
+		}
+	},
+	Teams = {
+		A = 'Acheron',
+		C = 'Chivalry',
+		D = 'Duelist',
+		E = 'Empire',
+		F = 'Fireforged',
+		G = 'Gallant',
+		H = 'Harbinger',
+		K = 'Kismet',
+		L = 'Legacy',
+		M = 'Mercenary',
+		O = 'Olympus',
+		R = 'Reckoning',
+		S = 'Sellswords',
+		T = 'Tsunami',
+		Y = 'Gravity',
+		U = 'Unknown',
+		ENK = 'Social'
+	},
+	Channels = {}
 }
 
-XFG.Cache = {}
-XFG.Cache.Teams = {
-	A = 'Acheron',
-	C = 'Chivalry',
-	D = 'Duelist',
-	E = 'Empire',
-	F = 'Fireforged',
-	G = 'Gallant',
-	H = 'Harbinger',
-	K = 'Kismet',
-	L = 'Legacy',
-	M = 'Mercenary',
-	O = 'Olympus',
-	R = 'Reckoning',
-	S = 'Sellswords',
-	T = 'Tsunami',
-	Y = 'Gravity',
-	U = 'Unknown',
-	ENK = 'Social'
-}
-XFG.Cache.Guilds = {}
-XFG.Cache.Guilds['Eternal Kingdom'] = 'EK'
-XFG.Cache.Guilds['Endless Kingdom'] = 'ENK'
-XFG.Cache.Guilds['Enduring Kingdom'] = 'EDK'
-XFG.Cache.Guilds['Alternal Kingdom'] = 'AK'
-XFG.Cache.Guilds['Alternal Kingdom Two'] = 'AK2'
-XFG.Cache.Guilds['Alternal Kingdom Three'] = 'AK3'
-XFG.Cache.Guilds['Alternal Kingdom Four'] = 'AK4'
-
-XFG.Cache.Realms = {}
-XFG.Cache.Realms.Proudmoore = {
-	Alliance = {'Eternal Kingdom', 'Endless Kingdom', 'Alternal Kingdom', 'Alternal Kingdom Two', 'Alternal Kingdom Three'},
-	Horde = {'Alternal Kingdom Four', 'Enduring Kingdom'}
-}
-XFG.Cache.Realms['Area 52'] = {
-	Alliance = {},
-	Horde = {'Eternal Kingdom'}
+XFG.Network = {
+	BNet = {
+		PingTimer = 60 * 5,
+		LinksTimer = 60 * 10
+	},
+	Channel = {
+		Name = XFG.Cache.Confederate.Initials .. 'XFactionChat'
+	},
+	Message = {
+		Subject = {
+			DATA = '1',
+			GCHAT = '2',
+			LOGOUT = '3',
+			LOGIN = '4',
+			ACHIEVEMENT = '5',
+			LINK = '6'
+		},
+		Tag = {
+			LOCAL = XFG.Cache.Confederate.Initials .. 'XF',
+			BNET  = XFG.Cache.Confederate.Initials .. 'BNET'
+		}
+	},
+	Type = {
+		BROADCAST = '1', -- BNet + Local Channel
+		LOCAL = '3',     -- Local Channel only
+		BNET = '4'       -- BNet only
+	}
 }

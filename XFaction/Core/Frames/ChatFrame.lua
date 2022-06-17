@@ -76,9 +76,17 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
-function ChatFrame:DisplayGuild(inMessage)
+function ChatFrame:Display(inMessage)
     if(XFG.Config.Chat.GChat.Enable == false) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')
+
+    local _Event = 'GUILD'
+    local _ConfigNode = 'GChat'
+    if(inMessage:GetSubject() == XFG.Network.Message.Subject.ACHIEVEMENT) then
+        _Event = 'ACHIEVEMENT'
+        _ConfigNode = 'Achievement'
+    end
+
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
@@ -86,77 +94,32 @@ function ChatFrame:DisplayGuild(inMessage)
         _FrameTable = { GetChatWindowMessages(i) }
         local v
         for _, _FrameName in ipairs(_FrameTable) do
-            if _FrameName == 'GUILD' then
+            if _FrameName == _Event then
                 local _Frame = 'ChatFrame' .. i
                 if _G[_Frame] then
 
                     local _Text = ''
-                    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())                    
+                    local _Guild = inMessage:GetGuild()
 
-                    if(XFG.Config.Chat.GChat.Faction) then  
+                    if(XFG.Config.Chat[_ConfigNode].Faction) then  
                         local _Faction = _Guild:GetFaction()                      
                         _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
-                    if(XFG.Config.Chat.GChat.Main and inMessage:GetMainName() ~= nil) then
+                    if(XFG.Config.Chat[_ConfigNode].Main and inMessage:GetMainName() ~= nil) then
                             _Text = _Text .. "(" .. inMessage:GetMainName() .. ") "
                     end
 
-                    if(XFG.Config.Chat.GChat.Guild) then
-                        _Text = _Text .. "<" .. _Guild:GetShortName() .. "> "
+                    if(XFG.Config.Chat[_ConfigNode].Guild) then
+                        _Text = _Text .. "<" .. _Guild:GetInitials() .. "> "
                     end
 
                     _Text = _Text .. inMessage:GetData()
 
-                    local _Hex = XFG:RGBPercToHex(XFG.Config.Chat.GChat.Color.Red, XFG.Config.Chat.GChat.Color.Green, XFG.Config.Chat.GChat.Color.Blue)
+                    local _Hex = XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].Color.Red, XFG.Config.Chat[_ConfigNode].Color.Green, XFG.Config.Chat[_ConfigNode].Color.Blue)
                     _Text = format('|cff%s%s|r', _Hex, _Text)
 
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_GUILD', _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
-                end                                   
-                break
-            end
-        end
-    end
-end
-
-function ChatFrame:DisplayAchievement(inMessage)
-    if(XFG.Config.Chat.Achievement.Enable == false) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
-    local _FrameTable
-    -- There are multiple chat windows, each registers for certain types of messages to display
-    -- Thus GUILD can be on multiple chat windows and we need to display on all
-    for i = 1, NUM_CHAT_WINDOWS do
-        _FrameTable = { GetChatWindowMessages(i) }
-        local v
-        for _, _FrameName in ipairs(_FrameTable) do
-            if _FrameName == 'ACHIEVEMENT' then
-                local _Frame = 'ChatFrame' .. i
-                if _G[_Frame] then
-
-                    local _Text = ''
-                    local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())                    
-
-                    if(XFG.Config.Chat.GChat.Faction) then
-                        local _Faction = _Guild:GetFaction()                        
-                        _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
-                    end
-
-                    _Text = _Text .. inMessage:GetUnitName() .. ' '
-
-                    if(XFG.Config.Chat.GChat.Main and inMessage:GetMainName() ~= nil) then
-                        _Text = _Text .. "(" .. inMessage:GetMainName() .. ") "
-                    end
-
-                    if(XFG.Config.Chat.GChat.Guild) then
-                        _Text = _Text .. "<" .. _Guild:GetShortName() .. "> "
-                    end
-
-                    _Text = _Text .. inMessage:GetData()
-                    
-                    local _Hex = XFG:RGBPercToHex(XFG.Config.Chat.GChat.Color.Red, XFG.Config.Chat.GChat.Color.Green, XFG.Config.Chat.GChat.Color.Blue)
-                    _Text = format('|cff%s%s|r', _Hex, _Text)
-
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_ACHIEVEMENT', _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                 end                                   
                 break
             end

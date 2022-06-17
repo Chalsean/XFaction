@@ -71,8 +71,12 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-    local _Message = XFG:DecodeMessage(inEncodedMessage)
-    self:Process(_Message, inMessageTag)
+    local _Message = nil
+    if(pcall(function () _Message = XFG:DecodeMessage(inEncodedMessage) end)) then
+        self:Process(_Message, inMessageTag)
+    else
+        XFG:Warn(LogCategory, 'Failed to decode received message [%s:%s:%s]', inSender, inMessageTag, inDistribution)
+    end    
 end
 
 function Inbox:Process(inMessage, inMessageTag)
@@ -116,20 +120,10 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.Network.Outbox:Send(inMessage)
     end
 
-    -- Process guild chat message
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT) then
-        local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
-        if(XFG.Player.Guild:Equals(_Guild) == false) then
-            XFG.Frames.Chat:DisplayGuild(inMessage)
-        end
-        return
-    end
-
-    -- Process achievement message
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.ACHIEVEMENT) then
-        local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
-        if(XFG.Player.Guild:Equals(_Guild) == false) then
-            XFG.Frames.Chat:DisplayAchievement(inMessage)
+    -- Process gchat/achievement messages
+    if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Network.Message.Subject.ACHIEVEMENT) then
+        if(XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
+            XFG.Frames.Chat:Display(inMessage)
         end
         return
     end
@@ -141,17 +135,13 @@ function Inbox:Process(inMessage, inMessageTag)
         return
     end
 
-    -- Display system message that unit has logged on/off
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT or inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
-        local _Guild = XFG.Guilds:GetGuildByID(inMessage:GetGuildID())
-        if(XFG.Player.Realm:Equals(_Guild:GetRealm()) == false or XFG.Player.Guild:Equals(_Guild) == false) then
-            XFG.Frames.System:Display(inMessage)
-        end
-    end
-
+    -- Display system message that unit has logged off
     if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
         XFG.Confederate:RemoveUnit(inMessage:GetFrom())
         XFG.DataText.Guild:RefreshBroker()
+        if(XFG.Player.Realm:Equals(inMessage:GetRealm()) == false or XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
+            XFG.Frames.System:Display(inMessage)
+        end
         return
     end
 
@@ -169,6 +159,10 @@ function Inbox:Process(inMessage, inMessageTag)
             -- Used to whisper back but was running into Blizz API bug, so just broadcast
             XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit)
             XFG.Network.BNet.Links:BroadcastLinks()
+            -- Display system message that unit has logged on
+            if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) == false or XFG.Player.Guild:Equals(_UnitData:GetGuild()) == false) then
+                XFG.Frames.System:Display(inMessage)
+            end
         end
     end
 end

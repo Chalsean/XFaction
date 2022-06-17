@@ -57,13 +57,13 @@ end
 function TeamCollection:Initialize()
 	if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
-		for _ShortName, _Name in pairs (XFG.Cache.Teams) do
+		for _Initials, _Name in pairs (XFG.Cache.Teams) do
 			local _NewTeam = Team:new()
 			_NewTeam:SetName(_Name)
-			_NewTeam:SetShortName(_ShortName)
+			_NewTeam:SetInitials(_Initials)
 			_NewTeam:Initialize()
 			self:AddTeam(_NewTeam)
-			table.RemoveKey(XFG.Cache.Teams, _ShortName)
+			table.RemoveKey(XFG.Cache.Teams, _Initials)
 		end
 		self:IsInitialized(true)
 	end

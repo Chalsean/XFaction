@@ -15,6 +15,8 @@ function Channel:new()
     self._Name = nil
     self._ShortName = nil
     self._Type = nil
+    self._FrameID = nil
+    self._OnFrame = false
     
     return _Object
 end
@@ -27,6 +29,8 @@ function Channel:Print()
     XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
     XFG:Debug(LogCategory, "  _ShortName (" ..type(self._ShortName) .. "): ".. tostring(self._ShortName))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
+    XFG:Debug(LogCategory, "  _FrameID (" ..type(self._FrameID) .. "): ".. tostring(self._FrameID))
+    XFG:Debug(LogCategory, "  _OnFrame (" ..type(self._OnFrame) .. "): ".. tostring(self._OnFrame))
 end
 
 function Channel:GetKey()
@@ -73,4 +77,33 @@ function Channel:SetType(inType)
     assert(type(inType) == 'number')
     self._Type = inType
     return true
+end
+
+function Channel:HasFrameID()
+    return self._FrameID ~= nil
+end
+
+function Channel:GetFrameID()
+    return self._FrameID
+end
+
+function Channel:SetFrameID(inID)
+    assert(type(inID) == 'number')
+    self._FrameID = inID
+    return self:GetFrameID()
+end
+
+function Channel:IsOnFrame(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+    if(inBoolean ~= nil) then
+        self._OnFrame = inBoolean
+        if(self._OnFrame == false and self:HasFrameID()) then
+            -- Store the frame id incase the user reactivates in a different session
+            if(XFG.Config.Channel.Frames == nil) then
+                XFG.Config.Channel.Frames = {}
+            end
+            XFG.Config.Channel.Frames[self:GetKey()] = self:GetFrameID()
+        end
+    end
+    return self._OnFrame
 end
