@@ -32,6 +32,8 @@ L['GENERAL'] = 'General'
 L['DISCLAIMER'] = 'Disclaimer'
 L['TRANSLATIONS'] = 'Translations'
 L['FAQ'] = 'FAQ'
+L['CHANNEL'] = 'Channel'
+L['INDEX'] = 'Index'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -47,6 +49,20 @@ L['GENERAL_DTGUILD'] = '1. Guild (X): Full roster visibility in the confederate'
 L['GENERAL_DTLINKS'] = '2. Links (X): Visibility of the active BNet links in the confederate used by the addon'
 L['GENERAL_DTSOULBIND'] = '3. Soulbind (X): View and change your active soulbind'
 L['GENERAL_DTTOKEN'] = '4. WoW Token (X): View current market price of WoW tokens'
+--=========================================================================
+-- Channel Specific
+--=========================================================================
+L['CHANNEL_ENABLE_TOOLTIP'] = 'Force channel order'
+L['CHANNEL1'] = 'Channel 1'
+L['CHANNEL2'] = 'Channel 2'
+L['CHANNEL3'] = 'Channel 3'
+L['CHANNEL4'] = 'Channel 4'
+L['CHANNEL5'] = 'Channel 5'
+L['CHANNEL6'] = 'Channel 6'
+L['CHANNEL7'] = 'Channel 7'
+L['CHANNEL8'] = 'Channel 8'
+L['CHANNEL9'] = 'Channel 9'
+L['CHANNEL10'] = 'Channel 10'
 --=========================================================================
 -- Chat Specific
 --=========================================================================
@@ -66,6 +82,8 @@ L['CHAT_ONLINE'] = 'Online/Offline'
 L['CHAT_ONLINE_TOOLTIP'] = 'Show message for players logging in/out on other realms/faction'
 L['CHAT_ONLINE_SOUND'] = 'Play Sound'
 L['CHAT_ONLINE_SOUND_TOOLTIP'] = 'Play sound when any confederate member comes online'
+L['CHAT_LOGIN'] = 'has come online.'
+L['CHAT_LOGOUT'] = 'has gone offline.'
 --=========================================================================
 -- DataText Specific
 --=========================================================================

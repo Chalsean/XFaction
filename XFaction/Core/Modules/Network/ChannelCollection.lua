@@ -22,25 +22,10 @@ end
 function ChannelCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
-		for i = 1, TotalChannels do
-			local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(i)
-			if(_ChannelInfo ~= nil) then
-				local _NewChannel = Channel:new()
-				_NewChannel:SetKey(_ChannelInfo.shortcut)
-				_NewChannel:SetID(_ChannelInfo.localID)
-				_NewChannel:SetShortName(_ChannelInfo.shortcut)
-				_NewChannel:SetType(_ChannelInfo.channelType)
-				-- Because the ElvUI and Blizzard APIs don't like each other
-				if(_ChannelInfo.channelType == 0) then
-					_NewChannel:SetName(tostring(_ChannelInfo.localID) .. ". " .. _ChannelInfo.shortcut)
-				else
-					_NewChannel:SetName(_ChannelInfo.name)
-				end
-				if(self:AddChannel(_NewChannel) and _NewChannel:GetKey() == XFG.Network.ChannelName) then
-					XFG.Network.Outbox:SetLocalChannel(_NewChannel)
-				end				
-			end
+		if(XFG.Config.Channel.Channels == nil) then
+			XFG.Config.Channel.Channels = {}
 		end
+		self:ScanChannels()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -85,19 +70,30 @@ function ChannelCollection:GetChannel(inKey)
     return self._Channels[inKey]
 end
 
+function ChannelCollection:GetChannelByID(inID)
+	assert(type(inID) == 'number')
+	for _, _Channel in self:Iterator() do
+		if(_Channel:GetID() == inID) then
+			return _Channel
+		end
+	end
+end
+
 function ChannelCollection:AddChannel(inChannel)
     assert(type(inChannel) == 'table' and inChannel.__name ~= nil and inChannel.__name == 'Channel', "argument must be Channel object")
 	if(self:Contains(inChannel:GetKey()) == false) then
 		self._ChannelCount = self._ChannelCount + 1
 	end
 	self._Channels[inChannel:GetKey()] = inChannel
+	XFG.Cache.Channels[inChannel:GetKey()] = inChannel:GetShortName()
 	return self:Contains(inChannel:GetKey())
 end
 
 function ChannelCollection:RemoveChannel(inKey)
 	assert(type(inKey) == 'string')
 	if(self:Contains(inKey)) then
-		table.RemoveKey(self._Channels, inKey)
+		self._Channels[inKey] = nil
+		XFG.Cache.Channels[inKey] = nil
 		self._ChannelCount = self._ChannelCount - 1
 	end
 	return self:Contains(inKey) == false
@@ -105,4 +101,89 @@ end
 
 function ChannelCollection:Iterator()
 	return next, self._Channels, nil
+end
+
+local function GetFrameID(inChannelName)
+	for i = 1, NUM_CHAT_WINDOWS do
+		local _Frame = 'ChatFrame' .. i
+		if _G[_Frame] then
+			for _, _ChannelName in pairs (_G[_Frame].channelList) do
+				if(inChannelName == _ChannelName) then
+					return i
+				end
+			end
+		end
+	end
+end
+
+function ChannelCollection:ScanChannels()
+	self._Channels = {}
+	self._ChannelCount = 0
+
+	-- Repopulate channels, the channel events are not very trustworthy
+	for i = 1, TotalChannels do
+		self:ScanChannel(i)
+	end
+
+	self:SyncChannels()
+end
+
+function ChannelCollection:ScanChannel(inIndex)
+	local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(inIndex)
+	if(_ChannelInfo ~= nil) then
+		local _Channel = nil
+		if(self:Contains(_ChannelInfo.shortcut)) then
+			_Channel = self:GetChannel(_ChannelInfo.shortcut)
+		else
+			_Channel = Channel:new()
+			_Channel:SetKey(_ChannelInfo.shortcut)
+			_Channel:SetID(inIndex)
+			_Channel:SetShortName(_ChannelInfo.shortcut)
+		end
+
+		_Channel:SetType(_ChannelInfo.channelType)
+		-- Because the ElvUI and Blizzard APIs don't like each other
+		if(_ChannelInfo.channelType == 0) then
+			_Channel:SetName(tostring(_ChannelInfo.localID) .. ". " .. _ChannelInfo.shortcut)
+		else
+			_Channel:SetName(_ChannelInfo.name)
+		end
+
+		if(self:AddChannel(_Channel) and _Channel:GetKey() == XFG.Network.Channel.Name) then
+			XFG.Network.Outbox:SetLocalChannel(_Channel)
+		end
+		if(XFG.Config.Channel.Channels['Channel' .. tostring(_Channel:GetID())] == nil) then
+			XFG.Config.Channel.Channels['Channel' .. tostring(_Channel:GetID())] = _Channel:GetKey()
+		end
+		XFG.Cache.Channels[_Channel:GetKey()] = _Channel:GetShortName()	
+	end
+end
+
+function ChannelCollection:SyncChannels()
+	for i = 1, 10 do
+		local _ChannelNode = 'Channel' .. tostring(i)
+		XFG.Options.args.Channel.args.Channels.args[_ChannelNode].values = XFG.Cache.Channels
+
+		if(XFG.Config.Channel.Enable) then
+			-- Ensure the channels are in the correct order
+			local _ChannelKey = XFG.Config.Channel.Channels[_ChannelNode]
+			if(_ChannelKey ~= nil) then
+				local _Channel = self:GetChannel(_ChannelKey)
+				if(_Channel ~= nil) then
+					if(i ~= _Channel:GetID()) then
+						local _SwapChannel = self:GetChannelByID(i)
+						if(_SwapChannel ~= nil) then
+							C_ChatInfo.SwapChatChannelsByChannelIndex(_Channel:GetID(), _SwapChannel:GetID())
+							_SwapChannel:SetID(_Channel:GetID())
+							_Channel:SetID(i)
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+function ChannelCollection:GetCount()
+	return self._ChannelCount
 end

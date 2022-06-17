@@ -68,14 +68,15 @@ function SystemEvent:CallbackLogout()
         XFG.Network.BNet.Friends:CreateBackup()
         XFG.Network.BNet.Links:CreateBackup()
     else
-        local _NewMessage = LogoutMessage:new()
+        local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
         _NewMessage:SetType(XFG.Network.Type.BROADCAST)
         _NewMessage:SetSubject(XFG.Network.Message.Subject.LOGOUT)
         if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
             _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
         end
-        _NewMessage:SetGuildID(XFG.Player.Guild:GetID())
+        _NewMessage:SetGuild(XFG.Player.Guild)
+        _NewMessage:SetRealm(XFG.Player.Realm)
         _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
         _NewMessage:SetData(' ')
         XFG.Network.Outbox:Send(_NewMessage)

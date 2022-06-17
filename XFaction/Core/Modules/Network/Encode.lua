@@ -9,31 +9,30 @@ function XFG:EncodeMessage(inMessage, inEncodeUnitData)
 	local _MessageData = {}
 
 	if(inMessage.__name == 'GuildMessage') then
-		_MessageData.H = inMessage:GetFlags()
-		_MessageData.L = inMessage:GetLineID()
 		_MessageData.M = inMessage:GetMainName()
-		_MessageData.W = inMessage:GetUnitName()		
-	elseif(inMessage.__name == 'LogoutMessage' or inMessage.__name == 'AchievementMessage') then
-		_MessageData.M = inMessage:GetMainName()		
-		_MessageData.W = inMessage:GetUnitName()
+		_MessageData.U = inMessage:GetUnitName()
+		local _Guild = inMessage:GetGuild()
+		_MessageData.G = _Guild:GetName()
+		local _Realm = inMessage:GetRealm()
+		_MessageData.R = _Realm:GetID()
 	end
 
 	if(inMessage:HasUnitData() and inEncodeUnitData) then
-		_MessageData.Y = XFG:SerializeUnitData(inMessage:GetData())
+		_MessageData.D = XFG:SerializeUnitData(inMessage:GetData())
 	else
-		_MessageData.Y = inMessage:GetData()
+		_MessageData.D = inMessage:GetData()
 	end
 
-	_MessageData.A = inMessage:GetKey()
+	_MessageData.K = inMessage:GetKey()
 	_MessageData.T = inMessage:GetTo()
-	_MessageData.B = inMessage:GetFrom()	
-	_MessageData.D = inMessage:GetSubject()
-	_MessageData.E = inMessage:GetType()
-	_MessageData.K = inMessage:GetTimeStamp()
-	_MessageData.G = inMessage:GetGuildID() -- Realm and Faction can be extrapolated from GuildID
-	_MessageData.Q = inMessage:GetRemainingTargets()
-	_MessageData.PN = inMessage:GetPacketNumber()
-	_MessageData.TP = inMessage:GetTotalPackets()
+	_MessageData.F = inMessage:GetFrom()	
+	_MessageData.S = inMessage:GetSubject()
+	_MessageData.Y = inMessage:GetType()
+	_MessageData.I = inMessage:GetTimeStamp()
+	_MessageData.A = inMessage:GetRemainingTargets()
+	_MessageData.P = inMessage:GetPacketNumber()
+	_MessageData.Q = inMessage:GetTotalPackets()
+	_MessageData.V = inMessage:GetVersion()
 
 	local _Serialized = XFG:Serialize(_MessageData)
 	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
@@ -50,13 +49,17 @@ function XFG:SerializeUnitData(inUnitData)
 	local _Faction = inUnitData:GetFaction()
 	_MessageData.F = _Faction:GetKey()
 	local _Guild = inUnitData:GetGuild()
-	_MessageData.G = _Guild:GetID()
-	_MessageData.H = inUnitData:GetGUID()
+	_MessageData.G = _Guild:GetName()
+	local _Realm = inUnitData:GetRealm()
+	_MessageData.R = _Realm:GetID()
+	_MessageData.K = inUnitData:GetGUID()
+
 	if(inUnitData:HasRank()) then
 		local _Rank = inUnitData:GetRank()
 		_MessageData.I = _Rank:GetKey()
 		_MessageData.J = _Rank:GetName()
 	end
+	
 	_MessageData.L = inUnitData:GetLevel()
 	_MessageData.M = (inUnitData:IsMobile() == true) and 1 or 0
 	_MessageData.N = inUnitData:GetNote()
@@ -72,7 +75,7 @@ function XFG:SerializeUnitData(inUnitData)
 	end
 	if(inUnitData:HasRace()) then
 		local _Race = inUnitData:GetRace()
-		_MessageData.R = _Race:GetKey()
+		_MessageData.A = _Race:GetKey()
 	end
 	if(inUnitData:HasSoulbind()) then
 		local _Soulbind = inUnitData:GetSoulbind()
@@ -83,7 +86,6 @@ function XFG:SerializeUnitData(inUnitData)
 		local _Spec = inUnitData:GetSpec()
 		_MessageData.V = _Spec:GetKey()
 	end
-	_MessageData.W = inUnitData:GetUnitName()
 	_MessageData.Z = inUnitData:GetZone()
 
 	return XFG:Serialize(_MessageData)

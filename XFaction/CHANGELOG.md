@@ -1,26 +1,18 @@
-### Version 2.2.0 [ 06.14.2022 ]
+### Version 2.3.0 [ 06.17.2022 ]
 
 **Enhancements**
 [XFaction]
-- Plays sound when confederate member comes online
+- Can configure order of channels in settings menu
+- Better error handling when unable to decode message
 
-### Version 2.1.4 [ 06.14.2022 ]
-
-**Enhancements**
+**Bug Fixes**
 [XFaction]
-- Added FAQ
+- Fixed bug around adding/removing/renaming guilds in the confederate
 
-### Version 2.1.2 [ 06.13.2022 ]
+[Links (X)]
+- Fixed bug where all friends were considered links
+- Fixed bug where players name was not always highlighted
 
-**Enhancements**
-[XFaction]
-- Spanish translations have been added thanks to Elskerdeg
-
-### Version 2.1.0 [ 06.12.2022 ]
-
-**Enhancements**
-[XFaction]
-- All DTs and config support localization
-
-[DTToken]
-- Properly formats gold price
+**Misc Changes**
+[Guild (X)]
+- Ignores mobile users

@@ -25,7 +25,7 @@ function GuildCollection:new(inObject)
     if(_newObject == true) then
 		self._Key = nil
         self._Guilds = {}
-		self._ShortNames = {}
+		self._Initials = {}
 		self._GuildCount = 0
 		self._Initialized = false
     end
@@ -80,15 +80,6 @@ function GuildCollection:GetGuild(inKey)
 	return self._Guilds[inKey]
 end
 
-function GuildCollection:GetGuildByID(inID)
-	assert(type(inID) == 'number')	
-	for _, _Guild in self:Iterator() do
-		if(_Guild:GetID() == inID) then
-			return _Guild
-		end
-	end
-end
-
 function GuildCollection:GetGuildByRealmGuildName(inRealm, inGuildName)
 	assert(type(inGuildName) == 'string' and type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "arguments must be a Realm object and a string")	
 	for _, _Guild in self:Iterator() do
@@ -104,7 +95,7 @@ function GuildCollection:AddGuild(inGuild)
 		self._GuildCount = self._GuildCount + 1
 	end
 	self._Guilds[inGuild:GetKey()] = inGuild
-	self._ShortNames[inGuild:GetShortName()] = true
+	self._Initials[inGuild:GetInitials()] = true
 	return self:Contains(inGuild:GetKey())
 end
 
@@ -112,6 +103,6 @@ function GuildCollection:Iterator()
 	return next, self._Guilds, nil
 end
 
-function GuildCollection:GetShortNames()
-	return self._ShortNames
+function GuildCollection:GetInitials()
+	return self._Initials
 end

@@ -11,9 +11,8 @@ function Guild:new()
     self.__name = ObjectName
 
     self._Key = nil
-    self._ID = nil
     self._Name = nil
-    self._ShortName = nil
+    self._Initials = nil
     self._Faction = nil
     self._Realm = nil
     self._Initialized = false
@@ -41,9 +40,8 @@ function Guild:Print()
     XFG:DoubleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _ShortName (" .. type(self._ShortName) .. "): ".. tostring(self._ShortName))
+    XFG:Debug(LogCategory, "  _Initials (" .. type(self._Initials) .. "): ".. tostring(self._Initials))
     XFG:Debug(LogCategory, "  _Faction (" .. type(self._Faction) .. ")")
     self._Faction:Print()
     XFG:Debug(LogCategory, "  _Realm (" .. type(self._Realm) .. ")")
@@ -60,16 +58,6 @@ function Guild:SetKey(inKey)
     return self:GetKey()
 end
 
-function Guild:GetID()
-    return self._ID
-end
-
-function Guild:SetID(inID)
-    assert(type(inID) == 'number')
-    self._ID = inID
-    return self:GetID()
-end
-
 function Guild:GetName()
     return self._Name
 end
@@ -80,14 +68,14 @@ function Guild:SetName(inName)
     return self:GetName()
 end
 
-function Guild:GetShortName()
-    return self._ShortName
+function Guild:GetInitials()
+    return self._Initials
 end
 
-function Guild:SetShortName(inShortName)
-    assert(type(inShortName) == 'string')
-    self._ShortName = inShortName
-    return self:GetShortName()
+function Guild:SetInitials(inInitials)
+    assert(type(inInitials) == 'string')
+    self._Initials = inInitials
+    return self:GetInitials()
 end
 
 function Guild:GetFaction()

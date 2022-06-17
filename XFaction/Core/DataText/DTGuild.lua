@@ -216,7 +216,7 @@ function DTGuild:OnEnter(this)
 	if(XFG.Config.DataText.Guild.GuildName) then
 		local _GuildName = XFG.Player.Guild:GetName()
 		local _Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
-		_GuildName = _GuildName .. ' <' .. _Guild:GetShortName() .. '>'
+		_GuildName = _GuildName .. ' <' .. _Guild:GetInitials() .. '>'
 		self._Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_GUILD'], _GuildName), self._HeaderFont, "LEFT", 4)
 	end
 

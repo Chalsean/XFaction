@@ -184,27 +184,29 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-
     XFG:Debug(LogCategory, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
-    local _Message = XFG:DecodeMessage(inEncodedMessage)
-
-    -- Have you seen this message before?
-    if(XFG.Network.Mailbox:Contains(_Message:GetKey())) then
-        return
-    end
-
-    -- Data was sent in one packet, okay to process
-    if(_Message:GetTotalPackets() == 1) then
-        XFG.Network.Inbox:Process(_Message, inMessageTag)
-    else
-        -- Going to have to stitch the data back together again
-        XFG.Network.BNet.Comm:AddPacket(_Message)
-        if(XFG.Network.BNet.Comm:HasAllPackets(_Message:GetKey())) then
-            XFG:Debug(LogCategory, "Received all packets for message [%s]", _Message:GetKey())
-            local _FullMessage = XFG.Network.BNet.Comm:RebuildMessage(_Message:GetKey())
-            XFG.Network.Inbox:Process(_FullMessage, inMessageTag)
+    local _Message = nil
+    if(pcall(function () _Message = XFG:DecodeMessage(inEncodedMessage) end)) then
+        -- Have you seen this message before?
+        if(XFG.Network.Mailbox:Contains(_Message:GetKey())) then
+            return
         end
-    end    
+
+        -- Data was sent in one packet, okay to process
+        if(_Message:GetTotalPackets() == 1) then
+            XFG.Network.Inbox:Process(_Message, inMessageTag)
+        else
+            -- Going to have to stitch the data back together again
+            XFG.Network.BNet.Comm:AddPacket(_Message)
+            if(XFG.Network.BNet.Comm:HasAllPackets(_Message:GetKey())) then
+                XFG:Debug(LogCategory, "Received all packets for message [%s]", _Message:GetKey())
+                local _FullMessage = XFG.Network.BNet.Comm:RebuildMessage(_Message:GetKey())
+                XFG.Network.Inbox:Process(_FullMessage, inMessageTag)
+            end
+        end  
+    else
+        XFG:Warn(LogCategory, 'Failed to decode received message [%d:%s:%s]', inSender, inMessageTag, inDistribution)
+    end
 end
 
 function BNet:Contains(inKey)

@@ -134,12 +134,17 @@ function DTLinks:OnEnter(this)
 				_ToKey = _ToRealm:GetID() .. ':' .. _ToFaction:GetID()
 
 				local _FromName = format("|cffffffff%s|r", _Link:GetFromName())
-				if(_Link:IsMyLink()) then
+				if(_Link:IsMyLink() and _Link:GetFromName() == XFG.Player.Unit:GetName()) then
 					_FromName = format("|cffffff00%s|r", _Link:GetFromName())
 				end
 
+				local _ToName = format("|cffffffff%s|r", _Link:GetToName())
+				if(_Link:IsMyLink() and _Link:GetToName() == XFG.Player.Unit:GetName()) then
+					_ToName = format("|cffffff00%s|r", _Link:GetToName())
+				end
+
 				self._Tooltip:SetCell(line, _TargetColumn[_FromKey], _FromName)
-				self._Tooltip:SetCell(line, _TargetColumn[_ToKey], _Link:GetToName())
+				self._Tooltip:SetCell(line, _TargetColumn[_ToKey], _ToName)
 				
 				line = self._Tooltip:AddLine()
 			end

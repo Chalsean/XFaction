@@ -26,8 +26,6 @@ function Confederate:new(inObject)
     if(_newObject) then
         self._Key = nil
         self._Name = nil
-        self._MainRealmName = nil
-        self._MainGuildName = nil
         self._Units = {}
         self._NumberOfUnits = 0
     end
@@ -40,8 +38,6 @@ function Confederate:Print(inPrintOffline)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _MainRealmName (" .. type(self._MainRealmName) .. "): ".. tostring(self._MainRealmName))
-    XFG:Debug(LogCategory, "  _MainGuildName (" .. type(self._MainGuildName) .. "): ".. tostring(self._MainGuildName))
     XFG:Debug(LogCategory, "  _NumberOfUnits (" .. type(self._NumberOfUnits) .. "): ".. tostring(self._NumberOfUnits))
     XFG:Debug(LogCategory, "  _Units (" .. type(self._Units) .. "): ")
     for _Key, _Unit in pairs (self._Units) do
@@ -56,8 +52,6 @@ function Confederate:ShallowPrint()
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _MainRealmName (" .. type(self._MainRealmName) .. "): ".. tostring(self._MainRealmName))
-    XFG:Debug(LogCategory, "  _MainGuildName (" .. type(self._MainGuildName) .. "): ".. tostring(self._MainGuildName))
     XFG:Debug(LogCategory, "  _NumberOfUnits (" .. type(self._NumberOfUnits) .. "): ".. tostring(self._NumberOfUnits))
     XFG:Debug(LogCategory, "  _Units (" .. type(self._Units) .. ")")
 end
@@ -80,26 +74,6 @@ function Confederate:SetName(inName)
     assert(type(inName) == 'string')
     self._Name = inName
     return self:GetName()
-end
-
-function Confederate:GetMainRealmName()
-    return self._MainRealmName
-end
-
-function Confederate:SetMainRealmName(inMainRealmName)
-    assert(type(inMainRealmName) == 'string')
-    self._MainRealmName = inMainRealmName
-    return self:GetMainRealmName()
-end
-
-function Confederate:GetMainGuildName()
-    return self._MainGuildName
-end
-
-function Confederate:SetMainGuildName(inMainGuildName)
-    assert(type(inMainGuildName) == 'string')
-    self._MainGuildName = inMainGuildName
-    return self:GetMainGuildName()
 end
 
 function Confederate:Contains(inKey)

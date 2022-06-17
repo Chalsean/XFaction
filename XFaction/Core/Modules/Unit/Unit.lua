@@ -60,11 +60,12 @@ function Unit:Initialize(_Argument)
     assert(type(_Argument) == 'number')
     self:SetGuildIndex(_Argument)
     local _unit, _rank, _, _level, _class, _zone, _note, _officernote, _online, _status, _, _, _, _isMobile, _, _, _GUID = GetGuildRosterInfo(self:GetGuildIndex())
+    
     -- Rare but the previous call can fail, we'll pick the unit up on next refresh
-    if(_GUID == nil) then
-        --XFG:Debug(LogCategory, "GetGuildRosterInfo call failed for [%d]", _Argument)
-        return
-    end
+    if(_GUID == nil) then return end
+
+    -- Ignore users who are logged in on their mobile devices
+    if(_isMobile) then return end
 
     self:SetGUID(_GUID)
     self:SetKey(self:GetGUID())
@@ -74,8 +75,7 @@ function Unit:Initialize(_Argument)
     end
    
     self:SetUnitName(_unit)
-	self:SetLevel(_level)
-	self:SetNote(_note)	
+	self:SetLevel(_level)	
 	self:IsMobile(_isMobile)
     self:SetFaction(XFG.Player.Faction)    
     
@@ -121,10 +121,8 @@ function Unit:Initialize(_Argument)
         XFG.Ranks:AddRank(_NewRank)
     end
     local _Rank = XFG.Ranks:GetRank(_RankID)
-    self:SetRank(_Rank)
-    if(_Rank:GetName() == 'Grand Alt' or _Rank:GetName() == 'Cat Herder') then
-        self:IsAlt(true)
-    end
+    self:SetRank(_Rank)    
+    self:SetNote(_note)
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
@@ -155,29 +153,6 @@ function Unit:Initialize(_Argument)
         if(XFG.Specs:Contains(_SpecID)) then
             self:SetSpec(XFG.Specs:GetSpec(_SpecID))
         end
-    end
-    
-    local _Note = self:GetNote()
-    local _Parts = string.Split(_Note, ' ')
-    if(self:IsAlt() and _Parts[2] ~= nil) then
-        self:SetMainName(_Parts[2])
-    end
-
-    if(_Parts[1] ~= nil) then
-        -- The first team that matches wins
-        _Parts[1] = string.gsub(_Parts[1], '[%[%]]', '')    
-        local _Tags = string.Split(_Parts[1], '-')
-        for _, _Tag in pairs (_Tags) do
-            if(XFG.Teams:Contains(_Tag)) then
-                self:SetTeam(XFG.Teams:GetTeam(_Tag))
-                break
-            end
-        end
-    end
-
-    if(self:HasTeam() == false) then
-        local _Team = XFG.Teams:GetTeam('U')
-        self:SetTeam(_Team)
     end
 
     self:IsInitialized(true)
@@ -315,6 +290,11 @@ end
 function Unit:SetRank(_Rank)
     assert(type(_Rank) == 'table' and _Rank.__name ~= nil and _Rank.__name == 'Rank', "argument must be Rank object")
     self._Rank = _Rank
+
+    if(_Rank:GetName() == 'Grand Alt' or _Rank:GetName() == 'Cat Herder') then
+        self:IsAlt(true)
+    end
+
     return self:GetRank()
 end
 
@@ -345,6 +325,29 @@ end
 function Unit:SetNote(_Note)
     assert(type(_Note) == 'string')
     self._Note = _Note
+
+    local _Parts = string.Split(_Note, ' ')
+    if(self:IsAlt() and _Parts[2] ~= nil) then
+        self:SetMainName(_Parts[2])
+    end
+
+    if(_Parts[1] ~= nil) then
+        -- The first team that matches wins
+        _Parts[1] = string.gsub(_Parts[1], '[%[%]]', '')    
+        local _Tags = string.Split(_Parts[1], '-')
+        for _, _Tag in pairs (_Tags) do
+            if(XFG.Teams:Contains(_Tag)) then
+                self:SetTeam(XFG.Teams:GetTeam(_Tag))
+                break
+            end
+        end
+    end
+
+    if(self:HasTeam() == false) then
+        local _Team = XFG.Teams:GetTeam('U')
+        self:SetTeam(_Team)
+    end
+
     return self:GetNote()
 end
 

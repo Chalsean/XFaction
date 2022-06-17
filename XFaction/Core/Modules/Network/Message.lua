@@ -14,7 +14,6 @@ function Message:new()
     self._To = nil
     self._From = nil
     self._Type = nil
-    self._GuildID = nil
     self._Subject = nil
     self._EpochTime = nil
     self._TargetCount = 0
@@ -22,6 +21,7 @@ function Message:new()
     self._Initialized = false
     self._PacketNumber = 1
     self._TotalPackets = 1
+    self._Version = nil
 
     return _Object
 end
@@ -37,7 +37,6 @@ function Message:newChildConstructor()
     self._To = nil
     self._From = nil    
     self._Type = nil
-    self._GuildID = nil
     self._Subject = nil
     self._EpochTime = nil    
     self._TargetCount = 0
@@ -45,6 +44,7 @@ function Message:newChildConstructor()
     self._Initialized = false
     self._PacketNumber = 1
     self._TotalPackets = 1
+    self._Version = nil
 
     return _Object
 end
@@ -62,9 +62,9 @@ function Message:Initialize()
         self._Targets = {}
         self:SetKey(math.GenerateUID())
         self:SetFrom(XFG.Player.Unit:GetKey())
-        self:SetGuildID(XFG.Player.Guild:GetID())
         self:SetTimeStamp(GetServerTime())
         self:SetAllTargets()
+        self:SetVersion(XFG.Version)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -78,12 +78,12 @@ function Message:Print()
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
     XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
     XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
-    XFG:Debug(LogCategory, "  _GuildID (" ..type(self._GuildID) .. "): ".. tostring(self._GuildID))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:Debug(LogCategory, "  _Version (" ..type(self._Version) .. "): ".. tostring(self._Version))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
     for _, _Target in pairs (self:GetTargets()) do
         _Target:Print()
@@ -98,12 +98,12 @@ function Message:ShallowPrint()
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
     XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
     XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
-    XFG:Debug(LogCategory, "  _GuildID (" ..type(self._GuildID) .. "): ".. tostring(self._GuildID))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:Debug(LogCategory, "  _Version (" ..type(self._Version) .. "): ".. tostring(self._Version))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
 end
 
@@ -135,16 +135,6 @@ function Message:SetFrom(inFrom)
     assert(type(inFrom) == 'string')
     self._From = inFrom
     return self:GetFrom()
-end
-
-function Message:GetGuildID()
-    return self._GuildID
-end
-
-function Message:SetGuildID(inGuildID)
-    assert(type(inGuildID) == 'number')
-    self._GuildID = inGuildID
-    return self:GetGuildID()
 end
 
 function Message:GetType()
@@ -273,13 +263,13 @@ function Message:Copy(inMessage)
     self._To = inMessage:GetTo()
     self._From = inMessage:GetFrom()
     self._Type = inMessage:GetType()
-    self._GuildID = inMessage:GetGuildID()
     self._Subject = inMessage:GetSubject()
     self._EpochTime = inMessage:GetTimeStamp()
     self._Data = inMessage:GetData()
     self._Initialized = inMessage:IsInitialized()
     self._PacketNumber = inMessage:GetPacketNumber()
     self._TotalPackets = inMessage:GetTotalPackets()
+    self._Version = inMessage:GetVersion()
     for _, _Target in pairs (self:GetTargets()) do
         self:RemoveTarget(_Target)
     end
@@ -290,4 +280,14 @@ end
 
 function Message:HasUnitData()
     return self:GetSubject() == XFG.Network.Message.Subject.DATA or self:GetSubject() == XFG.Network.Message.Subject.LOGIN
+end
+
+function Message:GetVersion()
+    return self._Version
+end
+
+function Message:SetVersion(inVersion)
+    assert(type(inVersion) == 'string')
+    self._Version = inVersion
+    return self:GetVersion()
 end

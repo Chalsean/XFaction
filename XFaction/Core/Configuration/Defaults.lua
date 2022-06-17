@@ -3,6 +3,10 @@ local LogCategory = 'Config'
 
 XFG.Defaults = {
     profile = {
+        Channel = {
+            Enable = false,
+            Channels = {},
+        },
         Chat = {
             GChat = {
                 Enable = true,
@@ -70,6 +74,7 @@ function XFG:LoadConfigs()
     XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.DataDB)
     XFG.Lib.Config:RegisterOptionsTable('XFaction', XFG.Options)
     XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'XFaction', nil, 'General')
+    XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'Channel', 'XFaction', 'Channel')
     XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'Chat', 'XFaction', 'Chat')
     XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'DataText', 'XFaction', 'DataText')
     XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'Support', 'XFaction', 'Support')
