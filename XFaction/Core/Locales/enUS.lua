@@ -34,6 +34,7 @@ L['TRANSLATIONS'] = 'Translations'
 L['FAQ'] = 'FAQ'
 L['CHANNEL'] = 'Channel'
 L['INDEX'] = 'Index'
+L['DUNGEON'] = 'Mythic+'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -101,7 +102,9 @@ L['DTGUILD_CONFIG_CONFEDERATE_TOOLTIP'] = 'Show name of the confederate'
 L['DTGUILD_CONFIG_GUILD_TOOLTIP'] = 'Show name of the current guild'
 L['DTGUILD_CONFIG_MOTD_TOOLTIP'] = 'Show guild message-of-the-day'
 L['DTGUILD_CONFIG_COLUMN_HEADER'] = 'Show Columns'
+L['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_TOOLTIP'] = 'Show players total achievement points'
 L['DTGUILD_CONFIG_COLUMN_COVENANT_TOOLTIP'] = 'Show players covenant icon'
+L['DTGUILD_CONFIG_COLUMN_DUNGEON_TOOLTIP'] = 'Show players mythic+ score'
 L['DTGUILD_CONFIG_COLUMN_FACTION_TOOLTIP'] = 'Show players faction icon'
 L['DTGUILD_CONFIG_COLUMN_GUILD_TOOLTIP'] = 'Show players guild name'
 L['DTGUILD_CONFIG_COLUMN_LEVEL_TOOLTIP'] = 'Show players level'

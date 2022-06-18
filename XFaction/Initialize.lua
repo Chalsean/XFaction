@@ -16,6 +16,7 @@ function XFG:Init()
 		local _NewRealm = Realm:new()
 		_NewRealm:SetKey(_RealmName)
 		_NewRealm:SetName(_RealmName)
+		_NewRealm:SetAPIName(string.gsub(_RealmName, '%s+', ''))
 		_NewRealm:Initialize()
 		XFG.Realms:AddRealm(_NewRealm)
 		for _FactionName, _Guilds in pairs(_FactionGuilds) do
@@ -52,9 +53,9 @@ function XFG:Init()
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
 	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 
-	--XFG.Frames.Channel = XChannelFrame:new(); XFG.Frames.Channel:Initialize()
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
 	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
+	--XFG.Frames.XFaction = XFactionFrame:new(); XFG.Frames.XFaction:Initialize()
 
 	-- Initialize DTs
 	XFG.DataText.Guild = DTGuild:new(); XFG.DataText.Guild:Initialize()

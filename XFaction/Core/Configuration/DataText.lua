@@ -63,16 +63,32 @@ XFG.Options.args.DataText = {
 					type = 'description',
 					name = '',
 				},
-				Covenant = {
+				Achievement = {
 					order = 9,
+					type = 'toggle',
+					name = XFG.Lib.Locale['ACHIEVEMENT'],
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
+				},
+				Covenant = {
+					order = 10,
 					type = 'toggle',
 					name = XFG.Lib.Locale['COVENANT'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_COVENANT_TOOLTIP'],
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
+				Dungeon = {
+					order = 11,
+					type = 'toggle',
+					name = XFG.Lib.Locale['DUNGEON'],
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_DUNGEON_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
+				},
 				Faction = {
-					order = 10,
+					order = 12,
 					type = 'toggle',
 					name = XFG.Lib.Locale['FACTION'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_FACTION_TOOLTIP'],
@@ -80,7 +96,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Guild = {
-					order = 11,
+					order = 13,
 					type = 'toggle',
 					name = XFG.Lib.Locale['GUILD'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_GUILD_TOOLTIP'],
@@ -88,7 +104,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Level = {
-					order = 12,
+					order = 14,
 					type = 'toggle',
 					name = XFG.Lib.Locale['LEVEL'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_LEVEL_TOOLTIP'],
@@ -96,7 +112,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Note = {
-					order = 13,
+					order = 15,
 					type = 'toggle',
 					name = XFG.Lib.Locale['NOTE'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_NOTE_TOOLTIP'],
@@ -104,7 +120,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Profession = {
-					order = 14,
+					order = 16,
 					type = 'toggle',
 					name = XFG.Lib.Locale['PROFESSION'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_PROFESSION_TOOLTIP'],
@@ -112,7 +128,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Race = {
-					order = 15,
+					order = 17,
 					type = 'toggle',
 					name = XFG.Lib.Locale['RACE'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_RACE_TOOLTIP'],
@@ -120,7 +136,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Rank = {
-					order = 16,
+					order = 18,
 					type = 'toggle',
 					name = XFG.Lib.Locale['RANK'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_RANK_TOOLTIP'],
@@ -128,7 +144,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Realm = {
-					order = 17,
+					order = 19,
 					type = 'toggle',
 					name = XFG.Lib.Locale['REALM'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_REALM_TOOLTIP'],
@@ -136,7 +152,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Spec = {
-					order = 18,
+					order = 20,
 					type = 'toggle',
 					name = XFG.Lib.Locale['SPEC'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_SPEC_TOOLTIP'],
@@ -144,7 +160,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Team = {
-					order = 19,
+					order = 21,
 					type = 'toggle',
 					name = XFG.Lib.Locale['TEAM'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_TEAM_TOOLTIP'],
@@ -152,7 +168,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Zone = {
-					order = 20,
+					order = 22,
 					type = 'toggle',
 					name = XFG.Lib.Locale['ZONE'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_ZONE_TOOLTIP'],

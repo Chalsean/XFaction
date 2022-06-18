@@ -54,10 +54,9 @@ end
 
 -- The event doesn't tell you what has changed, only that something has changed
 function GuildEvent:CallbackRosterUpdate()
-    local _TotalMembers, _, _OnlineMembers = GetNumGuildMembers()
-    for i = 1, _TotalMembers do
+    for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         local _UnitData = Unit:new()
-		_UnitData:Initialize(i)	
+		_UnitData:Initialize(_MemberID)	
         if(_UnitData:IsOnline()) then
 
             -- If cache doesn't have unit, process

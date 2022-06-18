@@ -77,7 +77,6 @@ function XFG:DeserializeUnitData(inData)
 	end
 
 	_UnitData:SetLevel(_DeserializedData.L)
-	_UnitData:IsMobile(_DeserializedData.M == 1)
 	_UnitData:SetNote(_DeserializedData.N)	
 	_UnitData:IsOnline(true)
 	if(_DeserializedData.P1 ~= nil) then
@@ -95,6 +94,9 @@ function XFG:DeserializeUnitData(inData)
 		_UnitData:SetSpec(XFG.Specs:GetSpec(_DeserializedData.V))
 	end
 	_UnitData:SetZone(_DeserializedData.Z)
+
+	if(_DeserializedData.B) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
+	if(_DeserializedData.D) then _UnitData:SetDungeonScore(_DeserializedData.D) end
 
 	return _UnitData
 end

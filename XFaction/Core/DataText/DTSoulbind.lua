@@ -92,6 +92,8 @@ end
 
 function DTSoulbind:OnEnter(this)
 	if(XFG.Initialized == false) then return end
+	if(XFG.Player.Unit:HasCovenant() == false) then return end
+	if(XFG.Player.Unit:HasSoulbind() == false) then return end
 	
 	local _Tooltip
 	if XFG.Lib.QT:IsAcquired(ObjectName) then

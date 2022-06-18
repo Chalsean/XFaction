@@ -42,10 +42,14 @@ end
 function XFG:SerializeUnitData(inUnitData)
 	local _MessageData = {}
 
+	local _Race = inUnitData:GetRace()
+	_MessageData.A = _Race:GetKey()
+	_MessageData.B = inUnitData:GetAchievementPoints()
 	if(inUnitData:HasCovenant()) then
 		local _Covenant = inUnitData:GetCovenant()
 		_MessageData.C = _Covenant:GetKey()
 	end
+	_MessageData.D = inUnitData:GetDungeonScore()
 	local _Faction = inUnitData:GetFaction()
 	_MessageData.F = _Faction:GetKey()
 	local _Guild = inUnitData:GetGuild()
@@ -61,7 +65,7 @@ function XFG:SerializeUnitData(inUnitData)
 	end
 	
 	_MessageData.L = inUnitData:GetLevel()
-	_MessageData.M = (inUnitData:IsMobile() == true) and 1 or 0
+	_MessageData.M = 0
 	_MessageData.N = inUnitData:GetNote()
 	local _Class = inUnitData:GetClass()
 	_MessageData.O = _Class:GetKey()
@@ -72,10 +76,6 @@ function XFG:SerializeUnitData(inUnitData)
 	if(inUnitData:HasProfession2()) then
 		local _Profession = inUnitData:GetProfession2()
 		_MessageData.P2 = _Profession:GetKey()
-	end
-	if(inUnitData:HasRace()) then
-		local _Race = inUnitData:GetRace()
-		_MessageData.A = _Race:GetKey()
 	end
 	if(inUnitData:HasSoulbind()) then
 		local _Soulbind = inUnitData:GetSoulbind()

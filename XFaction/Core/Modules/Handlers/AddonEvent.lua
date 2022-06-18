@@ -1,14 +1,14 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'TimerEvent'
-local LogCategory = 'HETimer'
+local ObjectName = 'AddonEvent'
+local LogCategory = 'HEAddon'
 local _OfflineTimer = 60       -- Seconds between checks if someone is offline
 local _HeartbeatDelta = 60 * 2 -- Seconds between sending your own status, regardless if things have changed
 local _GuildRosterDelta = 30   -- Seconds between local guild scans
 local _PingFriends = 60 * 1    -- Seconds between pinging friends
 
-TimerEvent = {}
+AddonEvent = {}
 
-function TimerEvent:new(inObject)
+function AddonEvent:new(inObject)
     local _typeof = type(inObject)
     local _newObject = true
 
@@ -33,30 +33,16 @@ function TimerEvent:new(inObject)
     return Object
 end
 
-function TimerEvent:Initialize()
+function AddonEvent:Initialize()
 	if(self:IsInitialized() == false) then
-        XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
-        XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", 60 * 5)
-        XFG:ScheduleRepeatingTimer(self.CallbackBNetMailboxTimer, 60 * 5) -- config
-        XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", 60 * 5)
-        XFG.Cache.CallbackTimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, .1) -- config
-        XFG:Info(LogCategory, "Scheduled initialization to occur once guild information is available")
-        XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineTimer) -- config
-        XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineTimer)
-        XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, _HeartbeatDelta) -- config
-        XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", _HeartbeatDelta)
-        XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, _GuildRosterDelta) -- config
-        XFG:Info(LogCategory, "Scheduled forcing local guild roster updates for %d seconds", _GuildRosterDelta)
-        XFG:ScheduleRepeatingTimer(self.CallbackPingFriends, XFG.Network.BNet.PingTimer) -- config
-        XFG:Info(LogCategory, "Scheduled to ping friends every %d seconds", XFG.Network.BNet.PingTimer)
-        XFG:ScheduleRepeatingTimer(self.CallbackLinks, 60 * 5) -- config
-        XFG:Info(LogCategory, "Scheduled to broadcast links every %d seconds", 60 * 5)
+        XFG:RegisterEvent('ADDON_LOADED', self.CallbackLoaded)
+        XFG:Info(LogCategory, "Registered for ADDON_LOADED events")
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
-function TimerEvent:IsInitialized(inBoolean)
+function AddonEvent:IsInitialized(inBoolean)
 	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
 	if(inBoolean ~= nil) then
 		self._Initialized = inBoolean
@@ -64,37 +50,21 @@ function TimerEvent:IsInitialized(inBoolean)
 	return self._Initialized
 end
 
-function TimerEvent:Print()
+function AddonEvent:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
-function TimerEvent:CallbackDelayedStartTimer()
-    XFG.Network.Channels:ScanChannels()
-    if(XFG.DB.UIReload == false) then
-        XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
-        XFG.Network.BNet.Links:BroadcastLinks()
-    end
-    XFG.DB.UIReload = false
-end
-
--- Cleanup mailbox
-function TimerEvent:CallbackMailboxTimer()
-    XFG.Network.Mailbox:Purge()
-end
-
--- Cleanup BNet mailbox
-function TimerEvent:CallbackBNetMailboxTimer()
-    XFG.Network.BNet.Comm:Purge()
-end
-
--- WoW has funky timing about getting guild and race info on first login, its not before PLAYER_ENTERING_WORLD so have to poll
-function TimerEvent:CallbackLogin()
-    if(IsAddOnLoaded(XFG.AddonName)) then
+function AddonEvent:CallbackLoaded(inAddonName)
+    print('--------------')
+    print('[' .. inAddonName .. ']')
+    print('[' .. XFG.AddonName .. ']')
+    if(inAddonName == XFG.AddonName) then
+        print('got here')
         XFG:Info(LogCategory, "Addon is loaded, disabling poller and continuing setup")
-        XFG:CancelTimer(XFG.Cache.CallbackTimerID)
-        table.RemoveKey(XFG.Cache, 'CallbackTimerID')
+       -- XFG:CancelTimer(XFG.Cache.CallbackTimerID)
+       -- table.RemoveKey(XFG.Cache, 'CallbackTimerID')
 
         XFG.Player.Account = C_BattleNet.GetAccountInfoByGUID(XFG.Player.GUID)
 
@@ -199,35 +169,4 @@ function TimerEvent:CallbackLogin()
         XFG.DataText.Soulbind:RefreshBroker()
         XFG.DataText.Links:RefreshBroker()
     end
-end
-
--- If you haven't heard from a unit in X minutes, set them to offline
-function TimerEvent:CallbackOffline()
-    local _EpochTime = GetServerTime()
-    XFG.Confederate:OfflineUnits(_EpochTime)
-end
-
--- Periodically send update to avoid other considering you offline
-function TimerEvent:CallbackHeartbeat()
-    if(XFG.Initialized and XFG.Player.Unit:GetTimeStamp() + _HeartbeatDelta < GetServerTime()) then
-        XFG:Debug(LogCategory, "Sending heartbeat")
-        XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.DATA)
-    end
-end
-
--- Periodically force a refresh
-function TimerEvent:CallbackGuildRoster()
-    if(XFG.Initialized) then
-        C_GuildInfo.GuildRoster()
-    end
-end
-
--- Periodically ping friends to see who is running addon
-function TimerEvent:CallbackPingFriends()
-    XFG.Network.BNet.Comm:PingFriends()
-end
-
--- Periodically broadcast your links
-function TimerEvent:CallbackLinks()
-    XFG.Network.BNet.Links:BroadcastLinks()
 end
