@@ -4,125 +4,97 @@ local LogCategory = 'UUnit'
 
 Unit = {}
 
-function Unit:new(_Argument)
-    local _typeof = type(_Argument)
-    local _newObject = true
-    assert(_Argument == nil or _typeof == 'table' or _typeof == 'number' or _typeof == 'string', "argument must be nil, string, number or " .. ObjectName .. " object")
-    if(_Argument == 'table' and _Argument.__name ~= nil and _Argument.__name == ObjectName) then
-        Object = _Argument
-        _newObject = false
-    else
-        Object = {}
-    end
+function Unit:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Key = nil
-        self._GUID = nil
-        self._UnitName = nil
-        self._Name = nil
-        self._GuildIndex = 0
-        self._Rank = nil
-        self._Level = 60
-        self._Class = nil
-        self._Spec = nil
-        self._Zone = nil
-        self._Note = nil
-        self._Online = false
-        self._Status = nil
-        self._Mobile = false
-        self._Race = nil
-        self._TimeStamp = nil
-        self._Covenant = nil
-        self._Soulbind = nil
-        self._Profession1 = nil
-        self._Profession2 = nil
-        self._RunningAddon = false
-        self._Alt = false
-        self._MainName = nil
-        self._IsPlayer = false
-        self._IsOnMainGuild = false
-        self._Faction = false
-        self._Team = nil
-        self._Initialized = false
-        self._Guild = nil
-        self._Realm = nil        
-    end
+    self._Key = nil
+    self._GUID = nil
+    self._UnitName = nil
+    self._Name = nil
+    self._ID = 0  -- Note player ID is unique to a guild, not globally
+    self._Rank = nil
+    self._Level = 60
+    self._Class = nil
+    self._Spec = nil
+    self._Zone = nil
+    self._Note = nil
+    self._Online = false
+    self._Status = nil
+    self._Mobile = false
+    self._Race = nil
+    self._TimeStamp = nil
+    self._Covenant = nil
+    self._Soulbind = nil
+    self._Profession1 = nil
+    self._Profession2 = nil
+    self._DungeonScore = 0
+    self._AchievementPoints = 0
+    self._RunningAddon = false
+    self._Alt = false
+    self._MainName = nil
+    self._IsPlayer = false
+    self._IsOnMainGuild = false
+    self._Faction = false
+    self._Team = nil
+    self._Initialized = false
+    self._Guild = nil
+    self._Realm = nil
 
     return Object
 end
 
--- Unfortunately lua seems to have a problem with the Blizz API function calls being in the constructor
--- So have to have a post creation intialization
-function Unit:Initialize(_Argument)
-    assert(type(_Argument) == 'number')
-    self:SetGuildIndex(_Argument)
-    local _unit, _rank, _, _level, _class, _zone, _note, _officernote, _online, _status, _, _, _, _isMobile, _, _, _GUID = GetGuildRosterInfo(self:GetGuildIndex())
-    
-    -- Rare but the previous call can fail, we'll pick the unit up on next refresh
-    if(_GUID == nil) then return end
+function Unit:Initialize(inMemberID)
+    assert(type(inMemberID) == 'number')
+    self:SetGuildIndex(inMemberID)
+    local _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
+    if(_UnitData == nil) then return end
 
-    -- Ignore users who are logged in on their mobile devices
-    if(_isMobile) then return end
-
-    self:SetGUID(_GUID)
+    self:SetGUID(_UnitData.guid)
     self:SetKey(self:GetGUID())
-    self:IsOnline(_online)
+    self:IsOnline(_UnitData.presence == 1 or _UnitData.presence == 4 or _UnitData.presence == 5)
     if(self:IsOffline()) then
         return
     end
-   
-    self:SetUnitName(_unit)
-	self:SetLevel(_level)	
-	self:IsMobile(_isMobile)
-    self:SetFaction(XFG.Player.Faction)    
-    
-	if(_zone == nil and self:IsPlayer()) then
-        _zone = GetZoneText()
-    end
 
-    if(_zone == nil) then
-        self:SetZone("?")
-    else
-        self:SetZone(_zone)
-    end
-
+    self:SetName(_UnitData.name)
+    self:SetUnitName(_UnitData.name .. '-' .. XFG.Player.Realm:GetAPIName())
+	self:SetLevel(_UnitData.level)	
+	self:SetFaction(XFG.Player.Faction)
     self:SetGuild(XFG.Player.Guild)
     self:SetRealm(XFG.Player.Realm)
     self:SetTimeStamp(GetServerTime())
+    self:SetClass(XFG.Classes:GetClass(_UnitData.classID))
+    self:SetRace(XFG.Races:GetRace(_UnitData.race))
 
-    local _ParsedName = string.Split(_unit, "-")
-    self:SetName(_ParsedName[1])
-
-    self:SetClass(XFG.Classes:GetClassByName(_class))
-
-    -- This call fails a lot on startup but have been unable to find a replacement
-    -- After given timeframe, assuredly after some unknown event fires, the call is much more stable
-    local _, _, _RaceName = GetPlayerInfoByGUID(self:GetGUID())
-    if(_RaceName ~= nil) then
-        self:SetRace(XFG.Races:GetRaceByName(_RaceName, XFG.Player.Faction))
-    end
-
-    if(self:HasRace() == false) then
-        local _GUID = self:GetGUID()
-        local _Name = self:GetUnitName()
-        local _Index = self:GetGuildIndex()
-        XFG:Warn(LogCategory, "Failed to get race [%s][%s][%d]", _GUID, _Name, _Index)
-    end
-
-    local _RankID = C_GuildInfo.GetGuildRankOrder(self:GetGUID())
-    if(XFG.Ranks:Contains(_RankID) == false) then
+    if(XFG.Ranks:Contains(_UnitData.guildRankOrder) == false) then
         local _NewRank = Rank:new()
-        _NewRank:SetKey(_RankID)
-        _NewRank:SetID(_RankID)
-        _NewRank:SetName(_rank)
+        _NewRank:SetKey(_UnitData.guildRankOrder)
+        _NewRank:SetID(_UnitData.guildRankOrder)
+        _NewRank:SetName(_UnitData.guildRank)
         XFG.Ranks:AddRank(_NewRank)
     end
-    local _Rank = XFG.Ranks:GetRank(_RankID)
-    self:SetRank(_Rank)    
-    self:SetNote(_note)
+    self:SetRank(XFG.Ranks:GetRank(_UnitData.guildRankOrder))    
+    self:SetNote(_UnitData.memberNote)
+    self:IsPlayer(_UnitData.isSelf)
+    self:SetDungeonScore(_UnitData.overallDungeonScore or 0)
+    self:SetAchievementPoints(_UnitData.achievementPoints or 0)
+
+    if(_UnitData.profession1ID) then
+        self:SetProfession1(XFG.Professions:GetProfession(_UnitData.profession1ID))
+    end
+
+    if(_UnitData.profession2ID) then
+        self:SetProfession2(XFG.Professions:GetProfession(_UnitData.profession2ID))
+    end
+
+    if(_UnitData.zone) then
+        self:SetZone(_UnitData.zone)
+    else
+        self:SetZone('?')
+    end
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
@@ -134,18 +106,6 @@ function Unit:Initialize(_Argument)
         local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
         if(XFG.Soulbinds:Contains(_SoulbindID)) then
             self:SetSoulbind(XFG.Soulbinds:GetSoulbind(_SoulbindID))
-        end
-
-        -- These profession IDs are local to the player, need to initialize object to get global ID
-        local _Profession1ID, _Profession2ID = GetProfessions()
-        if(_Profession1ID ~= nil) then
-            local _, _, _, _, _, _, _SkillLineID = GetProfessionInfo(_Profession1ID)
-            self:SetProfession1(XFG.Professions:GetProfession(_SkillLineID))            
-        end
-
-        if(_Profession2ID ~= nil) then
-            local _, _, _, _, _, _, _SkillLineID = GetProfessionInfo(_Profession2ID)
-            self:SetProfession2(XFG.Professions:GetProfession(_SkillLineID))        
         end
 
         local _SpecGroupID = GetSpecialization()
@@ -171,6 +131,7 @@ function Unit:Print()
 	XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _GUID (" .. type(self._GUID) .. "): ".. tostring(self._GUID))
+    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
 	XFG:Debug(LogCategory, "  _UnitName (" .. type(self._UnitName) .. "): ".. tostring(self._UnitName))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))    
     XFG:Debug(LogCategory, "  _GuildIndex (" .. type(self._GuildIndex) .. "): ".. tostring(self._GuildIndex))
@@ -179,7 +140,8 @@ function Unit:Print()
     XFG:Debug(LogCategory, "  _Note (" .. type(self._Note) .. "): ".. tostring(self._Note))
     XFG:Debug(LogCategory, "  _Online (" .. type(self._Online) .. "): ".. tostring(self._Online))
     XFG:Debug(LogCategory, "  _Status (" .. type(self._Status) .. "): ".. tostring(self._Status))
-    XFG:Debug(LogCategory, "  _Mobile (" .. type(self._Mobile) .. "): ".. tostring(self._Mobile))
+    XFG:Debug(LogCategory, "  _DungeonScore (" .. type(self._DungeonScore) .. "): ".. tostring(self._DungeonScore))
+    XFG:Debug(LogCategory, "  _AchievementPoints (" .. type(self._AchievementPoints) .. "): ".. tostring(self._AchievementPoints))
     XFG:Debug(LogCategory, "  _TimeStamp (" .. type(self._TimeStamp) .. "): ".. tostring(self._TimeStamp))
     XFG:Debug(LogCategory, "  _RunningAddon (" .. type(self._RunningAddon) .. "): ".. tostring(self._RunningAddon))
     XFG:Debug(LogCategory, "  _Alt (" .. type(self._Alt) .. "): ".. tostring(self._Alt))
@@ -247,6 +209,16 @@ function Unit:SetGUID(_GUID)
     self._GUID = _GUID
     self:IsPlayer(self:GetGUID() == XFG.Player.GUID)
     return self:GetGUID()
+end
+
+function Unit:GetID()
+    return self._ID
+end
+
+function Unit:SetID(inID)
+    assert(type(inID) == 'number')
+    self._ID = inID
+    return self:GetID()
 end
 
 function Unit:GetUnitName()
@@ -377,12 +349,24 @@ function Unit:IsOffline(inBoolean)
     return self._Online == false
 end
 
-function Unit:IsMobile(_Mobile)
-    assert(_Mobile == nil or type(_Mobile == 'boolean'), "argument must be nil or boolean")
-    if(_Mobile ~= nil) then
-        self._Mobile = _Mobile
-    end
-    return self._Mobile
+function Unit:GetDungeonScore()
+    return self._DungeonScore
+end
+
+function Unit:SetDungeonScore(inScore)
+    assert(type(inScore) == 'number')
+    self._DungeonScore = inScore
+    return self:GetDungeonScore()
+end
+
+function Unit:GetAchievementPoints()
+    return self._AchievementPoints
+end
+
+function Unit:SetAchievementPoints(inPoints)
+    assert(type(inPoints) == 'number')
+    self._AchievementPoints = inPoints
+    return self:GetAchievementPoints()
 end
 
 function Unit:HasRace()
@@ -575,15 +559,13 @@ function Unit:Equals(inUnit)
     if(self:GetZone() ~= inUnit:GetZone()) then return false end
     if(self:GetNote() ~= inUnit:GetNote()) then return false end
     if(self:IsOnline() ~= inUnit:IsOnline()) then return false end
-    --if(self:GetStatus() ~= inUnit:GetStatus()) then return false end
-    if(self:IsMobile() ~= inUnit:IsMobile()) then return false end    
+    if(self:GetDungeonScore() ~= inUnit:GetDungeonScore()) then return false end
+    if(self:GetAchievementPoints() ~= inUnit:GetAchievementPoints()) then return false end    
     if(self:IsRunningAddon() ~= inUnit:IsRunningAddon()) then return false end
     if(self:IsAlt() ~= inUnit:IsAlt()) then return false end
     if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
     if(self:IsOnMainGuild() ~= inUnit:IsOnMainGuild()) then return false end
     if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
-    --if(self:GetGuildName() ~= inUnit:GetGuildName()) then return false end
-    --if(self:GetRealmName() ~= inUnit:GetRealmName()) then return false end
 
     if(self:HasCovenant() == false and inUnit:HasCovenant()) then return false end
     if(self:HasCovenant()) then

@@ -1,3 +1,17 @@
+### Version 2.4.0 [ 06.18.2022 ]
+
+**Enhancements**
+[XFaction]
+- Switched to newer, more stable guild roster API calls
+
+[DTGuild]
+- Now shows professions for all local guild members
+- Added Mythic+ score and Achievement points as column options
+
+**Bug Fix**
+[DTSoulbind]
+- Fixed bug where exception was getting thrown if player did not have a covenant or soulbind
+
 ### Version 2.3.0 [ 06.17.2022 ]
 
 **Enhancements**

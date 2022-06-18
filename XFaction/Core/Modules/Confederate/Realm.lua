@@ -25,6 +25,7 @@ function Realm:new(inObject)
     if(_newObject) then
         self._Key = nil
         self._Name = nil
+        self._APIName = nil
         self._IDs = {}
         self._IDCount = 0
         self._Units = {} -- Only online units running addon (BNet bridging)
@@ -60,6 +61,7 @@ function Realm:Print(inPrintOffline)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
+    XFG:Debug(LogCategory, "  _APIName (" .. type(self._APIName) .. "): ".. tostring(self._APIName))
     XFG:Debug(LogCategory, "  _IDCount (" .. type(self._IDCount) .. "): ".. tostring(self._IDCount))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _NumberRunningAddon (" .. type(self._NumberRunningAddon) .. "): ".. tostring(self._NumberRunningAddon))
@@ -87,6 +89,16 @@ function Realm:SetName(inName)
     assert(type(inName) == 'string')
     self._Name = inName
     return self:GetName()
+end
+
+function Realm:GetAPIName()
+    return self._APIName
+end
+
+function Realm:SetAPIName(inName)
+    assert(type(inName) == 'string')
+    self._APIName = inName
+    return self:GetAPIName()
 end
 
 function Realm:GetID()
