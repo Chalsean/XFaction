@@ -87,7 +87,7 @@ function TimerEvent:CallbackLogin()
         XFG:Debug(LogCategory, 'Getting guild id')
         local _GuildID = C_Club.GetGuildClubId()
         if(_GuildID == nil) then
-            XFG.Error(LogCategory, 'Player is not in a guild')
+            XFG:Error(LogCategory, 'Player is not in a guild')
             XFG:CancelAllTimers()
             return
         end
@@ -95,7 +95,7 @@ function TimerEvent:CallbackLogin()
         local _GuildInfo = C_Club.GetClubInfo(_GuildID)
         XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildInfo.name)
         if(XFG.Player.Guild == nil) then
-            XFG.Error(LogCategory, 'Player is not in supported guild ' .. tostring(_GuildName))
+            XFG:Error(LogCategory, 'Player is not in supported guild ' .. tostring(_GuildName))
             XFG:CancelAllTimers()
             return
         end

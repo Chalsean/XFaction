@@ -124,7 +124,7 @@ function LinkCollection:ProcessMessage(inMessage)
 	for _, _Link in pairs (_Links) do
 		if(self:Contains(_Link:GetKey())) then
 			local _EpochTime = GetServerTime()
-			self:SetTimeStamp(_EpochTime)
+			_Link:SetTimeStamp(_EpochTime)
 		else
 			self:AddLink(_Link)
 			XFG:Debug(LogCategory, 'Added link due to node broadcast [%s]', _Link:GetKey())
