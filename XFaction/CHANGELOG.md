@@ -1,3 +1,9 @@
+### Version 2.4.1 [ 06.18.2022 ]
+
+**Bug Fix**
+[XFaction]
+- Fixed bug where M+ and achievement scores were not being decoded properly in messages
+
 ### Version 2.4.0 [ 06.18.2022 ]
 
 **Enhancements**
