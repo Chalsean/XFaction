@@ -86,6 +86,7 @@ function ChannelCollection:AddChannel(inChannel)
 	end
 	self._Channels[inChannel:GetKey()] = inChannel
 	XFG.Cache.Channels[inChannel:GetKey()] = inChannel:GetShortName()
+	XFG:Debug(LogCategory, 'Added channel [%s]', inChannel:GetShortName())
 	return self:Contains(inChannel:GetKey())
 end
 
@@ -96,7 +97,8 @@ function ChannelCollection:RemoveChannel(inKey)
 		XFG.Cache.Channels[inKey] = nil
 		self._ChannelCount = self._ChannelCount - 1
 	end
-	return self:Contains(inKey) == false
+	XFG:Debug(LogCategory, 'Removed channel [%s]', inKey)
+	return self:Contains(inKey) == false	
 end
 
 function ChannelCollection:Iterator()
@@ -139,6 +141,7 @@ function ChannelCollection:ScanChannel(inIndex)
 			_Channel:SetKey(_ChannelInfo.shortcut)
 			_Channel:SetID(inIndex)
 			_Channel:SetShortName(_ChannelInfo.shortcut)
+			self:AddChannel(_Channel)
 		end
 
 		_Channel:SetType(_ChannelInfo.channelType)
@@ -149,7 +152,7 @@ function ChannelCollection:ScanChannel(inIndex)
 			_Channel:SetName(_ChannelInfo.name)
 		end
 
-		if(self:AddChannel(_Channel) and _Channel:GetKey() == XFG.Network.Channel.Name) then
+		if(_Channel:GetKey() == XFG.Network.Channel.Name) then
 			XFG.Network.Outbox:SetLocalChannel(_Channel)
 		end
 		if(XFG.Config.Channel.Channels['Channel' .. tostring(_Channel:GetID())] == nil) then

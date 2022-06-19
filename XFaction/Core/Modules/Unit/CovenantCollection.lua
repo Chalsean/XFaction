@@ -38,10 +38,8 @@ function CovenantCollection:Initialize()
 			local _NewCovenant = Covenant:new()
 			_NewCovenant:SetID(_CovenantID)
 			_NewCovenant:Initialize()
-			if(self:Contains(_NewCovenant:GetKey()) == false) then
-				self._Covenants[_NewCovenant:GetKey()] = _NewCovenant
-				self._CovenantCount = self._CovenantCount + 1
-			end
+			self:AddCovenant(_NewCovenant)
+			XFG:Debug(LogCategory, 'Initialized covenant [%s]', _NewCovenant:GetName())
 		end
 		self._Initialized = true
 	end

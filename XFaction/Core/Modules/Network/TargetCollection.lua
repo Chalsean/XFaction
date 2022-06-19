@@ -31,7 +31,8 @@ function TargetCollection:Initialize()
 			local _Realm = _Guild:GetRealm()
 			local _Faction = _Guild:GetFaction()
 			local _Key = GetTargetKey(_Realm, _Faction)
-			if(_Realm:Equals(XFG.Player.Realm) == false or _Faction:Equals(XFG.Player.Faction) == false) then					
+			if(_Realm:Equals(XFG.Player.Realm) == false or _Faction:Equals(XFG.Player.Faction) == false) then	
+				XFG:Debug(LogCategory, 'Initializing target [%s]', _Key)				
 				local _NewTarget = Target:new()
 				_NewTarget:SetKey(_Key)
 				_NewTarget:SetRealm(_Realm)

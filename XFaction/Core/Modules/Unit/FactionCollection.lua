@@ -37,6 +37,7 @@ function FactionCollection:Initialize()
 		self:SetKey(math.GenerateUID())
 		local _Factions = {'Alliance', 'Horde', 'Neutral'}
 		for i, _FactionName in pairs (_Factions) do
+			XFG:Debug(LogCategory, 'Initializing faction [%s]', _FactionName)
 			local _NewFaction = Faction:new()
 			_NewFaction:SetKey(i)
 			_NewFaction:SetName(_FactionName)

@@ -36,7 +36,7 @@ function TimerEvent:Initialize()
         XFG:Info(LogCategory, "Scheduled to ping friends every %d seconds", XFG.Network.BNet.PingTimer)
         XFG:ScheduleRepeatingTimer(self.CallbackLinks, 60 * 5) -- config
         XFG:Info(LogCategory, "Scheduled to broadcast links every %d seconds", 60 * 5)
-        XFG.Cache.TimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, .1) -- config
+        XFG.Cache.TimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, 1) -- config
         XFG:Info(LogCategory, "Scheduled initialization to occur once guild information is available")
         XFG:ScheduleRepeatingTimer(self.CallbackStaleLinks, _StaleLinks) -- config
         XFG:Info(LogCategory, "Scheduled to remove stale links after %d seconds", _StaleLinks)
@@ -61,7 +61,6 @@ function TimerEvent:Print()
 end
 
 function TimerEvent:CallbackDelayedStartTimer()
-    XFG.Network.Channels:ScanChannels()
     if(XFG.DB.UIReload == false) then
         XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
         XFG.Network.BNet.Links:BroadcastLinks()
@@ -80,11 +79,10 @@ function TimerEvent:CallbackBNetMailboxTimer()
 end
 
 function TimerEvent:CallbackLogin()
-    if(IsAddOnLoaded(XFG.AddonName)) then
+    if(IsAddOnLoaded(XFG.AddonName) and C_SpecializationInfo.IsInitialized() and C_Club.IsEnabled()) then
         XFG:CancelTimer(XFG.Cache.TimerID)
         XFG.Cache.TimerID = nil
-
-        XFG.Player.Account = C_BattleNet.GetAccountInfoByGUID(XFG.Player.GUID)
+        XFG:Debug(LogCategory, 'Addon is loaded, cancelling timer and proceeding with setup')
 
         local _GuildID = C_Club.GetGuildClubId()
         if(_GuildID == nil) then
@@ -107,6 +105,9 @@ function TimerEvent:CallbackLogin()
             end
         end
 
+        XFG:Debug(LogCategory, 'Player realm [%s]', XFG.Player.Realm:GetName())
+        XFG:Debug(LogCategory, 'Player guild [%s]', XFG.Player.Guild:GetName())
+
         XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
         XFG.Classes = ClassCollection:new(); XFG.Classes:Initialize()
         XFG.Specs = SpecCollection:new(); XFG.Specs:Initialize()
@@ -125,6 +126,7 @@ function TimerEvent:CallbackLogin()
         XFG.Confederate = Confederate:new()
         XFG.Confederate:SetName(XFG.Cache.Confederate.Name)
         XFG.Confederate:SetKey(XFG.Cache.Confederate.Initials)
+        XFG:Debug(LogCategory, 'Player confederate [%s]', XFG.Confederate:GetName())
 
         -- If this is a reload, restore non-local guild members
         if(XFG.DB.UIReload) then
@@ -171,7 +173,18 @@ function TimerEvent:CallbackLogin()
 
         -- Use temporary so if they stop using addon, the channel goes away
         if(XFG.Network.Outbox:HasLocalChannel() == false) then
-            JoinTemporaryChannel(XFG.Network.Channel.Name)
+            local _GuildInfo = C_Club.GetClubInfo(XFG.Player.Guild:GetID())
+            local _Lines = string.Split(_GuildInfo.description, '\n')
+            for _, _Line in pairs (_Lines) do
+                local _Parts = string.Split(_Line, ':')
+                if(_Parts[1] == 'XFc') then
+                    XFG.Network.Channel.Name = _Parts[2]
+                    XFG.Network.Channel.Password = _Parts[3]
+                end
+            end
+            JoinTemporaryChannel(XFG.Network.Channel.Name, XFG.Network.Channel.Password)
+            XFG:Info(LogCategory, 'Joined temporary confederate channel [%s]', XFG.Network.Channel.Name)
+            XFG.Network.Channels:SyncChannels()
         end
 
         -- Broadcast login, refresh DTs and ready to roll        

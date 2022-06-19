@@ -41,8 +41,8 @@ function ClassCollection:Initialize()
 			_Class:SetID(_ClassInfo.classID)
 			_Class:SetName(_ClassInfo.className)
 			_Class:SetAPIName(_ClassInfo.classFile)
-			self._ClassCount = self._ClassCount + 1
-			self._Classes[_Class:GetKey()] = _Class
+			self:AddClass(_Class)
+			XFG:Debug(LogCategory, 'Initialized class [%s', _Class:GetName())
 		end
 		self._Initialized = true
 	end

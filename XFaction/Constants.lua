@@ -97,7 +97,8 @@ XFG.Network = {
 		LinksTimer = 60 * 10
 	},
 	Channel = {
-		Name = XFG.Cache.Confederate.Initials .. 'XFactionChat'
+		Name = XFG.Cache.Confederate.Initials .. 'XFactionChat',
+		Password = ''
 	},
 	Message = {
 		Subject = {

@@ -105,10 +105,13 @@ function Unit:Initialize(inMemberID)
             self:SetSoulbind(XFG.Soulbinds:GetSoulbind(_SoulbindID))
         end
 
+        -- Theres some kind of timing issue on initial login and getting spec info
         local _SpecGroupID = GetSpecialization()
-	    local _SpecID = GetSpecializationInfo(_SpecGroupID)
-        if(XFG.Specs:Contains(_SpecID)) then
-            self:SetSpec(XFG.Specs:GetSpec(_SpecID))
+        if(_SpecGroupID ~= nil) then
+	        local _SpecID = GetSpecializationInfo(_SpecGroupID)
+            if(_SpecID ~= nil and XFG.Specs:Contains(_SpecID)) then
+                self:SetSpec(XFG.Specs:GetSpec(_SpecID))
+            end
         end
     end
 

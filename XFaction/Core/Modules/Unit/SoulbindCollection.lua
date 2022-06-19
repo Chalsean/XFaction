@@ -39,10 +39,8 @@ function SoulbindCollection:Initialize()
 				_Soulbind:SetKey(_SoulbindID)
 				_Soulbind:SetID(_SoulbindID)
 				_Soulbind:Initialize()
-				if(self:Contains(_Soulbind:GetKey()) == false) then
-					self._Soulbinds[_Soulbind:GetKey()] = _Soulbind
-					self._SoulbindCount = self._SoulbindCount + 1
-				end
+				self:AddSoulbind(_Soulbind)
+				XFG:Debug(LogCategory, 'Initialized soulbind [%s]', _Soulbind:GetName())
 			end
 		end
 		self:IsInitialized(true)

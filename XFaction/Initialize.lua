@@ -13,6 +13,7 @@ function XFG:Init()
 
 	-- Make sure we have all the realm/guild combinations accounted for
 	for _RealmName, _FactionGuilds in pairs(XFG.Cache.Guilds) do
+		XFG:Debug(LogCategory, 'Initializing realm [%s]', _RealmName)
 		local _NewRealm = Realm:new()
 		_NewRealm:SetKey(_RealmName)
 		_NewRealm:SetName(_RealmName)
@@ -22,6 +23,7 @@ function XFG:Init()
 		for _FactionName, _Guilds in pairs(_FactionGuilds) do
 			local _Faction = XFG.Factions:GetFactionByName(_FactionName)
 			for _GuildInitials, _GuildName in pairs (_Guilds) do
+				XFG:Debug(LogCategory, 'Initializing guild [%s]', _GuildName)
 				local _NewGuild = Guild:new()
 				_NewGuild:Initialize()
 				_NewGuild:SetName(_GuildName)
@@ -43,12 +45,6 @@ function XFG:Init()
 	XFG.Network.Mailbox = Mailbox:new(); XFG.Network.Mailbox:Initialize()	
 	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()	
 	
-	for _, _Target in XFG.Network.BNet.Targets:Iterator() do
-		local _Realm = _Target:GetRealm()
-		local _Faction = _Target:GetFaction()
-		XFG:Info(LogCategory, "Established BNet target [%s:%s]", _Realm:GetName(), _Faction:GetName())
-	end
-
 	-- These handlers will register additional handlers
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
 	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()

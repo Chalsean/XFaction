@@ -86,6 +86,7 @@ function ProfessionCollection:Initialize()
 			_NewProfession:SetIconID(_ProfessionIDs.Icon)
 			_NewProfession:Initialize()
 			self:AddProfession(_NewProfession)
+			XFG:Debug(LogCategory, 'Initialized profession [%s]', _NewProfession:GetName())
 		end	
 		self:IsInitialized(true)
 	end
