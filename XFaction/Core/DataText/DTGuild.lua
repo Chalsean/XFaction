@@ -364,7 +364,9 @@ function DTGuild:OnEnter(this)
 end
 
 function DTGuild:OnLeave()
-	if(MouseIsOver(self._Tooltip) == false) then 
+	local _IsMouseOver = true
+	local _Status, _Error = pcall(function () _IsMouseOver = MouseIsOver(self._Tooltip) end)
+	if(_Status and _IsMouseOver == false) then 
 		if XFG.Lib.QT:IsAcquired(ObjectName) then self._Tooltip:Clear() end
 		self._Tooltip:Hide()
 		XFG.Lib.QT:Release(ObjectName)
