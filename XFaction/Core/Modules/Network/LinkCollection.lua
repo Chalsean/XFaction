@@ -67,6 +67,13 @@ function LinkCollection:GetLink(inKey)
     return self._Links[inKey]
 end
 
+function LinkCollection:LinkExists(inName1, inName2)
+	for _, _Link in self:Iterator() do
+
+	end
+	return false
+end
+
 function LinkCollection:AddLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey()) == false) then
@@ -94,23 +101,40 @@ end
 -- A link message is a reset of the links for that node
 function LinkCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
-	local _Links = string.Split(inMessage:GetData(), '|')
-	-- First remove all links that contain sending node
-    for _, _Link in pairs (_Links) do
+	local _LinkStrings = string.Split(inMessage:GetData(), '|')
+	local _Links = {}
+	local _FromName = nil
+	-- Compile a list of the updated links
+    for _, _LinkString in pairs (_LinkStrings) do
 		local _NewLink = Link:new()
-		if(pcall(function () _NewLink:SetObjectFromString(_Link) end)) then
-			self:RemoveNode(_NewLink:GetFromName())
-			break
+		if(pcall(function () _NewLink:SetObjectFromString(_LinkString) end)) then
+			-- Dont process players own links
+			if(_NewLink:IsMyLink() == false) then
+				_Links[_NewLink:GetKey()] = _NewLink
+				-- All links in the message should be "From" the same person
+				_FromName = _NewLink:GetFromName()
+			end
 		else
 			XFG:Warn(LogCategory, 'Failed to parse received links message')
 			return
 		end
     end
-	-- Then add the new links
+	-- Remove any stale links
+	for _, _Link in self:Iterator() do
+		-- Consider that we may have gotten link information from the other node
+		if((_Link:GetFromName() == _FromName or _Link:GetToName() == _FromName) and _Links[_Link:GetKey()] == nil) then
+			self:RemoveLink(_Link)
+			XFG:Debug(LogCategory, 'Removed link due to node broadcast [%s]', _Link:GetKey())
+		end
+	end
+	-- Add any new links and update timestamps of existing
 	for _, _Link in pairs (_Links) do
-		local _NewLink = Link:new()
-		_NewLink:SetObjectFromString(_Link)
-		self:AddLink(_NewLink)
+		if(self:Contains(_Link:GetKey())) then
+			self:SetTimeStamp(GetServerTime())
+		else
+			self:AddLink(_Link)
+			XFG:Debug(LogCategory, 'Added link due to node broadcast [%s]', _Link:GetKey())
+		end
     end
 end
 
@@ -174,6 +198,16 @@ function LinkCollection:RestoreBackup()
 			local _NewLink = Link:new()
 			_NewLink:SetObjectFromString(_Link)
 			self:AddLink(_NewLink)
+		end
+	end
+end
+
+function LinkCollection:PurgeStaleLinks(inEpochTime)
+	assert(type(inEpochTime) == 'number')
+	for _, _Link in self:Iterator() do
+		if(_Link:GetTimeStamp() < inEpochTime) then
+			XFG:Debug(LogCategory, 'Removing stale link')
+			self:RemoveLink(_Link)
 		end
 	end
 end

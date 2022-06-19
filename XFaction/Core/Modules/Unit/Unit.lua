@@ -77,7 +77,7 @@ function Unit:Initialize(inMemberID)
         XFG.Ranks:AddRank(_NewRank)
     end
     self:SetRank(XFG.Ranks:GetRank(_UnitData.guildRankOrder))    
-    self:SetNote(_UnitData.memberNote)
+    self:SetNote(_UnitData.memberNote or '?')
     self:IsPlayer(_UnitData.isSelf)
     self:SetDungeonScore(_UnitData.overallDungeonScore or 0)
     self:SetAchievementPoints(_UnitData.achievementPoints or 0)
@@ -90,11 +90,7 @@ function Unit:Initialize(inMemberID)
         self:SetProfession2(XFG.Professions:GetProfession(_UnitData.profession2ID))
     end
 
-    if(_UnitData.zone) then
-        self:SetZone(_UnitData.zone)
-    else
-        self:SetZone('?')
-    end
+    self:SetZone(_UnitData.zone or '?')
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)

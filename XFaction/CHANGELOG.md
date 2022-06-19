@@ -1,3 +1,9 @@
+### Version 2.4.2 [ 06.18.2022 ]
+
+**Bug Fix**
+[XFaction]
+- Fixed quite a few bugs with Links logic
+
 ### Version 2.4.1 [ 06.18.2022 ]
 
 **Bug Fix**

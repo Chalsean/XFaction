@@ -40,7 +40,7 @@ end
 function AchievementEvent:CallbackAchievement(inID)
     local _, _, _, _, _, _, _, _, _, _, _, _IsGuild = GetAchievementInfo(inID)
     if(_IsGuild == false) then
-        local _NewMessage = AchievementMessage:new()
+        local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
         _NewMessage:SetType(XFG.Network.Type.BROADCAST)
         _NewMessage:SetSubject(XFG.Network.Message.Subject.ACHIEVEMENT)
@@ -49,6 +49,8 @@ function AchievementEvent:CallbackAchievement(inID)
             _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
         end
         _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+        _NewMessage:SetRealm(XFG.Player.Realm)
+        _NewMessage:SetGuild(XFG.Player.Guild)
         XFG.Network.Outbox:Send(_NewMessage)
     end
 end

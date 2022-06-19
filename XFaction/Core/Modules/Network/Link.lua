@@ -17,6 +17,7 @@ function Link:new()
     self._ToName = nil
     self._ToRealm = nil
     self._ToFaction = nil
+    self._EpochTime = 0
     self._Initialized = false
 
     return _Object
@@ -44,6 +45,7 @@ function Link:Initialize()
         self:SetFromRealm(XFG.Player.Realm)
         self:SetFromFaction(XFG.Player.Faction)
         self:SetKey(GetLinkKey(self:GetFromName(), self:GetToName()))
+        self:SetTimeStamp(GetServerTime())
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -208,4 +210,14 @@ function Link:Equals(inLink)
     if(type(inLink) ~= 'table' or inLink.__name == nil or inLink.__name ~= 'Link') then return false end
     if(self:GetKey() ~= inLink:GetKey()) then return false end
     return true
+end
+
+function Link:GetTimeStamp()
+    return self._EpochTime
+end
+
+function Link:SetTimeStamp(inEpochTime)
+    assert(type(inEpochTime) == 'number')
+    self._EpochTime = inEpochTime
+    return self:GetTimeStamp()
 end
