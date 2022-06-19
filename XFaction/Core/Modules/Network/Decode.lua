@@ -95,8 +95,8 @@ function XFG:DeserializeUnitData(inData)
 	end
 	_UnitData:SetZone(_DeserializedData.Z)
 
-	if(_DeserializedData.B) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
-	if(_DeserializedData.D) then _UnitData:SetDungeonScore(_DeserializedData.D) end
+	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
+	if(_DeserializedData.D ~= nil) then _UnitData:SetDungeonScore(_DeserializedData.D) end
 
 	return _UnitData
 end
