@@ -3,6 +3,9 @@
 **Bug Fix**
 [XFaction]
 - Fixed quite a few bugs with Links logic
+- Fixed bugs with getting server time
+- Fixed bugs with QT releasing broker frames
+- Fixed bug with Achievement messages creating wrong objects
 
 ### Version 2.4.1 [ 06.18.2022 ]
 

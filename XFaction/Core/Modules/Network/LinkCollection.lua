@@ -67,13 +67,6 @@ function LinkCollection:GetLink(inKey)
     return self._Links[inKey]
 end
 
-function LinkCollection:LinkExists(inName1, inName2)
-	for _, _Link in self:Iterator() do
-
-	end
-	return false
-end
-
 function LinkCollection:AddLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey()) == false) then
