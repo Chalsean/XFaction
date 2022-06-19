@@ -84,12 +84,14 @@ function TimerEvent:CallbackLogin()
         XFG.Cache.TimerID = nil
         XFG:Debug(LogCategory, 'Addon is loaded, cancelling timer and proceeding with setup')
 
+        XFG:Debug(LogCategory, 'Getting guild id')
         local _GuildID = C_Club.GetGuildClubId()
         if(_GuildID == nil) then
             XFG.Error(LogCategory, 'Player is not in a guild')
             XFG:CancelAllTimers()
             return
         end
+        XFG:Debug(LogCategory, 'Getting guild info')
         local _GuildInfo = C_Club.GetClubInfo(_GuildID)
         XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildInfo.name)
         if(XFG.Player.Guild == nil) then
@@ -98,6 +100,7 @@ function TimerEvent:CallbackLogin()
             return
         end
         XFG.Player.Guild:SetID(_GuildID)
+        XFG:Debug(LogCategory, 'Getting stream id')
         for _, _Stream in pairs (C_Club.GetStreams(_GuildID)) do
             if(_Stream.streamType == 1) then
                 XFG.Player.Guild:SetStreamID(_Stream.streamId)
@@ -127,6 +130,7 @@ function TimerEvent:CallbackLogin()
         XFG.Confederate:SetName(XFG.Cache.Confederate.Name)
         XFG.Confederate:SetKey(XFG.Cache.Confederate.Initials)
         XFG:Debug(LogCategory, 'Player confederate [%s]', XFG.Confederate:GetName())
+        XFG.Ranks = RankCollection:new(); XFG.Ranks:Initialize()
 
         -- If this is a reload, restore non-local guild members
         if(XFG.DB.UIReload) then

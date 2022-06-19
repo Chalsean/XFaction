@@ -3,46 +3,18 @@ local ObjectName = 'RankCollection'
 local LogCategory = 'CCRank'
 
 RankCollection = {}
-_AltNames = {
-	GM = 'Guild Master',
-	Chancellor = 'Guild Lead',
-	Ambassador = 'Raid Lead',
-	Templar = 'Team Admin',
-	Squire = 'Trial',
-	Veteran = 'Retired Raider',
-}	
-_AltNames["Royal Emissary"] = 'Team Lead'
-_AltNames["Master of Coin"] = 'Bank'
-_AltNames["Grand Alt"] = 'Raider Alt'
-_AltNames["Noble Citizen"] = 'Non-Raider'
-_AltNames["Grand Army"] = 'Raider'
-_AltNames["Cat Herder"] = 'Guild Master Alt'
 
-function RankCollection:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or 
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function RankCollection:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-		self._Key = nil
-        self._Ranks = {}
-		self._RankCount = 0
-		self._Initialized = false
-    end
-
+	self._Key = nil
+    self._Ranks = {}
+	self._RankCount = 0
+	self._Initialized = false
+    
     return Object
 end
 
@@ -57,6 +29,19 @@ end
 function RankCollection:Initialize()
 	if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
+		for _RankIndex, _RankName in pairs (XFG.Cache.Ranks) do
+            local _NewRank = Rank:new()
+			_NewRank:SetKey(tonumber(_RankIndex))
+			_NewRank:SetID(tonumber(_RankIndex))
+			_NewRank:SetName(_RankName)
+			if(XFG.Config.Rank[_NewRank:GetID()] ~= nil) then
+				_NewRank:SetAltName(XFG.Config.Rank[_NewRank:GetID()])
+			end
+			self:AddRank(_NewRank)
+			XFG.Cache.DataText.Guild.Ranks[tonumber(_RankIndex)] = _RankIndex .. ' - ' .. _NewRank:GetName()
+			XFG:Debug(LogCategory, 'Initialized confederate rank [%s]', XFG.Cache.DataText.Guild.Ranks[_RankIndex])
+        end
+		XFG.Options.args.DataText.args.Guild.args.Rank.values = XFG.Cache.DataText.Guild.Ranks
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -93,13 +78,19 @@ function RankCollection:GetRank(inKey)
 	return self._Ranks[inKey]
 end
 
+function RankCollection:GetRankByName(inName)
+	assert(type(inName) == 'string')
+	for _, _Rank in self:Iterator() do
+		if(_Rank:GetName() == inName) then
+			return _Rank
+		end
+	end
+end
+
 function RankCollection:AddRank(inRank)
     assert(type(inRank) == 'table' and inRank.__name ~= nil and inRank.__name == 'Rank', "argument must be Rank object")
 	if(self:Contains(inRank:GetKey()) == false) then
 		self._RankCount = self._RankCount + 1
-	end
-	if(inRank:HasAltName() == false and _AltNames[inRank:GetName()] ~= nil) then
-		inRank:SetAltName(_AltNames[inRank:GetName()])
 	end
 	self._Ranks[inRank:GetKey()] = inRank
 	return self:Contains(inRank:GetKey())
@@ -107,4 +98,8 @@ end
 
 function RankCollection:Iterator()
 	return next, self._Ranks, nil
+end
+
+function RankCollection:GetCount()
+	return self._RankCount
 end

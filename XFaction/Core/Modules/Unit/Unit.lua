@@ -69,15 +69,7 @@ function Unit:Initialize(inMemberID)
     self:SetTimeStamp(_EpochTime)
     self:SetClass(XFG.Classes:GetClass(_UnitData.classID))
     self:SetRace(XFG.Races:GetRace(_UnitData.race))
-
-    if(XFG.Ranks:Contains(_UnitData.guildRankOrder) == false) then
-        local _NewRank = Rank:new()
-        _NewRank:SetKey(_UnitData.guildRankOrder)
-        _NewRank:SetID(_UnitData.guildRankOrder)
-        _NewRank:SetName(_UnitData.guildRank)
-        XFG.Ranks:AddRank(_NewRank)
-    end
-    self:SetRank(XFG.Ranks:GetRank(_UnitData.guildRankOrder))    
+    self:SetRank(XFG.Ranks:GetRankByName(_UnitData.guildRank))    
     self:SetNote(_UnitData.memberNote or '?')
     self:IsPlayer(_UnitData.isSelf)
     self:SetDungeonScore(_UnitData.overallDungeonScore or 0)

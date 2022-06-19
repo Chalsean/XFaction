@@ -7,8 +7,6 @@ function XFG:Init()
 	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Player.Faction = XFG.Factions:GetFactionByName(UnitFactionGroup('player'))
-
-	XFG.Ranks = RankCollection:new(); XFG.Ranks:Initialize()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
 
 	-- Make sure we have all the realm/guild combinations accounted for

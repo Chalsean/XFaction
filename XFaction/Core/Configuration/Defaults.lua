@@ -3,6 +3,7 @@ local LogCategory = 'Config'
 
 XFG.Defaults = {
     profile = {
+        Rank = {},
         Channel = {
             Enable = false,
             Channels = {},
@@ -53,7 +54,8 @@ XFG.Defaults = {
                 Realm = false,
                 Spec = true,
                 Team = true,
-                Zone = true
+                Zone = true,
+                Rank = 1
             },
             Links = {
                 OnlyMine = false

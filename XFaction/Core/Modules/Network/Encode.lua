@@ -60,7 +60,7 @@ function XFG:SerializeUnitData(inUnitData)
 
 	if(inUnitData:HasRank()) then
 		local _Rank = inUnitData:GetRank()
-		_MessageData.I = _Rank:GetKey()
+		_MessageData.I = _Rank:GetKey() -- Deprecated, remove after everyone on 2.5.0 or later
 		_MessageData.J = _Rank:GetName()
 	end
 	

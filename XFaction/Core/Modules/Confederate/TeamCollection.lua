@@ -3,20 +3,6 @@ local ObjectName = 'TeamCollection'
 local LogCategory = 'CCTeam'
 
 TeamCollection = {}
-_AltNames = {
-	GM = 'Guild Master',
-	Chancellor = 'Guild Lead',
-	Ambassador = 'Raid Lead',
-	Templar = 'Team Admin',
-	Squire = 'Trial',
-	Veteran = 'Retired Raider',
-}	
-_AltNames["Royal Emissary"] = 'Team Lead'
-_AltNames["Master of Coin"] = 'Bank'
-_AltNames["Grand Alt"] = 'Raider Alt'
-_AltNames["Noble Citizen"] = 'Non-Raider'
-_AltNames["Grand Army"] = 'Raider'
-_AltNames["Cat Herder"] = 'Guild Master Alt'
 
 function TeamCollection:new(inObject)
     local _typeof = type(inObject)

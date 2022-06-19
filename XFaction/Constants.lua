@@ -69,6 +69,19 @@ XFG.Cache = {
 			}
 		},
 	},
+	Ranks = {
+		['1'] = 'Guild Master',
+		['2'] = 'Chancellor',
+		['3'] = 'Master of Coin',
+		['4'] = 'Royal Emissary',
+		['5'] = 'Ambassador',
+		['6'] = 'Templar',
+		['7'] = 'Grand Army',
+		['8'] = 'Grand Alt',
+		['9'] = 'Noble Citizen',
+		['10'] = 'Squire',
+		['11'] = 'Stockade'
+	},
 	Teams = {
 		A = 'Acheron',
 		C = 'Chivalry',
@@ -86,9 +99,16 @@ XFG.Cache = {
 		T = 'Tsunami',
 		Y = 'Gravity',
 		U = 'Unknown',
-		ENK = 'Social'
+		ENK = 'Social',
+		ENKA = 'Social',
+		ENKH = 'Social'
 	},
-	Channels = {}
+	Channels = {},
+	DataText = {
+		Guild = {
+			Ranks = {}
+		}
+	}
 }
 
 XFG.Network = {
@@ -97,6 +117,7 @@ XFG.Network = {
 		LinksTimer = 60 * 10
 	},
 	Channel = {
+		-- This is the default, gets changed if configured properly in guild info
 		Name = XFG.Cache.Confederate.Initials .. 'XFactionChat',
 		Password = ''
 	},

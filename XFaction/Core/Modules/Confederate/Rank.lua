@@ -4,30 +4,16 @@ local LogCategory = 'CRank'
 
 Rank = {}
 
-function Rank:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or 
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil, string or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function Rank:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject) then
-        self._Key = nil
-        self._Name = nil
-        self._AltName = nil
-        self._ID = nil
-    end
+    self._Key = nil
+    self._Name = nil
+    self._AltName = nil
+    self._ID = nil
 
     return Object
 end
@@ -82,6 +68,7 @@ end
 function Rank:SetAltName(_AltName)
     assert(type(_AltName) == 'string')
     self._AltName = _AltName
+    XFG.Config.Rank[self:GetID()] = self:GetAltName()
     return self:GetAltName()
 end
 
