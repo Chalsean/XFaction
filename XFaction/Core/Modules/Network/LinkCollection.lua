@@ -130,7 +130,8 @@ function LinkCollection:ProcessMessage(inMessage)
 	-- Add any new links and update timestamps of existing
 	for _, _Link in pairs (_Links) do
 		if(self:Contains(_Link:GetKey())) then
-			self:SetTimeStamp(GetServerTime())
+			local _EpochTime = GetServerTime()
+			self:SetTimeStamp(_EpochTime)
 		else
 			self:AddLink(_Link)
 			XFG:Debug(LogCategory, 'Added link due to node broadcast [%s]', _Link:GetKey())
