@@ -89,7 +89,8 @@ function XFG:DeserializeUnitData(inData)
 	if(_DeserializedData.S ~= nil) then
 		_UnitData:SetSoulbind(XFG.Soulbinds:GetSoulbind(_DeserializedData.S))
 	end
-	_UnitData:SetTimeStamp(GetServerTime())
+	local _EpochTime = GetServerTime()
+	_UnitData:SetTimeStamp(_EpochTime)
 	if(_DeserializedData.V ~= nil) then
 		_UnitData:SetSpec(XFG.Specs:GetSpec(_DeserializedData.V))
 	end

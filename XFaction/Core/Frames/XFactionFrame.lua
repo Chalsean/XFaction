@@ -1,7 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'XFactionFrame'
 local LogCategory = 'FXFaction'
-local IconTokenString = '|T%d:16:16:0:0:64:64:4:60:4:60|t'
 
 XFactionFrame = {}
 
@@ -27,6 +26,8 @@ function XFactionFrame:new(inObject)
         self._Key = nil
         self._Initialized = false
         self._Frame = nil
+        self._HeaderFont = nil
+        self._RegularFont = nil
     end
 
     return Object
@@ -36,47 +37,27 @@ function XFactionFrame:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
 
-        -- Force the creation of the guild frame so we can hook it
-        if not CommunitiesFrame or not CommunitiesFrame:IsShown() then 
-			ToggleGuildFrame()	
-			CommunitiesFrame:HookScript('OnHide', function (self) print('got here') end )
-			CommunitiesFrame:Hide()
+        self._HeaderFont = CreateFont('_HeaderFont')
+		self._HeaderFont:SetTextColor(0.4,0.78,1)
+		self._RegularFont = CreateFont('_RegularFont')
+		self._RegularFont:SetTextColor(255,255,255)
+
+        local _Frame = CreateFrame('Frame', nil, UIParent)
+        _Frame.anim = _Frame:CreateAnimationGroup()
+        _Frame.rotate = _Frame.anim:CreateAnimation ("Rotation")
+        _Frame.rotate:SetDegrees (360)
+        _Frame.rotate:SetDuration (2)
+        _Frame.anim:SetLooping ("repeat")
+	
+	    local t = _Frame:CreateTexture (nil, "overlay")
+	    t:SetTexture ([[Interface\COMMON\StreamCircle]])
+	    t:SetAlpha (0.7)
+	    t:SetAllPoints()
 
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
-
-			--ToggleCommunitiesFrame();
-	--local communitiesFrame = CommunitiesFrame;
-			--CommunitiesFrame:Enable()
-			Communities_LoadUI()
-			CommunitiesFrame:HookScript('OnShow', function (self) print('got here') end )
-			--ToggleGuildFrame()
-			--CommunitiesFrame:Hide()
-			-- CommunitiesFrame:SetDisplayMode(COMMUNITIES_FRAME_DISPLAY_MODES.ROSTER)
-			-- local _Frame = CreateFrame('Frame', 'XFaction', CommunitiesFrame)
-			-- _Frame:SetPoint('CENTER')
-			-- _Frame:SetSize(64,64)
-			-- _Frame.tex = _Frame:CreateTexture()
-			-- _Frame.tex:SetAllPoints(_Frame)
-			-- _Frame.tex:SetTexture("interface/icons/inv_mushroom_11")
-			local _GuildID = C_Club.GetGuildClubId()
-			local _Streams = C_Club.GetStreams(2007621)
-			local _Numbers = C_Club.GetClubMembers(2007621, 1)
-
-			local _BNetID = C_AccountInfo.GetIDFromBattleNetAccountGUID('BNetAccount-0-000000000063')
-			local _info = C_BattleNet.GetAccountInfoByID(_BNetID, 'BNetAccount-0-000000000063')
-			XFG:DataDumper(LogCategory, _info)
-
-			XFG:Debug(LogCategory, _GuildID)
-			XFG:DataDumper(LogCategory, _Streams)
-			XFG:DataDumper(LogCategory, _Numbers)
-			for _, _ID in ipairs (_Numbers) do
-				local _Data =  C_Club.GetMemberInfo(2007621, _ID)
-				XFG:DataDumper(LogCategory, _Data)
-			end
-		else
 
 function XFactionFrame:IsInitialized(inBoolean)
 	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
@@ -101,45 +82,4 @@ function XFactionFrame:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
-end
-
-function XFactionFrame:Display(inMessage)
-    if(XFG.Config.Chat.Login.Enable == false) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
-
-    local _UnitName = nil
-    local _MainName = nil
-    local _Guild = nil
-
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
-        local _UnitData = inMessage:GetData()
-        _UnitName = _UnitData:GetName()
-        if(_UnitData:HasMainName()) then
-            _MainName = _UnitData:GetMainName()
-        end
-        _Guild = _UnitData:GetGuild()
-    else
-        _UnitName = inMessage:GetUnitName()
-        _MainName = inMessage:GetMainName()
-        _Guild = inMessage:GetGuild()
-    end
-
-    local _Faction = _Guild:GetFaction()
-                    
-    local _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID())) .. _UnitName
-    if(_MainName ~= nil) then
-        _Message = _Message .. ' (' .. _MainName .. ')'
-    end
-
-    _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> '
-    
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
-        _Message = _Message .. XFG.Lib.Locale['CHAT_LOGOUT']
-    elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
-        _Message = _Message .. XFG.Lib.Locale['CHAT_LOGIN']
-        if(XFG.Config.Chat.Login.Sound) then
-            PlaySound(3332, 'Master')
-        end
-    end
-    SendSystemMessage(_Message) 
 end

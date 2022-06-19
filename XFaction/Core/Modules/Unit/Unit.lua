@@ -48,7 +48,6 @@ end
 
 function Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number')
-    self:SetGuildIndex(inMemberID)
     local _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
     if(_UnitData == nil) then return end
 
@@ -59,13 +58,15 @@ function Unit:Initialize(inMemberID)
         return
     end
 
+    self:SetID(inMemberID)
     self:SetName(_UnitData.name)
     self:SetUnitName(_UnitData.name .. '-' .. XFG.Player.Realm:GetAPIName())
 	self:SetLevel(_UnitData.level)	
 	self:SetFaction(XFG.Player.Faction)
     self:SetGuild(XFG.Player.Guild)
     self:SetRealm(XFG.Player.Realm)
-    self:SetTimeStamp(GetServerTime())
+    local _EpochTime = GetServerTime()
+    self:SetTimeStamp(_EpochTime)
     self:SetClass(XFG.Classes:GetClass(_UnitData.classID))
     self:SetRace(XFG.Races:GetRace(_UnitData.race))
 
@@ -77,7 +78,7 @@ function Unit:Initialize(inMemberID)
         XFG.Ranks:AddRank(_NewRank)
     end
     self:SetRank(XFG.Ranks:GetRank(_UnitData.guildRankOrder))    
-    self:SetNote(_UnitData.memberNote)
+    self:SetNote(_UnitData.memberNote or '?')
     self:IsPlayer(_UnitData.isSelf)
     self:SetDungeonScore(_UnitData.overallDungeonScore or 0)
     self:SetAchievementPoints(_UnitData.achievementPoints or 0)
@@ -90,11 +91,7 @@ function Unit:Initialize(inMemberID)
         self:SetProfession2(XFG.Professions:GetProfession(_UnitData.profession2ID))
     end
 
-    if(_UnitData.zone) then
-        self:SetZone(_UnitData.zone)
-    else
-        self:SetZone('?')
-    end
+    self:SetZone(_UnitData.zone or '?')
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
@@ -134,7 +131,6 @@ function Unit:Print()
     XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
 	XFG:Debug(LogCategory, "  _UnitName (" .. type(self._UnitName) .. "): ".. tostring(self._UnitName))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))    
-    XFG:Debug(LogCategory, "  _GuildIndex (" .. type(self._GuildIndex) .. "): ".. tostring(self._GuildIndex))
     XFG:Debug(LogCategory, "  _Level (" .. type(self._Level) .. "): ".. tostring(self._Level))
     XFG:Debug(LogCategory, "  _Zone (" .. type(self._Zone) .. "): ".. tostring(self._Zone))
     XFG:Debug(LogCategory, "  _Note (" .. type(self._Note) .. "): ".. tostring(self._Note))
@@ -239,16 +235,6 @@ function Unit:SetName(_Name)
     assert(type(_Name) == 'string')
     self._Name = _Name
     return self:GetName()
-end
-
-function Unit:GetGuildIndex()
-    return self._GuildIndex
-end
-
-function Unit:SetGuildIndex(_GuildIndex)
-    assert(type(_GuildIndex) == 'number')
-    self._GuildIndex = _GuildIndex
-    return self:GetGuildIndex()
 end
 
 function Unit:HasRank()
@@ -552,9 +538,9 @@ function Unit:Equals(inUnit)
 
     if(self:GetKey() ~= inUnit:GetKey()) then return false end
     if(self:GetGUID() ~= inUnit:GetGUID()) then return false end
+    if(self:GetID() ~= inUnit:GetID()) then return false end
     if(self:GetUnitName() ~= inUnit:GetUnitName()) then return false end
     if(self:GetName() ~= inUnit:GetName()) then return false end
-    if(self:GetGuildIndex() ~= inUnit:GetGuildIndex()) then return false end
     if(self:GetLevel() ~= inUnit:GetLevel()) then return false end
     if(self:GetZone() ~= inUnit:GetZone()) then return false end
     if(self:GetNote() ~= inUnit:GetNote()) then return false end

@@ -169,7 +169,8 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     if(XFG.Network.BNet.Friends:ContainsByGameID(tonumber(inSender))) then
         local _Friend = XFG.Network.BNet.Friends:GetFriendByGameID(tonumber(inSender))
         if(_Friend ~= nil) then
-            _Friend:SetDateTime(GetServerTime())
+            local _EpochTime = GetServerTime()
+            _Friend:SetDateTime(_EpochTime)
             _Friend:IsRunningAddon(true)
             if(inEncodedMessage == 'PING') then
                 XFG:Debug(LogCategory, 'Received ping from [%s]', _Friend:GetTag())

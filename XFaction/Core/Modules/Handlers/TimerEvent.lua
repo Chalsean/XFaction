@@ -5,30 +5,17 @@ local _OfflineTimer = 60       -- Seconds between checks if someone is offline
 local _HeartbeatDelta = 60 * 2 -- Seconds between sending your own status, regardless if things have changed
 local _GuildRosterDelta = 30   -- Seconds between local guild scans
 local _PingFriends = 60 * 1    -- Seconds between pinging friends
+local _StaleLinks = 60 * 10    -- Seconds until considering a link stale
 
 TimerEvent = {}
 
-function TimerEvent:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function TimerEvent:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Initialized = false
-    end
+    self._Initialized = false
 
     return Object
 end
@@ -38,9 +25,7 @@ function TimerEvent:Initialize()
         XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
         XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", 60 * 5)
         XFG:ScheduleRepeatingTimer(self.CallbackBNetMailboxTimer, 60 * 5) -- config
-        XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", 60 * 5)
-        XFG.Cache.CallbackTimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, .1) -- config
-        XFG:Info(LogCategory, "Scheduled initialization to occur once guild information is available")
+        XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", 60 * 5)        
         XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineTimer) -- config
         XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineTimer)
         XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, _HeartbeatDelta) -- config
@@ -51,6 +36,11 @@ function TimerEvent:Initialize()
         XFG:Info(LogCategory, "Scheduled to ping friends every %d seconds", XFG.Network.BNet.PingTimer)
         XFG:ScheduleRepeatingTimer(self.CallbackLinks, 60 * 5) -- config
         XFG:Info(LogCategory, "Scheduled to broadcast links every %d seconds", 60 * 5)
+        XFG.Cache.TimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, .1) -- config
+        XFG:Info(LogCategory, "Scheduled initialization to occur once guild information is available")
+        XFG:ScheduleRepeatingTimer(self.CallbackStaleLinks, _StaleLinks) -- config
+        XFG:Info(LogCategory, "Scheduled to remove stale links after %d seconds", _StaleLinks)
+
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -89,12 +79,10 @@ function TimerEvent:CallbackBNetMailboxTimer()
     XFG.Network.BNet.Comm:Purge()
 end
 
--- WoW has funky timing about getting guild and race info on first login, its not before PLAYER_ENTERING_WORLD so have to poll
 function TimerEvent:CallbackLogin()
     if(IsAddOnLoaded(XFG.AddonName)) then
-        XFG:Info(LogCategory, "Addon is loaded, disabling poller and continuing setup")
-        XFG:CancelTimer(XFG.Cache.CallbackTimerID)
-        table.RemoveKey(XFG.Cache, 'CallbackTimerID')
+        XFG:CancelTimer(XFG.Cache.TimerID)
+        XFG.Cache.TimerID = nil
 
         XFG.Player.Account = C_BattleNet.GetAccountInfoByGUID(XFG.Player.GUID)
 
@@ -181,6 +169,7 @@ function TimerEvent:CallbackLogin()
         XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
         XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
 
+        -- Use temporary so if they stop using addon, the channel goes away
         if(XFG.Network.Outbox:HasLocalChannel() == false) then
             JoinTemporaryChannel(XFG.Network.Channel.Name)
         end
@@ -230,4 +219,10 @@ end
 -- Periodically broadcast your links
 function TimerEvent:CallbackLinks()
     XFG.Network.BNet.Links:BroadcastLinks()
+end
+
+-- Periodically purge stale links
+function TimerEvent:CallbackStaleLinks()
+    local _EpochTime = GetServerTime() - _StaleLinks
+    XFG.Network.BNet.Links:PurgeStaleLinks(_EpochTime)
 end

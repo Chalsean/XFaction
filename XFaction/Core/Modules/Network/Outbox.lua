@@ -110,7 +110,8 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
 	if(inSubject == nil) then inSubject = XFG.Network.Message.Subject.DATA end
     -- Update the last sent time, dont need to heartbeat for awhile
     if(inUnitData:IsPlayer()) then
-        inUnitData:SetTimeStamp(GetServerTime())
+        local _EpochTime = GetServerTime()
+        inUnitData:SetTimeStamp(_EpochTime)
         XFG.Player.LastBroadcast = inUnitData:GetTimeStamp()
     end
     local _Message = Message:new()
