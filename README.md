@@ -45,6 +45,7 @@ The addon should provide the following functionalities:
 
 > Ace3
 - Addon
+- Bucket
 - Comm
 - Config
 - ConfigDialog
