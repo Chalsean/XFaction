@@ -4,42 +4,28 @@ local LogCategory = 'UClass'
 
 Class = {}
 
-function Class:new(_Argument)
-    local _typeof = type(_Argument)
-    local _newObject = true
-
-	assert(_Argument == nil or
-	      (_typeof == 'table' and _Argument.__name ~= nil and _Argument.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = _Argument
-        _newObject = false
-    else
-        Object = {}
-    end
+function Class:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Key = nil
-        self._ID = nil
-        self._Name = nil
-        self._APIName = nil
-        self._ColorMixin = nil
-    end
+    self._Key = nil
+    self._ID = nil
+    self._Name = nil
+    self._APIName = nil
+    self._ColorMixin = nil
 
     return Object
 end
 
 function Class:Print()
     XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _APIName (" ..type(self._APIName) .. "): ".. tostring(self._APIName))
+    XFG:Debug(LogCategory, ObjectName .. ' Object')
+    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+    XFG:Debug(LogCategory, '  _APIName (' .. type(self._APIName) .. '): ' .. tostring(self._APIName))
 end
 
 function Class:GetKey()

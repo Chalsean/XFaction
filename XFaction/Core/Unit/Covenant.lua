@@ -4,57 +4,52 @@ local LogCategory = 'UCovenant'
 
 Covenant = {}
 
-function Covenant:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or 
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function Covenant:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Key = nil
-        self._ID = 0
-        self._Name = nil
-        self._SoulbindIDs = {}
-        self._IconID = nil
-        self._Initialized = false
-    end
+    self._Key = nil
+    self._ID = 0
+    self._Name = nil
+    self._SoulbindIDs = {}
+    self._IconID = nil
+    self._Initialized = false
 
     return Object
 end
 
 function Covenant:Initialize()
-    if(self._Initialized == false) then
+    if(self:IsInitialized() == false) then
         local _CovenantInfo = C_Covenants.GetCovenantData(self._ID)
-        self._Key = _CovenantInfo.ID
-        self._ID = _CovenantInfo.ID
-        self._Name = _CovenantInfo.name
+        self:SetKey(_CovenantInfo.ID)
+        self:SetID(_CovenantInfo.ID)
+        self:SetName(_CovenantInfo.name)
         self._SoulbindIDs = _CovenantInfo.soulbindIDs
         self:SetIconID(XFG.Icons[self:GetName()])
-        self._Initialized = true
+        self:IsInitialized(true)
     end
+    return self:IsInitialized()
+end
+
+function Covenant:IsInitialized(inBoolean)
+	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+	if(inBoolean ~= nil) then
+		self._Initialized = inBoolean
+	end
+	return self._Initialized
 end
 
 function Covenant:Print()
     XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): " .. tostring(self._Initialized))
+    XFG:Debug(LogCategory, ObjectName .. ' Object')
+    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
     for _Index, _SoulbindID in PairsByKeys (self._SoulbindIDs) do
-        XFG:Debug(LogCategory, "  _SoulbindID[" .. tostring(_Index) .. "] (" ..type(_SoulbindID) .. "): ".. tostring(_SoulbindID))
+        XFG:Debug(LogCategory, '  _SoulbindID[' .. tostring(_Index) .. '] (' .. type(_SoulbindID) .. '): ' .. tostring(_SoulbindID))
     end
 end
 

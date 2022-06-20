@@ -110,7 +110,94 @@ XFG.Settings = {
 		Guild = {
 			Ranks = {}
 		}
-	}
+	},
+	Races = {
+		Total = 37
+	},
+	Professions = {
+		Herbalism = {
+			ID = 182,
+			Icon = 136065
+		}, 
+		Mining = {
+			ID = 186,
+			Icon = 136248
+		}, 
+		Tailoring = {
+			ID = 197,
+			Icon = 136249
+		}, 
+		Engineering = {
+			ID = 202,
+			Icon = 136243
+		}, 
+		Alchemy = {
+			ID = 171,
+			Icon = 136240
+		}, 
+		Inscription = {
+			ID = 773,
+			Icon = 237171
+		}, 
+		Leatherworking = {
+			ID = 165,
+			Icon = 133611
+		}, 
+		Enchanting = {
+			ID = 333,
+			Icon = 136244
+		}, 
+		Blacksmithing = {
+			ID = 164,
+			Icon = 136241
+		}, 
+		Jewelcrafting = {
+			ID = 755,
+			Icon = 134071
+		}, 
+		Skinning = {
+			ID = 393,
+			Icon = 134366
+		}
+	},
+	Specs = {
+		250,
+		251,
+		252,
+		577,
+		581,
+		102,
+		103,
+		104,
+		105,
+		253,
+		254,
+		255,
+		62,
+		63,
+		64,
+		268,
+		269,
+		270,
+		65,
+		66,
+		70,
+		256,
+		257,
+		258,
+		259,
+		260,
+		261,
+		262,
+		263,
+		264,
+		265,
+		266,
+		267,
+		71,
+		72,
+		73
+	},
 }
 
 XFG.Network = {

@@ -66,7 +66,7 @@ function Unit:Initialize(inMemberID)
     self:SetGuild(XFG.Player.Guild)
     self:SetRealm(XFG.Player.Realm)
     local _EpochTime = GetServerTime()
-    self:SetTimeStamp(_EpochTime)
+    self:SetTimeStamp(_EpochTime or 0)
     self:SetClass(XFG.Classes:GetClass(_UnitData.classID))
     self:SetRace(XFG.Races:GetRace(_UnitData.race))
     self:SetRank(XFG.Ranks:GetRankByName(_UnitData.guildRank))    
@@ -74,6 +74,7 @@ function Unit:Initialize(inMemberID)
     self:IsPlayer(_UnitData.isSelf)
     self:SetDungeonScore(_UnitData.overallDungeonScore or 0)
     self:SetAchievementPoints(_UnitData.achievementPoints or 0)
+    self:SetZone(_UnitData.zone or '?')
 
     if(_UnitData.profession1ID) then
         self:SetProfession1(XFG.Professions:GetProfession(_UnitData.profession1ID))
@@ -82,8 +83,6 @@ function Unit:Initialize(inMemberID)
     if(_UnitData.profession2ID) then
         self:SetProfession2(XFG.Professions:GetProfession(_UnitData.profession2ID))
     end
-
-    self:SetZone(_UnitData.zone or '?')
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
@@ -111,7 +110,7 @@ function Unit:Initialize(inMemberID)
 end
 
 function Unit:IsInitialized(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument needs to be nil or boolean")
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(type(inBoolean) == 'boolean') then
         self._Initialized = inBoolean
     end
@@ -120,63 +119,42 @@ end
 
 function Unit:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _GUID (" .. type(self._GUID) .. "): ".. tostring(self._GUID))
-    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-	XFG:Debug(LogCategory, "  _UnitName (" .. type(self._UnitName) .. "): ".. tostring(self._UnitName))
-    XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))    
-    XFG:Debug(LogCategory, "  _Level (" .. type(self._Level) .. "): ".. tostring(self._Level))
-    XFG:Debug(LogCategory, "  _Zone (" .. type(self._Zone) .. "): ".. tostring(self._Zone))
-    XFG:Debug(LogCategory, "  _Note (" .. type(self._Note) .. "): ".. tostring(self._Note))
-    XFG:Debug(LogCategory, "  _Online (" .. type(self._Online) .. "): ".. tostring(self._Online))
-    XFG:Debug(LogCategory, "  _Status (" .. type(self._Status) .. "): ".. tostring(self._Status))
-    XFG:Debug(LogCategory, "  _DungeonScore (" .. type(self._DungeonScore) .. "): ".. tostring(self._DungeonScore))
-    XFG:Debug(LogCategory, "  _AchievementPoints (" .. type(self._AchievementPoints) .. "): ".. tostring(self._AchievementPoints))
-    XFG:Debug(LogCategory, "  _TimeStamp (" .. type(self._TimeStamp) .. "): ".. tostring(self._TimeStamp))
-    XFG:Debug(LogCategory, "  _RunningAddon (" .. type(self._RunningAddon) .. "): ".. tostring(self._RunningAddon))
-    XFG:Debug(LogCategory, "  _Alt (" .. type(self._Alt) .. "): ".. tostring(self._Alt))
-    XFG:Debug(LogCategory, "  _MainName (" .. type(self._MainName) .. "): ".. tostring(self._MainName))
-    XFG:Debug(LogCategory, "  _IsPlayer (" .. type(self._IsPlayer) .. "): ".. tostring(self._IsPlayer))
-    XFG:Debug(LogCategory, "  _IsOnMainGuild (" .. type(self._IsOnMainGuild) .. "): ".. tostring(self._IsOnMainGuild))
-    XFG:Debug(LogCategory, "  _GuildName (" .. type(self._GuildName) .. "): ".. tostring(self._GuildName))
-    XFG:Debug(LogCategory, "  _RealmName (" .. type(self._RealmName) .. "): ".. tostring(self._RealmName))
-    XFG:Debug(LogCategory, "  _Team (" .. type(self._Team) .. "): ")
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
+    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+    XFG:Debug(LogCategory, '  _GUID (' .. type(self._GUID) .. '): ' .. tostring(self._GUID))
+    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+	XFG:Debug(LogCategory, '  _UnitName (' .. type(self._UnitName) .. '): ' .. tostring(self._UnitName))
+    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))    
+    XFG:Debug(LogCategory, '  _Level (' .. type(self._Level) .. '): ' .. tostring(self._Level))
+    XFG:Debug(LogCategory, '  _Zone (' .. type(self._Zone) .. '): ' .. tostring(self._Zone))
+    XFG:Debug(LogCategory, '  _Note (' .. type(self._Note) .. '): ' .. tostring(self._Note))
+    XFG:Debug(LogCategory, '  _Online (' .. type(self._Online) .. '): ' .. tostring(self._Online))
+    XFG:Debug(LogCategory, '  _Status (' .. type(self._Status) .. '): ' .. tostring(self._Status))
+    XFG:Debug(LogCategory, '  _DungeonScore (' .. type(self._DungeonScore) .. '): ' .. tostring(self._DungeonScore))
+    XFG:Debug(LogCategory, '  _AchievementPoints (' .. type(self._AchievementPoints) .. '): ' .. tostring(self._AchievementPoints))
+    XFG:Debug(LogCategory, '  _TimeStamp (' .. type(self._TimeStamp) .. '): ' .. tostring(self._TimeStamp))
+    XFG:Debug(LogCategory, '  _RunningAddon (' .. type(self._RunningAddon) .. '): ' .. tostring(self._RunningAddon))
+    XFG:Debug(LogCategory, '  _Alt (' .. type(self._Alt) .. '): ' .. tostring(self._Alt))
+    XFG:Debug(LogCategory, '  _MainName (' .. type(self._MainName) .. '): ' .. tostring(self._MainName))
+    XFG:Debug(LogCategory, '  _IsPlayer (' .. type(self._IsPlayer) .. '): ' .. tostring(self._IsPlayer))
+    XFG:Debug(LogCategory, '  _IsOnMainGuild (' .. type(self._IsOnMainGuild) .. '): ' .. tostring(self._IsOnMainGuild))
+    if(self:HasRealm()) then self._Realm:Print() end
+    if(self:HasGuild()) then self._Guild:Print() end
     if(self:HasTeam()) then self._Team:Print() end
-    XFG:Debug(LogCategory, "  _Race (" .. type(self._Race) .. "): ")
     if(self:HasRace()) then self._Race:Print() end
-    XFG:Debug(LogCategory, "  _Class (" .. type(self._Class) .. "): ")
-    self._Class:Print()
-    XFG:Debug(LogCategory, "  _Spec (" .. type(self._Spec) .. "): ")
-    if(self._Spec ~= nil) then
-        self._Spec:Print()
-    end
-    XFG:Debug(LogCategory, "  _Covenant (" .. type(self._Covenant) .. "): ")
-    if(self._Covenant ~= nil) then
-        self._Covenant:Print()
-    end
-    XFG:Debug(LogCategory, "  _Soulbind (" .. type(self._Soulbind) .. "): ")
-    if(self._Soulbind ~= nil) then
-        self._Soulbind:Print()
-    end
-    XFG:Debug(LogCategory, "  _Profession1 (" .. type(self._Profession1) .. "): ")
-    if(self._Profession1 ~= nil) then
-        self._Profession1:Print()
-    end
-    XFG:Debug(LogCategory, "  _Profession2 (" .. type(self._Profession2) .. "): ")
-    if(self._Profession2 ~= nil) then
-        self._Profession2:Print()
-    end
-    XFG:Debug(LogCategory, "  _Rank (" .. type(self._Rank) .. "): ")
-    if(self._Rank ~= nil) then
-        self._Rank:Print()
-    end
+    if(self:HasClass()) then self._Class:Print() end
+    if(self:HasSpec()) then self._Spec:Print() end
+    if(self:HasCovenant()) then self._Covenant:Print() end
+    if(self:HasSoulbind()) then self._Soulbind:Print() end
+    if(self:HasProfession1()) then self._Profession1:Print() end
+    if(self:HasProfession2()) then self._Profession2:Print() end
+    if(self:HasRank()) then self._Rank:Print() end
 end
 
-function Unit:IsPlayer(_Player)
-    assert(_Player == nil or type(_Player == 'boolean'), "argument must be nil or boolean")
-    if(_Player ~= nil) then
-        self._IsPlayer = _Player
+function Unit:IsPlayer(inBoolean)
+    assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
+    if(inBoolean ~= nil) then
+        self._IsPlayer = inBoolean
     end
     return self._IsPlayer
 end
@@ -195,9 +173,9 @@ function Unit:GetGUID()
     return self._GUID
 end
 
-function Unit:SetGUID(_GUID)
-    assert(type(_GUID) == 'string')
-    self._GUID = _GUID
+function Unit:SetGUID(inGUID)
+    assert(type(inGUID) == 'string')
+    self._GUID = inGUID
     self:IsPlayer(self:GetGUID() == XFG.Player.GUID)
     return self:GetGUID()
 end
@@ -216,9 +194,9 @@ function Unit:GetUnitName()
     return self._UnitName
 end
 
-function Unit:SetUnitName(_UnitName)
-    assert(type(_UnitName) == 'string')
-    self._UnitName = _UnitName
+function Unit:SetUnitName(inUnitName)
+    assert(type(inUnitName) == 'string')
+    self._UnitName = inUnitName
     return self:GetUnitName()
 end
 
@@ -226,9 +204,9 @@ function Unit:GetName()
     return self._Name
 end
 
-function Unit:SetName(_Name)
-    assert(type(_Name) == 'string')
-    self._Name = _Name
+function Unit:SetName(inName)
+    assert(type(inName) == 'string')
+    self._Name = inName
     return self:GetName()
 end
 
@@ -240,11 +218,11 @@ function Unit:GetRank()
     return self._Rank
 end
 
-function Unit:SetRank(_Rank)
-    assert(type(_Rank) == 'table' and _Rank.__name ~= nil and _Rank.__name == 'Rank', "argument must be Rank object")
-    self._Rank = _Rank
+function Unit:SetRank(inRank)
+    assert(type(inRank) == 'table' and inRank.__name ~= nil and inRank.__name == 'Rank', 'argument must be Rank object')
+    self._Rank = inRank
 
-    if(_Rank:GetName() == 'Grand Alt' or _Rank:GetName() == 'Cat Herder') then
+    if(inRank:GetName() == 'Grand Alt') then
         self:IsAlt(true)
     end
 
@@ -255,9 +233,9 @@ function Unit:GetLevel()
     return self._Level
 end
 
-function Unit:SetLevel(_Level)
-    assert(type(_Level) == 'number')
-    self._Level = _Level
+function Unit:SetLevel(inLevel)
+    assert(type(inLevel) == 'number')
+    self._Level = inLevel
     return self:GetLevel()
 end
 
@@ -266,7 +244,7 @@ function Unit:GetZone()
 end
 
 function Unit:SetZone(inZone)
-    assert(type(inZone) == 'string', "Usage: SetZone(string)")
+    assert(type(inZone) == 'string')
     self._Zone = inZone
     return self:GetZone()
 end
@@ -275,11 +253,11 @@ function Unit:GetNote()
     return self._Note
 end
 
-function Unit:SetNote(_Note)
-    assert(type(_Note) == 'string')
-    self._Note = _Note
+function Unit:SetNote(inNote)
+    assert(type(inNote) == 'string')
+    self._Note = inNote
 
-    local _Parts = string.Split(_Note, ' ')
+    local _Parts = string.Split(inNote, ' ')
     if(self:IsAlt() and _Parts[2] ~= nil) then
         self:SetMainName(_Parts[2])
     end
@@ -309,24 +287,20 @@ function Unit:GetFaction()
 end
 
 function Unit:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be a Faction object")
+    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', 'argument must be a Faction object')
     self._Faction = inFaction
     return self:GetFaction()
 end
 
 function Unit:IsOnline(inBoolean)
-    assert(inBoolean == nil or type(inBoolean == 'boolean'), "argument must be nil or boolean")
+    assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
         self._Online = inBoolean
     end
     return self._Online
 end
 
-function Unit:IsOffline(inBoolean)
-    assert(inBoolean == nil or type(inBoolean == 'boolean'), "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self._Online = inBoolean
-    end
+function Unit:IsOffline()
     return self._Online == false
 end
 
@@ -358,8 +332,8 @@ function Unit:GetRace()
     return self._Race
 end
 
-function Unit:SetRace(_Race)
-    assert(type(_Race) == 'table' and _Race.__name ~= nil and _Race.__name == 'Race', "argument must be Race object")
+function Unit:SetRace(inRace)
+    assert(type(inRace) == 'table' and inRace.__name ~= nil and inRace.__name == 'Race', 'argument must be Race object')
     self._Race = _Race
     return self:GetRace()
 end
@@ -368,19 +342,23 @@ function Unit:GetTimeStamp()
     return self._TimeStamp
 end
 
-function Unit:SetTimeStamp(_TimeStamp)
-    assert(type(_TimeStamp) == 'number')
-    self._TimeStamp = _TimeStamp
+function Unit:SetTimeStamp(inTimeStamp)
+    assert(type(inTimeStamp) == 'number')
+    self._TimeStamp = inTimeStamp
     return self:GetTimeStamp()
+end
+
+function Unit:HasClass()
+    return self._Class ~= nil
 end
 
 function Unit:GetClass()
     return self._Class
 end
 
-function Unit:SetClass(_Class)
-    assert(type(_Class) == 'table' and _Class.__name ~= nil and _Class.__name == 'Class', "argument must be Class object")
-    self._Class = _Class
+function Unit:SetClass(inClass)
+    assert(type(inClass) == 'table' and inClass.__name ~= nil and inClass.__name == 'Class', 'argument must be Class object')
+    self._Class = inClass
     return self:GetClass()
 end
 
@@ -392,9 +370,9 @@ function Unit:GetSpec()
     return self._Spec
 end
 
-function Unit:SetSpec(_Spec)
-    assert(type(_Spec) == 'table' and _Spec.__name ~= nil and _Spec.__name == 'Spec', "argument must be Spec object")
-    self._Spec = _Spec
+function Unit:SetSpec(inSpec)
+    assert(type(inSpec) == 'table' and inSpec.__name ~= nil and inSpec.__name == 'Spec', 'argument must be Spec object')
+    self._Spec = inSpec
     return self:GetSpec()
 end
 
@@ -406,9 +384,9 @@ function Unit:GetCovenant()
     return self._Covenant
 end
 
-function Unit:SetCovenant(_Covenant)
-    assert(type(_Covenant) == 'table' and _Covenant.__name ~= nil and _Covenant.__name == 'Covenant', "argument must be Covenant object")
-    self._Covenant = _Covenant
+function Unit:SetCovenant(inCovenant)
+    assert(type(inCovenant) == 'table' and inCovenant.__name ~= nil and inCovenant.__name == 'Covenant', 'argument must be Covenant object')
+    self._Covenant = inCovenant
     return self:GetCovenant()
 end
 
@@ -420,8 +398,8 @@ function Unit:GetSoulbind()
     return self._Soulbind
 end
 
-function Unit:SetSoulbind(_Soulbind)
-    assert(type(_Soulbind) == 'table' and _Soulbind.__name ~= nil and _Soulbind.__name == 'Soulbind', "argument must be Soulbind object")
+function Unit:SetSoulbind(inSoulbind)
+    assert(type(inSoulbind) == 'table' and inSoulbind.__name ~= nil and inSoulbind.__name == 'Soulbind', 'argument must be Soulbind object')
     self._Soulbind = _Soulbind
     return self:GetSoulbind()
 end
@@ -434,9 +412,9 @@ function Unit:GetProfession1()
     return self._Profession1
 end
 
-function Unit:SetProfession1(_Profession)
-    assert(type(_Profession) == 'table' and _Profession.__name ~= nil and _Profession.__name == 'Profession', "argument must be Profession object")
-    self._Profession1 = _Profession
+function Unit:SetProfession1(inProfession)
+    assert(type(inProfession) == 'table' and inProfession.__name ~= nil and inProfession.__name == 'Profession', 'argument must be Profession object')
+    self._Profession1 = inProfession
     return self:GetProfession1()
 end
 
@@ -448,24 +426,24 @@ function Unit:GetProfession2()
     return self._Profession2
 end
 
-function Unit:SetProfession2(_Profession)
-    assert(type(_Profession) == 'table' and _Profession.__name ~= nil and _Profession.__name == 'Profession', "argument must be Profession object")
-    self._Profession2 = _Profession
+function Unit:SetProfession2(inProfession)
+    assert(type(inProfession) == 'table' and inProfession.__name ~= nil and inProfession.__name == 'Profession', 'argument must be Profession object')
+    self._Profession2 = inProfession
     return self:GetProfession2()
 end
 
-function Unit:IsRunningAddon(_RunningAddon)
-    assert(_RunningAddon == nil or type(_RunningAddon == 'boolean'), "argument must be nil or boolean")
-    if(_RunningAddon ~= nil) then
-        self._RunningAddon = _RunningAddon
+function Unit:IsRunningAddon(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+    if(inBoolean ~= nil) then
+        self._RunningAddon = inBoolean
     end
     return self._RunningAddon
 end
 
-function Unit:IsAlt(_Alt)
-    assert(_Alt == nil or type(_Alt == 'boolean'), "argument must be nil or boolean")
-    if(_Alt ~= nil) then
-        self._Alt = _Alt
+function Unit:IsAlt(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+    if(inBoolean ~= nil) then
+        self._Alt = inBoolean
     end
     return self._Alt
 end
@@ -478,9 +456,9 @@ function Unit:GetMainName()
     return self._MainName
 end
 
-function Unit:SetMainName(_MainName)
-    assert(type(_MainName) == 'string')
-    self._MainName = _MainName
+function Unit:SetMainName(inMainName)
+    assert(type(inMainName) == 'string')
+    self._MainName = inMainName
     return self:GetMainName()
 end
 
@@ -493,7 +471,7 @@ function Unit:GetTeam()
 end
 
 function Unit:SetTeam(inTeam)
-    assert(type(inTeam) == 'table' and inTeam.__name ~= nil and inTeam.__name == 'Team', "argument must be Team object")
+    assert(type(inTeam) == 'table' and inTeam.__name ~= nil and inTeam.__name == 'Team', 'argument must be Team object')
     self._Team = inTeam
     return self:GetTeam()
 end
@@ -503,7 +481,7 @@ function Unit:GetRealm()
 end
 
 function Unit:SetRealm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
+    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
     self._Realm = inRealm
     return self:GetRealm()
 end
@@ -513,13 +491,13 @@ function Unit:GetGuild()
 end
 
 function Unit:SetGuild(inGuild)
-    assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', "argument must be Guild object")
+    assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
     self._Guild = inGuild
     return self:GetGuild()
 end
 
 function Unit:IsOnMainGuild(inBoolean)
-    assert(inBoolean == nil or type(inBoolean == 'boolean'), "argument must be nil or boolean")
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
         self._IsOnMainGuild = inBoolean
     end

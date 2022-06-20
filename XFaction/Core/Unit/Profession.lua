@@ -4,31 +4,17 @@ local LogCategory = 'UProfession'
 
 Profession = {}
 
-function Profession:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or _typeof == 'number' or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil, string or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function Profession:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Key = nil
-        self._ID = 0
-		self._Name = nil
-        self._IconID = nil
-        self._Initialized = false
-    end
+    self._Key = nil
+    self._ID = 0
+    self._Name = nil
+    self._IconID = nil
+    self._Initialized = false
 
     return Object
 end
@@ -44,7 +30,7 @@ function Profession:Initialize()
 end
 
 function Profession:IsInitialized(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument needs to be nil or boolean")
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(type(inBoolean) == 'boolean') then
         self._Initialized = inBoolean
     end
@@ -53,12 +39,12 @@ end
 
 function Profession:Print()
     XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _IconID (" .. type(self._IconID) .. "): ".. tostring(self._IconID))
-    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): " .. tostring(self._Initialized))
+    XFG:Debug(LogCategory, ObjectName .. ' Object')
+    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+    XFG:Debug(LogCategory, '  _Name (' ..type(self._Name) .. '): ' .. tostring(self._Name))
+    XFG:Debug(LogCategory, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 end
 
 function Profession:GetKey()
@@ -75,9 +61,9 @@ function Profession:GetName()
     return self._Name
 end
 
-function Profession:SetName(_Name)
-    assert(type(_Name) == 'string')
-    self._Name = _Name
+function Profession:SetName(inName)
+    assert(type(inName) == 'string')
+    self._Name = inName
     return self:GetName()
 end
 
@@ -85,9 +71,9 @@ function Profession:GetID()
     return self._ID
 end
 
-function Profession:SetID(_ProfessionID)
-    assert(type(_ProfessionID) == 'number')
-    self._ID = _ProfessionID
+function Profession:SetID(inProfessionID)
+    assert(type(inProfessionID) == 'number')
+    self._ID = inProfessionID
     return self:GetID()
 end
 
@@ -95,9 +81,9 @@ function Profession:GetIconID()
     return self._IconID
 end
 
-function Profession:SetIconID(_IconID)
-    assert(type(_IconID) == 'number')
-    self._IconID = _IconID
+function Profession:SetIconID(inIconID)
+    assert(type(inIconID) == 'number')
+    self._IconID = inIconID
     return self:GetIconID()
 end
 

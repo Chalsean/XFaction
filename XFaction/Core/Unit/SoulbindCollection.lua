@@ -4,29 +4,15 @@ local LogCategory = 'UCSoulbind'
 
 SoulbindCollection = {}
 
-function SoulbindCollection:new(_Argument)
-    local _typeof = type(_Argument)
-    local _newObject = true
-
-	assert(_Argument == nil or 
-	      (_typeof == 'table' and _Argument.__name ~= nil and _Argument.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = _Argument
-        _newObject = false
-    else
-        Object = {}
-    end
+function SoulbindCollection:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject) then
-        self._Soulbinds = {}
-		self._SoulbindCount = 0
-		self._Initialized = false
-    end
+    self._Soulbinds = {}
+	self._SoulbindCount = 0
+	self._Initialized = false
 
     return Object
 end
@@ -48,7 +34,7 @@ function SoulbindCollection:Initialize()
 end
 
 function SoulbindCollection:IsInitialized(_Argument)
-    assert(_Argument == nil or type(_Argument) == 'boolean', "argument needs to be nil or boolean")
+    assert(_Argument == nil or type(_Argument) == 'boolean', 'argument needs to be nil or boolean')
     if(type(_Argument) == 'boolean') then
         self._Initialized = _Argument
     end
@@ -57,9 +43,10 @@ end
 
 function SoulbindCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
 	XFG:Debug(LogCategory, "  _SoulbindCount (" .. type(self._SoulbindCount) .. "): ".. tostring(self._SoulbindCount))
-	for _, _Soulbind in pairs (self._Soulbinds) do
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	for _, _Soulbind in self:Iterator() do
 		_Soulbind:Print()
 	end
 end
@@ -75,14 +62,11 @@ function SoulbindCollection:GetSoulbind(inKey)
 end
 
 function SoulbindCollection:AddSoulbind(inSoulbind)
-	assert(type(inSoulbind) == 'table' and inSoulbind.__name ~= nil and inSoulbind.__name == 'Soulbind', "argument must be Soulbind object")
-
+	assert(type(inSoulbind) == 'table' and inSoulbind.__name ~= nil and inSoulbind.__name == 'Soulbind', 'argument must be Soulbind object')
 	if(self:Contains(inSoulbind:GetKey()) == false) then
 		self._SoulbindCount = self._SoulbindCount + 1
 	end
-
 	self._Soulbinds[inSoulbind:GetKey()] = inSoulbind
-
 	return self:Contains(inSoulbind:GetKey())
 end
 

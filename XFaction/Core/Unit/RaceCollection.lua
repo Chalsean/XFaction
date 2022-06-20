@@ -1,42 +1,27 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'RaceCollection'
 local LogCategory = 'UCRace'
-local MaxRaces = 37
 
 RaceCollection = {}
 
-function RaceCollection:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or 
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function RaceCollection:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject) then
-		self._Key = nil
-        self._Races = {}
-		self._RaceCount = 0
-		self._Initialized = false
-    end
+	self._Key = nil
+    self._Races = {}
+	self._RaceCount = 0
+	self._Initialized = false
 
     return Object
 end
 
 function RaceCollection:Initialize()
-	if(self._Initialized == false) then
+	if(self:IsInitialized() == false) then
 		self._Key = math.GenerateUID()
-		for i = 1, MaxRaces do
+		for i = 1, XFG.Settings.Races.Total do
 			local _RaceInfo = C_CreatureInfo.GetRaceInfo(i)
 
 			local _NewRace = Race:new()
@@ -49,17 +34,26 @@ function RaceCollection:Initialize()
 			self:AddRace(_NewRace)
 			XFG:Debug(LogCategory, 'Initialized race [%s]', _NewRace:GetName())
 		end
-		self._Initialized = true
+		self:IsInitialized(true)
 	end
+	return self:IsInitialized()
+end
+
+function RaceCollection:IsInitialized(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
+    if(type(inBoolean) == 'boolean') then
+        self._Initialized = inBoolean
+    end
+    return self._Initialized
 end
 
 function RaceCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _RaceCount (" .. type(self._RaceCount) .. "): ".. tostring(self._RaceCount))
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-	for _, _Race in pairs (self._Races) do
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
+	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+	XFG:Debug(LogCategory, '  _RaceCount (' .. type(self._RaceCount) .. '): ' .. tostring(self._RaceCount))
+	XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
+	for _, _Race in self:Iterator() do
 		_Race:Print()
 	end
 end
@@ -87,7 +81,7 @@ function RaceCollection:GetRaceByName(inName, inFaction)
 end
 
 function RaceCollection:AddRace(inRace)
-	assert(type(inRace) == 'table' and inRace.__name ~= nil and inRace.__name == 'Race', "argument must be Race object")
+	assert(type(inRace) == 'table' and inRace.__name ~= nil and inRace.__name == 'Race', 'argument must be Race object')
 	if(self:Contains(inRace:GetKey()) == false) then
 		self._RaceCount = self._RaceCount + 1
 	end
