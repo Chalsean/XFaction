@@ -7,8 +7,8 @@ local function SwapChannels(inSourceNode, inTargetKey)
 		if(_ChannelKey == inTargetKey) then
 			XFG.Config.Channel.Channels[_ChannelIndex] = XFG.Config.Channel.Channels[inSourceNode]
 			local _Index = string.sub(_ChannelIndex, 8, 10)
-			local _SwapChannel1 = XFG.Network.Channels:GetChannelByID(tonumber(_Index))
-			local _SwapChannel2 = XFG.Network.Channels:GetChannelByID(tonumber(_SourceIndex))
+			local _SwapChannel1 = XFG.Channels:GetChannelByID(tonumber(_Index))
+			local _SwapChannel2 = XFG.Channels:GetChannelByID(tonumber(_SourceIndex))
 			C_ChatInfo.SwapChatChannelsByChannelIndex(_SwapChannel1:GetID(), _SwapChannel2:GetID())
 			_SwapChannel1:SetID(tonumber(_SourceIndex))
 			_SwapChannel2:SetID(tonumber(_Index))
@@ -30,7 +30,7 @@ XFG.Options.args.Channel = {
 			get = function(info) return XFG.Config.Channel[ info[#info] ] end,
 			set = function(info, value) 
 				XFG.Config.Channel[ info[#info] ] = value; 
-				if(value) then XFG.Network.Channels:SyncChannels() end
+				if(value) then XFG.Channels:SyncChannels() end
 			end
 		},
 		Channels = {
@@ -46,7 +46,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,
@@ -59,7 +59,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,
@@ -72,7 +72,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,
@@ -85,7 +85,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,
@@ -98,7 +98,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,
@@ -111,7 +111,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,
@@ -124,7 +124,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,
@@ -137,7 +137,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,
@@ -150,7 +150,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,
@@ -163,7 +163,7 @@ XFG.Options.args.Channel = {
 					desc = '',
 					disabled = function(info) 
 						local _ChannelNumber = string.sub(info[#info], 8, 10)
-						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Network.Channels:GetCount()
+						return XFG.Config.Channel.Enable == false or tonumber(_ChannelNumber) > XFG.Channels:GetCount()
 					end,
 					values = {},
 					get = function(info) return XFG.Config.Channel.Channels[info[#info]] end,

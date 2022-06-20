@@ -79,16 +79,8 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
-				Dungeon = {
-					order = 11,
-					type = 'toggle',
-					name = XFG.Lib.Locale['DUNGEON'],
-					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_DUNGEON_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
-				},
 				Faction = {
-					order = 12,
+					order = 11,
 					type = 'toggle',
 					name = XFG.Lib.Locale['FACTION'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_FACTION_TOOLTIP'],
@@ -96,7 +88,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Guild = {
-					order = 13,
+					order = 12,
 					type = 'toggle',
 					name = XFG.Lib.Locale['GUILD'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_GUILD_TOOLTIP'],
@@ -104,10 +96,18 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Level = {
-					order = 14,
+					order = 13,
 					type = 'toggle',
 					name = XFG.Lib.Locale['LEVEL'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_LEVEL_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
+				},
+				Dungeon = {  -- Mythic+
+					order = 14,
+					type = 'toggle',
+					name = XFG.Lib.Locale['DUNGEON'],
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_DUNGEON_TOOLTIP'],
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
@@ -175,6 +175,34 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
+				Line2 = {
+					order = 23,
+					type = 'header',
+					name = ''
+				},
+				Rank = {
+					order = 24,
+					type = 'select',
+					name = XFG.Lib.Locale['RANK'],
+					desc = 'Select the guild rank you would like to have an alternate name for',
+					values = {},
+					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
+				},
+				RankName = {
+					order = 25,
+					type = 'input',
+					name = 'Alt Name',
+					desc = 'Enter alternate rank name to display',
+					get = function(info) 
+						local _Rank = XFG.Ranks:GetRank(XFG.Config.DataText.Guild.Rank)
+						return _Rank:GetAltName() 
+					end,
+					set = function(info, value)
+						local _Rank = XFG.Ranks:GetRank(XFG.Config.DataText.Guild.Rank)
+						_Rank:SetAltName(value)
+					end
+				}
 			}
 		},				
 		Links = {

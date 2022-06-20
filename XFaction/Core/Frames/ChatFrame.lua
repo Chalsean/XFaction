@@ -1,7 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ChatFrame'
 local LogCategory = 'FChat'
-local IconTokenString = '|T%d:16:16:0:0:64:64:4:60:4:60|t'
 
 ChatFrame = {}
 
@@ -28,13 +27,13 @@ function ChatFrame:Initialize()
                 return ElvUI[1].private.chat.enable
             end)
             if _Status and _Enabled then
-                XFG:Info(LogCategory, "Using ElvUI chat handler")
+                XFG:Info(LogCategory, 'Using ElvUI chat handler')
                 self:IsElvUI(true)
                 self._ElvUIModule = ElvUI[1]:GetModule('Chat')
                 self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
             end
         else
-            XFG:Info(LogCategory, "Using default chat handler")
+            XFG:Info(LogCategory, 'Using default chat handler')
             self._ChatFrameHandler = ChatFrame_MessageEventHandler
         end
 
@@ -44,7 +43,7 @@ function ChatFrame:Initialize()
 end
 
 function ChatFrame:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
 	if(inBoolean ~= nil) then
 		self._Initialized = inBoolean
 	end
@@ -53,9 +52,10 @@ end
 
 function ChatFrame:Print()
 	XFG:SingleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _ElvUI (" .. type(self._ElvUI) .. "): ".. tostring(self._ElvUI))
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
+	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+	XFG:Debug(LogCategory, '  _ElvUI (' .. type(self._ElvUI) .. '): ' .. tostring(self._ElvUI))
+    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 end
 
 function ChatFrame:GetKey()
@@ -69,7 +69,7 @@ function ChatFrame:SetKey(inKey)
 end
 
 function ChatFrame:IsElvUI(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "Usage: IsElvUI([boolean])")
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
         self._ElvUI = inBoolean
     end
@@ -82,7 +82,7 @@ function ChatFrame:Display(inMessage)
 
     local _Event = 'GUILD'
     local _ConfigNode = 'GChat'
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.ACHIEVEMENT) then
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
         _Event = 'ACHIEVEMENT'
         _ConfigNode = 'Achievement'
     end
@@ -107,11 +107,11 @@ function ChatFrame:Display(inMessage)
                     end
 
                     if(XFG.Config.Chat[_ConfigNode].Main and inMessage:GetMainName() ~= nil) then
-                            _Text = _Text .. "(" .. inMessage:GetMainName() .. ") "
+                            _Text = _Text .. '(' .. inMessage:GetMainName() .. ') '
                     end
 
                     if(XFG.Config.Chat[_ConfigNode].Guild) then
-                        _Text = _Text .. "<" .. _Guild:GetInitials() .. "> "
+                        _Text = _Text .. '<' .. _Guild:GetInitials() .. '> '
                     end
 
                     _Text = _Text .. inMessage:GetData()

@@ -1,0 +1,13 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Rank.lua'/>
+    <Script file='RankCollection.lua'/>
+    <Script file='Realm.lua'/>
+    <Script file='RealmCollection.lua'/>
+    <Script file='Team.lua'/>
+    <Script file='TeamCollection.lua'/>
+    <Script file='Faction.lua'/>    
+    <Script file='FactionCollection.lua'/>
+    <Script file='Guild.lua'/>
+    <Script file='GuildCollection.lua'/>
+    <Script file='Confederate.lua'/>
+</Ui>

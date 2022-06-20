@@ -1,18 +1,17 @@
 local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Initialize'
 
-function XFG:Init()	
+function XFG:Init()
 	XFG.Player.GUID = UnitGUID('player')
 	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
 	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Player.Faction = XFG.Factions:GetFactionByName(UnitFactionGroup('player'))
-
-	XFG.Ranks = RankCollection:new(); XFG.Ranks:Initialize()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
 
 	-- Make sure we have all the realm/guild combinations accounted for
-	for _RealmName, _FactionGuilds in pairs(XFG.Cache.Guilds) do
+	for _RealmName, _FactionGuilds in pairs(XFG.Settings.Guilds) do
+		XFG:Debug(LogCategory, 'Initializing realm [%s]', _RealmName)
 		local _NewRealm = Realm:new()
 		_NewRealm:SetKey(_RealmName)
 		_NewRealm:SetName(_RealmName)
@@ -22,6 +21,7 @@ function XFG:Init()
 		for _FactionName, _Guilds in pairs(_FactionGuilds) do
 			local _Faction = XFG.Factions:GetFactionByName(_FactionName)
 			for _GuildInitials, _GuildName in pairs (_Guilds) do
+				XFG:Debug(LogCategory, 'Initializing guild [%s]', _GuildName)
 				local _NewGuild = Guild:new()
 				_NewGuild:Initialize()
 				_NewGuild:SetName(_GuildName)
@@ -40,18 +40,11 @@ function XFG:Init()
 		return
 	end
 
-	XFG.Network.Mailbox = Mailbox:new(); XFG.Network.Mailbox:Initialize()	
-	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()	
-	
-	for _, _Target in XFG.Network.BNet.Targets:Iterator() do
-		local _Realm = _Target:GetRealm()
-		local _Faction = _Target:GetFaction()
-		XFG:Info(LogCategory, "Established BNet target [%s:%s]", _Realm:GetName(), _Faction:GetName())
-	end
+	XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()	
+	XFG.Targets = TargetCollection:new(); XFG.Targets:Initialize()
 
-	-- These handlers will register additional handlers
+	-- A significant portion of start up is delayed due to guild information not being available yet
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
-	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
 	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
