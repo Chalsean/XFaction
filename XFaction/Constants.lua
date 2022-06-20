@@ -81,7 +81,7 @@ XFG.Settings = {
 		},
 	},
 	Ranks = {
-		['1'] = 'Guild Master',
+		['1'] = 'Cat Herder',
 		['2'] = 'Chancellor',
 		['3'] = 'Master of Coin',
 		['4'] = 'Royal Emissary',

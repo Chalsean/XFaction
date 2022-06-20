@@ -49,7 +49,8 @@ end
 function Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number')
     local _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
-    if(_UnitData == nil) then return end
+    -- Odd but guildRank is nil during a zone transition
+    if(_UnitData == nil or _UnitData.guildRank == nil) then return end
 
     self:SetGUID(_UnitData.guid)
     self:SetKey(self:GetGUID())
@@ -69,18 +70,18 @@ function Unit:Initialize(inMemberID)
     self:SetTimeStamp(_EpochTime or 0)
     self:SetClass(XFG.Classes:GetClass(_UnitData.classID))
     self:SetRace(XFG.Races:GetRace(_UnitData.race))
-    self:SetRank(XFG.Ranks:GetRankByName(_UnitData.guildRank))    
+    self:SetRank(XFG.Ranks:GetRankByName(_UnitData.guildRank))
     self:SetNote(_UnitData.memberNote or '?')
     self:IsPlayer(_UnitData.isSelf)
     self:SetDungeonScore(_UnitData.overallDungeonScore or 0)
     self:SetAchievementPoints(_UnitData.achievementPoints or 0)
     self:SetZone(_UnitData.zone or '?')
 
-    if(_UnitData.profession1ID) then
+    if(_UnitData.profession1ID ~= nil) then
         self:SetProfession1(XFG.Professions:GetProfession(_UnitData.profession1ID))
     end
 
-    if(_UnitData.profession2ID) then
+    if(_UnitData.profession2ID ~= nil) then
         self:SetProfession2(XFG.Professions:GetProfession(_UnitData.profession2ID))
     end
 

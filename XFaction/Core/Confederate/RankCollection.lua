@@ -80,6 +80,10 @@ end
 
 function RankCollection:GetRankByName(inName)
 	assert(type(inName) == 'string')
+	-- Temporary code until they fix GM title
+	if(inName == 'Guild Master' or inName == 'Executioner') then
+		inName = 'Cat Herder'
+	end
 	for _, _Rank in self:Iterator() do
 		if(_Rank:GetName() == inName) then
 			return _Rank

@@ -4,6 +4,9 @@
 [XFaction]
 - Supports password protected channel (XFc:<channel-name>:<password>)
 - Standardized rank names across the confederate
+- Broadcasts player information if level, spec, profession, covenant, zone, m+ or achievement score changes
+- Added AceBucket logic for achievement spams
+- Most initial login race conditions fixed
 
 [Guild (X)]
 - Supports displaying alternate confederate rank names
@@ -11,6 +14,11 @@
 **Bug Fixes**
 [XFaction]
 - Fixed exception from Blizz spec API returning no data on initial login
+- Fixed exception when updating link datetime (Raelea)
+
+**Misc**
+[XFaction]
+- Lots of code cleanup
 
 ### Version 2.4.2 [ 06.18.2022 ]
 

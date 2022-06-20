@@ -238,7 +238,7 @@ end
 
 -- Periodically force a refresh
 function TimerEvent:CallbackGuildRoster()
-    if(XFG.Initialized) then
+    if(XFG.Initialized and IsInGuild()) then
         C_GuildInfo.GuildRoster()
     end
 end
