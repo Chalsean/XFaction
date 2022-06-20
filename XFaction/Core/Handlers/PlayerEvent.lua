@@ -27,13 +27,12 @@ function PlayerEvent:Initialize()
         XFG:Info(LogCategory, 'Registered for PLAYER_LEVEL_CHANGED events')
         XFG:RegisterEvent('SKILL_LINES_CHANGED', self.CallbackSkillChanged)
         XFG:Info(LogCategory, 'Registered for SKILL_LINES_CHANGED events')
-        XFG:RegisterEvent('ZONE_CHANGED_NEW_AREA', self.CallbackZoneChanged)
+        XFG:RegisterEvent('ZONE_CHANGED_NEW_AREA', self.CallbackZoneChanged)       
         XFG:Info(LogCategory, 'Registered for ZONE_CHANGED_NEW_AREA events')
         XFG:RegisterEvent('CHALLENGE_MODE_COMPLETED', self.CallbackPlayerChanged, 'CHALLENGE_MODE_COMPLETED')
         XFG:Info(LogCategory, 'Registered for CHALLENGE_MODE_COMPLETED events')
         XFG:RegisterBucketEvent({'ACHIEVEMENT_EARNED'}, 10, self.CallbackPlayerChanged, 'ACHIEVEMENT_EARNED')
         XFG:Info(LogCategory, 'Registered for ACHIEVEMENT_EARNED events')
-        XFG.Cache.BroadcastZone = XFG.DB.UIReload
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -53,7 +52,7 @@ function PlayerEvent:Print()
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
-function PlayerEvent:CallbackPlayerChanged(inEvent)    
+function PlayerEvent:CallbackPlayerChanged(inEvent) 
     XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
     XFG:Info(LogCategory, 'Updated player data based on %s event', inEvent)
 
@@ -67,15 +66,17 @@ function PlayerEvent:CallbackPlayerChanged(inEvent)
     end
 end
 
--- Zone changes are kinda funky, during a zone change loading screen some guild rank data doesnt return
--- So detect zone text change, only update that information and broadcast
+-- Zone changes are kinda funky, during a zone change C_Club.GetMemberInfo returns a lot of nils
+-- So use a different API, detect zone text change, only update that information and broadcast
 function PlayerEvent:CallbackZoneChanged()
-    local _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), XFG.Player.Unit:GetID())
-    if(_UnitData == nil or _UnitData.zone == nil) then return end
-    if(_UnitData.zone ~= XFG.Player.Unit:GetZone()) then
-        XFG.Player.Unit:SetZone(_UnitData.zone)
-        XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
-        XFG.DataText.Guild:RefreshBroker()
+    if(XFG.Initialized) then 
+        local _Zone = GetZoneText()
+        if(_Zone ~= nil and _Zone ~= XFG.Player.Unit:GetZone()) then
+            XFG.Player.Unit:SetZone(_Zone)
+            XFG:Info(LogCategory, 'Updated player data based on ZONE_CHANGED_NEW_AREA event')
+            XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
+            XFG.DataText.Guild:RefreshBroker()
+        end
     end
 end
 
