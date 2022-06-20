@@ -4,36 +4,22 @@ local LogCategory = 'CCTeam'
 
 TeamCollection = {}
 
-function TeamCollection:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or 
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function TeamCollection:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-		self._Key = nil
-        self._Teams = {}
-		self._TeamCount = 0
-		self._Initialized = false
-    end
+	self._Key = nil
+    self._Teams = {}
+	self._TeamCount = 0
+	self._Initialized = false
 
     return Object
 end
 
 function TeamCollection:IsInitialized(inBoolean)
-    assert(inInitialized == nil or type(inInitialized) == 'boolean', "argument needs to be nil or boolean")
+    assert(inInitialized == nil or type(inInitialized) == 'boolean', 'argument needs to be nil or boolean')
     if(inInitialized ~= nil) then
         self._Initialized = inInitialized
     end
@@ -43,13 +29,12 @@ end
 function TeamCollection:Initialize()
 	if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
-		for _Initials, _Name in pairs (XFG.Cache.Teams) do
+		for _Initials, _Name in pairs (XFG.Settings.Teams) do
 			local _NewTeam = Team:new()
 			_NewTeam:SetName(_Name)
 			_NewTeam:SetInitials(_Initials)
 			_NewTeam:Initialize()
 			self:AddTeam(_NewTeam)
-			table.RemoveKey(XFG.Cache.Teams, _Initials)
 		end
 		self:IsInitialized(true)
 	end
@@ -58,10 +43,10 @@ end
 
 function TeamCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _TeamCount (" .. type(self._TeamCount) .. "): ".. tostring(self._TeamCount))
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
+	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+	XFG:Debug(LogCategory, '  _TeamCount (' .. type(self._TeamCount) .. '): ' .. tostring(self._TeamCount))
+	XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 	for _, _Team in pairs (self._Teams) do
 		_Team:Print()
 	end
@@ -88,7 +73,7 @@ function TeamCollection:GetTeam(inKey)
 end
 
 function TeamCollection:AddTeam(inTeam)
-    assert(type(inTeam) == 'table' and inTeam.__name ~= nil and inTeam.__name == 'Team', "argument must be Team object")
+    assert(type(inTeam) == 'table' and inTeam.__name ~= nil and inTeam.__name == 'Team', 'argument must be Team object')
 	if(self:Contains(inTeam:GetKey()) == false) then
 		self._TeamCount = self._TeamCount + 1
 	end

@@ -47,11 +47,13 @@ XFG.Player = {
 }
 
 XFG.Frames = {}
+XFG.Cache = {}
 
-XFG.Cache = {
+XFG.Settings = {
 	Confederate = {
 		Name = 'Eternal Kingdom',
-		Initials = 'EK'
+		Initials = 'EK',
+		OfflineDelta = 60 * 5   -- Seconds before you consider another unit offline
 	},
 	Guilds = {
 		Proudmoore = {

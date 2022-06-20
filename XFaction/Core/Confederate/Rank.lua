@@ -20,11 +20,11 @@ end
 
 function Rank:Print()
 	XFG:SingleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-	XFG:Debug(LogCategory, "  _AltName (" .. type(self._AltName) .. "): ".. tostring(self._AltName))
-    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
+	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+	XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+	XFG:Debug(LogCategory, '  _AltName (' .. type(self._AltName) .. '): ' .. tostring(self._AltName))
+    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
 end
 
 function Rank:GetKey()

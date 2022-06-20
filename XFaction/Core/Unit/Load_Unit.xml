@@ -1,0 +1,15 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Unit\Profession.lua'/>
+    <Script file='Unit\ProfessionCollection.lua'/>   
+    <Script file='Unit\Spec.lua'/>    
+    <Script file='Unit\SpecCollection.lua'/>    
+    <Script file='Unit\Class.lua'/>    
+    <Script file='Unit\ClassCollection.lua'/>    
+    <Script file='Unit\Race.lua'/>    
+    <Script file='Unit\RaceCollection.lua'/>
+    <Script file='Unit\Soulbind.lua'/>
+    <Script file='Unit\SoulbindCollection.lua'/>
+    <Script file='Unit\Covenant.lua'/>
+    <Script file='Unit\CovenantCollection.lua'/>    
+    <Script file='Unit\Unit.lua'/>
+</Ui>

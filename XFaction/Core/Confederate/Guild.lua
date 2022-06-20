@@ -11,8 +11,8 @@ function Guild:new()
     self.__name = ObjectName
 
     self._Key = nil
-    self._ID = nil
-    self._StreamID = nil
+    self._ID = nil        -- Only the player's guild will have an ID
+    self._StreamID = nil  -- Only the player's guild will have a StreamerID
     self._Name = nil
     self._Initials = nil
     self._Faction = nil
@@ -23,7 +23,7 @@ function Guild:new()
 end
 
 function Guild:IsInitialized(inInitialized)
-    assert(inInitialized == nil or type(inInitialized) == 'boolean', "argument needs to be nil or boolean")
+    assert(inInitialized == nil or type(inInitialized) == 'boolean', 'argument needs to be nil or boolean')
     if(inInitialized ~= nil) then
         self._Initialized = inInitialized
     end
@@ -40,15 +40,15 @@ end
 
 function Guild:Print()
     XFG:DoubleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    XFG:Debug(LogCategory, "  _StreamID (" .. type(self._StreamID) .. "): ".. tostring(self._StreamID))
-    XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _Initials (" .. type(self._Initials) .. "): ".. tostring(self._Initials))
-    XFG:Debug(LogCategory, "  _Faction (" .. type(self._Faction) .. ")")
+    XFG:Debug(LogCategory, ObjectName .. ' Object')
+    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+    XFG:Debug(LogCategory, '  _StreamID (' .. type(self._StreamID) .. '): ' .. tostring(self._StreamID))
+    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+    XFG:Debug(LogCategory, '  _Initials (' .. type(self._Initials) .. '): ' .. tostring(self._Initials))
+    XFG:Debug(LogCategory, '  _Faction (' .. type(self._Faction) .. ')')
     self._Faction:Print()
-    XFG:Debug(LogCategory, "  _Realm (" .. type(self._Realm) .. ")")
+    XFG:Debug(LogCategory, '  _Realm (' .. type(self._Realm) .. ')')
     self._Realm:Print()
 end
 
@@ -115,7 +115,7 @@ function Guild:SetStreamID(inStreamID)
 end
 
 function Guild:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
+    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', 'argument must be Faction object')
     self._Faction = inFaction
     return self:GetFaction()
 end
@@ -125,7 +125,7 @@ function Guild:GetRealm()
 end
 
 function Guild:SetRealm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
+    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
     self._Realm = inRealm
     return self:GetRealm()
 end

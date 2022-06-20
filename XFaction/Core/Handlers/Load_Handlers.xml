@@ -1,0 +1,13 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Handlers\AchievementEvent.lua'/>
+    <Script file='Handlers\BNetEvent.lua'/>
+    <Script file='Handlers\ChannelEvent.lua'/>
+    <Script file='Handlers\ChatEvent.lua'/>
+    <Script file='Handlers\CovenantEvent.lua'/>
+    <Script file='Handlers\GuildEvent.lua'/>    
+    <Script file='Handlers\ProfessionEvent.lua'/>
+    <Script file='Handlers\SoulbindEvent.lua'/>
+    <Script file='Handlers\SpecEvent.lua'/>
+    <Script file='Handlers\SystemEvent.lua'/>
+    <Script file='Handlers\TimerEvent.lua'/>
+</Ui>

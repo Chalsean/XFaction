@@ -19,7 +19,7 @@ function RankCollection:new()
 end
 
 function RankCollection:IsInitialized(inBoolean)
-    assert(inInitialized == nil or type(inInitialized) == 'boolean', "argument needs to be nil or boolean")
+    assert(inInitialized == nil or type(inInitialized) == 'boolean', 'argument needs to be nil or boolean')
     if(inInitialized ~= nil) then
         self._Initialized = inInitialized
     end
@@ -29,7 +29,7 @@ end
 function RankCollection:Initialize()
 	if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
-		for _RankIndex, _RankName in pairs (XFG.Cache.Ranks) do
+		for _RankIndex, _RankName in pairs (XFG.Settings.Ranks) do
             local _NewRank = Rank:new()
 			_NewRank:SetKey(tonumber(_RankIndex))
 			_NewRank:SetID(tonumber(_RankIndex))
@@ -38,10 +38,10 @@ function RankCollection:Initialize()
 				_NewRank:SetAltName(XFG.Config.Rank[_NewRank:GetID()])
 			end
 			self:AddRank(_NewRank)
-			XFG.Cache.DataText.Guild.Ranks[tonumber(_RankIndex)] = _RankIndex .. ' - ' .. _NewRank:GetName()
-			XFG:Debug(LogCategory, 'Initialized confederate rank [%s]', XFG.Cache.DataText.Guild.Ranks[_RankIndex])
+			XFG.Settings.DataText.Guild.Ranks[tonumber(_RankIndex)] = _RankIndex .. ' - ' .. _NewRank:GetName()
+			XFG:Debug(LogCategory, 'Initialized confederate rank [%s]', XFG.Settings.DataText.Guild.Ranks[_RankIndex])
         end
-		XFG.Options.args.DataText.args.Guild.args.Rank.values = XFG.Cache.DataText.Guild.Ranks
+		XFG.Options.args.DataText.args.Guild.args.Rank.values = XFG.Settings.DataText.Guild.Ranks
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -49,10 +49,10 @@ end
 
 function RankCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _RankCount (" .. type(self._RankCount) .. "): ".. tostring(self._RankCount))
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
+	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+	XFG:Debug(LogCategory, '  _RankCount (' .. type(self._RankCount) .. '): ' .. tostring(self._RankCount))
+	XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 	for _, _Rank in pairs (self._Ranks) do
 		_Rank:Print()
 	end
@@ -88,7 +88,7 @@ function RankCollection:GetRankByName(inName)
 end
 
 function RankCollection:AddRank(inRank)
-    assert(type(inRank) == 'table' and inRank.__name ~= nil and inRank.__name == 'Rank', "argument must be Rank object")
+    assert(type(inRank) == 'table' and inRank.__name ~= nil and inRank.__name == 'Rank', 'argument must be Rank object')
 	if(self:Contains(inRank:GetKey()) == false) then
 		self._RankCount = self._RankCount + 1
 	end

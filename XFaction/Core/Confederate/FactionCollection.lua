@@ -1,34 +1,20 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'FactionCollection'
-local LogCategory = 'UCFaction'
+local LogCategory = 'CCFaction'
 
 FactionCollection = {}
 
-function FactionCollection:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or _typeof == 'string' or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(_typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function FactionCollection:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject) then
-		self._Key = nil
-        self._Factions = {}
-		self._FactionCount = 0
-		self._Initialized = false
-    end
-
+	self._Key = nil
+    self._Factions = {}
+	self._FactionCount = 0
+	self._Initialized = false
+    
     return Object
 end
 
@@ -50,7 +36,7 @@ function FactionCollection:Initialize()
 end
 
 function FactionCollection:IsInitialized(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument needs to be nil or boolean")
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(type(inBoolean) == 'boolean') then
         self._Initialized = inBoolean
     end
@@ -59,11 +45,11 @@ end
 
 function FactionCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _FactionCount (" .. type(self._FactionCount) .. "): ".. tostring(self._FactionCount))
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-	XFG:Debug(LogCategory, "  _Factions (" .. type(self._Factions) .. "): ")
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
+	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+	XFG:Debug(LogCategory, '  _FactionCount (' .. type(self._FactionCount) .. '): ' .. tostring(self._FactionCount))
+	XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
+	XFG:Debug(LogCategory, '  _Factions (' .. type(self._Factions) .. '): ')
 	for _, _Faction in pairs (self._Factions) do
 		_Faction:Print()
 	end
@@ -99,7 +85,7 @@ function FactionCollection:GetFactionByName(inName)
 end
 
 function FactionCollection:AddFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
+    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', 'argument must be Faction object')
 	if(self:Contains(inFaction:GetKey()) == false) then
 		self._FactionCount = self._FactionCount + 1
 	end		

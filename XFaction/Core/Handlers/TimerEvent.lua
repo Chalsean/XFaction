@@ -127,8 +127,8 @@ function TimerEvent:CallbackLogin()
         XFG:LoadConfigs()        
 
         XFG.Confederate = Confederate:new()
-        XFG.Confederate:SetName(XFG.Cache.Confederate.Name)
-        XFG.Confederate:SetKey(XFG.Cache.Confederate.Initials)
+        XFG.Confederate:SetName(XFG.Settings.Confederate.Name)
+        XFG.Confederate:SetKey(XFG.Settings.Confederate.Initials)
         XFG:Debug(LogCategory, 'Player confederate [%s]', XFG.Confederate:GetName())
         XFG.Ranks = RankCollection:new(); XFG.Ranks:Initialize()
 
@@ -192,7 +192,6 @@ function TimerEvent:CallbackLogin()
         end
 
         -- Broadcast login, refresh DTs and ready to roll        
-        --wipe(XFG.Cache)
         wipe(XFG.DB.Backup)
 
         XFG.Initialized = true
