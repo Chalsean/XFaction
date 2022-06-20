@@ -88,7 +88,9 @@ Like any other addon displayed in WowUp, the application will recognize when a n
 
 ### Debugging addons
 
-**Not needed for testing this build (2.5.3).** Three addons will be critical for collecting meaningful information to troubleshoot issues. **Not needed for testing this build (2.5.3).**
+**Not needed for testing this build (2.5.3).** 
+Three addons will be critical for collecting meaningful information to troubleshoot issues. 
+**Not needed for testing this build (2.5.3).**
 
 >BugSack/BugGrabber
 
