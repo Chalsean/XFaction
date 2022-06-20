@@ -1,7 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ChannelCollection'
 local LogCategory = 'NCChannel'
-local TotalChannels = 10
 
 ChannelCollection = {}
 
@@ -123,7 +122,7 @@ function ChannelCollection:ScanChannels()
 	self._ChannelCount = 0
 
 	-- Repopulate channels, the channel events are not very trustworthy
-	for i = 1, TotalChannels do
+	for i = 1, XFG.Settings.Network.Channel.Total do
 		self:ScanChannel(i)
 	end
 
@@ -152,8 +151,8 @@ function ChannelCollection:ScanChannel(inIndex)
 			_Channel:SetName(_ChannelInfo.name)
 		end
 
-		if(_Channel:GetKey() == XFG.Network.Channel.Name) then
-			XFG.Network.Outbox:SetLocalChannel(_Channel)
+		if(_Channel:GetKey() == XFG.Settings.Network.Channel.Name) then
+			XFG.Outbox:SetLocalChannel(_Channel)
 		end
 		if(XFG.Config.Channel.Channels['Channel' .. tostring(_Channel:GetID())] == nil) then
 			XFG.Config.Channel.Channels['Channel' .. tostring(_Channel:GetID())] = _Channel:GetKey()
@@ -163,7 +162,7 @@ function ChannelCollection:ScanChannel(inIndex)
 end
 
 function ChannelCollection:SyncChannels()
-	for i = 1, 10 do
+	for i = 1, XFG.Settings.Network.Channel.Total do
 		local _ChannelNode = 'Channel' .. tostring(i)
 		XFG.Options.args.Channel.args.Channels.args[_ChannelNode].values = XFG.Cache.Channels
 

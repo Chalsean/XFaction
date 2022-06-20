@@ -82,7 +82,7 @@ function ChatFrame:Display(inMessage)
 
     local _Event = 'GUILD'
     local _ConfigNode = 'GChat'
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.ACHIEVEMENT) then
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
         _Event = 'ACHIEVEMENT'
         _ConfigNode = 'Achievement'
     end

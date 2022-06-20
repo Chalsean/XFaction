@@ -169,10 +169,10 @@ function LinkCollection:BroadcastLinks()
 		if(strlen(_LinksString) > 0) then
 			local _NewMessage = Message:new()
 			_NewMessage:Initialize()
-			_NewMessage:SetType(XFG.Network.Type.BROADCAST)
-			_NewMessage:SetSubject(XFG.Network.Message.Subject.LINK)
+			_NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+			_NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LINK)
 			_NewMessage:SetData(_LinksString)
-			XFG.Network.Outbox:Send(_NewMessage)  
+			XFG.Outbox:Send(_NewMessage)  
 		end
 	end
 end

@@ -52,10 +52,17 @@ XFG.Cache = {
 }
 
 XFG.Settings = {
+	Player = {
+		Heartbeat = 60 * 2,      -- Seconds between player status broadcast
+	},
 	Confederate = {
 		Name = 'Eternal Kingdom',
 		Initials = 'EK',
-		OfflineDelta = 60 * 5   -- Seconds before you consider another unit offline
+		UnitStale = 60 * 5,   -- Seconds before you consider another unit offline
+		UnitScan = 60,       -- Seconds between offline checks
+	},
+	LocalGuild = {
+		ScanTimer = 30,          -- Seconds between forced local guild scans
 	},
 	Guilds = {
 		Proudmoore = {
@@ -107,7 +114,7 @@ XFG.Settings = {
 		ENKA = 'Social',
 		ENKH = 'Social'
 	},
-	Channels = {},
+	
 	DataText = {
 		Guild = {
 			Ranks = {}
@@ -200,35 +207,46 @@ XFG.Settings = {
 		72,
 		73
 	},
+	Network = {
+		Channel = {
+			Total = 10,
+		},
+		BNet = {
+			Ping = {
+				Timer = 60 * 4,     -- Seconds between pinging friends
+			},
+			Link = {
+				Broadcast = 60 * 5, -- Seconds between broadcasting links
+				Scan = 60 * 3,      -- Seconds between link scans for stale links
+				Stale = 60 * 10     -- Seconds until considering a link stale
+			},
+		},
+		Message = {
+			Subject = {
+				DATA = '1',
+				GCHAT = '2',
+				LOGOUT = '3',
+				LOGIN = '4',
+				ACHIEVEMENT = '5',
+				LINK = '6'
+			},
+			Tag = {},
+		},
+		Type = {
+			BROADCAST = '1', -- BNet + Local Channel
+			LOCAL = '3',     -- Local Channel only
+			BNET = '4'       -- BNet only
+		},
+		Mailbox = {
+			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
+			Stale = 60 * 5   -- Seconds until a message is considered stale
+		},
+	},
 }
 
-XFG.Network = {
-	BNet = {
-		PingTimer = 60 * 5,
-		LinksTimer = 60 * 10
-	},
-	Channel = {
-		-- This is the default, gets changed if configured properly in guild info
-		Name = XFG.Settings.Confederate.Initials .. 'XFactionChat',
-		Password = ''
-	},
-	Message = {
-		Subject = {
-			DATA = '1',
-			GCHAT = '2',
-			LOGOUT = '3',
-			LOGIN = '4',
-			ACHIEVEMENT = '5',
-			LINK = '6'
-		},
-		Tag = {
-			LOCAL = XFG.Settings.Confederate.Initials .. 'XF',
-			BNET  = XFG.Settings.Confederate.Initials .. 'BNET'
-		}
-	},
-	Type = {
-		BROADCAST = '1', -- BNet + Local Channel
-		LOCAL = '3',     -- Local Channel only
-		BNET = '4'       -- BNet only
-	}
-}
+-- This is the default, gets changed if configured properly in guild info
+XFG.Settings.Network.Channel.Name = XFG.Settings.Confederate.Initials .. 'XFactionChat'
+XFG.Settings.Network.Channel.Password = ''
+
+XFG.Settings.Network.Message.Tag.LOCAL = XFG.Settings.Confederate.Initials .. 'XF'
+XFG.Settings.Network.Message.Tag.BNET = XFG.Settings.Confederate.Initials .. 'BNET'

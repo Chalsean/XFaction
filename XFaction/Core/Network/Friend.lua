@@ -137,7 +137,7 @@ function Friend:IsRunningAddon(inBoolean)
                 _NewLink:SetToRealm(_Target:GetRealm())
                 _NewLink:SetToFaction(_Target:GetFaction())
                 _NewLink:Initialize()
-                XFG.Network.BNet.Links:AddLink(_NewLink)
+                XFG.Links:AddLink(_NewLink)
                 XFG.DataText.Links:RefreshBroker()
             end
         end

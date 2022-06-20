@@ -221,7 +221,7 @@ function Message:RemoveTarget(inTarget)
 end
 
 function Message:SetAllTargets()
-    for _, _Target in XFG.Network.BNet.Targets:Iterator() do
+    for _, _Target in XFG.Targets:Iterator() do
         self:AddTarget(_Target)
     end
 end
@@ -252,8 +252,8 @@ function Message:SetRemainingTargets(inTargetString)
     self._TargetCount = 0
     local _Targets = string.Split(inTargetString, '|')
     for _, _TargetKey in pairs (_Targets) do
-        if(_TargetKey ~= nil and XFG.Network.BNet.Targets:ContainsByKey(_TargetKey)) then
-            self:AddTarget(XFG.Network.BNet.Targets:GetTargetByKey(_TargetKey))
+        if(_TargetKey ~= nil and XFG.Targets:ContainsByKey(_TargetKey)) then
+            self:AddTarget(XFG.Targets:GetTargetByKey(_TargetKey))
         end
     end
 end
@@ -280,7 +280,7 @@ function Message:Copy(inMessage)
 end
 
 function Message:HasUnitData()
-    return self:GetSubject() == XFG.Network.Message.Subject.DATA or self:GetSubject() == XFG.Network.Message.Subject.LOGIN
+    return self:GetSubject() == XFG.Settings.Network.Message.Subject.DATA or self:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN
 end
 
 function Message:GetVersion()

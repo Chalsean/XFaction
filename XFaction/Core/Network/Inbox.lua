@@ -27,10 +27,11 @@ end
 function Inbox:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
-        XFG:Info(LogCategory, "Registering to receive [%s] messages", XFG.Network.Message.Tag.LOCAL)
-        XFG:RegisterComm(XFG.Network.Message.Tag.LOCAL, function(inMessageType, inMessage, inDistribution, inSender) 
-                                                           XFG.Network.Inbox:Receive(inMessageType, inMessage, inDistribution, inSender)
-                                                        end)
+        XFG:Info(LogCategory, "Registering to receive [%s] messages", XFG.Settings.Network.Message.Tag.LOCAL)
+        XFG:RegisterComm(XFG.Settings.Network.Message.Tag.LOCAL, 
+                         function(inMessageType, inMessage, inDistribution, inSender) 
+                            XFG.Inbox:Receive(inMessageType, inMessage, inDistribution, inSender)
+                         end)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -61,7 +62,7 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     -- If not a message from this addon, ignore
     local _AddonTag = false
-    for _, _Tag in pairs (XFG.Network.Message.Tag) do
+    for _, _Tag in pairs (XFG.Settings.Network.Message.Tag) do
         if(inMessageTag == _Tag) then
             _AddonTag = true
             break
@@ -89,11 +90,11 @@ function Inbox:Process(inMessage, inMessageTag)
 	end
 
     -- Have you seen this message before?
-    if(XFG.Network.Mailbox:Contains(inMessage:GetKey())) then
+    if(XFG.Mailbox:Contains(inMessage:GetKey())) then
         --XFG:Debug(LogCategory, "This message has already been processed %s", inMessage:GetKey())
         return
     else
-        XFG.Network.Mailbox:AddMessage(inMessage)
+        XFG.Mailbox:AddMessage(inMessage)
     end
 
     -- Deserialize unit data
@@ -110,23 +111,23 @@ function Inbox:Process(inMessage, inMessageTag)
     inMessage:ShallowPrint()
 
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-    if(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.LOCAL) then
-        inMessage:SetType(XFG.Network.Type.BNET)
-        XFG.Network.Outbox:Send(inMessage)
+    if(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
+        inMessage:SetType(XFG.Settings.Network.Type.BNET)
+        XFG.Outbox:Send(inMessage)
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
-    elseif(inMessage:HasTargets() and inMessageTag == XFG.Network.Message.Tag.BNET) then
-        inMessage:SetType(XFG.Network.Type.BROADCAST)
-        XFG.Network.Outbox:Send(inMessage)
+    elseif(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
+        inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        XFG.Outbox:Send(inMessage)
 
     -- If came via BNet and no more targets, message locally only
-    elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Network.Message.Tag.BNET) then
-        inMessage:SetType(XFG.Network.Type.LOCAL)
-        XFG.Network.Outbox:Send(inMessage)
+    elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
+        inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
+        XFG.Outbox:Send(inMessage)
     end
 
     -- Process gchat/achievement messages
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Network.Message.Subject.ACHIEVEMENT) then
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
         if(XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
             XFG.Frames.Chat:Display(inMessage)
         end
@@ -134,14 +135,14 @@ function Inbox:Process(inMessage, inMessageTag)
     end
 
     -- Process link message
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LINK) then
-        XFG.Network.BNet.Links:ProcessMessage(inMessage)
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LINK) then
+        XFG.Links:ProcessMessage(inMessage)
         XFG.DataText.Links:RefreshBroker()
         return
     end
 
     -- Display system message that unit has logged off
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         XFG.Confederate:RemoveUnit(inMessage:GetFrom())
         XFG.DataText.Guild:RefreshBroker()
         if(XFG.Player.Realm:Equals(inMessage:GetRealm()) == false or XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
@@ -160,10 +161,10 @@ function Inbox:Process(inMessage, inMessageTag)
         end
 
         -- If unit has just logged in, reply with latest information
-        if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+        if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
             -- Used to whisper back but was running into Blizz API bug, so just broadcast
-            XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit)
-            XFG.Network.BNet.Links:BroadcastLinks()
+            XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
+            XFG.Links:BroadcastLinks()
             -- Display system message that unit has logged on
             if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) == false or XFG.Player.Guild:Equals(_UnitData:GetGuild()) == false) then
                 XFG.Frames.System:Display(inMessage)

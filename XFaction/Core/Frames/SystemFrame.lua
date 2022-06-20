@@ -57,7 +57,7 @@ function SystemFrame:Display(inMessage)
     local _MainName = nil
     local _Guild = nil
 
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
         local _UnitData = inMessage:GetData()
         _UnitName = _UnitData:GetName()
         if(_UnitData:HasMainName()) then
@@ -79,9 +79,9 @@ function SystemFrame:Display(inMessage)
 
     _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> '
     
-    if(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGOUT) then
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         _Message = _Message .. XFG.Lib.Locale['CHAT_LOGOUT']
-    elseif(inMessage:GetSubject() == XFG.Network.Message.Subject.LOGIN) then
+    elseif(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
         _Message = _Message .. XFG.Lib.Locale['CHAT_LOGIN']
         if(XFG.Config.Chat.Login.Sound) then
             PlaySound(3332, 'Master')

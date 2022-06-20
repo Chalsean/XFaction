@@ -110,7 +110,7 @@ function FriendCollection:RemoveFriend(inKey)
 	assert(type(inKey) == 'number')
 	if(self:Contains(inKey)) then
 		local _Friend = self:GetFriend(inKey)
-		XFG.Network.BNet.Links:RemoveNode(_Friend:GetName())
+		XFG.Links:RemoveNode(_Friend:GetName())
 		self._FriendsCount = self._FriendsCount - 1
 		self._Friends[inKey] = nil		
 	end
@@ -137,7 +137,7 @@ local function IsLink(inAccountInfo)
 		if(_Realm == nil) then return false end
 
 		local _Faction = XFG.Factions:GetFactionByName(inAccountInfo.gameAccountInfo.factionName)
-		if(XFG.Network.BNet.Targets:Contains(_Realm, _Faction)) then
+		if(XFG.Targets:Contains(_Realm, _Faction)) then
 			return true
 		end
 	end
@@ -154,7 +154,7 @@ function FriendCollection:CheckFriend(inKey)
 	-- Did they go offline?
     if(self:Contains(_AccountInfo.bnetAccountID)) then
 		if(IsLink(_AccountInfo) == false) then
-			local _Friend = XFG.Network.BNet.Friends:GetFriend(_AccountInfo.bnetAccountID)
+			local _Friend = XFG.Friends:GetFriend(_AccountInfo.bnetAccountID)
 			self:RemoveFriend(_Friend:GetKey())
 			XFG:Info(LogCategory, "Friend went offline or to unsupported guild [%s:%d:%d:%d]", _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
 			return true
@@ -164,7 +164,7 @@ function FriendCollection:CheckFriend(inKey)
 	elseif(IsLink(_AccountInfo)) then
 		local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
 		local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
-		local _Target = XFG.Network.BNet.Targets:GetTarget(_Realm, _Faction)
+		local _Target = XFG.Targets:GetTarget(_Realm, _Faction)
 		local _NewFriend = Friend:new()
 		_NewFriend:SetKey(_AccountInfo.bnetAccountID)
 		_NewFriend:SetID(inKey)
@@ -178,7 +178,7 @@ function FriendCollection:CheckFriend(inKey)
 		XFG:Info(LogCategory, "Friend logged into supported guild [%s:%d:%d:%d]", _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())
 		-- Ping them to see if they're running the addon
 		if(XFG.Initialized) then 
-			XFG.Network.BNet.Comm:PingFriend(_NewFriend) 
+			XFG.BNet:PingFriend(_NewFriend) 
 		end
 		return true
 	end
@@ -194,7 +194,7 @@ function FriendCollection:CheckFriends()
 		end
 	end
 	if(_LinksChanged) then
-		XFG.Network.BNet.Links:BroadcastLinks()
+		XFG.Links:BroadcastLinks()
 		XFG.DataText.Links:RefreshBroker()
 	end
 end
@@ -211,8 +211,8 @@ end
 function FriendCollection:RestoreBackup()
 	if(XFG.DB.Backup == nil or XFG.DB.Backup.Friends == nil) then return end
     for _, _Key in pairs (XFG.DB.Backup.Friends) do
-		if(XFG.Network.BNet.Friends:Contains(_Key)) then
-			local _Friend = XFG.Network.BNet.Friends:GetFriend(_Key)
+		if(XFG.Friends:Contains(_Key)) then
+			local _Friend = XFG.Friends:GetFriend(_Key)
 			_Friend:IsRunningAddon(true)
 			XFG:Info(LogCategory, "  Restored %s friend information from backup", _Friend:GetTag())
 		end

@@ -92,7 +92,7 @@ end
 function Confederate:OfflineUnits(inEpochTime)
     assert(type(inEpochTime) == 'number')
     for _, _Unit in self:Iterator() do
-        if(_Unit:IsPlayer() == false and _Unit:GetTimeStamp() + XFG.Settings.Confederate.OfflineDelta < inEpochTime) then
+        if(_Unit:IsPlayer() == false and _Unit:GetTimeStamp() < inEpochTime) then
             self:RemoveUnit(_Unit:GetKey())
         end
     end

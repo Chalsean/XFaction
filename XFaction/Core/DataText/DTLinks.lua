@@ -61,7 +61,7 @@ function DTLinks:Print()
 end
 
 function DTLinks:CountLinks()
-	self._Count =  XFG.Network.BNet.Links:GetCount()
+	self._Count =  XFG.Links:GetCount()
 end
 
 function DTLinks:RefreshBroker()
@@ -74,7 +74,7 @@ end
 function DTLinks:OnEnter(this)
 	if(XFG.Initialized == false) then return end
 
-	local _TargetCount = XFG.Network.BNet.Targets:GetCount() + 1
+	local _TargetCount = XFG.Targets:GetCount() + 1
 	
 	local _Tooltip
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
@@ -109,7 +109,7 @@ function DTLinks:OnEnter(this)
 	_TargetColumn[_Key] = 1
 	local i = 2
 
-	for _, _Target in XFG.Network.BNet.Targets:Iterator() do
+	for _, _Target in XFG.Targets:Iterator() do
 		local _Realm = _Target:GetRealm()
 		local _Faction = _Target:GetFaction()
 		local _TargetName = format('%s%s', format(XFG.Icons.String, _Faction:GetIconID()), _Realm:GetName())
@@ -123,7 +123,7 @@ function DTLinks:OnEnter(this)
 	line = self._Tooltip:AddLine()
 
 	if(XFG.Initialized) then
-		for _, _Link in XFG.Network.BNet.Links:Iterator() do
+		for _, _Link in XFG.Links:Iterator() do
 			if((XFG.Config.DataText.Links.OnlyMine and _Link:IsMyLink()) or XFG.Config.DataText.Links.OnlyMine == false) then
 				local _FromRealm = _Link:GetFromRealm()
 				local _FromFaction = _Link:GetFromFaction()

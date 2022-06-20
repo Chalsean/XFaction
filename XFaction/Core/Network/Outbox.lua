@@ -79,16 +79,16 @@ function Outbox:Send(inMessage)
     inMessage:ShallowPrint()
 
     -- If you messaged all possible realm/faction combinations, can switch to local broadcast    
-    if(inMessage:GetType() == XFG.Network.Type.BROADCAST or inMessage:GetType() == XFG.Network.Type.BNET) then
-        XFG.Network.BNet.Comm:Send(inMessage)
-        if(inMessage:HasTargets() == false and inMessage:GetType() == XFG.Network.Type.BROADCAST) then
+    if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
+        XFG.BNet:Send(inMessage)
+        if(inMessage:HasTargets() == false and inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST) then
             XFG:Debug(LogCategory, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
-            inMessage:SetType(XFG.Network.Type.LOCAL)
+            inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
         end
     end
 
     -- If we were only supposed to do BNet, we're done
-    if(inMessage:GetType() == XFG.Network.Type.BNET) then
+    if(inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
         return
     end
 
@@ -100,14 +100,14 @@ function Outbox:BroadcastLocally(inData)
     if(self:HasLocalChannel()) then
         -- Most addons use guild or raid chat, because were trying to hit multiple guilds on the same faction side need an actual channel
         local _Channel = self:GetLocalChannel()
-        XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Network.Message.Tag.LOCAL)
-        XFG:SendCommMessage(XFG.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
+        XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Settings.Network.Message.Tag.LOCAL)
+        XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
     end
 end
 
 function Outbox:BroadcastUnitData(inUnitData, inSubject)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
-	if(inSubject == nil) then inSubject = XFG.Network.Message.Subject.DATA end
+	if(inSubject == nil) then inSubject = XFG.Settings.Network.Message.Subject.DATA end
     -- Update the last sent time, dont need to heartbeat for awhile
     if(inUnitData:IsPlayer()) then
         local _EpochTime = GetServerTime()
@@ -117,7 +117,7 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     local _Message = Message:new()
     _Message:Initialize()
     _Message:SetFrom(XFG.Player.Unit:GetKey())
-    _Message:SetType(XFG.Network.Type.BROADCAST)
+    _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
     _Message:SetSubject(inSubject)
     _Message:SetData(inUnitData)
     self:Send(_Message)    

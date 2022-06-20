@@ -1,11 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'TimerEvent'
 local LogCategory = 'HETimer'
-local _OfflineTimer = 60       -- Seconds between checks if someone is offline
-local _HeartbeatDelta = 60 * 2 -- Seconds between sending your own status, regardless if things have changed
-local _GuildRosterDelta = 30   -- Seconds between local guild scans
-local _PingFriends = 60 * 1    -- Seconds between pinging friends
-local _StaleLinks = 60 * 10    -- Seconds until considering a link stale
 
 TimerEvent = {}
 
@@ -23,27 +18,24 @@ end
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
         XFG.Cache.LoginTimerStart = GetServerTime()
-
-        XFG.Cache.LoginTimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, 1) -- config
-        XFG:Info(LogCategory, "Scheduled monitor for guild information becoming available")
-        
-        XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, 60 * 5) -- config
-        XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", 60 * 5)
-        XFG:ScheduleRepeatingTimer(self.CallbackBNetMailboxTimer, 60 * 5) -- config
-        XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", 60 * 5)        
-        XFG:ScheduleRepeatingTimer(self.CallbackOffline, _OfflineTimer) -- config
-        XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", _OfflineTimer)
-        XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, _HeartbeatDelta) -- config
-        XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", _HeartbeatDelta)
-        XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, _GuildRosterDelta) -- config
-        XFG:Info(LogCategory, "Scheduled forcing local guild roster updates for %d seconds", _GuildRosterDelta)
-        XFG:ScheduleRepeatingTimer(self.CallbackPingFriends, XFG.Network.BNet.PingTimer) -- config
-        XFG:Info(LogCategory, "Scheduled to ping friends every %d seconds", XFG.Network.BNet.PingTimer)
-        XFG:ScheduleRepeatingTimer(self.CallbackLinks, 60 * 5) -- config
-        XFG:Info(LogCategory, "Scheduled to broadcast links every %d seconds", 60 * 5)
-        XFG:ScheduleRepeatingTimer(self.CallbackStaleLinks, _StaleLinks) -- config
-        XFG:Info(LogCategory, "Scheduled to remove stale links after %d seconds", _StaleLinks)
-
+        XFG.Cache.LoginTimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, 1)
+        XFG:Info(LogCategory, "Scheduled monitor for guild information becoming available")        
+        XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, XFG.Settings.Network.Mailbox.Scan)
+        XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", XFG.Settings.Network.Mailbox.Scan)
+        XFG:ScheduleRepeatingTimer(self.CallbackBNetMailboxTimer, XFG.Settings.Network.Mailbox.Scan)
+        XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", XFG.Settings.Network.Mailbox.Scan)        
+        XFG:ScheduleRepeatingTimer(self.CallbackOffline, XFG.Settings.Confederate.UnitScan)
+        XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", XFG.Settings.Confederate.UnitScan)
+        XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, XFG.Settings.Player.Heartbeat)
+        XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", XFG.Settings.Player.Heartbeat)
+        XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, XFG.Settings.LocalGuild.ScanTimer)
+        XFG:Info(LogCategory, "Scheduled forcing local guild roster updates for %d seconds", XFG.Settings.LocalGuild.ScanTimer)
+        XFG:ScheduleRepeatingTimer(self.CallbackPingFriends, XFG.Settings.Network.BNet.Ping.Timer)
+        XFG:Info(LogCategory, "Scheduled to ping friends every %d seconds", XFG.Settings.Network.BNet.Ping.Timer)
+        XFG:ScheduleRepeatingTimer(self.CallbackLinks, XFG.Settings.Network.BNet.Link.Broadcast)
+        XFG:Info(LogCategory, "Scheduled to broadcast links every %d seconds", XFG.Settings.Network.BNet.Link.Broadcast)
+        XFG:ScheduleRepeatingTimer(self.CallbackStaleLinks, XFG.Settings.Network.BNet.Link.Scan)
+        XFG:Info(LogCategory, "Scheduled to remove stale links after %d seconds", XFG.Settings.Network.BNet.Link.Scan)
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -144,34 +136,40 @@ function TimerEvent:CallbackLogin()
             end
 
             -- Start network setup
-            XFG.Network.Outbox = Outbox:new()
-            XFG.Network.Inbox = Inbox:new(); XFG.Network.Inbox:Initialize()
+            XFG.Outbox = Outbox:new()
+            XFG.Inbox = Inbox:new(); XFG.Inbox:Initialize()
             
-            XFG.Network.BNet.Comm = BNet:new(); BNet:Initialize()
-            XFG.Network.BNet.Friends = FriendCollection:new(); XFG.Network.BNet.Friends:Initialize()
-            XFG.Network.BNet.Links = LinkCollection:new(); XFG.Network.BNet.Links:Initialize()      
+            XFG.BNet = BNet:new(); BNet:Initialize()
+            XFG.Friends = FriendCollection:new(); XFG.Friends:Initialize()
+            XFG.Links = LinkCollection:new(); XFG.Links:Initialize()      
 
             -- If this is a reload, restore friends addon flag
             if(XFG.DB.UIReload) then
-                XFG.Network.BNet.Friends:RestoreBackup()
-                XFG.Network.BNet.Links:RestoreBackup()
+                XFG.Friends:RestoreBackup()
+                XFG.Links:RestoreBackup()
             end
-            XFG.Network.Channels = ChannelCollection:new(); XFG.Network.Channels:Initialize()
+            XFG.Channels = ChannelCollection:new(); XFG.Channels:Initialize()
 
-            -- Use temporary so if they stop using addon, the channel goes away
-            if(XFG.Network.Outbox:HasLocalChannel() == false) then
+            -- Log into addon channel for realm/faction wide communication
+            if(XFG.Outbox:HasLocalChannel() == false) then
                 local _GuildInfo = C_Club.GetClubInfo(XFG.Player.Guild:GetID())
                 local _Lines = string.Split(_GuildInfo.description, '\n')
                 for _, _Line in pairs (_Lines) do
                     local _Parts = string.Split(_Line, ':')
                     if(_Parts[1] == 'XFc') then
-                        XFG.Network.Channel.Name = _Parts[2]
-                        XFG.Network.Channel.Password = _Parts[3]
+                        XFG.Settings.Network.Channel.Name = _Parts[2]
+                        XFG.Settings.Network.Channel.Password = _Parts[3]
                     end
                 end
-                JoinTemporaryChannel(XFG.Network.Channel.Name, XFG.Network.Channel.Password)
-                XFG:Info(LogCategory, 'Joined temporary confederate channel [%s]', XFG.Network.Channel.Name)
-                XFG.Network.Channels:SyncChannels()
+                -- Use temporary channel so if they stop using addon, the channel goes away
+                JoinTemporaryChannel(XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password)
+                XFG:Info(LogCategory, 'Joined temporary confederate channel [%s]', XFG.Settings.Network.Channel.Name)
+                local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Settings.Network.Channel.Name)
+                local _NewChannel = Channel:new()
+			    _NewChannel:SetKey(_ChannelInfo.shortcut)
+			    _NewChannel:SetID(_ChannelInfo.localID)
+			    _NewChannel:SetShortName(_ChannelInfo.shortcut)
+			    XFG.Channels:AddChannel(_NewChannel)
             end
 
             -- Register handlers
@@ -184,16 +182,16 @@ function TimerEvent:CallbackLogin()
             XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
             XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
             XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
-
-            -- Broadcast locally, its not dependent upon BNet
-
-            -- Ping friends to find out whos available for BNet
+            
             if(XFG.DB.UIReload == false) then
-                XFG.Network.BNet.Comm:PingFriends()                 
+                -- We dont have any BNet contacts yet but maybe someone else does, so go ahead and broadcast
+                XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
+                -- Ping friends to find out whos available for BNet
+                XFG.BNet:PingFriends()                 
             end
 
             -- This is stuff waiting a few seconds for ping responses
-            XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 10)
+            XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 15)
 
             XFG.Initialized = true
 
@@ -208,27 +206,27 @@ function TimerEvent:CallbackLogin()
 end
 
 function TimerEvent:CallbackDelayedStartTimer()
-    -- Message just to BNet, already broadcasted locally
     if(XFG.DB.UIReload == false) then
-        XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.LOGIN)
-        XFG.Network.BNet.Links:BroadcastLinks()
+        XFG.Links:BroadcastLinks()
     end
     XFG.DB.UIReload = false
 end
 
 -- Cleanup mailbox
 function TimerEvent:CallbackMailboxTimer()
-    XFG.Network.Mailbox:Purge()
+    local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
+    XFG.Mailbox:Purge(_EpochTime)
 end
 
 -- Cleanup BNet mailbox
 function TimerEvent:CallbackBNetMailboxTimer()
-    XFG.Network.BNet.Comm:Purge()
+    local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
+    XFG.BNet:Purge(_EpochTime)
 end
 
 -- If you haven't heard from a unit in X minutes, set them to offline
 function TimerEvent:CallbackOffline()
-    local _EpochTime = GetServerTime()
+    local _EpochTime = GetServerTime() - XFG.Settings.Confederate.UnitStale
     XFG.Confederate:OfflineUnits(_EpochTime)
 end
 
@@ -236,7 +234,7 @@ end
 function TimerEvent:CallbackHeartbeat()
     if(XFG.Initialized and XFG.Player.Unit:GetTimeStamp() + _HeartbeatDelta < GetServerTime()) then
         XFG:Debug(LogCategory, "Sending heartbeat")
-        XFG.Network.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Network.Message.Subject.DATA)
+        XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.DATA)
     end
 end
 
@@ -249,16 +247,16 @@ end
 
 -- Periodically ping friends to see who is running addon
 function TimerEvent:CallbackPingFriends()
-    XFG.Network.BNet.Comm:PingFriends()
+    XFG.BNet:PingFriends()
 end
 
 -- Periodically broadcast your links
 function TimerEvent:CallbackLinks()
-    XFG.Network.BNet.Links:BroadcastLinks()
+    XFG.Links:BroadcastLinks()
 end
 
 -- Periodically purge stale links
 function TimerEvent:CallbackStaleLinks()
-    local _EpochTime = GetServerTime() - _StaleLinks
-    XFG.Network.BNet.Links:PurgeStaleLinks(_EpochTime)
+    local _EpochTime = GetServerTime() - XFG.Settings.Network.BNet.Link.Stale
+    XFG.Links:PurgeStaleLinks(_EpochTime)
 end

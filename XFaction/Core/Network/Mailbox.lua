@@ -83,11 +83,10 @@ function Mailbox:RemoveMessage(inKey)
 	return self:Contains(inKey) == false
 end
 
--- Review: Should back the epoch time an argument
-function Mailbox:Purge()
-	local _ServerEpochTime = GetServerTime()
+function Mailbox:Purge(inEpochTime)
+	assert(type(inEpochTime) == 'number')
 	for _, _Message in self:Iterator() do
-		if(_Message:GetTimeStamp() + 60 * 6 < _ServerEpochTime) then -- config
+		if(_Message:GetTimeStamp() < inEpochTime) then
 			self:RemoveMessage(_Message:GetKey())
 		end
 	end

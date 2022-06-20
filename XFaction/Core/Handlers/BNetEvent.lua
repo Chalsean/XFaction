@@ -53,5 +53,5 @@ end
 -- The friend API leaves much to be desired, it spams and will give you invalid indexes like 0
 -- Making the index kind of worthless, it's easier to just scan
 function BNetEvent:CallbackFriendInfo(inFriendIndex)
-    XFG.Network.BNet.Friends:CheckFriends()
+    XFG.Friends:CheckFriends()
 end

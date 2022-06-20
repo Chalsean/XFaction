@@ -59,13 +59,13 @@ function SystemEvent:CallbackLogout()
     if(XFG.DB.UIReload) then 
         -- Backup information on reload to be restored
         XFG.Confederate:CreateBackup()
-        XFG.Network.BNet.Friends:CreateBackup()
-        XFG.Network.BNet.Links:CreateBackup()
+        XFG.Friends:CreateBackup()
+        XFG.Links:CreateBackup()
     else
         local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
-        _NewMessage:SetType(XFG.Network.Type.BROADCAST)
-        _NewMessage:SetSubject(XFG.Network.Message.Subject.LOGOUT)
+        _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
         if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
             _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
         end
@@ -73,7 +73,7 @@ function SystemEvent:CallbackLogout()
         _NewMessage:SetRealm(XFG.Player.Realm)
         _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
         _NewMessage:SetData(' ')
-        XFG.Network.Outbox:Send(_NewMessage)
+        XFG.Outbox:Send(_NewMessage)
     end    
 end
 

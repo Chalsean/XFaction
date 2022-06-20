@@ -8,9 +8,9 @@ function XFG:DecodeMessage(inEncodedMessage)
 
 	local _Message
 	-- GCHAT, LOGOUT, ACHIEVEMENT use GuildMessage class
-	if(_MessageData.S == XFG.Network.Message.Subject.GCHAT or
-	   _MessageData.S == XFG.Network.Message.Subject.LOGOUT or
-	   _MessageData.S == XFG.Network.Message.Subject.ACHIEVEMENT) then
+	if(_MessageData.S == XFG.Settings.Network.Message.Subject.GCHAT or
+	   _MessageData.S == XFG.Settings.Network.Message.Subject.LOGOUT or
+	   _MessageData.S == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
 		_Message = GuildMessage:new()
 	else
 	-- DATA, LOGIN, LINKS use Message class
