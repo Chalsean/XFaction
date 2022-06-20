@@ -1,7 +1,10 @@
 local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Initialize'
 
-function XFG:Init()	
+function XFG:Init()
+	-- These handlers will register additional handlers
+	
+
 	XFG.Player.GUID = UnitGUID('player')
 	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
 	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
@@ -41,11 +44,10 @@ function XFG:Init()
 	end
 
 	XFG.Network.Mailbox = Mailbox:new(); XFG.Network.Mailbox:Initialize()	
-	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()	
-	
-	-- These handlers will register additional handlers
+	XFG.Network.BNet.Targets = TargetCollection:new(); XFG.Network.BNet.Targets:Initialize()
+
+	-- A significant portion of start up is delayed due to guild information not being available yet
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
-	XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
 	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()

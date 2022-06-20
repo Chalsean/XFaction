@@ -32,8 +32,6 @@ end
 
 function SystemEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:RegisterEvent('PLAYER_ENTERING_WORLD', self.CallbackEnterWorld)
-        XFG:Info(LogCategory, "Registered for PLAYER_ENTERING_WORLD events")
         XFG:RegisterEvent('PLAYER_LOGOUT', self.CallbackLogout)
         XFG:Info(LogCategory, "Registered for PLAYER_LOGOUT events")
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
@@ -55,10 +53,6 @@ function SystemEvent:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-end
-
-function SystemEvent:CallbackEnterWorld(inInitialLogin, inReloadUI)
-    
 end
 
 function SystemEvent:CallbackLogout()

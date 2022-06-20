@@ -4,8 +4,7 @@
     <Script file='ChannelEvent.lua'/>
     <Script file='ChatEvent.lua'/>
     <Script file='CovenantEvent.lua'/>
-    <Script file='GuildEvent.lua'/>    
-    <Script file='ProfessionEvent.lua'/>
+    <Script file='GuildEvent.lua'/>
     <Script file='SoulbindEvent.lua'/>
     <Script file='SpecEvent.lua'/>
     <Script file='SystemEvent.lua'/>
