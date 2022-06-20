@@ -19,7 +19,7 @@ function BNet:new()
 end
 
 function BNet:IsInitialized(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
         self._Initialized = inBoolean
     end
@@ -31,7 +31,7 @@ function BNet:Initialize()
         self:SetKey(math.GenerateUID())
         -- Technically this should be with the other handlers but wanted to keep the BNet logic together
         XFG:RegisterEvent('BN_CHAT_MSG_ADDON', self.Receive)
-        XFG:Info(LogCategory, "Registered for BN_CHAT_MSG_ADDON events")
+        XFG:Info(LogCategory, 'Registered for BN_CHAT_MSG_ADDON events')
         self:IsInitialized(true)
     end
     return self:IsInitialized()
