@@ -9,7 +9,6 @@ This addon is in very early stages (alpha) and currently only Eternal Kingdom (E
 - Eternal Kingdom (EKA)
 - Eternal Kingdom Horde (EKH)
 - Endless Kingdom (ENK)
-- Enduring Kingdom (EDK)
 - Alternal Kingdom (AK)
 - Alternal Kingdom Two (AK2)
 - Alternal Kingdom Three (AK3)
@@ -18,8 +17,8 @@ This addon is in very early stages (alpha) and currently only Eternal Kingdom (E
 ## What is included
 The addon should provide the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederate
-- This particular build will route merged guild chat to #EKXFactionChat to prevent cluttering of guild chat for testers. The addon will automatically join testers to this channel upon loading, but you may need to enable seeing messages from the channel.
-- Personal achievements forwarded to confederate members in other guilds
+- As of 2.5.3, the merged guild chat is routed to guild chat, similar to GreenWall
+- Personal achievements forwarded to confederate members in other guilds (Known Bug: player name can sometimes bug out when an achievement is announced)
 
 > Merged system messages across guilds/realms/factions in the confederate
 - When another player using the addon comes online/offline, you should see a system message as if they were local guild member
@@ -35,7 +34,7 @@ The addon should provide the following functionalities:
 > Links (X) DT
 - This will show all the active BNet links within the confederate
 
-> 3 misc DTs: Soulbind (X), WoW Token (X), Shard (X)
+> 3 miscellaneous DTs: Soulbind (X), WoW Token (X), Shard (X)
 - Soulbind: left click opens Soulbind frame, right click to change Soulbinds
 - WoW Token: Simply displays the current WoW token market price
 - Shard: Simply displays the shard # you are currently on (helpful for rare mob hunting)
@@ -89,7 +88,7 @@ Like any other addon displayed in WowUp, the application will recognize when a n
 
 ### Debugging addons
 
-Three addons will be critical for collecting meaningful information to troubleshoot issues. Please install them as well.
+**Not needed for testing this build (2.5.3).** Three addons will be critical for collecting meaningful information to troubleshoot issues. **Not needed for testing this build (2.5.3).**
 
 >BugSack/BugGrabber
 
@@ -109,8 +108,8 @@ Community channels are cross-realm/faction but do not have the "invisible" API c
 
 This dependency on BNet means users will need BNet friends online and logged into the realm(s) in question to form a bridge of communication. The addon will leverage other guild member's bridges to enable communication. You do not need to have a friend of your own logged in to the connected guild/realm, just someone online running the addon does. An important note: anyone who flags themselves as "offline" (aka incognito) cannot be used as a BNet link.
 
-For the addon to "work" from an EK member perspective, there needs to be a user actively logged onto a guild representing each faction on a given realm, e.g., AK3-Proudmoore (A Proudmoore), AK4-Proudmoore (H Proudmoore), EK-Area52 (H Area 52). These three online users will need to be Bnet friends with at least one of the three. Anyone running the addon (without being friends with the three "bridge" users) will then see messages regardless of what EK guild toon they are currently logged into.
+For the addon to "work" from an EK member perspective, there needs to be a user actively logged onto a guild representing each faction on a given realm, e.g., AK3-Proudmoore (A Proudmoore), AK4-Proudmoore (H Proudmoore), ENK (A Proudmoore). These three online users will need to be Bnet friends with at least one of the three. Anyone running the addon (without being friends with the three "bridge" users) will then see messages regardless of what EK guild toon they are currently logged into.
 
 A lot of the test cases are going to focus on validating this BNet communication works as intended, which is going to require coordination between the testers.
 
-Testing is being coordinated on the guild discord server, channel #addon-testing.
+Testing is being coordinated on the guild discord server, channel #xfaction-addon-testing.
