@@ -10,7 +10,7 @@ function XFG:Init()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
 
 	-- Make sure we have all the realm/guild combinations accounted for
-	for _RealmName, _FactionGuilds in pairs(XFG.Cache.Guilds) do
+	for _RealmName, _FactionGuilds in pairs(XFG.Settings.Guilds) do
 		XFG:Debug(LogCategory, 'Initializing realm [%s]', _RealmName)
 		local _NewRealm = Realm:new()
 		_NewRealm:SetKey(_RealmName)

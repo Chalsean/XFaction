@@ -47,7 +47,9 @@ XFG.Player = {
 }
 
 XFG.Frames = {}
-XFG.Cache = {}
+XFG.Cache = {
+	Channels = {}
+}
 
 XFG.Settings = {
 	Confederate = {
@@ -207,7 +209,7 @@ XFG.Network = {
 	},
 	Channel = {
 		-- This is the default, gets changed if configured properly in guild info
-		Name = XFG.Cache.Confederate.Initials .. 'XFactionChat',
+		Name = XFG.Settings.Confederate.Initials .. 'XFactionChat',
 		Password = ''
 	},
 	Message = {
@@ -220,8 +222,8 @@ XFG.Network = {
 			LINK = '6'
 		},
 		Tag = {
-			LOCAL = XFG.Cache.Confederate.Initials .. 'XF',
-			BNET  = XFG.Cache.Confederate.Initials .. 'BNET'
+			LOCAL = XFG.Settings.Confederate.Initials .. 'XF',
+			BNET  = XFG.Settings.Confederate.Initials .. 'BNET'
 		}
 	},
 	Type = {
