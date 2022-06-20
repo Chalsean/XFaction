@@ -86,11 +86,9 @@ The easiest way is to use WowUp client.
 
 Like any other addon displayed in WowUp, the application will recognize when a new build is made available via Github. To install a newer version, you will only need to click on "Upgrade". If not using WowUp client, you can download the .zip file from the repository and install manually to your Addons folder.
 
-### Debugging addons
+### Debugging Addons - NOT Needed for 2.5.3 Testing
 
-**Not needed for testing this build (2.5.3).** 
 Three addons will be critical for collecting meaningful information to troubleshoot issues. 
-**Not needed for testing this build (2.5.3).**
 
 >BugSack/BugGrabber
 
