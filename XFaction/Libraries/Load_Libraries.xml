@@ -13,6 +13,7 @@
     <Include file="Ace3\AceLocale-3.0\AceLocale-3.0.xml"/>
     <Include file="Ace3\AceSerializer-3.0\AceSerializer-3.0.xml"/>  
     <Include file="Ace3\AceTimer-3.0\AceTimer-3.0.xml"/>
+    <Include file="Ace3\AceBucket-3.0\AceBucket-3.0.xml"/>
     <Include file="LibCompress\lib.xml"/>    
     <Script file='LibRealmInfo\LibRealmInfo.lua'/>
     <Include file="LibQTip-1.0\lib.xml"/>
