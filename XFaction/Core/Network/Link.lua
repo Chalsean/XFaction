@@ -199,6 +199,9 @@ function Link:SetObjectFromString(inLinkString)
     self:SetToName(_ToNodeIDs[1])
     self:SetToRealm(XFG.Realms:GetRealmByID(tonumber(_ToNodeIDs[2])))
     self:SetToFaction(XFG.Factions:GetFaction(tonumber(_ToNodeIDs[3])))
+    
+    local _EpochTime = GetServerTime()
+    self:SetTimeStamp(_EpochTime)
 
     local _Key = GetLinkKey(self:GetFromName(), self:GetToName())
     self:SetKey(_Key)

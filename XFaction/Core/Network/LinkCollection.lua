@@ -130,6 +130,7 @@ function LinkCollection:ProcessMessage(inMessage)
 			XFG:Debug(LogCategory, 'Added link due to node broadcast [%s]', _Link:GetKey())
 		end
     end
+	XFG.DataText.Links:RefreshBroker()
 end
 
 function LinkCollection:GetCount()
