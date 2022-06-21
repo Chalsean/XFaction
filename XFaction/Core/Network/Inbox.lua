@@ -146,7 +146,9 @@ function Inbox:Process(inMessage, inMessageTag)
         local _UnitData = XFG.Confederate:GetUnit(inMessage:GetFrom())
         XFG.Confederate:RemoveUnit(inMessage:GetFrom())
         XFG.DataText.Guild:RefreshBroker()
-        XFG.Links:RemoveNode(_UnitData:GetName())
+        if(_UnitData ~= nil) then
+            XFG.Links:RemoveNode(_UnitData:GetName())
+        end
         if(XFG.Player.Realm:Equals(inMessage:GetRealm()) == false or XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
             XFG.Frames.System:Display(inMessage)
         end
