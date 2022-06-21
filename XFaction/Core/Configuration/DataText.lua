@@ -214,6 +214,7 @@ XFG.Options.args.DataText = {
 				OnlyMine = {
 					order = 1,
 					type = 'toggle',
+					disabled = true,
 					name = XFG.Lib.Locale['DTLINKS_CONFIG_ONLY_YOURS'],
 					desc = XFG.Lib.Locale['DTLINKS_CONFIG_ONLY_YOURS_TOOLTIP'],
 					get = function(info) return XFG.Config.DataText.Links[ info[#info] ] end,

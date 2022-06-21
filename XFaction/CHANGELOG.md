@@ -1,3 +1,9 @@
+### Version 2.5.6 [ 06.20.2022 ]
+
+**Bug Fix**
+[Links (X)]
+- Fixed Links bug where it was only showing players own links, not all links
+
 ### Version 2.5.5 [ 06.20.2022 ]
 
 **Bug Fix**

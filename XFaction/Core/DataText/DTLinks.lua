@@ -124,7 +124,7 @@ function DTLinks:OnEnter(this)
 
 	if(XFG.Initialized) then
 		for _, _Link in XFG.Links:Iterator() do
-			if((XFG.Config.DataText.Links.OnlyMine and _Link:IsMyLink()) or XFG.Config.DataText.Links.OnlyMine == false) then
+			--if((XFG.Config.DataText.Links.OnlyMine and _Link:IsMyLink()) or XFG.Config.DataText.Links.OnlyMine == false) then
 				local _FromRealm = _Link:GetFromRealm()
 				local _FromFaction = _Link:GetFromFaction()
 				local _ToRealm = _Link:GetToRealm()
@@ -147,7 +147,7 @@ function DTLinks:OnEnter(this)
 				self._Tooltip:SetCell(line, _TargetColumn[_ToKey], _ToName)
 				
 				line = self._Tooltip:AddLine()
-			end
+			--end
 		end
 	end
 
