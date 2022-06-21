@@ -115,7 +115,7 @@ function LinkCollection:ProcessMessage(inMessage)
 	-- Remove any stale links
 	for _, _Link in self:Iterator() do
 		-- Consider that we may have gotten link information from the other node
-		if((_Link:GetFromName() == _FromName or _Link:GetToName() == _FromName) and _Links[_Link:GetKey()] == nil) then
+		if(_Link:IsMyLink() == false and (_Link:GetFromName() == _FromName or _Link:GetToName() == _FromName) and _Links[_Link:GetKey()] == nil) then
 			self:RemoveLink(_Link)
 			XFG:Debug(LogCategory, 'Removed link due to node broadcast [%s]', _Link:GetKey())
 		end
@@ -192,6 +192,7 @@ function LinkCollection:RestoreBackup()
 			local _NewLink = Link:new()
 			_NewLink:SetObjectFromString(_Link)
 			self:AddLink(_NewLink)
+			XFG:Debug(LogCategory, 'Restored link from backup [%s]', _NewLink:GetKey())
 		end
 	end
 end
@@ -199,7 +200,7 @@ end
 function LinkCollection:PurgeStaleLinks(inEpochTime)
 	assert(type(inEpochTime) == 'number')
 	for _, _Link in self:Iterator() do
-		if(_Link:GetTimeStamp() < inEpochTime) then
+		if(_Link:IsMyLink() == false and _Link:GetTimeStamp() < inEpochTime) then
 			XFG:Debug(LogCategory, 'Removing stale link')
 			self:RemoveLink(_Link)
 		end
