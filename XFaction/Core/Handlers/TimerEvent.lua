@@ -162,7 +162,11 @@ function TimerEvent:CallbackLogin()
                     end
                 end
                 -- Use temporary channel so if they stop using addon, the channel goes away
-                JoinTemporaryChannel(XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password)
+                if(XFG.Settings.Network.Channel.Password == nil) then
+                    JoinChannelByName(XFG.Settings.Network.Channel.Name)
+                else
+                    JoinChannelByName(XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password)
+                end
                 XFG:Info(LogCategory, 'Joined temporary confederate channel [%s]', XFG.Settings.Network.Channel.Name)
                 local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Settings.Network.Channel.Name)
                 local _NewChannel = Channel:new()
@@ -170,6 +174,9 @@ function TimerEvent:CallbackLogin()
 			    _NewChannel:SetID(_ChannelInfo.localID)
 			    _NewChannel:SetShortName(_ChannelInfo.shortcut)
 			    XFG.Channels:AddChannel(_NewChannel)
+                if(_NewChannel:GetKey() == XFG.Settings.Network.Channel.Name) then
+                    XFG.Outbox:SetLocalChannel(_NewChannel)
+                end
             end
 
             -- Register handlers
