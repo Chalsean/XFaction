@@ -89,3 +89,19 @@ function SystemFrame:Display(inMessage)
     end
     SendSystemMessage(_Message) 
 end
+
+function SystemFrame:DisplayLocalOffline(inUnitData)
+    if(XFG.Config.Chat.Login.Enable == false) then return end
+    assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', 'argument must be Unit object')
+
+    local _Faction = inUnitData:GetFaction()
+    local _Guild = inUnitData:GetGuild()
+                    
+    local _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID())) .. inUnitData:GetName()
+    if(inUnitData:IsAlt() and inUnitData:HasMainName()) then
+        _Message = _Message .. ' (' .. inUnitData:GetMainName() .. ')'
+    end
+
+    _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> ' .. XFG.Lib.Locale['CHAT_LOGOUT']
+    SendSystemMessage(_Message) 
+end
