@@ -1,3 +1,9 @@
+### Version 2.5.7 [ 06.20.2022 ]
+
+**Bug Fix**
+[XFaction]
+- Fixed links bug with removing your own links
+
 ### Version 2.5.6 [ 06.20.2022 ]
 
 **Bug Fix**
