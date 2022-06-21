@@ -246,7 +246,7 @@ XFG.Settings = {
 
 -- This is the default, gets changed if configured properly in guild info
 XFG.Settings.Network.Channel.Name = XFG.Settings.Confederate.Initials .. 'XFactionChat'
-XFG.Settings.Network.Channel.Password = ''
+XFG.Settings.Network.Channel.Password = nil
 
 XFG.Settings.Network.Message.Tag.LOCAL = XFG.Settings.Confederate.Initials .. 'XF'
 XFG.Settings.Network.Message.Tag.BNET = XFG.Settings.Confederate.Initials .. 'BNET'
