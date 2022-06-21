@@ -150,6 +150,9 @@ function ChannelCollection:ScanChannel(inIndex)
 			_Channel:SetName(_ChannelInfo.name)
 		end
 
+		if(_Channel:GetKey() == XFG.Settings.Network.Channel.Name) then
+			XFG.Outbox:SetLocalChannel(_Channel)
+		end
 		if(XFG.Config.Channel.Channels['Channel' .. tostring(_Channel:GetID())] == nil) then
 			XFG.Config.Channel.Channels['Channel' .. tostring(_Channel:GetID())] = _Channel:GetKey()
 		end

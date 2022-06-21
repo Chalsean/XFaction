@@ -35,6 +35,7 @@ L['FAQ'] = 'FAQ'
 L['CHANNEL'] = 'Channel'
 L['INDEX'] = 'Index'
 L['DUNGEON'] = 'Mythic+'
+L['ACHIEVEMENT_EARNED'] = ' has earned achievement '
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================

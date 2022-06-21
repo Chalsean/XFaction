@@ -44,7 +44,7 @@ function AchievementEvent:CallbackAchievement(inID)
         _NewMessage:Initialize()
         _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
         _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.ACHIEVEMENT)
-        _NewMessage:SetData('has earned the achievement ' .. GetAchievementLink(inID) .. '!')
+        _NewMessage:SetData(inID) -- Leave as ID to localize on receiving end
         if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
             _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
         end
