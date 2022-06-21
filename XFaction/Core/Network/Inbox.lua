@@ -143,8 +143,10 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Display system message that unit has logged off
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
+        local _UnitData = XFG.Confederate:GetUnit(inMessage:GetFrom())
         XFG.Confederate:RemoveUnit(inMessage:GetFrom())
         XFG.DataText.Guild:RefreshBroker()
+        XFG.Links:RemoveNode(_UnitData:GetName())
         if(XFG.Player.Realm:Equals(inMessage:GetRealm()) == false or XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
             XFG.Frames.System:Display(inMessage)
         end

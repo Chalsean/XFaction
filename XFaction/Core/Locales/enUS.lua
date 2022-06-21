@@ -36,6 +36,7 @@ L['CHANNEL'] = 'Channel'
 L['INDEX'] = 'Index'
 L['DUNGEON'] = 'Mythic+'
 L['ACHIEVEMENT_EARNED'] = ' has earned achievement '
+L['CHAT_LOGOUT'] = ' has gone offline.'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
