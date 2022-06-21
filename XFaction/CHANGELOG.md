@@ -1,3 +1,9 @@
+### Version 2.5.5 [ 06.20.2022 ]
+
+**Bug Fix**
+[XFaction]
+- Fixed achievements not showing player name
+
 ### Version 2.4.2 [ 06.18.2022 ]
 
 **Bug Fix**
