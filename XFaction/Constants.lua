@@ -216,7 +216,7 @@ XFG.Settings = {
 				Timer = 60 * 4,     -- Seconds between pinging friends
 			},
 			Link = {
-				Broadcast = 60 * 5, -- Seconds between broadcasting links
+				Broadcast = 60 * 1, -- Seconds between broadcasting links
 				Scan = 60 * 3,      -- Seconds between link scans for stale links
 				Stale = 60 * 10     -- Seconds until considering a link stale
 			},

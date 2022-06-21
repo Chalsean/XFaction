@@ -189,14 +189,12 @@ function TimerEvent:CallbackLogin()
             XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
             
             if(XFG.DB.UIReload == false) then
-                -- We dont have any BNet contacts yet but maybe someone else does, so go ahead and broadcast
-                XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
                 -- Ping friends to find out whos available for BNet
                 XFG.BNet:PingFriends()                 
             end
 
             -- This is stuff waiting a few seconds for ping responses
-            XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 15)
+            XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 7)
 
             XFG.Initialized = true
 
@@ -212,6 +210,7 @@ end
 
 function TimerEvent:CallbackDelayedStartTimer()
     if(XFG.DB.UIReload == false) then
+        XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
         XFG.Links:BroadcastLinks()
     end
     XFG.DB.UIReload = false
