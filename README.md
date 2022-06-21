@@ -3,7 +3,7 @@ Enable roster visibility and communication between guilds of a confederation, in
 
 ## Disclaimer
 
-This addon is in very early stages (alpha) and currently only Eternal Kingdom (EK) is being supported. There are many hardcoded settings for EK, thus only the following guilds are supported at this time:
+This addon is in early stages of development (beta) and currently only Eternal Kingdom (EK) is being supported. Thus only the following guilds are supported at this time:
 
 > Proudmoore
 - Eternal Kingdom (EKA)
