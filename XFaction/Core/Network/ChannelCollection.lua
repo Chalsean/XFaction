@@ -118,14 +118,10 @@ local function GetFrameID(inChannelName)
 end
 
 function ChannelCollection:ScanChannels()
-	self._Channels = {}
-	self._ChannelCount = 0
-
 	-- Repopulate channels, the channel events are not very trustworthy
 	for i = 1, XFG.Settings.Network.Channel.Total do
 		self:ScanChannel(i)
 	end
-
 	self:SyncChannels()
 end
 
@@ -141,6 +137,9 @@ function ChannelCollection:ScanChannel(inIndex)
 			_Channel:SetID(inIndex)
 			_Channel:SetShortName(_ChannelInfo.shortcut)
 			self:AddChannel(_Channel)
+			if(_Channel:GetKey() == XFG.Settings.Network.Channel.Name) then
+				XFG.Outbox:SetLocalChannel(_Channel)
+			end
 		end
 
 		_Channel:SetType(_ChannelInfo.channelType)

@@ -106,6 +106,10 @@ function ChatFrame:Display(inMessage)
                         _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
+                    if(_Event == 'ACHIEVEMENT') then
+                        _Text = _Text .. inMessage:GetUnitName() .. ' '
+                    end
+
                     if(XFG.Config.Chat[_ConfigNode].Main and inMessage:GetMainName() ~= nil) then
                             _Text = _Text .. '(' .. inMessage:GetMainName() .. ') '
                     end
@@ -114,7 +118,12 @@ function ChatFrame:Display(inMessage)
                         _Text = _Text .. '<' .. _Guild:GetInitials() .. '> '
                     end
 
-                    _Text = _Text .. inMessage:GetData()
+                    local _Link = nil
+                    if(_Event == 'ACHIEVEMENT' and pcall(function () _Link = GetAchievementLink(inMessage:GetData()) end)) then
+                        _Text = _Text .. XFG.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. _Link
+                    else
+                        _Text = _Text .. inMessage:GetData()
+                    end
 
                     local _Hex = XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].Color.Red, XFG.Config.Chat[_ConfigNode].Color.Green, XFG.Config.Chat[_ConfigNode].Color.Blue)
                     _Text = format('|cff%s%s|r', _Hex, _Text)
