@@ -204,57 +204,6 @@ XFG.Options.args.DataText = {
 					end
 				}
 			}
-		},				
-		Links = {
-			order = 2,
-			type = 'group',
-			name = XFG.Lib.Locale['DTLINKS_NAME'],
-			guiInline = true,
-			args = {
-				OnlyMine = {
-					order = 1,
-					type = 'toggle',
-					disabled = true,
-					name = XFG.Lib.Locale['DTLINKS_CONFIG_ONLY_YOURS'],
-					desc = XFG.Lib.Locale['DTLINKS_CONFIG_ONLY_YOURS_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Links[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Links[ info[#info] ] = value; end
-				},						
-			}
 		},
-		Shard = {
-			order = 3,
-			type = 'group',
-			name = XFG.Lib.Locale['DTSHARD_NAME'],
-			guiInline = true,
-			args = {
-				Timer = {
-					order = 1,
-					type = 'range',
-					name = XFG.Lib.Locale['DTSHARD_CONFIG_FORCE_CHECK'],
-					min = 15, max = 300, step = 1,
-					desc = XFG.Lib.Locale['DTSHARD_CONFIG_FORCE_CHECK_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Shard[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Shard[ info[#info] ] = value; end
-				},						
-			}
-		},
-		Soulbind = {
-			order = 4,
-			type = 'group',
-			name = XFG.Lib.Locale['DTSOULBIND_NAME'],
-			guiInline = true,
-			args = {
-				Timer = {
-					order = 1,
-					type = 'toggle',
-					name = XFG.Lib.Locale['DTSOULBIND_CONFIG_CONDUIT'],
-					disabled = true,
-					desc = XFG.Lib.Locale['DTSOULBIND_CONFIG_CONDUIT_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Soulbind[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Soulbind[ info[#info] ] = value; end
-				},						
-			}
-		}
 	}
 }

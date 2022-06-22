@@ -72,7 +72,6 @@ function TimerEvent:CallbackLogin()
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
         if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
         XFG:LoadConfigs()
-        --XFG.DataText.Shard:Initialize()
     end
 
     if(IsInGuild()) then

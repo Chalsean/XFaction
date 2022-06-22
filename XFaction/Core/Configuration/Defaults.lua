@@ -57,15 +57,6 @@ XFG.Defaults = {
                 Zone = true,
                 Rank = 1
             },
-            Links = {
-                OnlyMine = false
-            },
-            Shard = {
-                Timer = 60
-            },
-            Soulbind = {
-                Conduits = false
-            }
         }
     }
 }
