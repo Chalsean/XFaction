@@ -73,6 +73,7 @@ end
 
 function DTLinks:OnEnter(this)
 	if(XFG.Initialized == false) then return end
+	if(InCombatLockdown()) then return end
 
 	local _TargetCount = XFG.Targets:GetCount() + 1
 	

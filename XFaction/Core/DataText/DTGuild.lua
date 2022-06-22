@@ -199,6 +199,7 @@ end
 
 function DTGuild:OnEnter(this)
 	if(XFG.Initialized == false) then return end
+	if(InCombatLockdown()) then return end
 
 	local _Tooltip
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
@@ -379,6 +380,7 @@ function DTGuild:OnLeave()
 end
 
 function DTGuild:OnClick(this, inButton)
+	if(InCombatLockdown()) then return end
 	if(inButton == 'LeftButton') then
 		ToggleGuildFrame()
 	elseif(inButton == 'RightButton') then
