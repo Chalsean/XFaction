@@ -114,7 +114,8 @@ XFG.Settings = {
 		U = 'Unknown',
 		ENK = 'Social',
 		ENKA = 'Social',
-		ENKH = 'Social'
+		ENKH = 'Social',
+		CC = 'CC'
 	},
 	
 	DataText = {

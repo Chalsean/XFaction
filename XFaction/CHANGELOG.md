@@ -1,3 +1,13 @@
+### Version 2.5.12 [ 06.21.2022 ]
+
+**Bug Fix**
+[XFaction]
+- Removed an extra space in offline message (for Itzi)
+
+**Misc**
+[XFaction]
+- Added CC team
+
 ### Version 2.5.11 [ 06.21.2022 ]
 
 **Misc**
