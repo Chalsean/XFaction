@@ -59,7 +59,8 @@ function TimerEvent:CallbackLogin()
     -- If havent gotten guild info after 30s, give up. probably not in a guild
     -- 10s is probably feasible but trying to be safe for lesser hardware or slow connections
     if(XFG.Cache.LoginTimerStart + 30 < GetServerTime()) then
-        XFG:CancelTimer(XFG.Cache.LoginTimerID)
+        XFG:Error(LogCategory, 'Did not detect a guild')
+        XFG:CancelAllTimers()
         return
     end
 
@@ -71,6 +72,7 @@ function TimerEvent:CallbackLogin()
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
         if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
         XFG:LoadConfigs()
+        --XFG.DataText.Shard:Initialize()
     end
 
     if(IsInGuild()) then
