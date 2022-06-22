@@ -87,11 +87,13 @@ XFG.Settings = {
 		['4'] = 'Royal Emissary',
 		['5'] = 'Ambassador',
 		['6'] = 'Templar',
-		['7'] = 'Grand Army',
-		['8'] = 'Grand Alt',
-		['9'] = 'Noble Citizen',
-		['10'] = 'Squire',
-		['11'] = 'Stockade'
+		['7'] = 'Sponsorship',
+		['8'] = 'Grand Army',
+		['9'] = 'Grand Alt',
+		['10'] = 'Veteran',
+		['11'] = 'Noble Citizen',
+		['12'] = 'Squire',
+		['13'] = 'Stockade'
 	},
 	Teams = {
 		A = 'Acheron',
@@ -112,7 +114,8 @@ XFG.Settings = {
 		U = 'Unknown',
 		ENK = 'Social',
 		ENKA = 'Social',
-		ENKH = 'Social'
+		ENKH = 'Social',
+		CC = 'CC'
 	},
 	
 	DataText = {
