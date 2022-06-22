@@ -252,7 +252,7 @@ end
 function BNet:Purge(inEpochTime)
     assert(type(inEpochTime) == 'number')
 	for _, _Packet in self:Iterator() do
-		if(_Packet:GetTimeStamp() < inEpochTime) then
+		if(_Packet ~= nil and _Packet:GetTimeStamp() < inEpochTime) then
 			self:RemoveMessage(_Packet:GetKey())
 		end
 	end
