@@ -53,7 +53,6 @@ function XFG:Init()
 	-- Initialize DTs
 	XFG.DataText.Guild = DTGuild:new(); XFG.DataText.Guild:Initialize()
 	XFG.DataText.Links = DTLinks:new(); XFG.DataText.Links:Initialize()
-	XFG.DataText.Shard = DTShard:new(); XFG.DataText.Shard:Initialize()
 	XFG.DataText.Soulbind = DTSoulbind:new(); XFG.DataText.Soulbind:Initialize()
 	XFG.DataText.Token = DTToken:new(); XFG.DataText.Token:Initialize()
 end
