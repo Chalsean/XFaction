@@ -112,7 +112,11 @@ local function PreSort()
 		_UnitData.Team = _Team:GetName()
 
 		local _Rank = _Unit:GetRank()
-		_UnitData.Rank = _Rank:GetAltName() and _Rank:GetAltName() or _Rank:GetName()
+		if(_Rank ~= nil) then
+			_UnitData.Rank = _Rank:GetAltName() and _Rank:GetAltName() or _Rank:GetName()
+		else
+			_UnitData.Rank = '?'
+		end
 
 		local _Class = _Unit:GetClass()
 		_UnitData.Class = _Class:GetColorMixin()

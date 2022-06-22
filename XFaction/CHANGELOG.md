@@ -1,3 +1,9 @@
+### Version 2.5.11 [ 06.21.2022 ]
+
+**Misc**
+[XFaction]
+- Added Veteran and Sponsorship ranks for ENK support
+
 ### Version 2.5.9 [ 06.21.2022 ]
 
 **Bug Fix**
