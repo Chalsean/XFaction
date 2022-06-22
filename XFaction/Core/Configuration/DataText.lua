@@ -175,34 +175,6 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
-				Line2 = {
-					order = 23,
-					type = 'header',
-					name = ''
-				},
-				Rank = {
-					order = 24,
-					type = 'select',
-					name = XFG.Lib.Locale['RANK'],
-					desc = 'Select the guild rank you would like to have an alternate name for',
-					values = {},
-					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
-				},
-				RankName = {
-					order = 25,
-					type = 'input',
-					name = 'Alt Name',
-					desc = 'Enter alternate rank name to display',
-					get = function(info) 
-						local _Rank = XFG.Ranks:GetRank(XFG.Config.DataText.Guild.Rank)
-						return _Rank:GetAltName() 
-					end,
-					set = function(info, value)
-						local _Rank = XFG.Ranks:GetRank(XFG.Config.DataText.Guild.Rank)
-						_Rank:SetAltName(value)
-					end
-				}
 			}
 		},
 	}

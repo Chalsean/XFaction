@@ -57,15 +57,9 @@ function XFG:SerializeUnitData(inUnitData)
 	local _Realm = inUnitData:GetRealm()
 	_MessageData.R = _Realm:GetID()
 	_MessageData.K = inUnitData:GetGUID()
-
-	if(inUnitData:HasRank()) then
-		local _Rank = inUnitData:GetRank()
-		_MessageData.I = _Rank:GetKey() -- Deprecated, remove after everyone on 2.5.0 or later
-		_MessageData.J = _Rank:GetName()
-	end
-	
+	_MessageData.J = inUnitData:GetRank()
 	_MessageData.L = inUnitData:GetLevel()
-	_MessageData.M = 0
+	_MessageData.M = 0  -- Deprecated, here for backwards compat
 	_MessageData.N = inUnitData:GetNote()
 	local _Class = inUnitData:GetClass()
 	_MessageData.O = _Class:GetKey()

@@ -60,12 +60,9 @@ function XFG:DeserializeUnitData(inData)
 	local _UnitNameParts = string.Split(_DeserializedData.U, '-')
 	_UnitData:SetName(_UnitNameParts[1])
 	_UnitData:SetUnitName(_DeserializedData.U)
-
 	_UnitData:SetRealm(XFG.Realms:GetRealmByID(_DeserializedData.R))
 	_UnitData:SetGuild(XFG.Guilds:GetGuildByRealmGuildName(_UnitData:GetRealm(), _DeserializedData.G))
-
-	if(_DeserializedData.J ~= nil) then _UnitData:SetRank(XFG.Ranks:GetRankByName(_DeserializedData.J)) end
-
+	_UnitData:SetRank(_DeserializedData.J)
 	_UnitData:SetLevel(_DeserializedData.L)
 	_UnitData:SetNote(_DeserializedData.N)	
 	_UnitData:IsOnline(true)

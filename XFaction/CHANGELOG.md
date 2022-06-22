@@ -1,3 +1,23 @@
+### Version 2.5.13 [ 06.22.2022 ]
+
+**Enhancements**
+[Guild (X)]
+- Now locksdown if in combat
+
+[Links (X)]
+- Now locksdown if in combat
+
+**Bug Fix**
+[XFaction]
+- Fixed an exception condition when player is not in a guild
+
+**Misc**
+[XFaction]
+- Removed unsupported options from options menu
+
+[Shard (X)]
+- Retired (wasnt working anyway)
+
 ### Version 2.5.12 [ 06.21.2022 ]
 
 **Bug Fix**

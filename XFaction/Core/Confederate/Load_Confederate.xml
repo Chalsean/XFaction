@@ -1,6 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
-    <Script file='Rank.lua'/>
-    <Script file='RankCollection.lua'/>
     <Script file='Realm.lua'/>
     <Script file='RealmCollection.lua'/>
     <Script file='Team.lua'/>
