@@ -24,7 +24,7 @@ function ChannelCollection:Initialize()
 		if(XFG.Config.Channel.Channels == nil) then
 			XFG.Config.Channel.Channels = {}
 		end
-		--self:ScanChannels()
+		self:ScanChannels()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -134,13 +134,13 @@ function ChannelCollection:ScanChannel(inIndex)
 		else
 			_Channel = Channel:new()
 			_Channel:SetKey(_ChannelInfo.shortcut)
-			_Channel:SetID(inIndex)
 			_Channel:SetShortName(_ChannelInfo.shortcut)
 			self:AddChannel(_Channel)
 			if(_Channel:GetKey() == XFG.Settings.Network.Channel.Name) then
 				XFG.Outbox:SetLocalChannel(_Channel)
 			end
 		end
+		_Channel:SetID(inIndex)
 
 		_Channel:SetType(_ChannelInfo.channelType)
 		-- Because the ElvUI and Blizzard APIs don't like each other

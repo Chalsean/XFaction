@@ -55,23 +55,12 @@ end
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _, inChannelType, inChannelNumber, inChannelShortName)
 	local _Channel = XFG.Outbox:GetLocalChannel()
 	-- Fires when player leaves a channel
-	if(inAction == 'YOU_LEFT' and XFG.Settings.Network.Channel.Name == inChannelShortName) then
-		XFG.Channels:RemoveChannel(inChannelShortName)
-		XFG:Error(LogCategory, "Removed channel was the addon channel")
+	if(inAction == 'YOU_LEFT') then
+		XFG.Channels:ScanChannels()
 
 	-- Fires when player joins a channel
-	elseif(inAction == 'YOU_CHANGED' and XFG.Settings.Network.Channel.Name == inChannelShortName) then
-		if(XFG.Outbox:HasLocalChannel()) then
-			local _Channel = XFG.Outbox:GetLocalChannel()
-			_Channel:SetID(inChannelNumber)
-		else
-			local _NewChannel = Channel:new()
-			_NewChannel:SetKey(inChannelShortName)
-			_NewChannel:SetID(inChannelNumber)
-			_NewChannel:SetShortName(inChannelShortName)
-			XFG.Channels:AddChannel(_NewChannel)
-			XFG.Outbox:SetLocalChannel(_NewChannel)
-		end
+	elseif(inAction == 'YOU_CHANGED') then
+		XFG.Channels:ScanChannels()
 	end
 end
 

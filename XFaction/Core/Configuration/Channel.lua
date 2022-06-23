@@ -21,7 +21,6 @@ XFG.Options.args.Channel = {
 	name = XFG.Lib.Locale['CHANNEL'],
 	order = 1,
 	type = 'group',
-	disabled = true,
 	args = {
 		Enable = {
 			order = 1,
