@@ -31,17 +31,8 @@ function Event:IsInitialized(inInitialized)
 	return self._Initialized
 end
 
-function Event:Initialize(inKey, inName, inCallback, inInstance, inInstanceCombat, inBucket, inDelta)
+function Event:Initialize()
 	if(self:IsInitialized() == false) then
-        self:SetKey(inKey)
-        self:SetName(inName)
-        self:SetCallback(inCallback)
-        self:IsInstance(inInstance)
-        self:IsInstanceCombat(inInstanceCombat)
-        if(inBucket ~= nil) then self:IsBucket(inBucket) end
-        if(inDelta ~= nil) then self:SetDelta(inDelta) end
-        self:Start()
-        XFG.Events:AddEvent(self)
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -151,4 +142,19 @@ function Event:Stop()
     XFG:UnregisterEvent(self:GetName())
     self:IsEnabled(false)
     XFG:Debug(LogCategory, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
+end
+
+function XFG:CreateEvent(inKey, inName, inCallback, inInstance, inInstanceCombat, inBucket, inDelta)
+    local _Event = Event:new()
+    _Event:SetKey(inKey)
+    _Event:SetName(inName)
+    _Event:SetCallback(inCallback)
+    _Event:IsInstance(inInstance)
+    _Event:IsInstanceCombat(inInstanceCombat)
+    if(inBucket ~= nil) then _Event:IsBucket(inBucket) end
+    if(inDelta ~= nil) then _Event:SetDelta(inDelta) end
+    if(_Event:IsInstance() or XFG.Player.InInstance == false) then
+        _Event:Start()
+    end
+    XFG.Events:AddEvent(_Event)
 end

@@ -15,34 +15,21 @@ function PlayerEvent:new()
     return Object
 end
 
-local function CreateEvent(inKey, inName, inCallback, inInstance, inInstanceCombat, inBucket, inDelta)
-    local _Event = Event:new()
-    _Event:SetKey(inKey)
-    _Event:SetName(inName)
-    _Event:SetCallback(inCallback)
-    _Event:IsInstance(inInstance)
-    _Event:IsInstanceCombat(inInstanceCombat)
-    if(inBucket ~= nil) then _Event:IsBucket(inBucket) end
-    if(inDelta ~= nil) then _Event:SetDelta(inDelta) end
-    if(_Event:IsInstance() or XFG.Player.InInstance == false) then
-        _Event:Start()
-    end
-    XFG.Events:AddEvent(_Event)
-end
+
 
 function PlayerEvent:Initialize()
 	if(self:IsInitialized() == false) then
 
-        CreateEvent('Covenant', 'COVENANT_CHOSEN', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
-        CreateEvent('Soulbind', 'SOULBIND_ACTIVATED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
-        CreateEvent('Spec', 'ACTIVE_TALENT_GROUP_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
-        CreateEvent('Mythic', 'CHALLENGE_MODE_COMPLETED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, true)
-        CreateEvent('Instance', 'PLAYER_ENTERING_WORLD', XFG.Handlers.PlayerEvent.CallbackInstance, true, false)
-        CreateEvent('EnterCombat', 'PLAYER_REGEN_DISABLED', XFG.Handlers.PlayerEvent.CallbackEnterCombat, true, true)
-        CreateEvent('LeaveCombat', 'PLAYER_REGEN_ENABLED', XFG.Handlers.PlayerEvent.CallbackLeaveCombat, true, true)
-        CreateEvent('Level', 'PLAYER_LEVEL_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
-        CreateEvent('Profession', 'SKILL_LINES_CHANGED', XFG.Handlers.PlayerEvent.CallbackSkillChanged, false, false)
-        --CreateEvent('Zone', 'ZONE_CHANGED_NEW_AREA', XFG.Handlers.PlayerEvent.CallbackZoneChanged, false, false)
+        XFG:CreateEvent('Covenant', 'COVENANT_CHOSEN', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
+        XFG:CreateEvent('Soulbind', 'SOULBIND_ACTIVATED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
+        XFG:CreateEvent('Spec', 'ACTIVE_TALENT_GROUP_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
+        XFG:CreateEvent('Mythic', 'CHALLENGE_MODE_COMPLETED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, true)
+        XFG:CreateEvent('Instance', 'PLAYER_ENTERING_WORLD', XFG.Handlers.PlayerEvent.CallbackInstance, true, false)
+        XFG:CreateEvent('EnterCombat', 'PLAYER_REGEN_DISABLED', XFG.Handlers.PlayerEvent.CallbackEnterCombat, true, true)
+        XFG:CreateEvent('LeaveCombat', 'PLAYER_REGEN_ENABLED', XFG.Handlers.PlayerEvent.CallbackLeaveCombat, true, true)
+        XFG:CreateEvent('Level', 'PLAYER_LEVEL_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
+        XFG:CreateEvent('Profession', 'SKILL_LINES_CHANGED', XFG.Handlers.PlayerEvent.CallbackSkillChanged, false, false)
+        XFG:CreateEvent('Zone', 'ZONE_CHANGED_NEW_AREA', XFG.Handlers.PlayerEvent.CallbackZoneChanged, false, false)
 
 		self:IsInitialized(true)
 	end

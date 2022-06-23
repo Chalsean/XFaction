@@ -527,17 +527,17 @@ function BNetChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype, targ
 end
 
 function BNetChatThrottleLib:BNSendGameData(prio, prefix, text, chattype, target, queueName, callbackFn, callbackArg)
-	if not self or not prio or not prefix or not text or not chattype or not self.Prio[prio] then
-		error('Usage: BNetChatThrottleLib:SendAddonMessage("{BULK||NORMAL||ALERT}", "prefix", "text", "chattype"[, "target"])', 2)
+	if not self or not prio or not prefix or not text or not self.Prio[prio] then
+		error('Usage: BNetChatThrottleLib:BNSendGameData("{BULK||NORMAL||ALERT}", "prefix", "text", "chattype"[, "target"])', 2)
 	end
 	if callbackFn and type(callbackFn)~="function" then
-		error('BNetChatThrottleLib:SendAddonMessage(): callbackFn: expected function, got '..type(callbackFn), 2)
+		error('BNetChatThrottleLib:BNSendGameData(): callbackFn: expected function, got '..type(callbackFn), 2)
 	end
 
 	local nSize = text:len();
 	--nSize = nSize + prefix:len() + 1
 	if nSize>4078 then
-		error("BNetChatThrottleLib:SendAddonMessage(): prefix + message length cannot exceed 4078 bytes", 2)
+		error("BNetChatThrottleLib:BNSendGameData(): prefix + message length cannot exceed 4078 bytes", 2)
 	end
 	nSize = nSize + self.MSG_OVERHEAD;
 

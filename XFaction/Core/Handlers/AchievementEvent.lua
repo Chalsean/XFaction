@@ -16,7 +16,7 @@ end
 
 function AchievementEvent:Initialize()
 	if(self:IsInitialized() == false) then
-        local _Event = Event:new(); _Event:Initialize('Achievement', 'ACHIEVEMENT_EARNED', XFG.Handlers.AchievementEvent.CallbackAchievement, true, true)
+        XFG:CreateEvent('Achievement', 'ACHIEVEMENT_EARNED', XFG.Handlers.AchievementEvent.CallbackAchievement, true, true)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

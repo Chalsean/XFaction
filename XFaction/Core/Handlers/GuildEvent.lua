@@ -32,7 +32,7 @@ end
 function GuildEvent:Initialize()
 	if(self:IsInitialized() == false) then
         -- This is the local guild roster scan for those not running the addon
-        local _Event = Event:new(); _Event:Initialize('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
+        XFG:CreateEvent('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

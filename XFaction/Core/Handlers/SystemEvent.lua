@@ -18,7 +18,7 @@ end
 
 function SystemEvent:Initialize()
 	if(self:IsInitialized() == false) then
-        local _Event = Event:new(); _Event:Initialize('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
+        XFG:CreateEvent('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
         XFG:Info(LogCategory, "Created hook for pre-ReloadUI")
 		self:IsInitialized(true)

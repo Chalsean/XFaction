@@ -3,10 +3,12 @@
 **Enhancements**
 [XFaction]
 - Confederate name, realms/guilds involved and channel are all configurable in guild info
-- Modified ChatThrottleLib from Ace3 libraries to accept BNet, this provides queueing and possible delaying of messages if nearing the disconnect threshold
+- Modified ChatThrottleLib from Ace3 libraries to accept BNet
+    - This is a standard library used to queue or delay addon messages if nearing the disconnect threshold
     - To point out, Blizzard will not say what that threshold is, so its trial and error from the dev community
 - Removed majority of network channel scanning
-- Increase each message size to try to reduce the number of overall messages
+- Increase message size by 50% to try to reduce the number of overall packets
+- Doubled the time between link broadcasts from 1min to 2min
 - The following broadcast triggering event listeners will now disable/enable upon entering/exiting an instance:
   - Level up
   - Changing covenant (cant outside Oribos anyway)
@@ -19,12 +21,14 @@
   - Timer to monitor local guild roster
   - Timer to monitor links
   - Timer to broadcast player data (hearbeat)
+  - Timer to broadcast players own links
   - All listeners listed above that are disabled/enabled upon entering/exiting instance apply
 - The following broadcast triggering event listeners was removed entirely:
   - Changing zone
   - Achievement points increase (getting an achievement will still broadcast, this has to do with the player's point total)
   - M+ score increase
 - Implemented a minimum heartbeat time, meaning regardless of triggers, player will not broadcast own data within 15s of previous broadcast
+- Ignores all "Explore" achievements to avoid spam
 
 [Guild (X)]
 - Now locksdown if in combat

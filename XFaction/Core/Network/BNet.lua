@@ -1,7 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'BNet'
 local LogCategory = 'NBNet'
-local MaxPacketSize = 150
 local BCTL = assert(BNetChatThrottleLib, "XFaction requires BNetChatThrottleLib")
 
 BNet = {}
@@ -31,7 +30,7 @@ function BNet:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
         -- Technically this should be with the other handlers but wanted to keep the BNet logic together
-        local _Event = Event:new(); _Event:Initialize('BNet', 'BN_CHAT_MSG_ADDON', XFG.BNet.Receive, true, true)
+        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', XFG.BNet.Receive)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -104,12 +103,12 @@ function BNet:Send(inMessage)
         _SerializedData = inMessage:GetData()
     end
     local _MessageSize = strlen(_SerializedData)
-    if(_MessageSize <= MaxPacketSize) then
+    if(_MessageSize <= XFG.Settings.Network.BNet.PacketSize) then
         table.insert(_Packets, inMessage)
         _PacketCount = 1
     else                
         local _SegmentStart = 1
-        local _SegmentEnd = MaxPacketSize
+        local _SegmentEnd = XFG.Settings.Network.BNet.PacketSize
 
         while(_SegmentStart <= _MessageSize) do
 
@@ -134,7 +133,7 @@ function BNet:Send(inMessage)
             table.insert(_Packets, _NewMessage)
             
             _SegmentStart = _SegmentEnd + 1
-            _SegmentEnd = _SegmentStart + MaxPacketSize
+            _SegmentEnd = _SegmentStart + XFG.Settings.Network.BNet.PacketSize
         end
     end
 
