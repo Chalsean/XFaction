@@ -18,4 +18,5 @@
     <Script file='LibRealmInfo\LibRealmInfo.lua'/>
     <Include file="LibQTip-1.0\lib.xml"/>
     <Script file='LibDataBroker-1.1\LibDataBroker-1.1.lua'/>
+    <!--<Script file='BNetChatThrottleLib\BNetChatThrottleLib.lua'/>-->
 </Ui>

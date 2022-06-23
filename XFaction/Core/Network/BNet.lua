@@ -1,7 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'BNet'
 local LogCategory = 'NBNet'
-local MaxPacketSize = 100
+local MaxPacketSize = 150
+local BCTL = assert(BNetChatThrottleLib, "XFaction requires BNetChatThrottleLib")
 
 BNet = {}
 
@@ -145,7 +146,8 @@ function BNet:Send(inMessage)
             local _EncodedPacket = XFG:EncodeMessage(_Packet)
             XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Settings.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
             -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-            BNSendGameData(_Friend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, _EncodedPacket)
+            BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _EncodedPacket, _, _Friend:GetGameID())
+--            BNSendGameData(_Friend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, _EncodedPacket)
         end
         inMessage:RemoveTarget(_Friend:GetTarget())
     end
@@ -181,7 +183,8 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end
 
     if(inEncodedMessage == 'PING') then
-        BNSendGameData(inSender, XFG.Settings.Network.Message.Tag.BNET, 'RE:PING')
+        BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
+        --BNSendGameData(inSender, XFG.Settings.Network.Message.Tag.BNET, 'RE:PING')
         return
     elseif(inEncodedMessage == 'RE:PING') then
         return
@@ -252,6 +255,7 @@ end
 function BNet:Purge(inEpochTime)
     assert(type(inEpochTime) == 'number')
 	for _, _Packet in self:Iterator() do
+        XFG:DataDumper(LogCategory, _Packet)
 		if(_Packet ~= nil and _Packet:GetTimeStamp() < inEpochTime) then
 			self:RemoveMessage(_Packet:GetKey())
 		end
@@ -268,6 +272,7 @@ function BNet:PingFriend(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', 'argument must be a Friend object')
     if(inFriend:IsRunningAddon() == false) then
         XFG:Debug(LogCategory, 'Sending ping to [%s]', inFriend:GetTag())
-        BNSendGameData(inFriend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, 'PING')
+        BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())
+        --BNSendGameData(inFriend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, 'PING')
     end
 end

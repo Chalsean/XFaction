@@ -23,16 +23,13 @@ function PlayerEvent:Initialize()
         XFG:Info(LogCategory, 'Registered for SOULBIND_ACTIVATED events')
         XFG:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED', self.CallbackPlayerChanged, 'ACTIVE_TALENT_GROUP_CHANGED')
         XFG:Info(LogCategory, 'Registered for ACTIVE_TALENT_GROUP_CHANGED events')
-        XFG:RegisterEvent('PLAYER_LEVEL_CHANGED', self.CallbackPlayerChanged, 'PLAYER_LEVEL_CHANGED')
-        XFG:Info(LogCategory, 'Registered for PLAYER_LEVEL_CHANGED events')
-        XFG:RegisterEvent('SKILL_LINES_CHANGED', self.CallbackSkillChanged)
-        XFG:Info(LogCategory, 'Registered for SKILL_LINES_CHANGED events')
-        XFG:RegisterEvent('ZONE_CHANGED_NEW_AREA', self.CallbackZoneChanged)       
-        XFG:Info(LogCategory, 'Registered for ZONE_CHANGED_NEW_AREA events')
         XFG:RegisterEvent('CHALLENGE_MODE_COMPLETED', self.CallbackPlayerChanged, 'CHALLENGE_MODE_COMPLETED')
         XFG:Info(LogCategory, 'Registered for CHALLENGE_MODE_COMPLETED events')
         XFG:RegisterBucketEvent({'ACHIEVEMENT_EARNED'}, 10, self.CallbackPlayerChanged, 'ACHIEVEMENT_EARNED')
         XFG:Info(LogCategory, 'Registered for ACHIEVEMENT_EARNED events')
+        XFG:RegisterEvent('PLAYER_ENTERING_WORLD', self.CallbackInstance)
+        XFG:Info(LogCategory, 'Registered for PLAYER_ENTERING_WORLD events')
+        self:CallbackInstance()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -104,4 +101,36 @@ function PlayerEvent:CallbackSkillChanged()
             return
         end
     end
+end
+
+function PlayerEvent:CallbackInstance()
+    local _InInstance, _InstanceType = IsInInstance()
+    -- Enter instance for first time
+    if(_InInstance and XFG.Player.InInstance == false) then
+        XFG.Handlers.PlayerEvent:DisableNonCritical()
+        XFG.Handlers.TimerEvent:DisableNonCritical()
+
+    -- Just leaving instance
+    elseif(_InInstance == false and XFG.Player.InInstance) then
+        XFG.Handlers.PlayerEvent:EnableNonCritical()
+        XFG.Handlers.TimerEvent:EnableNonCritical()
+    end
+end
+
+function PlayerEvent:EnableNonCritical()
+    XFG:RegisterEvent('PLAYER_LEVEL_CHANGED', self.CallbackPlayerChanged, 'PLAYER_LEVEL_CHANGED')
+    XFG:Info(LogCategory, 'Registered for PLAYER_LEVEL_CHANGED events')
+    XFG:RegisterEvent('SKILL_LINES_CHANGED', self.CallbackSkillChanged)
+    XFG:Info(LogCategory, 'Registered for SKILL_LINES_CHANGED events')
+    XFG:RegisterEvent('ZONE_CHANGED_NEW_AREA', self.CallbackZoneChanged)
+    XFG:Info(LogCategory, 'Registered for ZONE_CHANGED_NEW_AREA events')
+end
+
+function PlayerEvent:DisableNonCritical()
+    XFG:UnregisterEvent('PLAYER_LEVEL_CHANGED')
+    XFG:Info(LogCategory, 'Unregistered for PLAYER_LEVEL_CHANGED events')
+    XFG:UnregisterEvent('SKILL_LINES_CHANGED')
+    XFG:Info(LogCategory, 'Unegistered for SKILL_LINES_CHANGED events')
+    XFG:UnregisterEvent('ZONE_CHANGED_NEW_AREA')
+    XFG:Info(LogCategory, 'Unregistered for ZONE_CHANGED_NEW_AREA events')
 end

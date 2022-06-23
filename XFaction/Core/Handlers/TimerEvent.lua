@@ -11,6 +11,8 @@ function TimerEvent:new()
     self.__name = ObjectName
 
     self._Initialized = false
+    self._MailboxTimerID = nil
+    self._BNetMailboxTimerID = nil
 
     return Object
 end
@@ -19,11 +21,6 @@ function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
         XFG.Cache.LoginTimerStart = GetServerTime()
         XFG.Cache.LoginTimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, 1)
-        XFG:Info(LogCategory, "Scheduled monitor for guild information becoming available")        
-        XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, XFG.Settings.Network.Mailbox.Scan)
-        XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", XFG.Settings.Network.Mailbox.Scan)
-        XFG:ScheduleRepeatingTimer(self.CallbackBNetMailboxTimer, XFG.Settings.Network.Mailbox.Scan)
-        XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", XFG.Settings.Network.Mailbox.Scan)        
         XFG:ScheduleRepeatingTimer(self.CallbackOffline, XFG.Settings.Confederate.UnitScan)
         XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", XFG.Settings.Confederate.UnitScan)
         XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, XFG.Settings.Player.Heartbeat)
@@ -39,6 +36,27 @@ function TimerEvent:Initialize()
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
+end
+
+function TimerEvent:EnableNonCritical()
+    self._MailboxTimerID = XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, XFG.Settings.Network.Mailbox.Scan)
+    XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", XFG.Settings.Network.Mailbox.Scan)
+    self._BNetMailboxTimerID = XFG:ScheduleRepeatingTimer(self.CallbackBNetMailboxTimer, XFG.Settings.Network.Mailbox.Scan)
+    XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", XFG.Settings.Network.Mailbox.Scan)        
+
+end
+
+function TimerEvent:DisableNonCritical()
+    if(self._MailboxTimerID ~= nil) then
+        XFG:CancelTimer(self._MailboxTimerID)
+        self._MailboxTimerID = nil
+        XFG:Info(LogCategory, "Canceled mailbox purge")
+    end
+    if(self._BNetMailboxTimerID ~= nil) then
+        XFG:CancelTimer(self._BNetMailboxTimerID)
+        self._BNetMailboxTimerID = nil
+        XFG:Info(LogCategory, "Canceled BNet mailbox purge")
+    end
 end
 
 function TimerEvent:IsInitialized(inBoolean)
@@ -183,13 +201,13 @@ function TimerEvent:CallbackLogin()
                 local _UnitData = Unit:new()
                 _UnitData:Initialize(_MemberID)
                 if(_UnitData:IsOnline()) then
-                    XFG.Confederate:AddUnit(_UnitData)
+                    if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
+                        XFG.Confederate:AddUnit(_UnitData)
+                    end
                     if(_UnitData:IsPlayer()) then
                         XFG.Player.Unit = _UnitData                    
                         XFG.Player.Unit:Print()                    
                     end
-                elseif(_UnitData:GetKey() ~= nil and XFG.Confederate:Contains(_UnitData:GetKey())) then
-                    XFG.Confederate:RemoveUnit(_UnitData:GetKey())
                 end
             end
 
@@ -210,7 +228,7 @@ function TimerEvent:CallbackLogin()
 
             -- Log into addon channel for realm/faction wide communication
             XFG.Channels = ChannelCollection:new(); XFG.Channels:Initialize()
-            if(XFG.Outbox:HasLocalChannel() == false) then
+            --if(XFG.Outbox:HasLocalChannel() == false) then
                 if(XFG.Settings.Network.Channel.Password == nil) then
                     JoinChannelByName(XFG.Settings.Network.Channel.Name)
                 else
@@ -224,16 +242,16 @@ function TimerEvent:CallbackLogin()
 			    _NewChannel:SetShortName(_ChannelInfo.shortcut)
 			    XFG.Channels:AddChannel(_NewChannel)
                 XFG.Outbox:SetLocalChannel(_NewChannel)
-            end
+            --end
 
             -- Register event handlers
             XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
             XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()        
-            XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
-            XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
+            XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()            
             XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
             XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
             XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
+            XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
  
             -- Ping friends to find out whos available for BNet
             if(XFG.DB.UIReload == false) then                

@@ -43,7 +43,8 @@ XFG.DataText = {
 }
 
 XFG.Player = {
-	LastBroadcast = 0
+	LastBroadcast = 0,
+	InInstance = true
 }
 
 XFG.Frames = {}

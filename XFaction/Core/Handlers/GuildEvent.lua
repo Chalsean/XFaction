@@ -73,5 +73,4 @@ function GuildEvent:CallbackRosterUpdate()
             XFG.Confederate:RemoveUnit(_UnitData:GetKey())
         end
     end
-    XFG.DataText.Guild:RefreshBroker()
 end

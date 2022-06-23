@@ -3,6 +3,9 @@
 **Enhancements**
 [XFaction]
 - Confederate name, realms/guilds involved and channel are all configurable in guild info
+- Enable/disable non-critical event handlers and timers during instances
+- Modified ChatThrottleLib from Ace3 libraries to accept BNet
+- Removed majority of network channel scanning
 
 [Guild (X)]
 - Now locksdown if in combat
