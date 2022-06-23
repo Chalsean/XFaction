@@ -17,7 +17,7 @@ end
 
 function ChatEvent:Initialize()
 	if(self:IsInitialized() == false) then
-        XFG:CreateEvent('GChat', 'CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.CallbackGuildMessage, true, true)
+        XFG:RegisterEvent('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.CallbackGuildMessage)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

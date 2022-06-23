@@ -19,9 +19,9 @@ end
 function ChannelEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
-		XFG:CreateEvent('ChannelJoin', 'CHAT_MSG_CHANNEL_NOTICE', XFG.Handlers.ChannelEvent.CallbackChannelNotice, true, true)
-		XFG:CreateEvent('ChannelChange', 'CHANNEL_FLAGS_UPDATED', XFG.Handlers.ChannelEvent.CallbackChannelChange, true, true)
-		XFG:CreateEvent('ChannelLeave', 'CHAT_MSG_CHANNEL_LEAVE', XFG.Handlers.ChannelEvent.CallbackOffline, true, true)
+		XFG:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', XFG.Handlers.ChannelEvent.CallbackChannelNotice)
+		XFG:RegisterEvent('CHANNEL_FLAGS_UPDATED', XFG.Handlers.ChannelEvent.CallbackChannelChange)
+		XFG:RegisterEvent('CHAT_MSG_CHANNEL_LEAVE', XFG.Handlers.ChannelEvent.CallbackOffline)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
