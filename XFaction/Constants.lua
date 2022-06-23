@@ -44,7 +44,7 @@ XFG.DataText = {
 
 XFG.Player = {
 	LastBroadcast = 0,
-	InInstance = true
+	InInstance = false
 }
 
 XFG.Frames = {}
@@ -55,9 +55,10 @@ XFG.Cache = {
 XFG.Settings = {
 	Player = {
 		Heartbeat = 60 * 2,      -- Seconds between player status broadcast
+		MinimumHeartbeat = 15
 	},
 	Confederate = {
-		UnitStale = 60 * 5,   -- Seconds before you consider another unit offline
+		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
 		UnitScan = 60,       -- Seconds between offline checks
 		AltRank = nil,
 	},

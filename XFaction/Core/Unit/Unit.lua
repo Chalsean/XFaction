@@ -97,7 +97,7 @@ function Unit:Initialize(inMemberID)
             self:SetSoulbind(XFG.Soulbinds:GetSoulbind(_SoulbindID))
         end
 
-        -- The following call will randomly fail
+        -- The following call will randomly fail, retries seem to help
         for i = 1, 10 do
             local _SpecGroupID = GetSpecialization()
             if(_SpecGroupID ~= nil) then
@@ -106,6 +106,18 @@ function Unit:Initialize(inMemberID)
                     self:SetSpec(XFG.Specs:GetSpec(_SpecID))
                     break
                 end
+            end
+        end
+
+        -- If in Oribos, enable Covenant event listener
+        local _Event = XFG.Events:GetEvent('Covenant')   
+        if(_Event ~= nil) then
+            if(self:GetZone() == 'Oribos') then
+                if(_Event:IsEnabled() == false) then
+                    _Event:Start()
+                end
+            elseif(_Event:IsEnabled()) then
+                _Event:Stop()
             end
         end
     end

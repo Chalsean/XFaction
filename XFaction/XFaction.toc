@@ -15,6 +15,7 @@ Constants.lua
 Core\Developer\Load_Developer.xml
 Core\Functions\Load_Functions.xml
 Core\Configuration\Load_Configurations.xml
+Core\Wrappers\Load_Wrappers.xml
 Core\Handlers\Load_Handlers.xml
 Core\Network\Load_Network.xml
 Core\Unit\Load_Unit.xml

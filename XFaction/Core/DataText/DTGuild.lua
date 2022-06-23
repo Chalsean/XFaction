@@ -188,7 +188,7 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 	elseif inMouseButton == 'RightButton' then
 		if IsShiftKeyDown() then
 			-- Invite
-			C_PartyInfo.InviteUnit(inUnitName)
+			C_PartyInfo.InviteUnit(_UnitName)
 		else
 			-- Menu
 			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')

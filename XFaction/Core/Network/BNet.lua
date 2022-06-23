@@ -31,8 +31,7 @@ function BNet:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
         -- Technically this should be with the other handlers but wanted to keep the BNet logic together
-        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', self.Receive)
-        XFG:Info(LogCategory, 'Registered for BN_CHAT_MSG_ADDON events')
+        local _Event = Event:new(); _Event:Initialize('BNet', 'BN_CHAT_MSG_ADDON', XFG.BNet.Receive, true, true)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
