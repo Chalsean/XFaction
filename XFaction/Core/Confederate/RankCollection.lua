@@ -41,7 +41,7 @@ function RankCollection:Initialize()
 			XFG.Settings.DataText.Guild.Ranks[tonumber(_RankIndex)] = _RankIndex .. ' - ' .. _NewRank:GetName()
 			XFG:Debug(LogCategory, 'Initialized confederate rank [%s]', XFG.Settings.DataText.Guild.Ranks[_RankIndex])
         end
-		XFG.Options.args.DataText.args.Guild.args.Rank.values = XFG.Settings.DataText.Guild.Ranks
+		XFG.Options.args.DataText.args.Guild.args.RankSelect.values = XFG.Settings.DataText.Guild.Ranks
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

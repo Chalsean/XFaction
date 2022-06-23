@@ -101,8 +101,8 @@ function ChatFrame:Display(inMessage)
                     local _Text = ''
                     local _Guild = inMessage:GetGuild()
 
+                    local _Faction = _Guild:GetFaction()  
                     if(XFG.Config.Chat[_ConfigNode].Faction) then  
-                        local _Faction = _Guild:GetFaction()                      
                         _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
@@ -125,7 +125,27 @@ function ChatFrame:Display(inMessage)
                         _Text = _Text .. inMessage:GetData()
                     end
 
-                    local _Hex = XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].Color.Red, XFG.Config.Chat[_ConfigNode].Color.Green, XFG.Config.Chat[_ConfigNode].Color.Blue)
+                    local _Hex
+                    if(XFG.Config.Chat[_ConfigNode].CColor) then
+                        if(XFG.Config.Chat[_ConfigNode].FColor) then
+                            _Hex = _Faction:GetName() == 'Horde' and XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].HColor.Red, XFG.Config.Chat[_ConfigNode].HColor.Green, XFG.Config.Chat[_ConfigNode].HColor.Blue) or XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].AColor.Red, XFG.Config.Chat[_ConfigNode].AColor.Green, XFG.Config.Chat[_ConfigNode].AColor.Blue)
+                        else
+                            _Hex = XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].Color.Red, XFG.Config.Chat[_ConfigNode].Color.Green, XFG.Config.Chat[_ConfigNode].Color.Blue)
+                        end
+                    else
+                        if(XFG.Config.Chat[_ConfigNode].FColor) then
+                            _Hex = _Faction:GetName() == 'Horde' and 'E0000D' or '378DEF'
+                        else
+                            local _dColor 
+                            if (_Event == 'ACHIEVEMENT') then
+                                dColor = _G.ChatTypeInfo["GUILD_ACHIEVEMENT"]
+                            else
+                                dColor = _G.ChatTypeInfo["GUILD"]
+                            end
+                            _Hex = XFG:RGBPercToHex(dColor.r, dColor.g, dColor.b);
+                        end
+                    end
+                   
                     _Text = format('|cff%s%s|r', _Hex, _Text)
 
                     self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())

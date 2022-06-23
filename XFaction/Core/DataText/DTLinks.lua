@@ -3,6 +3,8 @@ local ObjectName = 'DTLinks'
 local LogCategory = 'DTLinks'
 
 DTLinks = {}
+	
+local _Tooltip
 
 function DTLinks:new()
     _Object = {}
@@ -15,7 +17,7 @@ function DTLinks:new()
 	self._HeaderFont = nil
 	self._RegularFont = nil
 	self._LDBObject = nil
-	self._Tooltip = nil
+	_Tooltip = nil
 	self._Count = 0
     
     return _Object
@@ -56,7 +58,7 @@ function DTLinks:Print()
 	XFG:Debug(LogCategory, "  _RegularFont (" .. type(self._RegularFont) .. "): ".. tostring(self._RegularFont))
 	XFG:Debug(LogCategory, "  _Count (" .. type(self._Count) .. "): ".. tostring(self._Count))
 	XFG:Debug(LogCategory, "  _LDBObject (" .. type(self._LDBObject) .. ")")
-	XFG:Debug(LogCategory, "  _Tooltip (" .. type(self._Tooltip) .. ")")
+	XFG:Debug(LogCategory, "  _Tooltip (" .. type(_Tooltip) .. ")")
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
@@ -76,35 +78,34 @@ function DTLinks:OnEnter(this)
 
 	local _TargetCount = XFG.Targets:GetCount() + 1
 	
-	local _Tooltip
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
-		self._Tooltip = XFG.Lib.QT:Acquire(ObjectName)		
+		_Tooltip = XFG.Lib.QT:Acquire(ObjectName)		
 	else
-		self._Tooltip = XFG.Lib.QT:Acquire(ObjectName, _TargetCount)
-		self._Tooltip:SetHeaderFont(self._HeaderFont)
-		self._Tooltip:SetFont(self._RegularFont)
-		self._Tooltip:SmartAnchorTo(this)
-		self._Tooltip:SetAutoHideDelay(XFG.DataText.AutoHide, self._Tooltip)
-		self._Tooltip:EnableMouse(true)
-		self._Tooltip:SetClampedToScreen(false)
+		_Tooltip = XFG.Lib.QT:Acquire(ObjectName, _TargetCount)
+		_Tooltip:SetHeaderFont(self._HeaderFont)
+		_Tooltip:SetFont(self._RegularFont)
+		_Tooltip:SmartAnchorTo(this)
+		_Tooltip:SetAutoHideDelay(XFG.DataText.AutoHide, this, function() DTLinks:OnLeave() end)
+		_Tooltip:EnableMouse(true)
+		_Tooltip:SetClampedToScreen(false)
 	end
 
-	self._Tooltip:Clear()
+	_Tooltip:Clear()
 
-	local line = self._Tooltip:AddLine()
+	local line = _Tooltip:AddLine()
 	local _GuildName = XFG.Confederate:GetName()
-	self._Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _GuildName), self._HeaderFont, "LEFT", _TargetCount)
-	line = self._Tooltip:AddLine()
-	self._Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DTLINKS_HEADER_LINKS'], self._Count), self._HeaderFont, "LEFT", _TargetCount)
+	_Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _GuildName), self._HeaderFont, "LEFT", _TargetCount)
+	line = _Tooltip:AddLine()
+	_Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DTLINKS_HEADER_LINKS'], self._Count), self._HeaderFont, "LEFT", _TargetCount)
 
-	line = self._Tooltip:AddLine()
-	line = self._Tooltip:AddLine()
-	line = self._Tooltip:AddHeader()
+	line = _Tooltip:AddLine()
+	line = _Tooltip:AddLine()
+	line = _Tooltip:AddHeader()
 
 	-- Targets collection does not contain player's current realm/faction
 	local _TargetColumn = {}
 	local _TargetName = format('%s%s', format(XFG.Icons.String, XFG.Player.Faction:GetIconID()), XFG.Player.Realm:GetName())
-	self._Tooltip:SetCell(line, 1, _TargetName)
+	_Tooltip:SetCell(line, 1, _TargetName)
 	local _Key = XFG.Player.Realm:GetID() .. ':' .. XFG.Player.Faction:GetID()
 	_TargetColumn[_Key] = 1
 	local i = 2
@@ -113,14 +114,14 @@ function DTLinks:OnEnter(this)
 		local _Realm = _Target:GetRealm()
 		local _Faction = _Target:GetFaction()
 		local _TargetName = format('%s%s', format(XFG.Icons.String, _Faction:GetIconID()), _Realm:GetName())
-		self._Tooltip:SetCell(line, i, _TargetName)
+		_Tooltip:SetCell(line, i, _TargetName)
 		_TargetColumn[_Target:GetKey()] = i
 		i = i + 1
 	end
 
-	line = self._Tooltip:AddLine()
-	self._Tooltip:AddSeparator()
-	line = self._Tooltip:AddLine()
+	line = _Tooltip:AddLine()
+	_Tooltip:AddSeparator()
+	line = _Tooltip:AddLine()
 
 	if(XFG.Initialized) then
 		for _, _Link in XFG.Links:Iterator() do
@@ -143,24 +144,24 @@ function DTLinks:OnEnter(this)
 					_ToName = format("|cffffff00%s|r", _Link:GetToName())
 				end
 
-				self._Tooltip:SetCell(line, _TargetColumn[_FromKey], _FromName)
-				self._Tooltip:SetCell(line, _TargetColumn[_ToKey], _ToName)
+				_Tooltip:SetCell(line, _TargetColumn[_FromKey], _FromName)
+				_Tooltip:SetCell(line, _TargetColumn[_ToKey], _ToName)
 				
-				line = self._Tooltip:AddLine()
+				line = _Tooltip:AddLine()
 			--end
 		end
 	end
 
-	self._Tooltip:Show()
+	_Tooltip:Show()
 end
 
 function DTLinks:OnLeave()
-	local _IsMouseOver = true
-	local _Status, _Error = pcall(function () _IsMouseOver = MouseIsOver(self._Tooltip) end)
-	if(_Status and _IsMouseOver == false) then 
-		if XFG.Lib.QT:IsAcquired(ObjectName) then self._Tooltip:Clear() end
-		self._Tooltip:Hide()
+	if _Tooltip and MouseIsOver(_Tooltip) then
+        return
+    else
+		if XFG.Lib.QT:IsAcquired(ObjectName) then _Tooltip:Clear() end
+		_Tooltip:Hide()
 		XFG.Lib.QT:Release(ObjectName)
-		self._Tooltip = nil
+		_Tooltip = nil
 	end
 end

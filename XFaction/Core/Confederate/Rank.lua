@@ -67,6 +67,7 @@ end
 
 function Rank:SetAltName(_AltName)
     assert(type(_AltName) == 'string')
+    if _AltName == "" then _AltName = XFG.Settings.Ranks[self:GetID()] end
     self._AltName = _AltName
     XFG.Config.Rank[self:GetID()] = self:GetAltName()
     return self:GetAltName()
