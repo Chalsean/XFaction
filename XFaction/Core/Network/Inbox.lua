@@ -167,9 +167,6 @@ function Inbox:Process(inMessage, inMessageTag)
 
         -- If unit has just logged in, reply with latest information
         if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
-            -- Used to whisper back but was running into Blizz API bug, so just broadcast
-            XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
-            XFG.Links:BroadcastLinks()
             -- Display system message that unit has logged on
             if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) == false or XFG.Player.Guild:Equals(_UnitData:GetGuild()) == false) then
                 XFG.Frames.System:Display(inMessage)
