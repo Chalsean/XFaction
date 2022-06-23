@@ -15,24 +15,22 @@ function PlayerEvent:new()
     return Object
 end
 
+
+
 function PlayerEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:RegisterEvent('COVENANT_CHOSEN', self.CallbackPlayerChanged, 'COVENANT_CHOSEN')
-        XFG:Info(LogCategory, 'Registered for COVENANT_CHOSEN events')
-        XFG:RegisterEvent('SOULBIND_ACTIVATED', self.CallbackPlayerChanged, 'SOULBIND_ACTIVATED')
-        XFG:Info(LogCategory, 'Registered for SOULBIND_ACTIVATED events')
-        XFG:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED', self.CallbackPlayerChanged, 'ACTIVE_TALENT_GROUP_CHANGED')
-        XFG:Info(LogCategory, 'Registered for ACTIVE_TALENT_GROUP_CHANGED events')
-        XFG:RegisterEvent('PLAYER_LEVEL_CHANGED', self.CallbackPlayerChanged, 'PLAYER_LEVEL_CHANGED')
-        XFG:Info(LogCategory, 'Registered for PLAYER_LEVEL_CHANGED events')
-        XFG:RegisterEvent('SKILL_LINES_CHANGED', self.CallbackSkillChanged)
-        XFG:Info(LogCategory, 'Registered for SKILL_LINES_CHANGED events')
-        XFG:RegisterEvent('ZONE_CHANGED_NEW_AREA', self.CallbackZoneChanged)       
-        XFG:Info(LogCategory, 'Registered for ZONE_CHANGED_NEW_AREA events')
-        XFG:RegisterEvent('CHALLENGE_MODE_COMPLETED', self.CallbackPlayerChanged, 'CHALLENGE_MODE_COMPLETED')
-        XFG:Info(LogCategory, 'Registered for CHALLENGE_MODE_COMPLETED events')
-        XFG:RegisterBucketEvent({'ACHIEVEMENT_EARNED'}, 10, self.CallbackPlayerChanged, 'ACHIEVEMENT_EARNED')
-        XFG:Info(LogCategory, 'Registered for ACHIEVEMENT_EARNED events')
+
+        XFG:CreateEvent('Covenant', 'COVENANT_CHOSEN', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
+        XFG:CreateEvent('Soulbind', 'SOULBIND_ACTIVATED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
+        XFG:CreateEvent('Spec', 'ACTIVE_TALENT_GROUP_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
+        XFG:CreateEvent('Mythic', 'CHALLENGE_MODE_COMPLETED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, true)
+        XFG:CreateEvent('Instance', 'PLAYER_ENTERING_WORLD', XFG.Handlers.PlayerEvent.CallbackInstance, true, false)
+        XFG:CreateEvent('EnterCombat', 'PLAYER_REGEN_DISABLED', XFG.Handlers.PlayerEvent.CallbackEnterCombat, true, true)
+        XFG:CreateEvent('LeaveCombat', 'PLAYER_REGEN_ENABLED', XFG.Handlers.PlayerEvent.CallbackLeaveCombat, true, true)
+        XFG:CreateEvent('Level', 'PLAYER_LEVEL_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
+        XFG:CreateEvent('Profession', 'SKILL_LINES_CHANGED', XFG.Handlers.PlayerEvent.CallbackSkillChanged, false, false)
+        XFG:CreateEvent('Zone', 'ZONE_CHANGED_NEW_AREA', XFG.Handlers.PlayerEvent.CallbackZoneChanged, false, false)
+
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -74,8 +72,16 @@ function PlayerEvent:CallbackZoneChanged()
         if(_Zone ~= nil and _Zone ~= XFG.Player.Unit:GetZone()) then
             XFG.Player.Unit:SetZone(_Zone)
             XFG:Info(LogCategory, 'Updated player data based on ZONE_CHANGED_NEW_AREA event')
-            XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
+            --XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
             XFG.DataText.Guild:RefreshBroker()
+            local _Event = XFG.Events:GetEvent('Covenant')
+            if(XFG.Player.Unit:GetZone() == 'Oribos') then
+                if(_Event:IsEnabled() == false) then
+                    _Event:Start()
+                end
+            elseif(_Event:IsEnabled()) then
+                _Event:Stop()
+            end
         end
     end
 end
@@ -103,5 +109,42 @@ function PlayerEvent:CallbackSkillChanged()
             XFG.DataText.Guild:RefreshBroker()
             return
         end
+    end
+end
+
+function PlayerEvent:CallbackInstance()
+    local _InInstance, _InstanceType = IsInInstance()
+    -- Enter instance for first time
+    if(_InInstance and XFG.Player.InInstance == false) then
+        XFG:Debug(LogCategory, 'Entering instance, disabling some event listeners and timers')
+        XFG.Player.InInstance = true
+        XFG.Events:EnterInstance()
+        XFG.Timers:EnterInstance()        
+
+    -- Just leaving instance or UI reload
+    elseif(_InInstance == false and XFG.Player.InInstance) then
+        XFG:Debug(LogCategory, 'Leaving instance, enabling some event listeners and timers')
+        XFG.Player.InInstance = false
+        XFG.Events:LeaveInstance()
+        XFG.Timers:LeaveInstance()
+    end
+end
+
+-- Entering combat in an instance, disable as much messaging as we can to not interfere
+-- An instance is raid, dungeon, bg, arena
+function PlayerEvent:CallbackEnterCombat()
+    if(XFG.Player.InInstance) then
+        XFG:Debug(LogCategory, 'Entering instance combat, disabling some event listeners and timers')
+        XFG.Events:EnterCombat()
+        XFG.Timers:EnterCombat()
+    end
+end
+
+-- Reenable things and fire if its been too long
+function PlayerEvent:CallbackLeaveCombat()
+    if(XFG.Player.InInstance) then
+        XFG:Debug(LogCategory, 'Leaving instance combat, enabling some event listeners and timers')
+        XFG.Events:LeaveCombat()
+        XFG.Timers:LeaveCombat()
     end
 end

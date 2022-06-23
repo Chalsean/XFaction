@@ -73,6 +73,7 @@ end
 
 function DTLinks:OnEnter(this)
 	if(XFG.Initialized == false) then return end
+	if(InCombatLockdown()) then return end
 
 	local _TargetCount = XFG.Targets:GetCount() + 1
 	
@@ -124,30 +125,28 @@ function DTLinks:OnEnter(this)
 
 	if(XFG.Initialized) then
 		for _, _Link in XFG.Links:Iterator() do
-			--if((XFG.Config.DataText.Links.OnlyMine and _Link:IsMyLink()) or XFG.Config.DataText.Links.OnlyMine == false) then
-				local _FromRealm = _Link:GetFromRealm()
-				local _FromFaction = _Link:GetFromFaction()
-				local _ToRealm = _Link:GetToRealm()
-				local _ToFaction = _Link:GetToFaction()
+			local _FromRealm = _Link:GetFromRealm()
+			local _FromFaction = _Link:GetFromFaction()
+			local _ToRealm = _Link:GetToRealm()
+			local _ToFaction = _Link:GetToFaction()
 
-				_FromKey = _FromRealm:GetID() .. ':' .. _FromFaction:GetID()
-				_ToKey = _ToRealm:GetID() .. ':' .. _ToFaction:GetID()
+			_FromKey = _FromRealm:GetID() .. ':' .. _FromFaction:GetID()
+			_ToKey = _ToRealm:GetID() .. ':' .. _ToFaction:GetID()
 
-				local _FromName = format("|cffffffff%s|r", _Link:GetFromName())
-				if(_Link:IsMyLink() and _Link:GetFromName() == XFG.Player.Unit:GetName()) then
-					_FromName = format("|cffffff00%s|r", _Link:GetFromName())
-				end
+			local _FromName = format("|cffffffff%s|r", _Link:GetFromName())
+			if(_Link:IsMyLink() and _Link:GetFromName() == XFG.Player.Unit:GetName()) then
+				_FromName = format("|cffffff00%s|r", _Link:GetFromName())
+			end
 
-				local _ToName = format("|cffffffff%s|r", _Link:GetToName())
-				if(_Link:IsMyLink() and _Link:GetToName() == XFG.Player.Unit:GetName()) then
-					_ToName = format("|cffffff00%s|r", _Link:GetToName())
-				end
+			local _ToName = format("|cffffffff%s|r", _Link:GetToName())
+			if(_Link:IsMyLink() and _Link:GetToName() == XFG.Player.Unit:GetName()) then
+				_ToName = format("|cffffff00%s|r", _Link:GetToName())
+			end
 
-				self._Tooltip:SetCell(line, _TargetColumn[_FromKey], _FromName)
-				self._Tooltip:SetCell(line, _TargetColumn[_ToKey], _ToName)
-				
-				line = self._Tooltip:AddLine()
-			--end
+			self._Tooltip:SetCell(line, _TargetColumn[_FromKey], _FromName)
+			self._Tooltip:SetCell(line, _TargetColumn[_ToKey], _ToName)
+			
+			line = self._Tooltip:AddLine()
 		end
 	end
 

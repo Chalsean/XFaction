@@ -70,7 +70,7 @@ function Unit:Initialize(inMemberID)
     self:SetTimeStamp(_EpochTime or 0)
     self:SetClass(XFG.Classes:GetClass(_UnitData.classID))
     self:SetRace(XFG.Races:GetRace(_UnitData.race))
-    self:SetRank(XFG.Ranks:GetRankByName(_UnitData.guildRank))
+    self:SetRank(_UnitData.guildRank)
     self:SetNote(_UnitData.memberNote or '?')
     self:IsPlayer(_UnitData.isSelf)
     self:SetDungeonScore(_UnitData.overallDungeonScore or 0)
@@ -97,7 +97,7 @@ function Unit:Initialize(inMemberID)
             self:SetSoulbind(XFG.Soulbinds:GetSoulbind(_SoulbindID))
         end
 
-        -- The following call will randomly fail
+        -- The following call will randomly fail, retries seem to help
         for i = 1, 10 do
             local _SpecGroupID = GetSpecialization()
             if(_SpecGroupID ~= nil) then
@@ -106,6 +106,18 @@ function Unit:Initialize(inMemberID)
                     self:SetSpec(XFG.Specs:GetSpec(_SpecID))
                     break
                 end
+            end
+        end
+
+        -- If in Oribos, enable Covenant event listener
+        local _Event = XFG.Events:GetEvent('Covenant')   
+        if(_Event ~= nil) then
+            if(self:GetZone() == 'Oribos') then
+                if(_Event:IsEnabled() == false) then
+                    _Event:Start()
+                end
+            elseif(_Event:IsEnabled()) then
+                _Event:Stop()
             end
         end
     end
@@ -128,7 +140,8 @@ function Unit:Print()
     XFG:Debug(LogCategory, '  _GUID (' .. type(self._GUID) .. '): ' .. tostring(self._GUID))
     XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
 	XFG:Debug(LogCategory, '  _UnitName (' .. type(self._UnitName) .. '): ' .. tostring(self._UnitName))
-    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))    
+    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+    XFG:Debug(LogCategory, '  _Rank (' .. type(self._Rank) .. '): ' .. tostring(self._Rank))
     XFG:Debug(LogCategory, '  _Level (' .. type(self._Level) .. '): ' .. tostring(self._Level))
     XFG:Debug(LogCategory, '  _Zone (' .. type(self._Zone) .. '): ' .. tostring(self._Zone))
     XFG:Debug(LogCategory, '  _Note (' .. type(self._Note) .. '): ' .. tostring(self._Note))
@@ -152,7 +165,6 @@ function Unit:Print()
     if(self:HasSoulbind()) then self._Soulbind:Print() end
     if(self:HasProfession1()) then self._Profession1:Print() end
     if(self:HasProfession2()) then self._Profession2:Print() end
-    if(self:HasRank()) then self._Rank:Print() end
 end
 
 function Unit:IsPlayer(inBoolean)
@@ -214,19 +226,15 @@ function Unit:SetName(inName)
     return self:GetName()
 end
 
-function Unit:HasRank()
-    return self._Rank ~= nil
-end
-
 function Unit:GetRank()
     return self._Rank
 end
 
 function Unit:SetRank(inRank)
-    assert(type(inRank) == 'table' and inRank.__name ~= nil and inRank.__name == 'Rank', 'argument must be Rank object')
+    assert(type(inRank) == 'string')
     self._Rank = inRank
 
-    if(inRank:GetName() == 'Grand Alt') then
+    if(inRank == XFG.Settings.Confederate.AltRank) then
         self:IsAlt(true)
     end
 
@@ -537,6 +545,7 @@ function Unit:Equals(inUnit)
     if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
     if(self:IsOnMainGuild() ~= inUnit:IsOnMainGuild()) then return false end
     if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
+    if(self:GetRank() ~= inUnit:GetRank()) then return false end
 
     if(self:HasCovenant() == false and inUnit:HasCovenant()) then return false end
     if(self:HasCovenant()) then
@@ -560,12 +569,6 @@ function Unit:Equals(inUnit)
     if(self:HasProfession2()) then
         local _CachedProfession2 = self:GetProfession2()
         if(_CachedProfession2:Equals(inUnit:GetProfession2()) == false) then return false end
-    end
-
-    if(self:HasRank() == false and inUnit:HasRank()) then return false end
-    if(self:HasRank()) then
-        local _CachedRank = self:GetRank()
-        if(_CachedRank:Equals(inUnit:GetRank()) == false) then return false end
     end
 
     if(self:HasRace() == false and inUnit:HasRace()) then return false end

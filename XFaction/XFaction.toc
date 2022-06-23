@@ -1,6 +1,6 @@
 ## Interface: 90205
 ## Author: Chalsean (US-Proudmoore)
-## Version: 2.5.12
+## Version: 2.6.0
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
@@ -15,6 +15,7 @@ Constants.lua
 Core\Developer\Load_Developer.xml
 Core\Functions\Load_Functions.xml
 Core\Configuration\Load_Configurations.xml
+Core\Wrappers\Load_Wrappers.xml
 Core\Handlers\Load_Handlers.xml
 Core\Network\Load_Network.xml
 Core\Unit\Load_Unit.xml

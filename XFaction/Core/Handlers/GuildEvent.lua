@@ -31,8 +31,8 @@ end
 
 function GuildEvent:Initialize()
 	if(self:IsInitialized() == false) then
-        XFG:RegisterEvent('GUILD_ROSTER_UPDATE', self.CallbackRosterUpdate)
-        XFG:Info(LogCategory, "Registered for GUILD_ROSTER_UPDATE events")
+        -- This is the local guild roster scan for those not running the addon
+        XFG:CreateEvent('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -73,5 +73,4 @@ function GuildEvent:CallbackRosterUpdate()
             XFG.Confederate:RemoveUnit(_UnitData:GetKey())
         end
     end
-    XFG.DataText.Guild:RefreshBroker()
 end

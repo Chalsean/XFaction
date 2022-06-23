@@ -148,6 +148,7 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.DataText.Guild:RefreshBroker()
         if(_UnitData ~= nil) then
             XFG.Links:RemoveNode(_UnitData:GetName())
+            XFG.DataText.Links:RefreshBroker()
         end
         if(XFG.Player.Realm:Equals(inMessage:GetRealm()) == false or XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
             XFG.Frames.System:Display(inMessage)

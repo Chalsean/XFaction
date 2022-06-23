@@ -48,7 +48,6 @@ function Realm:Print()
     XFG:Debug(LogCategory, '  _APIName (' .. type(self._APIName) .. '): ' .. tostring(self._APIName))
     XFG:Debug(LogCategory, '  _IDCount (' .. type(self._IDCount) .. '): ' .. tostring(self._IDCount))
     XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-    XFG:Debug(LogCategory, '  _NumberRunningAddon (' .. type(self._NumberRunningAddon) .. '): ' .. tostring(self._NumberRunningAddon))
     XFG:Debug(LogCategory, '  _IDs (' .. type(self._IDs) .. '): ')
     for _, _Value in pairs (self._IDs) do
         XFG:Debug(LogCategory, '  ID (' .. type(_Value) .. ') ' .. tostring(_Value))

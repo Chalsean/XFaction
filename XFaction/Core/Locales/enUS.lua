@@ -37,6 +37,7 @@ L['INDEX'] = 'Index'
 L['DUNGEON'] = 'Mythic+'
 L['ACHIEVEMENT_EARNED'] = 'has earned achievement'
 L['CHAT_LOGOUT'] = 'has gone offline.'
+L['EXPLORE'] = 'Explore'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -125,19 +126,6 @@ L['DTGUILD_CONFIG_COLUMN_ZONE_TOOLTIP'] = 'Show players current zone'
 L['DTLINKS_NAME'] = 'Links (X)'
 -- Header
 L['DTLINKS_HEADER_LINKS'] = 'Active BNet Links: |cffffffff%d|r'
--- Config
-L['DTLINKS_CONFIG_ONLY_YOURS'] = 'Show Only Yours'
-L['DTLINKS_CONFIG_ONLY_YOURS_TOOLTIP'] = 'Show only your active links'
--------------------------
--- DTShard (X)
--------------------------
--- Broker name
-L['DTSHARD_NAME'] = 'Shard (X)'
--- Broker text
-L['DTSHARD_SHARD_ID'] = 'Shard: %d'
--- Config
-L['DTSHARD_CONFIG_FORCE_CHECK'] = 'Force Check'
-L['DTSHARD_CONFIG_FORCE_CHECK_TOOLTIP'] = 'Seconds between non-event shard checks'
 -------------------------
 -- DTSoulbind (X)
 -------------------------

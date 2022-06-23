@@ -100,6 +100,7 @@ local function PreSort()
 		_UnitData.GUID = _Unit:GetGUID()
 		_UnitData.Dungeon = _Unit:GetDungeonScore()
 		_UnitData.Achievement = _Unit:GetAchievementPoints()
+		_UnitData.Rank = _Unit:GetRank()
 
 		if(_Unit:IsAlt() and _Unit:HasMainName()) then
 			_UnitData.Name = _Unit:GetName() .. " (" .. _Unit:GetMainName() .. ")"
@@ -110,13 +111,6 @@ local function PreSort()
 
 		local _Team = _Unit:GetTeam()
 		_UnitData.Team = _Team:GetName()
-
-		local _Rank = _Unit:GetRank()
-		if(_Rank ~= nil) then
-			_UnitData.Rank = _Rank:GetAltName() and _Rank:GetAltName() or _Rank:GetName()
-		else
-			_UnitData.Rank = '?'
-		end
 
 		local _Class = _Unit:GetClass()
 		_UnitData.Class = _Class:GetColorMixin()
@@ -173,13 +167,28 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 			-- Who
 			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton') 
 		elseif(_UnitFaction:Equals(_PlayerFaction)) then
-			-- Whisper		
-			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
+			-- Whisper
+			if(XFG.Player.Faction:Equals(_Unit:GetFaction())) then
+				SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
+			-- See if theyre a bnet friend
+			else
+				for _, _Friend in XFG.Friends:Iterator() do
+					if(_Unit:GetName() == _Friend:GetName()) then
+						local _Target = _Friend:GetTarget()
+						local _Realm = _Target:GetRealm()
+						if(_Realm:Equals(_Unit:GetRealm())) then
+							local _Name = _Friend:GetAccountName()
+							--"|HBNplayer:"..arg2..":"..arg13..":"..arg11..":"..chatGroup..(chatTarget and ":"..chatTarget or "").."|h"
+							SetItemRef('player:'.. _UnitName, format('|HBNplayer:%1:%2:0:1$s|h[%1$s]|h', _Friend:GetAccountName(), _Friend:GetID()), 'LeftButton')
+						end
+					end
+				end
+			end
 		end		
 	elseif inMouseButton == 'RightButton' then
 		if IsShiftKeyDown() then
 			-- Invite
-			C_PartyInfo.InviteUnit(inUnitName)
+			C_PartyInfo.InviteUnit(_UnitName)
 		else
 			-- Menu
 			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
@@ -199,6 +208,7 @@ end
 
 function DTGuild:OnEnter(this)
 	if(XFG.Initialized == false) then return end
+	if(InCombatLockdown()) then return end
 
 	local _Tooltip
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
@@ -379,6 +389,7 @@ function DTGuild:OnLeave()
 end
 
 function DTGuild:OnClick(this, inButton)
+	if(InCombatLockdown()) then return end
 	if(inButton == 'LeftButton') then
 		ToggleGuildFrame()
 	elseif(inButton == 'RightButton') then

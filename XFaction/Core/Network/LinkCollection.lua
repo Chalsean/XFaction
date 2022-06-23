@@ -72,9 +72,10 @@ function LinkCollection:AddLink(inLink)
 	if(self:Contains(inLink:GetKey()) == false) then
 		self._LinkCount = self._LinkCount + 1
 		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
+		XFG.DataText.Links:RefreshBroker()
 	end
     self._Links[inLink:GetKey()] = inLink	
-    return self:Contains(inLink:GetKey())
+    return self:Contains(inLink:GetKey())	
 end
 
 function LinkCollection:RemoveLink(inLink)
@@ -83,6 +84,7 @@ function LinkCollection:RemoveLink(inLink)
 		self._LinkCount = self._LinkCount - 1
 		self._Links[inLink:GetKey()] = nil
 		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
+		XFG.DataText.Links:RefreshBroker()
 	end
     return self:Contains(inLink:GetKey()) == false
 end

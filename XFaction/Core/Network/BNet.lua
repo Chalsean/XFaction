@@ -1,7 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'BNet'
 local LogCategory = 'NBNet'
-local MaxPacketSize = 100
+local BCTL = assert(BNetChatThrottleLib, "XFaction requires BNetChatThrottleLib")
 
 BNet = {}
 
@@ -30,8 +30,7 @@ function BNet:Initialize()
     if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
         -- Technically this should be with the other handlers but wanted to keep the BNet logic together
-        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', self.Receive)
-        XFG:Info(LogCategory, 'Registered for BN_CHAT_MSG_ADDON events')
+        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', XFG.BNet.Receive)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -104,12 +103,12 @@ function BNet:Send(inMessage)
         _SerializedData = inMessage:GetData()
     end
     local _MessageSize = strlen(_SerializedData)
-    if(_MessageSize <= MaxPacketSize) then
+    if(_MessageSize <= XFG.Settings.Network.BNet.PacketSize) then
         table.insert(_Packets, inMessage)
         _PacketCount = 1
     else                
         local _SegmentStart = 1
-        local _SegmentEnd = MaxPacketSize
+        local _SegmentEnd = XFG.Settings.Network.BNet.PacketSize
 
         while(_SegmentStart <= _MessageSize) do
 
@@ -134,7 +133,7 @@ function BNet:Send(inMessage)
             table.insert(_Packets, _NewMessage)
             
             _SegmentStart = _SegmentEnd + 1
-            _SegmentEnd = _SegmentStart + MaxPacketSize
+            _SegmentEnd = _SegmentStart + XFG.Settings.Network.BNet.PacketSize
         end
     end
 
@@ -145,7 +144,8 @@ function BNet:Send(inMessage)
             local _EncodedPacket = XFG:EncodeMessage(_Packet)
             XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Settings.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
             -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-            BNSendGameData(_Friend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, _EncodedPacket)
+            BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _EncodedPacket, _, _Friend:GetGameID())
+--            BNSendGameData(_Friend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, _EncodedPacket)
         end
         inMessage:RemoveTarget(_Friend:GetTarget())
     end
@@ -181,7 +181,8 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end
 
     if(inEncodedMessage == 'PING') then
-        BNSendGameData(inSender, XFG.Settings.Network.Message.Tag.BNET, 'RE:PING')
+        BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
+        --BNSendGameData(inSender, XFG.Settings.Network.Message.Tag.BNET, 'RE:PING')
         return
     elseif(inEncodedMessage == 'RE:PING') then
         return
@@ -252,7 +253,8 @@ end
 function BNet:Purge(inEpochTime)
     assert(type(inEpochTime) == 'number')
 	for _, _Packet in self:Iterator() do
-		if(_Packet:GetTimeStamp() < inEpochTime) then
+        XFG:DataDumper(LogCategory, _Packet)
+		if(_Packet ~= nil and _Packet:GetTimeStamp() < inEpochTime) then
 			self:RemoveMessage(_Packet:GetKey())
 		end
 	end
@@ -268,6 +270,7 @@ function BNet:PingFriend(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', 'argument must be a Friend object')
     if(inFriend:IsRunningAddon() == false) then
         XFG:Debug(LogCategory, 'Sending ping to [%s]', inFriend:GetTag())
-        BNSendGameData(inFriend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, 'PING')
+        BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())
+        --BNSendGameData(inFriend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, 'PING')
     end
 end

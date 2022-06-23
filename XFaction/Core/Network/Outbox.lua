@@ -109,8 +109,13 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
 	if(inSubject == nil) then inSubject = XFG.Settings.Network.Message.Subject.DATA end
     -- Update the last sent time, dont need to heartbeat for awhile
+
     if(inUnitData:IsPlayer()) then
         local _EpochTime = GetServerTime()
+        if(XFG.Player.LastBroadcast > _EpochTime - XFG.Settings.Player.MinimumHeartbeat) then 
+            XFG:Debug(LogCategory, 'Not sending broadcast, its been too recent')
+            return 
+        end
         inUnitData:SetTimeStamp(_EpochTime)
         XFG.Player.LastBroadcast = inUnitData:GetTimeStamp()
     end

@@ -19,8 +19,7 @@ end
 function BNetEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
-        XFG:RegisterEvent('BN_FRIEND_INFO_CHANGED', self.CallbackFriendInfo)
-        XFG:Info(LogCategory, "Registered for BN_FRIEND_INFO_CHANGED events")
+        local _Event = Event:new(); _Event:Initialize('Friend', 'BN_FRIEND_INFO_CHANGED', XFG.Handlers.BNetEvent.CallbackFriendInfo, true, true)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

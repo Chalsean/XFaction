@@ -16,8 +16,7 @@ end
 
 function AchievementEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:RegisterEvent('ACHIEVEMENT_EARNED', self.CallbackAchievement)
-        XFG:Info(LogCategory, "Registered for ACHIEVEMENT_EARNED events")
+        XFG:CreateEvent('Achievement', 'ACHIEVEMENT_EARNED', XFG.Handlers.AchievementEvent.CallbackAchievement, true, true)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -38,8 +37,8 @@ function AchievementEvent:Print()
 end
 
 function AchievementEvent:CallbackAchievement(inID)
-    local _, _, _, _, _, _, _, _, _, _, _, _IsGuild = GetAchievementInfo(inID)
-    if(_IsGuild == false) then
+    local _, _Name, _, _, _, _, _, _, _, _, _, _IsGuild = GetAchievementInfo(inID)
+    if(_IsGuild == false and string.find(_Name, XFG.Lib.Locale['EXPLORE']) == nil) then
         local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
         _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)

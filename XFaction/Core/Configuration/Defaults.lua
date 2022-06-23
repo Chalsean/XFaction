@@ -3,7 +3,6 @@ local LogCategory = 'Config'
 
 XFG.Defaults = {
     profile = {
-        Rank = {},
         Channel = {
             Enable = false,
             Channels = {},
@@ -55,17 +54,8 @@ XFG.Defaults = {
                 Spec = true,
                 Team = true,
                 Zone = true,
-                Rank = 1
+                Rank = true
             },
-            Links = {
-                OnlyMine = false
-            },
-            Shard = {
-                Timer = 60
-            },
-            Soulbind = {
-                Conduits = false
-            }
         }
     }
 }

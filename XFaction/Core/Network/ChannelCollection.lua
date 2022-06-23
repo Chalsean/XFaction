@@ -24,7 +24,7 @@ function ChannelCollection:Initialize()
 		if(XFG.Config.Channel.Channels == nil) then
 			XFG.Config.Channel.Channels = {}
 		end
-		self:ScanChannels()
+		--self:ScanChannels()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
