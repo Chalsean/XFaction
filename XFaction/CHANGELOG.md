@@ -6,6 +6,7 @@
 - Modified ChatThrottleLib from Ace3 libraries to accept BNet, this provides queueing and possible delaying of messages if nearing the disconnect threshold
     - To point out, Blizzard will not say what that threshold is, so its trial and error from the dev community
 - Removed majority of network channel scanning
+- Increase each message size to try to reduce the number of overall messages
 - The following broadcast triggering event listeners will now disable/enable upon entering/exiting an instance:
   - Level up
   - Changing covenant (cant outside Oribos anyway)
@@ -19,9 +20,9 @@
   - Timer to monitor links
   - Timer to broadcast player data (hearbeat)
   - All listeners listed above that are disabled/enabled upon entering/exiting instance apply
-- The following broadcast triggering event listener was removed entirely (possible spam source):
+- The following broadcast triggering event listeners was removed entirely:
   - Changing zone
-  - Achievement points increase (getting an achievement still is broadcasted, sending player data on points increase was double message)
+  - Achievement points increase (getting an achievement will still broadcast, this has to do with the player's point total)
   - M+ score increase
 - Implemented a minimum heartbeat time, meaning regardless of triggers, player will not broadcast own data within 15s of previous broadcast
 
@@ -45,6 +46,7 @@
 **Misc**
 [XFaction]
 - Removed unsupported options from options menu
+- Disabled channel sort option
 
 [Shard (X)]
 - Retired (wasnt working anyway)
