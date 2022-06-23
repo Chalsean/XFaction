@@ -566,7 +566,7 @@ function BNetChatThrottleLib:BNSendGameData(prio, prefix, text, chattype, target
 	msg.callbackFn = callbackFn
 	msg.callbackArg = callbackArg
 
-	self:Enqueue(prio, queueName or (prefix..chattype..(target or "")), msg)
+	self:Enqueue(prio, queueName or (prefix..(target or "")), msg)
 end
 
 
