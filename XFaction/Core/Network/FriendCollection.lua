@@ -194,7 +194,6 @@ function FriendCollection:CheckFriends()
 		end
 	end
 	if(_LinksChanged) then
-		XFG.Links:BroadcastLinks()
 		XFG.DataText.Links:RefreshBroker()
 	end
 end
