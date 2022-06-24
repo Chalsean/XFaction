@@ -37,6 +37,7 @@ XFG.Defaults = {
         },
         DataText = {
             Guild = {
+                Label = false,
                 GuildName = true,
                 Confederate = true,
                 MOTD = true,
@@ -58,6 +59,9 @@ XFG.Defaults = {
                 Rank = true,
                 Version = false
             },
+            Link = {
+                Label = false
+            }
         }
     }
 }

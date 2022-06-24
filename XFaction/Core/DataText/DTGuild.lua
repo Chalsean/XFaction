@@ -203,7 +203,12 @@ end
 
 function DTGuild:RefreshBroker()
 	if(XFG.Initialized) then
-		self._LDBObject.text = format('|cff3CE13F%d', XFG.Confederate:GetNumberOfUnits())
+		local _Text = ''
+		if(XFG.Config.DataText.Guild.Label) then
+			_Text = XFG.Lib.Locale['GUILD'] .. ': '
+		end
+		_Text = format('%s|cff3CE13F%d', _Text, XFG.Confederate:GetNumberOfUnits())
+		self._LDBObject.text = _Text
 	end
 end
 

@@ -40,11 +40,14 @@ L['CHAT_LOGOUT'] = 'has gone offline.'
 L['EXPLORE'] = 'Explore'
 L['VERSION'] = 'Version'
 L['MAIN'] = 'Main'
+L['LABEL'] = 'Label'
+L['LINKS'] = 'Links'
+L['PM'] = 'Project Manager'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
 L['GENERAL_DESCRIPTION'] = 'Enable roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.'
-L['GENERAL_DISCLAIMER'] = 'This addon is in alpha stage and currently only Eternal Kingdom (EK) is being supported:'
+L['GENERAL_DISCLAIMER'] = 'This addon is in beta stage and currently only Eternal Kingdom (EK) is being supported:'
 L['GENERAL_WHAT'] = 'What is included'
 L['GENERAL_GUILD_CHAT'] = '1. Merged guild chat across guilds/realms/factions in the confederate'
 L['GENERAL_GUILD_CHAT_ACHIEVEMENT'] = '2. Personal achievements forwarded to confederate members in other guilds'
@@ -95,6 +98,8 @@ L['CHAT_LOGOUT'] = 'has gone offline.'
 --=========================================================================
 L['DT_HEADER_CONFEDERATE'] = 'Confederate: |cffffffff%s|r'
 L['DT_HEADER_GUILD'] = 'Guild: |cffffffff%s|r'
+L['DT_CONFIG_BROKER'] = 'Show Broker Fields'
+L['DT_CONFIG_LABEL_TOOLTIP'] = 'Show broker level'
 -------------------------
 -- DTGuild (X)
 -------------------------

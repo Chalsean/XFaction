@@ -67,7 +67,12 @@ end
 function DTLinks:RefreshBroker()
 	if(XFG.Initialized) then
 		self:CountLinks()
-		self._LDBObject.text = format('|cffffffff%d', self._Count)
+		local _Text = ''
+		if(XFG.Config.DataText.Link.Label) then
+			_Text = XFG.Lib.Locale['LINKS'] .. ': '
+		end
+		_Text = format('%s|cffffffff%d', _Text, self._Count)
+		self._LDBObject.text = _Text
 	end
 end
 

@@ -88,8 +88,22 @@ XFG.Options.args.Support = {
 				},
 			}
 		},
-		Translation = {
+		PM = {
 			order = 4,
+			type = 'group',
+			name = XFG.Lib.Locale['PM'],
+			guiInline = true,
+			args = {
+				PM = {
+					order = 1,
+					type = 'description',
+					fontSize = 'medium',
+					name = 'Rysal (US-Proudmoore)',
+				},
+			}
+		},		
+		Translation = {
+			order = 5,
 			type = 'group',
 			name = XFG.Lib.Locale['TRANSLATIONS'],
 			guiInline = true,
@@ -103,7 +117,7 @@ XFG.Options.args.Support = {
 			}
 		},
 		Testing = {
-			order = 5,
+			order = 6,
 			type = 'group',
 			name = XFG.Lib.Locale['SUPPORT_UAT'],
 			guiInline = true,
@@ -112,7 +126,7 @@ XFG.Options.args.Support = {
 					order = 1,
 					type = 'description',
 					fontSize = 'medium',
-					name = 'Bicc, Elskerdeg, FrankyV, Nyssa, Rysal',
+					name = 'Bicter, Decobus, Dropbae, Elskerdeg, Fleecey, FrankyV, Fubash, Nyssa, Raelea, Rysal',
 				}
 			}
 		}
