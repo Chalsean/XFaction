@@ -39,7 +39,7 @@ XFG.Lib = {
 XFG.Lib.Encode = XFG.Lib.Compress:GetAddonEncodeTable()
 
 XFG.DataText = {
-	AutoHide = .5
+	AutoHide = .25
 }
 
 XFG.Player = {

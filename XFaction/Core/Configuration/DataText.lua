@@ -235,6 +235,7 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
+            },
 		},
 		Link = {
 			order = 2,
