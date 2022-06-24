@@ -248,8 +248,8 @@ function DTGuild:OnEnter(this)
 
 	if(XFG.Config.DataText.Guild.GuildName or XFG.Config.DataText.Guild.Confederate or XFG.Config.DataText.Guild.MOTD) then
 		line = _Tooltip:AddLine()
-		line = _Tooltip:AddLine()
 		_Tooltip:AddSeparator()
+		line = _Tooltip:AddLine()		
 	end
 
 	if(XFG.Config.DataText.Guild.MOTD) then
