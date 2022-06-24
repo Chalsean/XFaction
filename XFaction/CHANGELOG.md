@@ -1,6 +1,21 @@
+### Version 2.6.4 [ 06.XX.2022 ]
+
+[XFaction]
+- Reintroduced channel sorting
+- Fixed bug with BNet cleaning up mailbox
+
+[Guild (X)]
+- Added optional label for broker
+- Added version to optional columns
+
+[Links (X)]
+- Added optional label for broker
+
+[Soulbind (X)]
+- Fixed bug when switching covenants and have not unlocked soulbinds
+
 ### Version 2.6.0 [ 06.23.2022 ]
 
-**Enhancements**
 [XFaction]
 - Confederate name, realms/guilds involved and channel are all configurable in guild info
 - Modified ChatThrottleLib from Ace3 libraries to accept BNet
@@ -29,28 +44,18 @@
   - M+ score increase
 - Implemented a minimum heartbeat time, meaning regardless of triggers, player will not broadcast own data within 15s of previous broadcast
 - Ignores all "Explore" achievements to avoid spam
+- Fixed an exception condition when player is not in a guild
+- Removed unsupported options from options menu
+- Disabled channel sort option
 
 [Guild (X)]
 - Now locksdown if in combat
 - Now supports any rank name on any guild
-
-[Links (X)]
-- Now locksdown if in combat
-
-**Bug Fix**
-[XFaction]
-- Fixed an exception condition when player is not in a guild
-
-[Guild (X)]
 - Shift-right click now properly invites the player
 
 [Links (X)]
+- Now locksdown if in combat
 - Fixed broker not refreshing the count when opposite faction link logs off
-
-**Misc**
-[XFaction]
-- Removed unsupported options from options menu
-- Disabled channel sort option
 
 [Shard (X)]
 - Retired (wasnt working anyway)
