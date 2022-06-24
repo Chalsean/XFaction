@@ -229,37 +229,6 @@ XFG.Options.args.Chat = {
 						return (not XFG.Config.Chat.Achievement.Enable)
 					end,
 				},
-				FColor = {
-					order = 7,
-					type = 'toggle',
-					name = XFG.Lib.Locale['CHAT_FCOLOR'],
-					desc = XFG.Lib.Locale['CHAT_FCOLOR_TOOLTIP'],
-					hidden = function()
-						return (not XFG.Config.Chat.Achievement.Enable)
-					end,
-					get = function(info) return XFG.Config.Chat.Achievement[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Chat.Achievement[ info[#info] ] = value; end
-				},
-				Color = {
-					order = 8,
-					type = 'color',
-					name = XFG.Lib.Locale['CHAT_FONT_COLOR'],
-					hidden = function()
-						return (not XFG.Config.Chat.Achievement.Enable or XFG.Config.Chat.Achievement.FColor)
-					end,
-					get = function()
-						return XFG.Config.Chat.Achievement.Color.Red, XFG.Config.Chat.Achievement.Color.Green, XFG.Config.Chat.Achievement.Color.Blue
-					end,
-					set = function(_, inRed, inGreen, inBlue)
-						XFG.Config.Chat.Achievement.Color.Red = inRed
-						XFG.Config.Chat.Achievement.Color.Green = inGreen
-						XFG.Config.Chat.Achievement.Color.Blue = inBlue
-					end,
-				},
-                
-                
-                
-                ,
 				CColor = {
 					order = 7,
 					type = 'toggle',
@@ -357,7 +326,7 @@ XFG.Options.args.Chat = {
 				Sound = {
 					order = 2,
 					type = 'toggle',
-					disabled = function()
+					hidden = function()
 						return not XFG.Config.Chat.Login.Enable
 					end,
 					name = XFG.Lib.Locale['CHAT_ONLINE_SOUND'],
