@@ -59,6 +59,8 @@ The addon should provide the following functionalities:
 - Timer
 - Stub
 
+> BNetChatThrottleLib
+
 > LibCompress
 
 > LibDataBroker
