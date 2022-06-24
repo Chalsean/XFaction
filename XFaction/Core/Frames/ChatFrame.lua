@@ -76,6 +76,25 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
+function GetColoredNameByChatEvent(arg2, arg12)
+    if(arg12 and arg12 ~= "") then
+        local type = _G.strsplit("-", arg12 or "")
+        if type ~= "Player" then return arg2 end--Blizzard didn't return a valid guid, so abort class colors
+        local localizedClass, englishClass, localizedRace, englishRace, sex = _G.GetPlayerInfoByGUID(arg12)
+        if ( englishClass ) then
+            local classColorTable = _G.RAID_CLASS_COLORS[englishClass];
+            if ( not classColorTable ) then
+                return arg2;
+            end
+            return string.format("\124cff%.2x%.2x%.2x", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255)..arg2.."\124r"
+        else
+            return arg2;
+        end
+    else
+        return arg2;
+    end
+end
+
 function ChatFrame:Display(inMessage)
     if(XFG.Config.Chat.GChat.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')
@@ -100,32 +119,58 @@ function ChatFrame:Display(inMessage)
 
                     local _Text = ''
                     local _Guild = inMessage:GetGuild()
-
+                    local _Link = nil
+                    
+                    local _Faction = _Guild:GetFaction()  
                     if(XFG.Config.Chat[_ConfigNode].Faction) then  
-                        local _Faction = _Guild:GetFaction()                      
                         _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
                     if(_Event == 'ACHIEVEMENT') then
-                        _Text = _Text .. inMessage:GetUnitName() .. ' '
+                        _Link = nil
+                        if(pcall(function () _Link = GetPlayerLink(inMessage:GetUnitName(), GetColoredNameByChatEvent(inMessage:GetUnitName(), inMessage:GetFrom())) end)) then
+                            _Text = _Text .. '[' .. _Link .. ']' .. ' '
+                        else
+                            _Text = _Text .. '['.. inMessage:GetUnitName() .. ']' .. ' '
+                        end
                     end
 
                     if(XFG.Config.Chat[_ConfigNode].Main and inMessage:GetMainName() ~= nil) then
-                            _Text = _Text .. '(' .. inMessage:GetMainName() .. ') '
+                        _Text = _Text .. '(' .. inMessage:GetMainName() .. ') '
                     end
 
                     if(XFG.Config.Chat[_ConfigNode].Guild) then
                         _Text = _Text .. '<' .. _Guild:GetInitials() .. '> '
                     end
 
-                    local _Link = nil
+                    _Link = nil
                     if(_Event == 'ACHIEVEMENT' and pcall(function () _Link = GetAchievementLink(inMessage:GetData()) end)) then
                         _Text = _Text .. XFG.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. _Link
                     else
                         _Text = _Text .. inMessage:GetData()
                     end
 
-                    local _Hex = XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].Color.Red, XFG.Config.Chat[_ConfigNode].Color.Green, XFG.Config.Chat[_ConfigNode].Color.Blue)
+                    local _Hex
+                    if(XFG.Config.Chat[_ConfigNode].CColor) then
+                        if(XFG.Config.Chat[_ConfigNode].FColor) then
+                            _Hex = _Faction:GetName() == 'Horde' and XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].HColor.Red, XFG.Config.Chat[_ConfigNode].HColor.Green, XFG.Config.Chat[_ConfigNode].HColor.Blue) or XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].AColor.Red, XFG.Config.Chat[_ConfigNode].AColor.Green, XFG.Config.Chat[_ConfigNode].AColor.Blue)
+                        else
+                            _Hex = XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].Color.Red, XFG.Config.Chat[_ConfigNode].Color.Green, XFG.Config.Chat[_ConfigNode].Color.Blue)
+                        end
+                    else
+                        if(XFG.Config.Chat[_ConfigNode].FColor) then
+                            _Hex = _Faction:GetName() == 'Horde' and 'E0000D' or '378DEF'
+                        else
+                            local _dColor 
+                            if (_Event == 'ACHIEVEMENT') then
+                                dColor = _G.ChatTypeInfo["GUILD_ACHIEVEMENT"]
+                            else
+                                dColor = _G.ChatTypeInfo["GUILD"]
+                            end
+                            _Hex = XFG:RGBPercToHex(dColor.r, dColor.g, dColor.b);
+                        end
+                    end
+                   
                     _Text = format('|cff%s%s|r', _Hex, _Text)
 
                     self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())

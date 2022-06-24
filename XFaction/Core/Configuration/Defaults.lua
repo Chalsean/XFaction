@@ -13,10 +13,22 @@ XFG.Defaults = {
                 Faction = true,
                 Guild = true,
                 Main = true,
+                FColor = false,
+                CColor = false,
                 Color = {
-                    Red = 1,
+                    Red = 0.251,
                     Green = 1,
-                    Blue = 1
+                    Blue = 0.251
+                },
+                AColor = {
+                    Red = 0.216,
+                    Green = 0.553,
+                    Blue = 0.937
+                },
+                HColor = {
+                    Red = 0.878,
+                    Green = 0,
+                    Blue = 0.051
                 }
             },
             Achievement = {
@@ -24,10 +36,22 @@ XFG.Defaults = {
                 Faction = true,
                 Guild = true,
                 Main = true,
+                FColor = false,
+                CColor = false,
                 Color = {
-                    Red = 1,
+                    Red = 0.251,
                     Green = 1,
-                    Blue = 1
+                    Blue = 0.251
+                },
+                AColor = {
+                    Red = 0.216,
+                    Green = 0.553,
+                    Blue = 0.937
+                },
+                HColor = {
+                    Red = 0.878,
+                    Green = 0,
+                    Blue = 0.051
                 }
             },
             Login = {
@@ -57,7 +81,8 @@ XFG.Defaults = {
                 Team = true,
                 Zone = true,
                 Rank = true,
-                Version = false
+                Version = false,
+                Sort = 'Team'
             },
             Link = {
                 Label = false

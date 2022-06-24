@@ -218,7 +218,24 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
-			}
+				Line2 = {
+					order = 29,
+					type = 'header',
+					name = ''
+				},
+				Sort = {
+					order = 30,
+					type = 'select',
+					name = XFG.Lib.Locale['DTGUILD_CONFIG_SORT'],
+					desc = 'Select the default sort method',
+					values = {
+                        Team = 'Team',
+                        Name = 'Name'
+                    },
+					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
+				},
+            },
 		},
 		Link = {
 			order = 2,
