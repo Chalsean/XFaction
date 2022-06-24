@@ -72,9 +72,10 @@ function LinkCollection:AddLink(inLink)
 	if(self:Contains(inLink:GetKey()) == false) then
 		self._LinkCount = self._LinkCount + 1
 		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
+		XFG.DataText.Links:RefreshBroker()
 	end
     self._Links[inLink:GetKey()] = inLink	
-    return self:Contains(inLink:GetKey())
+    return self:Contains(inLink:GetKey())	
 end
 
 function LinkCollection:RemoveLink(inLink)
@@ -83,6 +84,7 @@ function LinkCollection:RemoveLink(inLink)
 		self._LinkCount = self._LinkCount - 1
 		self._Links[inLink:GetKey()] = nil
 		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
+		XFG.DataText.Links:RefreshBroker()
 	end
     return self:Contains(inLink:GetKey()) == false
 end
@@ -157,24 +159,22 @@ function LinkCollection:RemoveNode(inName)
 end
 
 function LinkCollection:BroadcastLinks()
-	if(self._EpochTime + 60 * 5 < GetServerTime()) then
-		XFG:Debug(LogCategory, 'Broadcasting links')
-		self._EpochTime = GetServerTime()
-		local _LinksString = ''
-		for _, _Link in self:Iterator() do
-			if(_Link:IsMyLink()) then
-				_LinksString = _LinksString .. '|' .. _Link:GetString()
-			end
+	XFG:Debug(LogCategory, 'Broadcasting links')
+	self._EpochTime = GetServerTime()
+	local _LinksString = ''
+	for _, _Link in self:Iterator() do
+		if(_Link:IsMyLink()) then
+			_LinksString = _LinksString .. '|' .. _Link:GetString()
 		end
+	end
 
-		if(strlen(_LinksString) > 0) then
-			local _NewMessage = Message:new()
-			_NewMessage:Initialize()
-			_NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-			_NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LINK)
-			_NewMessage:SetData(_LinksString)
-			XFG.Outbox:Send(_NewMessage)  
-		end
+	if(strlen(_LinksString) > 0) then
+		local _NewMessage = Message:new()
+		_NewMessage:Initialize()
+		_NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+		_NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LINK)
+		_NewMessage:SetData(_LinksString)
+		XFG.Outbox:Send(_NewMessage)  
 	end
 end
 

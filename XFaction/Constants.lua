@@ -43,7 +43,8 @@ XFG.DataText = {
 }
 
 XFG.Player = {
-	LastBroadcast = 0
+	LastBroadcast = 0,
+	InInstance = false
 }
 
 XFG.Frames = {}
@@ -54,46 +55,15 @@ XFG.Cache = {
 XFG.Settings = {
 	Player = {
 		Heartbeat = 60 * 2,      -- Seconds between player status broadcast
+		MinimumHeartbeat = 15
 	},
 	Confederate = {
-		Name = 'Eternal Kingdom',
-		Initials = 'EK',
-		UnitStale = 60 * 5,   -- Seconds before you consider another unit offline
+		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
 		UnitScan = 60,       -- Seconds between offline checks
+		AltRank = nil,
 	},
 	LocalGuild = {
 		ScanTimer = 30,          -- Seconds between forced local guild scans
-	},
-	Guilds = {
-		Proudmoore = {
-			Alliance = {
-				EKA = 'Eternal Kingdom', 
-				ENK = 'Endless Kingdom', 
-				AK  = 'Alternal Kingdom', 
-				AK2 = 'Alternal Kingdom Two', 
-				AK3 = 'Alternal Kingdom Three'
-			},
-			Horde = {
-				AK4 = 'Alternal Kingdom Four', 
-				EKH = 'Eternal Kingdom Horde',
-				EDK = 'EDK Bank'
-			}
-		},
-	},
-	Ranks = {
-		['1'] = 'Cat Herder',
-		['2'] = 'Chancellor',
-		['3'] = 'Master of Coin',
-		['4'] = 'Royal Emissary',
-		['5'] = 'Ambassador',
-		['6'] = 'Templar',
-		['7'] = 'Sponsorship',
-		['8'] = 'Grand Army',
-		['9'] = 'Grand Alt',
-		['10'] = 'Veteran',
-		['11'] = 'Noble Citizen',
-		['12'] = 'Squire',
-		['13'] = 'Stockade'
 	},
 	Teams = {
 		A = 'Acheron',
@@ -117,11 +87,43 @@ XFG.Settings = {
 		ENKH = 'Social',
 		CC = 'CC'
 	},
-	
-	DataText = {
-		Guild = {
-			Ranks = {}
-		}
+	Network = {
+		Channel = {
+			Total = 10,
+			Name = nil,
+			Password = nil
+		},
+		BNet = {
+			PacketSize = 150,
+			Ping = {
+				Timer = 60 * 4,     -- Seconds between pinging friends
+			},
+			Link = {
+				Broadcast = 60 * 2, -- Seconds between broadcasting links
+				Scan = 60 * 3,      -- Seconds between link scans for stale links
+				Stale = 60 * 10     -- Seconds until considering a link stale
+			},
+		},
+		Message = {
+			Subject = {
+				DATA = '1',
+				GCHAT = '2',
+				LOGOUT = '3',
+				LOGIN = '4',
+				ACHIEVEMENT = '5',
+				LINK = '6'
+			},
+			Tag = {},
+		},
+		Type = {
+			BROADCAST = '1', -- BNet + Local Channel
+			LOCAL = '3',     -- Local Channel only
+			BNET = '4'       -- BNet only
+		},
+		Mailbox = {
+			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
+			Stale = 60 * 5   -- Seconds until a message is considered stale
+		},
 	},
 	Races = {
 		Total = 37
@@ -210,46 +212,5 @@ XFG.Settings = {
 		72,
 		73
 	},
-	Network = {
-		Channel = {
-			Total = 10,
-		},
-		BNet = {
-			Ping = {
-				Timer = 60 * 4,     -- Seconds between pinging friends
-			},
-			Link = {
-				Broadcast = 60 * 1, -- Seconds between broadcasting links
-				Scan = 60 * 3,      -- Seconds between link scans for stale links
-				Stale = 60 * 10     -- Seconds until considering a link stale
-			},
-		},
-		Message = {
-			Subject = {
-				DATA = '1',
-				GCHAT = '2',
-				LOGOUT = '3',
-				LOGIN = '4',
-				ACHIEVEMENT = '5',
-				LINK = '6'
-			},
-			Tag = {},
-		},
-		Type = {
-			BROADCAST = '1', -- BNet + Local Channel
-			LOCAL = '3',     -- Local Channel only
-			BNET = '4'       -- BNet only
-		},
-		Mailbox = {
-			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
-			Stale = 60 * 5   -- Seconds until a message is considered stale
-		},
-	},
+	
 }
-
--- This is the default, gets changed if configured properly in guild info
-XFG.Settings.Network.Channel.Name = XFG.Settings.Confederate.Initials .. 'XFactionChat'
-XFG.Settings.Network.Channel.Password = nil
-
-XFG.Settings.Network.Message.Tag.LOCAL = XFG.Settings.Confederate.Initials .. 'XF'
-XFG.Settings.Network.Message.Tag.BNET = XFG.Settings.Confederate.Initials .. 'BNET'

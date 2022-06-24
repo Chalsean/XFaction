@@ -1,0 +1,6 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Event.lua'/>
+    <Script file='EventCollection.lua'/>
+    <Script file='Timer.lua'/>
+    <Script file='TimerCollection.lua'/>
+</Ui>

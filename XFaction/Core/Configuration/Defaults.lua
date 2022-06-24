@@ -3,7 +3,6 @@ local LogCategory = 'Config'
 
 XFG.Defaults = {
     profile = {
-        Rank = {},
         Channel = {
             Enable = false,
             Channels = {},
@@ -62,6 +61,7 @@ XFG.Defaults = {
         },
         DataText = {
             Guild = {
+                Label = false,
                 GuildName = true,
                 Confederate = true,
                 MOTD = true,
@@ -71,6 +71,7 @@ XFG.Defaults = {
                 Faction = true,
                 Guild = true,
                 Level = true,
+                Main = true,
                 Note = false,
                 Profession = true,
                 Race = true,
@@ -79,17 +80,12 @@ XFG.Defaults = {
                 Spec = true,
                 Team = true,
                 Zone = true,
-                RankSelect = 1,
+                Rank = true,
+                Version = false,
                 Sort = 'Team'
             },
-            Links = {
-                OnlyMine = false
-            },
-            Shard = {
-                Timer = 60
-            },
-            Soulbind = {
-                Conduits = false
+            Link = {
+                Label = false
             }
         }
     }

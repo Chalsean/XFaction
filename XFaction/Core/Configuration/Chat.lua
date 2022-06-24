@@ -149,25 +149,8 @@ XFG.Options.args.Chat = {
 				},
 			}
 		},
-		OChat = {
-			order = 2,
-			type = 'group',
-			name = XFG.Lib.Locale['CHAT_OFFICER'],
-			guiInline = true,
-			args = {
-				Enable = {
-					order = 1,
-					type = 'toggle',
-					name = XFG.Lib.Locale['ENABLE'],
-					disabled = true,
-					desc = XFG.Lib.Locale['CHAT_OFFICER_TOOLTIP'],
-					get = function(info) return XFG.Config.Chat[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Chat[ info[#info] ] = value; end
-				}
-			}
-		},
 		Achievement = {
-			order = 3,
+			order = 2,
 			type = 'group',
 			name = XFG.Lib.Locale['ACHIEVEMENT'],
 			guiInline = true,
@@ -310,7 +293,7 @@ XFG.Options.args.Chat = {
 			}
 		},
 		Login = {
-			order = 4,
+			order = 3,
 			type = 'group',
 			name = XFG.Lib.Locale['CHAT_ONLINE'],
 			guiInline = true,

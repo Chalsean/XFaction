@@ -99,8 +99,14 @@ local function PreSort()
 		_UnitData.GUID = _Unit:GetGUID()
 		_UnitData.Dungeon = _Unit:GetDungeonScore()
 		_UnitData.Achievement = _Unit:GetAchievementPoints()
+		_UnitData.Rank = _Unit:GetRank()
+		if(_Unit:HasVersion()) then
+			_UnitData.Version = _Unit:GetVersion()
+		else
+			_UnitData.Version = '0'
+		end
 
-		if(_Unit:IsAlt() and _Unit:HasMainName()) then
+		if(_Unit:IsAlt() and _Unit:HasMainName() and XFG.Config.DataText.Guild.Main) then
 			_UnitData.Name = _Unit:GetName() .. " (" .. _Unit:GetMainName() .. ")"
 		end
 
@@ -109,13 +115,6 @@ local function PreSort()
 
 		local _Team = _Unit:GetTeam()
 		_UnitData.Team = _Team:GetName()
-
-		local _Rank = _Unit:GetRank()
-		if(_Rank ~= nil) then
-			_UnitData.Rank = _Rank:GetAltName() and _Rank:GetAltName() or _Rank:GetName()
-		else
-			_UnitData.Rank = '?'
-		end
 
 		local _Class = _Unit:GetClass()
 		_UnitData.Class = _Class:GetColorMixin()
@@ -172,13 +171,28 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 			-- Who
 			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton') 
 		elseif(_UnitFaction:Equals(_PlayerFaction)) then
-			-- Whisper		
-			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
+			-- Whisper
+			if(XFG.Player.Faction:Equals(_Unit:GetFaction())) then
+				SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
+			-- See if theyre a bnet friend
+			else
+				for _, _Friend in XFG.Friends:Iterator() do
+					if(_Unit:GetName() == _Friend:GetName()) then
+						local _Target = _Friend:GetTarget()
+						local _Realm = _Target:GetRealm()
+						if(_Realm:Equals(_Unit:GetRealm())) then
+							local _Name = _Friend:GetAccountName()
+							--"|HBNplayer:"..arg2..":"..arg13..":"..arg11..":"..chatGroup..(chatTarget and ":"..chatTarget or "").."|h"
+							SetItemRef('player:'.. _UnitName, format('|HBNplayer:%1:%2:0:1$s|h[%1$s]|h', _Friend:GetAccountName(), _Friend:GetID()), 'LeftButton')
+						end
+					end
+				end
+			end
 		end		
 	elseif inMouseButton == 'RightButton' then
 		if IsShiftKeyDown() then
 			-- Invite
-			C_PartyInfo.InviteUnit(inUnitName)
+			C_PartyInfo.InviteUnit(_UnitName)
 		else
 			-- Menu
 			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
@@ -188,7 +202,12 @@ end
 
 function DTGuild:RefreshBroker()
 	if(XFG.Initialized) then
-		self._LDBObject.text = format('|cff3CE13F%d', XFG.Confederate:GetNumberOfUnits())
+		local _Text = ''
+		if(XFG.Config.DataText.Guild.Label) then
+			_Text = XFG.Lib.Locale['GUILD'] .. ': '
+		end
+		_Text = format('%s|cff3CE13F%d', _Text, XFG.Confederate:GetNumberOfUnits())
+		self._LDBObject.text = _Text
 	end
 end
 
@@ -198,11 +217,12 @@ end
 
 function DTGuild:OnEnter(this)
 	if(XFG.Initialized == false) then return end
+	if(InCombatLockdown()) then return end
 	
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
 		_Tooltip = XFG.Lib.QT:Acquire(ObjectName)		
 	else
-		_Tooltip = XFG.Lib.QT:Acquire(ObjectName, 16, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "CENTER", "RIGHT", "LEFT", "LEFT", "CENTER")
+		_Tooltip = XFG.Lib.QT:Acquire(ObjectName, 17, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "CENTER", "RIGHT", "LEFT", "LEFT", "CENTER", "CENTER")
 		_Tooltip:SetHeaderFont(self._HeaderFont)
 		_Tooltip:SetFont(self._RegularFont)
 		_Tooltip:SmartAnchorTo(this)
@@ -299,6 +319,10 @@ function DTGuild:OnEnter(this)
 		line = _Tooltip:SetCell(line, 16, XFG.Lib.Locale['ACHIEVEMENT'])	
 		_Tooltip:SetCellScript(line, 16, 'OnMouseUp', SetSortColumn, 'Achievement')
 	end
+	if(XFG.Config.DataText.Guild.Version) then
+		line = _Tooltip:SetCell(line, 17, XFG.Lib.Locale['VERSION'])	
+		_Tooltip:SetCellScript(line, 17, 'OnMouseUp', SetSortColumn, 'Version')
+	end
 	_Tooltip:AddSeparator()
 
 	if(XFG.Initialized) then
@@ -357,6 +381,9 @@ function DTGuild:OnEnter(this)
 			if(XFG.Config.DataText.Guild.Achievement) then
 				_Tooltip:SetCell(line, 16, format("|cffffffff%d|r", _UnitData.Achievement))
 			end
+			if(XFG.Config.DataText.Guild.Version) then
+				_Tooltip:SetCell(line, 17, format("|cffffffff%s|r", _UnitData.Version))
+			end
 
 			_Tooltip:SetLineScript(line, "OnMouseUp", LineClick, _UnitData.GUID)
 		end
@@ -378,6 +405,7 @@ function DTGuild:OnLeave()
 end
 
 function DTGuild:OnClick(this, inButton)
+	if(InCombatLockdown()) then return end
 	if(inButton == 'LeftButton') then
 		ToggleGuildFrame()
 	elseif(inButton == 'RightButton') then

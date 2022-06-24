@@ -79,6 +79,7 @@ function Confederate:AddUnit(inUnit)
         end
     else
         self._NumberOfUnits = self._NumberOfUnits + 1
+        XFG.DataText.Guild:RefreshBroker()
     end
 
     self._Units[inUnit:GetKey()] = inUnit
@@ -103,6 +104,7 @@ function Confederate:RemoveUnit(inKey)
     if(self:Contains(inKey)) then
         table.RemoveKey(self._Units, inKey)
         self._NumberOfUnits = self._NumberOfUnits - 1
+        XFG.DataText.Guild:RefreshBroker()
     end
 end
 

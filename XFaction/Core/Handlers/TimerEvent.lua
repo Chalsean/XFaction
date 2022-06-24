@@ -15,27 +15,22 @@ function TimerEvent:new()
     return Object
 end
 
+local function CreateTimer(inName, inDelta, inCallback, inInstance, inInstanceCombat)
+    local _Timer = Timer:new()
+    _Timer:SetName(inName)
+    _Timer:Initialize()
+    _Timer:SetDelta(inDelta)
+    _Timer:SetCallback(inCallback)
+    _Timer:IsInstance(inInstance)
+    _Timer:IsInstanceCombat(inInstanceCombat)
+    _Timer:Start()
+    XFG.Timers:AddTimer(_Timer)
+end
+
 function TimerEvent:Initialize()
 	if(self:IsInitialized() == false) then
         XFG.Cache.LoginTimerStart = GetServerTime()
-        XFG.Cache.LoginTimerID = XFG:ScheduleRepeatingTimer(self.CallbackLogin, 1)
-        XFG:Info(LogCategory, "Scheduled monitor for guild information becoming available")        
-        XFG:ScheduleRepeatingTimer(self.CallbackMailboxTimer, XFG.Settings.Network.Mailbox.Scan)
-        XFG:Info(LogCategory, "Scheduled mailbox purge to occur every %d seconds", XFG.Settings.Network.Mailbox.Scan)
-        XFG:ScheduleRepeatingTimer(self.CallbackBNetMailboxTimer, XFG.Settings.Network.Mailbox.Scan)
-        XFG:Info(LogCategory, "Scheduled BNet mailbox purge to occur every %d seconds", XFG.Settings.Network.Mailbox.Scan)        
-        XFG:ScheduleRepeatingTimer(self.CallbackOffline, XFG.Settings.Confederate.UnitScan)
-        XFG:Info(LogCategory, "Scheduled to offline players not heard from in %d seconds", XFG.Settings.Confederate.UnitScan)
-        XFG:ScheduleRepeatingTimer(self.CallbackHeartbeat, XFG.Settings.Player.Heartbeat)
-        XFG:Info(LogCategory, "Scheduled heartbeat for %d seconds", XFG.Settings.Player.Heartbeat)
-        XFG:ScheduleRepeatingTimer(self.CallbackGuildRoster, XFG.Settings.LocalGuild.ScanTimer)
-        XFG:Info(LogCategory, "Scheduled forcing local guild roster updates for %d seconds", XFG.Settings.LocalGuild.ScanTimer)
-        XFG:ScheduleRepeatingTimer(self.CallbackPingFriends, XFG.Settings.Network.BNet.Ping.Timer)
-        XFG:Info(LogCategory, "Scheduled to ping friends every %d seconds", XFG.Settings.Network.BNet.Ping.Timer)
-        XFG:ScheduleRepeatingTimer(self.CallbackLinks, XFG.Settings.Network.BNet.Link.Broadcast)
-        XFG:Info(LogCategory, "Scheduled to broadcast links every %d seconds", XFG.Settings.Network.BNet.Link.Broadcast)
-        XFG:ScheduleRepeatingTimer(self.CallbackStaleLinks, XFG.Settings.Network.BNet.Link.Scan)
-        XFG:Info(LogCategory, "Scheduled to remove stale links after %d seconds", XFG.Settings.Network.BNet.Link.Scan)
+        CreateTimer('Login', 1, XFG.Handlers.TimerEvent.CallbackLogin, true, true)
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -59,7 +54,8 @@ function TimerEvent:CallbackLogin()
     -- If havent gotten guild info after 30s, give up. probably not in a guild
     -- 10s is probably feasible but trying to be safe for lesser hardware or slow connections
     if(XFG.Cache.LoginTimerStart + 30 < GetServerTime()) then
-        XFG:CancelTimer(XFG.Cache.LoginTimerID)
+        XFG:Error(LogCategory, 'Did not detect a guild')
+        XFG.Timers:Stop()
         return
     end
 
@@ -79,9 +75,76 @@ function TimerEvent:CallbackLogin()
         if(_GuildID ~= nil) then
             -- Now that guild info is available we can finish setup
             XFG:Debug(LogCategory, 'Guild info is loaded, proceeding with setup')
-            XFG:CancelTimer(XFG.Cache.LoginTimerID)
+            local _Timer = XFG.Timers:GetTimer('Login')
+            XFG.Timers:RemoveTimer(_Timer)
 
             local _GuildInfo = C_Club.GetClubInfo(_GuildID)
+            _GuildInfo.description = 'blah blah blah  ' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFn:Eternal Kingdom:EK' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFc:EKXFactionChat:' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Eternal Kingdom:EKA:Alliance' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Eternal Kingdom Horde:EKH:Horde' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Endless Kingdom:ENK:Alliance' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Alternal Kingdom:AK:Alliance' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Alternal Kingdom Two:AK2:Alliance' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Alternal Kingdom Three:AK3:Alliance' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Alternal Kingdom Four:AK4:Horde' .. "\n"          
+            _GuildInfo.description = _GuildInfo.description .. 'XFa:Grand Alt'
+
+            XFG.Confederate = Confederate:new()
+            -- Parse out configuration from guild information so GMs have control
+            for _, _Line in ipairs(string.Split(_GuildInfo.description, '\n')) do
+                -- Confederate information
+                if(string.find(_Line, 'XFn')) then                    
+                    local _Name, _Initials = _Line:match('XFn:(.-):(.+)')
+                    XFG:Debug(LogCategory, 'Initializing confederate %s <%s>', _Name, _Initials)
+                    Confederate:SetName(_Name)
+                    Confederate:SetKey(_Initials)
+                    XFG.Settings.Network.Message.Tag.LOCAL = _Initials .. 'XF'
+                    XFG.Settings.Network.Message.Tag.BNET = _Initials .. 'BNET'
+                -- Guild within the confederate
+                elseif(string.find(_Line, 'XFg')) then
+                    local _RealmName, _GuildName, _GuildInitials, _FactionName = _Line:match('XFg:(.-):(.-):(.-):(.+)')
+                    -- Create each realm once
+                    if(XFG.Realms:Contains(_RealmName) == false) then
+                        XFG:Debug(LogCategory, 'Initializing realm [%s]', _RealmName)
+                        local _NewRealm = Realm:new()
+                        _NewRealm:SetKey(_RealmName)
+                        _NewRealm:SetName(_RealmName)
+                        _NewRealm:SetAPIName(string.gsub(_RealmName, '%s+', ''))
+                        _NewRealm:Initialize()
+                        XFG.Realms:AddRealm(_NewRealm)
+                    end
+                    local _Realm = XFG.Realms:GetRealm(_RealmName)                    
+                    local _Faction = XFG.Factions:GetFactionByName(_FactionName)
+
+                    XFG:Debug(LogCategory, 'Initializing guild %s <%s>', _GuildName, _GuildInitials)
+                    local _NewGuild = Guild:new()
+                    _NewGuild:Initialize()
+                    _NewGuild:SetName(_GuildName)
+                    _NewGuild:SetFaction(_Faction)
+                    _NewGuild:SetRealm(_Realm)
+                    _NewGuild:SetInitials(_GuildInitials)
+                    XFG.Guilds:AddGuild(_NewGuild)
+                -- Local channel for same realm/faction communication
+                elseif(string.find(_Line, 'XFc')) then
+                    XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password = _Line:match('XFc:(.-):(.*)')
+                -- If you keep your alts at a certain rank, this will flag them as alts in comms/DTs
+                elseif(string.find(_Line, 'XFa')) then
+                    local _AltRank = _Line:match('XFa:(.+)')
+                    XFG.Settings.Confederate.AltRank = _AltRank
+                end
+            end
+
+            -- Ensure player is on supported realm
+            local _RealmName = GetRealmName()
+            XFG.Player.Realm = XFG.Realms:GetRealm(_RealmName)
+            if(XFG.Player.Realm == nil) then
+                XFG:Error(LogCategory, 'Player is not on a supported realm [%s]', _RealmName)
+                XFG:CancelAllTimers()
+                return
+            end
+            -- Ensure player is on supported guild
             XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildInfo.name)
             if(XFG.Player.Guild == nil) then
                 XFG:Error(LogCategory, 'Player is not in supported guild ' .. tostring(_GuildName))
@@ -95,15 +158,8 @@ function TimerEvent:CallbackLogin()
                     break
                 end
             end
-
-            XFG:Debug(LogCategory, 'Player realm [%s]', XFG.Player.Realm:GetName())
-            XFG:Debug(LogCategory, 'Player guild [%s]', XFG.Player.Guild:GetName())
-
-            XFG.Confederate = Confederate:new()
-            XFG.Confederate:SetName(XFG.Settings.Confederate.Name)
-            XFG.Confederate:SetKey(XFG.Settings.Confederate.Initials)
-            XFG:Debug(LogCategory, 'Player confederate [%s]', XFG.Confederate:GetName())
-            XFG.Ranks = RankCollection:new(); XFG.Ranks:Initialize()
+            local _InInstance, _InstanceType = IsInInstance()
+            XFG.Player.InInstance = _InInstance
 
             -- Some of this data (spec) is like guild where its not available for a time after initial login
             -- Seems to align with guild data becoming available
@@ -120,25 +176,26 @@ function TimerEvent:CallbackLogin()
             end
 
             -- Scan local guild roster
-            XFG:Info(LogCategory, "Initializing local guild roster cache")
+            XFG:Info(LogCategory, "Initializing local guild roster")
             for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
                 local _UnitData = Unit:new()
                 _UnitData:Initialize(_MemberID)
                 if(_UnitData:IsOnline()) then
-                    XFG.Confederate:AddUnit(_UnitData)
+                    if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
+                        XFG.Confederate:AddUnit(_UnitData)
+                    end
                     if(_UnitData:IsPlayer()) then
                         XFG.Player.Unit = _UnitData                    
                         XFG.Player.Unit:Print()                    
                     end
-                elseif(_UnitData:GetKey() ~= nil and XFG.Confederate:Contains(_UnitData:GetKey())) then
-                    XFG.Confederate:RemoveUnit(_UnitData:GetKey())
                 end
             end
 
             -- Start network setup
+            XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()	
+            XFG.Targets = TargetCollection:new(); XFG.Targets:Initialize()
             XFG.Outbox = Outbox:new()
-            XFG.Inbox = Inbox:new(); XFG.Inbox:Initialize()
-            
+            XFG.Inbox = Inbox:new(); XFG.Inbox:Initialize()            
             XFG.BNet = BNet:new(); BNet:Initialize()
             XFG.Friends = FriendCollection:new(); XFG.Friends:Initialize()
             XFG.Links = LinkCollection:new(); XFG.Links:Initialize()      
@@ -148,54 +205,51 @@ function TimerEvent:CallbackLogin()
                 XFG.Friends:RestoreBackup()
                 XFG.Links:RestoreBackup()
             end
-            XFG.Channels = ChannelCollection:new(); XFG.Channels:Initialize()
 
             -- Log into addon channel for realm/faction wide communication
-            if(XFG.Outbox:HasLocalChannel() == false) then
-                local _GuildInfo = C_Club.GetClubInfo(XFG.Player.Guild:GetID())
-                local _Lines = string.Split(_GuildInfo.description, '\n')
-                for _, _Line in pairs (_Lines) do
-                    local _Parts = string.Split(_Line, ':')
-                    if(_Parts[1] == 'XFc') then
-                        XFG.Settings.Network.Channel.Name = _Parts[2]
-                        XFG.Settings.Network.Channel.Password = _Parts[3]
-                    end
-                end
-                -- Use temporary channel so if they stop using addon, the channel goes away
+            XFG.Channels = ChannelCollection:new(); XFG.Channels:Initialize()
+            --if(XFG.Outbox:HasLocalChannel() == false) then
                 if(XFG.Settings.Network.Channel.Password == nil) then
                     JoinChannelByName(XFG.Settings.Network.Channel.Name)
                 else
                     JoinChannelByName(XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password)
                 end
-                XFG:Info(LogCategory, 'Joined temporary confederate channel [%s]', XFG.Settings.Network.Channel.Name)
+                XFG:Info(LogCategory, 'Joined confederate channel [%s]', XFG.Settings.Network.Channel.Name)
                 local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Settings.Network.Channel.Name)
                 local _NewChannel = Channel:new()
 			    _NewChannel:SetKey(_ChannelInfo.shortcut)
 			    _NewChannel:SetID(_ChannelInfo.localID)
 			    _NewChannel:SetShortName(_ChannelInfo.shortcut)
 			    XFG.Channels:AddChannel(_NewChannel)
-                if(_NewChannel:GetKey() == XFG.Settings.Network.Channel.Name) then
-                    XFG.Outbox:SetLocalChannel(_NewChannel)
-                end
-            end
+                XFG.Outbox:SetLocalChannel(_NewChannel)
+            --end
 
-            -- Register handlers
+            -- Start timers
+            CreateTimer('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, false)
+            CreateTimer('Links', XFG.Settings.Network.BNet.Link.Broadcast, XFG.Handlers.TimerEvent.CallbackLinks, true, false)
+            CreateTimer('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, false, false)
+            CreateTimer('BNetMailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackBNetMailboxTimer, false, false)
+            CreateTimer('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, false)
+            CreateTimer('Roster', XFG.Settings.LocalGuild.ScanTimer, XFG.Handlers.TimerEvent.CallbackGuildRoster, true, false)
+            CreateTimer('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, false)
+            CreateTimer('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, false)
+
+            -- Register event handlers
             XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
             XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()        
-            XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
-            XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
+            XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()            
             XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
             XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
             XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
-            
-            if(XFG.DB.UIReload == false) then
-                -- Ping friends to find out whos available for BNet
+            XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
+ 
+            -- Ping friends to find out whos available for BNet
+            if(XFG.DB.UIReload == false) then                
                 XFG.BNet:PingFriends()                 
             end
 
             -- This is stuff waiting a few seconds for ping responses
             XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 7)
-
             XFG.Initialized = true
 
             -- Refresh brokers (theyve been waiting on XFG.Initialized flag)
@@ -220,18 +274,24 @@ end
 function TimerEvent:CallbackMailboxTimer()
     local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
     XFG.Mailbox:Purge(_EpochTime)
+    local _Timer = XFG.Timers:GetTimer('Mailbox')
+    _Timer:SetLastRan(GetServerTime())
 end
 
 -- Cleanup BNet mailbox
 function TimerEvent:CallbackBNetMailboxTimer()
     local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
     XFG.BNet:Purge(_EpochTime)
+    local _Timer = XFG.Timers:GetTimer('BNetMailbox')
+    _Timer:SetLastRan(GetServerTime())
 end
 
 -- If you haven't heard from a unit in X minutes, set them to offline
 function TimerEvent:CallbackOffline()
     local _EpochTime = GetServerTime() - XFG.Settings.Confederate.UnitStale
     XFG.Confederate:OfflineUnits(_EpochTime)
+    local _Timer = XFG.Timers:GetTimer('Offline')
+    _Timer:SetLastRan(GetServerTime())
 end
 
 -- Periodically send update to avoid other considering you offline
@@ -240,6 +300,8 @@ function TimerEvent:CallbackHeartbeat()
         XFG:Debug(LogCategory, "Sending heartbeat")
         XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.DATA)
     end
+    local _Timer = XFG.Timers:GetTimer('Heartbeat')
+    _Timer:SetLastRan(GetServerTime())
 end
 
 -- Periodically force a refresh
@@ -247,20 +309,28 @@ function TimerEvent:CallbackGuildRoster()
     if(XFG.Initialized and IsInGuild()) then
         C_GuildInfo.GuildRoster()
     end
+    local _Timer = XFG.Timers:GetTimer('Roster')
+    _Timer:SetLastRan(GetServerTime())
 end
 
 -- Periodically ping friends to see who is running addon
 function TimerEvent:CallbackPingFriends()
     XFG.BNet:PingFriends()
+    local _Timer = XFG.Timers:GetTimer('Ping')
+    _Timer:SetLastRan(GetServerTime())
 end
 
 -- Periodically broadcast your links
 function TimerEvent:CallbackLinks()
     XFG.Links:BroadcastLinks()
+    local _Timer = XFG.Timers:GetTimer('Links')
+    _Timer:SetLastRan(GetServerTime())
 end
 
 -- Periodically purge stale links
 function TimerEvent:CallbackStaleLinks()
     local _EpochTime = GetServerTime() - XFG.Settings.Network.BNet.Link.Stale
     XFG.Links:PurgeStaleLinks(_EpochTime)
+    local _Timer = XFG.Timers:GetTimer('StaleLinks')
+    _Timer:SetLastRan(GetServerTime())
 end

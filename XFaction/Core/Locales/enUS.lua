@@ -37,11 +37,17 @@ L['INDEX'] = 'Index'
 L['DUNGEON'] = 'Mythic+'
 L['ACHIEVEMENT_EARNED'] = 'has earned the achievement'
 L['CHAT_LOGOUT'] = 'has gone offline.'
+L['EXPLORE'] = 'Explore'
+L['VERSION'] = 'Version'
+L['MAIN'] = 'Main'
+L['LABEL'] = 'Label'
+L['LINKS'] = 'Links'
+L['PM'] = 'Project Manager'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
 L['GENERAL_DESCRIPTION'] = 'Enable roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.'
-L['GENERAL_DISCLAIMER'] = 'This addon is in alpha stage and currently only Eternal Kingdom (EK) is being supported:'
+L['GENERAL_DISCLAIMER'] = 'This addon is in beta stage and currently only Eternal Kingdom (EK) is being supported:'
 L['GENERAL_WHAT'] = 'What is included'
 L['GENERAL_GUILD_CHAT'] = '1. Merged guild chat across guilds/realms/factions in the confederate'
 L['GENERAL_GUILD_CHAT_ACHIEVEMENT'] = '2. Personal achievements forwarded to confederate members in other guilds'
@@ -98,6 +104,8 @@ L['CHAT_LOGOUT'] = 'has gone offline.'
 --=========================================================================
 L['DT_HEADER_CONFEDERATE'] = 'Confederate: |cffffffff%s|r'
 L['DT_HEADER_GUILD'] = 'Guild: |cffffffff%s|r'
+L['DT_CONFIG_BROKER'] = 'Show Broker Fields'
+L['DT_CONFIG_LABEL_TOOLTIP'] = 'Show broker level'
 -------------------------
 -- DTGuild (X)
 -------------------------
@@ -116,6 +124,7 @@ L['DTGUILD_CONFIG_COLUMN_DUNGEON_TOOLTIP'] = 'Show players mythic+ score'
 L['DTGUILD_CONFIG_COLUMN_FACTION_TOOLTIP'] = 'Show players faction icon'
 L['DTGUILD_CONFIG_COLUMN_GUILD_TOOLTIP'] = 'Show players guild name'
 L['DTGUILD_CONFIG_COLUMN_LEVEL_TOOLTIP'] = 'Show players level'
+L['DTGUILD_CONFIG_COLUMN_MAIN_TOOLTIP'] = 'Show players main name if on alt'
 L['DTGUILD_CONFIG_COLUMN_NOTE_TOOLTIP'] = 'Show players note'
 L['DTGUILD_CONFIG_COLUMN_PROFESSION_TOOLTIP'] = 'Show players profession icons'
 L['DTGUILD_CONFIG_COLUMN_RACE_TOOLTIP'] = 'Show players race'
@@ -123,6 +132,7 @@ L['DTGUILD_CONFIG_COLUMN_RANK_TOOLTIP'] = 'Show players rank'
 L['DTGUILD_CONFIG_COLUMN_REALM_TOOLTIP'] = 'Show players realm name'
 L['DTGUILD_CONFIG_COLUMN_SPEC_TOOLTIP'] = 'Show players spec icon'
 L['DTGUILD_CONFIG_COLUMN_TEAM_TOOLTIP'] = 'Show players team name'
+L['DTGUILD_CONFIG_COLUMN_VERSION_TOOLTIP'] = 'Show players XFaction version'
 L['DTGUILD_CONFIG_COLUMN_ZONE_TOOLTIP'] = 'Show players current zone'
 -------------------------
 -- DTLinks (X)
@@ -131,19 +141,6 @@ L['DTGUILD_CONFIG_COLUMN_ZONE_TOOLTIP'] = 'Show players current zone'
 L['DTLINKS_NAME'] = 'Links (X)'
 -- Header
 L['DTLINKS_HEADER_LINKS'] = 'Active BNet Links: |cffffffff%d|r'
--- Config
-L['DTLINKS_CONFIG_ONLY_YOURS'] = 'Show Only Yours'
-L['DTLINKS_CONFIG_ONLY_YOURS_TOOLTIP'] = 'Show only your active links'
--------------------------
--- DTShard (X)
--------------------------
--- Broker name
-L['DTSHARD_NAME'] = 'Shard (X)'
--- Broker text
-L['DTSHARD_SHARD_ID'] = 'Shard: %d'
--- Config
-L['DTSHARD_CONFIG_FORCE_CHECK'] = 'Force Check'
-L['DTSHARD_CONFIG_FORCE_CHECK_TOOLTIP'] = 'Seconds between non-event shard checks'
 -------------------------
 -- DTSoulbind (X)
 -------------------------

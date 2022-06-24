@@ -5,35 +5,20 @@ local TotalChannels = 10
 
 SystemEvent = {}
 
-function SystemEvent:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function SystemEvent:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Initialized = false
-    end
+    self._Initialized = false
 
     return Object
 end
 
 function SystemEvent:Initialize()
 	if(self:IsInitialized() == false) then
-        XFG:RegisterEvent('PLAYER_LOGOUT', self.CallbackLogout)
-        XFG:Info(LogCategory, "Registered for PLAYER_LOGOUT events")
+        XFG:CreateEvent('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
         XFG:Info(LogCategory, "Created hook for pre-ReloadUI")
 		self:IsInitialized(true)
@@ -71,7 +56,7 @@ function SystemEvent:CallbackLogout()
         end
         _NewMessage:SetGuild(XFG.Player.Guild)
         _NewMessage:SetRealm(XFG.Player.Realm)
-        _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+        _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
         _NewMessage:SetData(' ')
         XFG.Outbox:Send(_NewMessage)
     end    

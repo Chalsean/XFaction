@@ -19,16 +19,9 @@ end
 function ChannelEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
-		XFG:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', self.CallbackChannelNotice)
-        XFG:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL_NOTICE events")
-		XFG:RegisterEvent('CHANNEL_FLAGS_UPDATED', self.CallbackChannelChange)
-        XFG:Info(LogCategory, "Registered for CHANNEL_FLAGS_UPDATED events")
-		XFG:RegisterEvent('CHAT_SERVER_DISCONNECTED', self.CallbackDisconnect)
-		XFG:Info(LogCategory, "Registered for CHAT_SERVER_DISCONNECTED events")
-		XFG:RegisterEvent('CHAT_SERVER_RECONNECTED', self.CallbackReconnect)
-		XFG:Info(LogCategory, "Registered for CHAT_SERVER_RECONNECTED events")	
-		XFG:RegisterEvent('CHAT_MSG_CHANNEL_LEAVE', self.CallbackOffline)
-		XFG:Info(LogCategory, "Registered for CHAT_MSG_CHANNEL_LEAVE events")
+		XFG:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', XFG.Handlers.ChannelEvent.CallbackChannelNotice)
+		XFG:RegisterEvent('CHANNEL_FLAGS_UPDATED', XFG.Handlers.ChannelEvent.CallbackChannelChange)
+		XFG:RegisterEvent('CHAT_MSG_CHANNEL_LEAVE', XFG.Handlers.ChannelEvent.CallbackOffline)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -60,14 +53,10 @@ function ChannelEvent:SetKey(inKey)
 end
 
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _, inChannelType, inChannelNumber, inChannelShortName)
+	local _Channel = XFG.Outbox:GetLocalChannel()
 	-- Fires when player leaves a channel
 	if(inAction == 'YOU_LEFT') then
-		if(XFG.Channels:RemoveChannel(inChannelShortName)) then
-			local _Channel = XFG.Outbox:GetLocalChannel()
-			if(_Channel:GetShortName() == inChannelShortName) then
-				XFG:Error(LogCategory, "Removed channel was the addon channel")
-			end
-		end
+		XFG.Channels:ScanChannels()
 
 	-- Fires when player joins a channel
 	elseif(inAction == 'YOU_CHANGED') then
@@ -79,14 +68,6 @@ function ChannelEvent:CallbackChannelChange(inIndex)
 	XFG.Channels:ScanChannel(inIndex)
 end
 
-function ChannelEvent:CallbackDisconnect()
-	XFG:Info(LogCategory, "Received CHAT_SERVER_DISCONNECTED system event")
-end
-
-function ChannelEvent:CallbackReconnect()
-	XFG:Info(LogCategory, "Received CHAT_SERVER_RECONNECTED system event")
-end
-
 function ChannelEvent:CallbackOffline(_, inUnitName, _, _, _, _, _, inChannelID, _, _, _, inGUID)
 	XFG:Debug(LogCategory, "Received CHAT_MSG_CHANNEL_LEAVE system event")
 	local _Channel = XFG.Outbox:GetLocalChannel()
@@ -95,8 +76,6 @@ function ChannelEvent:CallbackOffline(_, inUnitName, _, _, _, _, _, inChannelID,
 		local _UnitData = XFG.Confederate:GetUnit(inGUID)
 		XFG.Confederate:RemoveUnit(inGUID)
 		XFG.Frames.System:DisplayLocalOffline(_UnitData)
-		XFG.Links:RemoveNode(_UnitData:GetName())
-		XFG.DataText.Guild:RefreshBroker()
-		XFG.DataText.Links:RefreshBroker()
+		XFG.Links:RemoveNode(_UnitData:GetName())		
 	end
 end

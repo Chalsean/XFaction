@@ -102,6 +102,9 @@ function Inbox:Process(inMessage, inMessageTag)
         local _UnitData
         if(pcall(function () _UnitData = XFG:DeserializeUnitData(inMessage:GetData()) end)) then
             inMessage:SetData(_UnitData)
+            if(_UnitData:HasVersion() == false) then
+                _UnitData:SetVersion(inMessage:GetVersion())
+            end
         else
             XFG:Warn(LogCategory, 'Failed to decode received unit data [%s]', inMessage:GetFrom())
             return
@@ -148,6 +151,7 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.DataText.Guild:RefreshBroker()
         if(_UnitData ~= nil) then
             XFG.Links:RemoveNode(_UnitData:GetName())
+            XFG.DataText.Links:RefreshBroker()
         end
         if(XFG.Player.Realm:Equals(inMessage:GetRealm()) == false or XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
             XFG.Frames.System:Display(inMessage)
@@ -166,9 +170,6 @@ function Inbox:Process(inMessage, inMessageTag)
 
         -- If unit has just logged in, reply with latest information
         if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
-            -- Used to whisper back but was running into Blizz API bug, so just broadcast
-            XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
-            XFG.Links:BroadcastLinks()
             -- Display system message that unit has logged on
             if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) == false or XFG.Player.Guild:Equals(_UnitData:GetGuild()) == false) then
                 XFG.Frames.System:Display(inMessage)

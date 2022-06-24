@@ -16,8 +16,7 @@ end
 
 function AchievementEvent:Initialize()
 	if(self:IsInitialized() == false) then
-		XFG:RegisterEvent('ACHIEVEMENT_EARNED', self.CallbackAchievement)
-        XFG:Info(LogCategory, "Registered for ACHIEVEMENT_EARNED events")
+        XFG:RegisterEvent('ACHIEVEMENT_EARNED', XFG.Handlers.AchievementEvent.CallbackAchievement)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -38,8 +37,8 @@ function AchievementEvent:Print()
 end
 
 function AchievementEvent:CallbackAchievement(inID)
-    local _, _, _, _, _, _, _, _, _, _, _, _IsGuild = GetAchievementInfo(inID)
-    if(_IsGuild == false) then
+    local _, _Name, _, _, _, _, _, _, _, _, _, _IsGuild = GetAchievementInfo(inID)
+    if(_IsGuild == false and string.find(_Name, XFG.Lib.Locale['EXPLORE']) == nil) then
         local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
         _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
@@ -48,7 +47,7 @@ function AchievementEvent:CallbackAchievement(inID)
         if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
             _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
         end
-        _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+        _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
         _NewMessage:SetRealm(XFG.Player.Realm)
         _NewMessage:SetGuild(XFG.Player.Guild)
         XFG.Outbox:Send(_NewMessage)

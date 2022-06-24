@@ -69,12 +69,18 @@ end
 function DTLinks:RefreshBroker()
 	if(XFG.Initialized) then
 		self:CountLinks()
-		self._LDBObject.text = format('|cffffffff%d', self._Count)
+		local _Text = ''
+		if(XFG.Config.DataText.Link.Label) then
+			_Text = XFG.Lib.Locale['LINKS'] .. ': '
+		end
+		_Text = format('%s|cffffffff%d', _Text, self._Count)
+		self._LDBObject.text = _Text
 	end
 end
 
 function DTLinks:OnEnter(this)
 	if(XFG.Initialized == false) then return end
+	if(InCombatLockdown()) then return end
 
 	local _TargetCount = XFG.Targets:GetCount() + 1
 	
@@ -125,30 +131,28 @@ function DTLinks:OnEnter(this)
 
 	if(XFG.Initialized) then
 		for _, _Link in XFG.Links:Iterator() do
-			--if((XFG.Config.DataText.Links.OnlyMine and _Link:IsMyLink()) or XFG.Config.DataText.Links.OnlyMine == false) then
-				local _FromRealm = _Link:GetFromRealm()
-				local _FromFaction = _Link:GetFromFaction()
-				local _ToRealm = _Link:GetToRealm()
-				local _ToFaction = _Link:GetToFaction()
+			local _FromRealm = _Link:GetFromRealm()
+			local _FromFaction = _Link:GetFromFaction()
+			local _ToRealm = _Link:GetToRealm()
+			local _ToFaction = _Link:GetToFaction()
 
-				_FromKey = _FromRealm:GetID() .. ':' .. _FromFaction:GetID()
-				_ToKey = _ToRealm:GetID() .. ':' .. _ToFaction:GetID()
+			_FromKey = _FromRealm:GetID() .. ':' .. _FromFaction:GetID()
+			_ToKey = _ToRealm:GetID() .. ':' .. _ToFaction:GetID()
 
-				local _FromName = format("|cffffffff%s|r", _Link:GetFromName())
-				if(_Link:IsMyLink() and _Link:GetFromName() == XFG.Player.Unit:GetName()) then
-					_FromName = format("|cffffff00%s|r", _Link:GetFromName())
-				end
+			local _FromName = format("|cffffffff%s|r", _Link:GetFromName())
+			if(_Link:IsMyLink() and _Link:GetFromName() == XFG.Player.Unit:GetName()) then
+				_FromName = format("|cffffff00%s|r", _Link:GetFromName())
+			end
 
-				local _ToName = format("|cffffffff%s|r", _Link:GetToName())
-				if(_Link:IsMyLink() and _Link:GetToName() == XFG.Player.Unit:GetName()) then
-					_ToName = format("|cffffff00%s|r", _Link:GetToName())
-				end
+			local _ToName = format("|cffffffff%s|r", _Link:GetToName())
+			if(_Link:IsMyLink() and _Link:GetToName() == XFG.Player.Unit:GetName()) then
+				_ToName = format("|cffffff00%s|r", _Link:GetToName())
+			end
 
-				_Tooltip:SetCell(line, _TargetColumn[_FromKey], _FromName)
-				_Tooltip:SetCell(line, _TargetColumn[_ToKey], _ToName)
-				
-				line = _Tooltip:AddLine()
-			--end
+			_Tooltip:SetCell(line, _TargetColumn[_FromKey], _FromName)
+			_Tooltip:SetCell(line, _TargetColumn[_ToKey], _ToName)
+			
+			line = _Tooltip:AddLine()
 		end
 	end
 
