@@ -1,12 +1,19 @@
-### Version 2.6.4 [ 06.XX.2022 ]
+### Version 2.6.4 [ 06.24.2022 ]
 
 [XFaction]
 - Reintroduced channel sorting
 - Fixed bug with BNet cleaning up mailbox
+- Hovering broker button no longer autohides after delay, updated to shorter delay duration to align with smoother functionality
+- Options pages updated for dynamic hiding when not enabled
+- Chat faction color coding available
+- Chat color now supports system colors and faction colors, custom color functionality also extended to factions
+- Cleaned up achievement toast to be more like the system default
 
 [Guild (X)]
 - Added optional label for broker
 - Added version to optional columns
+- Increased viewport size
+- Added dropdown to select default Sort order
 
 [Links (X)]
 - Added optional label for broker
