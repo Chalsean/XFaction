@@ -46,6 +46,7 @@ XFG.Defaults = {
                 Faction = true,
                 Guild = true,
                 Level = true,
+                Main = true,
                 Note = false,
                 Profession = true,
                 Race = true,
@@ -54,7 +55,8 @@ XFG.Defaults = {
                 Spec = true,
                 Team = true,
                 Zone = true,
-                Rank = true
+                Rank = true,
+                Version = false
             },
         }
     }

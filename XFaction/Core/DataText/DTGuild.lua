@@ -101,8 +101,13 @@ local function PreSort()
 		_UnitData.Dungeon = _Unit:GetDungeonScore()
 		_UnitData.Achievement = _Unit:GetAchievementPoints()
 		_UnitData.Rank = _Unit:GetRank()
+		if(_Unit:HasVersion()) then
+			_UnitData.Version = _Unit:GetVersion()
+		else
+			_UnitData.Version = '0'
+		end
 
-		if(_Unit:IsAlt() and _Unit:HasMainName()) then
+		if(_Unit:IsAlt() and _Unit:HasMainName() and XFG.Config.DataText.Guild.Main) then
 			_UnitData.Name = _Unit:GetName() .. " (" .. _Unit:GetMainName() .. ")"
 		end
 
@@ -214,7 +219,7 @@ function DTGuild:OnEnter(this)
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
 		self._Tooltip = XFG.Lib.QT:Acquire(ObjectName)		
 	else
-		self._Tooltip = XFG.Lib.QT:Acquire(ObjectName, 16, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "CENTER", "RIGHT", "LEFT", "LEFT", "CENTER")
+		self._Tooltip = XFG.Lib.QT:Acquire(ObjectName, 17, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "CENTER", "RIGHT", "LEFT", "LEFT", "CENTER", "CENTER")
 		self._Tooltip:SetHeaderFont(self._HeaderFont)
 		self._Tooltip:SetFont(self._RegularFont)
 		self._Tooltip:SmartAnchorTo(this)
@@ -310,6 +315,10 @@ function DTGuild:OnEnter(this)
 		line = self._Tooltip:SetCell(line, 16, XFG.Lib.Locale['ACHIEVEMENT'])	
 		self._Tooltip:SetCellScript(line, 16, 'OnMouseUp', SetSortColumn, 'Achievement')
 	end
+	if(XFG.Config.DataText.Guild.Version) then
+		line = self._Tooltip:SetCell(line, 17, XFG.Lib.Locale['VERSION'])	
+		self._Tooltip:SetCellScript(line, 17, 'OnMouseUp', SetSortColumn, 'Version')
+	end
 	self._Tooltip:AddSeparator()
 
 	if(XFG.Initialized) then
@@ -367,6 +376,9 @@ function DTGuild:OnEnter(this)
 			end			
 			if(XFG.Config.DataText.Guild.Achievement) then
 				self._Tooltip:SetCell(line, 16, format("|cffffffff%d|r", _UnitData.Achievement))
+			end
+			if(XFG.Config.DataText.Guild.Version) then
+				self._Tooltip:SetCell(line, 17, format("|cffffffff%s|r", _UnitData.Version))
 			end
 
 			self._Tooltip:SetLineScript(line, "OnMouseUp", LineClick, _UnitData.GUID)

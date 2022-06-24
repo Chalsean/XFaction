@@ -38,6 +38,8 @@ L['DUNGEON'] = 'Mythic+'
 L['ACHIEVEMENT_EARNED'] = 'has earned achievement'
 L['CHAT_LOGOUT'] = 'has gone offline.'
 L['EXPLORE'] = 'Explore'
+L['VERSION'] = 'Version'
+L['MAIN'] = 'Main'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -111,6 +113,7 @@ L['DTGUILD_CONFIG_COLUMN_DUNGEON_TOOLTIP'] = 'Show players mythic+ score'
 L['DTGUILD_CONFIG_COLUMN_FACTION_TOOLTIP'] = 'Show players faction icon'
 L['DTGUILD_CONFIG_COLUMN_GUILD_TOOLTIP'] = 'Show players guild name'
 L['DTGUILD_CONFIG_COLUMN_LEVEL_TOOLTIP'] = 'Show players level'
+L['DTGUILD_CONFIG_COLUMN_MAIN_TOOLTIP'] = 'Show players main name if on alt'
 L['DTGUILD_CONFIG_COLUMN_NOTE_TOOLTIP'] = 'Show players note'
 L['DTGUILD_CONFIG_COLUMN_PROFESSION_TOOLTIP'] = 'Show players profession icons'
 L['DTGUILD_CONFIG_COLUMN_RACE_TOOLTIP'] = 'Show players race'
@@ -118,6 +121,7 @@ L['DTGUILD_CONFIG_COLUMN_RANK_TOOLTIP'] = 'Show players rank'
 L['DTGUILD_CONFIG_COLUMN_REALM_TOOLTIP'] = 'Show players realm name'
 L['DTGUILD_CONFIG_COLUMN_SPEC_TOOLTIP'] = 'Show players spec icon'
 L['DTGUILD_CONFIG_COLUMN_TEAM_TOOLTIP'] = 'Show players team name'
+L['DTGUILD_CONFIG_COLUMN_VERSION_TOOLTIP'] = 'Show players XFaction version'
 L['DTGUILD_CONFIG_COLUMN_ZONE_TOOLTIP'] = 'Show players current zone'
 -------------------------
 -- DTLinks (X)

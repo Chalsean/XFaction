@@ -103,6 +103,14 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
+				Main = {
+					order = 13,
+					type = 'toggle',
+					name = XFG.Lib.Locale['MAIN'],
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_MAIN_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
+				},
 				Dungeon = {  -- Mythic+
 					order = 14,
 					type = 'toggle',
@@ -167,8 +175,16 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
-				Zone = {
+				Version = {
 					order = 22,
+					type = 'toggle',
+					name = XFG.Lib.Locale['VERSION'],
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_VERSION_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
+				},
+				Zone = {
+					order = 23,
 					type = 'toggle',
 					name = XFG.Lib.Locale['ZONE'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_ZONE_TOOLTIP'],

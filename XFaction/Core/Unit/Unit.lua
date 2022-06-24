@@ -42,6 +42,7 @@ function Unit:new()
     self._Initialized = false
     self._Guild = nil
     self._Realm = nil
+    self._Version = nil
 
     return Object
 end
@@ -87,6 +88,7 @@ function Unit:Initialize(inMemberID)
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
+        self:SetVersion(XFG.Version)
         local _CovenantID = C_Covenants.GetActiveCovenantID()
         if(XFG.Covenants:Contains(_CovenantID)) then
             self:SetCovenant(XFG.Covenants:GetCovenant(_CovenantID))
@@ -151,6 +153,7 @@ function Unit:Print()
     XFG:Debug(LogCategory, '  _AchievementPoints (' .. type(self._AchievementPoints) .. '): ' .. tostring(self._AchievementPoints))
     XFG:Debug(LogCategory, '  _TimeStamp (' .. type(self._TimeStamp) .. '): ' .. tostring(self._TimeStamp))
     XFG:Debug(LogCategory, '  _RunningAddon (' .. type(self._RunningAddon) .. '): ' .. tostring(self._RunningAddon))
+    XFG:Debug(LogCategory, '  _Version (' .. type(self._Version) .. '): ' .. tostring(self._Version))
     XFG:Debug(LogCategory, '  _Alt (' .. type(self._Alt) .. '): ' .. tostring(self._Alt))
     XFG:Debug(LogCategory, '  _MainName (' .. type(self._MainName) .. '): ' .. tostring(self._MainName))
     XFG:Debug(LogCategory, '  _IsPlayer (' .. type(self._IsPlayer) .. '): ' .. tostring(self._IsPlayer))
@@ -450,6 +453,20 @@ function Unit:IsRunningAddon(inBoolean)
         self._RunningAddon = inBoolean
     end
     return self._RunningAddon
+end
+
+function Unit:HasVersion()
+    return self._Version ~= nil
+end
+
+function Unit:GetVersion()
+    return self._Version
+end
+
+function Unit:SetVersion(inVersion)
+    assert(type(inVersion) == 'string')
+    self._Version = inVersion
+    return self:GetVersion()
 end
 
 function Unit:IsAlt(inBoolean)

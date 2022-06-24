@@ -117,10 +117,6 @@ function BNet:Send(inMessage)
             local _NewMessage = nil
             if(inMessage.__name == 'GuildMessage') then
                 _NewMessage = GuildMessage:new()
-            elseif(inMessage.__name == 'LogoutMessage') then
-                _NewMessage = LogoutMessage:new()
-            elseif(inMessage.__name == 'AchievementMessage') then
-                _NewMessage = AchievementMessage:new()
             else
                 _NewMessage = Message:new()
             end	
