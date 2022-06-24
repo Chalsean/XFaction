@@ -102,6 +102,9 @@ function Inbox:Process(inMessage, inMessageTag)
         local _UnitData
         if(pcall(function () _UnitData = XFG:DeserializeUnitData(inMessage:GetData()) end)) then
             inMessage:SetData(_UnitData)
+            if(_UnitData:HasVersion() == false) then
+                _UnitData:SetVersion(inMessage:GetVersion())
+            end
         else
             XFG:Warn(LogCategory, 'Failed to decode received unit data [%s]', inMessage:GetFrom())
             return

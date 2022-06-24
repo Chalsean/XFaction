@@ -85,6 +85,7 @@ function XFG:DeserializeUnitData(inData)
 
 	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
 	if(_DeserializedData.D ~= nil) then _UnitData:SetDungeonScore(_DeserializedData.D) end
+	if(_DeserializedData.X ~= nil) then _UnitData:SetVersion(_DeserializedData.X) end
 
 	return _UnitData
 end

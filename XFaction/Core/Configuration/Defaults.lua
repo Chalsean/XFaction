@@ -13,10 +13,22 @@ XFG.Defaults = {
                 Faction = true,
                 Guild = true,
                 Main = true,
+                FColor = false,
+                CColor = false,
                 Color = {
-                    Red = 1,
+                    Red = 0.251,
                     Green = 1,
-                    Blue = 1
+                    Blue = 0.251
+                },
+                AColor = {
+                    Red = 0.216,
+                    Green = 0.553,
+                    Blue = 0.937
+                },
+                HColor = {
+                    Red = 0.878,
+                    Green = 0,
+                    Blue = 0.051
                 }
             },
             Achievement = {
@@ -24,10 +36,22 @@ XFG.Defaults = {
                 Faction = true,
                 Guild = true,
                 Main = true,
+                FColor = false,
+                CColor = false,
                 Color = {
-                    Red = 1,
+                    Red = 0.251,
                     Green = 1,
-                    Blue = 1
+                    Blue = 0.251
+                },
+                AColor = {
+                    Red = 0.216,
+                    Green = 0.553,
+                    Blue = 0.937
+                },
+                HColor = {
+                    Red = 0.878,
+                    Green = 0,
+                    Blue = 0.051
                 }
             },
             Login = {
@@ -37,6 +61,7 @@ XFG.Defaults = {
         },
         DataText = {
             Guild = {
+                Label = false,
                 GuildName = true,
                 Confederate = true,
                 MOTD = true,
@@ -46,6 +71,7 @@ XFG.Defaults = {
                 Faction = true,
                 Guild = true,
                 Level = true,
+                Main = true,
                 Note = false,
                 Profession = true,
                 Race = true,
@@ -54,8 +80,13 @@ XFG.Defaults = {
                 Spec = true,
                 Team = true,
                 Zone = true,
-                Rank = true
+                Rank = true,
+                Version = false,
+                Sort = 'Team'
             },
+            Link = {
+                Label = false
+            }
         }
     }
 }
