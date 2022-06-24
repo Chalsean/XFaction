@@ -242,8 +242,16 @@ function BNet:RebuildMessage(inMessageKey)
             _Message:SetData(_Data)
         end
     end
-    self._Packets[inMessageKey] = nil
+    self:RemovePackets(inMessageKey)
     return _Message
+end
+
+function BNet:RemovePackets(inKey)
+    assert(type(inKey) == 'string')
+    if(self:Contains(inKey)) then
+        self._Packets[inKey] = nil
+    end
+    return self:Contains(inKey) == false
 end
 
 function BNet:Purge(inEpochTime)
@@ -251,7 +259,7 @@ function BNet:Purge(inEpochTime)
 	for _, _Packet in self:Iterator() do
         XFG:DataDumper(LogCategory, _Packet)
 		if(_Packet ~= nil and _Packet:GetTimeStamp() < inEpochTime) then
-			self:RemoveMessage(_Packet:GetKey())
+			self:RemovePackets(_Packet:GetKey())
 		end
 	end
 end

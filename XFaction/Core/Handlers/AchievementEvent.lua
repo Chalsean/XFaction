@@ -47,7 +47,7 @@ function AchievementEvent:CallbackAchievement(inID)
         if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
             _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
         end
-        _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+        _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
         _NewMessage:SetRealm(XFG.Player.Realm)
         _NewMessage:SetGuild(XFG.Player.Guild)
         XFG.Outbox:Send(_NewMessage)

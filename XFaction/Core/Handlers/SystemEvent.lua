@@ -56,7 +56,7 @@ function SystemEvent:CallbackLogout()
         end
         _NewMessage:SetGuild(XFG.Player.Guild)
         _NewMessage:SetRealm(XFG.Player.Realm)
-        _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+        _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
         _NewMessage:SetData(' ')
         XFG.Outbox:Send(_NewMessage)
     end    
