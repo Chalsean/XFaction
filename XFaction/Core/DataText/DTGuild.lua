@@ -397,10 +397,8 @@ function DTGuild:OnLeave()
 	if _Tooltip and MouseIsOver(_Tooltip) then
 	    return
 	else
-	    if XFG.Lib.QT:IsAcquired(ObjectName) then _Tooltip:Clear() end
-	        _Tooltip:Hide()
-		XFG.Lib.QT:Release(ObjectName)
-		_Tooltip = nil
+        XFG.Lib.QT:Release(_Tooltip)
+        _Tooltip = nil
 	end
 end
 
