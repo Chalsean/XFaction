@@ -97,6 +97,9 @@ function Unit:Initialize(inMemberID)
         local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
         if(XFG.Soulbinds:Contains(_SoulbindID)) then
             self:SetSoulbind(XFG.Soulbinds:GetSoulbind(_SoulbindID))
+        else
+            -- If you switched covenants and target covenant you have not unlocked soulbinds
+            self:ClearSoulbind()
         end
 
         -- The following call will randomly fail, retries seem to help
@@ -417,6 +420,11 @@ function Unit:SetSoulbind(inSoulbind)
     assert(type(inSoulbind) == 'table' and inSoulbind.__name ~= nil and inSoulbind.__name == 'Soulbind', 'argument must be Soulbind object')
     self._Soulbind = inSoulbind
     return self:GetSoulbind()
+end
+
+function Unit:ClearSoulbind()
+    self._Soulbind = nil
+    return self:HasSoulbind() == false
 end
 
 function Unit:HasProfession1()
