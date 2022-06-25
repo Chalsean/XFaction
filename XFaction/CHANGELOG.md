@@ -1,3 +1,8 @@
+### Version 2.6.6 [ 06.25.2022 ]
+
+[Links (X)]
+- Added optional faction numbers to broke label
+
 ### Version 2.6.4 [ 06.24.2022 ]
 
 [XFaction]

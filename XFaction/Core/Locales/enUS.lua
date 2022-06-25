@@ -43,6 +43,7 @@ L['MAIN'] = 'Main'
 L['LABEL'] = 'Label'
 L['LINKS'] = 'Links'
 L['PM'] = 'Project Manager'
+L['FACTION'] = 'Faction'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -105,7 +106,8 @@ L['CHAT_LOGOUT'] = 'has gone offline.'
 L['DT_HEADER_CONFEDERATE'] = 'Confederate: |cffffffff%s|r'
 L['DT_HEADER_GUILD'] = 'Guild: |cffffffff%s|r'
 L['DT_CONFIG_BROKER'] = 'Show Broker Fields'
-L['DT_CONFIG_LABEL_TOOLTIP'] = 'Show broker level'
+L['DT_CONFIG_LABEL_TOOLTIP'] = 'Show broker label'
+L['DT_CONFIG_FACTION_TOOLTIP'] = 'Show faction counts in broker label'
 -------------------------
 -- DTGuild (X)
 -------------------------
