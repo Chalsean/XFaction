@@ -254,8 +254,19 @@ XFG.Options.args.DataText = {
 					type = 'description',
 					name = '',
 				},
-				Label = {
+				Faction = {
 					order = 3,
+					type = 'toggle',
+					name = XFG.Lib.Locale['FACTION'],
+					desc = XFG.Lib.Locale['DT_CONFIG_FACTION_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Link[ info[#info] ] end,
+					set = function(info, value) 
+						XFG.Config.DataText.Link[ info[#info] ] = value;
+						XFG.DataText.Links:RefreshBroker()
+					end
+				},
+				Label = {
+					order = 4,
 					type = 'toggle',
 					name = XFG.Lib.Locale['LABEL'],
 					desc = XFG.Lib.Locale['DT_CONFIG_LABEL_TOOLTIP'],

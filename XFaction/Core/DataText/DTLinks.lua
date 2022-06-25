@@ -62,18 +62,44 @@ function DTLinks:Print()
 	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
-function DTLinks:CountLinks()
-	self._Count =  XFG.Links:GetCount()
-end
-
 function DTLinks:RefreshBroker()
 	if(XFG.Initialized) then
-		self:CountLinks()
+		local _Alliance = 0
+		local _Horde = 0
+		local _Names = {}
+		
+		for _, _Link in XFG.Links:Iterator() do
+			XFG:Debug(LogCategory, '%s to %s', _Link:GetFromName(), _Link:GetToName())
+			if(_Names[_Link:GetFromName()] == nil) then
+				local _Faction = _Link:GetFromFaction()
+				if(_Faction:GetName() == 'Alliance') then
+					_Alliance = _Alliance + 1
+				else
+					_Horde = _Horde + 1
+				end
+				_Names[_Link:GetFromName()] = true
+			end
+			if(_Names[_Link:GetToName()] == nil) then
+				local _Faction = _Link:GetToFaction()
+				if(_Faction:GetName() == 'Alliance') then
+					_Alliance = _Alliance + 1
+				else
+					_Horde = _Horde + 1
+				end
+				_Names[_Link:GetToName()] = true
+			end
+		end
+
 		local _Text = ''
 		if(XFG.Config.DataText.Link.Label) then
 			_Text = XFG.Lib.Locale['LINKS'] .. ': '
 		end
-		_Text = format('%s|cffffffff%d', _Text, self._Count)
+
+		if(XFG.Config.DataText.Link.Faction) then
+			_Text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', _Text, XFG.Links:GetCount(), _Alliance, _Horde)
+		else
+			_Text = format('%s|cffffffff%d|r', _Text, XFG.Links:GetCount())
+		end
 		self._LDBObject.text = _Text
 	end
 end

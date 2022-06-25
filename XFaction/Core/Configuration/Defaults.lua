@@ -85,7 +85,8 @@ XFG.Defaults = {
                 Sort = 'Team'
             },
             Link = {
-                Label = false
+                Label = false,
+                Faction = true
             }
         }
     }
