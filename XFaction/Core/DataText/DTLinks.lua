@@ -64,39 +64,38 @@ end
 
 function DTLinks:RefreshBroker()
 	if(XFG.Initialized) then
-		local _Alliance = 0
-		local _Horde = 0
+		local _Text = ''
+		if(XFG.Config.DataText.Link.Label) then
+			_Text = XFG.Lib.Locale['LINKS'] .. ': '
+		end
+
 		local _Names = {}
-		
+		local _AllianceCount = 0
+		local _HordeCount = 0
+
 		for _, _Link in XFG.Links:Iterator() do
-			XFG:Debug(LogCategory, '%s to %s', _Link:GetFromName(), _Link:GetToName())
 			if(_Names[_Link:GetFromName()] == nil) then
 				local _Faction = _Link:GetFromFaction()
 				if(_Faction:GetName() == 'Alliance') then
-					_Alliance = _Alliance + 1
+					_AllianceCount = _AllianceCount + 1
 				else
-					_Horde = _Horde + 1
+					_HordeCount = _HordeCount + 1
 				end
 				_Names[_Link:GetFromName()] = true
 			end
 			if(_Names[_Link:GetToName()] == nil) then
 				local _Faction = _Link:GetToFaction()
 				if(_Faction:GetName() == 'Alliance') then
-					_Alliance = _Alliance + 1
+					_AllianceCount = _AllianceCount + 1
 				else
-					_Horde = _Horde + 1
+					_HordeCount = _HordeCount + 1
 				end
 				_Names[_Link:GetToName()] = true
 			end
 		end
 
-		local _Text = ''
-		if(XFG.Config.DataText.Link.Label) then
-			_Text = XFG.Lib.Locale['LINKS'] .. ': '
-		end
-
 		if(XFG.Config.DataText.Link.Faction) then
-			_Text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', _Text, XFG.Links:GetCount(), _Alliance, _Horde)
+			_Text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', _Text, XFG.Links:GetCount(), _AllianceCount, _HordeCount)
 		else
 			_Text = format('%s|cffffffff%d|r', _Text, XFG.Links:GetCount())
 		end
@@ -128,7 +127,7 @@ function DTLinks:OnEnter(this)
 	local _GuildName = XFG.Confederate:GetName()
 	_Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _GuildName), self._HeaderFont, "LEFT", _TargetCount)
 	line = _Tooltip:AddLine()
-	_Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DTLINKS_HEADER_LINKS'], self._Count), self._HeaderFont, "LEFT", _TargetCount)
+	_Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DTLINKS_HEADER_LINKS'], XFG.Links:GetCount()), self._HeaderFont, "LEFT", _TargetCount)
 
 	line = _Tooltip:AddLine()
 	line = _Tooltip:AddLine()

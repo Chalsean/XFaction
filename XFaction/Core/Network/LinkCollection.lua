@@ -83,7 +83,7 @@ function LinkCollection:RemoveLink(inLink)
 	if(self:Contains(inLink:GetKey())) then
 		self._LinkCount = self._LinkCount - 1
 		self._Links[inLink:GetKey()] = nil
-		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
+		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())		
 		XFG.DataText.Links:RefreshBroker()
 	end
     return self:Contains(inLink:GetKey()) == false
@@ -132,7 +132,6 @@ function LinkCollection:ProcessMessage(inMessage)
 			XFG:Debug(LogCategory, 'Added link due to node broadcast [%s]', _Link:GetKey())
 		end
     end
-	XFG.DataText.Links:RefreshBroker()
 end
 
 function LinkCollection:GetCount()
