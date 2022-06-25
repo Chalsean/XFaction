@@ -51,9 +51,7 @@ function PlayerEvent:Print()
 end
 
 function PlayerEvent:CallbackPlayerChanged(inEvent) 
-    local _ID = XFG.Player.Unit:GetID()
-    XFG.Player.Unit = Unit:new()
-    XFG.Player.Unit:Initialize(_ID)
+    XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
     XFG:Info(LogCategory, 'Updated player data based on %s event', inEvent)
 
     if(inEvent ~= 'SOULBIND_ACTIVATED') then
