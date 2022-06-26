@@ -256,10 +256,12 @@ end
 
 function BNet:Purge(inEpochTime)
     assert(type(inEpochTime) == 'number')
-	for _, _Packet in self:Iterator() do
-        XFG:DataDumper(LogCategory, _Packet)
-		if(_Packet ~= nil and _Packet:GetTimeStamp() < inEpochTime) then
-			self:RemovePackets(_Packet:GetKey())
+	for _ID, _Packets in self:Iterator() do
+        for _, _Packet in ipairs (_Packets) do
+		    if(_Packet:GetTimeStamp() < inEpochTime) then
+			    self:RemovePackets(_ID)
+            end
+            break
 		end
 	end
 end

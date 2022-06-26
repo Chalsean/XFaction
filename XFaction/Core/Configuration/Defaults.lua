@@ -85,7 +85,8 @@ XFG.Defaults = {
                 Zone = true,
                 Rank = true,
                 Version = false,
-                Sort = 'Team'
+                Sort = 'Team',
+                Size = 350
             },
             Link = {
                 Label = false,

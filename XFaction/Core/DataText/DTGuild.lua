@@ -389,7 +389,7 @@ function DTGuild:OnEnter(this)
 		end
 	end
 
-	_Tooltip:UpdateScrolling()
+	_Tooltip:UpdateScrolling(XFG.Config.DataText.Guild.Size)
 	_Tooltip:Show()
 end
 
