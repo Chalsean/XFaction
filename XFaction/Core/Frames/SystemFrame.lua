@@ -71,13 +71,26 @@ function SystemFrame:Display(inMessage)
     end
 
     local _Faction = _Guild:GetFaction()
-                    
-    local _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID())) .. _UnitName
-    if(_MainName ~= nil) then
+    local _Link = nil
+    local _Message = ''
+    
+    if(XFG.Config.Chat.Login.Faction) then  
+        _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
+    end
+    
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT or not pcall(function () _Link = ( '['.. GetPlayerLink(_UnitName, _UnitName) ) .. ']' end )) then
+        _Link = _UnitName
+    end
+    
+    _Message = _Message .. _Link
+    
+    if(XFG.Config.Chat.Login.Main and _MainName ~= nil) then
         _Message = _Message .. ' (' .. _MainName .. ')'
     end
 
-    _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> '
+    if(XFG.Config.Chat.Login.Guild) then
+        _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> '
+    end
     
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         _Message = _Message .. XFG.Lib.Locale['CHAT_LOGOUT']
@@ -96,12 +109,22 @@ function SystemFrame:DisplayLocalOffline(inUnitData)
 
     local _Faction = inUnitData:GetFaction()
     local _Guild = inUnitData:GetGuild()
-                    
-    local _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID())) .. inUnitData:GetName()
-    if(inUnitData:IsAlt() and inUnitData:HasMainName()) then
-        _Message = _Message .. ' (' .. inUnitData:GetMainName() .. ')'
+    local _Message = ''
+    
+    if(XFG.Config.Chat.Login.Faction) then  
+        _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
+    end
+    
+    _Message = _Message .. inUnitData:GetName()
+    
+    if(XFG.Config.Chat.Login.Main and _MainName ~= nil) then
+        _Message = _Message .. ' (' .. _MainName .. ')'
     end
 
-    _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> ' .. XFG.Lib.Locale['CHAT_LOGOUT']
+    if(XFG.Config.Chat.Login.Guild) then
+        _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> ' 
+    end
+    
+    _Message = _Message.. XFG.Lib.Locale['CHAT_LOGOUT']
     SendSystemMessage(_Message) 
 end
