@@ -115,6 +115,7 @@ L['DT_CONFIG_FACTION_TOOLTIP'] = 'Show faction counts in broker label'
 L['DTGUILD_NAME'] = 'Guild (X)'
 -- Config
 L['DTGUILD_CONFIG_SORT'] = 'Default Sort Column'
+L['DTGUILD_CONFIG_SIZE'] = 'Window Size'
 L['DTGUILD_CONFIG_HEADER'] = 'Show Header Fields'
 L['DTGUILD_CONFIG_CONFEDERATE_TOOLTIP'] = 'Show name of the confederate'
 L['DTGUILD_CONFIG_GUILD_TOOLTIP'] = 'Show name of the current guild'
@@ -136,6 +137,8 @@ L['DTGUILD_CONFIG_COLUMN_SPEC_TOOLTIP'] = 'Show players spec icon'
 L['DTGUILD_CONFIG_COLUMN_TEAM_TOOLTIP'] = 'Show players team name'
 L['DTGUILD_CONFIG_COLUMN_VERSION_TOOLTIP'] = 'Show players XFaction version'
 L['DTGUILD_CONFIG_COLUMN_ZONE_TOOLTIP'] = 'Show players current zone'
+L['DTGUILD_CONFIG_SORT_TOOLTIP'] = 'Select the default sort column'
+L['DTGUILD_CONFIG_SIZE_TOOLTIP'] = 'Select the maximum height of the window before it starts scrolling'
 -------------------------
 -- DTLinks (X)
 -------------------------
