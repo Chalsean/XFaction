@@ -35,6 +35,7 @@ XFG.Lib = {
 	Config = LibStub('AceConfig-3.0'),
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
+	Cmd = LibStub('AceConfigCmd-3.0'),
 }
 XFG.Lib.Encode = XFG.Lib.Compress:GetAddonEncodeTable()
 
