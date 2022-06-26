@@ -227,11 +227,20 @@ XFG.Options.args.DataText = {
 					order = 30,
 					type = 'select',
 					name = XFG.Lib.Locale['DTGUILD_CONFIG_SORT'],
-					desc = 'Select the default sort method',
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_SORT_TOOLTIP'],
 					values = {
                         Team = 'Team',
                         Name = 'Name'
                     },
+					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
+				},
+				Size = {
+					order = 31,
+					type = 'range',
+					name = XFG.Lib.Locale['DTGUILD_CONFIG_SIZE'],
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_SIZE_TOOLTIP'],
+					min = 200, max = 1000, step = 5,
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
