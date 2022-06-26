@@ -17,11 +17,15 @@ This addon is in early stages of development (beta) and currently only Eternal K
 ## What is included
 The addon should provide the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederate
+
 - As of 2.5.3, the merged guild chat is routed to guild chat, similar to GreenWall
-- Personal achievements forwarded to confederate members in other guilds (Known Bug: player name can sometimes bug out when an achievement is announced)
+- Personal achievements forwarded to confederate members in other guilds
+![image](https://user-images.githubusercontent.com/45693161/175836209-ba993c9a-5aa8-49ff-ba1f-d16aebdf0059.png)
 
 > Merged system messages across guilds/realms/factions in the confederate
 - When another player using the addon comes online/offline, you should see a system message as if they were local guild member
+![image](https://user-images.githubusercontent.com/45693161/175836164-9aa7c46c-5b7c-4056-8d3f-ed5487b4debf.png)
+
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
 - Full guild roster view across guilds/realms/factions
@@ -30,6 +34,7 @@ The addon should provide the following functionalities:
 - If on an alt, displays the main character name as well
 - The DT frame should be scrollable and sortable by column headers, with team being the default sort
 - Left click performs "who", shift left click performs "whisper" (not working for cross faction yet), right click performs "menu dropdown", and shift right click performs "invite"
+![image](https://user-images.githubusercontent.com/45693161/175836187-30198825-1d36-4c9f-be8e-b724b604cae7.png)
 
 > Links (X) DT
 - This will show all the active BNet links within the confederate
