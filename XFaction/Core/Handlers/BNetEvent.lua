@@ -19,7 +19,7 @@ end
 function BNetEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
-        local _Event = Event:new(); _Event:Initialize('Friend', 'BN_FRIEND_INFO_CHANGED', XFG.Handlers.BNetEvent.CallbackFriendInfo, true, true)
+        XFG:CreateEvent('Friend', 'BN_FRIEND_INFO_CHANGED', XFG.Handlers.BNetEvent.CallbackFriendInfo, true, true)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -51,6 +51,6 @@ end
 
 -- The friend API leaves much to be desired, it spams and will give you invalid indexes like 0
 -- Making the index kind of worthless, it's easier to just scan
-function BNetEvent:CallbackFriendInfo(inFriendIndex)
+function BNetEvent:CallbackFriendInfo()
     XFG.Friends:CheckFriends()
 end
