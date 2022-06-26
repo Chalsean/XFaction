@@ -20,11 +20,11 @@ The addon should provide the following functionalities:
 
 - As of 2.5.3, the merged guild chat is routed to guild chat, similar to GreenWall
 - Personal achievements forwarded to confederate members in other guilds
-![image](https://user-images.githubusercontent.com/45693161/175836209-ba993c9a-5aa8-49ff-ba1f-d16aebdf0059.png)
+<img src="https://user-images.githubusercontent.com/45693161/175836417-dde29267-b00e-4eda-8506-52ef2a24d7e4.png" width=500>
 
 > Merged system messages across guilds/realms/factions in the confederate
 - When another player using the addon comes online/offline, you should see a system message as if they were local guild member
-![image](https://user-images.githubusercontent.com/45693161/175836164-9aa7c46c-5b7c-4056-8d3f-ed5487b4debf.png)
+<img src="https://user-images.githubusercontent.com/45693161/175836164-9aa7c46c-5b7c-4056-8d3f-ed5487b4debf.png" width=300>
 
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
@@ -34,15 +34,18 @@ The addon should provide the following functionalities:
 - If on an alt, displays the main character name as well
 - The DT frame should be scrollable and sortable by column headers, with team being the default sort
 - Left click performs "who", shift left click performs "whisper" (not working for cross faction yet), right click performs "menu dropdown", and shift right click performs "invite"
-![image](https://user-images.githubusercontent.com/45693161/175836187-30198825-1d36-4c9f-be8e-b724b604cae7.png)
+<img src="https://user-images.githubusercontent.com/45693161/175836288-82855e04-0200-4d4c-964c-387675975f29.png" width=650>
+
 
 > Links (X) DT
 - This will show all the active BNet links within the confederate
 
-> 3 miscellaneous DTs: Soulbind (X), WoW Token (X), Shard (X)
+> 2 miscellaneous DTs: Soulbind (X), WoW Token (X)
 - Soulbind: left click opens Soulbind frame, right click to change Soulbinds
+<img src="https://user-images.githubusercontent.com/45693161/175836356-80c30337-bf55-471c-b54b-f18f01e0b02c.png" width=200>
+
 - WoW Token: Simply displays the current WoW token market price
-- Shard: Simply displays the shard # you are currently on (helpful for rare mob hunting)
+<img src="https://user-images.githubusercontent.com/45693161/175836370-d6a40a6f-0356-4e47-9461-2f554ea3d7d4.png" width=200>
 
 ## Misc
 
@@ -53,6 +56,7 @@ The addon should provide the following functionalities:
 - Bucket
 - Comm
 - Config
+- ConfigCmd
 - ConfigDialog
 - Console
 - DB
