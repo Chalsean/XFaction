@@ -1,3 +1,11 @@
+### Version 2.6.7 [ 06.25.2022 ]
+
+[XFaction]
+- Fixed bug with deleting stale messages in BNet mailbox
+
+[Guild (X)]
+- Window size is now configurable
+
 ### Version 2.6.6 [ 06.25.2022 ]
 
 [Links (X)]

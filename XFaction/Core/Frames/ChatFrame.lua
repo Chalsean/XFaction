@@ -76,25 +76,6 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
-function GetColoredNameByChatEvent(arg2, arg12)
-    if(arg12 and arg12 ~= "") then
-        local type = _G.strsplit("-", arg12 or "")
-        if type ~= "Player" then return arg2 end--Blizzard didn't return a valid guid, so abort class colors
-        local localizedClass, englishClass, localizedRace, englishRace, sex = _G.GetPlayerInfoByGUID(arg12)
-        if ( englishClass ) then
-            local classColorTable = _G.RAID_CLASS_COLORS[englishClass];
-            if ( not classColorTable ) then
-                return arg2;
-            end
-            return string.format("\124cff%.2x%.2x%.2x", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255)..arg2.."\124r"
-        else
-            return arg2;
-        end
-    else
-        return arg2;
-    end
-end
-
 function ChatFrame:Display(inMessage)
     if(XFG.Config.Chat.GChat.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')
@@ -127,12 +108,7 @@ function ChatFrame:Display(inMessage)
                     end
 
                     if(_Event == 'ACHIEVEMENT') then
-                        _Link = nil
-                        if(pcall(function () _Link = GetPlayerLink(inMessage:GetUnitName(), GetColoredNameByChatEvent(inMessage:GetUnitName(), inMessage:GetFrom())) end)) then
-                            _Text = _Text .. '[' .. _Link .. ']' .. ' '
-                        else
-                            _Text = _Text .. '['.. inMessage:GetUnitName() .. ']' .. ' '
-                        end
+                        _Text = _Text .. '['.. inMessage:GetUnitName() .. ']' .. ' '
                     end
 
                     if(XFG.Config.Chat[_ConfigNode].Main and inMessage:GetMainName() ~= nil) then
