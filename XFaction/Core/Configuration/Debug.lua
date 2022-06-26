@@ -18,7 +18,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Channels:Print() end,
-					set = function(info, value) XFG.Channels:Print() end
+					set = function(info, value) end
 				},
 				Class = {
 					order = 1,
@@ -26,7 +26,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Classes:Print() end,
-					set = function(info, value) XFG.Classes:Print() end
+					set = function(info, value) end
 				},
 				Confederate = {
 					order = 1,
@@ -34,7 +34,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Confederate:Print() end,
-					set = function(info, value) XFG.Confederate:Print() end
+					set = function(info, value) end
 				},
 				Covenant = {
 					order = 1,
@@ -42,7 +42,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Covenants:Print() end,
-					set = function(info, value) XFG.Covenants:Print() end
+					set = function(info, value) end
 				},
 				Event = {
 					order = 1,
@@ -50,7 +50,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Events:Print() end,
-					set = function(info, value) XFG.Events:Print() end
+					set = function(info, value) end
 				},
 				Faction = {
 					order = 1,
@@ -58,7 +58,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Factions:Print() end,
-					set = function(info, value) XFG.Factions:Print() end
+					set = function(info, value) end
 				},
 				Friend = {
 					order = 1,
@@ -66,7 +66,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Friends:Print() end,
-					set = function(info, value) XFG.Friends:Print() end
+					set = function(info, value) end
 				},
 				Guild = {
 					order = 1,
@@ -74,7 +74,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Guilds:Print() end,
-					set = function(info, value) XFG.Guilds:Print() end
+					set = function(info, value) end
 				},
 				Link = {
 					order = 1,
@@ -82,7 +82,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Links:Print() end,
-					set = function(info, value) XFG.Links:Print() end
+					set = function(info, value) end
 				},
 				Player = {
 					order = 1,
@@ -90,7 +90,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Player.Unit:Print() end,
-					set = function(info, value) XFG.Player.Unit:Print() end
+					set = function(info, value) end
 				},
 				Profession = {
 					order = 1,
@@ -98,7 +98,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Professions:Print() end,
-					set = function(info, value) XFG.Professions:Print() end
+					set = function(info, value) end
 				},
 				Race = {
 					order = 1,
@@ -106,7 +106,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Races:Print() end,
-					set = function(info, value) XFG.Races:Print() end
+					set = function(info, value) end
 				},
 				Realm = {
 					order = 1,
@@ -114,7 +114,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Realms:Print() end,
-					set = function(info, value) XFG.Realms:Print() end
+					set = function(info, value) end
 				},
 				Soulbind = {
 					order = 1,
@@ -122,7 +122,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Soulbinds:Print() end,
-					set = function(info, value) XFG.Soulbinds:Print() end
+					set = function(info, value) end
 				},
 				Spec = {
 					order = 1,
@@ -130,7 +130,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Specs:Print() end,
-					set = function(info, value) XFG.Specs:Print() end
+					set = function(info, value) end
 				},
 				Target = {
 					order = 1,
@@ -138,7 +138,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Targets:Print() end,
-					set = function(info, value) XFG.Targets:Print() end
+					set = function(info, value) end
 				},
 				Team = {
 					order = 1,
@@ -146,7 +146,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Teams:Print() end,
-					set = function(info, value) XFG.Teams:Print() end
+					set = function(info, value) end
 				},
 				Timer = {
 					order = 1,
@@ -154,7 +154,7 @@ XFG.Options.args.Debug = {
 					name = '',
 					desc = '',
 					get = function(info) XFG.Timers:Print() end,
-					set = function(info, value) XFG.Timers:Print() end
+					set = function(info, value) end
 				},
 			},
 		},
