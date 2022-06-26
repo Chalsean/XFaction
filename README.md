@@ -17,6 +17,7 @@ This addon is in early stages of development (beta) and currently only Eternal K
 ## What is included
 The addon should provide the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederate
+<img src="https://user-images.githubusercontent.com/45693161/175836814-c326335a-786d-4be7-9547-5e31c594390c.png" width=400>
 
 - As of 2.5.3, the merged guild chat is routed to guild chat, similar to GreenWall
 - Personal achievements forwarded to confederate members in other guilds
