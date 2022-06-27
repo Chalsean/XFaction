@@ -40,7 +40,8 @@ The addon should provide the following functionalities:
 
 > Links (X) DT
 - This will show all the active BNet links within the confederate
-<img src="https://user-images.githubusercontent.com/45693161/175841924-314389eb-de25-45b9-893e-69ee0eb1f554.png" width=200>
+<img src="https://user-images.githubusercontent.com/45693161/175842217-b00a8966-d6fd-4ad2-9cfb-2f821933fcee.png" width=200>
+
 
 
 > 2 miscellaneous DTs: Soulbind (X), WoW Token (X)
