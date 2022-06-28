@@ -316,7 +316,48 @@ XFG.Options.args.Chat = {
 					desc = XFG.Lib.Locale['CHAT_ONLINE_SOUND_TOOLTIP'],
 					get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
-				}
+				},
+				Space1 = {
+					order = 3,
+					type = 'description',
+					name = '',
+					hidden = function()
+						return not XFG.Config.Chat.Login.Enable
+					end,
+				},
+				Faction = {
+					order = 4,
+					type = 'toggle',
+					name = XFG.Lib.Locale['CHAT_FACTION'],
+					desc = XFG.Lib.Locale['CHAT_FACTION_TOOLTIP'],
+					hidden = function()
+						return not XFG.Config.Chat.Login.Enable
+					end,
+					get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
+					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
+				},
+				Guild = {
+					order = 5,
+					type = 'toggle',
+					name = XFG.Lib.Locale['CHAT_GUILD_NAME'],
+					desc = XFG.Lib.Locale['CHAT_GUILD_NAME_TOOLTIP'],
+					hidden = function()
+						return not XFG.Config.Chat.Login.Enable
+					end,
+					get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
+					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
+				},
+				Main = {
+					order = 6,
+					type = 'toggle',
+					name = XFG.Lib.Locale['CHAT_MAIN'],
+					desc = XFG.Lib.Locale['CHAT_MAIN_TOOLTIP'],
+					hidden = function()
+						return not XFG.Config.Chat.Login.Enable
+					end,
+					get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
+					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
+				},
 			}
 		}
 	}
