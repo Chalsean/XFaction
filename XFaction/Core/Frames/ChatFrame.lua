@@ -32,15 +32,6 @@ function ChatFrame:Initialize()
                 self._ElvUIModule = ElvUI[1]:GetModule('Chat')
                 self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
             end
-        elseif IsAddOnLoaded('WIM') then
-            XFG:Info(LogCategory, 'Using WIM chat handler')
-            self._ChatFrameHandler = function(arg1, _Event, ...)
-                if _Event == "CHAT_MSG_GUILD" and WIM.modules.GuildChat.enabled then
-                    WIM.modules.GuildChat:CHAT_MSG_GUILD(...)
-                else
-                    ChatFrame_MessageEventHandler(arg1, _Event, ...)
-                end
-            end
         else
             XFG:Info(LogCategory, 'Using default chat handler')
             self._ChatFrameHandler = ChatFrame_MessageEventHandler
@@ -85,16 +76,6 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
-function GetColoredNameByChatEvent(_inMessageName, _inMessageFrom)
-	local _UnitData = XFG.Confederate:GetUnit(_inMessageFrom)
-    if _UnitData == nil then
-        return _inMessageName
-    end
-        
-    local _ClassHexColor = _UnitData:GetClass():GetColorMixin():GenerateHexColor()
-	return format("|c%s%s|r", _ClassHexColor, _inMessageName)
-end
-
 function ChatFrame:Display(inMessage)
     if(XFG.Config.Chat.GChat.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')
@@ -127,12 +108,7 @@ function ChatFrame:Display(inMessage)
                     end
 
                     if(_Event == 'ACHIEVEMENT') then
-                        _Link = nil
-                        if(pcall(function () _Link = GetPlayerLink(inMessage:GetUnitName(), GetColoredNameByChatEvent(inMessage:GetUnitName(), inMessage:GetFrom())) end)) then
-                            _Text = _Text .. '[' .. _Link .. ']' .. ' '
-                        else
-                            _Text = _Text .. '['.. inMessage:GetUnitName() .. ']' .. ' '
-                        end
+                        _Text = _Text .. '['.. inMessage:GetUnitName() .. ']' .. ' '
                     end
 
                     if(XFG.Config.Chat[_ConfigNode].Main and inMessage:GetMainName() ~= nil) then
