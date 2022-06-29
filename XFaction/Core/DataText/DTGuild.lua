@@ -95,6 +95,7 @@ local function PreSort()
 		_UnitData.Guild = _UnitGuild:GetName()
 		_UnitData.Zone = _Unit:GetZone()
 		_UnitData.Name = _Unit:GetName()
+		_UnitData.UnitName = _Unit:GetUnitName()
 		_UnitData.Note = _Unit:GetNote()
 		_UnitData.GUID = _Unit:GetGUID()
 		_UnitData.Dungeon = _Unit:GetDungeonScore()
@@ -161,42 +162,13 @@ end
 
 local function LineClick(_, inUnitGUID, inMouseButton)
 	local _Unit = XFG.Confederate:GetUnit(inUnitGUID)
-	local _UnitName = _Unit:GetUnitName()
+	local _Link = _Unit:GetLink()
+	if(_Link == nil) then return end
 
-	local _UnitFaction = _Unit:GetFaction()
-	local _PlayerFaction = XFG.Player.Unit:GetFaction()
-
-	if inMouseButton == 'LeftButton' then
-		if IsShiftKeyDown() then
-			-- Who
-			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton') 
-		elseif(_UnitFaction:Equals(_PlayerFaction)) then
-			-- Whisper
-			if(XFG.Player.Faction:Equals(_Unit:GetFaction())) then
-				SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
-			-- See if theyre a bnet friend
-			else
-				for _, _Friend in XFG.Friends:Iterator() do
-					if(_Unit:GetName() == _Friend:GetName()) then
-						local _Target = _Friend:GetTarget()
-						local _Realm = _Target:GetRealm()
-						if(_Realm:Equals(_Unit:GetRealm())) then
-							local _Name = _Friend:GetAccountName()
-							--"|HBNplayer:"..arg2..":"..arg13..":"..arg11..":"..chatGroup..(chatTarget and ":"..chatTarget or "").."|h"
-							SetItemRef('player:'.. _UnitName, format('|HBNplayer:%1:%2:0:1$s|h[%1$s]|h', _Friend:GetAccountName(), _Friend:GetID()), 'LeftButton')
-						end
-					end
-				end
-			end
-		end		
-	elseif inMouseButton == 'RightButton' then
-		if IsShiftKeyDown() then
-			-- Invite
-			C_PartyInfo.InviteUnit(_UnitName)
-		else
-			-- Menu
-			SetItemRef('player:' .. _UnitName, format('|Hplayer:%1$s|h[%1$s]|h', _UnitName), 'LeftButton')
-		end
+	if(inMouseButton == 'RightButton' and IsShiftKeyDown()) then
+ 		C_PartyInfo.InviteUnit(_Unit:GetUnitName())
+ 	else
+		SetItemRef(_Link, _, inMouseButton)
 	end
 end
 

@@ -78,6 +78,7 @@ function TimerEvent:CallbackLogin()
             local _Timer = XFG.Timers:GetTimer('Login')
             XFG.Timers:RemoveTimer(_Timer)
 
+            -- This is hard coding during alpha/beta phase
             local _GuildInfo = C_Club.GetClubInfo(_GuildID)
             _GuildInfo.description = 'blah blah blah  ' .. "\n"
             _GuildInfo.description = _GuildInfo.description .. 'XFn:Eternal Kingdom:EK' .. "\n"
@@ -208,21 +209,19 @@ function TimerEvent:CallbackLogin()
 
             -- Log into addon channel for realm/faction wide communication
             XFG.Channels = ChannelCollection:new(); XFG.Channels:Initialize()
-            --if(XFG.Outbox:HasLocalChannel() == false) then
-                if(XFG.Settings.Network.Channel.Password == nil) then
-                    JoinChannelByName(XFG.Settings.Network.Channel.Name)
-                else
-                    JoinChannelByName(XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password)
-                end
-                XFG:Info(LogCategory, 'Joined confederate channel [%s]', XFG.Settings.Network.Channel.Name)
-                local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Settings.Network.Channel.Name)
-                local _NewChannel = Channel:new()
-			    _NewChannel:SetKey(_ChannelInfo.shortcut)
-			    _NewChannel:SetID(_ChannelInfo.localID)
-			    _NewChannel:SetShortName(_ChannelInfo.shortcut)
-			    XFG.Channels:AddChannel(_NewChannel)
-                XFG.Outbox:SetLocalChannel(_NewChannel)
-            --end
+            if(XFG.Settings.Network.Channel.Password == nil) then
+                JoinChannelByName(XFG.Settings.Network.Channel.Name)
+            else
+                JoinChannelByName(XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password)
+            end
+            XFG:Info(LogCategory, 'Joined confederate channel [%s]', XFG.Settings.Network.Channel.Name)
+            local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Settings.Network.Channel.Name)
+            local _NewChannel = Channel:new()
+            _NewChannel:SetKey(_ChannelInfo.shortcut)
+            _NewChannel:SetID(_ChannelInfo.localID)
+            _NewChannel:SetShortName(_ChannelInfo.shortcut)
+            XFG.Channels:AddChannel(_NewChannel)
+            XFG.Outbox:SetLocalChannel(_NewChannel)
 
             -- Start timers
             CreateTimer('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, false)

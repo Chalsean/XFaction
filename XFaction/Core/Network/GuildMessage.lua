@@ -8,6 +8,7 @@ function GuildMessage:new()
     local _Object = GuildMessage.parent.new(self)
 
     _Object.__name = 'GuildMessage'
+    _Object._Name = nil
     _Object._UnitName = nil
     _Object._MainName = nil
     _Object._Guild = nil
@@ -24,6 +25,7 @@ function GuildMessage:Print()
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
     XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
     XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
+    XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
     XFG:Debug(LogCategory, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
     XFG:Debug(LogCategory, "  _MainName (" ..type(self._MainName) .. "): ".. tostring(self._MainName))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
@@ -38,6 +40,16 @@ function GuildMessage:Print()
     for _, _Target in pairs (self:GetTargets()) do
         _Target:Print()
     end
+end
+
+function GuildMessage:GetName()
+    return self._Name
+end
+
+function GuildMessage:SetName(inName)
+    assert(type(inName) == 'string')
+    self._Name = inName
+    return self:GetName()
 end
 
 function GuildMessage:GetUnitName()
