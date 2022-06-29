@@ -22,8 +22,32 @@ XFG.Options.args.Channel = {
 	order = 1,
 	type = 'group',
 	args = {
-		Enable = {
+		Bar1 = {
 			order = 1,
+			name = '',
+			type = 'header'
+		},	
+		DHeader = {
+			order = 2,
+			type = 'group',
+			name = XFG.Lib.Locale['USAGE'],
+			guiInline = true,
+			args = {
+				Description = {
+					order = 1,
+					type = 'description',
+					fontSize = 'medium',
+					name = XFG.Lib.Locale['CHANNEL_USAGE'],
+				},
+			}
+		},
+		Bar2 = {
+			order = 3,
+			name = '',
+			type = 'header'
+		},
+		Enable = {
+			order = 4,
 			type = 'toggle',
 			name = XFG.Lib.Locale['ENABLE'],
 			desc = XFG.Lib.Locale['CHANNEL_ENABLE_TOOLTIP'],
@@ -34,7 +58,7 @@ XFG.Options.args.Channel = {
 			end
 		},
 		Channels = {
-			order = 2,
+			order = 5,
 			type = 'group',
 			name = '',
 			guiInline = true,
