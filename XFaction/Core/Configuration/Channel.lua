@@ -9,9 +9,11 @@ local function SwapChannels(inSourceNode, inTargetKey)
 			local _Index = string.sub(_ChannelIndex, 8, 10)
 			local _SwapChannel1 = XFG.Channels:GetChannelByID(tonumber(_Index))
 			local _SwapChannel2 = XFG.Channels:GetChannelByID(tonumber(_SourceIndex))
-			C_ChatInfo.SwapChatChannelsByChannelIndex(_SwapChannel1:GetID(), _SwapChannel2:GetID())
-			_SwapChannel1:SetID(tonumber(_SourceIndex))
-			_SwapChannel2:SetID(tonumber(_Index))
+			if(_SwapChannel1 ~= nil and _SwapChannel2 ~= nil) then
+				C_ChatInfo.SwapChatChannelsByChannelIndex(_SwapChannel1:GetID(), _SwapChannel2:GetID())
+				_SwapChannel1:SetID(tonumber(_SourceIndex))
+				_SwapChannel2:SetID(tonumber(_Index))
+			end
 		end
 	end
 	XFG.Config.Channel.Channels[inSourceNode] = inTargetKey
