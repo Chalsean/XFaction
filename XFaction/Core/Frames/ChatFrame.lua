@@ -127,11 +127,11 @@ function ChatFrame:Display(inMessage)
                         if(_Faction:Equals(XFG.Player.Faction)) then
                             _Text = _Text .. format('|Hplayer:%1$s|h[%2$s]|h', inMessage:GetUnitName(), inMessage:GetName()) .. ' '
                         else
-                            local _Friend = XFG.Friends:GetFriendByRealmUnitName(_Realm, _Name)
+                            local _Friend = XFG.Friends:GetFriendByRealmUnitName(inMessage:GetRealm(), inMessage:GetName())
                             if(_Friend ~= nil) then
-                                _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetTag(), inMessage:GetName())
+                                _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetTag(), inMessage:GetName()) .. ' '
                             else
-                                _Text = _Text .. '[' .. inMessage:GetName() .. ']'
+                                _Text = _Text .. inMessage:GetName() .. ' '
                             end
                         end
                     end

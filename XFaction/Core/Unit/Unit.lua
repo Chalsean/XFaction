@@ -547,7 +547,7 @@ end
 
 function Unit:GetLink()
     if(XFG.Player.Faction:Equals(self:GetFaction())) then
-        return format('player:%s', self:GetUnitName())
+        return format('|Hplayer:%s|h[%s]|h', _UnitName, _Name)
     else
         local _Friend = XFG.Friends:GetFriendByRealmUnitName(self:GetRealm(), self:GetName())
         if(_Friend ~= nil) then

@@ -256,6 +256,10 @@ function TimerEvent:CallbackLogin()
             XFG.DataText.Soulbind:RefreshBroker()
             XFG.DataText.Links:RefreshBroker()
 
+            -- local _Profession = XFG.Player.Unit:GetProfession1()
+            -- local _Link = '|cffffd000|Htrade:Player-5-0AE75DDD:195128:185|h[Cooking]|h|r'
+            -- print(_Link)
+
             wipe(XFG.DB.Backup)
         end
     end

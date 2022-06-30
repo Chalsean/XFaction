@@ -87,11 +87,11 @@ function SystemFrame:Display(inMessage)
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         _Message = _Message .. _Name .. ' '
     elseif(_Faction:Equals(XFG.Player.Faction)) then
-        _Message = _Message .. format('|Hplayer:%1$s|h[%1$s]|h', _UnitName) .. ' '
+        _Message = _Message .. format('|Hplayer:%s|h[%s]|h', _UnitName, _Name) .. ' '
     else
         local _Friend = XFG.Friends:GetFriendByRealmUnitName(_Realm, _Name)
         if(_Friend ~= nil) then
-            _Message = _Message .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetTag(), _Name)
+            _Message = _Message .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetTag(), _Name) .. ' '
         else
             _Message = _Message .. _Name .. ' '
         end

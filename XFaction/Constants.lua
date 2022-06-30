@@ -140,11 +140,13 @@ XFG.Settings = {
 		}, 
 		Tailoring = {
 			ID = 197,
-			Icon = 136249
+			Icon = 136249,
+			SpellID = 3908
 		}, 
 		Engineering = {
 			ID = 202,
-			Icon = 136243
+			Icon = 136243,
+			SpellID = 4036
 		}, 
 		Alchemy = {
 			ID = 171,

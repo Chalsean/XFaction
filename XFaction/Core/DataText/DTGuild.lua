@@ -167,6 +167,8 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 
 	if(inMouseButton == 'RightButton' and IsShiftKeyDown()) then
  		C_PartyInfo.InviteUnit(_Unit:GetUnitName())
+	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
+		C_PartyInfo.RequestInviteFromUnit(_Unit:GetUnitName())
  	else
 		SetItemRef(_Link, _, inMouseButton)
 	end
@@ -174,7 +176,7 @@ end
 
 function DTGuild:RefreshBroker()
 	if(XFG.Initialized) then
-		local _Text = ''
+		local _Text = ''  
 		if(XFG.Config.DataText.Guild.Label) then
 			_Text = XFG.Lib.Locale['GUILD'] .. ': '
 		end

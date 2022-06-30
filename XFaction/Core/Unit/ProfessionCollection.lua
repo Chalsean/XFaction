@@ -23,6 +23,9 @@ function ProfessionCollection:Initialize()
 			local _NewProfession = Profession:new()
 			_NewProfession:SetID(_ProfessionIDs.ID)
 			_NewProfession:SetIconID(_ProfessionIDs.Icon)
+			if(_ProfessionIDs.SpellID ~= nil) then
+				_NewProfession:SetSpellID(_ProfessionIDs.SpellID)
+			end
 			_NewProfession:Initialize()
 			self:AddProfession(_NewProfession)
 			XFG:Debug(LogCategory, 'Initialized profession [%s]', _NewProfession:GetName())
