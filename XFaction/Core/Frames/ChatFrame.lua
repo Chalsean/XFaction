@@ -83,16 +83,6 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
-function GetColoredNameByChatEvent(_inMessageName, _inMessageFrom)
-	local _UnitData = XFG.Confederate:GetUnit(_inMessageFrom)
-    if _UnitData == nil then
-        return _inMessageName
-    end
-        
-    local _ClassHexColor = _UnitData:GetClass():GetColorMixin():GenerateHexColor()
-	return format("|c%s%s|r", _ClassHexColor, _inMessageName)
-end
-
 function ChatFrame:Display(inMessage)
     if(XFG.Config.Chat.GChat.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')

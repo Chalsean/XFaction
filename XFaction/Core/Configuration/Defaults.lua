@@ -56,10 +56,7 @@ XFG.Defaults = {
             },
             Login = {
                 Enable = true,
-                Sound = true,
-                Faction = true,
-                Guild = true,
-                Main = true
+                Sound = true
             }
         },
         DataText = {
