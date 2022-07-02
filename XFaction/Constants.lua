@@ -35,6 +35,7 @@ XFG.Lib = {
 	Config = LibStub('AceConfig-3.0'),
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
+	Cmd = LibStub('AceConfigCmd-3.0'),
 }
 XFG.Lib.Encode = XFG.Lib.Compress:GetAddonEncodeTable()
 
@@ -139,11 +140,13 @@ XFG.Settings = {
 		}, 
 		Tailoring = {
 			ID = 197,
-			Icon = 136249
+			Icon = 136249,
+			SpellID = 3908
 		}, 
 		Engineering = {
 			ID = 202,
-			Icon = 136243
+			Icon = 136243,
+			SpellID = 4036
 		}, 
 		Alchemy = {
 			ID = 171,

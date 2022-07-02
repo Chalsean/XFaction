@@ -32,20 +32,14 @@ function ChatFrame:Initialize()
                 self._ElvUIModule = ElvUI[1]:GetModule('Chat')
                 self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
             end
-        elseif IsAddOnLoaded('WIM') then
-            XFG:Info(LogCategory, 'Using WIM chat handler')
-            self._ChatFrameHandler = function(arg1, _Event, ...)
-                if _Event == "CHAT_MSG_GUILD" and WIM.modules.GuildChat.enabled then
-                    WIM.modules.GuildChat:CHAT_MSG_GUILD(...)
-                else
-                    ChatFrame_MessageEventHandler(arg1, _Event, ...)
-                end
-            end
         else
             XFG:Info(LogCategory, 'Using default chat handler')
             self._ChatFrameHandler = ChatFrame_MessageEventHandler
         end
 
+        if(self:UseWIM()) then
+            XFG:Info(LogCategory, 'Using WIM for guild chat handler')
+        end
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -57,6 +51,10 @@ function ChatFrame:IsInitialized(inBoolean)
 		self._Initialized = inBoolean
 	end
 	return self._Initialized
+end
+
+function ChatFrame:UseWIM()
+	return IsAddOnLoaded('WIM') and WIM.modules.GuildChat.enabled
 end
 
 function ChatFrame:Print()
@@ -85,16 +83,6 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
-function GetColoredNameByChatEvent(_inMessageName, _inMessageFrom)
-	local _UnitData = XFG.Confederate:GetUnit(_inMessageFrom)
-    if _UnitData == nil then
-        return _inMessageName
-    end
-        
-    local _ClassHexColor = _UnitData:GetClass():GetColorMixin():GenerateHexColor()
-	return format("|c%s%s|r", _ClassHexColor, _inMessageName)
-end
-
 function ChatFrame:Display(inMessage)
     if(XFG.Config.Chat.GChat.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')
@@ -118,20 +106,24 @@ function ChatFrame:Display(inMessage)
                 if _G[_Frame] then
 
                     local _Text = ''
-                    local _Guild = inMessage:GetGuild()
-                    local _Link = nil
-                    
-                    local _Faction = _Guild:GetFaction()  
+                    local _Guild = inMessage:GetGuild()                    
+                    local _Faction = _Guild:GetFaction()
+
                     if(XFG.Config.Chat[_ConfigNode].Faction) then  
                         _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
                     if(_Event == 'ACHIEVEMENT') then
-                        _Link = nil
-                        if(pcall(function () _Link = GetPlayerLink(inMessage:GetUnitName(), GetColoredNameByChatEvent(inMessage:GetUnitName(), inMessage:GetFrom())) end)) then
-                            _Text = _Text .. '[' .. _Link .. ']' .. ' '
+                        if(_Faction:Equals(XFG.Player.Faction)) then
+                            _Text = _Text .. format('|Hplayer:%1$s|h[%2$s]|h', inMessage:GetUnitName(), inMessage:GetName()) .. ' '
                         else
-                            _Text = _Text .. '['.. inMessage:GetUnitName() .. ']' .. ' '
+                            local _Friend = XFG.Friends:GetFriendByRealmUnitName(inMessage:GetRealm(), inMessage:GetName())
+                            if(_Friend ~= nil) then
+                                _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inMessage:GetName(), _Friend:GetAccountID(), inMessage:GetName(), inMessage:GetName()) .. ' '
+                            else
+                                -- Maybe theyre in a bnet community together, no way to associate tho
+                                _Text = _Text .. format('|Hplayer:%1$s|h[%2$s]|h', inMessage:GetUnitName(), inMessage:GetName()) .. ' '
+                            end
                         end
                     end
 
@@ -143,9 +135,8 @@ function ChatFrame:Display(inMessage)
                         _Text = _Text .. '<' .. _Guild:GetInitials() .. '> '
                     end
 
-                    _Link = nil
-                    if(_Event == 'ACHIEVEMENT' and pcall(function () _Link = GetAchievementLink(inMessage:GetData()) end)) then
-                        _Text = _Text .. XFG.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. _Link
+                    if(_Event == 'ACHIEVEMENT') then
+                        _Text = _Text .. XFG.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. GetAchievementLink(inMessage:GetData())
                     else
                         _Text = _Text .. inMessage:GetData()
                     end
@@ -157,23 +148,20 @@ function ChatFrame:Display(inMessage)
                         else
                             _Hex = XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].Color.Red, XFG.Config.Chat[_ConfigNode].Color.Green, XFG.Config.Chat[_ConfigNode].Color.Blue)
                         end
+                    elseif(XFG.Config.Chat[_ConfigNode].FColor) then
+                        _Hex = _Faction:GetName() == 'Horde' and 'E0000D' or '378DEF'
                     else
-                        if(XFG.Config.Chat[_ConfigNode].FColor) then
-                            _Hex = _Faction:GetName() == 'Horde' and 'E0000D' or '378DEF'
-                        else
-                            local _dColor 
-                            if (_Event == 'ACHIEVEMENT') then
-                                dColor = _G.ChatTypeInfo["GUILD_ACHIEVEMENT"]
-                            else
-                                dColor = _G.ChatTypeInfo["GUILD"]
-                            end
-                            _Hex = XFG:RGBPercToHex(dColor.r, dColor.g, dColor.b);
-                        end
+                        local _Color = _G.ChatTypeInfo[_Event]
+                        _Hex = XFG:RGBPercToHex(_Color.r, _Color.g, _Color.b)
                     end
                    
                     _Text = format('|cff%s%s|r', _Hex, _Text)
 
-                    self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                    if(_Event == 'GUILD' and self:UseWIM()) then
+                        WIM.modules.GuildChat:CHAT_MSG_GUILD(_Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                    else
+                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                    end
                 end                                   
                 break
             end

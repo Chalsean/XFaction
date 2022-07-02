@@ -44,6 +44,7 @@ L['LABEL'] = 'Label'
 L['LINKS'] = 'Links'
 L['PM'] = 'Project Manager'
 L['FACTION'] = 'Faction'
+L['USAGE'] = 'Usage'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -62,6 +63,7 @@ L['GENERAL_DTTOKEN'] = '4. WoW Token (X): View current market price of WoW token
 --=========================================================================
 -- Channel Specific
 --=========================================================================
+L['CHANNEL_USAGE'] = 'This feature will only work with non-shared profiles or shared profiles with same channel setup'
 L['CHANNEL_ENABLE_TOOLTIP'] = 'Force channel order'
 L['CHANNEL1'] = 'Channel 1'
 L['CHANNEL2'] = 'Channel 2'

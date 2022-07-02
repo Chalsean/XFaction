@@ -1,3 +1,19 @@
+### Version 2.7.0 [ 06.29.2022 ]
+
+[XFaction]
+- WIM guild chat integration (Zyroxia)
+- Achievement and login/logout provide click ability (Zyroxia)
+- Login/logout config options to enable/disable faction/guild/alt (Zyroxia)
+- Cleaned up a rare corner case where link became stale
+- Fixed exception with setting channels and added usage instructions
+- Added debug capability to print libraries ad-hoc
+
+[Guild (X)]
+- Left click will start a whisper with a member of same faction or BNet friend
+- Right click will give drop down menu with a member of same faction or BNet friend
+- Shift-right click will invite player to your party if same faction or BNet friend
+- Control-right click will request to join player's party if same faction or BNet friend
+
 ### Version 2.6.7 [ 06.25.2022 ]
 
 [XFaction]

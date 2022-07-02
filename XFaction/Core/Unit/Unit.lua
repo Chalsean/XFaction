@@ -541,12 +541,21 @@ function Unit:SetGuild(inGuild)
     return self:GetGuild()
 end
 
-function Unit:IsOnMainGuild(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
-    if(inBoolean ~= nil) then
-        self._IsOnMainGuild = inBoolean
+function Unit:IsSameFaction()
+    return XFG.Player.Faction:Equals(self:GetFaction())
+end
+
+function Unit:GetLink()
+    if(XFG.Player.Faction:Equals(self:GetFaction())) then
+        return format('player:%s', self:GetUnitName())
     end
-    return self._IsOnMainGuild
+
+    local _Friend = XFG.Friends:GetFriendByRealmUnitName(self:GetRealm(), self:GetName())
+    if(_Friend ~= nil) then
+        return format('BNplayer:%s:%d:0:WHISPER:%s', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetName())
+    end
+
+    return format('player:%s', self:GetUnitName())
 end
 
 -- Usually a key check is enough for equality check, but use case is to detect any data differences
@@ -567,8 +576,6 @@ function Unit:Equals(inUnit)
     if(self:GetAchievementPoints() ~= inUnit:GetAchievementPoints()) then return false end    
     if(self:IsRunningAddon() ~= inUnit:IsRunningAddon()) then return false end
     if(self:IsAlt() ~= inUnit:IsAlt()) then return false end
-    if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
-    if(self:IsOnMainGuild() ~= inUnit:IsOnMainGuild()) then return false end
     if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
     if(self:GetRank() ~= inUnit:GetRank()) then return false end
 

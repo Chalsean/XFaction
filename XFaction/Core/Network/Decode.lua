@@ -32,6 +32,7 @@ function XFG:DecodeMessage(inEncodedMessage)
 	if(_Message.__name == 'GuildMessage') then
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
 		if(_MessageData.U ~= nil) then	_Message:SetUnitName(_MessageData.U) end
+		if(_MessageData.N ~= nil) then	_Message:SetName(_MessageData.N) else _Message:SetName(_Message:GetUnitName()) end		
 		if(_MessageData.R ~= nil) then
 			_Message:SetRealm(XFG.Realms:GetRealmByID(_MessageData.R))
 			if(_MessageData.G ~= nil) then
