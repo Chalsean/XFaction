@@ -1,3 +1,8 @@
+### Version 2.7.1 [ 07.02.2022 ]
+
+[XFaction]
+- Increased "login give up" timer on trying to get guild information
+
 ### Version 2.7.0 [ 06.29.2022 ]
 
 [XFaction]
