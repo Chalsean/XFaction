@@ -170,7 +170,7 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
 		C_PartyInfo.RequestInviteFromUnit(_Unit:GetUnitName())
  	else
-		SetItemRef(_Link, _, inMouseButton)
+		SetItemRef(_Link, _Unit:GetName(), inMouseButton)
 	end
 end
 

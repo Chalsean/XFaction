@@ -547,13 +547,15 @@ end
 
 function Unit:GetLink()
     if(XFG.Player.Faction:Equals(self:GetFaction())) then
-        return format('|Hplayer:%s|h[%s]|h', _UnitName, _Name)
-    else
-        local _Friend = XFG.Friends:GetFriendByRealmUnitName(self:GetRealm(), self:GetName())
-        if(_Friend ~= nil) then
-            return format('BNplayer:%s:%d:0:WHISPER:%s', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetName())
-        end
+        return format('player:%s', self:GetUnitName())
     end
+
+    local _Friend = XFG.Friends:GetFriendByRealmUnitName(self:GetRealm(), self:GetName())
+    if(_Friend ~= nil) then
+        return format('BNplayer:%s:%d:0:WHISPER:%s', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetName())
+    end
+
+    return format('player:%s', self:GetUnitName())
 end
 
 -- Usually a key check is enough for equality check, but use case is to detect any data differences
