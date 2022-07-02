@@ -51,9 +51,8 @@ function TimerEvent:Print()
 end
 
 function TimerEvent:CallbackLogin()
-    -- If havent gotten guild info after 30s, give up. probably not in a guild
-    -- 10s is probably feasible but trying to be safe for lesser hardware or slow connections
-    if(XFG.Cache.LoginTimerStart + 30 < GetServerTime()) then
+    -- If havent gotten guild info after Xs, give up. probably not in a guild
+    if(XFG.Cache.LoginTimerStart + XFG.Settings.LocalGuild.LoginGiveUp < GetServerTime()) then
         XFG:Error(LogCategory, 'Did not detect a guild')
         XFG.Timers:Stop()
         return
