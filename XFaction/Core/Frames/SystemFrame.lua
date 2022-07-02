@@ -93,7 +93,8 @@ function SystemFrame:Display(inMessage)
         if(_Friend ~= nil) then
             _Message = _Message .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetTag(), _Name) .. ' '
         else
-            _Message = _Message .. _Name .. ' '
+            -- Maybe theyre in a bnet community together, no way to associate tho
+            _Message = _Message .. format('|Hplayer:%s|h[%s]|h', _UnitName, _Name) .. ' '
         end
     end
     

@@ -129,9 +129,10 @@ function ChatFrame:Display(inMessage)
                         else
                             local _Friend = XFG.Friends:GetFriendByRealmUnitName(inMessage:GetRealm(), inMessage:GetName())
                             if(_Friend ~= nil) then
-                                _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetTag(), inMessage:GetName()) .. ' '
+                                _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inMessage:GetName(), _Friend:GetAccountID(), inMessage:GetName(), inMessage:GetName()) .. ' '
                             else
-                                _Text = _Text .. inMessage:GetName() .. ' '
+                                -- Maybe theyre in a bnet community together, no way to associate tho
+                                _Text = _Text .. format('|Hplayer:%1$s|h[%2$s]|h', inMessage:GetUnitName(), inMessage:GetName()) .. ' '
                             end
                         end
                     end
