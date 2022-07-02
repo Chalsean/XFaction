@@ -97,6 +97,19 @@ function FriendCollection:GetFriendByGameID(inGameID)
 	end
 end
 
+function FriendCollection:GetFriendByRealmUnitName(inRealm, inName)
+	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
+	assert(type(inName) == 'string')
+	for _, _Friend in self:Iterator() do
+		 if(inName == _Friend:GetName()) then
+			 local _Target = _Friend:GetTarget()
+			 if(inRealm:Equals(_Target:GetRealm())) then
+				return _Friend
+			 end
+		 end
+	 end
+end
+
 function FriendCollection:AddFriend(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', "argument must be Friend object")
 	if(self:Contains(inFriend:GetKey()) == false) then

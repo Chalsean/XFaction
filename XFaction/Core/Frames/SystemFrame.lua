@@ -53,31 +53,58 @@ function SystemFrame:Display(inMessage)
     if(XFG.Config.Chat.Login.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
-    local _UnitName = nil
+    local _Name = nil
+    local _UnitName = nil -- Fully qualified name
     local _MainName = nil
     local _Guild = nil
+    local _Realm = nil
 
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
         local _UnitData = inMessage:GetData()
-        _UnitName = _UnitData:GetName()
+        _Name = _UnitData:GetName()
+        _UnitName = _UnitData:GetUnitName()
+        _Guild = _UnitData:GetGuild()
+        _Realm = _UnitData:GetRealm()
         if(_UnitData:HasMainName()) then
             _MainName = _UnitData:GetMainName()
-        end
-        _Guild = _UnitData:GetGuild()
+        end        
     else
+        _Name = inMessage:GetName()
         _UnitName = inMessage:GetUnitName()
         _MainName = inMessage:GetMainName()
         _Guild = inMessage:GetGuild()
+        _Realm = inMessage:GetRealm()
     end
 
     local _Faction = _Guild:GetFaction()
-                    
-    local _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID())) .. _UnitName
-    if(_MainName ~= nil) then
-        _Message = _Message .. ' (' .. _MainName .. ')'
+    local _Link = nil
+    local _Message = ''
+    
+    if(XFG.Config.Chat.Login.Faction) then  
+        _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
+    end
+  
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
+        _Message = _Message .. _Name .. ' '
+    elseif(_Faction:Equals(XFG.Player.Faction)) then
+        _Message = _Message .. format('|Hplayer:%s|h[%s]|h', _UnitName, _Name) .. ' '
+    else
+        local _Friend = XFG.Friends:GetFriendByRealmUnitName(_Realm, _Name)
+        if(_Friend ~= nil) then
+            _Message = _Message .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetTag(), _Name) .. ' '
+        else
+            -- Maybe theyre in a bnet community together, no way to associate tho
+            _Message = _Message .. format('|Hplayer:%s|h[%s]|h', _UnitName, _Name) .. ' '
+        end
+    end
+    
+    if(XFG.Config.Chat.Login.Main and _MainName ~= nil) then
+        _Message = _Message .. '(' .. _MainName .. ') '
     end
 
-    _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> '
+    if(XFG.Config.Chat.Login.Guild) then
+        _Message = _Message .. '<' .. _Guild:GetInitials() .. '> '
+    end
     
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         _Message = _Message .. XFG.Lib.Locale['CHAT_LOGOUT']
@@ -96,12 +123,22 @@ function SystemFrame:DisplayLocalOffline(inUnitData)
 
     local _Faction = inUnitData:GetFaction()
     local _Guild = inUnitData:GetGuild()
-                    
-    local _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID())) .. inUnitData:GetName()
-    if(inUnitData:IsAlt() and inUnitData:HasMainName()) then
-        _Message = _Message .. ' (' .. inUnitData:GetMainName() .. ')'
+    local _Message = ''
+    
+    if(XFG.Config.Chat.Login.Faction) then  
+        _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
+    end
+    
+    _Message = _Message .. inUnitData:GetName() .. ' '
+    
+    if(XFG.Config.Chat.Login.Main and _MainName ~= nil) then
+        _Message = _Message .. '(' .. _MainName .. ') '
     end
 
-    _Message = _Message .. ' <' .. _Guild:GetInitials() .. '> ' .. XFG.Lib.Locale['CHAT_LOGOUT']
+    if(XFG.Config.Chat.Login.Guild) then
+        _Message = _Message .. '<' .. _Guild:GetInitials() .. '> ' 
+    end
+    
+    _Message = _Message.. XFG.Lib.Locale['CHAT_LOGOUT']
     SendSystemMessage(_Message) 
 end

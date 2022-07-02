@@ -99,13 +99,15 @@ function XFG:LoadConfigs()
 	XFG.DataDB.RegisterCallback(self, 'OnProfileReset', 'InitProfile')
 
     XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.DataDB)
-    XFG.Lib.Config:RegisterOptionsTable('XFaction', XFG.Options)
-    XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'XFaction', nil, 'General')
-    XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'Channel', 'XFaction', 'Channel')
-    XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'Chat', 'XFaction', 'Chat')
-    XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'DataText', 'XFaction', 'DataText')
-    XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'Support', 'XFaction', 'Support')
-    XFG.Lib.ConfigDialog:AddToBlizOptions('XFaction', 'Profile', 'XFaction', 'Profile')
+    XFG.Lib.Config:RegisterOptionsTable(XFG.Category, XFG.Options)
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, XFG.Category, nil, 'General')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Channel', XFG.Category, 'Channel')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Chat', XFG.Category, 'Chat')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'DataText', XFG.Category, 'DataText')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Support', XFG.Category, 'Support')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Profile', XFG.Category, 'Profile')
+
+    XFG.Lib.Cmd:CreateChatCommand('xfaction', XFG.Category)
 end
 
 function XFG:InitProfile()

@@ -15,6 +15,7 @@ function Profession:new()
     self._Name = nil
     self._IconID = nil
     self._Initialized = false
+    self._SpellID = nil
 
     return Object
 end
@@ -85,6 +86,16 @@ function Profession:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self._IconID = inIconID
     return self:GetIconID()
+end
+
+function Profession:GetSpellID()
+    return self._SpellID
+end
+
+function Profession:SetSpellID(inSpellID)
+    assert(type(inSpellID) == 'number')
+    self._SpellID = inSpellID
+    return self:GetSpellID()
 end
 
 function Profession:Equals(inProfession)

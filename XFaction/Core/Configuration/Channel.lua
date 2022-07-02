@@ -9,9 +9,11 @@ local function SwapChannels(inSourceNode, inTargetKey)
 			local _Index = string.sub(_ChannelIndex, 8, 10)
 			local _SwapChannel1 = XFG.Channels:GetChannelByID(tonumber(_Index))
 			local _SwapChannel2 = XFG.Channels:GetChannelByID(tonumber(_SourceIndex))
-			C_ChatInfo.SwapChatChannelsByChannelIndex(_SwapChannel1:GetID(), _SwapChannel2:GetID())
-			_SwapChannel1:SetID(tonumber(_SourceIndex))
-			_SwapChannel2:SetID(tonumber(_Index))
+			if(_SwapChannel1 ~= nil and _SwapChannel2 ~= nil) then
+				C_ChatInfo.SwapChatChannelsByChannelIndex(_SwapChannel1:GetID(), _SwapChannel2:GetID())
+				_SwapChannel1:SetID(tonumber(_SourceIndex))
+				_SwapChannel2:SetID(tonumber(_Index))
+			end
 		end
 	end
 	XFG.Config.Channel.Channels[inSourceNode] = inTargetKey
@@ -22,8 +24,32 @@ XFG.Options.args.Channel = {
 	order = 1,
 	type = 'group',
 	args = {
-		Enable = {
+		Bar1 = {
 			order = 1,
+			name = '',
+			type = 'header'
+		},	
+		DHeader = {
+			order = 2,
+			type = 'group',
+			name = XFG.Lib.Locale['USAGE'],
+			guiInline = true,
+			args = {
+				Description = {
+					order = 1,
+					type = 'description',
+					fontSize = 'medium',
+					name = XFG.Lib.Locale['CHANNEL_USAGE'],
+				},
+			}
+		},
+		Bar2 = {
+			order = 3,
+			name = '',
+			type = 'header'
+		},
+		Enable = {
+			order = 4,
 			type = 'toggle',
 			name = XFG.Lib.Locale['ENABLE'],
 			desc = XFG.Lib.Locale['CHANNEL_ENABLE_TOOLTIP'],
@@ -34,7 +60,7 @@ XFG.Options.args.Channel = {
 			end
 		},
 		Channels = {
-			order = 2,
+			order = 5,
 			type = 'group',
 			name = '',
 			guiInline = true,

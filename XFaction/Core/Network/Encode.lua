@@ -10,6 +10,7 @@ function XFG:EncodeMessage(inMessage, inEncodeUnitData)
 
 	if(inMessage.__name == 'GuildMessage') then
 		_MessageData.M = inMessage:GetMainName()
+		_MessageData.N = inMessage:GetName()
 		_MessageData.U = inMessage:GetUnitName()
 		local _Guild = inMessage:GetGuild()
 		_MessageData.G = _Guild:GetName()
