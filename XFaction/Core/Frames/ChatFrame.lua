@@ -162,7 +162,7 @@ function ChatFrame:Display(inMessage)
                     end
 
                     if(_Event == 'GUILD_ACHIEVEMENT') then
-                        _Text = _Text .. XFG.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. GetAchievementLink(inMessage:GetData())
+                        _Text = _Text .. XFG.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(GetAchievementLink(inMessage:GetData()), "(Player.-:.-:.-:.-:.-:)"  , inMessage:GetFrom() .. ':1:' .. date("%m:%d:%y:") ) .. '!'
                     else
                         _Text = _Text .. inMessage:GetData()
                     end
