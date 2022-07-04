@@ -67,6 +67,7 @@ XFG.Settings = {
 		ScanTimer = 30,          -- Seconds between forced local guild scans
 		LoginGiveUp = 60 * 5     -- Seconds before giving up on querying for guild on login
 	},
+	-- This really should be in guild info but doesnt fit
 	Teams = {
 		A = 'Acheron',
 		C = 'Chivalry',
@@ -216,4 +217,7 @@ XFG.Settings = {
 		72,
 		73
 	},	
+	DataText = {
+		AutoHide = .25,
+	}
 }

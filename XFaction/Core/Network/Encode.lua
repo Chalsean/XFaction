@@ -50,7 +50,6 @@ function XFG:SerializeUnitData(inUnitData)
 		local _Covenant = inUnitData:GetCovenant()
 		_MessageData.C = _Covenant:GetKey()
 	end
-	_MessageData.D = inUnitData:GetDungeonScore()
 	local _Faction = inUnitData:GetFaction()
 	_MessageData.F = _Faction:GetKey()
 	local _Guild = inUnitData:GetGuild()
