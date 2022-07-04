@@ -48,8 +48,13 @@ function Unit:new()
 end
 
 function Unit:Initialize(inMemberID)
-    assert(type(inMemberID) == 'number')
-    local _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
+    assert(type(inMemberID) == 'number' or inMemberID == nil)
+    local _UnitData
+    if(inMemberID ~= nil) then
+        _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
+    else
+        _UnitData = C_Club.GetMemberInfoForSelf(XFG.Player.Guild:GetID())
+    end
     -- Odd but guildRank is nil during a zone transition
     if(_UnitData == nil or _UnitData.guildRank == nil) then return end
 

@@ -68,10 +68,19 @@ function TimerEvent:CallbackLogin()
         XFG:LoadConfigs()
     end
 
+    -- Ensure we get the player guid and faction without failure
+    if(XFG.Player.GUID == nil) then
+        XFG.Player.GUID = UnitGUID('player')
+    end
+    if(XFG.Player.Faction == nil) then
+        XFG.Player.Faction = XFG.Factions:GetFactionByName(UnitFactionGroup('player'))
+    end
+
     if(IsInGuild()) then
         -- Even though it says were in guild, the following call still may not work on initial login, hence the poller
         local _GuildID = C_Club.GetGuildClubId()
-        if(_GuildID ~= nil) then
+        -- Sanity check
+        if(XFG.Player.GUID ~= nil and XFG.Player.Faction ~= nil and _GuildID ~= nil) then
             -- Now that guild info is available we can finish setup
             XFG:Debug(LogCategory, 'Guild info is loaded, proceeding with setup')
             local _Timer = XFG.Timers:GetTimer('Login')
@@ -186,9 +195,17 @@ function TimerEvent:CallbackLogin()
                     end
                     if(_UnitData:IsPlayer()) then
                         XFG.Player.Unit = _UnitData                    
-                        XFG.Player.Unit:Print()                    
+                        XFG.Player.Unit:Print()            
                     end
                 end
+            end
+
+            -- On rare occassions there was an error getting the player themself
+            -- This will ensure we at least have an object and thus avoid exceptions
+            -- Fresh data will get picked up during next GuildRoster event
+            if(XFG.Player.Unit == nil) then
+                XFG.Player.Unit = Unit:new()
+                XFG.Player.Unit:Initialize()
             end
 
             -- Start network setup

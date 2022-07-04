@@ -159,7 +159,7 @@ XFG.Options.args.Chat = {
 					order = 1,
 					type = 'toggle',
 					name = XFG.Lib.Locale['ENABLE'],
-					desc = 'See cross realm/faction individual achievements',
+					desc = XFG.Lib.Locale['CHAT_ACHIEVEMENT_TOOLTIP'],
 					get = function(info) return XFG.Config.Chat.Achievement[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Achievement[ info[#info] ] = value; end
 				},

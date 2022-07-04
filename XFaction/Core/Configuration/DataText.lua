@@ -229,8 +229,18 @@ XFG.Options.args.DataText = {
 					name = XFG.Lib.Locale['DTGUILD_CONFIG_SORT'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_SORT_TOOLTIP'],
 					values = {
-                        Team = 'Team',
-                        Name = 'Name'
+						Achievement = XFG.Lib.Locale['ACHIEVEMENT'],
+						Guild = XFG.Lib.Locale['GUILD'],
+						Level = XFG.Lib.Locale['LEVEL'],            
+						Dungeon = XFG.Lib.Locale['DUNGEON'],
+                        Name = XFG.Lib.Locale['NAME'],
+						Note = XFG.Lib.Locale['NOTE'],
+						Race = XFG.Lib.Locale['RACE'],
+						Rank = XFG.Lib.Locale['RANK'],
+						Realm = XFG.Lib.Locale['REALM'],
+						Team = XFG.Lib.Locale['TEAM'],
+						Version = XFG.Lib.Locale['VERSION'],
+						Zone = XFG.Lib.Locale['ZONE'],
                     },
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
