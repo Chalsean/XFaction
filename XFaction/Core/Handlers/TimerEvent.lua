@@ -98,7 +98,6 @@ function TimerEvent:CallbackLogin()
             _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom Two:AK2' .. "\n"
             _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom Three:AK3' .. "\n"
             _GuildInfo.description = _GuildInfo.description .. 'XFg:5:H:Alternal Kingdom Four:AK4' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'EKg:5:A:Triarius:T' .. "\n"
             _GuildInfo.description = _GuildInfo.description .. 'XFa:Grand Alt'
 
             XFG.Confederate = Confederate:new()
