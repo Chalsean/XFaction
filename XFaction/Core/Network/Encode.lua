@@ -57,6 +57,7 @@ function XFG:SerializeUnitData(inUnitData)
 	local _Realm = inUnitData:GetRealm()
 	_MessageData.R = _Realm:GetID()
 	_MessageData.K = inUnitData:GetGUID()
+	_MessageData.I = inUnitData:GetItemLevel()
 	_MessageData.J = inUnitData:GetRank()
 	_MessageData.L = inUnitData:GetLevel()
 	_MessageData.M = 0  -- Deprecated, here for backwards compat

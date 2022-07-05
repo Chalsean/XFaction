@@ -63,6 +63,7 @@ function XFG:DeserializeUnitData(inData)
 	_UnitData:SetUnitName(_DeserializedData.U)
 	_UnitData:SetRealm(XFG.Realms:GetRealmByID(_DeserializedData.R))
 	_UnitData:SetGuild(XFG.Guilds:GetGuildByRealmGuildName(_UnitData:GetRealm(), _DeserializedData.G))
+	if(_DeserializedData.I ~= nil) then _UnitData:SetItemLevel(_DeserializedData.I) end
 	_UnitData:SetRank(_DeserializedData.J)
 	_UnitData:SetLevel(_DeserializedData.L)
 	_UnitData:SetNote(_DeserializedData.N)	
