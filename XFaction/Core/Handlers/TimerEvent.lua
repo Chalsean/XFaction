@@ -65,7 +65,7 @@ function TimerEvent:CallbackLogin()
         XFG.Config = XFG.DataDB.profile
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
         if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
-        XFG:LoadConfigs()
+        XFG:LoadConfigs()        
     end
 
     -- Ensure we get the player guid and faction without failure

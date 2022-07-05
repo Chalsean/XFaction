@@ -50,7 +50,7 @@ XFG.Player = {
 
 XFG.Frames = {}
 XFG.Cache = {
-	Channels = {}
+	Channels = {},
 }
 
 XFG.Settings = {

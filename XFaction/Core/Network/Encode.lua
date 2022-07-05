@@ -74,13 +74,14 @@ function XFG:SerializeUnitData(inUnitData)
 	if(inUnitData:HasSoulbind()) then
 		local _Soulbind = inUnitData:GetSoulbind()
 		_MessageData.S = _Soulbind:GetKey()
-	end
+	end	
 	_MessageData.U = inUnitData:GetUnitName()	
 	if(inUnitData:HasSpec()) then
 		local _Spec = inUnitData:GetSpec()
 		_MessageData.V = _Spec:GetKey()
 	end
 	_MessageData.X = inUnitData:GetVersion()
+	_MessageData.Y = inUnitData:GetPvP()
 	_MessageData.Z = inUnitData:GetZone()
 
 	return XFG:Serialize(_MessageData)

@@ -103,7 +103,8 @@ local function PreSort()
 		_UnitData.Rank = _Unit:GetRank()
 		_UnitData.ItemLevel = _Unit:GetItemLevel()
 		_UnitData.Raid = _Unit:GetRaidProgress()
-		
+		_UnitData.PvP = _Unit:GetPvP()
+
 		if(_Unit:HasVersion()) then
 			_UnitData.Version = _Unit:GetVersion()
 		else
@@ -197,30 +198,30 @@ function DTGuild:OnEnter(this)
 	if(InCombatLockdown()) then return end
 
 	local _OrderEnabled = {}
-	local _TotalColumns = 0
+	XFG.Cache.DTGuildTotalEnabled = 0
 	for _ColumnName, _Enabled in pairs (XFG.Config.DataText.Guild.Enable) do
 		if(_Enabled) then
 			local _OrderKey = _ColumnName .. 'Order'
 			local _AlignmentKey = _ColumnName .. 'Alignment'
-			if(XFG.Config.DataText.Guild.Order[_OrderKey] ~= nil) then
+
+			if(XFG.Config.DataText.Guild.Order[_OrderKey] ~= 0) then
+				XFG.Cache.DTGuildTotalEnabled = XFG.Cache.DTGuildTotalEnabled + 1
 				local _Index = tostring(XFG.Config.DataText.Guild.Order[_OrderKey])
 				_OrderEnabled[_Index] = {
 					ColumnName = _ColumnName,
 					Alignment = string.upper(XFG.Config.DataText.Guild.Alignment[_AlignmentKey]),
 					Icon = (_ColumnName == 'Covenant' or _ColumnName == 'Spec' or _ColumnName == 'Profession' or _ColumnName == 'Faction'),
 				}
-				_TotalColumns = _TotalColumns + 1
 			end
-		end
+		end		
 	end
 	
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
 		_Tooltip = XFG.Lib.QT:Acquire(ObjectName)		
 	else
-		--_Tooltip = XFG.Lib.QT:Acquire(ObjectName, 19, "RIGHT", "CENTER", "CENTER", "LEFT", "CENTER", "LEFT", "CENTER", "CENTER", "LEFT", "LEFT", "CENTER", "CENTER", "RIGHT", "LEFT", "LEFT", "CENTER", "CENTER", "CENTER", "CENTER")
 		_Tooltip = XFG.Lib.QT:Acquire(ObjectName)
 
-		for i = 1, _TotalColumns do
+		for i = 1, XFG.Cache.DTGuildTotalEnabled do
 			_Tooltip:AddColumn(_OrderEnabled[tostring(i)].Alignment)
 		end
 		
@@ -235,17 +236,15 @@ function DTGuild:OnEnter(this)
 	_Tooltip:Clear()
 	local line = _Tooltip:AddLine()
 	
-	if(XFG.Config.DataText.Guild.GuildName) then
+	if(XFG.Config.DataText.Guild.GuildName and XFG.Cache.DTGuildTotalEnabled > 4) then
 		local _GuildName = XFG.Player.Guild:GetName()
 		local _Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
 		_GuildName = _GuildName .. ' <' .. _Guild:GetInitials() .. '>'
-		-- To fix
 		_Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_GUILD'], _GuildName), self._HeaderFont, "LEFT", 4)
 	end
 
-	if(XFG.Config.DataText.Guild.Confederate) then
+	if(XFG.Config.DataText.Guild.Confederate and XFG.Cache.DTGuildTotalEnabled > 4) then
 		local _ConfederateName = XFG.Confederate:GetName()
-		-- To fix
 		_Tooltip:SetCell(line, 6, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _ConfederateName), self._HeaderFont, "LEFT", 4)	
 	end
 
@@ -255,7 +254,7 @@ function DTGuild:OnEnter(this)
 		line = _Tooltip:AddLine()		
 	end
 
-	if(XFG.Config.DataText.Guild.MOTD) then
+	if(XFG.Config.DataText.Guild.MOTD and XFG.Cache.DTGuildTotalEnabled > 9) then
 		local _MOTD = GetGuildRosterMOTD()
 		local _LineWords = ''
 		local _LineLength = 150
@@ -265,22 +264,21 @@ function DTGuild:OnEnter(this)
 				if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
 					_LineWords = _LineWords .. ' ' .. _Word
 				else
-					-- To fix
-					_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 10)
+					_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 9)
 					line = _Tooltip:AddLine()
 					_LineWords = ''				
 				end
 			end
 		end
 		if(strlen(_LineWords) > 0) then
-			_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 10)
+			_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 9)
 			line = _Tooltip:AddLine()
 		end
 		line = _Tooltip:AddLine()
 	end
 	
 	line = _Tooltip:AddHeader()
-	for i = 1, _TotalColumns do
+	for i = 1, XFG.Cache.DTGuildTotalEnabled do
 		local _ColumnName = _OrderEnabled[tostring(i)].ColumnName
 		if(not _OrderEnabled[tostring(i)].Icon) then
 			line = _Tooltip:SetCell(line, i, XFG.Lib.Locale[string.upper(_ColumnName)], self._HeaderFont, 'CENTER')
@@ -298,7 +296,7 @@ function DTGuild:OnEnter(this)
 		for _, _UnitData in ipairs (_List) do
 			line = _Tooltip:AddLine()
 
-			for i = 1, _TotalColumns do
+			for i = 1, XFG.Cache.DTGuildTotalEnabled do
 				local _ColumnName = _OrderEnabled[tostring(i)].ColumnName
 				local _CellValue = ''
 				if(_OrderEnabled[tostring(i)].Icon) then
@@ -315,7 +313,7 @@ function DTGuild:OnEnter(this)
 				elseif(_ColumnName == 'Name') then
 					local _ClassHexColor = _UnitData.Class:GenerateHexColor()
 					_CellValue = format('|c%s%s|r', _ClassHexColor, _UnitData.Name)
-				else
+				elseif(_UnitData[_ColumnName] ~= nil) then
 					_CellValue = format('|cffffffff%s|r', _UnitData[_ColumnName])
 				end
 				_Tooltip:SetCell(line, i, _CellValue)

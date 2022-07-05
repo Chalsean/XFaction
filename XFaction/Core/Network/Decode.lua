@@ -85,6 +85,7 @@ function XFG:DeserializeUnitData(inData)
 	_UnitData:SetZone(_DeserializedData.Z)
 
 	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
+	if(_DeserializedData.Y ~= nil) then _UnitData:SetPvPString(_DeserializedData.Y) end
 	if(_DeserializedData.X ~= nil) then _UnitData:SetVersion(_DeserializedData.X) end
 
 	-- If RaiderIO is installed, grab raid/mythic
@@ -102,8 +103,8 @@ function XFG:DeserializeUnitData(inData)
         if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
             if(_RaiderIO.mythicKeystoneProfile.mainCurrentScore > 0) then
                 _UnitData:SetDungeonScore(_RaiderIO.mythicKeystoneProfile.mainCurrentScore)
-            else
-                _UnitData:SetDungeonScore(_RaiderIO.mythicKeystoneProfile.mainCurrentScore)
+			elseif(_RaiderIO.mythicKeystoneProfile.currentScore > 0) then
+                _UnitData:SetDungeonScore(_RaiderIO.mythicKeystoneProfile.currentScore)
             end
         end
     end
