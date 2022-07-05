@@ -83,31 +83,6 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
-function GetColoredNameByChatEvent(_inMessageName, _inMessageFrom)
-	local _UnitData = XFG.Confederate:GetUnit(_inMessageFrom)
-    if _UnitData == nil then
-        return _inMessageName
-    end
-        
-    local _UnitClass = _UnitData:GetClass()
-    if _UnitClass == nil then
-        return _inMessageName
-    end
-    
-
-    local _UnitColorMixin = _UnitClass:GetColorMixin()
-    if _UnitColorMixin == nil then
-        return _inMessageName
-    end
-     
-    local _ClassHexColor = _UnitColorMixin:GenerateHexColor()
-    if _ClassHexColor == nil then
-        return _inMessageName
-    end
-    
-	return format("|c%s%s|r", _ClassHexColor, _inMessageName)
-end
-
 function ChatFrame:Display(inMessage)
     if(XFG.Config.Chat.GChat.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')
@@ -140,17 +115,16 @@ function ChatFrame:Display(inMessage)
 
                     if(_Event == 'GUILD_ACHIEVEMENT') then
                         if(_Faction:Equals(XFG.Player.Faction)) then
-                            _Text = _Text .. format('|Hplayer:%1$s|h[%2$s]|h', inMessage:GetUnitName(), GetColoredNameByChatEvent(inMessage:GetName(),inMessage:GetFrom())) .. ' '
+                            _Text = _Text .. '%s ' -- This whole section for player name could be replaced with this line as ChatFrame_MessageEventHandler already does a format for achievement messages, but this would not differentiate BN friend like below
                         else
                             local _Friend = XFG.Friends:GetFriendByRealmUnitName(inMessage:GetRealm(), inMessage:GetName())
                             if(_Friend ~= nil) then
-                                _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inMessage:GetName(), _Friend:GetAccountID(), inMessage:GetName(), GetColoredNameByChatEvent(inMessage:GetName(),inMessage:GetFrom())) .. ' '
+                                _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inMessage:GetName(), _Friend:GetAccountID(), inMessage:GetName(), inMessage:GetName()) .. ' '
                             else
                                 -- Maybe theyre in a bnet community together, no way to associate tho
-                                _Text = _Text .. format('|Hplayer:%1$s|h[%2$s]|h', inMessage:GetUnitName(), GetColoredNameByChatEvent(inMessage:GetName(),inMessage:GetFrom())) .. ' '
+                                _Text = _Text .. '%s '
                             end
                         end
-                        --_Text = _Text .. '%s ' -- This whole section for player name could be replaced with this line as ChatFrame_MessageEventHandler already does a format for achievement messages, but this would not differentiate BN friend like above
                     end
 
                     if(XFG.Config.Chat[_ConfigNode].Main and inMessage:GetMainName() ~= nil) then
