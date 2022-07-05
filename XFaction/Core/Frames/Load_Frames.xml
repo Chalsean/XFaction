@@ -1,5 +1,4 @@
 <Ui xmlns='http://www.blizzard.com/wow/ui/'>
 	<Script file='ChatFrame.lua'/>
-	<!--<Script file='XFactionFrame.lua'/>-->
 	<Script file='SystemFrame.lua'/>	
 </Ui>
