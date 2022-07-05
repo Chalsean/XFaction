@@ -2,6 +2,7 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Config'
 
 local function OrderMenu()
+	if(XFG.Cache.DTGuildTotalEnabled == nil) then XFG.Cache.DTGuildTotalEnabled = 0 end
 	if(XFG.Cache.DTGuildTotalEnabled == 0) then
 		for _Label, _Value in pairs (XFG.Config.DataText.Guild.Enable) do
 			if(_Value) then
@@ -14,7 +15,7 @@ local function OrderMenu()
 	end
 
 	local _Menu = {}
-	for i = 1, _TotalEnabled do
+	for i = 1, XFG.Cache.DTGuildTotalEnabled do
 		_Menu[tostring(i)] = i
 	end
 
