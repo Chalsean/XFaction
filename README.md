@@ -10,7 +10,6 @@ The addon should provide the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederate
 <img src="https://user-images.githubusercontent.com/45693161/175836814-c326335a-786d-4be7-9547-5e31c594390c.png" width=400>
 
-- As of 2.5.3, the merged guild chat is routed to guild chat, similar to GreenWall
 - Personal achievements forwarded to confederate members in other guilds
 <img src="https://user-images.githubusercontent.com/45693161/175836417-dde29267-b00e-4eda-8506-52ef2a24d7e4.png" width=500>
 
