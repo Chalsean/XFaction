@@ -43,13 +43,21 @@ function Unit:new()
     self._Guild = nil
     self._Realm = nil
     self._Version = nil
+    self._ItemLevel = 0
+    self._RaidProgress = ''
+    self._PvP = ''
 
     return Object
 end
 
 function Unit:Initialize(inMemberID)
-    assert(type(inMemberID) == 'number')
-    local _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
+    assert(type(inMemberID) == 'number' or inMemberID == nil)
+    local _UnitData
+    if(inMemberID ~= nil) then
+        _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
+    else
+        _UnitData = C_Club.GetMemberInfoForSelf(XFG.Player.Guild:GetID())
+    end
     -- Odd but guildRank is nil during a zone transition
     if(_UnitData == nil or _UnitData.guildRank == nil) then return end
 
@@ -86,9 +94,37 @@ function Unit:Initialize(inMemberID)
         self:SetProfession2(XFG.Professions:GetProfession(_UnitData.profession2ID))
     end
 
+    -- If RaiderIO is installed, grab raid/mythic
+    local RaiderIO = _G.RaiderIO
+    if(RaiderIO) then
+        local _RaiderIO = RaiderIO.GetProfile(self:GetName(), self:GetRealm():GetName(), self:GetFaction():GetID())
+        -- Raid
+        if(_RaiderIO and _RaiderIO.raidProfile) then
+            local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
+            if(_TopProgress.isProgressPrev == nil or _TopProgress.IsProgressPrev == false) then
+                self:SetRaidProgress(_TopProgress.progress.progressCount, _TopProgress.progress.raid.bossCount, _TopProgress.progress.difficulty)
+            end
+        end
+        -- M+
+        if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
+            local _Profile = _RaiderIO.mythicKeystoneProfile
+            if(_Profile.mainCurrentScore and _Profile.mainCurrentScore > 0) then
+                self:SetDungeonScore(_Profile.mainCurrentScore)
+			elseif(_Profile.currentScore and _Profile.currentScore > 0) then
+                self:SetDungeonScore(_Profile.currentScore)
+            end
+        end
+    end
+
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
         self:SetVersion(XFG.Version)
+        local _ItemLevel = GetAverageItemLevel()
+        if(type(_ItemLevel) == 'number') then
+            _ItemLevel = math.floor(_ItemLevel)
+            self:SetItemLevel(_ItemLevel)
+        end
+
         local _CovenantID = C_Covenants.GetActiveCovenantID()
         if(XFG.Covenants:Contains(_CovenantID)) then
             self:SetCovenant(XFG.Covenants:GetCovenant(_CovenantID))
@@ -125,6 +161,20 @@ function Unit:Initialize(inMemberID)
                 _Event:Stop()
             end
         end
+
+        -- Highest PvP rating wins
+        local _HighestRating = 0
+        local _HighestIndex = 1
+        for i = 1, 3 do
+            local _PvPRating = GetPersonalRatedInfo(i)
+            if(_PvPRating > _HighestRating) then
+                _HighestRating = _PvPRating
+                _HighestIndex = i
+            end
+        end
+        if(_HighestRating > 0) then
+            self:SetPvP(_HighestRating, _HighestIndex)
+        end
     end
 
     self:IsInitialized(true)
@@ -160,7 +210,9 @@ function Unit:Print()
     XFG:Debug(LogCategory, '  _Alt (' .. type(self._Alt) .. '): ' .. tostring(self._Alt))
     XFG:Debug(LogCategory, '  _MainName (' .. type(self._MainName) .. '): ' .. tostring(self._MainName))
     XFG:Debug(LogCategory, '  _IsPlayer (' .. type(self._IsPlayer) .. '): ' .. tostring(self._IsPlayer))
-    XFG:Debug(LogCategory, '  _IsOnMainGuild (' .. type(self._IsOnMainGuild) .. '): ' .. tostring(self._IsOnMainGuild))
+    XFG:Debug(LogCategory, '  _ItemLevel (' .. type(self._ItemLevel) .. '): ' .. tostring(self._ItemLevel))
+    XFG:Debug(LogCategory, '  _RaidProgress (' .. type(self._RaidProgress) .. '): ' .. tostring(self._RaidProgress))
+    XFG:Debug(LogCategory, '  _PvP (' .. type(self._PvP) .. '): ' .. tostring(self._PvP))
     if(self:HasRealm()) then self._Realm:Print() end
     if(self:HasGuild()) then self._Guild:Print() end
     if(self:HasTeam()) then self._Team:Print() end
@@ -330,6 +382,49 @@ function Unit:SetDungeonScore(inScore)
     assert(type(inScore) == 'number')
     self._DungeonScore = inScore
     return self:GetDungeonScore()
+end
+
+function Unit:GetRaidProgress()
+    return self._RaidProgress
+end
+
+function Unit:SetRaidProgress(inCurrent, inTotal, inDifficulty)
+    assert(type(inCurrent) == 'number')
+    assert(type(inTotal) == 'number')
+    assert(type(inDifficulty) == 'number')
+    self._RaidProgress = tostring(inCurrent) .. '/' .. tostring(inTotal) .. ' '
+    if(inDifficulty == 3) then
+        self._RaidProgress = self._RaidProgress .. 'M'
+    elseif(inDifficulty == 2) then
+        self._RaidProgress = self._RaidProgress .. 'H'
+    else
+        self._RaidProgress = self._RaidProgress .. 'N'
+    end
+    return self:GetRaidProgress()
+end
+
+function Unit:GetPvP()
+    return self._PvP
+end
+
+function Unit:SetPvP(inScore, inIndex)
+    assert(type(inScore) == 'number')
+    assert(type(inIndex) == 'number')
+    self._PvP = tostring(inScore)
+    if(inIndex == 1) then
+        self._PvP = self._PvP .. ' (2)'
+    elseif(inIndex == 2) then
+        self._PvP = self._PvP .. ' (3)'
+    else
+        self._PvP = self._PvP .. ' (10)'
+    end
+    return self:GetPvP()
+end
+
+function Unit:SetPvPString(inString)
+    assert(type(inString) == 'string')
+    self._PvP = inString
+    return self:GetPvP()
 end
 
 function Unit:GetAchievementPoints()
@@ -539,6 +634,16 @@ function Unit:SetGuild(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
     self._Guild = inGuild
     return self:GetGuild()
+end
+
+function Unit:GetItemLevel()
+    return self._ItemLevel
+end
+
+function Unit:SetItemLevel(inItemLevel)
+    assert(type(inItemLevel) == 'number')
+    self._ItemLevel = inItemLevel
+    return self:GetItemLevel()
 end
 
 function Unit:IsSameFaction()

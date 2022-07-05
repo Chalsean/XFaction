@@ -30,11 +30,9 @@ The addon should provide the following functionalities:
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
 - Full guild roster view across guilds/realms/factions
-- View guild members' faction, level, spec, class, name, covenant, race, realm, guild, team, guild rank, zone and professions
+- View guild members' faction, level, spec, class, name, covenant, race, realm, guild, team, guild rank, zone, professions, pvp rating, raid progress, max item level and M+ score
 - View guild members' team affiliation
 - If on an alt, displays the main character name as well
-- The DT frame should be scrollable and sortable by column headers, with team being the default sort
-- Left click performs "who", shift left click performs "whisper" (not working for cross faction yet), right click performs "menu dropdown", and shift right click performs "invite"
 <img src="https://user-images.githubusercontent.com/45693161/175836288-82855e04-0200-4d4c-964c-387675975f29.png" width=700>
 
 

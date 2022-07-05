@@ -64,34 +64,82 @@ XFG.Defaults = {
         },
         DataText = {
             Guild = {
+                Column = '',
                 Label = false,
                 GuildName = true,
                 Confederate = true,
                 MOTD = true,
-                Achievement = false,
-                Covenant = true,
-                Dungeon = false,
-                Faction = true,
-                Guild = true,
-                Level = true,
                 Main = true,
-                Note = false,
-                Profession = true,
-                Race = true,
-                Rank = true,
-                Realm = false,
-                Spec = true,
-                Team = true,
-                Zone = true,
-                Rank = true,
-                Version = false,
+                Enable = {                    
+                    Achievement = false,
+                    Covenant = true,
+                    Dungeon = false,
+                    Faction = true,
+                    Guild = true,
+                    Level = true,
+                    Name = true,
+                    Note = false,
+                    Profession = true,
+                    PvP = false,
+                    Race = true,
+                    Rank = true,
+                    Realm = false,
+                    Spec = true,
+                    Team = true,
+                    Zone = true,
+                    Raid = true,
+                    Version = false,
+                    ItemLevel = false,
+                },
+                Order = {
+                    AchievementOrder = 0,
+                    CovenantOrder = 5,
+                    DungeonOrder = 0,
+                    FactionOrder = 1,
+                    GuildOrder = 7,
+                    ItemLevelOrder = 0,
+                    LevelOrder = 2,
+                    NameOrder = 4,
+                    NoteOrder = 0,
+                    ProfessionOrder = 12,
+                    PvPOrder = 0,
+                    RaceOrder = 6,
+                    RaidOrder = 9,
+                    RankOrder = 10,
+                    RealmOrder = 0,
+                    SpecOrder = 3,
+                    TeamOrder = 8,
+                    VersionOrder = 0,
+                    ZoneOrder = 11,
+                },
+                Alignment = {
+                    AchievementAlignment = 'Center',
+                    CovenantAlignment = 'Center',
+                    FactionAlignment = 'Center',
+                    GuildAlignment = 'Left',
+                    ItemLevelAlignment = 'Center',
+                    LevelAlignment = 'Center',
+                    DungeonAlignment = 'Center',
+                    NameAlignment = 'Left',
+                    NoteAlignment = 'Left',
+                    ProfessionAlignment = 'Center',
+                    PvPAlignment = 'Center',
+                    RaceAlignment = 'Left',
+                    RaidAlignment = 'Center',
+                    RankAlignment = 'Left',
+                    RealmAlignment = 'Left',
+                    SpecAlignment = 'Center',
+                    TeamAlignment = 'Left',
+                    VersionAlignment = 'Center',
+                    ZoneAlignment = 'Center',
+                },                
                 Sort = 'Team',
-                Size = 350
+                Size = 350,
             },
             Link = {
                 Label = false,
                 Faction = true
-            }
+            },
         }
     }
 }
@@ -108,6 +156,7 @@ function XFG:LoadConfigs()
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Chat', XFG.Category, 'Chat')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'DataText', XFG.Category, 'DataText')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Support', XFG.Category, 'Support')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Debug', XFG.Category, 'Debug')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Profile', XFG.Category, 'Profile')
 
     XFG.Lib.Cmd:CreateChatCommand('xfaction', XFG.Category)

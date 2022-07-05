@@ -65,13 +65,22 @@ function TimerEvent:CallbackLogin()
         XFG.Config = XFG.DataDB.profile
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
         if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
-        XFG:LoadConfigs()
+        XFG:LoadConfigs()        
+    end
+
+    -- Ensure we get the player guid and faction without failure
+    if(XFG.Player.GUID == nil) then
+        XFG.Player.GUID = UnitGUID('player')
+    end
+    if(XFG.Player.Faction == nil) then
+        XFG.Player.Faction = XFG.Factions:GetFactionByName(UnitFactionGroup('player'))
     end
 
     if(IsInGuild()) then
         -- Even though it says were in guild, the following call still may not work on initial login, hence the poller
         local _GuildID = C_Club.GetGuildClubId()
-        if(_GuildID ~= nil) then
+        -- Sanity check
+        if(XFG.Player.GUID ~= nil and XFG.Player.Faction ~= nil and _GuildID ~= nil) then
             -- Now that guild info is available we can finish setup
             XFG:Debug(LogCategory, 'Guild info is loaded, proceeding with setup')
             local _Timer = XFG.Timers:GetTimer('Login')
@@ -82,13 +91,13 @@ function TimerEvent:CallbackLogin()
             _GuildInfo.description = 'blah blah blah  ' .. "\n"
             _GuildInfo.description = _GuildInfo.description .. 'XFn:Eternal Kingdom:EK' .. "\n"
             _GuildInfo.description = _GuildInfo.description .. 'XFc:EKXFactionChat:' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Eternal Kingdom:EKA:Alliance' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Eternal Kingdom Horde:EKH:Horde' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Endless Kingdom:ENK:Alliance' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Alternal Kingdom:AK:Alliance' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Alternal Kingdom Two:AK2:Alliance' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Alternal Kingdom Three:AK3:Alliance' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:Proudmoore:Alternal Kingdom Four:AK4:Horde' .. "\n"          
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Eternal Kingdom:EKA' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:H:Eternal Kingdom Horde:EKH' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Endless Kingdom:ENK' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom:AK' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom Two:AK2' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom Three:AK3' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:H:Alternal Kingdom Four:AK4' .. "\n"
             _GuildInfo.description = _GuildInfo.description .. 'XFa:Grand Alt'
 
             XFG.Confederate = Confederate:new()
@@ -104,7 +113,8 @@ function TimerEvent:CallbackLogin()
                     XFG.Settings.Network.Message.Tag.BNET = _Initials .. 'BNET'
                 -- Guild within the confederate
                 elseif(string.find(_Line, 'XFg')) then
-                    local _RealmName, _GuildName, _GuildInitials, _FactionName = _Line:match('XFg:(.-):(.-):(.-):(.+)')
+                    local _RealmNumber, _FactionInitial, _GuildName, _GuildInitials = _Line:match('XFg:(.-):(.-):(.-):(.+)')
+                    local _, _RealmName = XFG.Lib.Realm:GetRealmInfoByID(_RealmNumber)
                     -- Create each realm once
                     if(XFG.Realms:Contains(_RealmName) == false) then
                         XFG:Debug(LogCategory, 'Initializing realm [%s]', _RealmName)
@@ -116,7 +126,7 @@ function TimerEvent:CallbackLogin()
                         XFG.Realms:AddRealm(_NewRealm)
                     end
                     local _Realm = XFG.Realms:GetRealm(_RealmName)                    
-                    local _Faction = XFG.Factions:GetFactionByName(_FactionName)
+                    local _Faction = XFG.Factions:GetFactionByName(_FactionInitial == 'A' and 'Alliance' or 'Horde')
 
                     XFG:Debug(LogCategory, 'Initializing guild %s <%s>', _GuildName, _GuildInitials)
                     local _NewGuild = Guild:new()
@@ -186,9 +196,17 @@ function TimerEvent:CallbackLogin()
                     end
                     if(_UnitData:IsPlayer()) then
                         XFG.Player.Unit = _UnitData                    
-                        XFG.Player.Unit:Print()                    
+                        XFG.Player.Unit:Print()            
                     end
                 end
+            end
+
+            -- On rare occassions there was an error getting the player themself
+            -- This will ensure we at least have an object and thus avoid exceptions
+            -- Fresh data will get picked up during next GuildRoster event
+            if(XFG.Player.Unit == nil) then
+                XFG.Player.Unit = Unit:new()
+                XFG.Player.Unit:Initialize()
             end
 
             -- Start network setup
@@ -258,6 +276,8 @@ function TimerEvent:CallbackLogin()
             -- local _Profession = XFG.Player.Unit:GetProfession1()
             -- local _Link = '|cffffd000|Htrade:Player-5-0AE75DDD:195128:185|h[Cooking]|h|r'
             -- print(_Link)
+
+            --wipe(XFG.Config.DataText.Guild)
 
             wipe(XFG.DB.Backup)
         end
