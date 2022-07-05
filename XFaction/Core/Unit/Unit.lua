@@ -97,7 +97,7 @@ function Unit:Initialize(inMemberID)
     -- If RaiderIO is installed, grab raid/mythic
     local RaiderIO = _G.RaiderIO
     if(RaiderIO) then
-        local _RaiderIO = RaiderIO.GetProfile(self:GetName(), self:GetRealm():GetName(), self:GetFaction():GetID())
+        local _RaiderIO = RaiderIO.GetProfile(self:GetName(), self:GetRealm():GetName())
         -- Raid
         if(_RaiderIO and _RaiderIO.raidProfile) then
             local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
