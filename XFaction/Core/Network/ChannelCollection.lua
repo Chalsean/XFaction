@@ -21,10 +21,6 @@ end
 function ChannelCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
-		if(XFG.Config.Channel.Channels == nil) then
-			XFG.Config.Channel.Channels = {}
-		end
-		self:ScanChannels()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -104,87 +100,20 @@ function ChannelCollection:Iterator()
 	return next, self._Channels, nil
 end
 
-local function GetFrameID(inChannelName)
-	for i = 1, NUM_CHAT_WINDOWS do
-		local _Frame = 'ChatFrame' .. i
-		if _G[_Frame] then
-			for _, _ChannelName in pairs (_G[_Frame].channelList) do
-				if(inChannelName == _ChannelName) then
-					return i
-				end
-			end
-		end
-	end
-end
-
-function ChannelCollection:ScanChannels()
-	-- Repopulate channels, the channel events are not very trustworthy
-	for i = 1, XFG.Settings.Network.Channel.Total do
-		self:ScanChannel(i)
-	end
-	self:SyncChannels()
-end
-
-function ChannelCollection:ScanChannel(inIndex)
-	local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(inIndex)
-	if(_ChannelInfo ~= nil) then
-		local _Channel = nil
-		if(self:Contains(_ChannelInfo.shortcut)) then
-			_Channel = self:GetChannel(_ChannelInfo.shortcut)
-		else
-			_Channel = Channel:new()
-			_Channel:SetKey(_ChannelInfo.shortcut)
-			_Channel:SetShortName(_ChannelInfo.shortcut)
-			self:AddChannel(_Channel)
-			if(_Channel:GetKey() == XFG.Settings.Network.Channel.Name) then
-				XFG.Outbox:SetLocalChannel(_Channel)
-			end
-		end
-		_Channel:SetID(inIndex)
-
-		_Channel:SetType(_ChannelInfo.channelType)
-		-- Because the ElvUI and Blizzard APIs don't like each other
-		if(_ChannelInfo.channelType == 0) then
-			_Channel:SetName(tostring(_ChannelInfo.localID) .. ". " .. _ChannelInfo.shortcut)
-		else
-			_Channel:SetName(_ChannelInfo.name)
-		end
-
-		if(_Channel:GetKey() == XFG.Settings.Network.Channel.Name) then
-			XFG.Outbox:SetLocalChannel(_Channel)
-		end
-		if(XFG.Config.Channel.Channels['Channel' .. tostring(_Channel:GetID())] == nil) then
-			XFG.Config.Channel.Channels['Channel' .. tostring(_Channel:GetID())] = _Channel:GetKey()
-		end
-		XFG.Cache.Channels[_Channel:GetKey()] = _Channel:GetShortName()	
-	end
-end
-
-function ChannelCollection:SyncChannels()
-	for i = 1, XFG.Settings.Network.Channel.Total do
-		local _ChannelNode = 'Channel' .. tostring(i)
-		XFG.Options.args.Channel.args.Channels.args[_ChannelNode].values = XFG.Cache.Channels
-
-		if(XFG.Config.Channel.Enable) then
-			-- Ensure the channels are in the correct order
-			local _ChannelKey = XFG.Config.Channel.Channels[_ChannelNode]
-			if(_ChannelKey ~= nil) then
-				local _Channel = self:GetChannel(_ChannelKey)
-				if(_Channel ~= nil) then
-					if(i ~= _Channel:GetID()) then
-						local _SwapChannel = self:GetChannelByID(i)
-						if(_SwapChannel ~= nil) then
-							C_ChatInfo.SwapChatChannelsByChannelIndex(_Channel:GetID(), _SwapChannel:GetID())
-							_SwapChannel:SetID(_Channel:GetID())
-							_Channel:SetID(i)
-						end
-					end
-				end
-			end
-		end
-	end
-end
-
 function ChannelCollection:GetCount()
 	return self._ChannelCount
+end
+
+function ChannelCollection:SetChannelLast(inKey)
+	if(not XFG.Config.Chat.ChannelLast.Enable) then return end
+	if(not self:Contains(inKey)) then return end
+	local _Channel = self:GetChannel(inKey)
+	local _TotalChannels = C_ChatInfo.GetNumActiveChannels()
+	if(_Channel:GetID() ~= _TotalChannels) then
+		XFG:Debug(LogCategory, 'Moving channel to last place [%s]', inKey)
+		for i = _Channel:GetID(), _TotalChannels - 1 do
+			C_ChatInfo.SwapChatChannelsByChannelIndex(i, i + 1)
+		end
+		_Channel:SetID(_TotalChannels)
+	end
 end

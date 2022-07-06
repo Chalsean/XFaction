@@ -82,18 +82,8 @@ L['GENERAL_DTTOKEN'] = '4. WoW Token (X): View current market price of WoW token
 --=========================================================================
 -- Channel Specific
 --=========================================================================
-L['CHANNEL_USAGE'] = 'This feature will only work with non-shared profiles or shared profiles with same channel setup'
-L['CHANNEL_ENABLE_TOOLTIP'] = 'Force channel order'
-L['CHANNEL1'] = 'Channel 1'
-L['CHANNEL2'] = 'Channel 2'
-L['CHANNEL3'] = 'Channel 3'
-L['CHANNEL4'] = 'Channel 4'
-L['CHANNEL5'] = 'Channel 5'
-L['CHANNEL6'] = 'Channel 6'
-L['CHANNEL7'] = 'Channel 7'
-L['CHANNEL8'] = 'Channel 8'
-L['CHANNEL9'] = 'Channel 9'
-L['CHANNEL10'] = 'Channel 10'
+L['CHANNEL_LAST'] = 'Addon Channel Last'
+L['CHANNEL_LAST_TOOLTIP'] = 'XFaction will ensure its channel is always last in the channel list'
 --=========================================================================
 -- Chat Specific
 --=========================================================================

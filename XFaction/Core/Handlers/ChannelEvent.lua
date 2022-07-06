@@ -56,20 +56,41 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
 	local _Channel = XFG.Outbox:GetLocalChannel()
 	-- Fires when player leaves a channel
 	if(inAction == 'YOU_LEFT') then
-		XFG.Channels:ScanChannels()
+		if(inChannelShortName == _Channel:GetShortName()) then
+			XFG:Error(LogCategory, 'Removed channel was the addon channel')
+			XFG.Channels:RemoveChannel(_Channel:GetKey())
+			XFG.Outbox:VoidLocalChannel()
+		end
 
 	-- Fires when player joins a channel
 	elseif(inAction == 'YOU_CHANGED') then
-		XFG.Channels:ScanChannels()
+		if(inChannelShortName == XFG.Settings.Network.Channel.Name and not XFG.Outbox:HasLocalChannel()) then
+			local _NewChannel = Channel:new()
+            _NewChannel:SetKey(inChannelShortName)
+            _NewChannel:SetID(inChannelNumber)
+            _NewChannel:SetShortName(inChannelShortName)
+            XFG.Channels:AddChannel(_NewChannel)
+			XFG.Channels:SetChannelLast(_NewChannel:GetKey())
+            XFG.Outbox:SetLocalChannel(_NewChannel)
+		end
 	end
 end
 
-function ChannelEvent:CallbackChannelChange(inIndex)
-	XFG.Channels:ScanChannel(inIndex)
+function ChannelEvent:CallbackChannelChange(inChannelIndex)
+	if(XFG.Outbox:HasLocalChannel()) then
+		local _ChannelShortName, _, _, _ChannelID = GetChannelDisplayInfo(inChannelIndex)
+		if(_ChannelShortName == XFG.Outbox:GetLocalChannel():GetKey() or _ChannelID == XFG.Outbox:GetLocalChannel():GetID()) then
+			local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Outbox:GetLocalChannel():GetKey())
+			if(_ChannelInfo ~= nil) then
+				XFG.Outbox:GetLocalChannel():SetID(_ChannelInfo.localID)
+				XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
+			end
+		end
+	end
 end
 
 function ChannelEvent:CallbackOffline(_, inUnitName, _, _, _, _, _, inChannelID, _, _, _, inGUID)
-	XFG:Debug(LogCategory, "Received CHAT_MSG_CHANNEL_LEAVE system event")
+	XFG:Debug(LogCategory, 'Received CHAT_MSG_CHANNEL_LEAVE system event')
 	local _Channel = XFG.Outbox:GetLocalChannel()
 	if(_Channel:GetID() == inChannelID and XFG.Confederate:Contains(inGUID)) then
 		XFG:Info(LogCategory, 'Detected %s has left channel %s and presumed offline', inUnitName, _Channel:GetName())
