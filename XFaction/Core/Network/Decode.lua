@@ -63,6 +63,7 @@ function XFG:DeserializeUnitData(inData)
 	_UnitData:SetUnitName(_DeserializedData.U)
 	_UnitData:SetRealm(XFG.Realms:GetRealmByID(_DeserializedData.R))
 	_UnitData:SetGuild(XFG.Guilds:GetGuildByRealmGuildName(_UnitData:GetRealm(), _DeserializedData.G))
+	if(_DeserializedData.I ~= nil) then _UnitData:SetItemLevel(_DeserializedData.I) end
 	_UnitData:SetRank(_DeserializedData.J)
 	_UnitData:SetLevel(_DeserializedData.L)
 	_UnitData:SetNote(_DeserializedData.N)	
@@ -91,7 +92,7 @@ function XFG:DeserializeUnitData(inData)
 	-- If RaiderIO is installed, grab raid/mythic
     local RaiderIO = _G.RaiderIO
     if(RaiderIO) then
-        local _RaiderIO = RaiderIO.GetProfile(_UnitData:GetName(), _UnitData:GetRealm():GetName(), _UnitData:GetFaction():GetID())
+        local _RaiderIO = RaiderIO.GetProfile(_UnitData:GetName(), _UnitData:GetRealm():GetName())
         -- Raid
         if(_RaiderIO and _RaiderIO.raidProfile) then
             local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]

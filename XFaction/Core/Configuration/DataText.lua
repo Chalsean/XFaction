@@ -214,7 +214,7 @@ XFG.Options.args.DataText = {
 					order = 16,
 					type = 'description',
 					name = '',
-					hidden = function()	return XFG.Config.DataText.Guild.Enable.Achievement	end,
+					--hidden = function()	return XFG.Config.DataText.Guild.Enable.Achievement	end,
 				},
 				Achievement = {
 					order = 17,

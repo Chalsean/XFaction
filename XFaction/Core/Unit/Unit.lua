@@ -97,7 +97,7 @@ function Unit:Initialize(inMemberID)
     -- If RaiderIO is installed, grab raid/mythic
     local RaiderIO = _G.RaiderIO
     if(RaiderIO) then
-        local _RaiderIO = RaiderIO.GetProfile(self:GetName(), self:GetRealm():GetName(), self:GetFaction():GetID())
+        local _RaiderIO = RaiderIO.GetProfile(self:GetName(), self:GetRealm():GetName())
         -- Raid
         if(_RaiderIO and _RaiderIO.raidProfile) then
             local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
@@ -683,6 +683,9 @@ function Unit:Equals(inUnit)
     if(self:IsAlt() ~= inUnit:IsAlt()) then return false end
     if(self:GetMainName() ~= inUnit:GetMainName()) then return false end
     if(self:GetRank() ~= inUnit:GetRank()) then return false end
+    if(self:GetItemLevel() ~= inUnit:GetItemLevel()) then return false end
+    if(self:GetPvP() ~= inUnit:GetPvP()) then return false end
+    if(self:GetRaidProgress() ~= inUnit:GetRaidProgress()) then return false end
 
     if(self:HasCovenant() == false and inUnit:HasCovenant()) then return false end
     if(self:HasCovenant()) then
