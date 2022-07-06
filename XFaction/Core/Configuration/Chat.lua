@@ -359,6 +359,22 @@ XFG.Options.args.Chat = {
 					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
 				},
 			}
+		},
+		ChannelLast = {
+			order = 4,
+			type = 'group',
+			name = XFG.Lib.Locale['CHANNEL'],
+			guiInline = true,
+			args = {
+				Enable = {
+					order = 1,
+					type = 'toggle',
+					name = XFG.Lib.Locale['CHANNEL_LAST'],
+					desc = XFG.Lib.Locale['CHANNEL_LAST_TOOLTIP'],
+					get = function(info) return XFG.Config.Chat.ChannelLast[ info[#info] ] end,
+					set = function(info, value) XFG.Config.Chat.ChannelLast[ info[#info] ] = value; end
+				},
+			}
 		}
 	}
 }

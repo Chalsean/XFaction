@@ -68,6 +68,11 @@ function Outbox:SetLocalChannel(inChannel)
     return self:HasLocalChannel()
 end
 
+function Outbox:VoidLocalChannel()
+    self._LocalChannel = nil
+    return self:HasLocalChannel() == false
+end
+
 function Outbox:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(inMessage:IsInitialized() == false) then
