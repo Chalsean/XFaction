@@ -83,3 +83,5 @@ Most addons use an API that goes over an invisible (to the user) channel for com
 Community channels are cross-realm/faction but do not have the "invisible" API calls. Battle.Net (BNet) does though. This addon leverages BNet to send communication back-and-forth between realms/factions invisible to the user.
 
 This dependency on BNet means users will need BNet friends online and logged into the realm(s) in question to form a bridge of communication. The addon will leverage other guild member's bridges to enable communication. You do not need to have a friend of your own logged in to the connected guild/realm, just someone online running the addon does. An important note: anyone who flags themselves as "offline" (aka incognito) cannot be used as a BNet link.
+
+For more information please reference the [wiki](https://github.com/Chalsean/XFaction/wiki) or [faq](https://github.com/Chalsean/XFaction/wiki/FAQ).
