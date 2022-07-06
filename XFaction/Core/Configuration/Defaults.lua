@@ -77,6 +77,7 @@ XFG.Defaults = {
                     Faction = true,
                     Guild = true,
                     Level = true,
+                    LFG = false,
                     Name = true,
                     Note = false,
                     Profession = true,
@@ -99,6 +100,7 @@ XFG.Defaults = {
                     GuildOrder = 7,
                     ItemLevelOrder = 0,
                     LevelOrder = 2,
+                    LFGOrder = 0,
                     NameOrder = 4,
                     NoteOrder = 0,
                     ProfessionOrder = 12,
@@ -119,6 +121,7 @@ XFG.Defaults = {
                     GuildAlignment = 'Left',
                     ItemLevelAlignment = 'Center',
                     LevelAlignment = 'Center',
+                    LFGAlignment = 'Center',
                     DungeonAlignment = 'Center',
                     NameAlignment = 'Left',
                     NoteAlignment = 'Left',
@@ -139,8 +142,24 @@ XFG.Defaults = {
             Link = {
                 Label = false,
                 Faction = true
+            }
+        },
+        LFG = {
+            Role = {
+                Tank = false,
+                Healer = false,
+                DPS = false
             },
-        }
+            Activity = {
+                RA = false,
+                RH = false,
+                RM = false,
+                SM = false,
+                SP = false,
+                SS = false,
+                TW = false
+            },
+        },
     }
 }
     
@@ -155,6 +174,7 @@ function XFG:LoadConfigs()
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Channel', XFG.Category, 'Channel')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Chat', XFG.Category, 'Chat')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'DataText', XFG.Category, 'DataText')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'LFG', XFG.Category, 'LFG')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Support', XFG.Category, 'Support')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Debug', XFG.Category, 'Debug')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Profile', XFG.Category, 'Profile')

@@ -165,6 +165,9 @@ L['DTGUILD_CONFIG_COLUMN_GUILD_ALIGNMENT_TOOLTIP'] = 'Guild name text justificat
 L['DTGUILD_CONFIG_COLUMN_ITEMLEVEL_TOOLTIP'] = 'Show player max item level'
 L['DTGUILD_CONFIG_COLUMN_ITEMLEVEL_ORDER_TOOLTIP'] = 'Column number the max item level will be displayed in'
 L['DTGUILD_CONFIG_COLUMN_ITEMLEVEL_ALIGNMENT_TOOLTIP'] = 'Item level text justification'
+L['DTGUILD_CONFIG_COLUMN_LFG_TOOLTIP'] = 'Show player LFG'
+L['DTGUILD_CONFIG_COLUMN_LFG_ORDER_TOOLTIP'] = 'Column number LFG will be displayed in'
+L['DTGUILD_CONFIG_COLUMN_LFG_ALIGNMENT_TOOLTIP'] = 'LFG text justification'
 L['DTGUILD_CONFIG_COLUMN_LEVEL_TOOLTIP'] = 'Show player level'
 L['DTGUILD_CONFIG_COLUMN_LEVEL_ORDER_TOOLTIP'] = 'Column number the players level will be displayed in'
 L['DTGUILD_CONFIG_COLUMN_LEVEL_ALIGNMENT_TOOLTIP'] = 'Player level text justification'
@@ -206,6 +209,19 @@ L['DTGUILD_CONFIG_COLUMN_ZONE_ORDER_TOOLTIP'] = 'Column number the player zone w
 L['DTGUILD_CONFIG_COLUMN_ZONE_ALIGNMENT_TOOLTIP'] = 'Player zone text justification'
 L['DTGUILD_CONFIG_SORT_TOOLTIP'] = 'Select the default sort column'
 L['DTGUILD_CONFIG_SIZE_TOOLTIP'] = 'Select the maximum height of the window before it starts scrolling'
+--=========================================================================
+-- LFG Specific
+--=========================================================================
+L['LFG'] = 'LFG'
+L['LFG_ROLE'] = 'Looking for group as'
+L['LFG_ACTIVITY'] = 'Looking for group activities'
+L['LFG_RAID_NORMAL'] = 'Raid Normal'
+L['LFG_RAID_HEROIC'] = 'Raid Heroic'
+L['LFG_RAID_MYTHIC'] = 'Raid Mythic'
+L['LFG_MYTHIC_PLUS'] = 'Mythic+'
+L['LFG_TIMEWALKING'] = 'Timewalking'
+L['LFG_PVP'] = 'PvP'
+L['LFG_SOCIAL'] = 'Social'
 -------------------------
 -- DTLinks (X)
 -------------------------

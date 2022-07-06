@@ -25,6 +25,9 @@ XFG.Icons = {
 	Alliance = 2565243,
 	Horde = 463451,
 	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
+    DPS = '|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES.blp:16:16:0:%d:64:64:20:39:22:41|t',
+    Healer = '|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES.blp:16:16:0:%d:64:64:20:39:1:20|t',
+    Tank = '|TInterface\\LFGFrame\\UI-LFG-ICON-PORTRAITROLES.blp:16:16:0:%d:64:64:0:19:22:41|t',
 }
 
 XFG.Lib = {

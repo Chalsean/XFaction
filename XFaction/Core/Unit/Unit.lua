@@ -44,6 +44,7 @@ function Unit:new()
     self._Realm = nil
     self._Version = nil
     self._ItemLevel = 0
+    self._LFG = ''
     self._RaidProgress = ''
     self._PvP = ''
 
@@ -123,6 +124,11 @@ function Unit:Initialize(inMemberID)
         if(type(_ItemLevel) == 'number') then
             _ItemLevel = math.floor(_ItemLevel)
             self:SetItemLevel(_ItemLevel)
+        end
+        
+        local _LFG = self:GetLFGFromConfig()
+        if(type(_LFG) == 'string') then
+            self:SetLFG(_LFG)
         end
 
         local _CovenantID = C_Covenants.GetActiveCovenantID()
@@ -211,6 +217,7 @@ function Unit:Print()
     XFG:Debug(LogCategory, '  _MainName (' .. type(self._MainName) .. '): ' .. tostring(self._MainName))
     XFG:Debug(LogCategory, '  _IsPlayer (' .. type(self._IsPlayer) .. '): ' .. tostring(self._IsPlayer))
     XFG:Debug(LogCategory, '  _ItemLevel (' .. type(self._ItemLevel) .. '): ' .. tostring(self._ItemLevel))
+    XFG:Debug(LogCategory, '  _LFG (' .. type(self._LFG) .. '): ' .. tostring(self._LFG))
     XFG:Debug(LogCategory, '  _RaidProgress (' .. type(self._RaidProgress) .. '): ' .. tostring(self._RaidProgress))
     XFG:Debug(LogCategory, '  _PvP (' .. type(self._PvP) .. '): ' .. tostring(self._PvP))
     if(self:HasRealm()) then self._Realm:Print() end
@@ -646,6 +653,69 @@ function Unit:SetItemLevel(inItemLevel)
     return self:GetItemLevel()
 end
 
+function Unit:GetLFG()
+    return self._LFG
+end
+
+function Unit:SetLFG(inLFG)
+    assert(type(inLFG) == 'string')
+    self._LFG = inLFG
+    return self:GetLFG()
+end
+
+function Unit:GetLFGFromConfig()
+
+    local _LFG = ''
+    
+    if(XFG.Config.LFG.Role.Tank) then  
+        _LFG = _LFG .. format('%s ', XFG.Icons.Tank)
+    end
+    if(XFG.Config.LFG.Role.Healer) then  
+        _LFG = _LFG .. format('%s ', XFG.Icons.Healer)
+    end
+    if(XFG.Config.LFG.Role.DPS) then  
+        _LFG = _LFG .. format('%s ', XFG.Icons.DPS)
+    end
+
+    if(XFG.Config.LFG.Activity.RA or XFG.Config.LFG.Activity.RH or XFG.Config.LFG.Activity.RM) then  
+        _LFG = _LFG .. 'R'
+        
+        if(XFG.Config.LFG.Activity.RA) then  
+            _LFG = _LFG .. 'N'
+        end
+        if(XFG.Config.LFG.Activity.RH) then  
+            _LFG = _LFG .. 'H'
+        end
+        if(XFG.Config.LFG.Activity.RM) then  
+            _LFG = _LFG .. 'M'
+        end
+        _LFG = _LFG .. ' '
+    end
+    
+    if(XFG.Config.LFG.Activity.SM) then  
+        if C_MythicPlus.GetOwnedKeystoneLevel() ~= nil then
+            _LFG = _LFG .. '|cffa335ee|Hkeystone:180653:' .. C_MythicPlus.GetOwnedKeystoneChallengeMapID() .. ':' .. C_MythicPlus.GetOwnedKeystoneLevel() .. ':0:0:0:0|h[M+]|h|r'
+        else
+            _LFG = _LFG .. 'M+ '
+        end
+    end
+    
+    if(XFG.Config.LFG.Activity.SP) then  
+        _LFG = _LFG .. 'PvP '
+    end
+    
+    if(XFG.Config.LFG.Activity.SS) then  
+        _LFG = _LFG .. 'S '
+    end
+    
+    if(XFG.Config.LFG.Activity.TW) then  
+        _LFG = _LFG .. 'TW '
+    end
+    gsub(_LFG, "%s+", "")
+
+    return _LFG
+end
+
 function Unit:IsSameFaction()
     return XFG.Player.Faction:Equals(self:GetFaction())
 end
@@ -686,6 +756,7 @@ function Unit:Equals(inUnit)
     if(self:GetItemLevel() ~= inUnit:GetItemLevel()) then return false end
     if(self:GetPvP() ~= inUnit:GetPvP()) then return false end
     if(self:GetRaidProgress() ~= inUnit:GetRaidProgress()) then return false end
+    if(self:GetLFG() ~= inUnit:GetLFG()) then return false end
 
     if(self:HasCovenant() == false and inUnit:HasCovenant()) then return false end
     if(self:HasCovenant()) then

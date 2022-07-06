@@ -85,6 +85,7 @@ function XFG:DeserializeUnitData(inData)
 	end
 	_UnitData:SetZone(_DeserializedData.Z)
 
+	if(_DeserializedData.W ~= nil) then _UnitData:SetLFG(_DeserializedData.W) end
 	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
 	if(_DeserializedData.Y ~= nil) then _UnitData:SetPvPString(_DeserializedData.Y) end
 	if(_DeserializedData.X ~= nil) then _UnitData:SetVersion(_DeserializedData.X) end

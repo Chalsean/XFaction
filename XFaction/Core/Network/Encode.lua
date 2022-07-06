@@ -81,6 +81,7 @@ function XFG:SerializeUnitData(inUnitData)
 		local _Spec = inUnitData:GetSpec()
 		_MessageData.V = _Spec:GetKey()
 	end
+	_MessageData.W = inUnitData:GetLFG()
 	_MessageData.X = inUnitData:GetVersion()
 	_MessageData.Y = inUnitData:GetPvP()
 	_MessageData.Z = inUnitData:GetZone()

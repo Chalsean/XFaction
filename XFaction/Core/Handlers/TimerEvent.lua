@@ -320,6 +320,7 @@ end
 function TimerEvent:CallbackHeartbeat()
     if(XFG.Initialized and XFG.Player.LastBroadcast < GetServerTime() - XFG.Settings.Player.Heartbeat) then
         XFG:Debug(LogCategory, "Sending heartbeat")
+        XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
         XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.DATA)
     end
     local _Timer = XFG.Timers:GetTimer('Heartbeat')

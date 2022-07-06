@@ -4,6 +4,7 @@
     <Script file='Channel.lua'/>
     <Script file='Chat.lua'/>
     <Script file='DataText.lua'/>    
+    <Script file='LFG.lua'/>
     <Script file='Support.lua'/>
     <Script file='Debug.lua'/>
 </Ui>
