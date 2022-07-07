@@ -1,15 +1,7 @@
-### Version 3.0.1 [ 07.10.2022 ]
+### Version 2.8.4 [ 07.07.2022 ]
 
 [XFaction]
-- Removed channel sort option as it was not meeting user expectations
-- Addon will now always ensure addon-channel is last if enabled
-
-### Version 3.0.0 [ 07.10.2022 ]
-
-[XFaction]
-- Pointed guild information at in-game rather than hardcoded
-- CurseForge and WowUp go-live
-- GreenWall retirement
+- Lowered couple message throttle dials
 
 ### Version 2.8.3 [ 07.06.2022 ]
 
