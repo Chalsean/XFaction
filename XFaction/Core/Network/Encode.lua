@@ -36,8 +36,8 @@ function XFG:EncodeMessage(inMessage, inEncodeUnitData)
 	_MessageData.V = inMessage:GetVersion()
 
 	local _Serialized = XFG:Serialize(_MessageData)
-	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
-	return XFG.Lib.Encode:Encode(_Compressed)
+	local _Compressed = XFG.Lib.Compress:CompressDeflate(_Serialized, {level = XFG.Settings.Network.CompressionLevel})
+	return XFG.Lib.Compress:EncodeForWoWAddonChannel(_Compressed)
 end
 
 function XFG:SerializeUnitData(inUnitData)
@@ -60,7 +60,6 @@ function XFG:SerializeUnitData(inUnitData)
 	_MessageData.I = inUnitData:GetItemLevel()
 	_MessageData.J = inUnitData:GetRank()
 	_MessageData.L = inUnitData:GetLevel()
-	_MessageData.M = 0  -- Deprecated, here for backwards compat
 	_MessageData.N = inUnitData:GetNote()
 	local _Class = inUnitData:GetClass()
 	_MessageData.O = _Class:GetKey()

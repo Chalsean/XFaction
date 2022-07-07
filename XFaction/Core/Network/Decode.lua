@@ -2,8 +2,8 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'NDecode'
 
 function XFG:DecodeMessage(inEncodedMessage)
-	local _Decoded = XFG.Lib.Encode:Decode(inEncodedMessage)
-	local _Decompressed = XFG.Lib.Compress:DecompressHuffman(_Decoded)
+	local _Decoded = XFG.Lib.Compress:DecodeForWoWAddonChannel(inEncodedMessage)
+	local _Decompressed = XFG.Lib.Compress:DecompressDeflate(_Decoded)
 	local _, _MessageData = XFG:Deserialize(_Decompressed)
 
 	local _Message

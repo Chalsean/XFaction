@@ -28,7 +28,7 @@ XFG.Icons = {
 }
 
 XFG.Lib = {
-	Compress = LibStub:GetLibrary("LibCompress"),	
+	Compress = LibStub:GetLibrary('LibDeflate'),
 	QT = LibStub('LibQTip-1.0'),
 	Realm = LibStub:GetLibrary('LibRealmInfo'),
 	Broker = LibStub('LibDataBroker-1.1'),
@@ -37,7 +37,6 @@ XFG.Lib = {
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
 	Cmd = LibStub('AceConfigCmd-3.0'),
 }
-XFG.Lib.Encode = XFG.Lib.Compress:GetAddonEncodeTable()
 
 XFG.DataText = {
 	AutoHide = .25
@@ -91,6 +90,7 @@ XFG.Settings = {
 		CC = 'CC'
 	},
 	Network = {
+		CompressionLevel = 6,
 		Channel = {
 			Total = 10,
 			Name = nil,
