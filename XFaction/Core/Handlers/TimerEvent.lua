@@ -88,8 +88,19 @@ function TimerEvent:CallbackLogin()
 
             -- This is hard coding during alpha/beta phase
             local _GuildInfo = C_Club.GetClubInfo(_GuildID)
-            XFG.Confederate = Confederate:new()
-            
+            _GuildInfo.description = 'blah blah blah  ' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFn:Eternal Kingdom:EK' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFc:EKXFactionChat:' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Eternal Kingdom:EKA' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:H:Eternal Kingdom Horde:EKH' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Endless Kingdom:ENK' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom:AK' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom Two:AK2' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom Three:AK3' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:H:Alternal Kingdom Four:AK4' .. "\n"
+            _GuildInfo.description = _GuildInfo.description .. 'XFa:Grand Alt'
+
+            XFG.Confederate = Confederate:new()            
             -- Parse out configuration from guild information so GMs have control
             for _, _Line in ipairs(string.Split(_GuildInfo.description, '\n')) do
                 -- Confederate information
