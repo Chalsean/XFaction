@@ -161,7 +161,8 @@ XFG.Options.args.DataText = {
 						Achievement = XFG.Lib.Locale['ACHIEVEMENT'],
 						Guild = XFG.Lib.Locale['GUILD'],
 						ItemLevel = XFG.Lib.Locale['ITEMLEVEL'],
-						Level = XFG.Lib.Locale['LEVEL'],            
+						Level = XFG.Lib.Locale['LEVEL'],
+						LFG = XFG.Lib.Locale['LFG'],
 						Dungeon = XFG.Lib.Locale['DUNGEON'],
                         Name = XFG.Lib.Locale['NAME'],
 						Note = XFG.Lib.Locale['NOTE'],
@@ -193,6 +194,7 @@ XFG.Options.args.DataText = {
 						Guild = XFG.Lib.Locale['GUILD'],
 						ItemLevel = XFG.Lib.Locale['ITEMLEVEL'],
 						Level = XFG.Lib.Locale['LEVEL'],
+						LFG = XFG.Lib.Locale['LFG'],       
 						Dungeon = XFG.Lib.Locale['DUNGEON'],
 						Name = XFG.Lib.Locale['NAME'],
 						Note = XFG.Lib.Locale['NOTE'],
@@ -436,6 +438,44 @@ XFG.Options.args.DataText = {
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Level) end,
 					name = XFG.Lib.Locale['ALIGNMENT'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_LEVEL_ALIGNMENT_TOOLTIP'],
+					values = {
+						Center = XFG.Lib.Locale['CENTER'],
+						Left = XFG.Lib.Locale['LEFT'],
+						Right = XFG.Lib.Locale['RIGHT'],
+                    },
+					get = function(info) return XFG.Config.DataText.Guild.Alignment[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
+				},
+				LFG = {
+					order = 17,
+					type = 'toggle',
+					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'LFG' end,
+					name = XFG.Lib.Locale['ENABLE'],
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_LFG_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Guild.Enable[ info[#info] ] end,
+					set = function(info, value) 
+						XFG.Config.DataText.Guild.Enable[ info[#info] ] = value
+						if(value) then AddedMenuItem(info[#info]) else RemovedMenuItem(info[#info]) end
+					end
+				},
+				LFGOrder = {
+					order = 18,
+					type = 'select',
+					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'LFG' end,
+					disabled = function () return (not XFG.Config.DataText.Guild.Enable.LFG) end,
+					name = XFG.Lib.Locale['ORDER'],
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_LFG_ORDER_TOOLTIP'],
+					values = function () return OrderMenu() end,
+					get = function(info) if(XFG.Config.DataText.Guild.Enable.LFG) then return tostring(XFG.Config.DataText.Guild.Order[ info[#info] ]) end end,
+					set = function(info, value) SelectedMenuItem(info[#info], value) end
+				},
+				LFGAlignment = {
+					order = 19,
+					type = 'select',
+					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'LFG' end,
+					disabled = function () return (not XFG.Config.DataText.Guild.Enable.LFG) end,
+					name = XFG.Lib.Locale['ALIGNMENT'],
+					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_LFG_ALIGNMENT_TOOLTIP'],
 					values = {
 						Center = XFG.Lib.Locale['CENTER'],
 						Left = XFG.Lib.Locale['LEFT'],

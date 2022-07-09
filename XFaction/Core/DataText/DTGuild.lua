@@ -104,6 +104,7 @@ local function PreSort()
 		_UnitData.ItemLevel = _Unit:GetItemLevel()
 		_UnitData.Raid = _Unit:GetRaidProgress()
 		_UnitData.PvP = _Unit:GetPvP()
+		_UnitData.LFG = _Unit:GetLFG()
 
 		if(_Unit:HasVersion()) then
 			_UnitData.Version = _Unit:GetVersion()
@@ -176,6 +177,19 @@ local function LineClick(_, inUnitGUID, inMouseButton)
  	else
 		SetItemRef(_Link, _Unit:GetName(), inMouseButton)
 	end
+end
+
+local function MenuTooltipOnCellEnter(self, info)
+    local _tooltipContainsHyperLink = false
+    local _preString, _hyperLinkString, _postString
+    _tooltipContainsHyperLink, _preString, _hyperLinkString, _postString = ExtractHyperlinkString(info)
+    if (_tooltipContainsHyperLink) then
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetHyperlink(_hyperLinkString)
+        GameTooltip:Show()
+    else
+        GameTooltip:Hide()
+    end
 end
 
 function DTGuild:RefreshBroker()
@@ -313,10 +327,17 @@ function DTGuild:OnEnter(this)
 				elseif(_ColumnName == 'Name') then
 					local _ClassHexColor = _UnitData.Class:GenerateHexColor()
 					_CellValue = format('|c%s%s|r', _ClassHexColor, _UnitData.Name)
-				elseif(_UnitData[_ColumnName] ~= nil) then
+                elseif(_UnitData[_ColumnName] ~= nil) then
 					_CellValue = format('|cffffffff%s|r', _UnitData[_ColumnName])
 				end
 				_Tooltip:SetCell(line, i, _CellValue)
+                
+                -- Cell must be set before assigning script
+                if(_ColumnName == 'LFG') then
+                    if(_UnitData[_ColumnName] ~= nil) then
+                        _Tooltip:SetCellScript(line, i, 'OnEnter', MenuTooltipOnCellEnter, _UnitData[_ColumnName])
+                    end
+				end
 			end
 
 	 		_Tooltip:SetLineScript(line, "OnMouseUp", LineClick, _UnitData.GUID)
