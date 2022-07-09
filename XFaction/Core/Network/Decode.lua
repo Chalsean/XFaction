@@ -1,11 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local LogCategory = 'NDecode'
 
-function XFG:DecodeMessage(inEncodedMessage)
-	local _Decoded = XFG.Lib.Encode:Decode(inEncodedMessage)
-	local _Decompressed = XFG.Lib.Compress:DecompressHuffman(_Decoded)
-	local _, _MessageData = XFG:Deserialize(_Decompressed)
-
+local function DeserializeMessage(inSerializedMessage)
+	local _, _MessageData = XFG:Deserialize(inSerializedMessage)
 	local _Message
 	-- GCHAT, LOGOUT, ACHIEVEMENT use GuildMessage class
 	if(_MessageData.S == XFG.Settings.Network.Message.Subject.GCHAT or
@@ -111,4 +108,16 @@ function XFG:DeserializeUnitData(inData)
     end
 
 	return _UnitData
+end
+
+function XFG:DecodeBNetMessage(inEncodedMessage)
+	local _Decoded = XFG.Lib.Encode:Decode(inEncodedMessage)
+	local _Decompressed = XFG.Lib.Compress:Decompress(_Decoded)
+	return DeserializeMessage(_Decompressed)
+end
+
+function XFG:DecodeMessage(inEncodedMessage)
+	local _Decoded = XFG.Lib.Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
+	local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(_Decoded)	
+	return DeserializeMessage(_Decompressed)
 end

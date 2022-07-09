@@ -186,7 +186,7 @@ function TimerEvent:CallbackLogin()
             end
 
             -- Scan local guild roster
-            XFG:Info(LogCategory, "Initializing local guild roster")
+            XFG:Info(LogCategory, 'Initializing local guild roster')
             for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
                 local _UnitData = Unit:new()
                 _UnitData:Initialize(_MemberID)

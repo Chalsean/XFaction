@@ -137,7 +137,7 @@ function BNet:Send(inMessage)
     for _, _Friend in pairs (_Links) do
         for _, _Packet in pairs (_Packets) do
             _Packet:SetTotalPackets(_PacketCount)
-            local _EncodedPacket = XFG:EncodeMessage(_Packet)
+            local _EncodedPacket = XFG:EncodeBNetMessage(_Packet)
             XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Settings.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
             -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
             BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _EncodedPacket, _, _Friend:GetGameID())
@@ -186,7 +186,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     XFG:Debug(LogCategory, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
     local _Message = nil
-    if(pcall(function () _Message = XFG:DecodeMessage(inEncodedMessage) end)) then
+    if(pcall(function () _Message = XFG:DecodeBNetMessage(inEncodedMessage) end)) then
         -- Have you seen this message before?
         if(XFG.Mailbox:Contains(_Message:GetKey())) then
             return
