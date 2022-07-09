@@ -53,6 +53,9 @@ XFG.Cache = {
 }
 
 XFG.Settings = {
+	System = {
+		Roster = true,
+	},
 	Player = {
 		Heartbeat = 60 * 2,      -- Seconds between player status broadcast
 		MinimumHeartbeat = 15

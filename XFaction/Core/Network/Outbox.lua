@@ -75,6 +75,7 @@ end
 
 function Outbox:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
+    if(inMessage:HasUnitData() and not XFG.Settings.System.Roster) then return end
     if(inMessage:IsInitialized() == false) then
 		-- Review: double check this isn't overriding the timestamp of the message
         inMessage:Initialize()

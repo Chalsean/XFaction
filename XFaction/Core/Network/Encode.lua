@@ -2,10 +2,9 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'NEncode'
 
 -- BNet seems to have a cap of around 300 characters and there is no BNet support from AceComm/ChatThrottle
--- So have to strip down to bare essentials and reconstruct as much as we can on receiving end
+-- So have to strip down to bare essentials, like send race id instead of race name and reconstruct as much as we can on receiving end
 -- I'm sure there's a cooler way of doing this :)
-function XFG:EncodeMessage(inMessage, inEncodeUnitData)
-	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
+local function SerializeMessage(inMessage, inEncodeUnitData)
 	local _MessageData = {}
 
 	if(inMessage.__name == 'GuildMessage') then
@@ -35,9 +34,7 @@ function XFG:EncodeMessage(inMessage, inEncodeUnitData)
 	_MessageData.Q = inMessage:GetTotalPackets()
 	_MessageData.V = inMessage:GetVersion()
 
-	local _Serialized = XFG:Serialize(_MessageData)
-	local _Compressed = XFG.Lib.Compress:CompressDeflate(_Serialized, {level = XFG.Settings.Network.CompressionLevel})
-	return XFG.Lib.Compress:EncodeForWoWAddonChannel(_Compressed)
+	return XFG:Serialize(_MessageData)
 end
 
 function XFG:SerializeUnitData(inUnitData)
@@ -85,4 +82,19 @@ function XFG:SerializeUnitData(inUnitData)
 	_MessageData.Z = inUnitData:GetZone()
 
 	return XFG:Serialize(_MessageData)
+end
+
+function XFG:EncodeMessage(inMessage, inEncodeUnitData)
+	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
+	local _Serialized = SerializeMessage(inMessage, inEncodeUnitData)
+	local _Compressed = XFG.Lib.Deflate:CompressDeflate(_Serialized, {level = XFG.Settings.Network.CompressionLevel})
+	return XFG.Lib.Deflate:EncodeForWoWAddonChannel(_Compressed)
+end
+
+-- Have not been able to identify why, but bnet does not like the output of deflate
+function XFG:EncodeBNetMessage(inMessage, inEncodeUnitData)
+	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
+	local _Serialized = SerializeMessage(inMessage, inEncodeUnitData)
+	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
+	return XFG.Lib.Encode:Encode(_Compressed)
 end
