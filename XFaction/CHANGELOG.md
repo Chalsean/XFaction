@@ -1,3 +1,8 @@
+### Version 3.1.0 [ 07.10.2022 ]
+
+[XFaction]
+- Switched compression library for chat channel communication
+
 ### Version 2.8.4 [ 07.07.2022 ]
 
 [XFaction]
