@@ -193,7 +193,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         end
 
         -- If received via BNet, remove all bnet link nodes
-        _Message:RemoveAllLinkNodes()
+        _Message:RemoveAllNodes()
 
         -- Data was sent in one packet, okay to process
         if(_Message:GetTotalPackets() == 1) then
