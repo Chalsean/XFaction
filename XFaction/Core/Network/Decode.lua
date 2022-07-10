@@ -119,11 +119,8 @@ function XFG:DeserializeUnitData(inData)
 end
 
 function XFG:DecodeBNetMessage(inEncodedMessage)
-	-- local _Decoded = XFG.Lib.Encode:Decode(inEncodedMessage)
-	-- local _Decompressed = XFG.Lib.Compress:Decompress(_Decoded)
-	-- return DeserializeMessage(_Decompressed)
-	local _Decoded = XFG.Lib.Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
-	local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(_Decoded)	
+	local _Decoded = XFG.Lib.Encode:Decode(inEncodedMessage)
+	local _Decompressed = XFG.Lib.Compress:Decompress(_Decoded)
 	return DeserializeMessage(_Decompressed)
 end
 

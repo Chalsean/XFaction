@@ -39,6 +39,8 @@ function Link:Initialize()
     if(self:IsInitialized() == false) then
         local _EpochTime = GetServerTime()
         self:SetTimeStamp(_EpochTime)
+        local _Key = GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName())
+        self:SetKey(_Key)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -73,7 +75,7 @@ function Link:GetFromNode()
 end
 
 function Link:SetFromNode(inNode)
-    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'LinkNode', 'argument must be LinkNode object')
+    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
     self._FromNode = inNode
     return self:GetFromNode()
 end
@@ -83,7 +85,7 @@ function Link:GetToNode()
 end
 
 function Link:SetToNode(inNode)
-    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'LinkNode', 'argument must be LinkNode object')
+    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
     self._ToNode = inNode
     return self:GetToNode()
 end
@@ -96,17 +98,17 @@ function Link:SetObjectFromString(inLinkString)
     assert(type(inLinkString) == 'string')
     local _Nodes = string.Split(inLinkString, ';')
 
-    local _FromNode = LinkNode:new(); _FromNode:Initialize(_Nodes[1])
-    if(not XFG.LinkNodes:Contains(_FromNode:GetKey())) then
-        XFG.LinkNodes:AddLinkNode(_FromNode)
+    local _FromNode = Node:new(); _FromNode:Initialize(_Nodes[1])
+    if(not XFG.Nodes:Contains(_FromNode:GetKey())) then
+        XFG.Nodes:AddNode(_FromNode)
     end
-    self:SetFromNode(XFG.LinkNodes:GetLinkNode(_FromNode:GetKey()))
+    self:SetFromNode(XFG.Nodes:GetNode(_FromNode:GetKey()))
 
-    local _ToNode = LinkNode:new(); _ToNode:Initialize(_Nodes[1])
-    if(not XFG.LinkNodes:Contains(_ToNode:GetKey())) then
-        XFG.LinkNodes:AddLinkNode(_ToNode)
+    local _ToNode = Node:new(); _ToNode:Initialize(_Nodes[2])
+    if(not XFG.Nodes:Contains(_ToNode:GetKey())) then
+        XFG.Nodes:AddNode(_ToNode)
     end
-    self:SetToNode(XFG.LinkNodes:GetLinkNode(_ToNode:GetKey()))
+    self:SetToNode(XFG.Nodes:GetNode(_ToNode:GetKey()))
     
     local _EpochTime = GetServerTime()
     self:SetTimeStamp(_EpochTime)

@@ -153,7 +153,7 @@ function DTLinks:OnEnter(this)
 	if(XFG.Initialized) then
 		for _, _Link in XFG.Links:Iterator() do
 			_FromKey = _Link:GetFromNode():GetRealm():GetID() .. ':' .. _Link:GetFromNode():GetFaction():GetID()
-			_ToKey = _Link:GetFromNode():GetRealm():GetID() .. ':' .. _Link:GetFromNode():GetFaction():GetID()
+			_ToKey = _Link:GetToNode():GetRealm():GetID() .. ':' .. _Link:GetToNode():GetFaction():GetID()
 
 			local _FromName = format("|cffffffff%s|r", _Link:GetFromNode():GetName())
 			if(_Link:IsMyLink() and _Link:GetFromNode():GetName() == XFG.Player.Unit:GetName()) then

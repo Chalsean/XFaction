@@ -1,10 +1,10 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'LinkNode'
-local LogCategory = 'NLinkNode'
+local ObjectName = 'Node'
+local LogCategory = 'NNode'
 
-LinkNode = {}
+Node = {}
 
-function LinkNode:new()
+function Node:new()
     _Object = {}
     setmetatable(_Object, self)
     self.__index = self
@@ -19,7 +19,7 @@ function LinkNode:new()
     return _Object
 end
 
-function LinkNode:IsInitialized(inBoolean)
+function Node:IsInitialized(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
     if(inBoolean ~= nil) then
         self._Initialized = inBoolean
@@ -27,20 +27,20 @@ function LinkNode:IsInitialized(inBoolean)
     return self._Initialized
 end
 
-function LinkNode:Initialize(inString)
+function Node:Initialize(inString)
     if(not self:IsInitialized()) then
         assert(type(inString) == 'string')
-        local _Parts = string.Split(':', inString)
+        local _Parts = string.Split(inString, ':')
         self:SetKey(_Parts[1])
         self:SetName(_Parts[1])
-        self:SetRealm(XFG.Realms:GetRealmByID(_Parts[2]))
-        self:SetFaction(XFG.Factions:GetFaction(_Parts[3]))
+        self:SetRealm(XFG.Realms:GetRealmByID(tonumber(_Parts[2])))
+        self:SetFaction(XFG.Factions:GetFaction(tonumber(_Parts[3])))
         self:IsInitialized(true)
     end
     return self:IsInitialized()
 end
 
-function LinkNode:Print()
+function Node:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
@@ -50,56 +50,56 @@ function LinkNode:Print()
     self._Faction:Print()
 end
 
-function LinkNode:GetKey()
+function Node:GetKey()
     return self._Key
 end
 
-function LinkNode:SetKey(inKey)
+function Node:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
 end
 
-function LinkNode:IsMyNode()
+function Node:IsMyNode()
     return self:GetName() == XFG.Player.Unit:GetName()
 end
 
-function LinkNode:GetName()
+function Node:GetName()
     return self._Name
 end
 
-function LinkNode:SetName(inName)
+function Node:SetName(inName)
     assert(type(inName) == 'string')
     self._Name = inName
     return self:GetName()
 end
 
-function LinkNode:GetRealm()
+function Node:GetRealm()
     return self._Realm
 end
 
-function LinkNode:SetRealm(inRealm)
+function Node:SetRealm(inRealm)
     assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
     self._Realm = inRealm
     return self:GetRealm()
 end
 
-function LinkNode:GetFaction()
+function Node:GetFaction()
     return self._Faction
 end
 
-function LinkNode:SetFaction(inFaction)
+function Node:SetFaction(inFaction)
     assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
     self._Faction = inFaction
     return self:GetFaction()
 end
 
-function LinkNode:IsNodeForTarget(inTarget)
+function Node:IsNodeForTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', "argument must be Target object")
     return inTarget:GetRealm():Equals(self:GetRealm()) and inTarget:GetFaction():Equals(self:GetFaction())
 end
 
-function LinkNode:GetString()
+function Node:GetString()
     return self:GetName() .. ':' .. 
            self:GetRealm():GetID() .. ':' .. 
            self:GetFaction():GetID()

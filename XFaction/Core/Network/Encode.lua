@@ -91,12 +91,9 @@ end
 
 function XFG:EncodeMessage(inMessage, inEncodeUnitData)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
-	-- local _Serialized = SerializeMessage(inMessage, inEncodeUnitData)
-	-- local _Compressed = XFG.Lib.Deflate:CompressDeflate(_Serialized, {level = XFG.Settings.Network.CompressionLevel})
-	-- return XFG.Lib.Deflate:EncodeForWoWAddonChannel(_Compressed)
 	local _Serialized = SerializeMessage(inMessage, inEncodeUnitData)
-	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
-	return XFG.Lib.Encode:Encode(_Compressed)
+	local _Compressed = XFG.Lib.Deflate:CompressDeflate(_Serialized, {level = XFG.Settings.Network.CompressionLevel})
+	return XFG.Lib.Deflate:EncodeForWoWAddonChannel(_Compressed)
 end
 
 -- Have not been able to identify why, but bnet does not like the output of deflate

@@ -72,11 +72,11 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-    local _Message = nil
+    local _Message --= XFG:DecodeMessage(inEncodedMessage)
     if(pcall(function () _Message = XFG:DecodeMessage(inEncodedMessage) end)) then
-        self:Process(_Message, inMessageTag)
+       self:Process(_Message, inMessageTag)
     else
-        XFG:Warn(LogCategory, 'Failed to decode received message [%s:%s:%s]', inSender, inMessageTag, inDistribution)
+       XFG:Warn(LogCategory, 'Failed to decode received message [%s:%s:%s]', inSender, inMessageTag, inDistribution)
     end    
 end
 

@@ -22,6 +22,12 @@ end
 function NodeCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
+		local _Node = Node:new()
+		_Node:SetKey(XFG.Player.Unit:GetName())
+		_Node:SetName(XFG.Player.Unit:GetName())
+		_Node:SetRealm(XFG.Player.Realm)
+		_Node:SetFaction(XFG.Player.Faction)
+		self:AddNode(_Node)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
