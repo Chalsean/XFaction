@@ -139,6 +139,9 @@ XFG.Defaults = {
                 Label = false,
                 Faction = true
             },
+        },
+        Confederate = {
+            Config = 'XFn:Guild Name:GN\nXFc:ChannelName:ChannelPassword\nXFg:5:A:Alliance Guild:GA\nXFg:5:H:Horde Guild:GH\nXFg:5:A:Alliance Alt Guild:AGA\nXFa:Grand Alt\nXFt:A:AlphaTeam\nXFt:B:BetaTeam'
         }
     }
 }
@@ -153,6 +156,7 @@ function XFG:LoadConfigs()
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, XFG.Category, nil, 'General')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Chat', XFG.Category, 'Chat')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'DataText', XFG.Category, 'DataText')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Confederate', XFG.Category, 'Confederate')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Support', XFG.Category, 'Support')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Debug', XFG.Category, 'Debug')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Profile', XFG.Category, 'Profile')
