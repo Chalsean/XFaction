@@ -283,10 +283,10 @@ function TimerEvent:CallbackLogin()
 end
 
 function TimerEvent:CallbackDelayedStartTimer()
-    --if(XFG.DB.UIReload == false) then
+    if(XFG.DB.UIReload == false) then
         XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
-    --    XFG.Links:BroadcastLinks()
-    --end
+        XFG.Links:BroadcastLinks()
+    end
     XFG.DB.UIReload = false
 end
 
