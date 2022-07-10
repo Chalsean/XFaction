@@ -141,9 +141,10 @@ function BNet:Send(inMessage)
             XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetName(), _Friend:GetGameID(), _Packet:GetPacketNumber(), _Packet:GetTotalPackets(), XFG.Settings.Network.Message.Tag.BNET, strlen(tostring(_EncodedPacket)))
             -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
             BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _EncodedPacket, _, _Friend:GetGameID())
---            BNSendGameData(_Friend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, _EncodedPacket)
         end
+        -- Successfully messaged target, remove target and nodes associated because we dont need others help
         inMessage:RemoveTarget(_Friend:GetTarget())
+        inMessage:RemoveAllNodes()
     end
 end
 
@@ -178,7 +179,6 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     if(inEncodedMessage == 'PING') then
         BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
-        --BNSendGameData(inSender, XFG.Settings.Network.Message.Tag.BNET, 'RE:PING')
         return
     elseif(inEncodedMessage == 'RE:PING') then
         return
@@ -191,6 +191,9 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         if(XFG.Mailbox:Contains(_Message:GetKey())) then
             return
         end
+
+        -- If received via BNet, remove all bnet link nodes
+        _Message:RemoveAllLinkNodes()
 
         -- Data was sent in one packet, okay to process
         if(_Message:GetTotalPackets() == 1) then
@@ -277,6 +280,5 @@ function BNet:PingFriend(inFriend)
     if(inFriend:IsRunningAddon() == false) then
         XFG:Debug(LogCategory, 'Sending ping to [%s]', inFriend:GetTag())
         BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())
-        --BNSendGameData(inFriend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, 'PING')
     end
 end

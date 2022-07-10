@@ -24,7 +24,6 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	end
 
 	_MessageData.K = inMessage:GetKey()
-	_MessageData.T = inMessage:GetTo()
 	_MessageData.F = inMessage:GetFrom()	
 	_MessageData.S = inMessage:GetSubject()
 	_MessageData.Y = inMessage:GetType()
@@ -33,6 +32,12 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	_MessageData.P = inMessage:GetPacketNumber()
 	_MessageData.Q = inMessage:GetTotalPackets()
 	_MessageData.V = inMessage:GetVersion()
+	if(inMessage:HasTargets() and inMessage:HasNodes()) then
+		_MessageData.L = ''
+		for _, _Node in (inMessage:NodeIterator()) do
+			_MessageData.L = _Message.L .. _Node:GetString() .. ';'
+		end
+	end
 
 	return XFG:Serialize(_MessageData)
 end
@@ -86,9 +91,12 @@ end
 
 function XFG:EncodeMessage(inMessage, inEncodeUnitData)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
+	-- local _Serialized = SerializeMessage(inMessage, inEncodeUnitData)
+	-- local _Compressed = XFG.Lib.Deflate:CompressDeflate(_Serialized, {level = XFG.Settings.Network.CompressionLevel})
+	-- return XFG.Lib.Deflate:EncodeForWoWAddonChannel(_Compressed)
 	local _Serialized = SerializeMessage(inMessage, inEncodeUnitData)
-	local _Compressed = XFG.Lib.Deflate:CompressDeflate(_Serialized, {level = XFG.Settings.Network.CompressionLevel})
-	return XFG.Lib.Deflate:EncodeForWoWAddonChannel(_Compressed)
+	local _Compressed = XFG.Lib.Compress:CompressHuffman(_Serialized)
+	return XFG.Lib.Encode:Encode(_Compressed)
 end
 
 -- Have not been able to identify why, but bnet does not like the output of deflate

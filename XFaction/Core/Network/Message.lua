@@ -11,12 +11,12 @@ function Message:new()
     self.__name = ObjectName
     
     self._Key = nil
-    self._To = nil
     self._From = nil
     self._Type = nil
     self._Subject = nil
     self._EpochTime = nil
     self._TargetCount = 0
+    self._NodeCount = 0
     self._Data = nil
     self._Initialized = false
     self._PacketNumber = 1
@@ -34,12 +34,12 @@ function Message:newChildConstructor()
     self.parent = self
     
     self._Key = nil
-    self._To = nil
-    self._From = nil    
+    self._From = nil   
     self._Type = nil
     self._Subject = nil
     self._EpochTime = nil    
     self._TargetCount = 0
+    self._NodeCount = 0
     self._Data = nil
     self._Initialized = false
     self._PacketNumber = 1
@@ -60,6 +60,7 @@ end
 function Message:Initialize()
     if(self:IsInitialized() == false) then
         self._Targets = {}
+        self._Nodes = {}
         self:SetKey(math.GenerateUID())
         self:SetFrom(XFG.Player.Unit:GetKey())
         local _EpochTime = GetServerTime()
@@ -75,8 +76,8 @@ function Message:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+    XFG:Debug(LogCategory, "  _Nodes (" ..type(self._Nodes) .. "): ".. tostring(self._Nodes))
     XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
     XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
@@ -85,6 +86,7 @@ function Message:Print()
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _Version (" ..type(self._Version) .. "): ".. tostring(self._Version))
+    XFG:Debug(LogCategory, "  _NodeCount (" ..type(self._NodeCount) .. "): ".. tostring(self._NodeCount))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
     for _, _Target in pairs (self:GetTargets()) do
         _Target:Print()
@@ -95,8 +97,8 @@ function Message:ShallowPrint()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+    XFG:Debug(LogCategory, "  _Nodes (" ..type(self._Nodes) .. "): ".. tostring(self._Nodes))
     XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
     XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
@@ -105,6 +107,7 @@ function Message:ShallowPrint()
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _Version (" ..type(self._Version) .. "): ".. tostring(self._Version))
+    XFG:Debug(LogCategory, "  _NodeCount (" ..type(self._NodeCount) .. "): ".. tostring(self._NodeCount))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
 end
 
@@ -116,16 +119,6 @@ function Message:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
-end
-
-function Message:GetTo()
-    return self._To
-end
-
-function Message:SetTo(inTo)
-    assert(type(inTo) == 'string')
-    self._To = inTo
-    return self:GetTo()
 end
 
 function Message:GetFrom()
@@ -261,7 +254,6 @@ end
 function Message:Copy(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
     self._Key = inMessage:GetKey()
-    self._To = inMessage:GetTo()
     self._From = inMessage:GetFrom()
     self._Type = inMessage:GetType()
     self._Subject = inMessage:GetSubject()
@@ -277,6 +269,12 @@ function Message:Copy(inMessage)
     for _, _Target in pairs (inMessage:GetTargets()) do
         self:AddTarget(_Target)
     end
+    for _, _Node in self:NodeIterator() do
+        self:RemoveNode(_Node)
+    end
+    for _, _Node in inMessage:NodeIterator() do
+        self:AddNode(_Node)
+    end
 end
 
 function Message:HasUnitData()
@@ -291,4 +289,45 @@ function Message:SetVersion(inVersion)
     assert(type(inVersion) == 'string')
     self._Version = inVersion
     return self:GetVersion()
+end
+
+function Message:HasNodes()
+    return self:GetNodeCount() > 0
+end
+
+function Message:GetNodeCount()
+    return self._NodeCount
+end
+
+function Message:ContainsNode(inKey)
+    assert(type(inKey) == 'string')
+    return self._Nodes[inKey] ~= nil
+end
+
+function Message:AddNode(inNode)
+    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
+    if(not self:ContainsNode(inNode:GetKey())) then
+        self._NodeCount = self._NodeCount + 1
+    end
+    self._Nodes[inNode:GetKey()] = inNode
+    return self:ContainsNode(inNode:GetKey())
+end
+
+function Message:RemoveNode(inNode)
+    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
+    if(self:ContainsNode(inNode:GetKey())) then
+        self._NodeCount = self._NodeCount - 1
+    end
+    self._Nodes[inNode:GetKey()] = nil
+    return not self:ContainsNode(inNode:GetKey())
+end
+
+function Message:RemoveAllNodes()
+    self._Nodes = {}
+    self._NodeCount = 0
+    return self._NodeCount == 0
+end
+
+function Message:NodeIterator()
+	return next, self._Nodes, nil
 end

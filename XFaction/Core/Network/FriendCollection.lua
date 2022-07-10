@@ -164,6 +164,8 @@ function FriendCollection:CheckFriend(inKey)
 		return
 	end
 
+	if(_AccountInfo.gameAccountInfo.characterName ~= 'Chalseantest') then return end
+
 	-- Did they go offline?
     if(self:Contains(_AccountInfo.bnetAccountID)) then
 		if(IsLink(_AccountInfo) == false) then

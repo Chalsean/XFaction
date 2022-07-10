@@ -86,21 +86,12 @@ function TimerEvent:CallbackLogin()
             local _Timer = XFG.Timers:GetTimer('Login')
             XFG.Timers:RemoveTimer(_Timer)
 
-            -- This is hard coding during alpha/beta phase
+            --==========================================
+            -- Build confederate collections
+            --==========================================
             local _GuildInfo = C_Club.GetClubInfo(_GuildID)
-            _GuildInfo.description = 'blah blah blah  ' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFn:Eternal Kingdom:EK' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFc:EKXFactionChat:' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Eternal Kingdom:EKA' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:H:Eternal Kingdom Horde:EKH' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Endless Kingdom:ENK' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom:AK' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom Two:AK2' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:A:Alternal Kingdom Three:AK3' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFg:5:H:Alternal Kingdom Four:AK4' .. "\n"
-            _GuildInfo.description = _GuildInfo.description .. 'XFa:Grand Alt'
-
             XFG.Confederate = Confederate:new()            
+
             -- Parse out configuration from guild information so GMs have control
             for _, _Line in ipairs(string.Split(_GuildInfo.description, '\n')) do
                 -- Confederate information
@@ -171,6 +162,10 @@ function TimerEvent:CallbackLogin()
             local _InInstance, _InstanceType = IsInInstance()
             XFG.Player.InInstance = _InInstance
 
+            --==========================================
+            -- Build unit collections
+            --==========================================
+
             -- Some of this data (spec) is like guild where its not available for a time after initial login
             -- Seems to align with guild data becoming available
             XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
@@ -209,13 +204,16 @@ function TimerEvent:CallbackLogin()
                 XFG.Player.Unit:Initialize()
             end
 
-            -- Start network setup
-            XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()	
+            --==========================================
+            -- Startup network
+            --==========================================
+            XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()
             XFG.Targets = TargetCollection:new(); XFG.Targets:Initialize()
             XFG.Outbox = Outbox:new()
             XFG.Inbox = Inbox:new(); XFG.Inbox:Initialize()            
             XFG.BNet = BNet:new(); BNet:Initialize()
             XFG.Friends = FriendCollection:new(); XFG.Friends:Initialize()
+            XFG.Nodes = NodeCollection:new(); XFG.Nodes:Initialize()
             XFG.Links = LinkCollection:new(); XFG.Links:Initialize()      
 
             -- If this is a reload, restore friends addon flag
@@ -242,7 +240,9 @@ function TimerEvent:CallbackLogin()
             XFG.Channels:SetChannelLast(_NewChannel:GetKey())
             XFG.Outbox:SetLocalChannel(_NewChannel)
 
-            -- Start timers
+            --==========================================
+            -- Event handlers
+            --==========================================
             CreateTimer('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, false)
             CreateTimer('Links', XFG.Settings.Network.BNet.Link.Broadcast, XFG.Handlers.TimerEvent.CallbackLinks, true, false)
             CreateTimer('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, false, false)
@@ -265,6 +265,10 @@ function TimerEvent:CallbackLogin()
                 XFG.BNet:PingFriends()                 
             end
 
+            --==========================================
+            -- Post work
+            --==========================================
+
             -- This is stuff waiting a few seconds for ping responses
             XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 7)
             XFG.Initialized = true
@@ -273,23 +277,16 @@ function TimerEvent:CallbackLogin()
             XFG.DataText.Guild:RefreshBroker()
             XFG.DataText.Soulbind:RefreshBroker()
             XFG.DataText.Links:RefreshBroker()
-
-            -- local _Profession = XFG.Player.Unit:GetProfession1()
-            -- local _Link = '|cffffd000|Htrade:Player-5-0AE75DDD:195128:185|h[Cooking]|h|r'
-            -- print(_Link)
-
-            --wipe(XFG.Config.DataText.Guild)
-
             wipe(XFG.DB.Backup)
         end
     end
 end
 
 function TimerEvent:CallbackDelayedStartTimer()
-    if(XFG.DB.UIReload == false) then
+    --if(XFG.DB.UIReload == false) then
         XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
-        XFG.Links:BroadcastLinks()
-    end
+    --    XFG.Links:BroadcastLinks()
+    --end
     XFG.DB.UIReload = false
 end
 

@@ -15,4 +15,6 @@
     <Script file='TargetCollection.lua'/>
     <Script file='Link.lua'/>
     <Script file='LinkCollection.lua'/>
+    <Script file='Node.lua'/>
+    <Script file='NodeCollection.lua'/>
 </Ui>

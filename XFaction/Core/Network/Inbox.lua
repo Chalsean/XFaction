@@ -83,8 +83,11 @@ end
 function Inbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 
+    --==========================================
+    -- Ignore message logic
+    --==========================================
+
     -- Ignore if it's your own message
-    -- Due to startup timing, use GUID directly rather than from Unit object
 	if(inMessage:GetFrom() == XFG.Player.GUID) then
         return
 	end
@@ -96,6 +99,10 @@ function Inbox:Process(inMessage, inMessageTag)
     else
         XFG.Mailbox:AddMessage(inMessage)
     end
+
+    --==========================================
+    -- Deserialize data
+    --==========================================
 
     -- Deserialize unit data
     if(inMessage:HasUnitData()) then
@@ -113,6 +120,10 @@ function Inbox:Process(inMessage, inMessageTag)
 
     inMessage:ShallowPrint()
 
+    --==========================================
+    -- Forwarding logic
+    --==========================================
+
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
         inMessage:SetType(XFG.Settings.Network.Type.BNET)
@@ -128,6 +139,10 @@ function Inbox:Process(inMessage, inMessageTag)
         inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
         XFG.Outbox:Send(inMessage)
     end
+
+    --==========================================
+    -- Process message
+    --==========================================
 
     -- Process gchat/achievement messages
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
