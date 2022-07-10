@@ -60,11 +60,13 @@ The addon should provide the following functionalities:
 - Timer
 - Stub
 
-> BNetChatThrottleLib
+> ChatThrottleLib (*modified for BNet)
 
 > LibCompress
 
 > LibDataBroker
+
+> LibDeflate
 
 > LibQTip
 
