@@ -52,6 +52,17 @@ function NodeCollection:Print()
     end
 end
 
+function NodeCollection:CandidatePrint()
+	XFG:DoubleLine(LogCategory)
+	XFG:Debug(LogCategory, ObjectName .. " Object")
+	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+	XFG:Debug(LogCategory, "  _CandidateCount: ".. tostring(#self._Candidates))
+	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	for _, _Node in ipairs (self._Candidates) do
+		_Node:Print()
+	end
+end
+
 function NodeCollection:GetKey()
     return self._Key
 end

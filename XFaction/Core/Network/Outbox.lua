@@ -81,7 +81,7 @@ function Outbox:Send(inMessage)
     end
 
     XFG:Debug(LogCategory, "Sending message")
-    inMessage:ShallowPrint()
+    inMessage:Print()
 
     -- If you messaged all possible realm/faction combinations, can switch to local broadcast
     if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
@@ -96,7 +96,7 @@ function Outbox:Send(inMessage)
             else
                 while(inMessage:GetNodeCount() < XFG.Settings.Network.BNet.Link.CandidateCount) do
                     local _Candidate = XFG.Nodes:GetRandomCandidate()
-                    if(not inMessage:ContainsNode(_Candidate)) then
+                    if(not inMessage:ContainsNode(_Candidate:GetKey())) then
                         inMessage:AddNode(_Candidate)
                     end
                 end
