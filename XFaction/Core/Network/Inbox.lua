@@ -130,7 +130,7 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.Outbox:Send(inMessage)
     
     -- It came locally, there are targets remaining and nodes selected
-    elseif(inMessage:HasTargets() and inMessage:HasNodes()) then
+    elseif(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST and inMessage:HasTargets() and inMessage:HasNodes()) then
         for _, _Node in inMessage:NodeIterator() do
             if(_Node:IsMyNode()) then
                 XFG:Debug(LogCategory, 'Player has been selected as a BNet node')
@@ -141,7 +141,7 @@ function Inbox:Process(inMessage, inMessageTag)
         end
 
     -- It came locally, there are targets remaining but no nodes selected
-    elseif(inMessage:HasTargets()) then
+    elseif(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST and inMessage:HasTargets()) then
         inMessage:SetType(XFG.Settings.Network.Type.BNET)
         XFG.Outbox:Send(inMessage)
     end

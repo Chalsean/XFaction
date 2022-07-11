@@ -102,11 +102,12 @@ function NodeCollection:AddNode(inNode)
 	if(not inNode:IsMyNode() and XFG.Player.Realm:Equals(inNode:GetRealm()) and XFG.Player.Faction:Equals(inNode:GetFaction()) and not self:ContainsCandidate(inNode:GetKey())) then
 		table.insert(self._Candidates, inNode)		
 	end
-    return self:Contains(inNode:GetKey())	
+    return self:Contains(inNode:GetKey())
 end
 
 function NodeCollection:RemoveNode(inNode)
     assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', "argument must be Node object")
+	if(inNode:GetName() == XFG.Player.Unit:GetName()) then return end
 	if(self:Contains(inNode:GetKey())) then
 		self._NodeCount = self._NodeCount - 1
 		self._Nodes[inNode:GetKey()] = nil
