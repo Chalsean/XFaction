@@ -132,20 +132,12 @@ function Friend:IsRunningAddon(inBoolean)
             -- New link has been established
             if(self:HasTarget()) then
                 local _Target = self:GetTarget()
-                if(not XFG.Nodes:Contains(self:GetName())) then
-                    local _Node = Node:new()
-                    _Node:SetKey(self:GetName())
-                    _Node:SetName(self:GetName())
-                    _Node:SetRealm(_Target:GetRealm())
-                    _Node:SetFaction(_Target:GetFaction())
-                    XFG.Nodes:AddNode(_Node)
-                end
-
-                local _Link = Link:new()
-                _Link:SetFromNode(XFG.Nodes:GetNode(XFG.Player.Unit:GetName()))
-                _Link:SetToNode(XFG.Nodes:GetNode(self:GetName()))
-                _Link:Initialize()
-                XFG.Links:AddLink(_Link)
+                local _NewLink = Link:new()
+                _NewLink:SetToName(self:GetName())
+                _NewLink:SetToRealm(_Target:GetRealm())
+                _NewLink:SetToFaction(_Target:GetFaction())
+                _NewLink:Initialize()
+                XFG.Links:AddLink(_NewLink)
                 XFG.DataText.Links:RefreshBroker()
             end
         end

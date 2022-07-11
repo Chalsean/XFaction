@@ -64,8 +64,6 @@ L['ALIGNMENT'] = 'Justification'
 L['ORDER'] = 'Order'
 L['RAID'] = 'Raid'
 L['PVP'] = 'PvP'
-L['NODE'] = 'Node'
-L['CANDIDATE'] = 'Candidate'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
