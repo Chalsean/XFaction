@@ -118,13 +118,14 @@ function Inbox:Process(inMessage, inMessageTag)
         end
     end
 
-    --inMessage:ShallowPrint()
+    inMessage:ShallowPrint()
 
     --==========================================
     -- Forwarding logic
     --==========================================
     -- If came via BNet then local
     if(inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
+        XFG:Debug(LogCategory, 'Message came via BNet, broadcasting to local channel')
         inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
         XFG.Outbox:Send(inMessage)
     
@@ -132,6 +133,7 @@ function Inbox:Process(inMessage, inMessageTag)
     elseif(inMessage:HasTargets() and inMessage:HasNodes()) then
         for _, _Node in inMessage:NodeIterator() do
             if(_Node:IsMyNode()) then
+                XFG:Debug(LogCategory, 'Player has been selected as a BNet node')
                 inMessage:SetType(XFG.Settings.Network.Type.BNET)
                 XFG.Outbox:Send(inMessage)
                 break

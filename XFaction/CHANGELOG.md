@@ -1,7 +1,7 @@
-### Version 3.2.0 [ 07.XX.2022 ]
+### Version 3.2.0 [ 07.10.2022 ]
 
 [XFaction]
-- Refactored some of the link node logic to try to reduce overall BNet traffic
+- Refactored the link node logic to reduce overall BNet traffic
 
 ### Version 3.1.0 [ 07.10.2022 ]
 
