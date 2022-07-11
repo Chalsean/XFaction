@@ -72,7 +72,7 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-    local _Message --= XFG:DecodeMessage(inEncodedMessage)
+    local _Message
     if(pcall(function () _Message = XFG:DecodeMessage(inEncodedMessage) end)) then
        self:Process(_Message, inMessageTag)
     else
