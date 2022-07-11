@@ -91,7 +91,7 @@ function Message:Print()
     for _, _Target in pairs (self:GetTargets()) do
         _Target:Print()
     end
-    for _, _Node in pairs (self:NodeIterator()) do
+    for _, _Node in self:NodeIterator() do
         _Node:Print()
     end
 end

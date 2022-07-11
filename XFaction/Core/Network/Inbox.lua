@@ -118,7 +118,7 @@ function Inbox:Process(inMessage, inMessageTag)
         end
     end
 
-    inMessage:ShallowPrint()
+    --inMessage:ShallowPrint()
 
     --==========================================
     -- Forwarding logic

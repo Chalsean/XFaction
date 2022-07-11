@@ -34,8 +34,8 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	_MessageData.V = inMessage:GetVersion()
 	if(inMessage:HasTargets() and inMessage:HasNodes()) then
 		_MessageData.L = ''
-		for _, _Node in (inMessage:NodeIterator()) do
-			_MessageData.L = _Message.L .. _Node:GetString() .. ';'
+		for _, _Node in inMessage:NodeIterator() do
+			_MessageData.L = _MessageData.L .. _Node:GetString() .. ';'
 		end
 	end
 
