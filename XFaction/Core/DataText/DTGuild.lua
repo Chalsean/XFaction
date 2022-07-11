@@ -254,7 +254,7 @@ function DTGuild:OnEnter(this)
 		line = _Tooltip:AddLine()		
 	end
 
-	if(XFG.Config.DataText.Guild.MOTD and XFG.Cache.DTGuildTotalEnabled > 9) then
+	if(XFG.Config.DataText.Guild.MOTD and XFG.Cache.DTGuildTotalEnabled > 11) then
 		local _MOTD = GetGuildRosterMOTD()
 		local _LineWords = ''
 		local _LineLength = 150
