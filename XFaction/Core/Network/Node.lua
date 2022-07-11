@@ -15,6 +15,7 @@ function Node:new()
     self._Realm = nil
     self._Faction = nil
     self._Initialized = false
+    self._LinkCount = 0
 
     return _Object
 end
@@ -103,4 +104,14 @@ function Node:GetString()
     return self:GetName() .. ':' .. 
            self:GetRealm():GetID() .. ':' .. 
            self:GetFaction():GetID()
+end
+
+function Node:GetLinkCount()
+    return self._LinkCount
+end
+
+function Node:SetLinkCount(inLinkCount)
+    assert(type(inLinkCount) == 'number')
+    self._LinkCount = inLinkCount
+    return self:GetLinkCount()
 end

@@ -70,17 +70,37 @@ end
 function LinkCollection:AddLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey()) == false) then
+		self._Links[inLink:GetKey()] = inLink
 		self._LinkCount = self._LinkCount + 1
 		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		XFG.DataText.Links:RefreshBroker()
+
+		local _LinkCount = inLink:GetFromNode():GetLinkCount() + 1
+		inLink:GetFromNode():SetLinkCount(_LinkCount)
+
+		_LinkCount = inLink:GetToNode():GetLinkCount() + 1
+		inLink:GetToNode():SetLinkCount(_LinkCount)
 	end
-    self._Links[inLink:GetKey()] = inLink	
     return self:Contains(inLink:GetKey())	
 end
 
 function LinkCollection:RemoveLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey())) then
+		local _LinkCount = inLink:GetFromNode():GetLinkCount() - 1
+		if(_LinkCount == 0) then
+			XFG.Nodes:RemoveNode(inLink:GetFromNode())
+		else
+			inLink:GetFromNode():SetLinkCount(_LinkCount)
+		end
+
+		_LinkCount = inLink:GetToNode():GetLinkCount() - 1
+		if(_LinkCount == 0) then
+			XFG.Nodes:RemoveNode(inLink:GetToNode())
+		else
+			inLink:GetToNode():SetLinkCount(_LinkCount)
+		end
+
 		self._LinkCount = self._LinkCount - 1
 		self._Links[inLink:GetKey()] = nil
 		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
