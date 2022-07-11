@@ -123,27 +123,30 @@ function Inbox:Process(inMessage, inMessageTag)
     --==========================================
     -- Forwarding logic
     --==========================================
-
-    -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-    if(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
-        inMessage:SetType(XFG.Settings.Network.Type.BNET)
-        XFG.Outbox:Send(inMessage)
-
-    -- If there are still BNet targets remaining and came via BNet, broadcast
-    elseif(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
-        inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-        XFG.Outbox:Send(inMessage)
-
-    -- If came via BNet and no more targets, message locally only
-    elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
+    -- If came via BNet then local
+    if(inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
         inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
+        XFG.Outbox:Send(inMessage)
+    
+    -- It came locally, there are targets remaining and nodes selected
+    elseif(inMessage:HasTargets() and inMessage:HasNodes()) then
+        for _, _Node in inMessage:NodeIterator() do
+            if(_Node:IsMyNode()) then
+                inMessage:SetType(XFG.Settings.Network.Type.BNET)
+                XFG.Outbox:Send(inMessage)
+                break
+            end
+        end
+
+    -- It came locally, there are targets remaining but no nodes selected
+    elseif(inMessage:HasTargets()) then
+        inMessage:SetType(XFG.Settings.Network.Type.BNET)
         XFG.Outbox:Send(inMessage)
     end
 
     --==========================================
     -- Process message
     --==========================================
-
     -- Process gchat/achievement messages
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
         if(XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then

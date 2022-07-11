@@ -94,7 +94,7 @@ function Outbox:Send(inMessage)
                     inMessage:AddNode(_Candidate)
                 end
             else
-                while(XFG.Nodes:GetNodeCount() < XFG.Settings.Network.BNet.Link.CandidateCount) do
+                while(inMessage:GetNodeCount() < XFG.Settings.Network.BNet.Link.CandidateCount) do
                     local _Candidate = XFG.Nodes:GetRandomCandidate()
                     if(not inMessage:ContainsNode(_Candidate)) then
                         inMessage:AddNode(_Candidate)

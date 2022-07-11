@@ -107,7 +107,7 @@ function LinkCollection:ProcessMessage(inMessage)
 			if(_NewLink:IsMyLink() == false) then
 				_Links[_NewLink:GetKey()] = _NewLink
 				-- All links in the message should be "From" the same person
-				_FromName = _NewLink:GetFromName()
+				_FromName = _NewLink:GetFromNode():GetName()
 			end
 		else
 			XFG:Warn(LogCategory, 'Failed to parse received links message')
