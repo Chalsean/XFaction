@@ -67,7 +67,7 @@ function Link:SetKey(inKey)
 end
 
 function Link:IsMyLink()
-    return self._FromNode:IsMyNode() or self._ToNode:IsMyNode()
+    return self:GetFromNode():IsMyNode() or self:GetToNode():IsMyNode()
 end
 
 function Link:GetFromNode()
