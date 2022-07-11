@@ -70,20 +70,40 @@ end
 function LinkCollection:AddLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey()) == false) then
+		self._Links[inLink:GetKey()] = inLink
 		self._LinkCount = self._LinkCount + 1
-		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
+		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		XFG.DataText.Links:RefreshBroker()
+
+		local _LinkCount = inLink:GetFromNode():GetLinkCount() + 1
+		inLink:GetFromNode():SetLinkCount(_LinkCount)
+
+		_LinkCount = inLink:GetToNode():GetLinkCount() + 1
+		inLink:GetToNode():SetLinkCount(_LinkCount)
 	end
-    self._Links[inLink:GetKey()] = inLink	
     return self:Contains(inLink:GetKey())	
 end
 
 function LinkCollection:RemoveLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey())) then
+		local _LinkCount = inLink:GetFromNode():GetLinkCount() - 1
+		if(_LinkCount == 0) then
+			XFG.Nodes:RemoveNode(inLink:GetFromNode())
+		else
+			inLink:GetFromNode():SetLinkCount(_LinkCount)
+		end
+
+		_LinkCount = inLink:GetToNode():GetLinkCount() - 1
+		if(_LinkCount == 0) then
+			XFG.Nodes:RemoveNode(inLink:GetToNode())
+		else
+			inLink:GetToNode():SetLinkCount(_LinkCount)
+		end
+
 		self._LinkCount = self._LinkCount - 1
 		self._Links[inLink:GetKey()] = nil
-		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())		
+		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
 		XFG.DataText.Links:RefreshBroker()
 	end
     return self:Contains(inLink:GetKey()) == false
@@ -107,7 +127,7 @@ function LinkCollection:ProcessMessage(inMessage)
 			if(_NewLink:IsMyLink() == false) then
 				_Links[_NewLink:GetKey()] = _NewLink
 				-- All links in the message should be "From" the same person
-				_FromName = _NewLink:GetFromName()
+				_FromName = _NewLink:GetFromNode():GetName()
 			end
 		else
 			XFG:Warn(LogCategory, 'Failed to parse received links message')
@@ -117,7 +137,7 @@ function LinkCollection:ProcessMessage(inMessage)
 	-- Remove any stale links
 	for _, _Link in self:Iterator() do
 		-- Consider that we may have gotten link information from the other node
-		if(_Link:IsMyLink() == false and (_Link:GetFromName() == _FromName or _Link:GetToName() == _FromName) and _Links[_Link:GetKey()] == nil) then
+		if(_Link:IsMyLink() == false and (_Link:GetFromNode():GetName() == _FromName or _Link:GetToNode():GetName() == _FromName) and _Links[_Link:GetKey()] == nil) then
 			self:RemoveLink(_Link)
 			XFG:Debug(LogCategory, 'Removed link due to node broadcast [%s]', _Link:GetKey())
 		end
@@ -141,7 +161,7 @@ end
 function LinkCollection:IsNode(inName)
 	assert(type(inName) == 'string')
 	for _, _Link in self:Iterator() do
-		if(_Link:GetFromName() == inName or _Link:GetToName() == inName) then
+		if(_Link:GetFromNode():GetName() == inName or _Link:GetToNode():GetName() == inName) then
 			return true
 		end
 	end
@@ -151,7 +171,7 @@ end
 function LinkCollection:RemoveNode(inName)
 	assert(type(inName) == 'string')
 	for _, _Link in self:Iterator() do
-		if(_Link:GetFromName() == inName or _Link:GetToName() == inName) then
+		if(_Link:GetFromNode():GetName() == inName or _Link:GetToNode():GetName() == inName) then
 			self:RemoveLink(_Link)
 		end
 	end
@@ -188,11 +208,11 @@ end
 function LinkCollection:RestoreBackup()
 	if(XFG.DB.Backup.Links ~= nil and strlen(XFG.DB.Backup.Links) > 0) then
 		local _Links = string.Split(XFG.DB.Backup.Links, '|')
-		for _, _Link in pairs (_Links) do
-			local _NewLink = Link:new()
-			_NewLink:SetObjectFromString(_Link)
-			self:AddLink(_NewLink)
-			XFG:Debug(LogCategory, 'Restored link from backup [%s]', _NewLink:GetKey())
+		for _, _LinkString in pairs (_Links) do
+			local _Link = Link:new()
+			_Link:SetObjectFromString(_LinkString)
+			self:AddLink(_Link)
+			XFG:Debug(LogCategory, 'Restored link from backup [%s]', _Link:GetKey())
 		end
 	end
 end

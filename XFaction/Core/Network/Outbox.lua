@@ -75,7 +75,6 @@ end
 
 function Outbox:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
-    if(inMessage:HasUnitData() and not XFG.Settings.System.Roster) then return end
     if(inMessage:IsInitialized() == false) then
 		-- Review: double check this isn't overriding the timestamp of the message
         inMessage:Initialize()
@@ -84,11 +83,29 @@ function Outbox:Send(inMessage)
     XFG:Debug(LogCategory, "Sending message")
     inMessage:ShallowPrint()
 
-    -- If you messaged all possible realm/faction combinations, can switch to local broadcast    
+    -- If you messaged all possible realm/faction combinations, can switch to local broadcast
     if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
         XFG.BNet:Send(inMessage)
-        if(inMessage:HasTargets() == false and inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST) then
+        -- If targets remain, pick X number of links to request them to bnet for you
+        if(inMessage:HasTargets() and not inMessage:HasNodes()) then
+            local _CandidateCount = XFG.Nodes:GetCandidateCount()
+            if(_CandidateCount <= XFG.Settings.Network.BNet.Link.CandidateCount) then
+                for _, _Node in XFG.Nodes:CandidateIterator() do
+                    inMessage:AddNode(_Candidate)
+                end
+            else
+                while(inMessage:GetNodeCount() < XFG.Settings.Network.BNet.Link.CandidateCount) do
+                    local _Candidate = XFG.Nodes:GetRandomCandidate()
+                    if(not inMessage:ContainsNode(_Candidate:GetKey())) then
+                        inMessage:AddNode(_Candidate)
+                    end
+                end
+            end
+
+        -- If all bnet targets are accounted for, switch to local only
+        elseif(not inMessage:HasTargets() and inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST) then
             XFG:Debug(LogCategory, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
+            inMessage:RemoveAllNodes()
             inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
         end
     end

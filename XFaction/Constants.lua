@@ -55,9 +55,6 @@ XFG.Cache = {
 }
 
 XFG.Settings = {
-	System = {
-		Roster = true,
-	},
 	Player = {
 		Heartbeat = 60 * 2,      -- Seconds between player status broadcast
 		MinimumHeartbeat = 15
@@ -109,7 +106,9 @@ XFG.Settings = {
 			Link = {
 				Broadcast = 60 * 2, -- Seconds between broadcasting links
 				Scan = 60 * 3,      -- Seconds between link scans for stale links
-				Stale = 60 * 10     -- Seconds until considering a link stale
+				Stale = 60 * 10,    -- Seconds until considering a link stale
+				CandidateCount = 3, -- If cannot bnet yourself, select X candidates to send for you
+				NodeChance = 25,
 			},
 		},
 		Message = {

@@ -24,7 +24,6 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	end
 
 	_MessageData.K = inMessage:GetKey()
-	_MessageData.T = inMessage:GetTo()
 	_MessageData.F = inMessage:GetFrom()	
 	_MessageData.S = inMessage:GetSubject()
 	_MessageData.Y = inMessage:GetType()
@@ -33,6 +32,12 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	_MessageData.P = inMessage:GetPacketNumber()
 	_MessageData.Q = inMessage:GetTotalPackets()
 	_MessageData.V = inMessage:GetVersion()
+	if(inMessage:HasTargets() and inMessage:HasNodes()) then
+		_MessageData.L = ''
+		for _, _Node in inMessage:NodeIterator() do
+			_MessageData.L = _MessageData.L .. _Node:GetString() .. ';'
+		end
+	end
 
 	return XFG:Serialize(_MessageData)
 end

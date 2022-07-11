@@ -254,7 +254,7 @@ function DTGuild:OnEnter(this)
 		line = _Tooltip:AddLine()		
 	end
 
-	if(XFG.Config.DataText.Guild.MOTD and XFG.Cache.DTGuildTotalEnabled > 9) then
+	if(XFG.Config.DataText.Guild.MOTD and XFG.Cache.DTGuildTotalEnabled > 11) then
 		local _MOTD = GetGuildRosterMOTD()
 		local _LineWords = ''
 		local _LineLength = 150
@@ -264,14 +264,14 @@ function DTGuild:OnEnter(this)
 				if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
 					_LineWords = _LineWords .. ' ' .. _Word
 				else
-					_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 9)
+					_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 11)
 					line = _Tooltip:AddLine()
 					_LineWords = ''				
 				end
 			end
 		end
 		if(strlen(_LineWords) > 0) then
-			_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 9)
+			_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 11)
 			line = _Tooltip:AddLine()
 		end
 		line = _Tooltip:AddLine()
