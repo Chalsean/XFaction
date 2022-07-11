@@ -72,22 +72,19 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-    local _Message
+    local _Message = nil
     if(pcall(function () _Message = XFG:DecodeMessage(inEncodedMessage) end)) then
-       self:Process(_Message, inMessageTag)
+        self:Process(_Message, inMessageTag)
     else
-       XFG:Warn(LogCategory, 'Failed to decode received message [%s:%s:%s]', inSender, inMessageTag, inDistribution)
+        XFG:Warn(LogCategory, 'Failed to decode received message [%s:%s:%s]', inSender, inMessageTag, inDistribution)
     end    
 end
 
 function Inbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 
-    --==========================================
-    -- Ignore message logic
-    --==========================================
-
     -- Ignore if it's your own message
+    -- Due to startup timing, use GUID directly rather than from Unit object
 	if(inMessage:GetFrom() == XFG.Player.GUID) then
         return
 	end
@@ -99,10 +96,6 @@ function Inbox:Process(inMessage, inMessageTag)
     else
         XFG.Mailbox:AddMessage(inMessage)
     end
-
-    --==========================================
-    -- Deserialize data
-    --==========================================
 
     -- Deserialize unit data
     if(inMessage:HasUnitData()) then
@@ -120,35 +113,22 @@ function Inbox:Process(inMessage, inMessageTag)
 
     inMessage:ShallowPrint()
 
-    --==========================================
-    -- Forwarding logic
-    --==========================================
-    -- If came via BNet then local
-    if(inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
-        XFG:Debug(LogCategory, 'Message came via BNet, broadcasting to local channel')
-        inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
-        XFG.Outbox:Send(inMessage)
-    
-    -- It came locally, there are targets remaining and nodes selected
-    elseif(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST and inMessage:HasTargets() and inMessage:HasNodes()) then
-        for _, _Node in inMessage:NodeIterator() do
-            if(_Node:IsMyNode()) then
-                XFG:Debug(LogCategory, 'Player has been selected as a BNet node')
-                inMessage:SetType(XFG.Settings.Network.Type.BNET)
-                XFG.Outbox:Send(inMessage)
-                break
-            end
-        end
-
-    -- It came locally, there are targets remaining but no nodes selected
-    elseif(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST and inMessage:HasTargets()) then
+    -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
+    if(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
         inMessage:SetType(XFG.Settings.Network.Type.BNET)
+        XFG.Outbox:Send(inMessage)
+
+    -- If there are still BNet targets remaining and came via BNet, broadcast
+    elseif(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
+        inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        XFG.Outbox:Send(inMessage)
+
+    -- If came via BNet and no more targets, message locally only
+    elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
+        inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
         XFG.Outbox:Send(inMessage)
     end
 
-    --==========================================
-    -- Process message
-    --==========================================
     -- Process gchat/achievement messages
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
         if(XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then

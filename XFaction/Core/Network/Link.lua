@@ -11,8 +11,12 @@ function Link:new()
     self.__name = ObjectName
 
     self._Key = nil
-    self._FromNode = nil
-    self._ToNode = nil
+    self._FromName = nil
+    self._FromRealm = nil
+    self._FromFaction = nil
+    self._ToName = nil
+    self._ToRealm = nil
+    self._ToFaction = nil
     self._EpochTime = 0
     self._Initialized = false
 
@@ -37,10 +41,12 @@ end
 
 function Link:Initialize()
     if(self:IsInitialized() == false) then
+        self:SetFromName(XFG.Player.Unit:GetName())
+        self:SetFromRealm(XFG.Player.Realm)
+        self:SetFromFaction(XFG.Player.Faction)
+        self:SetKey(GetLinkKey(self:GetFromName(), self:GetToName()))
         local _EpochTime = GetServerTime()
         self:SetTimeStamp(_EpochTime)
-        local _Key = GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName())
-        self:SetKey(_Key)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -51,9 +57,24 @@ function Link:Print()
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(LogCategory, "  _EpochTime (" .. type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-    self._FromNode:Print()
-    self._ToNode:Print()
+    XFG:Debug(LogCategory, "  _FromName (" .. type(self._FromName) .. "): ".. tostring(self._FromName))
+    XFG:Debug(LogCategory, "  _ToName (" .. type(self._ToName) .. "): ".. tostring(self._ToName))
+    XFG:Debug(LogCategory, "  _FromRealm (" .. type(self._FromRealm) .. ")")
+    if(self:HasFromRealm()) then
+        self._FromRealm:Print()
+    end
+    XFG:Debug(LogCategory, "  _FromFaction (" .. type(self._FromFaction) .. ")")
+    if(self:HasFromFaction()) then
+        self._FromFaction:Print()
+    end
+    XFG:Debug(LogCategory, "  _ToRealm (" .. type(self._ToRealm) .. ")")
+    if(self:HasToRealm()) then
+        self._ToRealm:Print()
+    end
+    XFG:Debug(LogCategory, "  _ToFaction (" .. type(self._ToFaction) .. ")")
+    if(self:HasToFaction()) then
+        self._ToFaction:Print()
+    end
 end
 
 function Link:GetKey()
@@ -67,53 +88,122 @@ function Link:SetKey(inKey)
 end
 
 function Link:IsMyLink()
-    return self:GetFromNode():IsMyNode() or self:GetToNode():IsMyNode()
+    return (self:HasFromName() and self:GetFromName() == XFG.Player.Unit:GetName()) or
+           (self:HasToName() and self:GetToName() == XFG.Player.Unit:GetName())
 end
 
-function Link:GetFromNode()
-    return self._FromNode
+function Link:HasFromName()
+    return self._FromName ~= nil
 end
 
-function Link:SetFromNode(inNode)
-    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
-    self._FromNode = inNode
-    return self:GetFromNode()
+function Link:GetFromName()
+    return self._FromName
 end
 
-function Link:GetToNode()
-    return self._ToNode
+function Link:SetFromName(inName)
+    assert(type(inName) == 'string')
+    self._FromName = inName
+    return self:GetFromName()
 end
 
-function Link:SetToNode(inNode)
-    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
-    self._ToNode = inNode
-    return self:GetToNode()
+function Link:HasFromRealm()
+    return self._FromRealm ~= nil
+end
+
+function Link:GetFromRealm()
+    return self._FromRealm
+end
+
+function Link:SetFromRealm(inRealm)
+    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
+    self._FromRealm = inRealm
+    return self:GetFromRealm()
+end
+
+function Link:HasFromFaction()
+    return self._FromFaction ~= nil
+end
+
+
+function Link:GetFromFaction()
+    return self._FromFaction
+end
+
+function Link:SetFromFaction(inFaction)
+    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
+    self._FromFaction = inFaction
+    return self:GetFromFaction()
+end
+
+function Link:HasToName()
+    return self._ToName ~= nil
+end
+
+function Link:GetToName()
+    return self._ToName
+end
+
+function Link:SetToName(inName)
+    assert(type(inName) == 'string')
+    self._ToName = inName
+    return self:GetToName()
+end
+
+function Link:HasToRealm()
+    return self._ToRealm ~= nil
+end
+
+function Link:GetToRealm()
+    return self._ToRealm
+end
+
+function Link:SetToRealm(inRealm)
+    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
+    self._ToRealm = inRealm
+    return self:GetToRealm()
+end
+
+function Link:HasToFaction()
+    return self._ToFaction ~= nil
+end
+
+
+function Link:GetToFaction()
+    return self._ToFaction
+end
+
+function Link:SetToFaction(inFaction)
+    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
+    self._ToFaction = inFaction
+    return self:GetToFaction()
 end
 
 function Link:GetString()
-    return self:GetFromNode():GetString() .. ';' .. self:GetToNode():GetString()
+    local _FromRealm = self:GetFromRealm()
+    local _ToRealm = self:GetToRealm()
+    local _FromFaction = self:GetFromFaction()
+    local _ToFaction = self:GetToFaction()
+    return self:GetFromName() .. ':' .. _FromRealm:GetID() .. ':' .. _FromFaction:GetID() .. ';' .. self:GetToName() .. ':' .. _ToRealm:GetID() .. ':' .. _ToFaction:GetID()
 end
 
 function Link:SetObjectFromString(inLinkString)
-    assert(type(inLinkString) == 'string')
+    assert(type(inLinkString) == 'string')    
     local _Nodes = string.Split(inLinkString, ';')
 
-    local _FromNode = Node:new(); _FromNode:Initialize(_Nodes[1])
-    if(not XFG.Nodes:Contains(_FromNode:GetKey())) then
-        XFG.Nodes:AddNode(_FromNode)
-    end
-    self:SetFromNode(XFG.Nodes:GetNode(_FromNode:GetKey()))
+    local _FromNodeIDs = string.Split(_Nodes[1], ':')  
+    self:SetFromName(_FromNodeIDs[1])
+    self:SetFromRealm(XFG.Realms:GetRealmByID(tonumber(_FromNodeIDs[2])))
+    self:SetFromFaction(XFG.Factions:GetFaction(tonumber(_FromNodeIDs[3])))
 
-    local _ToNode = Node:new(); _ToNode:Initialize(_Nodes[2])
-    if(not XFG.Nodes:Contains(_ToNode:GetKey())) then
-        XFG.Nodes:AddNode(_ToNode)
-    end
-    self:SetToNode(XFG.Nodes:GetNode(_ToNode:GetKey()))
+    local _ToNodeIDs = string.Split(_Nodes[2], ':')
+    self:SetToName(_ToNodeIDs[1])
+    self:SetToRealm(XFG.Realms:GetRealmByID(tonumber(_ToNodeIDs[2])))
+    self:SetToFaction(XFG.Factions:GetFaction(tonumber(_ToNodeIDs[3])))
     
     local _EpochTime = GetServerTime()
     self:SetTimeStamp(_EpochTime)
 
-    local _Key = GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName())
+    local _Key = GetLinkKey(self:GetFromName(), self:GetToName())
     self:SetKey(_Key)
     self:IsInitialized(true)
     return self:IsInitialized()

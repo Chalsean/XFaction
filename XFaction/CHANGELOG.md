@@ -1,8 +1,3 @@
-### Version 3.2.0 [ 07.10.2022 ]
-
-[XFaction]
-- Refactored the link node logic to reduce overall traffic
-
 ### Version 3.1.0 [ 07.10.2022 ]
 
 [XFaction]

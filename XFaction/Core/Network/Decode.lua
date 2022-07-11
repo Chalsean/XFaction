@@ -16,6 +16,7 @@ local function DeserializeMessage(inSerializedMessage)
 	_Message:Initialize()
 	
 	if(_MessageData.K ~= nil) then	_Message:SetKey(_MessageData.K)	end
+	if(_MessageData.T ~= nil) then	_Message:SetTo(_MessageData.T)	end
 	if(_MessageData.F ~= nil) then _Message:SetFrom(_MessageData.F)	end	
 	if(_MessageData.S ~= nil) then _Message:SetSubject(_MessageData.S) end
 	if(_MessageData.Y ~= nil) then	_Message:SetType(_MessageData.Y) end	
@@ -24,15 +25,6 @@ local function DeserializeMessage(inSerializedMessage)
 	if(_MessageData.P ~= nil) then _Message:SetPacketNumber(_MessageData.P) end
 	if(_MessageData.Q ~= nil) then _Message:SetTotalPackets(_MessageData.Q) end
 	if(_MessageData.V ~= nil) then _Message:SetVersion(_MessageData.V) end
-	if(_MessageData.L ~= nil) then
-		for _, _NodeString in ipairs (string.Split(';', _MessageData.L)) do
-			local _Node = LinkNode:new(); _Node:Initialize(_NodeString)
-			if(not XFG.Nodes:Contains(_Node)) then
-				XFG.Nodes:AddNode(_Node)
-			end
-			_Message:AddNode(XFG.Nodes:GetNode(_Node:GetKey()))
-		end
-	end
 
 	if(_Message.__name == 'GuildMessage') then
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
