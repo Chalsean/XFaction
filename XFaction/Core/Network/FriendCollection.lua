@@ -137,7 +137,7 @@ function FriendCollection:HasFriends()
     return self._FriendsCount > 0
 end
 
-local function IsLink(inAccountInfo)
+local function CanLink(inAccountInfo)
 	if(inAccountInfo.isFriend == true and 
 	   inAccountInfo.gameAccountInfo.isOnline == true and 
 	   inAccountInfo.gameAccountInfo.clientProgram == "WoW") then
@@ -166,7 +166,7 @@ function FriendCollection:CheckFriend(inKey)
 
 	-- Did they go offline?
     if(self:Contains(_AccountInfo.bnetAccountID)) then
-		if(IsLink(_AccountInfo) == false) then
+		if(CanLink(_AccountInfo) == false) then
 			local _Friend = XFG.Friends:GetFriend(_AccountInfo.bnetAccountID)
 			self:RemoveFriend(_Friend:GetKey())
 			XFG:Info(LogCategory, "Friend went offline or to unsupported guild [%s:%d:%d:%d]", _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
@@ -174,7 +174,7 @@ function FriendCollection:CheckFriend(inKey)
 		end
 
 	-- Did they come online on a supported realm/faction?
-	elseif(IsLink(_AccountInfo)) then
+	elseif(CanLink(_AccountInfo)) then
 		local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
 		local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
 		local _Target = XFG.Targets:GetTarget(_Realm, _Faction)

@@ -203,6 +203,7 @@ function TimerEvent:CallbackLogin()
             XFG.Outbox = Outbox:new()
             XFG.Inbox = Inbox:new(); XFG.Inbox:Initialize()            
             XFG.BNet = BNet:new(); BNet:Initialize()
+            XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()
             XFG.Friends = FriendCollection:new(); XFG.Friends:Initialize()
             XFG.Links = LinkCollection:new(); XFG.Links:Initialize()      
 
@@ -241,18 +242,17 @@ function TimerEvent:CallbackLogin()
             CreateTimer('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, false)
 
             -- Register event handlers
-            XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
-            XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()
+            XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()            
             XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
             XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
             XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
             XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
- 
+
             -- Ping friends to find out whos available for BNet
             if(XFG.DB.UIReload == false) then                
                 XFG.BNet:PingFriends()                 
             end
-
+ 
             -- This is stuff waiting a few seconds for ping responses
             XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 7)
             XFG.Initialized = true
@@ -261,13 +261,6 @@ function TimerEvent:CallbackLogin()
             XFG.DataText.Guild:RefreshBroker()
             XFG.DataText.Soulbind:RefreshBroker()
             XFG.DataText.Links:RefreshBroker()
-
-            -- local _Profession = XFG.Player.Unit:GetProfession1()
-            -- local _Link = '|cffffd000|Htrade:Player-5-0AE75DDD:195128:185|h[Cooking]|h|r'
-            -- print(_Link)
-
-            --wipe(XFG.Config.DataText.Guild)
-
             wipe(XFG.DB.Backup)
         end
     end
@@ -326,7 +319,11 @@ end
 
 -- Periodically ping friends to see who is running addon
 function TimerEvent:CallbackPingFriends()
-    XFG.BNet:PingFriends()
+    for _, _Friend in XFG.Friends:Iterator() do
+        if(not _Friend:IsRunningAddon()) then
+            XFG.BNet:PingFriend(_Friend)
+        end
+    end
     local _Timer = XFG.Timers:GetTimer('Ping')
     _Timer:SetLastRan(GetServerTime())
 end
