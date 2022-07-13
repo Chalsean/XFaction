@@ -40,7 +40,7 @@ function TargetCollection:Initialize()
 				XFG:Debug(LogCategory, 'Initializing target [%s]', _Key)
 				self:AddTarget(_NewTarget)
 			end
-			if(_Realm:Equals(XFG.Player.Realm) and _Faction:Equals(XFG.Player.Faction)) then
+			if(XFG.Player.Target == nil and _Realm:Equals(XFG.Player.Realm) and _Faction:Equals(XFG.Player.Faction)) then
 				XFG:Debug(LogCategory, 'Initializing player target [%s]', _Key)
 				XFG.Player.Target = _NewTarget
 			end

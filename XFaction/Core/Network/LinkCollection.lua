@@ -111,7 +111,7 @@ function LinkCollection:ProcessMessage(inMessage)
 			if(_NewLink:IsMyLink() == false) then
 				_Links[_NewLink:GetKey()] = _NewLink
 				-- All links in the message should be "From" the same person
-				_FromName = _NewLink:GetFromName()
+				_FromName = _NewLink:GetFromNode():GetName()
 			end
 		else
 			XFG:Warn(LogCategory, 'Failed to parse received links message')
@@ -121,7 +121,7 @@ function LinkCollection:ProcessMessage(inMessage)
 	-- Remove any stale links
 	for _, _Link in self:Iterator() do
 		-- Consider that we may have gotten link information from the other node
-		if(_Link:IsMyLink() == false and (_Link:GetFromName() == _FromName or _Link:GetToName() == _FromName) and _Links[_Link:GetKey()] == nil) then
+		if(not _Link:IsMyLink() and (_Link:GetFromNode():GetName() == _FromName or _Link:GetToNode():GetName() == _FromName) and _Links[_Link:GetKey()] == nil) then
 			self:RemoveLink(_Link)
 			XFG:Debug(LogCategory, 'Removed link due to node broadcast [%s]', _Link:GetKey())
 		end
