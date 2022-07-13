@@ -106,7 +106,7 @@ function Confederate:RemoveUnit(inKey)
         self._NumberOfUnits = self._NumberOfUnits - 1
         XFG.DataText.Guild:RefreshBroker()
         if(XFG.Nodes:Contains(inKey)) then
-            XFG.Nodes:RemoveNode(inKey)
+            XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(inKey))
         end
         XFG.DataText.Links:RefreshBroker()
     end

@@ -126,9 +126,11 @@ function Inbox:Process(inMessage, inMessageTag)
         -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
         if(XFG.Nodes:GetTargetCount(XFG.Player.Target) > XFG.Settings.Network.BNet.Link.PercentStart) then
             if(math.random(1, 100) <= XFG.Settings.Network.BNet.Link.PercentLevel) then
-                XFG:Debug(LogCategory, 'Randomly selected to forward message')
+                XFG:Debug(LogCategory, 'Randomly selected, forwarding message')
                 inMessage:SetType(XFG.Settings.Network.Type.BNET)
                 XFG.Outbox:Send(inMessage)
+            else
+                XFG:Debug(LogCategory, 'Not randomly selected, will not forward mesesage')
             end
         else
             XFG:Debug(LogCategory, 'Node count under threshold, forwarding message')

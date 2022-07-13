@@ -121,7 +121,7 @@ function Link:SetObjectFromString(inLinkString)
     self:GetFromNode():IncrementLinkCount()
 
     local _ToNode = Node:new()
-    _ToNode:SetObjectFromString(_Nodes[1])
+    _ToNode:SetObjectFromString(_Nodes[2])
     if(not XFG.Nodes:Contains(_ToNode:GetKey())) then
         XFG.Nodes:AddNode(_ToNode)
     end
