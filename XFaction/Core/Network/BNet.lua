@@ -141,6 +141,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
             local _EpochTime = GetServerTime()
             _Friend:SetDateTime(_EpochTime)
             _Friend:IsRunningAddon(true)
+            _Friend:CreateLink()
             if(inEncodedMessage == 'PING') then
                 XFG:Debug(LogCategory, 'Received ping from [%s]', _Friend:GetTag())
             elseif(inEncodedMessage == 'RE:PING') then

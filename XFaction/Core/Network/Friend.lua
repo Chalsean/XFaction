@@ -152,12 +152,18 @@ function Friend:CreateLink()
             _FromNode = Node:new(); _FromNode:MyInitialize()
             XFG.Nodes:AddNode(_FromNode)
         end
+        _NewLink:SetFromNode(_FromNode)
+
         local _ToNode = XFG.Nodes:GetNode(self:GetName())
         if(_ToNode == nil) then
-            local _Node = Node:new()
-            _Node:SetName(self:GetName())
-            _Node:SetTarget(self:GetTarget())
+            _ToNode = Node:new()
+            _ToNode:SetKey(self:GetName())
+            _ToNode:SetName(self:GetName())
+            _ToNode:SetTarget(self:GetTarget())
+            XFG.Nodes:AddNode(_ToNode)
         end
+        _NewLink:SetToNode(_ToNode)
+
         _NewLink:Initialize()
         XFG.Links:AddLink(_NewLink)
         XFG.DataText.Links:RefreshBroker()

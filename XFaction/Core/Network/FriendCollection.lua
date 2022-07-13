@@ -226,6 +226,7 @@ function FriendCollection:RestoreBackup()
 		if(XFG.Friends:Contains(_Key)) then
 			local _Friend = XFG.Friends:GetFriend(_Key)
 			_Friend:IsRunningAddon(true)
+			_Friend:CreateLink()
 			XFG:Info(LogCategory, "  Restored %s friend information from backup", _Friend:GetTag())
 		end
     end

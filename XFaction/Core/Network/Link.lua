@@ -37,9 +37,11 @@ end
 
 function Link:Initialize()
     if(self:IsInitialized() == false) then
-        self:SetFromNode(XFG.Nodes:GetNode(XFG.Player.Unit:GetName()))
         local _EpochTime = GetServerTime()
         self:SetTimeStamp(_EpochTime)
+        if(self:HasFromNode() and self:HasToNode()) then
+            self:SetKey(self:GetFromNode():GetName(), self:GetToNode():GetName())
+        end
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -126,12 +128,7 @@ function Link:SetObjectFromString(inLinkString)
     self:SetToNode(XFG.Nodes:GetNode(_ToNode:GetKey()))
     self:GetToNode():IncrementLinkCount()
 
-    local _EpochTime = GetServerTime()
-    self:SetTimeStamp(_EpochTime)
-
-    local _Key = GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName())
-    self:SetKey(_Key)
-    self:IsInitialized(true)
+    self:Initialize()
     return self:IsInitialized()
 end
 
