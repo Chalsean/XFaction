@@ -157,8 +157,6 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-    if(inSender ~= 69) then return end
-
     local _PacketNumber = tonumber(string.sub(inEncodedMessage, 1, 1))
     local _TotalPackets = tonumber(string.sub(inEncodedMessage, 2, 2))
     local _MessageKey = string.sub(inEncodedMessage, 3, 38)

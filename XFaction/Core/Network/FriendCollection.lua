@@ -123,7 +123,9 @@ function FriendCollection:RemoveFriend(inKey)
 	assert(type(inKey) == 'number')
 	if(self:Contains(inKey)) then
 		local _Friend = self:GetFriend(inKey)
-		XFG.Nodes:RemoveNode(_Friend:GetName())
+		if(XFG.Nodes:Contains(_Friend:GetName())) then
+			XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(_Friend:GetName()))
+		end
 		self._FriendsCount = self._FriendsCount - 1
 		self._Friends[inKey] = nil		
 	end
@@ -150,7 +152,7 @@ local function CanLink(inAccountInfo)
 		if(_Realm == nil) then return false end
 
 		local _Faction = XFG.Factions:GetFactionByName(inAccountInfo.gameAccountInfo.factionName)
-		if(XFG.Targets:Contains(_Realm, _Faction)) then
+		if(not XFG.Player.Faction:Equals(_Faction) or not XFG.Player.Realm:Equals(_Realm)) then
 			return true
 		end
 	end

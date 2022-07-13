@@ -74,9 +74,9 @@ function LinkCollection:AddLink(inLink)
 		inLink:GetFromNode():IncrementLinkCount()
 		inLink:GetToNode():IncrementLinkCount()
 		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
-		XFG.DataText.Links:RefreshBroker()
 	end
-    self._Links[inLink:GetKey()] = inLink	
+    self._Links[inLink:GetKey()] = inLink
+	XFG.DataText.Links:RefreshBroker()	
     return self:Contains(inLink:GetKey())	
 end
 

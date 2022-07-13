@@ -40,7 +40,7 @@ function Link:Initialize()
         local _EpochTime = GetServerTime()
         self:SetTimeStamp(_EpochTime)
         if(self:HasFromNode() and self:HasToNode()) then
-            self:SetKey(self:GetFromNode():GetName(), self:GetToNode():GetName())
+            self:SetKey(GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName()))
         end
         self:IsInitialized(true)
     end

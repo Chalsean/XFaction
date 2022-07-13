@@ -92,7 +92,7 @@ function NodeCollection:RemoveNode(inNode)
 	end
 	for _, _Link in XFG.Links:Iterator() do
 		if(_Link:GetFromNode():Equals(inNode) or _Link:GetToNode():Equals(inNode)) then
-			self:RemoveLink(_Link)
+			XFG.Links:RemoveLink(_Link)
 		end
 	end
     return self:Contains(inNode:GetKey()) == false
