@@ -250,7 +250,7 @@ function TimerEvent:CallbackLogin()
 
             -- Ping friends to find out whos available for BNet
             if(XFG.DB.UIReload == false) then                
-                XFG.BNet:PingFriends()                 
+                XFG.Handlers.TimerEvent:CallbackPingFriends()      
             end
  
             -- This is stuff waiting a few seconds for ping responses
