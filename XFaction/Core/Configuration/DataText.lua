@@ -24,7 +24,7 @@ end
 
 local function RemovedMenuItem(inColumnName)
 	local _Index = XFG.Config.DataText.Guild.Order[inColumnName .. 'Order']
-	XFG.Config.DataText.Guild.Order[_Index] = 0
+	XFG.Config.DataText.Guild.Order[inColumnName .. 'Order'] = 0
 	XFG.Cache.DTGuildTotalEnabled = XFG.Cache.DTGuildTotalEnabled - 1
 	for _ColumnName, _OrderNumber in pairs (XFG.Config.DataText.Guild.Order) do
 		if(_OrderNumber > _Index) then
