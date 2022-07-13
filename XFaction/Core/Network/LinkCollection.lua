@@ -71,11 +71,10 @@ function LinkCollection:AddLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(not self:Contains(inLink:GetKey())) then
 		self._LinkCount = self._LinkCount + 1
+		self:GetFromNode():IncrementLinkCount()
+		self:GetToNode():IncrementLinkCount()
 		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
 		XFG.DataText.Links:RefreshBroker()
-		if(inLink:IsMyLink()) then 
-			self._MyLinkCount = self._MyLinkCount + 1 
-		end
 	end
     self._Links[inLink:GetKey()] = inLink	
     return self:Contains(inLink:GetKey())	
@@ -85,12 +84,11 @@ function LinkCollection:RemoveLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey())) then
 		self._LinkCount = self._LinkCount - 1
+		self:GetFromNode():DecrementLinkCount()
+		self:GetToNode():DecrementLinkCount()
 		self._Links[inLink:GetKey()] = nil
 		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())		
 		XFG.DataText.Links:RefreshBroker()
-		if(inLink:IsMyLink()) then 
-			self._MyLinkCount = self._MyLinkCount - 1 
-		end
 	end
     return self:Contains(inLink:GetKey()) == false
 end
@@ -148,25 +146,6 @@ function LinkCollection:GetMyCount()
 	return self._MyLinkCount
 end
 
-function LinkCollection:IsNode(inName)
-	assert(type(inName) == 'string')
-	for _, _Link in self:Iterator() do
-		if(_Link:GetFromName() == inName or _Link:GetToName() == inName) then
-			return true
-		end
-	end
-	return false
-end
-
-function LinkCollection:RemoveNode(inName)
-	assert(type(inName) == 'string')
-	for _, _Link in self:Iterator() do
-		if(_Link:GetFromName() == inName or _Link:GetToName() == inName) then
-			self:RemoveLink(_Link)
-		end
-	end
-end
-
 function LinkCollection:BroadcastLinks()
 	XFG:Debug(LogCategory, 'Broadcasting links')
 	self._EpochTime = GetServerTime()
@@ -216,11 +195,3 @@ function LinkCollection:PurgeStaleLinks(inEpochTime)
 		end
 	end
 end
-
--- function LinkCollection:UniqueFactionCount(inFaction)
--- 	assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
--- 	local _Count = 0
--- 	for _, _Link in self:Iterator() do
-
--- 	end
--- end

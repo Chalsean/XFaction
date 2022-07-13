@@ -146,12 +146,18 @@ end
 
 function Friend:CreateLink()
     if(self:IsRunningAddon() and self:HasTarget()) then
-        self:IsMyLink(true)
-        local _Target = self:GetTarget()
         local _NewLink = Link:new()
-        _NewLink:SetToName(self:GetName())
-        _NewLink:SetToRealm(_Target:GetRealm())
-        _NewLink:SetToFaction(_Target:GetFaction())
+        local _FromNode = XFG.Nodes:GetNode(XFG.Player.Unit:GetName())
+        if(_FromNode == nil) then
+            _FromNode = Node:new(); _FromNode:MyInitialize()
+            XFG.Nodes:AddNode(_FromNode)
+        end
+        local _ToNode = XFG.Nodes:GetNode(self:GetName())
+        if(_ToNode == nil) then
+            local _Node = Node:new()
+            _Node:SetName(self:GetName())
+            _Node:SetTarget(self:GetTarget())
+        end
         _NewLink:Initialize()
         XFG.Links:AddLink(_NewLink)
         XFG.DataText.Links:RefreshBroker()

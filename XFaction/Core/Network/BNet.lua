@@ -63,14 +63,6 @@ end
 function BNet:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 
-    -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
-    -- if(XFG.Links:GetCount() > XFG.Settings.Network.BNet.Link.PercentStart) then
-    --     if(math.random(1, 100) > XFG.Settings.Network.BNet.Link.PercentLevel) then
-    --         XFG:Debug(LogCategory, 'Was not randomly selected to forward message')
-    --         return
-    --     end
-    -- end
-
     -- Before we do work, lets make sure there are targets and we can message those targets
     local _Links = {}
     for _, _Target in pairs(inMessage:GetTargets()) do

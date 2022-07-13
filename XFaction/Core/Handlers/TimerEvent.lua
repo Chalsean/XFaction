@@ -205,6 +205,7 @@ function TimerEvent:CallbackLogin()
             XFG.BNet = BNet:new(); BNet:Initialize()
             XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()
             XFG.Friends = FriendCollection:new(); XFG.Friends:Initialize()
+            XFG.Nodes = NodeCollection:new(); XFG.Nodes:Initialize()
             XFG.Links = LinkCollection:new(); XFG.Links:Initialize()      
 
             -- If this is a reload, restore friends addon flag
@@ -227,8 +228,7 @@ function TimerEvent:CallbackLogin()
             _NewChannel:SetKey(_ChannelInfo.shortcut)
             _NewChannel:SetID(_ChannelInfo.localID)
             _NewChannel:SetShortName(_ChannelInfo.shortcut)
-            XFG.Channels:AddChannel(_NewChannel)
-            XFG.Channels:SetChannelLast(_NewChannel:GetKey())
+            XFG.Channels:AddChannel(_NewChannel)            
             XFG.Outbox:SetLocalChannel(_NewChannel)
 
             -- Start timers
@@ -268,6 +268,7 @@ end
 
 function TimerEvent:CallbackDelayedStartTimer()
     if(XFG.DB.UIReload == false) then
+        XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
         XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
         XFG.Links:BroadcastLinks()
     end
