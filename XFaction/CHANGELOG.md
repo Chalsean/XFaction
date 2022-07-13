@@ -5,6 +5,8 @@
 - Refactored BNet messaging to reduce redundant overhead in message packets
 - Better granularity on controlling packet size
 - Randomizes BNet forwarding if above a threshold
+- Cleaned up achievement message formatting (Zoombara)
+- Fixed support button lua exception (Zoombara)
 
 ### Version 3.1.0 [ 07.10.2022 ]
 
