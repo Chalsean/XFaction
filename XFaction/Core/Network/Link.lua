@@ -83,7 +83,7 @@ function Link:GetFromNode()
 end
 
 function Link:SetFromNode(inNode)
-    assert(type(inNode) == 'string' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
+    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
     self._FromNode = inNode
     return self:GetFromNode()
 end
@@ -96,8 +96,8 @@ function Link:GetToNode()
     return self._ToNode
 end
 
-function Link:SetFromNode(inNode)
-    assert(type(inNode) == 'string' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
+function Link:SetToNode(inNode)
+    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
     self._ToNode = inNode
     return self:GetToNode()
 end

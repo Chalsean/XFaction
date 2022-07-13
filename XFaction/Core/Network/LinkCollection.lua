@@ -71,9 +71,9 @@ function LinkCollection:AddLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(not self:Contains(inLink:GetKey())) then
 		self._LinkCount = self._LinkCount + 1
-		self:GetFromNode():IncrementLinkCount()
-		self:GetToNode():IncrementLinkCount()
-		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())
+		inLink:GetFromNode():IncrementLinkCount()
+		inLink:GetToNode():IncrementLinkCount()
+		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		XFG.DataText.Links:RefreshBroker()
 	end
     self._Links[inLink:GetKey()] = inLink	
@@ -84,10 +84,10 @@ function LinkCollection:RemoveLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey())) then
 		self._LinkCount = self._LinkCount - 1
-		self:GetFromNode():DecrementLinkCount()
-		self:GetToNode():DecrementLinkCount()
+		inLink:GetFromNode():DecrementLinkCount()
+		inLink:GetToNode():DecrementLinkCount()
 		self._Links[inLink:GetKey()] = nil
-		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromName(), inLink:GetToName())		
+		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
 		XFG.DataText.Links:RefreshBroker()
 	end
     return self:Contains(inLink:GetKey()) == false
@@ -178,10 +178,12 @@ function LinkCollection:RestoreBackup()
 	if(XFG.DB.Backup.Links ~= nil and strlen(XFG.DB.Backup.Links) > 0) then
 		local _Links = string.Split(XFG.DB.Backup.Links, '|')
 		for _, _Link in pairs (_Links) do
-			local _NewLink = Link:new()
-			_NewLink:SetObjectFromString(_Link)
-			self:AddLink(_NewLink)
-			XFG:Debug(LogCategory, 'Restored link from backup [%s]', _NewLink:GetKey())
+			if(_Link ~= nil) then
+				local _NewLink = Link:new()
+				_NewLink:SetObjectFromString(_Link)
+				self:AddLink(_NewLink)
+				XFG:Debug(LogCategory, 'Restored link from backup [%s]', _NewLink:GetKey())
+			end
 		end
 	end
 end

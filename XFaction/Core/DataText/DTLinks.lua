@@ -74,23 +74,21 @@ function DTLinks:RefreshBroker()
 		local _HordeCount = 0
 
 		for _, _Link in XFG.Links:Iterator() do
-			if(_Names[_Link:GetFromName()] == nil) then
-				local _Faction = _Link:GetFromFaction()
-				if(_Faction:GetName() == 'Alliance') then
+			if(_Names[_Link:GetFromNode():GetName()] == nil) then
+				if(_Link:GetFromNode():GetTarget():GetFaction():GetName() == 'Alliance') then
 					_AllianceCount = _AllianceCount + 1
 				else
 					_HordeCount = _HordeCount + 1
 				end
-				_Names[_Link:GetFromName()] = true
+				_Names[_Link:GetFromNode():GetName()] = true
 			end
-			if(_Names[_Link:GetToName()] == nil) then
-				local _Faction = _Link:GetToFaction()
-				if(_Faction:GetName() == 'Alliance') then
+			if(_Names[_Link:GetToNode():GetName()] == nil) then
+				if(_Link:GetToNode():GetTarget():GetFaction():GetName() == 'Alliance') then
 					_AllianceCount = _AllianceCount + 1
 				else
 					_HordeCount = _HordeCount + 1
 				end
-				_Names[_Link:GetToName()] = true
+				_Names[_Link:GetToNode():GetName()] = true
 			end
 		end
 
@@ -133,18 +131,10 @@ function DTLinks:OnEnter(this)
 	line = _Tooltip:AddLine()
 	line = _Tooltip:AddHeader()
 
-	-- Targets collection does not contain player's current realm/faction
 	local _TargetColumn = {}
-	local _TargetName = format('%s%s', format(XFG.Icons.String, XFG.Player.Faction:GetIconID()), XFG.Player.Realm:GetName())
-	_Tooltip:SetCell(line, 1, _TargetName)
-	local _Key = XFG.Player.Realm:GetID() .. ':' .. XFG.Player.Faction:GetID()
-	_TargetColumn[_Key] = 1
-	local i = 2
-
+	local i = 1
 	for _, _Target in XFG.Targets:Iterator() do
-		local _Realm = _Target:GetRealm()
-		local _Faction = _Target:GetFaction()
-		local _TargetName = format('%s%s', format(XFG.Icons.String, _Faction:GetIconID()), _Realm:GetName())
+		local _TargetName = format('%s%s', format(XFG.Icons.String, _Target:GetFaction():GetIconID()), _Target:GetRealm():GetName())
 		_Tooltip:SetCell(line, i, _TargetName)
 		_TargetColumn[_Target:GetKey()] = i
 		i = i + 1
@@ -156,26 +146,18 @@ function DTLinks:OnEnter(this)
 
 	if(XFG.Initialized) then
 		for _, _Link in XFG.Links:Iterator() do
-			local _FromRealm = _Link:GetFromRealm()
-			local _FromFaction = _Link:GetFromFaction()
-			local _ToRealm = _Link:GetToRealm()
-			local _ToFaction = _Link:GetToFaction()
-
-			_FromKey = _FromRealm:GetID() .. ':' .. _FromFaction:GetID()
-			_ToKey = _ToRealm:GetID() .. ':' .. _ToFaction:GetID()
-
-			local _FromName = format("|cffffffff%s|r", _Link:GetFromName())
-			if(_Link:IsMyLink() and _Link:GetFromName() == XFG.Player.Unit:GetName()) then
-				_FromName = format("|cffffff00%s|r", _Link:GetFromName())
+			local _FromName = format("|cffffffff%s|r", _Link:GetFromNode():GetName())
+			if(_Link:IsMyLink() and _Link:GetFromNode():IsMyNode()) then
+				_FromName = format("|cffffff00%s|r", _Link:GetFromNode():GetName())
 			end
 
-			local _ToName = format("|cffffffff%s|r", _Link:GetToName())
-			if(_Link:IsMyLink() and _Link:GetToName() == XFG.Player.Unit:GetName()) then
-				_ToName = format("|cffffff00%s|r", _Link:GetToName())
+			local _ToName = format("|cffffffff%s|r", _Link:GetToNode():GetName())
+			if(_Link:IsMyLink() and _Link:GetToNode():IsMyNode()) then
+				_ToName = format("|cffffff00%s|r", _Link:GetToNode():GetName())
 			end
 
-			_Tooltip:SetCell(line, _TargetColumn[_FromKey], _FromName)
-			_Tooltip:SetCell(line, _TargetColumn[_ToKey], _ToName)
+			_Tooltip:SetCell(line, _TargetColumn[_Link:GetFromNode():GetTarget():GetKey()], _FromName)
+			_Tooltip:SetCell(line, _TargetColumn[_Link:GetToNode():GetTarget():GetKey()], _ToName)
 			
 			line = _Tooltip:AddLine()
 		end

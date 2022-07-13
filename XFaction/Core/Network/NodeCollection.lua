@@ -106,6 +106,6 @@ function NodeCollection:GetCount()
 	return self._NodeCount
 end
 
-function NodeCollection:GetMyTargetCount()
-	return self._TargetCount[XFG.Player.Target:GetKey()] or 0
+function NodeCollection:GetTargetCount(inTarget)
+	return self._TargetCount[inTarget:GetKey()] or 0
 end
