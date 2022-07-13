@@ -120,14 +120,14 @@ XFG.Settings = {
 				LOGOUT = '3',
 				LOGIN = '4',
 				ACHIEVEMENT = '5',
-				LINK = '6'
+				LINK = '6',
 			},
 			Tag = {},
 		},
 		Type = {
 			BROADCAST = '1', -- BNet + Local Channel
 			LOCAL = '3',     -- Local Channel only
-			BNET = '4'       -- BNet only
+			BNET = '4',      -- BNet only
 		},
 		Mailbox = {
 			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages

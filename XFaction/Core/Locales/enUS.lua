@@ -65,6 +65,8 @@ L['ORDER'] = 'Order'
 L['RAID'] = 'Raid'
 L['PVP'] = 'PvP'
 L['NODE'] = 'Node'
+L['ROSTER'] = 'Roster'
+L['DEBUG'] = 'Debug'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -231,3 +233,4 @@ L['DTTOKEN_NAME'] = 'WoW Token (X)'
 --=========================================================================
 L['SUPPORT_UAT'] = 'User Acceptance Testing'
 L['DEBUG_PRINT'] = 'Click any button to ad-hoc print that datacollection to _DebugLog'
+L['DEBUG_ROSTER_TOOLTIP'] = 'Whether all confederate members send roster information'

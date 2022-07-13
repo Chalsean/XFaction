@@ -123,8 +123,9 @@ function FriendCollection:RemoveFriend(inKey)
 	assert(type(inKey) == 'number')
 	if(self:Contains(inKey)) then
 		local _Friend = self:GetFriend(inKey)
-		if(XFG.Nodes:Contains(_Friend:GetName())) then
-			XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(_Friend:GetName()))
+		local _Node = XFG.Nodes:GetNode(_Friend:GetName())
+		if(_Node ~= nil) then
+			XFG.Nodes:RemoveNode(_Node)
 		end
 		self._FriendsCount = self._FriendsCount - 1
 		self._Friends[inKey] = nil		

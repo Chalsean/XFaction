@@ -162,6 +162,11 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     local _MessageKey = string.sub(inEncodedMessage, 3, 38)
     local _MessageData = string.sub(inEncodedMessage, 39, -1)
     XFG:Debug(LogCategory, 'Received packet [%d:%d] of message [%s] from [%d]', _PacketNumber, _TotalPackets, _MessageKey, inSender)
+    -- Temporary, remove after all upgraded to 3.3
+    if(not _TotalPackets) then
+        XFG:Debug(LogCategory, 'Message is in pre-3.3 format, ignoring')
+        return
+    end
 
     XFG.BNet:AddPacket(_MessageKey, _PacketNumber, _MessageData)
     if(XFG.BNet:HasAllPackets(_MessageKey, _TotalPackets)) then
@@ -233,5 +238,5 @@ end
 function BNet:PingFriend(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', 'argument must be a Friend object')
     XFG:Debug(LogCategory, 'Sending ping to [%s]', inFriend:GetTag())
-    BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())
+    BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())    
 end

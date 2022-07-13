@@ -139,7 +139,7 @@ XFG.Defaults = {
                 Label = false,
                 Faction = true
             },
-        }
+        },
     }
 }
     

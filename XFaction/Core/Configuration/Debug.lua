@@ -2,7 +2,7 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Config'
 
 XFG.Options.args.Debug = {
-	name = '',
+	name = XFG.Lib.Locale['DEBUG'],
 	order = 1,
 	type = 'group',
 	args = {
@@ -128,5 +128,5 @@ XFG.Options.args.Debug = {
 				},
 			},
 		},
-	},	
+	},
 }

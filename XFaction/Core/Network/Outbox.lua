@@ -75,7 +75,7 @@ end
 
 function Outbox:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
-    if(inMessage:HasUnitData() and not XFG.Settings.System.Roster) then return end
+    if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.DATA) then return end
     if(inMessage:IsInitialized() == false) then
 		-- Review: double check this isn't overriding the timestamp of the message
         inMessage:Initialize()
@@ -115,7 +115,6 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
 	if(inSubject == nil) then inSubject = XFG.Settings.Network.Message.Subject.DATA end
     -- Update the last sent time, dont need to heartbeat for awhile
-
     if(inUnitData:IsPlayer()) then
         local _EpochTime = GetServerTime()
         if(XFG.Player.LastBroadcast > _EpochTime - XFG.Settings.Player.MinimumHeartbeat) then 
@@ -131,5 +130,5 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
     _Message:SetSubject(inSubject)
     _Message:SetData(inUnitData)
-    self:Send(_Message)    
+    self:Send(_Message)
 end

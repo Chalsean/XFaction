@@ -1,4 +1,4 @@
-### Version 3.3.0 [ 07.15.2022 ]
+### Version 3.3.0 [ 07.13.2022 ]
 
 [XFaction]
 - Switched compression library for BNet communication
