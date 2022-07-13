@@ -13,7 +13,7 @@ function Confederate:new()
     self._Key = nil
     self._Name = nil
     self._Units = {}
-    self._NumberOfUnits = 0
+    self._UnitCount = 0
     
     return Object
 end
@@ -23,7 +23,7 @@ function Confederate:Print()
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _NumberOfUnits (" .. type(self._NumberOfUnits) .. "): ".. tostring(self._NumberOfUnits))
+    XFG:Debug(LogCategory, "  _UnitCount (" .. type(self._UnitCount) .. "): ".. tostring(self._UnitCount))
     XFG:Debug(LogCategory, "  _Units (" .. type(self._Units) .. "): ")
     for _Key, _Unit in pairs (self._Units) do
         _Unit:Print()
@@ -35,7 +35,7 @@ function Confederate:ShallowPrint()
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _NumberOfUnits (" .. type(self._NumberOfUnits) .. "): ".. tostring(self._NumberOfUnits))
+    XFG:Debug(LogCategory, "  _UnitCount (" .. type(self._UnitCount) .. "): ".. tostring(self._UnitCount))
     XFG:Debug(LogCategory, "  _Units (" .. type(self._Units) .. ")")
 end
 
@@ -78,7 +78,7 @@ function Confederate:AddUnit(inUnit)
             return false
         end
     else
-        self._NumberOfUnits = self._NumberOfUnits + 1
+        self._UnitCount = self._UnitCount + 1
         XFG.DataText.Guild:RefreshBroker()
     end
 
@@ -102,13 +102,14 @@ end
 function Confederate:RemoveUnit(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
-        table.RemoveKey(self._Units, inKey)
-        self._NumberOfUnits = self._NumberOfUnits - 1
+        local _Unit = self:GetUnit(inKey)
+        self._Units[inKey] = nil
+        self._UnitCount = self._UnitCount - 1
         XFG.DataText.Guild:RefreshBroker()
-        if(XFG.Nodes:Contains(inKey)) then
-            XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(inKey))
-        end
-        XFG.DataText.Links:RefreshBroker()
+        if(XFG.Nodes:Contains(_Unit:GetName())) then
+            XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(_Unit:GetName()))
+            XFG.DataText.Links:RefreshBroker()
+        end        
     end
 end
 
@@ -116,8 +117,8 @@ function Confederate:Iterator()
 	return next, self._Units, nil
 end
 
-function Confederate:GetNumberOfUnits()
-    return self._NumberOfUnits
+function Confederate:GetCount()
+    return self._UnitCount
 end
 
 function Confederate:CreateBackup()

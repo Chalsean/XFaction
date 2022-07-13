@@ -253,7 +253,7 @@ function TimerEvent:CallbackLogin()
                 XFG.Handlers.TimerEvent:CallbackPingFriends()      
             end
  
-            -- This is stuff waiting a few seconds for ping responses
+            -- This is stuff waiting a few seconds for ping responses or Blizz setup to finish
             XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 7)
             XFG.Initialized = true
 
@@ -267,7 +267,7 @@ function TimerEvent:CallbackLogin()
 end
 
 function TimerEvent:CallbackDelayedStartTimer()
-    if(XFG.DB.UIReload == false) then
+    if(not XFG.DB.UIReload) then
         XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
         XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
         XFG.Links:BroadcastLinks()

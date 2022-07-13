@@ -82,7 +82,7 @@ function NodeCollection:AddNode(inNode)
 end
 
 function NodeCollection:RemoveNode(inNode)
-    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Link object')
+    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
 	if(self:Contains(inNode:GetKey())) then
 		self._NodeCount = self._NodeCount - 1
 		self._Nodes[inNode:GetKey()] = nil
