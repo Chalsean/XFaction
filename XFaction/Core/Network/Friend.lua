@@ -20,6 +20,7 @@ function Friend:new()
     self._Name = nil
     self._IsRunningAddon = false
     self._DateTime = 0  -- Last time we heard from them via addon
+    self._MyLink = false
 
     return _Object
 end
@@ -35,6 +36,7 @@ function Friend:Print()
     XFG:Debug(LogCategory, "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
     XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
     XFG:Debug(LogCategory, "  _IsRunningAddon (" ..type(self._IsRunningAddon) .. "): ".. tostring(self._IsRunningAddon))
+    XFG:Debug(LogCategory, "  _MyLink (" ..type(self._MyLink) .. "): ".. tostring(self._MyLink))
     if(self:HasTarget()) then
         self._Target:Print()
     end
@@ -128,19 +130,6 @@ function Friend:IsRunningAddon(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
     if(inBoolean ~= nil) then
         self._IsRunningAddon = inBoolean
-        if(self._IsRunningAddon) then
-            -- New link has been established
-            if(self:HasTarget()) then
-                local _Target = self:GetTarget()
-                local _NewLink = Link:new()
-                _NewLink:SetToName(self:GetName())
-                _NewLink:SetToRealm(_Target:GetRealm())
-                _NewLink:SetToFaction(_Target:GetFaction())
-                _NewLink:Initialize()
-                XFG.Links:AddLink(_NewLink)
-                XFG.DataText.Links:RefreshBroker()
-            end
-        end
     end
     return self._IsRunningAddon
 end
@@ -153,4 +142,38 @@ function Friend:SetDateTime(inDateTime)
     assert(type(inDateTime) == 'number')
     self._DateTime = inDateTime
     return self:GetDateTime()
+end
+
+function Friend:CreateLink()
+    if(self:IsRunningAddon() and self:HasTarget()) then
+        local _NewLink = Link:new()
+        local _FromNode = XFG.Nodes:GetNode(XFG.Player.Unit:GetName())
+        if(_FromNode == nil) then
+            _FromNode = Node:new(); _FromNode:Initialize()
+            XFG.Nodes:AddNode(_FromNode)
+        end
+        _NewLink:SetFromNode(_FromNode)
+
+        local _ToNode = XFG.Nodes:GetNode(self:GetName())
+        if(_ToNode == nil) then
+            _ToNode = Node:new()
+            _ToNode:SetKey(self:GetName())
+            _ToNode:SetName(self:GetName())
+            _ToNode:SetTarget(self:GetTarget())
+            XFG.Nodes:AddNode(_ToNode)
+        end
+        _NewLink:SetToNode(_ToNode)
+
+        _NewLink:Initialize()
+        XFG.Links:AddLink(_NewLink)
+        XFG.DataText.Links:RefreshBroker()
+    end
+end
+
+function Friend:IsMyLink(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+    if(inBoolean ~= nil) then
+        self._MyLink = inBoolean
+    end
+    return self._MyLink
 end

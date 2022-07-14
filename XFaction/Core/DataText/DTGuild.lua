@@ -184,7 +184,7 @@ function DTGuild:RefreshBroker()
 		if(XFG.Config.DataText.Guild.Label) then
 			_Text = XFG.Lib.Locale['GUILD'] .. ': '
 		end
-		_Text = format('%s|cff3CE13F%d', _Text, XFG.Confederate:GetNumberOfUnits())
+		_Text = format('%s|cff3CE13F%d', _Text, XFG.Confederate:GetCount())
 		self._LDBObject.text = _Text
 	end
 end
@@ -264,14 +264,14 @@ function DTGuild:OnEnter(this)
 				if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
 					_LineWords = _LineWords .. ' ' .. _Word
 				else
-					_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 9)
+					_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 11)
 					line = _Tooltip:AddLine()
 					_LineWords = ''				
 				end
 			end
 		end
 		if(strlen(_LineWords) > 0) then
-			_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 9)
+			_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 11)
 			line = _Tooltip:AddLine()
 		end
 		line = _Tooltip:AddLine()

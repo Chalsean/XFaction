@@ -83,9 +83,14 @@ end
 function Inbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
 
+    --========================================
+    -- Ignore message
+    --========================================
+
     -- Ignore if it's your own message
     -- Due to startup timing, use GUID directly rather than from Unit object
 	if(inMessage:GetFrom() == XFG.Player.GUID) then
+        inMessage:Print()
         return
 	end
 
@@ -113,21 +118,40 @@ function Inbox:Process(inMessage, inMessageTag)
 
     inMessage:ShallowPrint()
 
+    --========================================
+    -- Forward message
+    --========================================
+
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
-        inMessage:SetType(XFG.Settings.Network.Type.BNET)
-        XFG.Outbox:Send(inMessage)
+        -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
+        if(XFG.Nodes:GetTargetCount(XFG.Player.Target) > XFG.Settings.Network.BNet.Link.PercentStart) then
+            if(math.random(1, 100) <= XFG.Settings.Network.BNet.Link.PercentLevel) then
+                XFG:Debug(LogCategory, 'Randomly selected, forwarding message')
+                inMessage:SetType(XFG.Settings.Network.Type.BNET)
+                XFG.Outbox:Send(inMessage)
+            else
+                XFG:Debug(LogCategory, 'Not randomly selected, will not forward mesesage')
+            end
+        else
+            XFG:Debug(LogCategory, 'Node count under threshold, forwarding message')
+            inMessage:SetType(XFG.Settings.Network.Type.BNET)
+            XFG.Outbox:Send(inMessage)
+        end        
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
-    elseif(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
-        inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-        XFG.Outbox:Send(inMessage)
-
-    -- If came via BNet and no more targets, message locally only
-    elseif(inMessage:HasTargets() == false and inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
-        inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
+    elseif(inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
+        if(inMessage:HasTargets()) then
+            inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        else
+            inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
+        end
         XFG.Outbox:Send(inMessage)
     end
+
+    --========================================
+    -- Process message
+    --========================================
 
     -- Process gchat/achievement messages
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
@@ -149,8 +173,8 @@ function Inbox:Process(inMessage, inMessageTag)
         local _UnitData = XFG.Confederate:GetUnit(inMessage:GetFrom())
         XFG.Confederate:RemoveUnit(inMessage:GetFrom())
         XFG.DataText.Guild:RefreshBroker()
-        if(_UnitData ~= nil) then
-            XFG.Links:RemoveNode(_UnitData:GetName())
+        if(_UnitData ~= nil and XFG.Nodes:Contains(_UnitData:GetName())) then
+            XFG.Nodes:RemoveNode(_UnitData:GetName())
             XFG.DataText.Links:RefreshBroker()
         end
         if(XFG.Player.Realm:Equals(inMessage:GetRealm()) == false or XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then

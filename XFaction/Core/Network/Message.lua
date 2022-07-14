@@ -222,7 +222,9 @@ end
 
 function Message:SetAllTargets()
     for _, _Target in XFG.Targets:Iterator() do
-        self:AddTarget(_Target)
+        if(not _Target:Equals(XFG.Player.Target)) then
+            self:AddTarget(_Target)
+        end
     end
 end
 

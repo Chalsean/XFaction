@@ -97,6 +97,5 @@ function ChannelEvent:CallbackOffline(_, inUnitName, _, _, _, _, _, inChannelID,
 		local _UnitData = XFG.Confederate:GetUnit(inGUID)
 		XFG.Confederate:RemoveUnit(inGUID)
 		XFG.Frames.System:DisplayLocalOffline(_UnitData)
-		XFG.Links:RemoveNode(_UnitData:GetName())		
 	end
 end
