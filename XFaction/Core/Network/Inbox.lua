@@ -90,6 +90,7 @@ function Inbox:Process(inMessage, inMessageTag)
     -- Ignore if it's your own message
     -- Due to startup timing, use GUID directly rather than from Unit object
 	if(inMessage:GetFrom() == XFG.Player.GUID) then
+        inMessage:Print()
         return
 	end
 
@@ -139,7 +140,7 @@ function Inbox:Process(inMessage, inMessageTag)
         end        
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
-    elseif(XFG.Settings.Network.Message.Tag.BNET) then
+    elseif(inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
         if(inMessage:HasTargets()) then
             inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
         else
@@ -172,7 +173,7 @@ function Inbox:Process(inMessage, inMessageTag)
         local _UnitData = XFG.Confederate:GetUnit(inMessage:GetFrom())
         XFG.Confederate:RemoveUnit(inMessage:GetFrom())
         XFG.DataText.Guild:RefreshBroker()
-        if(_UnitData ~= nil) then
+        if(_UnitData ~= nil and XFG.Nodes:Contains(_UnitData:GetName())) then
             XFG.Nodes:RemoveNode(_UnitData:GetName())
             XFG.DataText.Links:RefreshBroker()
         end

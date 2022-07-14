@@ -29,16 +29,6 @@ end
 
 function Node:Initialize()
     if(self:IsInitialized() == false) then
-        if(self:GetName() ~= nil and self:GetKey() == nil) then
-            self:SetKey(self:GetName())
-        end
-        self:IsInitialized(true)
-    end
-    return self:IsInitialized()
-end
-
-function Node:MyInitialize()
-    if(self:IsInitialized() == false) then
         self:SetKey(XFG.Player.Unit:GetName())
         self:SetName(XFG.Player.Unit:GetName())
         self:SetTarget(XFG.Player.Target)
@@ -105,13 +95,13 @@ function Node:SetObjectFromString(inLinkString)
     assert(type(inLinkString) == 'string')    
 
     local _Node = string.Split(inLinkString, ':')  
+    self:SetKey(_Node[1])
     self:SetName(_Node[1])
     local _Realm = XFG.Realms:GetRealmByID(tonumber(_Node[2]))
     local _Faction = XFG.Factions:GetFaction(tonumber(_Node[3]))
     self:SetTarget(XFG.Targets:GetTarget(_Realm, _Faction))
-    self:Initialize()
 
-    return self:IsInitialized()
+    return self:IsInitialized(true)
 end
 
 function Node:Equals(inNode)

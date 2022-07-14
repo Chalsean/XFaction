@@ -149,7 +149,7 @@ function Friend:CreateLink()
         local _NewLink = Link:new()
         local _FromNode = XFG.Nodes:GetNode(XFG.Player.Unit:GetName())
         if(_FromNode == nil) then
-            _FromNode = Node:new(); _FromNode:MyInitialize()
+            _FromNode = Node:new(); _FromNode:Initialize()
             XFG.Nodes:AddNode(_FromNode)
         end
         _NewLink:SetFromNode(_FromNode)
