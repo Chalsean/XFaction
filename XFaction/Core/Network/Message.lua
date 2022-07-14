@@ -255,7 +255,10 @@ function Message:SetRemainingTargets(inTargetString)
     local _Targets = string.Split(inTargetString, '|')
     for _, _TargetKey in pairs (_Targets) do
         if(_TargetKey ~= nil and XFG.Targets:ContainsByKey(_TargetKey)) then
-            self:AddTarget(XFG.Targets:GetTargetByKey(_TargetKey))
+            local _Target = XFG.Targets:GetTargetByKey(_TargetKey)
+            if(not XFG.Player.Target:Equals(_Target)) then
+                self:AddTarget()
+            end
         end
     end
 end
