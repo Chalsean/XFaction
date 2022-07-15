@@ -21,6 +21,8 @@ function SystemEvent:Initialize()
         XFG:CreateEvent('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
         XFG:Info(LogCategory, "Created hook for pre-ReloadUI")
+        XFG:CreateEvent('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true, true)
+        XFG:Info(LogCategory, 'Created hook for loading screen')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -65,5 +67,11 @@ end
 function SystemEvent:CallbackReloadUI()
     if(XFG.DB ~= nil) then
         XFG.DB.UIReload = true
+    end
+end
+
+function SystemEvent:CallbackLogin()
+    if(XFG.Outlook:HasLocalChannel()) then
+        XFG.Channels:SetChannelLast(XFG.Outlook:GetLocalChannel():GetKey())
     end
 end

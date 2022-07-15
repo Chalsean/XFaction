@@ -1,4 +1,10 @@
-### Version 3.3.0 [ 07.13.2022 ]
+### Version 3.4 [ 07.24.2022 ]
+
+[XFaction]
+- Fixed exception handling if RaiderIO throws
+- RaiderIO defaults to main
+
+### Version 3.3 [ 07.17.2022 ]
 
 [XFaction]
 - Switched compression library for BNet communication
@@ -7,8 +13,3 @@
 - Randomizes BNet forwarding if above a threshold
 - Cleaned up achievement message formatting (Zoombara)
 - Fixed support button lua exception (Zoombara)
-
-### Version 3.1.0 [ 07.10.2022 ]
-
-[XFaction]
-- Switched compression library for chat channel communication

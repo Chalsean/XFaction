@@ -95,26 +95,28 @@ function Unit:Initialize(inMemberID)
     end
 
     -- If RaiderIO is installed, grab raid/mythic
+    pcall(function ()
     local RaiderIO = _G.RaiderIO
-    if(RaiderIO) then
-        local _RaiderIO = RaiderIO.GetProfile(self:GetName(), self:GetRealm():GetName())
-        -- Raid
-        if(_RaiderIO and _RaiderIO.raidProfile) then
-            local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
-            if(_TopProgress.isProgressPrev == nil or _TopProgress.IsProgressPrev == false) then
-                self:SetRaidProgress(_TopProgress.progress.progressCount, _TopProgress.progress.raid.bossCount, _TopProgress.progress.difficulty)
+        if(RaiderIO) then
+            local _RaiderIO = RaiderIO.GetProfile(self:HasMainName() and self:GetMainName() or self:GetName(), self:GetRealm():GetName())
+            -- Raid
+            if(_RaiderIO and _RaiderIO.raidProfile) then
+                local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
+                if(_TopProgress.isProgressPrev == nil or _TopProgress.IsProgressPrev == false) then
+                    self:SetRaidProgress(_TopProgress.progress.progressCount, _TopProgress.progress.raid.bossCount, _TopProgress.progress.difficulty)
+                end
+            end
+            -- M+
+            if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
+                local _Profile = _RaiderIO.mythicKeystoneProfile
+                if(_Profile.mainCurrentScore and _Profile.mainCurrentScore > 0) then
+                    self:SetDungeonScore(_Profile.mainCurrentScore)
+                elseif(_Profile.currentScore and _Profile.currentScore > 0) then
+                    self:SetDungeonScore(_Profile.currentScore)
+                end
             end
         end
-        -- M+
-        if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
-            local _Profile = _RaiderIO.mythicKeystoneProfile
-            if(_Profile.mainCurrentScore and _Profile.mainCurrentScore > 0) then
-                self:SetDungeonScore(_Profile.mainCurrentScore)
-			elseif(_Profile.currentScore and _Profile.currentScore > 0) then
-                self:SetDungeonScore(_Profile.currentScore)
-            end
-        end
-    end
+    end)
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
