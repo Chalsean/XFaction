@@ -90,7 +90,6 @@ function Inbox:Process(inMessage, inMessageTag)
     -- Ignore if it's your own message
     -- Due to startup timing, use GUID directly rather than from Unit object
 	if(inMessage:GetFrom() == XFG.Player.GUID) then
-        inMessage:Print()
         return
 	end
 
@@ -170,14 +169,11 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Display system message that unit has logged off
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
-        if(XFG.Confederate:Contains(inMessage:GetFrom())) then
-            local _UnitData = XFG.Confederate:GetUnit(inMessage:GetFrom())
-            -- Local realm/faction will be triggered by ChannelEvent
-            --if(not XFG.Player.Realm:Equals(_UnitData:GetRealm()) or not XFG.Player.Faction:Equals(_UnitData:GetFaction())) then
-                XFG.Confederate:RemoveUnit(inMessage:GetFrom())
-                XFG.DataText.Guild:RefreshBroker()
-                XFG.Frames.System:DisplayLogoutMessage(inMessage)
-            --end
+        -- If own guild, GuildEvent will take care of logout
+        -- If own faction/realm, ChannelEvent will take care of logout
+        if(not XFG.Player.Realm:Equals(inMessage:GetRealm()) or not XFG.Player.Faction:Equals(inMessage:GetGuild():GetFaction())) then
+            XFG.Confederate:RemoveUnit(inMessage:GetFrom())
+            XFG.Frames.System:DisplayLogoutMessage(inMessage)
         end
         return
     end

@@ -53,7 +53,8 @@ function SystemEvent:CallbackLogout()
     else
         local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
-        _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        -- ChannelEvent will recognize a realm/faction logout, so we only need to BNet
+        _NewMessage:SetType(XFG.Settings.Network.Type.BNET)
         _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
         if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
             _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
@@ -79,13 +80,14 @@ function SystemEvent:CallbackLogin()
 end
 
 function SystemEvent:ChatFilter(inEvent, inMessage, ...)
-    --XFG:Error(LogCategory, inMessage)
     if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.System.Prepend)) == XFG.Settings.Frames.System.Prepend) then
         inMessage = string.gsub(inMessage, XFG.Settings.Frames.System.Prepend, '')
         return false, inMessage, ...
-    -- Hide Blizz login message, we display our own, this is a double notification
+    -- Hide Blizz login/logout messages, we display our own, this is a double notification
     elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
         return true
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGOUT'])) then
+        return true    
     end
     return false, inMessage, ...
 end

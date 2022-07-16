@@ -187,8 +187,12 @@ function TimerEvent:CallbackLogin()
                         XFG.Player.Unit:Print()            
                     end
                 end
-            end
+            end            
             XFG.Cache.Guild.FirstScan = false
+            if(XFG.Player.Unit == nil) then
+                local _UnitData = Unit:new(); _UnitData:Initialize()
+                XFG.Player.Unit = _UnitData
+            end
 
             -- Start network setup
             XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()	
