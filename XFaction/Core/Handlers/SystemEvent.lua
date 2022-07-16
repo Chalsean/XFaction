@@ -17,7 +17,7 @@ function SystemEvent:new()
 end
 
 function SystemEvent:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
         XFG:CreateEvent('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
         XFG:Info(LogCategory, "Created hook for pre-ReloadUI")
@@ -75,3 +75,17 @@ function SystemEvent:CallbackLogin()
         XFG.Channels:SetChannelLast(XFG.Outlook:GetLocalChannel():GetKey())
     end
 end
+
+-- function XFG:myChatFilter(inEvent, inMessage, ...)
+--     --XFG:Error(LogCategory, inMessage)
+--     if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.System.Prepend)) == XFG.Settings.Frames.System.Prepend) then
+--         inMessage = string.gsub(inMessage, XFG.Settings.Frames.System.Prepend, '')
+--         return false, inMessage, ...
+--     -- Hide Blizz login message, we display our own, this is a double notification
+--     elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
+--         return true
+--     end
+--     return false, inMessage, ...
+--   end
+
+--   ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", XFG.myChatFilter)

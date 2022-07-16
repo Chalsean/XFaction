@@ -62,6 +62,7 @@ function GuildEvent:CallbackRosterUpdate()
             -- If cache doesn't have unit, process
             if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
                 XFG.Confederate:AddUnit(_UnitData)
+                XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGIN, _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
             else
                 local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
                 -- If the player is running addon, do not process
@@ -70,7 +71,10 @@ function GuildEvent:CallbackRosterUpdate()
                 end
             end
         elseif(_UnitData:GetKey() ~= nil and XFG.Confederate:Contains(_UnitData:GetKey())) then
-            XFG.Confederate:RemoveUnit(_UnitData:GetKey())
+            local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
+            if(not _CachedUnitData:IsRunningAddon()) then
+                XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())
+            end
         end
     end
 end

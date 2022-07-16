@@ -83,6 +83,10 @@ function ChatFrame:IsElvUI(inBoolean)
     return self._ElvUI
 end
 
+function ChatFrame:GetHandler()
+    return self._ChatFrameHandler
+end
+
 function ChatFrame:Display(inMessage)
     if(XFG.Config.Chat.GChat.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')

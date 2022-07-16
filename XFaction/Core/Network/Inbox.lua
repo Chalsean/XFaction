@@ -170,15 +170,17 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Display system message that unit has logged off
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
-        local _UnitData = XFG.Confederate:GetUnit(inMessage:GetFrom())
-        XFG.Confederate:RemoveUnit(inMessage:GetFrom())
-        XFG.DataText.Guild:RefreshBroker()
-        if(_UnitData ~= nil and XFG.Nodes:Contains(_UnitData:GetName())) then
-            XFG.Nodes:RemoveNode(_UnitData:GetName())
-            XFG.DataText.Links:RefreshBroker()
-        end
-        if(XFG.Player.Realm:Equals(inMessage:GetRealm()) == false or XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
-            XFG.Frames.System:Display(inMessage)
+        if(XFG.Confederate:Contains(inMessage:GetFrom())) then
+            local _UnitData = XFG.Confederate:GetUnit(inMessage:GetFrom())
+            -- Local realm/faction will be triggered by ChannelEvent
+            --if(not XFG.Player.Realm:Equals(_UnitData:GetRealm()) or not XFG.Player.Faction:Equals(_UnitData:GetFaction())) then
+                XFG.Confederate:RemoveUnit(inMessage:GetFrom())
+                XFG.DataText.Guild:RefreshBroker()
+                if(not inMessage:HasGuild()) then
+                    inMessage:SetGuild(_UnitData:GetGuild())
+                end
+                XFG.Frames.System:DisplayLogoutMessage(inMessage)
+            --end
         end
         return
     end
@@ -195,8 +197,8 @@ function Inbox:Process(inMessage, inMessageTag)
         -- If unit has just logged in, reply with latest information
         if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
             -- Display system message that unit has logged on
-            if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) == false or XFG.Player.Guild:Equals(_UnitData:GetGuild()) == false) then
-                XFG.Frames.System:Display(inMessage)
+            if(not XFG.Player.Guild:Equals(_UnitData:GetGuild())) then
+                XFG.Frames.System:DisplayLoginMessage(inMessage)
             end
         end
     end
