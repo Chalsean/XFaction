@@ -188,14 +188,7 @@ function TimerEvent:CallbackLogin()
                     end
                 end
             end
-
-            -- On rare occassions there was an error getting the player themself
-            -- This will ensure we at least have an object and thus avoid exceptions
-            -- Fresh data will get picked up during next GuildRoster event
-            if(XFG.Player.Unit == nil) then
-                XFG.Player.Unit = Unit:new()
-                XFG.Player.Unit:Initialize()
-            end
+            XFG.Cache.Guild.FirstScan = false
 
             -- Start network setup
             XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()	

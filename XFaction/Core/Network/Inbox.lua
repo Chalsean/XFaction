@@ -176,9 +176,6 @@ function Inbox:Process(inMessage, inMessageTag)
             --if(not XFG.Player.Realm:Equals(_UnitData:GetRealm()) or not XFG.Player.Faction:Equals(_UnitData:GetFaction())) then
                 XFG.Confederate:RemoveUnit(inMessage:GetFrom())
                 XFG.DataText.Guild:RefreshBroker()
-                if(not inMessage:HasGuild()) then
-                    inMessage:SetGuild(_UnitData:GetGuild())
-                end
                 XFG.Frames.System:DisplayLogoutMessage(inMessage)
             --end
         end

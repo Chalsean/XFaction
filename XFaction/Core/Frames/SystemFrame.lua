@@ -63,7 +63,7 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     end
   
     if(inType == XFG.Settings.Network.Message.Subject.LOGOUT) then
-        _Message = _Message .. _Name .. ' '
+        _Message = _Message .. inName .. ' '
     elseif(_Faction:Equals(XFG.Player.Faction)) then
         _Message = _Message .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
     else
@@ -105,7 +105,7 @@ end
 function SystemFrame:DisplayLogoutMessage(inMessage)
     if(XFG.Config.Chat.Login.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    self:Display(inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm())
+    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm())
 end
 
 function SystemFrame:DisplayLocalOffline(inUnitData)
