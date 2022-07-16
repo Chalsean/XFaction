@@ -329,20 +329,86 @@ function Unit:SetNote(inNote)
     assert(type(inNote) == 'string')
     self._Note = inNote
 
-    local _Parts = string.Split(inNote, ' ')
-    if(self:IsAlt() and _Parts[2] ~= nil) then
-        self:SetMainName(_Parts[2])
+    --================================
+    -- EK standard notes logic
+    --================================
+
+    -- New team initial format on main
+    local _StartIndex, _, _TeamInitial = string.find(self._Note, '%[(%a)%]')
+    if(_StartIndex == 1) then
+        if(XFG.Teams:Contains(_TeamInitial)) then
+            self:SetTeam(XFG.Teams:GetTeam(_TeamInitial))
+        end
+    else
+        -- No team format
+        local _StartIndex, _, _GuildInitials = string.find(self._Note, '%[(%a%a-)%]')
+        if(_StartIndex == 1) then
+            XFG:Error(LogCategory, 'no team format')
+            XFG:DataDumper(LogCategory, self._Note)
+            XFG:DataDumper(LogCategory, _GuildInitials)
+            if(_GuildInitials == 'EK') then _GuildInitials = 'EKA' end
+            if(_GuildInitials == 'ENKA') then _GuildInitials = 'ENK' end
+            if(_GuildInitials == 'ENKH') then _GuildInitials = 'ENK' end
+            local _Guild = XFG.Guilds:GetGuild(_GuildInitials)
+            if(not _Guild:Equals(self:GetGuild())) then
+                self:IsAlt(true)
+                local _, _, _MainName = string.find(self._Note, '%s(%S+)%s?')
+                if(_MainName ~= nil) then
+                    self:SetMainName(_MainName)
+                end
+            end
+        end
     end
 
-    if(_Parts[1] ~= nil) then
-        -- The first team that matches wins
-        _Parts[1] = string.gsub(_Parts[1], '[%[%]]', '')    
-        local _Tags = string.Split(_Parts[1], '-')
-        for _, _Tag in pairs (_Tags) do
-            if(XFG.Teams:Contains(_Tag)) then
-                self:SetTeam(XFG.Teams:GetTeam(_Tag))
-                break
+    -- New team initial format on alt
+    local _StartIndex, _, _TeamInitial, _GuildInitials = string.find(self._Note, '%[(%a)-(%a-)%]')
+    if(_StartIndex == 1) then            
+        if(XFG.Teams:Contains(_TeamInitial)) then
+            self:SetTeam(XFG.Teams:GetTeam(_TeamInitial))
+        end
+        if(_GuildInitials == 'EK') then _GuildInitials = 'EKA' end
+        if(_GuildInitials == 'ENKA') then _GuildInitials = 'ENK' end
+        if(_GuildInitials == 'ENKH') then _GuildInitials = 'EKH' end
+        local _Guild = XFG.Guilds:GetGuild(_GuildInitials)
+        if(not _Guild:Equals(self:GetGuild())) then
+            self:IsAlt(true)
+            local _, _, _MainName = string.find(self._Note, '%s(%S+)%s?')
+            if(_MainName ~= nil) then
+                self:SetMainName(_MainName)
             end
+        end
+    else
+        -- Some officer specific format
+        local _StartIndex, _, _GuildInitials = string.find(self._Note, '%[(%a%a-)-(%a-)%]')
+        if(_StartIndex == 1) then            
+            if(_GuildInitials == 'EK') then _GuildInitials = 'EKA' end
+            if(_GuildInitials == 'ENKA') then _GuildInitials = 'ENK' end
+            if(_GuildInitials == 'ENKH') then _GuildInitials = 'EKH' end
+            local _Guild = XFG.Guilds:GetGuild(_GuildInitials)
+            if(not _Guild:Equals(self:GetGuild())) then
+                self:IsAlt(true)
+                local _, _, _MainName = string.find(self._Note, '%s(%S+)%s?')
+                if(_MainName ~= nil) then
+                    self:SetMainName(_MainName)
+                end
+            end    
+        end 
+    end
+
+    -- Old team initial format on alt
+    local _StartIndex, _, _GuildInitials, _TeamInitial = string.find(self._Note, '%[(%a+)%]%s?%[(%a)%]%s?')
+    if(_StartIndex == 1) then
+        if(_GuildInitials == 'EK') then _GuildInitials = 'EKA' end
+        local _Guild = XFG.Guilds:GetGuild(_GuildInitials)
+        if(not _Guild:Equals(self:GetGuild())) then
+            self:IsAlt(true)
+            local _, _, _MainName = string.find(self._Note, '%s+(%a+)%s?')
+            if(_MainName ~= nil) then
+                self:SetMainName(_MainName)
+            end
+        end
+        if(XFG.Teams:Contains(_TeamInitial)) then
+            self:SetTeam(XFG.Teams:GetTeam(_TeamInitial))
         end
     end
 
