@@ -75,6 +75,8 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
             XFG.Channels:AddChannel(_NewChannel)
 			XFG.Channels:SetChannelLast(_NewChannel:GetKey())
             XFG.Outbox:SetLocalChannel(_NewChannel)
+		elseif(XFG.Outbox:HasLocalChannel()) then
+			XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
 		end
 	end
 end

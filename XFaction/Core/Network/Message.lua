@@ -294,3 +294,7 @@ function Message:SetVersion(inVersion)
     self._Version = inVersion
     return self:GetVersion()
 end
+
+function Message:IsMyMessage()
+    return XFG.Player.Unit:GetGUID() == self:GetFrom()
+end

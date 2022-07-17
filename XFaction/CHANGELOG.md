@@ -3,6 +3,9 @@
 [XFaction]
 - Fixed exception handling if RaiderIO throws
 - RaiderIO defaults to main
+- Updated to recognize EK old notes style
+- Updated to always view ENK as Social team
+- All local guild logout messages are now in XFaction format (still working on gchat and login)
 
 ### Version 3.3 [ 07.17.2022 ]
 

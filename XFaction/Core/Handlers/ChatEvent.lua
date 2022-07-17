@@ -19,6 +19,10 @@ function ChatEvent:Initialize()
 	if(self:IsInitialized() == false) then
         XFG:RegisterEvent('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.CallbackGuildMessage)
         XFG:Info(LogCategory, 'Registered for CHAT_MSG_GUILD events')
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.ChatFilter)
+        XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD event filter')
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)
+        XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -55,4 +59,16 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
         _NewMessage:SetData(inText)
         XFG.Outbox:Send(_NewMessage, true)
     end
+end
+
+function ChatEvent:ChatFilter(inEvent, inMessage, inSender, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, ...)
+    XFG:Error(LogCategory, inMessage)
+    XFG:Error(LogCategory, inSender)
+    XFG:Error(LogCategory, arg8)
+    if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.Chat.Prepend)) == XFG.Settings.Frames.Chat.Prepend) then
+        inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
+    else
+
+    end
+    return false, inMessage, inSender, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, ...
 end

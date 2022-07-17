@@ -56,7 +56,7 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
 
     local _Faction = inGuild:GetFaction()
-    local _Message = XFG.Settings.Frames.System.Prepend
+    local _Message = XFG.Settings.Frames.Chat.Prepend
     
     if(XFG.Config.Chat.Login.Faction) then  
         _Message = _Message .. format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))

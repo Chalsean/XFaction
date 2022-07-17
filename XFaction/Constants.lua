@@ -51,9 +51,6 @@ XFG.Player = {
 
 XFG.Frames = {}
 XFG.Cache = {
-	Guild = {
-		FirstScan = true
-	},
 	Channels = {},
 }
 
@@ -138,7 +135,7 @@ XFG.Settings = {
 		},
 	},
 	Frames = {
-		System = {
+		Chat = {
 			Prepend = '&xfaction;',
 		},
 	},

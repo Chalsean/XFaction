@@ -84,14 +84,13 @@ function Outbox:Send(inMessage)
     XFG:Debug(LogCategory, "Sending message")
     inMessage:ShallowPrint()
 
-    -- If you messaged all possible realm/faction combinations, can switch to local broadcast    
     if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
         XFG.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
-        if(inMessage:HasTargets() and inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
+        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
             inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
         -- Successfully bnet to all targets and only were supposed to bnet, were done
-        elseif(not inMessage:HasTargets() and inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
+        elseif(inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
         elseif(not inMessage:HasTargets() and inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST) then

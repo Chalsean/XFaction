@@ -80,12 +80,12 @@ function SystemEvent:CallbackLogin()
 end
 
 function SystemEvent:ChatFilter(inEvent, inMessage, ...)
-    if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.System.Prepend)) == XFG.Settings.Frames.System.Prepend) then
-        inMessage = string.gsub(inMessage, XFG.Settings.Frames.System.Prepend, '')
+    if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.Chat.Prepend)) == XFG.Settings.Frames.Chat.Prepend) then
+        inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
         return false, inMessage, ...
     -- Hide Blizz login/logout messages, we display our own, this is a double notification
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
-        return true
+--    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
+--        return true
     elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGOUT'])) then
         return true    
     end

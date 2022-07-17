@@ -176,20 +176,26 @@ function TimerEvent:CallbackLogin()
 
             -- Scan local guild roster
             XFG:Info(LogCategory, 'Initializing local guild roster')
+            local _Clean = true
             for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
                 local _UnitData = Unit:new()
-                _UnitData:Initialize(_MemberID)
-                if(_UnitData:IsOnline()) then
-                    if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
-                        XFG.Confederate:AddUnit(_UnitData)
+                if(pcall(function () _UnitData:Initialize(_MemberID) end)) then
+                    if(_UnitData:IsOnline()) then
+                        if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
+                            XFG.Confederate:AddUnit(_UnitData)
+                        end
+                        if(_UnitData:IsPlayer()) then
+                            XFG.Player.Unit = _UnitData                    
+                            XFG.Player.Unit:Print()            
+                        end
                     end
-                    if(_UnitData:IsPlayer()) then
-                        XFG.Player.Unit = _UnitData                    
-                        XFG.Player.Unit:Print()            
-                    end
+                else
+                    _Clean = false
                 end
-            end            
-            XFG.Cache.Guild.FirstScan = false
+            end
+            if(_Clean and not XFG.GuildAPIReady) then
+                XFG.GuildAPIReady = true
+            end
             if(XFG.Player.Unit == nil) then
                 local _UnitData = Unit:new(); _UnitData:Initialize()
                 XFG.Player.Unit = _UnitData
