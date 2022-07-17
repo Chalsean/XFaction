@@ -330,6 +330,28 @@ function Unit:GetNote()
     return self._Note
 end
 
+function Unit:SetMainTeam(inGuildInitials, inTeamInitial)
+    if(inTeamInitial ~= nil and XFG.Teams:Contains(inTeamInitial)) then
+        self:SetTeam(XFG.Teams:GetTeam(inTeamInitial))
+    end
+    if(inGuildInitials == 'EK') then inGuildInitials = 'EKA' end
+    if(inGuildInitials == 'ENKA') then inGuildInitials = 'ENK' end
+    if(inGuildInitials == 'ENKH') then inGuildInitials = 'ENK' end
+    if(inGuildInitials ~= nil and XFG.Guilds:Contains(inGuildInitials)) then
+        local _Guild = XFG.Guilds:GetGuild(inGuildInitials)
+        if(not _Guild:Equals(self:GetGuild())) then
+            self:IsAlt(true)
+            local _, _, _MainName = string.find(self._Note, '%s+([^%s%[%]]+)%s?')
+            if(_MainName ~= nil) then
+                self:SetMainName(_MainName)
+            end                
+        end
+        if(XFG.Teams:Contains(_Guild:GetInitials())) then
+            self:SetTeam(XFG.Teams:GetTeam(_Guild:GetInitials()))
+        end
+    end    
+end
+
 function Unit:SetNote(inNote)
     assert(type(inNote) == 'string')
     self._Note = inNote
@@ -341,84 +363,31 @@ function Unit:SetNote(inNote)
     -- New team initial format on main
     local _StartIndex, _, _TeamInitial = string.find(self._Note, '%[(%a)%]')
     if(_StartIndex == 1) then
-        if(XFG.Teams:Contains(_TeamInitial)) then
-            self:SetTeam(XFG.Teams:GetTeam(_TeamInitial))
-        end
+        self:SetMainTeam(nil, _TeamInitial)
     else
         -- No team format
-        local _StartIndex, _, _GuildInitials = string.find(self._Note, '%[(%a%a-)%]')
+        local _StartIndex, _, _GuildInitials = string.find(self._Note, '%[(%a+)%]')
         if(_StartIndex == 1) then
-            if(_GuildInitials == 'EK') then _GuildInitials = 'EKA' end
-            if(_GuildInitials == 'ENKA') then _GuildInitials = 'ENK' end
-            if(_GuildInitials == 'ENKH') then _GuildInitials = 'ENK' end
-            if(XFG.Guilds:Contains(_GuildInitials)) then
-                local _Guild = XFG.Guilds:GetGuild(_GuildInitials)
-                if(not _Guild:Equals(self:GetGuild())) then
-                    self:IsAlt(true)
-                    local _, _, _MainName = string.find(self._Note, '%s(%S+)%s?')
-                    if(_MainName ~= nil) then
-                        self:SetMainName(_MainName)
-                    end                
-                end
-                if(XFG.Teams:Contains(_Guild:GetInitials())) then
-                    self:SetTeam(XFG.Teams:GetTeam(_Guild:GetInitials()))
-                end
-            end
+            self:SetMainTeam(_GuildInitials)            
         end
     end
 
     -- New team initial format on alt
-    local _StartIndex, _, _TeamInitial, _GuildInitials = string.find(self._Note, '%[(%a)-(%a-)%]')
-    if(_StartIndex == 1) then            
-        if(XFG.Teams:Contains(_TeamInitial)) then
-            self:SetTeam(XFG.Teams:GetTeam(_TeamInitial))
-        end
-        if(_GuildInitials == 'EK') then _GuildInitials = 'EKA' end
-        if(_GuildInitials == 'ENKA') then _GuildInitials = 'ENK' end
-        if(_GuildInitials == 'ENKH') then _GuildInitials = 'ENK' end
-        local _Guild = XFG.Guilds:GetGuild(_GuildInitials)
-        if(not _Guild:Equals(self:GetGuild())) then
-            self:IsAlt(true)
-            local _, _, _MainName = string.find(self._Note, '%s(%S+)%s?')
-            if(_MainName ~= nil) then
-                self:SetMainName(_MainName)
-            end
-        end
+    local _StartIndex, _, _TeamInitial, _GuildInitials = string.find(self._Note, '%[(%a)-(%a+)')
+    if(_StartIndex == 1) then
+        self:SetMainTeam(_GuildInitials, _TeamInitial)
     else
         -- Some officer specific format
         local _StartIndex, _, _GuildInitials = string.find(self._Note, '%[(%a%a-)-(%a-)%]')
-        if(_StartIndex == 1) then            
-            if(_GuildInitials == 'EK') then _GuildInitials = 'EKA' end
-            if(_GuildInitials == 'ENKA') then _GuildInitials = 'ENK' end
-            if(_GuildInitials == 'ENKH') then _GuildInitials = 'ENK' end
-            local _Guild = XFG.Guilds:GetGuild(_GuildInitials)
-            if(not _Guild:Equals(self:GetGuild())) then
-                self:IsAlt(true)
-                local _, _, _MainName = string.find(self._Note, '%s(%S+)%s?')
-                if(_MainName ~= nil) then
-                    self:SetMainName(_MainName)
-                end
-            end    
+        if(_StartIndex == 1) then
+            self:SetMainTeam(_GuildInitials)
         end 
     end
 
     -- Old team initial format on alt
     local _StartIndex, _, _GuildInitials, _TeamInitial = string.find(self._Note, '%[(%a+)%]%s?%[(%a)%]%s?')
     if(_StartIndex == 1) then
-        if(_GuildInitials == 'EK') then _GuildInitials = 'EKA' end
-        if(XFG.Guilds:Contains(_GuildInitials)) then
-            local _Guild = XFG.Guilds:GetGuild(_GuildInitials)
-            if(not _Guild:Equals(self:GetGuild())) then
-                self:IsAlt(true)
-                local _, _, _MainName = string.find(self._Note, '%s+(%a+)%s?')
-                if(_MainName ~= nil) then
-                    self:SetMainName(_MainName)
-                end
-            end
-            if(XFG.Teams:Contains(_TeamInitial)) then
-                self:SetTeam(XFG.Teams:GetTeam(_TeamInitial))
-            end
-        end
+        self:SetMainTeam(_GuildInitials, _TeamInitial)
     end
 
     if(self:GetNote() == '?' and self:GetGuild():GetInitials() == 'ENK') then
