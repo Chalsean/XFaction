@@ -95,26 +95,28 @@ function Unit:Initialize(inMemberID)
     end
 
     -- If RaiderIO is installed, grab raid/mythic
-    local RaiderIO = _G.RaiderIO
-    if(RaiderIO) then
-        local _RaiderIO = RaiderIO.GetProfile(self:GetName(), self:GetRealm():GetName())
-        -- Raid
-        if(_RaiderIO and _RaiderIO.raidProfile) then
-            local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
-            if(_TopProgress.isProgressPrev == nil or _TopProgress.IsProgressPrev == false) then
-                self:SetRaidProgress(_TopProgress.progress.progressCount, _TopProgress.progress.raid.bossCount, _TopProgress.progress.difficulty)
+    pcall(function ()
+        local RaiderIO = _G.RaiderIO
+        if(RaiderIO) then
+            local _RaiderIO = RaiderIO.GetProfile(self:GetName(), self:GetRealm():GetName())
+            -- Raid
+            if(_RaiderIO and _RaiderIO.raidProfile) then
+                local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
+                if(_TopProgress.isProgressPrev == nil or _TopProgress.IsProgressPrev == false) then
+                    self:SetRaidProgress(_TopProgress.progress.progressCount, _TopProgress.progress.raid.bossCount, _TopProgress.progress.difficulty)
+                end
+            end
+            -- M+
+            if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
+                local _Profile = _RaiderIO.mythicKeystoneProfile
+                if(_Profile.mainCurrentScore and _Profile.mainCurrentScore > 0) then
+                    self:SetDungeonScore(_Profile.mainCurrentScore)
+                elseif(_Profile.currentScore and _Profile.currentScore > 0) then
+                    self:SetDungeonScore(_Profile.currentScore)
+                end
             end
         end
-        -- M+
-        if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
-            local _Profile = _RaiderIO.mythicKeystoneProfile
-            if(_Profile.mainCurrentScore and _Profile.mainCurrentScore > 0) then
-                self:SetDungeonScore(_Profile.mainCurrentScore)
-			elseif(_Profile.currentScore and _Profile.currentScore > 0) then
-                self:SetDungeonScore(_Profile.currentScore)
-            end
-        end
-    end
+    end)
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
@@ -323,28 +325,69 @@ function Unit:GetNote()
     return self._Note
 end
 
+function Unit:SetMainTeam(inGuildInitials, inTeamInitial)
+    if(inTeamInitial ~= nil and XFG.Teams:Contains(inTeamInitial)) then
+        self:SetTeam(XFG.Teams:GetTeam(inTeamInitial))
+    end
+    if(inGuildInitials == 'EK') then inGuildInitials = 'EKA' end
+    if(inGuildInitials == 'ENKA') then inGuildInitials = 'ENK' end
+    if(inGuildInitials == 'ENKH') then inGuildInitials = 'ENK' end
+    if(inGuildInitials ~= nil and XFG.Guilds:Contains(inGuildInitials)) then
+        local _Guild = XFG.Guilds:GetGuild(inGuildInitials)
+        if(not _Guild:Equals(self:GetGuild())) then
+            self:IsAlt(true)
+            local _, _, _MainName = string.find(self._Note, '%s+([^%s%[%]]+)%s?')
+            if(_MainName ~= nil) then
+                self:SetMainName(_MainName)
+            end                
+        end
+        if(XFG.Teams:Contains(_Guild:GetInitials())) then
+            self:SetTeam(XFG.Teams:GetTeam(_Guild:GetInitials()))
+        end
+    end    
+end
+
 function Unit:SetNote(inNote)
     assert(type(inNote) == 'string')
     self._Note = inNote
 
-    local _Parts = string.Split(inNote, ' ')
-    if(self:IsAlt() and _Parts[2] ~= nil) then
-        self:SetMainName(_Parts[2])
-    end
+    --================================
+    -- EK standard notes logic
+    --================================
 
-    if(_Parts[1] ~= nil) then
-        -- The first team that matches wins
-        _Parts[1] = string.gsub(_Parts[1], '[%[%]]', '')    
-        local _Tags = string.Split(_Parts[1], '-')
-        for _, _Tag in pairs (_Tags) do
-            if(XFG.Teams:Contains(_Tag)) then
-                self:SetTeam(XFG.Teams:GetTeam(_Tag))
-                break
-            end
+    -- New team initial format on main
+    local _StartIndex, _, _TeamInitial = string.find(self._Note, '%[(%a)%]')
+    if(_StartIndex == 1) then
+        self:SetMainTeam(nil, _TeamInitial)
+    else
+        -- No team format
+        local _StartIndex, _, _GuildInitials = string.find(self._Note, '%[(%a+)%]')
+        if(_StartIndex == 1) then
+            self:SetMainTeam(_GuildInitials)            
         end
     end
 
-    if(self:HasTeam() == false) then
+    -- New team initial format on alt
+    local _StartIndex, _, _TeamInitial, _GuildInitials = string.find(self._Note, '%[(%a)-(%a+)')
+    if(_StartIndex == 1) then
+        self:SetMainTeam(_GuildInitials, _TeamInitial)
+    else
+        -- Some officer specific format
+        local _StartIndex, _, _GuildInitials = string.find(self._Note, '%[(%a%a-)-(%a-)%]')
+        if(_StartIndex == 1) then
+            self:SetMainTeam(_GuildInitials)
+        end 
+    end
+
+    -- Old team initial format on alt
+    local _StartIndex, _, _GuildInitials, _TeamInitial = string.find(self._Note, '%[(%a+)%]%s?%[(%a)%]%s?')
+    if(_StartIndex == 1) then
+        self:SetMainTeam(_GuildInitials, _TeamInitial)
+    end
+
+    if(self:GetNote() == '?' and self:GetGuild():GetInitials() == 'ENK') then
+        self:SetTeam(XFG.Teams:GetTeam(self:GetGuild():GetInitials()))
+    elseif(not self:HasTeam()) then
         local _Team = XFG.Teams:GetTeam('U')
         self:SetTeam(_Team)
     end
