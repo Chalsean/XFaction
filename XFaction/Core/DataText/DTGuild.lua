@@ -245,7 +245,7 @@ function DTGuild:OnEnter(this)
 
 	if(XFG.Config.DataText.Guild.Confederate and XFG.Cache.DTGuildTotalEnabled > 4) then
 		local _ConfederateName = XFG.Confederate:GetName()
-		_Tooltip:SetCell(line, 6, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _ConfederateName), self._HeaderFont, "LEFT", 4)	
+		_Tooltip:SetCell(line, 6, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _ConfederateName), self._HeaderFont, "LEFT", -1)	
 	end
 
 	if(XFG.Config.DataText.Guild.GuildName or XFG.Config.DataText.Guild.Confederate or XFG.Config.DataText.Guild.MOTD) then
@@ -254,28 +254,26 @@ function DTGuild:OnEnter(this)
 		line = _Tooltip:AddLine()		
 	end
 
-	if(XFG.Config.DataText.Guild.MOTD and XFG.Cache.DTGuildTotalEnabled > 9) then
-		local _MOTD = GetGuildRosterMOTD()
-		local _LineWords = ''
-		local _LineLength = 150
-		if(_MOTD ~= nil) then
-			local _Words = string.Split(_MOTD, ' ')		
-			for _, _Word in pairs (_Words) do
-				if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
-					_LineWords = _LineWords .. ' ' .. _Word
-				else
-					_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 11)
-					line = _Tooltip:AddLine()
-					_LineWords = ''				
-				end
+	local _MOTD = GetGuildRosterMOTD()
+	local _LineWords = ''
+	local _LineLength = 150
+	if(_MOTD ~= nil) then
+		local _Words = string.Split(_MOTD, ' ')		
+		for _, _Word in pairs (_Words) do
+			if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
+				_LineWords = _LineWords .. ' ' .. _Word
+			else
+				_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", -1)
+				line = _Tooltip:AddLine()
+				_LineWords = ''				
 			end
 		end
-		if(strlen(_LineWords) > 0) then
-			_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", 11)
-			line = _Tooltip:AddLine()
-		end
+	end
+	if(strlen(_LineWords) > 0) then
+		_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", -1)
 		line = _Tooltip:AddLine()
 	end
+	line = _Tooltip:AddLine()
 	
 	line = _Tooltip:AddHeader()
 	for i = 1, XFG.Cache.DTGuildTotalEnabled do

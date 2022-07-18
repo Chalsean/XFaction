@@ -110,7 +110,7 @@ function ChatFrame:Display(inMessage)
                     local _Faction = _Guild:GetFaction()
 
                     if(XFG.Config.Chat[_ConfigNode].Faction) then  
-                        _Text = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
+                        _Text = _Text .. format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
                     if(_Event == 'GUILD_ACHIEVEMENT') then
@@ -162,7 +162,7 @@ function ChatFrame:Display(inMessage)
                     if(_Event == 'GUILD' and self:UseWIM()) then
                         WIM.modules.GuildChat:CHAT_MSG_GUILD(_Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                     else
-                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, XFG.Settings.Frames.Chat.Prepend .. _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                     end
                 end                                   
                 break

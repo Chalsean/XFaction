@@ -17,12 +17,14 @@ function SystemEvent:new()
 end
 
 function SystemEvent:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
         XFG:CreateEvent('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
-        XFG:Info(LogCategory, "Created hook for pre-ReloadUI")
+        XFG:Info(LogCategory, 'Created hook for pre-ReloadUI')
         XFG:CreateEvent('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true, true)
         XFG:Info(LogCategory, 'Created hook for loading screen')
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Handlers.SystemEvent.ChatFilter)
+        XFG:Info(LogCategory, 'Created CHAT_MSG_SYSTEM event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -51,7 +53,8 @@ function SystemEvent:CallbackLogout()
     else
         local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
-        _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        -- ChannelEvent will recognize a realm/faction logout, so we only need to BNet
+        _NewMessage:SetType(XFG.Settings.Network.Type.BNET)
         _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
         if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
             _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
@@ -74,4 +77,17 @@ function SystemEvent:CallbackLogin()
     if(XFG.Outlook:HasLocalChannel()) then
         XFG.Channels:SetChannelLast(XFG.Outlook:GetLocalChannel():GetKey())
     end
+end
+
+function SystemEvent:ChatFilter(inEvent, inMessage, ...)
+    if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.Chat.Prepend)) == XFG.Settings.Frames.Chat.Prepend) then
+        inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
+        return false, inMessage, ...
+    -- Hide Blizz login/logout messages, we display our own, this is a double notification
+--    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
+--        return true
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGOUT'])) then
+        return true    
+    end
+    return false, inMessage, ...
 end
