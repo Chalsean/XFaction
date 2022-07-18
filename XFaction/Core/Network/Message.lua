@@ -257,7 +257,7 @@ function Message:SetRemainingTargets(inTargetString)
         if(_TargetKey ~= nil and XFG.Targets:ContainsByKey(_TargetKey)) then
             local _Target = XFG.Targets:GetTargetByKey(_TargetKey)
             if(not XFG.Player.Target:Equals(_Target)) then
-                self:AddTarget()
+                self:AddTarget(_Target)
             end
         end
     end
