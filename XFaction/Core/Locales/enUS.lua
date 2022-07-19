@@ -199,6 +199,12 @@ L['DTGUILD_CONFIG_COLUMN_ZONE_ORDER_TOOLTIP'] = 'Column number the player zone w
 L['DTGUILD_CONFIG_COLUMN_ZONE_ALIGNMENT_TOOLTIP'] = 'Player zone text justification'
 L['DTGUILD_CONFIG_SORT_TOOLTIP'] = 'Select the default sort column'
 L['DTGUILD_CONFIG_SIZE_TOOLTIP'] = 'Select the maximum height of the window before it starts scrolling'
+--=========================================================================
+-- Confederate Specific
+--=========================================================================
+L['CONFEDERATE_CONFIG_BUILDER'] = 'Config Builder'
+L['CONFEDERATE_GENERATE'] = 'Generate'
+L['CONFEDERATE_LOAD'] = 'Load'
 -------------------------
 -- DTLinks (X)
 -------------------------
