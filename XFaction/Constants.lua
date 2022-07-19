@@ -134,6 +134,11 @@ XFG.Settings = {
 			Stale = 60 * 5   -- Seconds until a message is considered stale
 		},
 	},
+	Frames = {
+		Chat = {
+			Prepend = '&xfaction;',
+		},
+	},
 	Races = {
 		Total = 37
 	},

@@ -54,23 +54,35 @@ end
 
 -- The event doesn't tell you what has changed, only that something has changed
 function GuildEvent:CallbackRosterUpdate()
+    --local _Clean = true
     for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         local _UnitData = Unit:new()
-		_UnitData:Initialize(_MemberID)	
-        if(_UnitData:IsOnline()) then
+		if(pcall(function () _UnitData:Initialize(_MemberID) end)) then
+            if(_UnitData:IsOnline()) then
 
-            -- If cache doesn't have unit, process
-            if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
-                XFG.Confederate:AddUnit(_UnitData)
-            else
-                local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
-                -- If the player is running addon, do not process
-                if(_CachedUnitData:IsRunningAddon() == false and _CachedUnitData:Equals(_UnitData) == false) then         
+                -- If cache doesn't have unit, process
+                if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
                     XFG.Confederate:AddUnit(_UnitData)
+--                    XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGIN, _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
+                else
+                    local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
+                    -- If the player is running addon, do not process
+                    if(_CachedUnitData:IsRunningAddon() == false and _CachedUnitData:Equals(_UnitData) == false) then         
+                        XFG.Confederate:AddUnit(_UnitData)
+                    end
+                end
+            elseif(_UnitData:GetKey() ~= nil and XFG.Confederate:Contains(_UnitData:GetKey())) then
+                local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
+                if(not _CachedUnitData:IsPlayer()) then
+                    XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())
+                    XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, _CachedUnitData:GetName(), _CachedUnitData:GetUnitName(), _CachedUnitData:GetMainName(), _CachedUnitData:GetGuild(), _CachedUnitData:GetRealm())
                 end
             end
-        elseif(_UnitData:GetKey() ~= nil and XFG.Confederate:Contains(_UnitData:GetKey())) then
-            XFG.Confederate:RemoveUnit(_UnitData:GetKey())
+        else
+            _Clean = false
         end
     end
+    -- if(_Clean and not XFG.GuildAPIReady) then
+    --     XFG.GuildAPIReady = true
+    -- end
 end

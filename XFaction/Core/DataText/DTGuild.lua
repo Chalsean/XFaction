@@ -280,6 +280,7 @@ function DTGuild:OnEnter(this)
 		end
 		line = _Tooltip:AddLine()
 	end
+	line = _Tooltip:AddLine()
 	
 	line = _Tooltip:AddHeader()
 	for i = 1, XFG.Cache.DTGuildTotalEnabled do

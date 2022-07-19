@@ -58,8 +58,13 @@ function Unit:Initialize(inMemberID)
     else
         _UnitData = C_Club.GetMemberInfoForSelf(XFG.Player.Guild:GetID())
     end
+
+    if(_UnitData == nil) then
+        error('C_Club API returned nil for guild member')
+    end
+
     -- Odd but guildRank is nil during a zone transition
-    if(_UnitData == nil or _UnitData.guildRank == nil) then return end
+    if(_UnitData.guildRank == nil) then return end
 
     self:SetGUID(_UnitData.guid)
     self:SetKey(self:GetGUID())
@@ -96,9 +101,9 @@ function Unit:Initialize(inMemberID)
 
     -- If RaiderIO is installed, grab raid/mythic
     pcall(function ()
-        local RaiderIO = _G.RaiderIO
+    local RaiderIO = _G.RaiderIO
         if(RaiderIO) then
-            local _RaiderIO = RaiderIO.GetProfile(self:GetName(), self:GetRealm():GetName())
+            local _RaiderIO = RaiderIO.GetProfile(self:HasMainName() and self:GetMainName() or self:GetName(), self:GetRealm():GetName())
             -- Raid
             if(_RaiderIO and _RaiderIO.raidProfile) then
                 local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]

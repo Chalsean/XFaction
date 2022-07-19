@@ -90,7 +90,6 @@ function Inbox:Process(inMessage, inMessageTag)
     -- Ignore if it's your own message
     -- Due to startup timing, use GUID directly rather than from Unit object
 	if(inMessage:GetFrom() == XFG.Player.GUID) then
-        inMessage:Print()
         return
 	end
 
@@ -155,9 +154,9 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Process gchat/achievement messages
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
-        if(XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
+        --if(XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
             pcall(function() XFG.Frames.Chat:Display(inMessage) end)
-        end
+        --end
         return
     end
 
@@ -170,15 +169,11 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Display system message that unit has logged off
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
-        local _UnitData = XFG.Confederate:GetUnit(inMessage:GetFrom())
-        XFG.Confederate:RemoveUnit(inMessage:GetFrom())
-        XFG.DataText.Guild:RefreshBroker()
-        if(_UnitData ~= nil and XFG.Nodes:Contains(_UnitData:GetName())) then
-            XFG.Nodes:RemoveNode(_UnitData:GetName())
-            XFG.DataText.Links:RefreshBroker()
-        end
-        if(XFG.Player.Realm:Equals(inMessage:GetRealm()) == false or XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
-            XFG.Frames.System:Display(inMessage)
+        -- If own guild, GuildEvent will take care of logout
+        -- If own faction/realm, ChannelEvent will take care of logout
+        if(not XFG.Player.Realm:Equals(inMessage:GetRealm()) or not XFG.Player.Faction:Equals(inMessage:GetGuild():GetFaction())) then
+            XFG.Confederate:RemoveUnit(inMessage:GetFrom())
+            XFG.Frames.System:DisplayLogoutMessage(inMessage)
         end
         return
     end
@@ -195,8 +190,8 @@ function Inbox:Process(inMessage, inMessageTag)
         -- If unit has just logged in, reply with latest information
         if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
             -- Display system message that unit has logged on
-            if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) == false or XFG.Player.Guild:Equals(_UnitData:GetGuild()) == false) then
-                XFG.Frames.System:Display(inMessage)
+            if(not XFG.Player.Guild:Equals(_UnitData:GetGuild())) then
+                XFG.Frames.System:DisplayLoginMessage(inMessage)
             end
         end
     end

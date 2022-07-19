@@ -76,7 +76,21 @@ XFG.Options.args.Debug = {
 					order = 11,
 					type = 'execute',
 					name = XFG.Lib.Locale['PLAYER'],
-					func = function(info) XFG.Player.Unit:Print() end,
+					func = function(info) 
+						XFG.Player.Unit:Print() 
+						local _NewMessage = GuildMessage:new()
+						_NewMessage:Initialize()
+						_NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+						_NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
+						if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+							_NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+						end
+						_NewMessage:SetGuild(XFG.Player.Guild)
+						_NewMessage:SetRealm(XFG.Player.Realm)
+						_NewMessage:SetUnitName(XFG.Player.Unit:GetName())
+						_NewMessage:SetData(' ')
+						XFG.Outbox:Send(_NewMessage)
+					end,
 				},
 				Profession = {
 					order = 12,

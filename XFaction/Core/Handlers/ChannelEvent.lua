@@ -20,8 +20,11 @@ function ChannelEvent:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
 		XFG:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', XFG.Handlers.ChannelEvent.CallbackChannelNotice)
+		XFG:Info(LogCategory, 'Registered to receive CHAT_MSG_CHANNEL_NOTICE events')
 		XFG:RegisterEvent('CHANNEL_FLAGS_UPDATED', XFG.Handlers.ChannelEvent.CallbackChannelChange)
+		XFG:Info(LogCategory, 'Registered to receive CHANNEL_FLAGS_UPDATED events')
 		XFG:RegisterEvent('CHAT_MSG_CHANNEL_LEAVE', XFG.Handlers.ChannelEvent.CallbackOffline)
+		XFG:Info(LogCategory, 'Registered to receive CHAT_MSG_CHANNEL_LEAVE events')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -72,30 +75,27 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _,
             XFG.Channels:AddChannel(_NewChannel)
 			XFG.Channels:SetChannelLast(_NewChannel:GetKey())
             XFG.Outbox:SetLocalChannel(_NewChannel)
+		elseif(XFG.Outbox:HasLocalChannel()) then
+			XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
 		end
 	end
 end
 
 function ChannelEvent:CallbackChannelChange(inChannelIndex)
 	if(XFG.Outbox:HasLocalChannel()) then
-		local _ChannelShortName, _, _, _ChannelID = GetChannelDisplayInfo(inChannelIndex)
-		if(_ChannelShortName == XFG.Outbox:GetLocalChannel():GetKey() or _ChannelID == XFG.Outbox:GetLocalChannel():GetID()) then
-			local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Outbox:GetLocalChannel():GetKey())
-			if(_ChannelInfo ~= nil) then
-				XFG.Outbox:GetLocalChannel():SetID(_ChannelInfo.localID)
-				XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
-			end
-		end
+		XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
 	end
 end
 
 function ChannelEvent:CallbackOffline(_, inUnitName, _, _, _, _, _, inChannelID, _, _, _, inGUID)
-	XFG:Debug(LogCategory, 'Received CHAT_MSG_CHANNEL_LEAVE system event')
 	local _Channel = XFG.Outbox:GetLocalChannel()
 	if(_Channel:GetID() == inChannelID and XFG.Confederate:Contains(inGUID)) then
-		XFG:Info(LogCategory, 'Detected %s has left channel %s and presumed offline', inUnitName, _Channel:GetName())
 		local _UnitData = XFG.Confederate:GetUnit(inGUID)
-		XFG.Confederate:RemoveUnit(inGUID)
-		XFG.Frames.System:DisplayLocalOffline(_UnitData)
+		-- GuildEvent will handle players local guild logout notifications
+		if(not XFG.Player.Guild:Equals(_UnitData:GetGuild())) then
+			XFG:Info(LogCategory, 'Detected %s has left channel %s and presumed offline', _UnitData:GetUnitName(), _Channel:GetShortName())
+			XFG.Confederate:RemoveUnit(inGUID)
+			XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
+		end
 	end
 end
