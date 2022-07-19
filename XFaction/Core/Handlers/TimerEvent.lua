@@ -90,7 +90,19 @@ function TimerEvent:CallbackLogin()
             XFG.Confederate = Confederate:new()            
 
             -- Parse out configuration from guild information so GMs have control
-            for _, _Line in ipairs(string.Split(_GuildInfo.description, '\n')) do
+            local _XFData
+            local _DataIn = string.match(_GuildInfo.description, 'XF:(.-):XF')
+            if (_DataIn ~= nil) then
+                -- Decompress and deserialize XFaction data
+                local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
+                local _, _Deserialized = XFG:Deserialize(_Decompressed)
+                XFG:Debug(LogCategory, 'Data from config %s', _Deserialized)
+                _XFData = _Deserialized
+            else
+                _XFData = _GuildInfo.description
+            end
+
+            for _, _Line in ipairs(string.Split(_XFData, '\n')) do
                 -- Confederate information
                 if(string.find(_Line, 'XFn')) then                    
                     local _Name, _Initials = _Line:match('XFn:(.-):(.+)')
