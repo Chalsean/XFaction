@@ -79,7 +79,7 @@ function GuildEvent:CallbackRosterUpdate()
                 end
             end
         else
-            _Clean = false
+ --           _Clean = false
         end
     end
     -- if(_Clean and not XFG.GuildAPIReady) then
