@@ -199,6 +199,7 @@ function DTGuild:OnEnter(this)
 
 	local _OrderEnabled = {}
 	XFG.Cache.DTGuildTotalEnabled = 0
+	XFG.Cache.DTGuildTextEnabled = 0
 	for _ColumnName, _Enabled in pairs (XFG.Config.DataText.Guild.Enable) do
 		if(_Enabled) then
 			local _OrderKey = _ColumnName .. 'Order'
@@ -212,6 +213,9 @@ function DTGuild:OnEnter(this)
 					Alignment = string.upper(XFG.Config.DataText.Guild.Alignment[_AlignmentKey]),
 					Icon = (_ColumnName == 'Covenant' or _ColumnName == 'Spec' or _ColumnName == 'Profession' or _ColumnName == 'Faction'),
 				}
+				if(not _OrderEnabled[_Index].Icon) then
+					XFG.Cache.DTGuildTextEnabled = XFG.Cache.DTGuildTextEnabled + 1
+				end
 			end
 		end		
 	end
@@ -243,7 +247,7 @@ function DTGuild:OnEnter(this)
 		_Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_GUILD'], _GuildName), self._HeaderFont, "LEFT", 4)
 	end
 
-	if(XFG.Config.DataText.Guild.Confederate and XFG.Cache.DTGuildTotalEnabled > 4) then
+	if(XFG.Config.DataText.Guild.Confederate and XFG.Cache.DTGuildTotalEnabled > 8) then
 		local _ConfederateName = XFG.Confederate:GetName()
 		_Tooltip:SetCell(line, 6, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _ConfederateName), self._HeaderFont, "LEFT", -1)	
 	end
@@ -254,26 +258,28 @@ function DTGuild:OnEnter(this)
 		line = _Tooltip:AddLine()		
 	end
 
-	local _MOTD = GetGuildRosterMOTD()
-	local _LineWords = ''
-	local _LineLength = 150
-	if(_MOTD ~= nil) then
-		local _Words = string.Split(_MOTD, ' ')		
-		for _, _Word in pairs (_Words) do
-			if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
-				_LineWords = _LineWords .. ' ' .. _Word
-			else
-				_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", -1)
-				line = _Tooltip:AddLine()
-				_LineWords = ''				
+	if(XFG.Config.DataText.Guild.MOTD and XFG.Cache.DTGuildTotalEnabled > 8) then
+		local _MOTD = GetGuildRosterMOTD()
+		local _LineWords = ''
+		local _LineLength = XFG.Cache.DTGuildTextEnabled * 15
+		if(_MOTD ~= nil) then
+			local _Words = string.Split(_MOTD, ' ')		
+			for _, _Word in pairs (_Words) do
+				if(strlen(_LineWords .. ' ' .. _Word) < _LineLength) then
+					_LineWords = _LineWords .. ' ' .. _Word
+				else
+					_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", -1)
+					line = _Tooltip:AddLine()
+					_LineWords = ''				
+				end
 			end
 		end
-	end
-	if(strlen(_LineWords) > 0) then
-		_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", -1)
+		if(strlen(_LineWords) > 0) then
+			_Tooltip:SetCell(line, 1, format("|cffffffff%s|r", _LineWords), self._RegularFont, "LEFT", -1)
+			line = _Tooltip:AddLine()
+		end
 		line = _Tooltip:AddLine()
 	end
-	line = _Tooltip:AddLine()
 	
 	line = _Tooltip:AddHeader()
 	for i = 1, XFG.Cache.DTGuildTotalEnabled do
