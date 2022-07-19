@@ -297,6 +297,10 @@ function Unit:SetRank(inRank)
     if(inRank == XFG.Settings.Confederate.AltRank) then
         self:IsAlt(true)
     end
+    -- Temporary hardcoding until I can figure out how to accomodate all the EK rules
+    if(inRank == 'Noble Citizen') then
+        self:SetTeam(XFG.Teams:GetTeam('S'))
+    end
 
     return self:GetRank()
 end
