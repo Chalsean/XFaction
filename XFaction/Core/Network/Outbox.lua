@@ -75,7 +75,7 @@ end
 
 function Outbox:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
-    if(inMessage:HasUnitData() and not XFG.Settings.System.Roster) then return end
+    if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.DATA) then return end
     if(inMessage:IsInitialized() == false) then
 		-- Review: double check this isn't overriding the timestamp of the message
         inMessage:Initialize()
@@ -84,18 +84,19 @@ function Outbox:Send(inMessage)
     XFG:Debug(LogCategory, "Sending message")
     inMessage:ShallowPrint()
 
-    -- If you messaged all possible realm/faction combinations, can switch to local broadcast    
     if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
         XFG.BNet:Send(inMessage)
-        if(inMessage:HasTargets() == false and inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST) then
+        -- Failed to bnet to all targets, broadcast to leverage others links
+        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
+            inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        -- Successfully bnet to all targets and only were supposed to bnet, were done
+        elseif(inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
+            return
+        -- Successfully bnet to all targets and was broadcast, switch to local only
+        elseif(not inMessage:HasTargets() and inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST) then
             XFG:Debug(LogCategory, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
-            inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
+            inMessage:SetType(XFG.Settings.Network.Type.LOCAL)        
         end
-    end
-
-    -- If we were only supposed to do BNet, we're done
-    if(inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
-        return
     end
 
     local _OutgoingData = XFG:EncodeMessage(inMessage, true)
@@ -115,7 +116,6 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', "argument must be Unit object")
 	if(inSubject == nil) then inSubject = XFG.Settings.Network.Message.Subject.DATA end
     -- Update the last sent time, dont need to heartbeat for awhile
-
     if(inUnitData:IsPlayer()) then
         local _EpochTime = GetServerTime()
         if(XFG.Player.LastBroadcast > _EpochTime - XFG.Settings.Player.MinimumHeartbeat) then 
@@ -131,5 +131,5 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
     _Message:SetSubject(inSubject)
     _Message:SetData(inUnitData)
-    self:Send(_Message)    
+    self:Send(_Message)
 end

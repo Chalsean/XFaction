@@ -222,7 +222,9 @@ end
 
 function Message:SetAllTargets()
     for _, _Target in XFG.Targets:Iterator() do
-        self:AddTarget(_Target)
+        if(not _Target:Equals(XFG.Player.Target)) then
+            self:AddTarget(_Target)
+        end
     end
 end
 
@@ -253,7 +255,10 @@ function Message:SetRemainingTargets(inTargetString)
     local _Targets = string.Split(inTargetString, '|')
     for _, _TargetKey in pairs (_Targets) do
         if(_TargetKey ~= nil and XFG.Targets:ContainsByKey(_TargetKey)) then
-            self:AddTarget(XFG.Targets:GetTargetByKey(_TargetKey))
+            local _Target = XFG.Targets:GetTargetByKey(_TargetKey)
+            if(not XFG.Player.Target:Equals(_Target)) then
+                self:AddTarget(_Target)
+            end
         end
     end
 end
@@ -291,4 +296,8 @@ function Message:SetVersion(inVersion)
     assert(type(inVersion) == 'string')
     self._Version = inVersion
     return self:GetVersion()
+end
+
+function Message:IsMyMessage()
+    return XFG.Player.Unit:GetGUID() == self:GetFrom()
 end

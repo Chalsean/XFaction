@@ -87,37 +87,39 @@ function XFG:DeserializeUnitData(inData)
 	if(_DeserializedData.X ~= nil) then _UnitData:SetVersion(_DeserializedData.X) end
 
 	-- If RaiderIO is installed, grab raid/mythic
-    local RaiderIO = _G.RaiderIO
-    if(RaiderIO) then
-        local _RaiderIO = RaiderIO.GetProfile(_UnitData:GetName(), _UnitData:GetRealm():GetName())
-        -- Raid
-        if(_RaiderIO and _RaiderIO.raidProfile) then
-            local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
-            if(_TopProgress.isProgressPrev == nil or _TopProgress.IsProgressPrev == false) then
-                _UnitData:SetRaidProgress(_TopProgress.progress.progressCount, _TopProgress.progress.raid.bossCount, _TopProgress.progress.difficulty)
-            end
-        end
-        -- M+
-        if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
-            if(_RaiderIO.mythicKeystoneProfile.mainCurrentScore > 0) then
-                _UnitData:SetDungeonScore(_RaiderIO.mythicKeystoneProfile.mainCurrentScore)
-			elseif(_RaiderIO.mythicKeystoneProfile.currentScore > 0) then
-                _UnitData:SetDungeonScore(_RaiderIO.mythicKeystoneProfile.currentScore)
-            end
-        end
-    end
+	pcall(function ()
+		local RaiderIO = _G.RaiderIO
+		if(RaiderIO) then
+			local _RaiderIO = RaiderIO.GetProfile(_UnitData:GetName(), _UnitData:GetRealm():GetName())
+			-- Raid
+			if(_RaiderIO and _RaiderIO.raidProfile) then
+				local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
+				if(_TopProgress.isProgressPrev == nil or _TopProgress.IsProgressPrev == false) then
+					_UnitData:SetRaidProgress(_TopProgress.progress.progressCount, _TopProgress.progress.raid.bossCount, _TopProgress.progress.difficulty)
+				end
+			end
+			-- M+
+			if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
+				if(_RaiderIO.mythicKeystoneProfile.mainCurrentScore > 0) then
+					_UnitData:SetDungeonScore(_RaiderIO.mythicKeystoneProfile.mainCurrentScore)
+				elseif(_RaiderIO.mythicKeystoneProfile.currentScore > 0) then
+					_UnitData:SetDungeonScore(_RaiderIO.mythicKeystoneProfile.currentScore)
+				end
+			end
+		end
+	end)
 
 	return _UnitData
 end
 
-function XFG:DecodeBNetMessage(inEncodedMessage)
-	local _Decoded = XFG.Lib.Encode:Decode(inEncodedMessage)
-	local _Decompressed = XFG.Lib.Compress:Decompress(_Decoded)
+function XFG:DecodeMessage(inEncodedMessage)
+	local _Decoded = XFG.Lib.Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
+	local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(_Decoded)	
 	return DeserializeMessage(_Decompressed)
 end
 
-function XFG:DecodeMessage(inEncodedMessage)
-	local _Decoded = XFG.Lib.Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
+function XFG:DecodeBNetMessage(inEncodedMessage)
+	local _Decoded = XFG.Lib.Deflate:DecodeForPrint(inEncodedMessage)
 	local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(_Decoded)	
 	return DeserializeMessage(_Decompressed)
 end

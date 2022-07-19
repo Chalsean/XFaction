@@ -65,7 +65,6 @@ XFG.Settings = {
 	Confederate = {
 		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
 		UnitScan = 60,       -- Seconds between offline checks
-		AltRank = nil,
 	},
 	LocalGuild = {
 		ScanTimer = 30,          -- Seconds between forced local guild scans
@@ -102,14 +101,16 @@ XFG.Settings = {
 			Password = nil
 		},
 		BNet = {
-			PacketSize = 150,
+			PacketSize = 420,
 			Ping = {
-				Timer = 60 * 4,     -- Seconds between pinging friends
+				Timer = 60,         -- Seconds between pinging friends
 			},
 			Link = {
 				Broadcast = 60 * 2, -- Seconds between broadcasting links
 				Scan = 60 * 3,      -- Seconds between link scans for stale links
-				Stale = 60 * 10     -- Seconds until considering a link stale
+				Stale = 60 * 10,    -- Seconds until considering a link stale
+				PercentStart = 10,  -- Number of links across confederate before random selection kicks in
+				PercentLevel = 50,  -- Randomization percentage
 			},
 		},
 		Message = {
@@ -119,18 +120,23 @@ XFG.Settings = {
 				LOGOUT = '3',
 				LOGIN = '4',
 				ACHIEVEMENT = '5',
-				LINK = '6'
+				LINK = '6',
 			},
 			Tag = {},
 		},
 		Type = {
 			BROADCAST = '1', -- BNet + Local Channel
 			LOCAL = '3',     -- Local Channel only
-			BNET = '4'       -- BNet only
+			BNET = '4',      -- BNet only
 		},
 		Mailbox = {
 			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
 			Stale = 60 * 5   -- Seconds until a message is considered stale
+		},
+	},
+	Frames = {
+		Chat = {
+			Prepend = '&xfaction;',
 		},
 	},
 	Races = {
