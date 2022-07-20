@@ -154,9 +154,9 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Process gchat/achievement messages
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
-        --if(XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
+        if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             pcall(function() XFG.Frames.Chat:Display(inMessage) end)
-        --end
+        end
         return
     end
 

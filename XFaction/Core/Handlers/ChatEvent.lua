@@ -61,14 +61,49 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
     end
 end
 
-function ChatEvent:ChatFilter(inEvent, inMessage, inSender, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, ...)
+local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
+    local _ConfigNode = inEvent == 'CHAT_MSG_GUILD' and 'GChat' or 'Achievement'
+    local _Event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
+    local _Text = ''
+    if(XFG.Config.Chat[_ConfigNode].Faction) then  
+        _Text = _Text .. format('%s ', format(XFG.Icons.String, inUnitData:GetFaction():GetIconID()))
+    end
+    if(XFG.Config.Chat[_ConfigNode].Main and inUnitData:IsAlt() and inUnitData:HasMainName()) then
+        _Text = _Text .. '(' .. inUnitData:GetMainName() .. ') '
+    end
+    if(XFG.Config.Chat[_ConfigNode].Guild) then
+        _Text = _Text .. '<' .. inUnitData:GetGuild():GetInitials() .. '> '
+    end
+    _Text = _Text .. inMessage
+
+    local _Hex = nil
+    if(XFG.Config.Chat[_ConfigNode].CColor) then
+        if(XFG.Config.Chat[_ConfigNode].FColor) then
+            _Hex = inUnitData:GetFaction():GetName() == 'Horde' and XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].HColor.Red, XFG.Config.Chat[_ConfigNode].HColor.Green, XFG.Config.Chat[_ConfigNode].HColor.Blue) or XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].AColor.Red, XFG.Config.Chat[_ConfigNode].AColor.Green, XFG.Config.Chat[_ConfigNode].AColor.Blue)
+        else
+            _Hex = XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].Color.Red, XFG.Config.Chat[_ConfigNode].Color.Green, XFG.Config.Chat[_ConfigNode].Color.Blue)
+        end
+    elseif(XFG.Config.Chat[_ConfigNode].FColor) then
+        _Hex = inUnitData:GetFaction():GetName() == 'Horde' and 'E0000D' or '378DEF'
+    elseif(_G.ChatTypeInfo[_Event]) then
+        local _Color = _G.ChatTypeInfo[_Event]
+        _Hex = XFG:RGBPercToHex(_Color.r, _Color.g, _Color.b)
+    end
+    
+    if _Hex ~= nil then
+        _Text = format('|cff%s%s|r', _Hex, _Text)
+    end
+
+    return _Text
+end
+
+function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
     XFG:Error(LogCategory, inMessage)
-    XFG:Error(LogCategory, inSender)
-    XFG:Error(LogCategory, arg8)
+    XFG:Error(LogCategory, inGUID)
     if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.Chat.Prepend)) == XFG.Settings.Frames.Chat.Prepend) then
         inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
-    else
-
+    elseif(XFG.Confederate:Contains(inGUID)) then
+        inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetUnit(inGUID))
     end
-    return false, inMessage, inSender, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, ...
+    return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end

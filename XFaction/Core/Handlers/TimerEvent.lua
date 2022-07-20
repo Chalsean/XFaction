@@ -87,8 +87,8 @@ function TimerEvent:CallbackLogin()
             XFG.Timers:RemoveTimer(_Timer)
 
             local _GuildInfo = C_Club.GetClubInfo(_GuildID)
-            XFG.Confederate = Confederate:new()            
-
+            XFG.Confederate = Confederate:new()    
+            
             -- Parse out configuration from guild information so GMs have control
             local _XFData
             local _DataIn = string.match(_GuildInfo.description, 'XF:(.-):XF')
@@ -144,7 +144,19 @@ function TimerEvent:CallbackLogin()
                 elseif(string.find(_Line, 'XFa')) then
                     local _AltRank = _Line:match('XFa:(.+)')
                     XFG.Settings.Confederate.AltRank = _AltRank
+                elseif(string.find(_Line, 'XFt')) then
+                    local _TeamInitial, _TeamName = _Line:match('XFt:(%a):(%a+)')
+                    local _NewTeam = Team:new()
+                    _NewTeam:SetName(_TeamName)
+                    _NewTeam:SetInitials(_TeamInitial)
+                    _NewTeam:Initialize()
+                    XFG.Teams:AddTeam(_NewTeam)
                 end
+            end
+
+            -- Backwards compat for EK
+            if(XFG.Teams:GetCount() == 0) then
+                XFG.Teams:Initialize()
             end
 
             -- Ensure player is on supported realm
