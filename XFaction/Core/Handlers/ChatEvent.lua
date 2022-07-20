@@ -21,8 +21,8 @@ function ChatEvent:Initialize()
         XFG:Info(LogCategory, 'Registered for CHAT_MSG_GUILD events')
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.ChatFilter)
         XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD event filter')
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)
-        XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
+        --ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)
+        --XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -98,8 +98,6 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
 end
 
 function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
-    XFG:Error(LogCategory, inMessage)
-    XFG:Error(LogCategory, inGUID)
     if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.Chat.Prepend)) == XFG.Settings.Frames.Chat.Prepend) then
         inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
     elseif(XFG.Confederate:Contains(inGUID)) then
