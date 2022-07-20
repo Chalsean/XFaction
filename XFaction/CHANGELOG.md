@@ -1,3 +1,8 @@
+### Version 3.4.0 [ 07.20.2022 ]
+[XFaction]
+- Local guild logouts and gchat are now in XFaction format
+- Configurable team names (Zoombara)
+
 ### Version 3.3.3 [ 07.17.2022 ]
 [XFaction]
 - Fixed ENK team association
