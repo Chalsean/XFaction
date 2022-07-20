@@ -154,9 +154,9 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Process gchat/achievement messages
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
-        --if(XFG.Player.Guild:Equals(inMessage:GetGuild()) == false) then
+        if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             pcall(function() XFG.Frames.Chat:Display(inMessage) end)
-        --end
+        end
         return
     end
 
@@ -170,8 +170,7 @@ function Inbox:Process(inMessage, inMessageTag)
     -- Display system message that unit has logged off
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         -- If own guild, GuildEvent will take care of logout
-        -- If own faction/realm, ChannelEvent will take care of logout
-        if(not XFG.Player.Realm:Equals(inMessage:GetRealm()) or not XFG.Player.Faction:Equals(inMessage:GetGuild():GetFaction())) then
+        if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             XFG.Confederate:RemoveUnit(inMessage:GetFrom())
             XFG.Frames.System:DisplayLogoutMessage(inMessage)
         end

@@ -53,8 +53,7 @@ function SystemEvent:CallbackLogout()
     else
         local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
-        -- ChannelEvent will recognize a realm/faction logout, so we only need to BNet
-        _NewMessage:SetType(XFG.Settings.Network.Type.BNET)
+        _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
         _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
         if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
             _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())

@@ -28,7 +28,6 @@ XFG.Icons = {
 }
 
 XFG.Lib = {
-	Compress = LibStub:GetLibrary('LibCompress'),
 	Deflate = LibStub:GetLibrary('LibDeflate'),
 	QT = LibStub('LibQTip-1.0'),
 	Realm = LibStub:GetLibrary('LibRealmInfo'),
@@ -38,7 +37,6 @@ XFG.Lib = {
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
 	Cmd = LibStub('AceConfigCmd-3.0'),
 }
-XFG.Lib.Encode = XFG.Lib.Compress:GetAddonEncodeTable()
 
 XFG.DataText = {
 	AutoHide = .25
@@ -70,7 +68,7 @@ XFG.Settings = {
 		ScanTimer = 30,          -- Seconds between forced local guild scans
 		LoginGiveUp = 60 * 5     -- Seconds before giving up on querying for guild on login
 	},
-	-- This really should be in guild info but doesnt fit
+	-- EK specific teams
 	Teams = {
 		A = 'Acheron',
 		C = 'Chivalry',

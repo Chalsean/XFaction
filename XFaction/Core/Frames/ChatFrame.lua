@@ -162,7 +162,8 @@ function ChatFrame:Display(inMessage)
                     if(_Event == 'GUILD' and self:UseWIM()) then
                         WIM.modules.GuildChat:CHAT_MSG_GUILD(_Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                     else
-                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, XFG.Settings.Frames.Chat.Prepend .. _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                        if(_Event == 'GUILD') then _Text = XFG.Settings.Frames.Chat.Prepend .. _Text end
+                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                     end
                 end                                   
                 break

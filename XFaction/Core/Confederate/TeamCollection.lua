@@ -84,3 +84,7 @@ end
 function TeamCollection:Iterator()
 	return next, self._Teams, nil
 end
+
+function TeamCollection:GetCount()
+	return self._TeamCount
+end
