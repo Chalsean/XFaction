@@ -54,7 +54,6 @@ end
 
 -- The event doesn't tell you what has changed, only that something has changed
 function GuildEvent:CallbackRosterUpdate()
-    --local _Clean = true
     for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         local _UnitData = Unit:new()
 		if(pcall(function () _UnitData:Initialize(_MemberID) end)) then
@@ -78,11 +77,6 @@ function GuildEvent:CallbackRosterUpdate()
                     XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, _CachedUnitData:GetName(), _CachedUnitData:GetUnitName(), _CachedUnitData:GetMainName(), _CachedUnitData:GetGuild(), _CachedUnitData:GetRealm())
                 end
             end
-        else
- --           _Clean = false
         end
     end
-    -- if(_Clean and not XFG.GuildAPIReady) then
-    --     XFG.GuildAPIReady = true
-    -- end
 end

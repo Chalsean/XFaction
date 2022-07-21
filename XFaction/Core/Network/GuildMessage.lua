@@ -32,6 +32,7 @@ function GuildMessage:Print()
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
+    XFG:DataDumper(LogCategory, self._Data)
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _Version (" ..type(self._Version) .. "): ".. tostring(self._Version))
     if(self:HasRealm()) then self._Realm:Print() end

@@ -100,15 +100,15 @@ function Outbox:Send(inMessage)
     end
 
     local _OutgoingData = XFG:EncodeMessage(inMessage, true)
-    self:BroadcastLocally(_OutgoingData) 
-end
-
-function Outbox:BroadcastLocally(inData)
-    if(self:HasLocalChannel()) then
-        -- Most addons use guild or raid chat, because were trying to hit multiple guilds on the same faction side need an actual channel
+    -- Whisper to same realm/faction player
+    if(inMessage:GetType() == XFG.Settings.Network.Type.WHISPER) then 
+        XFG:Debug(LogCategory, 'Whispering [%s] with tag [%s]', inMessage:GetTo(), XFG.Settings.Network.Message.Tag.LOCAL)
+        XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'WHISPER', inMessage:GetTo())
+    -- Broadcast on same realm/faction channel for multiple players
+    elseif(self:HasLocalChannel()) then
         local _Channel = self:GetLocalChannel()
-        XFG:Debug(LogCategory, "Broadcasting on channel [%s] with tag [%s]", _Channel:GetShortName(), XFG.Settings.Network.Message.Tag.LOCAL)
-        XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, inData, "CHANNEL", _Channel:GetID())
+        XFG:Debug(LogCategory, 'Broadcasting on channel [%s] with tag [%s]', _Channel:GetShortName(), XFG.Settings.Network.Message.Tag.LOCAL)
+        XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'CHANNEL', _Channel:GetID())
     end
 end
 
@@ -130,6 +130,19 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     _Message:SetFrom(XFG.Player.Unit:GetKey())
     _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
     _Message:SetSubject(inSubject)
+    _Message:SetData(inUnitData)
+    self:Send(_Message)
+end
+
+function Outbox:WhisperUnitData(inTo, inUnitData)
+    assert(type(inTo) == 'string')
+    assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', 'argument must be Unit object')
+    local _Message = Message:new()
+    _Message:Initialize()
+    _Message:SetTo(inTo)
+    _Message:SetFrom(XFG.Player.Unit:GetKey())
+    _Message:SetType(XFG.Settings.Network.Type.WHISPER)
+    _Message:SetSubject(XFG.Settings.Network.Message.Subject.DATA)
     _Message:SetData(inUnitData)
     self:Send(_Message)
 end

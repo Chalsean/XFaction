@@ -14,6 +14,7 @@ function Confederate:new()
     self._Name = nil
     self._Units = {}
     self._UnitCount = 0
+    self._CountByTarget = {}
     
     return Object
 end
@@ -87,6 +88,12 @@ function Confederate:AddUnit(inUnit)
         XFG.Player.Unit = inUnit
     end
 
+    local _Target = XFG.Targets:GetTarget(inUnit:GetRealm(), inUnit:GetFaction())
+    if(self._CountByTarget[_Target:GetKey()] == nil) then
+        self._CountByTarget[_Target:GetKey()] = 0
+    end
+    self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] + 1
+
     return true
 end
 
@@ -109,7 +116,9 @@ function Confederate:RemoveUnit(inKey)
         if(XFG.Nodes:Contains(_Unit:GetName())) then
             XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(_Unit:GetName()))
             XFG.DataText.Links:RefreshBroker()
-        end        
+        end
+        local _Target = XFG.Targets:GetTarget(_Unit:GetRealm(), _Unit:GetFaction())
+        self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1      
     end
 end
 
@@ -141,4 +150,9 @@ function Confederate:RestoreBackup()
             XFG:Info(LogCategory, '  Restored %s unit information from backup', _UnitData:GetUnitName())
         end
     end
+end
+
+function Confederate:GetCountByTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', 'argument must be Target object')
+    return self._CountByTarget[inTarget:GetKey()] or 0
 end
