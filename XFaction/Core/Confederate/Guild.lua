@@ -12,7 +12,7 @@ function Guild:new()
 
     self._Key = nil
     self._ID = nil        -- Only the player's guild will have an ID
-    self._StreamID = nil  -- Only the player's guild will have a StreamerID
+    self._StreamID = nil  -- Only the player's guild will have a StreamerID (this is gchat)
     self._Name = nil
     self._Initials = nil
     self._Faction = nil

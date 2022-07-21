@@ -37,7 +37,7 @@ function Unit:new()
     self._MainName = nil
     self._IsPlayer = false
     self._IsOnMainGuild = false
-    self._Faction = false
+    self._Faction = nil
     self._Team = nil
     self._Initialized = false
     self._Guild = nil
@@ -46,6 +46,8 @@ function Unit:new()
     self._ItemLevel = 0
     self._RaidProgress = ''
     self._PvP = ''
+    self._GuildSpeak = true
+    self._GuildListen = true
 
     return Object
 end
@@ -59,12 +61,8 @@ function Unit:Initialize(inMemberID)
         _UnitData = C_Club.GetMemberInfoForSelf(XFG.Player.Guild:GetID())
     end
 
-    if(_UnitData == nil) then
-        error('C_Club API returned nil for guild member')
-    end
-
     -- Odd but guildRank is nil during a zone transition
-    if(_UnitData.guildRank == nil) then return end
+    if(_UnitData == nil or _UnitData.guildRank == nil) then return end
 
     self:SetGUID(_UnitData.guid)
     self:SetKey(self:GetGUID())
@@ -126,6 +124,13 @@ function Unit:Initialize(inMemberID)
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
         self:SetVersion(XFG.Version)
+
+        local _Permissions = C_GuildInfo.GuildControlGetRankFlags(_UnitData.guildRankOrder)
+        if(_Permissions ~= nil) then
+            self:CanGuildListen(_Permissions[1])
+            self:CanGuildSpeak(_Permissions[2])
+        end
+        
         local _ItemLevel = GetAverageItemLevel()
         if(type(_ItemLevel) == 'number') then
             _ItemLevel = math.floor(_ItemLevel)
@@ -220,6 +225,8 @@ function Unit:Print()
     XFG:Debug(LogCategory, '  _ItemLevel (' .. type(self._ItemLevel) .. '): ' .. tostring(self._ItemLevel))
     XFG:Debug(LogCategory, '  _RaidProgress (' .. type(self._RaidProgress) .. '): ' .. tostring(self._RaidProgress))
     XFG:Debug(LogCategory, '  _PvP (' .. type(self._PvP) .. '): ' .. tostring(self._PvP))
+    XFG:Debug(LogCategory, '  _GuildSpeak (' .. type(self._GuildSpeak) .. '): ' .. tostring(self._GuildSpeak))
+    XFG:Debug(LogCategory, '  _GuildListen (' .. type(self._GuildListen) .. '): ' .. tostring(self._GuildListen))
     if(self:HasRealm()) then self._Realm:Print() end
     if(self:HasGuild()) then self._Guild:Print() end
     if(self:HasTeam()) then self._Team:Print() end
@@ -424,6 +431,22 @@ end
 
 function Unit:IsOffline()
     return self._Online == false
+end
+
+function Unit:CanGuildSpeak(inBoolean)
+    assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
+    if(inBoolean ~= nil) then
+        self._GuildSpeak = inBoolean
+    end
+    return self._GuildSpeak
+end
+
+function Unit:CanGuildListen(inBoolean)
+    assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
+    if(inBoolean ~= nil) then
+        self._GuildListen = inBoolean
+    end
+    return self._GuildListen
 end
 
 function Unit:GetDungeonScore()

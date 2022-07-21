@@ -154,7 +154,7 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Process gchat/achievement messages
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
-        if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
+        if(XFG.Player.Unit:CanGuildListen() and not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             pcall(function() XFG.Frames.Chat:Display(inMessage) end)
         end
         return
@@ -192,6 +192,12 @@ function Inbox:Process(inMessage, inMessageTag)
             if(not XFG.Player.Guild:Equals(_UnitData:GetGuild())) then
                 XFG.Frames.System:DisplayLoginMessage(inMessage)
             end
+            -- Reply if same realm/faction and under threshold
+            -- if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) and 
+            --    XFG.Player.Faction:Equals(_UnitData:GetFaction()) and 
+            --    XFG.Confederate:GetCountByTarget(XFG.Player.Target) <= XFG.Settings.Network.LoginLimit) then
+            --     XFG.Outbox:WhisperUnitData(_UnitData:GetGUID(), XFG.Player.Unit)
+            -- end
         end
     end
 end

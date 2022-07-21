@@ -183,6 +183,7 @@ function TimerEvent:CallbackLogin()
             end
             local _InInstance, _InstanceType = IsInInstance()
             XFG.Player.InInstance = _InInstance
+            XFG.Targets = TargetCollection:new(); XFG.Targets:Initialize()
 
             -- Some of this data (spec) is like guild where its not available for a time after initial login
             -- Seems to align with guild data becoming available
@@ -196,29 +197,22 @@ function TimerEvent:CallbackLogin()
             -- If this is a reload, restore non-local guild members
             if(XFG.DB.UIReload) then
                 XFG.Confederate:RestoreBackup()
-            end
+            end            
 
             -- Scan local guild roster
             XFG:Info(LogCategory, 'Initializing local guild roster')
-            local _Clean = true
             for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
                 local _UnitData = Unit:new()
                 if(pcall(function () _UnitData:Initialize(_MemberID) end)) then
                     if(_UnitData:IsOnline()) then
-                        if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
+                        if(not XFG.Confederate:Contains(_UnitData:GetKey())) then
                             XFG.Confederate:AddUnit(_UnitData)
                         end
                         if(_UnitData:IsPlayer()) then
-                            XFG.Player.Unit = _UnitData                    
                             XFG.Player.Unit:Print()            
                         end
                     end
-                else
-                    _Clean = false
                 end
-            end
-            if(_Clean and not XFG.GuildAPIReady) then
-                XFG.GuildAPIReady = true
             end
             if(XFG.Player.Unit == nil) then
                 local _UnitData = Unit:new(); _UnitData:Initialize()
@@ -226,8 +220,7 @@ function TimerEvent:CallbackLogin()
             end
 
             -- Start network setup
-            XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()	
-            XFG.Targets = TargetCollection:new(); XFG.Targets:Initialize()
+            XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()            
             XFG.Outbox = Outbox:new()
             XFG.Inbox = Inbox:new(); XFG.Inbox:Initialize()            
             XFG.BNet = BNet:new(); BNet:Initialize()

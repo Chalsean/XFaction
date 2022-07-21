@@ -93,6 +93,7 @@ XFG.Settings = {
 	},
 	Network = {
 		CompressionLevel = 6,
+		LoginLimit = 42,
 		Channel = {
 			Total = 10,
 			Name = nil,
@@ -124,6 +125,7 @@ XFG.Settings = {
 		},
 		Type = {
 			BROADCAST = '1', -- BNet + Local Channel
+			WHISPER = '2',   -- Whisper only
 			LOCAL = '3',     -- Local Channel only
 			BNET = '4',      -- BNet only
 		},

@@ -44,7 +44,7 @@ end
 
 function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
     -- If you are the sender, broadcast to other realms/factions
-    if(XFG.Player.GUID == inSenderGUID) then
+    if(XFG.Player.GUID == inSenderGUID and XFG.Player.Unit:CanGuildSpeak()) then
         local _NewMessage = GuildMessage:new()
         _NewMessage:Initialize()
         _NewMessage:SetFrom(XFG.Player.Unit:GetKey())
@@ -100,6 +100,9 @@ end
 function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
     if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.Chat.Prepend)) == XFG.Settings.Frames.Chat.Prepend) then
         inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
+    -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
+        return true
     elseif(XFG.Confederate:Contains(inGUID)) then
         inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetUnit(inGUID))
     end
