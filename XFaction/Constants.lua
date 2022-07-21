@@ -93,7 +93,7 @@ XFG.Settings = {
 	},
 	Network = {
 		CompressionLevel = 6,
-		LoginLimit = 50,
+		LoginLimit = 42,
 		Channel = {
 			Total = 10,
 			Name = nil,
