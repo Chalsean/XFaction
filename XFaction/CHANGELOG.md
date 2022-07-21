@@ -1,4 +1,4 @@
-### Version 3.4.0 [ 07.20.2022 ]
+### Version 3.4.1 [ 07.21.2022 ]
 [XFaction]
 - Local guild logouts and gchat are now in XFaction format
 - Configurable team names (Zoombara)

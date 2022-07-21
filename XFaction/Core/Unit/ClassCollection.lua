@@ -21,13 +21,15 @@ function ClassCollection:Initialize()
 	if(self._Initialized == false) then
 		for i = 1, GetNumClasses() do
 			local _ClassInfo = C_CreatureInfo.GetClassInfo(i)
-			local _Class = Class:new()
-			_Class:SetKey(_ClassInfo.classID)
-			_Class:SetID(_ClassInfo.classID)
-			_Class:SetName(_ClassInfo.className)
-			_Class:SetAPIName(_ClassInfo.classFile)
-			self:AddClass(_Class)
-			XFG:Debug(LogCategory, 'Initialized class [%s]', _Class:GetName())
+			if(_ClassInfo ~= nil) then
+				local _Class = Class:new()
+				_Class:SetKey(_ClassInfo.classID)
+				_Class:SetID(_ClassInfo.classID)
+				_Class:SetName(_ClassInfo.className)
+				_Class:SetAPIName(_ClassInfo.classFile)
+				self:AddClass(_Class)
+				XFG:Debug(LogCategory, 'Initialized class [%s]', _Class:GetName())
+			end
 		end
 		self._Initialized = true
 	end

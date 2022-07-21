@@ -18,7 +18,7 @@ function CovenantCollection:new()
 end
 
 function CovenantCollection:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized() and XFG.WoW:IsRetail()) then
 		for _, _CovenantID in pairs (C_Covenants.GetCovenantIDs()) do
 			local _NewCovenant = Covenant:new()
 			_NewCovenant:SetID(_CovenantID)

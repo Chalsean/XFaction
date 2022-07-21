@@ -18,7 +18,7 @@ function SoulbindCollection:new()
 end
 
 function SoulbindCollection:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized() and XFG.WoW:IsRetail()) then
 		for _, _Covenant in pairs (XFG.Covenants:GetCovenants()) do
 			for _, _SoulbindID in pairs (_Covenant:GetSoulbindIDs()) do
 				local _Soulbind = Soulbind:new()

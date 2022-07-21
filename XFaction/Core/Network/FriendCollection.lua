@@ -160,7 +160,30 @@ local function CanLink(inAccountInfo)
 end
 
 function FriendCollection:CheckFriend(inKey)
-	local _AccountInfo = C_BattleNet.GetFriendAccountInfo(inKey)
+	local _AccountInfo = nil
+	
+	-- Make the data structure uniform coming out of this
+	if(XFG.WoW:IsRetail()) then 
+		_AccountInfo = C_BattleNet.GetFriendAccountInfo(inKey)
+	else
+		local _PresenceID, _GivenName, _Surname, _ToonName, _, _Client, _IsOnline, _, _, _, _, _, _IsFriend = BNGetFriendInfo(inKey)
+		_AccountInfo = {
+			bnetIDAccount = _PresenceID,
+			accountName = _GivenName,
+			presenceName = _GivenName,
+			battleTag = _Surname,
+			characterName = _ToonName,			
+			isFriend = _IsFriend,
+		}
+		local _, _, _, _, _RealmID, _FactionName, _, _, _, _, _, _, _, _, _, _, _BNetIDAccount = BNGetGameAccountInfo(bnetIDGameAccount)
+		_AccountInfo.gameAccountInfo = {
+			realmID = _RealmID,
+			factionName = _FactionName,
+			gameAccountID = _BNetIDAccount,
+			isOnline = _IsOnline,
+			clientProgram = _Client,
+		}
+	end
 	if(_AccountInfo == nil) then
 		XFG:Warn(LogCategory, "Received nothing for [%d]", inKey)
 		return

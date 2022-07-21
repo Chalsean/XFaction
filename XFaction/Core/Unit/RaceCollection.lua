@@ -21,18 +21,14 @@ end
 function RaceCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self._Key = math.GenerateUID()
-		for i = 1, XFG.Settings.Races.Total do
-			local _RaceInfo = C_CreatureInfo.GetRaceInfo(i)
-
+		for _, _Race in XFG.Lib.Race:Iterator() do
 			local _NewRace = Race:new()
-			_NewRace:SetKey(_RaceInfo.raceID)
-			_NewRace:SetID(_RaceInfo.raceID)
-			_NewRace:SetName(_RaceInfo.raceName)
-			local _FactionInfo = C_CreatureInfo.GetFactionInfo(_NewRace:GetID())
-			_NewRace:SetFaction(XFG.Factions:GetFactionByName(_FactionInfo.groupTag))
-
+			_NewRace:SetKey(_Race.ID)
+			_NewRace:SetID(_Race.ID)
+			_NewRace:SetName(_Race.Name)
+			_NewRace:SetFaction(XFG.Factions:GetFactionByName(_Race.Faction))
 			self:AddRace(_NewRace)
-			XFG:Debug(LogCategory, 'Initialized race [%s]', _NewRace:GetName())
+			XFG:Debug(LogCategory, 'Initialized race [%s:%s]', _NewRace:GetName(), _NewRace:GetFaction():GetName())
 		end
 		self:IsInitialized(true)
 	end

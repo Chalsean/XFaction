@@ -137,17 +137,31 @@ function Unit:Initialize(inMemberID)
             self:SetItemLevel(_ItemLevel)
         end
 
-        local _CovenantID = C_Covenants.GetActiveCovenantID()
-        if(XFG.Covenants:Contains(_CovenantID)) then
-            self:SetCovenant(XFG.Covenants:GetCovenant(_CovenantID))
-        end
+        if(XFG.WoW:IsRetail()) then
+            local _CovenantID = C_Covenants.GetActiveCovenantID()
+            if(XFG.Covenants:Contains(_CovenantID)) then
+                self:SetCovenant(XFG.Covenants:GetCovenant(_CovenantID))
+            end
 
-        local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
-        if(XFG.Soulbinds:Contains(_SoulbindID)) then
-            self:SetSoulbind(XFG.Soulbinds:GetSoulbind(_SoulbindID))
-        else
-            -- If you switched covenants and target covenant you have not unlocked soulbinds
-            self:ClearSoulbind()
+            local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
+            if(XFG.Soulbinds:Contains(_SoulbindID)) then
+                self:SetSoulbind(XFG.Soulbinds:GetSoulbind(_SoulbindID))
+            else
+                -- If you switched covenants and target covenant you have not unlocked soulbinds
+                self:ClearSoulbind()
+            end
+
+            -- If in Oribos, enable Covenant event listener
+            local _Event = XFG.Events:GetEvent('Covenant')   
+            if(_Event ~= nil) then
+                if(self:GetZone() == 'Oribos') then
+                    if(_Event:IsEnabled() == false) then
+                        _Event:Start()
+                    end
+                elseif(_Event:IsEnabled()) then
+                    _Event:Stop()
+                end
+            end
         end
 
         -- The following call will randomly fail, retries seem to help
@@ -160,19 +174,7 @@ function Unit:Initialize(inMemberID)
                     break
                 end
             end
-        end
-
-        -- If in Oribos, enable Covenant event listener
-        local _Event = XFG.Events:GetEvent('Covenant')   
-        if(_Event ~= nil) then
-            if(self:GetZone() == 'Oribos') then
-                if(_Event:IsEnabled() == false) then
-                    _Event:Start()
-                end
-            elseif(_Event:IsEnabled()) then
-                _Event:Stop()
-            end
-        end
+        end        
 
         -- Highest PvP rating wins
         local _HighestRating = 0

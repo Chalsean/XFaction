@@ -36,6 +36,7 @@ XFG.Lib = {
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
 	Cmd = LibStub('AceConfigCmd-3.0'),
+	Race = LibStub('LibRace'),
 }
 
 XFG.DataText = {
@@ -139,8 +140,10 @@ XFG.Settings = {
 			Prepend = '&xfaction;',
 		},
 	},
+	-- If Classic, API doesnt know what a velf is
 	Races = {
-		Total = 37
+		Total = 37,
+
 	},
 	Professions = {
 		Herbalism = {

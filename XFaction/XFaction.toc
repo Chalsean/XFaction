@@ -1,6 +1,7 @@
 ## Interface: 90205
+## Globe: check-classic
 ## Author: Chalsean (US-Proudmoore)
-## Version: 3.4.0
+## Version: 4.0.0
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
@@ -8,7 +9,7 @@
 ## SavedVariables: XFactionDB
 
 Libraries\Load_Libraries.xml
-##Core\Libraries\Load_Libraries.xml
+Core\Libraries\Load_Libraries.xml
 Core\Locales\Load_Locales.xml
 
 Constants.lua 

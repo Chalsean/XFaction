@@ -86,6 +86,9 @@ function TimerEvent:CallbackLogin()
             local _Timer = XFG.Timers:GetTimer('Login')
             XFG.Timers:RemoveTimer(_Timer)
 
+            XFG:Info(LogCategory, 'WoW client version [%s:%s]', XFG.WoW:GetName(), XFG.WoW:GetVersion():GetKey())
+            XFG:Info(LogCategory, 'XFaction version [%s]', XFG.Version)
+
             local _GuildInfo = C_Club.GetClubInfo(_GuildID)
             XFG.Confederate = Confederate:new()    
             
