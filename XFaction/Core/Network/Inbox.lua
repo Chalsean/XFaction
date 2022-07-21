@@ -193,11 +193,11 @@ function Inbox:Process(inMessage, inMessageTag)
                 XFG.Frames.System:DisplayLoginMessage(inMessage)
             end
             -- Reply if same realm/faction and under threshold
-            if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) and 
-               XFG.Player.Faction:Equals(_UnitData:GetFaction()) and 
-               XFG.Confederate:GetCountByTarget(XFG.Player.Target) <= XFG.Settings.Network.LoginLimit) then
-                XFG.Outbox:WhisperUnitData(_UnitData:GetGUID(), XFG.Player.Unit)
-            end
+            -- if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) and 
+            --    XFG.Player.Faction:Equals(_UnitData:GetFaction()) and 
+            --    XFG.Confederate:GetCountByTarget(XFG.Player.Target) <= XFG.Settings.Network.LoginLimit) then
+            --     XFG.Outbox:WhisperUnitData(_UnitData:GetGUID(), XFG.Player.Unit)
+            -- end
         end
     end
 end
