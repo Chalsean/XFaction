@@ -2,6 +2,8 @@
 [XFaction]
 - Local guild logouts and gchat are now in XFaction format
 - Configurable team names (Zoombara)
+- Same realm/faction players will reply whisper unit data on login event if below threshold (50 units)
+- Respects guild rank gchat speak/listen permissions
 
 ### Version 3.3.3 [ 07.17.2022 ]
 [XFaction]

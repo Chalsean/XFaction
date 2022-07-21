@@ -84,15 +84,23 @@ function ChatFrame:IsElvUI(inBoolean)
 end
 
 function ChatFrame:Display(inMessage)
-    if(XFG.Config.Chat.GChat.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')
 
-    local _Event = 'GUILD'
-    local _ConfigNode = 'GChat'
+    local _Event = nil
+    local _ConfigNode = nil
+
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
         _Event = 'GUILD_ACHIEVEMENT'
         _ConfigNode = 'Achievement'
+    elseif(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.OCHAT) then
+        _Event = 'OFFICER'
+        _ConfigNode = 'OChat'
+    else
+        _Event = 'GUILD'
+        _ConfigNode = 'GChat'
     end
+
+    if(not XFG.Config.Chat[_ConfigNode].Enable) then return end
 
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
@@ -162,7 +170,7 @@ function ChatFrame:Display(inMessage)
                     if(_Event == 'GUILD' and self:UseWIM()) then
                         WIM.modules.GuildChat:CHAT_MSG_GUILD(_Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                     else
-                        if(_Event == 'GUILD') then _Text = XFG.Settings.Frames.Chat.Prepend .. _Text end
+                        if(_Event ~= 'GUILD_ACHIEVEMENT') then _Text = XFG.Settings.Frames.Chat.Prepend .. _Text end
                         self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                     end
                 end                                   
