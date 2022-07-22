@@ -15,13 +15,12 @@ function Profession:new()
     self._Name = nil
     self._IconID = nil
     self._Initialized = false
-    self._SpellID = nil
 
     return Object
 end
 
 function Profession:Initialize()
-    if(self:IsInitialized() == false) then
+    if(not self:IsInitialized()) then
         local _Name = C_TradeSkillUI.GetTradeSkillLineInfoByID(self._ID)
         self._Key = self._ID
         self._Name = _Name

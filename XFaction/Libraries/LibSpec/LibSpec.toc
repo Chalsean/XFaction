@@ -1,0 +1,8 @@
+## Interface: 90205
+## Globe: check-classic
+## Title: Lib: Spec
+## Notes: Library to provide information about specs.
+## Author: Chalsean (US-Proudmoore)
+## OptionalDeps: LibStub
+
+LibSpec.lua

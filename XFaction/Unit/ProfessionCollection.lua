@@ -18,15 +18,16 @@ function ProfessionCollection:new()
 end
 
 function ProfessionCollection:Initialize()
-	if(self:IsInitialized() == false) then
-		for _ProfessionName, _ProfessionIDs in pairs (XFG.Settings.Professions) do
+	if(not self:IsInitialized()) then
+		for _, _Profession in XFG.Lib.Profession:Iterator() do
 			local _NewProfession = Profession:new()
-			_NewProfession:SetID(_ProfessionIDs.ID)
-			_NewProfession:SetIconID(_ProfessionIDs.Icon)
-			if(_ProfessionIDs.SpellID ~= nil) then
-				_NewProfession:SetSpellID(_ProfessionIDs.SpellID)
+			_NewProfession:SetID(_Profession.ID)
+			_NewProfession:SetIconID(_Profession.Icon)
+			if(XFG.WoW:IsRetail()) then
+				_NewProfession:Initialize()
+			else
+				_NewProfession:SetName(_Profession.Name)
 			end
-			_NewProfession:Initialize()
 			self:AddProfession(_NewProfession)
 			XFG:Debug(LogCategory, 'Initialized profession [%s]', _NewProfession:GetName())
 		end	
