@@ -127,8 +127,7 @@ local function PreSort()
 		_UnitData.Faction = _Faction:GetIconID()
 
 		if(_Unit:HasSpec()) then
-			local _Spec = _Unit:GetSpec()
-			_UnitData.Spec = _Spec:GetIconID()
+			_UnitData.Spec = _Unit:GetSpec():GetIconID()
 		end
 
 		if(_Unit:HasCovenant()) then
@@ -311,9 +310,13 @@ function DTGuild:OnEnter(this)
 						if(_UnitData.Profession2 ~= nil) then
 							_CellValue = _CellValue .. ' ' .. format('%s', format(XFG.Icons.String, _UnitData.Profession2))
 						end
+					elseif(not XFG.WoW:IsRetail() and _ColumnName == 'Spec' and _UnitData.Spec ~= nil) then
+						if(XFG.Media:Contains(tostring(_UnitData.Spec))) then
+							_CellValue = format('|T%s:16:16:0:0:64:64:5:59:5:59|t', XFG.Media:GetMedia(tostring(_UnitData.Spec)):GetPath())
+						end
 					elseif(_UnitData[_ColumnName] ~= nil) then
 						_CellValue = format('%s', format(XFG.Icons.String, _UnitData[_ColumnName]))
-					end
+					end					
 				elseif(_ColumnName == 'Name') then
 					_CellValue = format('|cff%s%s|r', _UnitData.Class, _UnitData.Name)
 				elseif(_UnitData[_ColumnName] ~= nil) then

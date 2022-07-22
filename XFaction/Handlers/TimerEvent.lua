@@ -197,6 +197,8 @@ function TimerEvent:CallbackLogin()
             XFG.Soulbinds = SoulbindCollection:new(); XFG.Soulbinds:Initialize()
             XFG.Professions = ProfessionCollection:new(); XFG.Professions:Initialize()
 
+            XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
+
             -- If this is a reload, restore non-local guild members
             if(XFG.DB.UIReload) then
                 XFG.Confederate:RestoreBackup()
@@ -238,22 +240,24 @@ function TimerEvent:CallbackLogin()
                 XFG.Links:RestoreBackup()
             end
 
-            -- Log into addon channel for realm/faction wide communication
-            XFG.Channels = ChannelCollection:new(); XFG.Channels:Initialize()
-            XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
-            if(XFG.Settings.Network.Channel.Password == nil) then
-                JoinChannelByName(XFG.Settings.Network.Channel.Name)
-            else
-                JoinChannelByName(XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password)
+            -- Blizz has custom channels locked down in Classic
+            if(XFG.WoW:IsRetail()) then
+                XFG.Channels = ChannelCollection:new(); XFG.Channels:Initialize()
+                XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
+                if(XFG.Settings.Network.Channel.Password == nil) then
+                    JoinChannelByName(XFG.Settings.Network.Channel.Name)
+                else
+                    JoinChannelByName(XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password)
+                end
+                XFG:Info(LogCategory, 'Joined confederate channel [%s]', XFG.Settings.Network.Channel.Name)
+                local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Settings.Network.Channel.Name)
+                local _NewChannel = Channel:new()
+                _NewChannel:SetKey(_ChannelInfo.shortcut)
+                _NewChannel:SetID(_ChannelInfo.localID)
+                _NewChannel:SetShortName(_ChannelInfo.shortcut)
+                XFG.Channels:AddChannel(_NewChannel)            
+                XFG.Outbox:SetLocalChannel(_NewChannel)
             end
-            XFG:Info(LogCategory, 'Joined confederate channel [%s]', XFG.Settings.Network.Channel.Name)
-            local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Settings.Network.Channel.Name)
-            local _NewChannel = Channel:new()
-            _NewChannel:SetKey(_ChannelInfo.shortcut)
-            _NewChannel:SetID(_ChannelInfo.localID)
-            _NewChannel:SetShortName(_ChannelInfo.shortcut)
-            XFG.Channels:AddChannel(_NewChannel)            
-            XFG.Outbox:SetLocalChannel(_NewChannel)
 
             -- Start timers
             CreateTimer('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, false)

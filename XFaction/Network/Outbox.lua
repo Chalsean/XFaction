@@ -105,10 +105,13 @@ function Outbox:Send(inMessage)
         XFG:Debug(LogCategory, 'Whispering [%s] with tag [%s]', inMessage:GetTo(), XFG.Settings.Network.Message.Tag.LOCAL)
         XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'WHISPER', inMessage:GetTo())
     -- Broadcast on same realm/faction channel for multiple players
-    elseif(self:HasLocalChannel()) then
+    elseif(XFG.WoW:IsRetail() and self:HasLocalChannel()) then
         local _Channel = self:GetLocalChannel()
         XFG:Debug(LogCategory, 'Broadcasting on channel [%s] with tag [%s]', _Channel:GetShortName(), XFG.Settings.Network.Message.Tag.LOCAL)
         XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'CHANNEL', _Channel:GetID())
+    elseif(not XFG.WoW:IsRetail()) then
+        XFG:Debug(LogCategory, 'Broadcasting in guild chat with tag [%s]', XFG.Settings.Network.Message.Tag.LOCAL)
+        XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'GUILD')
     end
 end
 

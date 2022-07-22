@@ -19,32 +19,17 @@ end
 
 function ClassCollection:Initialize()
 	if(not self._Initialized) then
-		-- if(XFG.WoW:IsRetail()) then
-		-- 	for i = 1, GetNumClasses() do
-		-- 		local _ClassInfo = C_CreatureInfo.GetClassInfo(i)
-		-- 		if(_ClassInfo ~= nil) then
-		-- 			local _Class = Class:new()
-		-- 			_Class:SetKey(_ClassInfo.classID)
-		-- 			_Class:SetID(_ClassInfo.classID)
-		-- 			_Class:SetName(_ClassInfo.className)
-		-- 			_Class:SetAPIName(_ClassInfo.classFile)
-		-- 			self:AddClass(_Class)
-		-- 			XFG:Debug(LogCategory, 'Initialized class [%s]', _Class:GetName())
-		-- 		end
-		-- 	end
-		-- else
-			for _, _Class in XFG.Lib.Class:Iterator() do
-				local _NewClass = Class:new()
-				_NewClass:SetKey(_Class.ID)
-				_NewClass:SetID(_Class.ID)
-				_NewClass:SetName(_Class.Name)
-				_NewClass:SetAPIName(_Class.API)
-				_NewClass:SetRGB(_Class.R, _Class.G, _Class.B)
-				_NewClass:SetHex(_Class.Hex)
-				self:AddClass(_NewClass)
-				XFG:Debug(LogCategory, 'Initialized class [%s]', _NewClass:GetName())
-			end
---		end
+		for _, _Class in XFG.Lib.Class:Iterator() do
+			local _NewClass = Class:new()
+			_NewClass:SetKey(_Class.ID)
+			_NewClass:SetID(_Class.ID)
+			_NewClass:SetName(_Class.Name)
+			_NewClass:SetAPIName(_Class.API)
+			_NewClass:SetRGB(_Class.R, _Class.G, _Class.B)
+			_NewClass:SetHex(_Class.Hex)
+			self:AddClass(_NewClass)
+			XFG:Debug(LogCategory, 'Initialized class [%s]', _NewClass:GetName())
+		end
 		self._Initialized = true
 	end
 	return self._Initialized

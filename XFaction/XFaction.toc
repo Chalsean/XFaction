@@ -8,18 +8,19 @@
 ## LoadOnDemand: 0
 ## SavedVariables: XFactionDB
 
-Libraries\Load_Libraries.xml
-Locales\Load_Locales.xml
+Libraries\LoadLibraries.xml
+Locales\LoadLocales.xml
 
 Constants.lua 
-Developer\Load_Developer.xml
-Functions\Load_Functions.xml
-Configuration\Load_Configurations.xml
-Wrappers\Load_Wrappers.xml
-Handlers\Load_Handlers.xml
-Network\Load_Network.xml
-Unit\Load_Unit.xml
-Confederate\Load_Confederate.xml
-Frames\Load_Frames.xml
-DataText\Load_DataText.xml
+Developer\LoadDeveloper.xml
+Functions\LoadFunctions.xml
+Configuration\LoadConfigurations.xml
+Wrappers\LoadWrappers.xml
+Media\LoadMedia.xml
+Handlers\LoadHandlers.xml
+Network\LoadNetwork.xml
+Unit\LoadUnit.xml
+Confederate\LoadConfederate.xml
+Frames\LoadFrames.xml
+DataText\LoadDataText.xml
 Initialize.lua
