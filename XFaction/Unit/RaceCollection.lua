@@ -21,11 +21,17 @@ end
 function RaceCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self._Key = math.GenerateUID()
+		local _LookupTable = XFG.Lib.BabbleRace:GetUnstrictLookupTable()
 		for _, _Race in XFG.Lib.Race:Iterator() do
 			local _NewRace = Race:new()
 			_NewRace:SetKey(_Race.ID)
 			_NewRace:SetID(_Race.ID)
 			_NewRace:SetName(_Race.Name)
+			if(_LookupTable[_NewRace:GetName()] ~= nil) then
+				_NewRace:SetLocaleName(_LookupTable[_NewRace:GetName()])
+			else
+				_NewRace:SetLocaleName(_NewRace:GetName())
+			end
 			_NewRace:SetFaction(XFG.Factions:GetFactionByName(_Race.Faction))
 			self:AddRace(_NewRace)
 			XFG:Debug(LogCategory, 'Initialized race [%s:%s]', _NewRace:GetName(), _NewRace:GetFaction():GetName())

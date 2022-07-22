@@ -12,6 +12,7 @@ function Race:new()
 
     self._Key = nil
     self._Name = nil
+    self._LocaleName = nil
 	self._ID = nil
     self._Faction = nil
 
@@ -24,6 +25,7 @@ function Race:Print()
     XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
     XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
     XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+    XFG:Debug(LogCategory, '  _LocaleName (' .. type(self._LocaleName) .. '): ' .. tostring(self._LocaleName))
     if(self:HasFaction()) then
         self._Faction:Print()
     end
@@ -43,10 +45,20 @@ function Race:GetName()
     return self._Name
 end
 
-function Race:SetName(_Name)
-    assert(type(_Name) == 'string')
-    self._Name = _Name
+function Race:SetName(inName)
+    assert(type(inName) == 'string')
+    self._Name = inName
     return self:GetName()
+end
+
+function Race:GetLocaleName()
+    return self._LocaleName
+end
+
+function Race:SetLocaleName(inName)
+    assert(type(inName) == 'string')
+    self._LocaleName = inName
+    return self:GetLocaleName()
 end
 
 function Race:GetID()

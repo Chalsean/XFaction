@@ -18,7 +18,7 @@ function SpecCollection:new()
 end
 
 function SpecCollection:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
 		for _, _Spec in XFG.Lib.Spec:Iterator() do
 			local _NewSpec = Spec:new()
 			_NewSpec:SetID(_Spec.ID)

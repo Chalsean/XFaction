@@ -38,6 +38,7 @@ XFG.Lib = {
 	Cmd = LibStub('AceConfigCmd-3.0'),
 	-- Libraries needed for Classic
 	Race = LibStub('LibRace'),
+	BabbleRace = LibStub('LibBabble-Race-3.0'),
 	Spec = LibStub('LibSpec'),
 	Class = LibStub('LibClass'),
 	Profession = LibStub('LibProfession'),

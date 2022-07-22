@@ -115,8 +115,7 @@ local function PreSort()
 			_UnitData.Name = _Unit:GetName() .. " (" .. _Unit:GetMainName() .. ")"
 		end
 
-		local _Race = _Unit:GetRace()
-		_UnitData.Race = _Race:GetName()
+		_UnitData.Race = _Unit:GetRace():GetLocaleName()
 
 		local _Team = _Unit:GetTeam()
 		_UnitData.Team = _Team:GetName()

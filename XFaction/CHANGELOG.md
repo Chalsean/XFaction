@@ -1,3 +1,7 @@
+### Version 4.0.0 [ 07.21.2022 ]
+[XFaction]
+- Updated to work with Classic and TBC
+
 ### Version 3.4.1 [ 07.21.2022 ]
 [XFaction]
 - Local guild logouts and gchat are now in XFaction format
