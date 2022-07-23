@@ -312,7 +312,7 @@ function TimerEvent:CallbackDelayedStartTimer()
     -- For support reasons, it helps to know what addons are being used
     for i = 1, GetNumAddOns() do
         local _Name, _, _, _Enabled = GetAddOnInfo(i)
-        XFG:Debug(LogCategory, 'Addon is loaded [%s][%s]', _Name, tostring(_Enabled))
+        XFG:Debug(LogCategory, 'Addon is loaded [%s] enabled [%s]', _Name, tostring(_Enabled))
     end
 end
 
