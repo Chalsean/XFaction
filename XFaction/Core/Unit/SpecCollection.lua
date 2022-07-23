@@ -26,7 +26,7 @@ function SpecCollection:Initialize()
 			_Spec:Initialize()
 			self._Specs[_Spec:GetKey()] = _Spec
 			self._SpecCount = self._SpecCount + 1
-			XFG:Debug(LogCategory, 'Initialized spec [%s]', _Spec:GetName())
+			XFG:Info(LogCategory, 'Initialized spec [%s]', _Spec:GetName())
 		end
 		self:IsInitialized(true)
 	end

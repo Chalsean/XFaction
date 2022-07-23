@@ -101,12 +101,12 @@ function TimerEvent:CallbackLogin()
             else
                 _XFData = _GuildInfo.description
             end
-
+            
             for _, _Line in ipairs(string.Split(_XFData, '\n')) do
                 -- Confederate information
                 if(string.find(_Line, 'XFn')) then                    
                     local _Name, _Initials = _Line:match('XFn:(.-):(.+)')
-                    XFG:Debug(LogCategory, 'Initializing confederate %s <%s>', _Name, _Initials)
+                    XFG:Info(LogCategory, 'Initializing confederate %s <%s>', _Name, _Initials)
                     Confederate:SetName(_Name)
                     Confederate:SetKey(_Initials)
                     XFG.Settings.Network.Message.Tag.LOCAL = _Initials .. 'XF'
@@ -117,7 +117,7 @@ function TimerEvent:CallbackLogin()
                     local _, _RealmName = XFG.Lib.Realm:GetRealmInfoByID(_RealmNumber)
                     -- Create each realm once
                     if(XFG.Realms:Contains(_RealmName) == false) then
-                        XFG:Debug(LogCategory, 'Initializing realm [%s]', _RealmName)
+                        XFG:Info(LogCategory, 'Initializing realm [%s]', _RealmName)
                         local _NewRealm = Realm:new()
                         _NewRealm:SetKey(_RealmName)
                         _NewRealm:SetName(_RealmName)
@@ -128,7 +128,7 @@ function TimerEvent:CallbackLogin()
                     local _Realm = XFG.Realms:GetRealm(_RealmName)                    
                     local _Faction = XFG.Factions:GetFactionByName(_FactionInitial == 'A' and 'Alliance' or 'Horde')
 
-                    XFG:Debug(LogCategory, 'Initializing guild %s <%s>', _GuildName, _GuildInitials)
+                    XFG:Info(LogCategory, 'Initializing guild %s <%s>', _GuildName, _GuildInitials)
                     local _NewGuild = Guild:new()
                     _NewGuild:Initialize()
                     _NewGuild:SetKey(_GuildInitials)
@@ -143,9 +143,11 @@ function TimerEvent:CallbackLogin()
                 -- If you keep your alts at a certain rank, this will flag them as alts in comms/DTs
                 elseif(string.find(_Line, 'XFa')) then
                     local _AltRank = _Line:match('XFa:(.+)')
+                    XFG:Info(LogCategory, 'Initializing alt rank [%s]', _AltRank)
                     XFG.Settings.Confederate.AltRank = _AltRank
                 elseif(string.find(_Line, 'XFt')) then
                     local _TeamInitial, _TeamName = _Line:match('XFt:(%a):(%a+)')
+                    XFG:Info(LogCategory, 'Initializing team [%s][%s]', _TeamInitial, _TeamName)
                     local _NewTeam = Team:new()
                     _NewTeam:SetName(_TeamName)
                     _NewTeam:SetInitials(_TeamInitial)
@@ -157,6 +159,17 @@ function TimerEvent:CallbackLogin()
             -- Backwards compat for EK
             if(XFG.Teams:GetCount() == 0) then
                 XFG.Teams:Initialize()
+            end
+
+            for _TeamInitial, _TeamName in pairs (XFG.Settings.Confederate.DefaultTeams) do
+                if(not XFG.Teams:Contains(_TeamInitial)) then
+                    XFG:Info(LogCategory, 'Initializing default team [%s][%s]', _TeamInitial, _TeamName)
+                    local _NewTeam = Team:new()
+                    _NewTeam:SetInitials(_TeamInitial)
+                    _NewTeam:SetName(_TeamName)
+                    _NewTeam:Initialize()
+                    XFG.Teams:AddTeam(_NewTeam)
+                end
             end
 
             -- Ensure player is on supported realm
