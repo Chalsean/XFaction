@@ -69,6 +69,9 @@ XFG.Settings = {
 	Confederate = {
 		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
 		UnitScan = 60,       -- Seconds between offline checks
+		DefaultTeams = {
+			U = 'Unknown',
+		},
 	},
 	LocalGuild = {
 		ScanTimer = 30,          -- Seconds between forced local guild scans
@@ -91,7 +94,6 @@ XFG.Settings = {
 		S = 'Sellswords',
 		T = 'Tsunami',
 		Y = 'Gravity',
-		U = 'Unknown',
 		ENK = 'Social',
 		ENKA = 'Social',
 		ENKH = 'Social',
@@ -145,7 +147,4 @@ XFG.Settings = {
 			Prepend = '&xfaction;',
 		},
 	},
-	DataText = {
-		AutoHide = .25,
-	}
 }

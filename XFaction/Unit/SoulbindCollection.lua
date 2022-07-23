@@ -26,7 +26,7 @@ function SoulbindCollection:Initialize()
 				_Soulbind:SetID(_SoulbindID)
 				_Soulbind:Initialize()
 				self:AddSoulbind(_Soulbind)
-				XFG:Debug(LogCategory, 'Initialized soulbind [%s]', _Soulbind:GetName())
+				XFG:Info(LogCategory, 'Initialized soulbind [%s]', _Soulbind:GetName())
 			end
 		end
 		self:IsInitialized(true)

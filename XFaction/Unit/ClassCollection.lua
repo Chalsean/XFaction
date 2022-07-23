@@ -28,7 +28,7 @@ function ClassCollection:Initialize()
 			_NewClass:SetRGB(_Class.R, _Class.G, _Class.B)
 			_NewClass:SetHex(_Class.Hex)
 			self:AddClass(_NewClass)
-			XFG:Debug(LogCategory, 'Initialized class [%s]', _NewClass:GetName())
+			XFG:Info(LogCategory, 'Initialized class [%s]', _NewClass:GetName())
 		end
 		self._Initialized = true
 	end

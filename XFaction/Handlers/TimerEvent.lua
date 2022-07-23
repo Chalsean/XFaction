@@ -162,6 +162,17 @@ function TimerEvent:CallbackLogin()
                 XFG.Teams:Initialize()
             end
 
+            for _TeamInitial, _TeamName in pairs (XFG.Settings.Confederate.DefaultTeams) do
+                if(not XFG.Teams:Contains(_TeamInitial)) then
+                    XFG:Info(LogCategory, 'Initializing default team [%s][%s]', _TeamInitial, _TeamName)
+                    local _NewTeam = Team:new()
+                    _NewTeam:SetInitials(_TeamInitial)
+                    _NewTeam:SetName(_TeamName)
+                    _NewTeam:Initialize()
+                    XFG.Teams:AddTeam(_NewTeam)
+                end
+            end
+
             -- Ensure player is on supported realm
             local _RealmName = GetRealmName()
             XFG.Player.Realm = XFG.Realms:GetRealm(_RealmName)
@@ -295,12 +306,19 @@ function TimerEvent:CallbackLogin()
 end
 
 function TimerEvent:CallbackDelayedStartTimer()
+    XFG.Frames.Chat:LoadElvUI()
     if(not XFG.DB.UIReload) then
         XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
         XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
         XFG.Links:BroadcastLinks()
     end
     XFG.DB.UIReload = false
+
+    -- For support reasons, it helps to know what addons are being used
+    for i = 1, GetNumAddOns() do
+        local _Name, _, _, _Enabled = GetAddOnInfo(i)
+        XFG:Debug(LogCategory, 'Addon is loaded [%s] enabled [%s]', _Name, tostring(_Enabled))
+    end
 end
 
 -- Cleanup mailbox

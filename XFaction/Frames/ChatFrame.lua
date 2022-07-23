@@ -22,21 +22,8 @@ end
 function ChatFrame:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
-        if IsAddOnLoaded('ElvUI') then
-            local _Status, _Enabled = pcall(function()
-                return ElvUI[1].private.chat.enable
-            end)
-            if _Status and _Enabled then
-                XFG:Info(LogCategory, 'Using ElvUI chat handler')
-                self:IsElvUI(true)
-                self._ElvUIModule = ElvUI[1]:GetModule('Chat')
-                self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
-            end
-        else
-            XFG:Info(LogCategory, 'Using default chat handler')
-            self._ChatFrameHandler = ChatFrame_MessageEventHandler
-        end
-
+        XFG:Info(LogCategory, 'Using default chat handler')
+        self._ChatFrameHandler = ChatFrame_MessageEventHandler
         if(self:UseWIM()) then
             XFG:Info(LogCategory, 'Using WIM for guild chat handler')
         end
@@ -81,6 +68,28 @@ function ChatFrame:IsElvUI(inBoolean)
         self._ElvUI = inBoolean
     end
     return self._ElvUI
+end
+
+function ChatFrame:LoadElvUI()
+    if(not self:IsElvUI()) then
+        if(IsAddOnLoaded('ElvUI')) then
+            local _Status, _Enabled = pcall(function()
+                return ElvUI[1].private.chat.enable
+            end)
+            if _Status and _Enabled then
+                XFG:Info(LogCategory, 'Using ElvUI chat handler')
+                self:IsElvUI(true)
+                self._ElvUIModule = ElvUI[1]:GetModule('Chat')
+                self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
+            else
+                XFG:Error(LogCategory, 'Failed to detect if elvui has chat enabled')
+                self._ChatFrameHandler = ChatFrame_MessageEventHandler
+            end
+        else
+            XFG:Info(LogCategory, 'Using default chat handler')
+            self._ChatFrameHandler = ChatFrame_MessageEventHandler
+        end
+    end
 end
 
 function ChatFrame:Display(inMessage)

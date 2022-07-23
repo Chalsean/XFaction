@@ -34,7 +34,7 @@ function RaceCollection:Initialize()
 			end
 			_NewRace:SetFaction(XFG.Factions:GetFactionByName(_Race.Faction))
 			self:AddRace(_NewRace)
-			XFG:Debug(LogCategory, 'Initialized race [%s:%s]', _NewRace:GetName(), _NewRace:GetFaction():GetName())
+			XFG:Info(LogCategory, 'Initialized race [%s:%s]', _NewRace:GetName(), _NewRace:GetFaction():GetName())
 		end
 		self:IsInitialized(true)
 	end

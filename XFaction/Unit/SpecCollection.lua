@@ -26,7 +26,7 @@ function SpecCollection:Initialize()
 			_NewSpec:SetName(_Spec.Name)
 			_NewSpec:SetIconID(_Spec.Icon)
 			self:AddSpec(_NewSpec)
-			XFG:Debug(LogCategory, 'Initialized spec [%s]', _NewSpec:GetName())
+			XFG:Info(LogCategory, 'Initialized spec [%s]', _NewSpec:GetName())
 		end
 		self:IsInitialized(true)
 	end
