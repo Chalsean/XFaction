@@ -151,6 +151,9 @@ local function CanLink(inAccountInfo)
 		-- Bail out before it causes an exception
 		if(_Realm == nil) then return false end
 
+		-- We don't want to link to neutral faction toons
+		if(_AccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
+
 		local _Faction = XFG.Factions:GetFactionByName(inAccountInfo.gameAccountInfo.factionName)
 		if(not XFG.Player.Faction:Equals(_Faction) or not XFG.Player.Realm:Equals(_Realm)) then
 			return true
@@ -160,43 +163,45 @@ local function CanLink(inAccountInfo)
 end
 
 function FriendCollection:CheckFriend(inKey)
-	local _AccountInfo = C_BattleNet.GetFriendAccountInfo(inKey)
-	if(_AccountInfo == nil) then
-		XFG:Warn(LogCategory, "Received nothing for [%d]", inKey)
-		return
-	end
+	pcall(function ()
+		local _AccountInfo = C_BattleNet.GetFriendAccountInfo(inKey)
+		if(_AccountInfo == nil) then
+			XFG:Warn(LogCategory, "Received nothing for [%d]", inKey)
+			return
+		end
 
-	-- Did they go offline?
-    if(self:Contains(_AccountInfo.bnetAccountID)) then
-		if(CanLink(_AccountInfo) == false) then
-			local _Friend = XFG.Friends:GetFriend(_AccountInfo.bnetAccountID)
-			self:RemoveFriend(_Friend:GetKey())
-			XFG:Info(LogCategory, "Friend went offline or to unsupported guild [%s:%d:%d:%d]", _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
+		-- Did they go offline?
+		if(self:Contains(_AccountInfo.bnetAccountID)) then
+			if(CanLink(_AccountInfo) == false) then
+				local _Friend = XFG.Friends:GetFriend(_AccountInfo.bnetAccountID)
+				self:RemoveFriend(_Friend:GetKey())
+				XFG:Info(LogCategory, "Friend went offline or to unsupported guild [%s:%d:%d:%d]", _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
+				return true
+			end
+
+		-- Did they come online on a supported realm/faction?
+		elseif(CanLink(_AccountInfo)) then
+			local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
+			local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
+			local _Target = XFG.Targets:GetTarget(_Realm, _Faction)
+			local _NewFriend = Friend:new()
+			_NewFriend:SetKey(_AccountInfo.bnetAccountID)
+			_NewFriend:SetID(inKey)
+			_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
+			_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
+			_NewFriend:SetAccountName(_AccountInfo.accountName)
+			_NewFriend:SetTag(_AccountInfo.battleTag)
+			_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
+			_NewFriend:SetTarget(_Target)
+			self:AddFriend(_NewFriend)
+			XFG:Info(LogCategory, "Friend logged into supported guild [%s:%d:%d:%d]", _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())
+			-- Ping them to see if they're running the addon
+			if(XFG.Initialized) then 
+				XFG.BNet:PingFriend(_NewFriend) 
+			end
 			return true
 		end
-
-	-- Did they come online on a supported realm/faction?
-	elseif(CanLink(_AccountInfo)) then
-		local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
-		local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
-		local _Target = XFG.Targets:GetTarget(_Realm, _Faction)
-		local _NewFriend = Friend:new()
-		_NewFriend:SetKey(_AccountInfo.bnetAccountID)
-		_NewFriend:SetID(inKey)
-		_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
-		_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
-		_NewFriend:SetAccountName(_AccountInfo.accountName)
-		_NewFriend:SetTag(_AccountInfo.battleTag)
-		_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
-		_NewFriend:SetTarget(_Target)
-		self:AddFriend(_NewFriend)
-		XFG:Info(LogCategory, "Friend logged into supported guild [%s:%d:%d:%d]", _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())
-		-- Ping them to see if they're running the addon
-		if(XFG.Initialized) then 
-			XFG.BNet:PingFriend(_NewFriend) 
-		end
-		return true
-	end
+	end)
 	return false
 end
 
