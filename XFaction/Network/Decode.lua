@@ -25,6 +25,7 @@ local function DeserializeMessage(inSerializedMessage)
 	if(_MessageData.P ~= nil) then _Message:SetPacketNumber(_MessageData.P) end
 	if(_MessageData.Q ~= nil) then _Message:SetTotalPackets(_MessageData.Q) end
 	if(_MessageData.V ~= nil) then _Message:SetVersion(_MessageData.V) end
+	if(_MessageData.E ~= nil) then _Message:SetExpansion(XFG.Expansions:GetExpansion(_MessageData.E))
 
 	if(_Message.__name == 'GuildMessage') then
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end

@@ -32,7 +32,8 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	_MessageData.A = inMessage:GetRemainingTargets()
 	_MessageData.P = inMessage:GetPacketNumber()
 	_MessageData.Q = inMessage:GetTotalPackets()
-	_MessageData.V = inMessage:GetVersion()
+	_MessageData.V = inMessage:GetVersion():GetKey()
+	_MessageData.E = inMessage:GetExpansion():GetKey()
 
 	return XFG:Serialize(_MessageData)
 end

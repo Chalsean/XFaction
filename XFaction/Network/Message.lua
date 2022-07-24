@@ -22,6 +22,7 @@ function Message:new()
     self._PacketNumber = 1
     self._TotalPackets = 1
     self._Version = nil
+    self._Expansion = nil
 
     return _Object
 end
@@ -66,6 +67,7 @@ function Message:Initialize()
         self:SetTimeStamp(_EpochTime)
         self:SetAllTargets()
         self:SetVersion(XFG.Version)
+        self:SetExpansion(XFG.WoW)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -86,6 +88,7 @@ function Message:Print()
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _Version (" ..type(self._Version) .. "): ".. tostring(self._Version))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
+    if(self:HasExpansion()) then self:GetExpansion():Print() end
     for _, _Target in pairs (self:GetTargets()) do
         _Target:Print()
     end
@@ -106,6 +109,7 @@ function Message:ShallowPrint()
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _Version (" ..type(self._Version) .. "): ".. tostring(self._Version))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
+    if(self:HasExpansion()) then self:GetExpansion():Print() end
 end
 
 function Message:GetKey()
@@ -276,6 +280,7 @@ function Message:Copy(inMessage)
     self._PacketNumber = inMessage:GetPacketNumber()
     self._TotalPackets = inMessage:GetTotalPackets()
     self._Version = inMessage:GetVersion()
+    self._Expansion = inMessage:GetExpansion()
     for _, _Target in pairs (self:GetTargets()) do
         self:RemoveTarget(_Target)
     end
@@ -300,4 +305,18 @@ end
 
 function Message:IsMyMessage()
     return XFG.Player.Unit:GetGUID() == self:GetFrom()
+end
+
+function Message:HasExpansion()
+    return self._Expansion ~= nil
+end
+
+function Message:GetExpansion()
+    return self._Expansion
+end
+
+function Message:SetExpansion(inExpansion)
+    assert(type(inExpansion) == 'table' and inExpansion.__name ~= nil and inExpansion.__name == 'Expansion', 'argument must be an Expansion object')
+    self._Expansion = inExpansion
+    return self:GetExpansion()
 end
