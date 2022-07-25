@@ -11,26 +11,31 @@ function FriendCollection:new()
     self.__name = ObjectName
 
     self._Key = nil
-	self._Friends = {}
-	self._FriendsCount = 0
+    self._Friends = {}
+    self._FriendsCount = 0
     self._Initialized = false
 
     return _Object
 end
 
 function FriendCollection:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
 		self:SetKey(math.GenerateUID())
-		for i = 1, BNGetNumFriends() do
-			self:CheckFriend(i)
-		end
-		self:IsInitialized(true)
+		try(function ()
+			for i = 1, BNGetNumFriends() do
+				self:CheckFriend(i)
+			end
+			self:IsInitialized(true)
+		end)
+		.catch(function (inErrorMessage)
+			XFG:Warn(LogCategory, 'Failed to initialize ' .. ObjectName .. ': ' .. inErrorMessage)
+		end)
 	end
 	return self:IsInitialized()
 end
 
 function FriendCollection:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
 	if(inBoolean ~= nil) then
 		self._Initialized = inBoolean
 	end
@@ -39,10 +44,10 @@ end
 
 function FriendCollection:Print()
 	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _FriendsCount (" .. type(self._FriendsCount) .. "): ".. tostring(self._FriendsCount))
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
+	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+	XFG:Debug(LogCategory, '  _FriendsCount (' .. type(self._FriendsCount) .. '): ' .. tostring(self._FriendsCount))
+	XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 	for _, _Friend in self:Iterator() do
 		_Friend:Print()
 	end
@@ -98,7 +103,7 @@ function FriendCollection:GetFriendByGameID(inGameID)
 end
 
 function FriendCollection:GetFriendByRealmUnitName(inRealm, inName)
-	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
+	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
 	assert(type(inName) == 'string')
 	for _, _Friend in self:Iterator() do
 		 if(inName == _Friend:GetName()) then
@@ -111,8 +116,8 @@ function FriendCollection:GetFriendByRealmUnitName(inRealm, inName)
 end
 
 function FriendCollection:AddFriend(inFriend)
-    assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', "argument must be Friend object")
-	if(self:Contains(inFriend:GetKey()) == false) then
+    assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', 'argument must be Friend object')
+	if(not self:Contains(inFriend:GetKey())) then
 		self._FriendsCount = self._FriendsCount + 1
 	end
 	self._Friends[inFriend:GetKey()] = inFriend
@@ -129,6 +134,7 @@ function FriendCollection:RemoveFriend(inKey)
 		self._FriendsCount = self._FriendsCount - 1
 		self._Friends[inKey] = nil		
 	end
+	return not self:Contains(inKey)
 end
 
 function FriendCollection:Iterator()
@@ -140,9 +146,9 @@ function FriendCollection:HasFriends()
 end
 
 local function CanLink(inAccountInfo)
-	if(inAccountInfo.isFriend == true and 
-	   inAccountInfo.gameAccountInfo.isOnline == true and 
-	   inAccountInfo.gameAccountInfo.clientProgram == "WoW") then
+	if(inAccountInfo.isFriend and 
+	   inAccountInfo.gameAccountInfo.isOnline and 
+	   inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
 
 	   	-- There's no need to store if they are not logged into realm/faction we care about
 		local _Realm = XFG.Realms:GetRealmByID(inAccountInfo.gameAccountInfo.realmID)
@@ -163,11 +169,10 @@ local function CanLink(inAccountInfo)
 end
 
 function FriendCollection:CheckFriend(inKey)
-	pcall(function ()
+	try(function ()
 		local _AccountInfo = C_BattleNet.GetFriendAccountInfo(inKey)
 		if(_AccountInfo == nil) then
-			XFG:Warn(LogCategory, "Received nothing for [%d]", inKey)
-			return
+			error('Received nil for friend [%d]', inKey)
 		end
 
 		-- Did they go offline?
@@ -175,7 +180,7 @@ function FriendCollection:CheckFriend(inKey)
 			if(CanLink(_AccountInfo) == false) then
 				local _Friend = XFG.Friends:GetFriend(_AccountInfo.bnetAccountID)
 				self:RemoveFriend(_Friend:GetKey())
-				XFG:Info(LogCategory, "Friend went offline or to unsupported guild [%s:%d:%d:%d]", _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
+				XFG:Info(LogCategory, 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
 				return true
 			end
 
@@ -194,7 +199,7 @@ function FriendCollection:CheckFriend(inKey)
 			_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
 			_NewFriend:SetTarget(_Target)
 			self:AddFriend(_NewFriend)
-			XFG:Info(LogCategory, "Friend logged into supported guild [%s:%d:%d:%d]", _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())
+			XFG:Info(LogCategory, 'Friend logged into supported guild [%s:%d:%d:%d]', _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())
 			-- Ping them to see if they're running the addon
 			if(XFG.Initialized) then 
 				XFG.BNet:PingFriend(_NewFriend) 
@@ -202,38 +207,55 @@ function FriendCollection:CheckFriend(inKey)
 			return true
 		end
 	end)
+	.catch(function (inErrorMessage)
+	    XFG:Warn(LogCategory, 'Failed to check friend: ' .. inErrorMessage)
+	end)
 	return false
 end
 
 function FriendCollection:CheckFriends()
-	local _LinksChanged = false
-	for i = 1, BNGetNumFriends() do
-		local _Changed = self:CheckFriend(i)
-		if(_Changed) then
-			_LinksChanged = true
+	try(function ()
+		local _LinksChanged = false
+		for i = 1, BNGetNumFriends() do
+			local _Changed = self:CheckFriend(i)
+			if(_Changed) then
+				_LinksChanged = true
+			end
 		end
-	end
-	if(_LinksChanged) then
-		XFG.DataText.Links:RefreshBroker()
-	end
+		if(_LinksChanged) then
+			XFG.DataText.Links:RefreshBroker()
+		end
+	end)
+	.catch(function (inErrorMessage)
+		XFG:Warn(LogCategory, 'Failed to update BNet friends: ' .. inErrorMessage)
+	end)
 end
 
 function FriendCollection:CreateBackup()
-    XFG.DB.Backup.Friends = {}
-    for _, _Friend in self:Iterator() do
-        if(_Friend:IsRunningAddon()) then
-			table.insert(XFG.DB.Backup.Friends, _Friend:GetKey())
-        end
-    end
+	try(function ()
+	    XFG.DB.Backup.Friends = {}
+	    for _, _Friend in self:Iterator() do
+		if(_Friend:IsRunningAddon()) then
+				table.insert(XFG.DB.Backup.Friends, _Friend:GetKey())
+		end
+	    end
+	.catch(function (inErrorMessage)
+		table.insert(XFG.DB.Errors, 'Failed to create friend backup: ' .. inErrorMessage)
+	end)
 end
 
 function FriendCollection:RestoreBackup()
 	if(XFG.DB.Backup == nil or XFG.DB.Backup.Friends == nil) then return end
-    for _, _Key in pairs (XFG.DB.Backup.Friends) do
-		if(XFG.Friends:Contains(_Key)) then
-			local _Friend = XFG.Friends:GetFriend(_Key)
-			_Friend:IsRunningAddon(true)
-			XFG:Info(LogCategory, "  Restored %s friend information from backup", _Friend:GetTag())
-		end
-    end
+	try(function ()		
+	    	for _, _Key in pairs (XFG.DB.Backup.Friends) do
+			if(XFG.Friends:Contains(_Key)) then
+				local _Friend = XFG.Friends:GetFriend(_Key)
+				_Friend:IsRunningAddon(true)
+				XFG:Info(LogCategory, "  Restored %s friend information from backup", _Friend:GetTag())
+			end
+	    	end
+	end)
+	.catch(function (inErrorMessage)
+		XFG:Warn(LogCategory, 'Failed to restore friend list: ' .. inErrorMessage)
+	end)
 end
