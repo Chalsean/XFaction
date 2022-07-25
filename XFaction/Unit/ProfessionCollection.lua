@@ -29,7 +29,7 @@ function ProfessionCollection:Initialize()
 				_NewProfession:SetName(_Profession.Name)
 			end
 			self:AddProfession(_NewProfession)
-			XFG:Debug(LogCategory, 'Initialized profession [%s]', _NewProfession:GetName())
+			XFG:Info(LogCategory, 'Initialized profession [%s]', _NewProfession:GetName())
 		end	
 		self:IsInitialized(true)
 	end

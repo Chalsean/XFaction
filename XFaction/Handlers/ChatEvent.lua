@@ -98,7 +98,7 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
 end
 
 function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
-    if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.Chat.Prepend)) == XFG.Settings.Frames.Chat.Prepend) then
+    if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
     -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
     elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then

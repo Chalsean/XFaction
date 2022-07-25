@@ -17,7 +17,7 @@ function ChannelEvent:new()
 end
 
 function ChannelEvent:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
 		self:SetKey(math.GenerateUID())
 		XFG:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', XFG.Handlers.ChannelEvent.CallbackChannelNotice)
 		XFG:Info(LogCategory, 'Registered to receive CHAT_MSG_CHANNEL_NOTICE events')
@@ -54,33 +54,43 @@ function ChannelEvent:SetKey(inKey)
 end
 
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _, inChannelType, inChannelNumber, inChannelShortName)
-	local _Channel = XFG.Outbox:GetLocalChannel()
-	-- Fires when player leaves a channel
-	if(inAction == 'YOU_LEFT') then
-		if(inChannelShortName == _Channel:GetShortName()) then
-			XFG:Error(LogCategory, 'Removed channel was the addon channel')
-			XFG.Channels:RemoveChannel(_Channel:GetKey())
-			XFG.Outbox:VoidLocalChannel()
-		end
+	try(function ()
+		local _Channel = XFG.Outbox:GetLocalChannel()
+		-- Fires when player leaves a channel
+		if(inAction == 'YOU_LEFT') then
+			if(inChannelShortName == _Channel:GetShortName()) then
+				XFG:Error(LogCategory, 'Removed channel was the addon channel')
+				XFG.Channels:RemoveChannel(_Channel:GetKey())
+				XFG.Outbox:VoidLocalChannel()
+			end
 
-	-- Fires when player joins a channel
-	elseif(inAction == 'YOU_CHANGED') then
-		if(inChannelShortName == XFG.Settings.Network.Channel.Name and not XFG.Outbox:HasLocalChannel()) then
-			local _NewChannel = Channel:new()
-            _NewChannel:SetKey(inChannelShortName)
-            _NewChannel:SetID(inChannelNumber)
-            _NewChannel:SetShortName(inChannelShortName)
-            XFG.Channels:AddChannel(_NewChannel)
-			XFG.Channels:SetChannelLast(_NewChannel:GetKey())
-            XFG.Outbox:SetLocalChannel(_NewChannel)
-		elseif(XFG.Outbox:HasLocalChannel()) then
-			XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
+		-- Fires when player joins a channel
+		elseif(inAction == 'YOU_CHANGED') then
+			if(inChannelShortName == XFG.Settings.Network.Channel.Name and not XFG.Outbox:HasLocalChannel()) then
+				local _NewChannel = Channel:new()
+		    _NewChannel:SetKey(inChannelShortName)
+		    _NewChannel:SetID(inChannelNumber)
+		    _NewChannel:SetShortName(inChannelShortName)
+		    XFG.Channels:AddChannel(_NewChannel)
+				XFG.Channels:SetChannelLast(_NewChannel:GetKey())
+		    XFG.Outbox:SetLocalChannel(_NewChannel)
+			elseif(XFG.Outbox:HasLocalChannel()) then
+				XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
+			end
 		end
-	end
+	end)
+	.catch(function (inErrorMessage)
+		XFG:Warn(LogCategory, 'Failed to update channel information based on event: ' .. inErrorMessage)
+	end)
 end
 
 function ChannelEvent:CallbackChannelChange(inChannelIndex)
-	if(XFG.Outbox:HasLocalChannel()) then
-		XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
-	end
+	try(function ()
+		if(XFG.Outbox:HasLocalChannel()) then
+			XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
+		end
+	end)
+	.catch(function (inErrorMessage)
+		XFG:Error(LogCategory, 'Failure moving channel: ' .. inErrorMessage)
+	end)
 end
