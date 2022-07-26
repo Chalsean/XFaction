@@ -149,5 +149,20 @@ XFG.Settings = {
 	},
 	DataText = {
 		AutoHide = .25,
-	}
+	},
+	Metric = {
+		PurgeDelta = 60 * 10,
+		Names = {
+			Messages = 'Messages',
+			Data = 'DataMessages',
+			Login = 'LoginMessages',
+			Links = 'LinksMessages',
+			Logout = 'LogoutMessages',
+			Chat = 'ChatMessages',
+			Achievement = 'AchievementMessages',
+			BNet = 'BNetMessages',
+			Channel = 'ChannelMessages',
+			Forward = 'ForwardMessages',
+		},
+	},
 }

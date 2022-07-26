@@ -114,13 +114,13 @@ function TimerEvent:CallbackLogin()
 				local _XFData
 				local _DataIn = string.match(_GuildInfo.description, 'XF:(.-):XF')
 				if (_DataIn ~= nil) then
-				-- Decompress and deserialize XFaction data
-				local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
-				local _, _Deserialized = XFG:Deserialize(_Decompressed)
-				XFG:Debug(LogCategory, 'Data from config %s', _Deserialized)
-				_XFData = _Deserialized
+					-- Decompress and deserialize XFaction data
+					local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
+					local _, _Deserialized = XFG:Deserialize(_Decompressed)
+					XFG:Debug(LogCategory, 'Data from config %s', _Deserialized)
+					_XFData = _Deserialized
 				else
-				_XFData = _GuildInfo.description
+					_XFData = _GuildInfo.description
 				end
 
 				for _, _Line in ipairs(string.Split(_XFData, '\n')) do
@@ -225,6 +225,7 @@ function TimerEvent:CallbackLogin()
 					XFG.Covenants = CovenantCollection:new(); XFG.Covenants:Initialize()
 					XFG.Soulbinds = SoulbindCollection:new(); XFG.Soulbinds:Initialize()
 				end
+				XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
 
 				-- If this is a reload, restore non-local guild members
 				try(function ()
@@ -345,28 +346,28 @@ end
 
 function TimerEvent:CallbackDelayedStartTimer()
 	try(function ()
-    		XFG.Frames.Chat:LoadElvUI()
-    		if(not XFG.DB.UIReload) then
-        		XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
-        		XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
-        		XFG.Links:BroadcastLinks()
-    		end
-	end)
-	.catch(function (inErrorMessage)
+		XFG.Frames.Chat:LoadElvUI()
+		if(not XFG.DB.UIReload) then
+			XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
+			XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
+			XFG.Links:BroadcastLinks()
+		end
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed delayed start initialization: ' .. inErrorMessage)
-	end)
-	.finally(function ()
-    		XFG.DB.UIReload = false
+	end).
+	finally(function ()
+		XFG.DB.UIReload = false
 	end)
 
 	try(function ()
-    		-- For support reasons, it helps to know what addons are being used
-    		for i = 1, GetNumAddOns() do
-        		local _Name, _, _, _Enabled = GetAddOnInfo(i)
-        		XFG:Debug(LogCategory, 'Addon is loaded [%s] enabled [%s]', _Name, tostring(_Enabled))
-    		end
-	end)
-	.catch(function (inErrorMessage)
+		-- For support reasons, it helps to know what addons are being used
+		for i = 1, GetNumAddOns() do
+			local _Name, _, _, _Enabled = GetAddOnInfo(i)
+			XFG:Debug(LogCategory, 'Addon is loaded [%s] enabled [%s]', _Name, tostring(_Enabled))
+		end
+	end).
+	catch(function (inErrorMessage)
 		XFG:Debug(LogCategory, 'Failed to query for addon: ' .. inErrorMessage)
 	end)
 end
@@ -374,78 +375,78 @@ end
 -- Cleanup mailbox
 function TimerEvent:CallbackMailboxTimer()
 	try(function ()
-    		local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
-    		XFG.Mailbox:Purge(_EpochTime)
-	end)
-	.catch(function (inErrorMessage)
+		local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
+		XFG.Mailbox:Purge(_EpochTime)
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to clean regular mailbox: ' .. inErrorMessage)
-	end)
-	.finally(function ()
-    		local _Timer = XFG.Timers:GetTimer('Mailbox')
-    		_Timer:SetLastRan(GetServerTime())
+	end).
+	finally(function ()
+		local _Timer = XFG.Timers:GetTimer('Mailbox')
+		_Timer:SetLastRan(GetServerTime())
 	end)
 end
 
 -- Cleanup BNet mailbox
 function TimerEvent:CallbackBNetMailboxTimer()
 	try(function ()
-    		local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
-    		XFG.BNet:Purge(_EpochTime)
-	end)
-	.catch(function (inErrorMessage)
+		local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
+		XFG.BNet:Purge(_EpochTime)
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to clean BNet mailbox: ' .. inErrorMessage)
-	end)
-	.finally(function ()
-    		local _Timer = XFG.Timers:GetTimer('BNetMailbox')
-    		_Timer:SetLastRan(GetServerTime())
+	end).
+	finally(function ()
+		local _Timer = XFG.Timers:GetTimer('BNetMailbox')
+		_Timer:SetLastRan(GetServerTime())
 	end)
 end
 
 -- If you haven't heard from a unit in X minutes, set them to offline
 function TimerEvent:CallbackOffline()
 	try(function ()
-    		local _EpochTime = GetServerTime() - XFG.Settings.Confederate.UnitStale
-    		XFG.Confederate:OfflineUnits(_EpochTime)
-	end)
-	.catch(function (inErrorMessage)
+		local _EpochTime = GetServerTime() - XFG.Settings.Confederate.UnitStale
+		XFG.Confederate:OfflineUnits(_EpochTime)
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to identify stale units: ' .. inErrorMessage)
-	end)
-	.finally(function ()
-    		local _Timer = XFG.Timers:GetTimer('Offline')
-    		_Timer:SetLastRan(GetServerTime())
+	end).
+	finally(function ()
+		local _Timer = XFG.Timers:GetTimer('Offline')
+		_Timer:SetLastRan(GetServerTime())
 	end)
 end
 
 -- Periodically send update to avoid other considering you offline
 function TimerEvent:CallbackHeartbeat()
 	try(function ()
-    		if(XFG.Initialized and XFG.Player.LastBroadcast < GetServerTime() - XFG.Settings.Player.Heartbeat) then
-        		XFG:Debug(LogCategory, "Sending heartbeat")
-        		XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.DATA)
-    		end
-	end)
-	.catch(function (inErrorMessage)
+		if(XFG.Initialized and XFG.Player.LastBroadcast < GetServerTime() - XFG.Settings.Player.Heartbeat) then
+			XFG:Debug(LogCategory, "Sending heartbeat")
+			XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.DATA)
+		end
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to send heartbeat message: ' .. inErrorMessage)
-	end)
-	.finally(function ()
-    		local _Timer = XFG.Timers:GetTimer('Heartbeat')
-    		_Timer:SetLastRan(GetServerTime())
+	end).
+	finally(function ()
+		local _Timer = XFG.Timers:GetTimer('Heartbeat')
+		_Timer:SetLastRan(GetServerTime())
 	end)
 end
 
 -- Periodically force a refresh
 function TimerEvent:CallbackGuildRoster()
 	try(function ()
-    		if(XFG.Initialized and IsInGuild()) then
-        		C_GuildInfo.GuildRoster()
-    		end
-	end)
-	.catch(function (inErrorMessage)
+		if(XFG.Initialized and IsInGuild()) then
+			C_GuildInfo.GuildRoster()
+		end
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to call C_GuildInfo API: ' .. inErrorMessage)
-	end)
-	.finally(function ()
-    		local _Timer = XFG.Timers:GetTimer('Roster')
-    		_Timer:SetLastRan(GetServerTime())
+	end).
+	finally(function ()
+		local _Timer = XFG.Timers:GetTimer('Roster')
+		_Timer:SetLastRan(GetServerTime())
 	end)
 end
 
@@ -453,17 +454,17 @@ end
 function TimerEvent:CallbackPingFriends()
     try(function()
 	    for _, _Friend in XFG.Friends:Iterator() do
-		if(not _Friend:IsRunningAddon()) then
-		    XFG.BNet:PingFriend(_Friend)
-		end
+			if(not _Friend:IsRunningAddon()) then
+				XFG.BNet:PingFriend(_Friend)
+			end
 	    end
-	end)
-	.catch(function (inErrorMessage)
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to ping friends: ' .. inErrorMessage)
-	end)
-	.finally(function ()
-    		local _Timer = XFG.Timers:GetTimer('Ping')
-    		_Timer:SetLastRan(GetServerTime())
+	end).
+	finally(function ()
+		local _Timer = XFG.Timers:GetTimer('Ping')
+		_Timer:SetLastRan(GetServerTime())
 	end)
 end
 
@@ -471,27 +472,27 @@ end
 function TimerEvent:CallbackLinks()
 	try(function ()
     		XFG.Links:BroadcastLinks()
-	end)
-	.catch(function (inErrorMessage)
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to broadcast links: ' .. inErrorMessage)
-	end)
-	.finally(function ()
-    		local _Timer = XFG.Timers:GetTimer('Links')
-    		_Timer:SetLastRan(GetServerTime())
+	end).
+	finally(function ()
+		local _Timer = XFG.Timers:GetTimer('Links')
+		_Timer:SetLastRan(GetServerTime())
 	end)
 end
 
 -- Periodically purge stale links
 function TimerEvent:CallbackStaleLinks()
 	try(function ()
-    		local _EpochTime = GetServerTime() - XFG.Settings.Network.BNet.Link.Stale
-    		XFG.Links:PurgeStaleLinks(_EpochTime)
-	end)
-	.catch(function (inErrorMessage)
+		local _EpochTime = GetServerTime() - XFG.Settings.Network.BNet.Link.Stale
+		XFG.Links:PurgeStaleLinks(_EpochTime)
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to purge stale links: ' .. inErrorMessage)
-	end)
-	.finally(function ()
-    		local _Timer = XFG.Timers:GetTimer('StaleLinks')
-    		_Timer:SetLastRan(GetServerTime())
+	end).
+	finally(function ()
+		local _Timer = XFG.Timers:GetTimer('StaleLinks')
+		_Timer:SetLastRan(GetServerTime())
 	end)
 end

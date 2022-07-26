@@ -72,12 +72,12 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-	try(function ()
-    local _Message = XFG:DecodeMessage(inEncodedMessage)
+    try(function ()
+        local _Message = XFG:DecodeMessage(inEncodedMessage)
         self:Process(_Message, inMessageTag)
     end).
-	catch(function (inErrorMessage)
-        XFG:Warn(LogCategory, 'Failed to process received message [%s:%s:%s]: ' .. inErrorMessage, inSender, inMessageTag, inDistribution)
+    catch(function (inErrorMessage)
+        XFG:Warn(LogCategory, 'Failed to process received message: ' .. inErrorMessage)
     end)
 end
 
@@ -102,17 +102,14 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.Mailbox:AddMessage(inMessage)
     end
 
+    XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Messages):Increment()
+
     -- Deserialize unit data
     if(inMessage:HasUnitData()) then
-        local _UnitData
-        if(pcall(function () _UnitData = XFG:DeserializeUnitData(inMessage:GetData()) end)) then
-            inMessage:SetData(_UnitData)
-            if(_UnitData:HasVersion() == false) then
-                _UnitData:SetVersion(inMessage:GetVersion())
-            end
-        else
-            XFG:Warn(LogCategory, 'Failed to decode received unit data [%s]', inMessage:GetFrom())
-            return
+        local _UnitData = XFG:DeserializeUnitData(inMessage:GetData())
+        inMessage:SetData(_UnitData)
+        if(not _UnitData:HasVersion()) then
+            _UnitData:SetVersion(inMessage:GetVersion())
         end
     end
 
@@ -130,6 +127,7 @@ function Inbox:Process(inMessage, inMessageTag)
                 XFG:Debug(LogCategory, 'Randomly selected, forwarding message')
                 inMessage:SetType(XFG.Settings.Network.Type.BNET)
                 XFG.Outbox:Send(inMessage)
+                XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Forward):Increment()
             else
                 XFG:Debug(LogCategory, 'Not randomly selected, will not forward mesesage')
             end
@@ -137,6 +135,7 @@ function Inbox:Process(inMessage, inMessageTag)
             XFG:Debug(LogCategory, 'Node count under threshold, forwarding message')
             inMessage:SetType(XFG.Settings.Network.Type.BNET)
             XFG.Outbox:Send(inMessage)
+            XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Forward):Increment()
         end        
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
@@ -147,6 +146,7 @@ function Inbox:Process(inMessage, inMessageTag)
             inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
         end
         XFG.Outbox:Send(inMessage)
+        XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Forward):Increment()
     end
 
     --========================================
@@ -157,6 +157,11 @@ function Inbox:Process(inMessage, inMessageTag)
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
         if(XFG.Player.Unit:CanGuildListen() and not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             XFG.Frames.Chat:Display(inMessage)
+            if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT) then
+                XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Chat):Increment()
+            else
+                XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Achievement):Increment()
+            end
         end
         return
     end
@@ -165,6 +170,7 @@ function Inbox:Process(inMessage, inMessageTag)
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LINK) then
         XFG.Links:ProcessMessage(inMessage)
         XFG.DataText.Links:RefreshBroker()
+        XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Links):Increment()
         return
     end
 
@@ -174,6 +180,7 @@ function Inbox:Process(inMessage, inMessageTag)
         if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             XFG.Confederate:RemoveUnit(inMessage:GetFrom())
             XFG.Frames.System:DisplayLogoutMessage(inMessage)
+            XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Logout):Increment()
         end
         return
     end
@@ -188,6 +195,7 @@ function Inbox:Process(inMessage, inMessageTag)
 
         -- If unit has just logged in, reply with latest information
         if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
+            XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Login):Increment()
             -- Display system message that unit has logged on
             if(not XFG.Player.Guild:Equals(_UnitData:GetGuild())) then
                 XFG.Frames.System:DisplayLoginMessage(inMessage)
@@ -197,7 +205,9 @@ function Inbox:Process(inMessage, inMessageTag)
             --    XFG.Player.Faction:Equals(_UnitData:GetFaction()) and 
             --    XFG.Confederate:GetCountByTarget(XFG.Player.Target) <= XFG.Settings.Network.LoginLimit) then
             --     XFG.Outbox:WhisperUnitData(_UnitData:GetGUID(), XFG.Player.Unit)
-            -- end
+            -- end    
+        else
+            XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Data):Increment()
         end
     end
 end

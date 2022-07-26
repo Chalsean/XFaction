@@ -21,7 +21,8 @@ Handlers\LoadHandlers.xml
 Network\LoadNetwork.xml
 Unit\LoadUnit.xml
 Confederate\LoadConfederate.xml
-Media\LoadMedia.xml
 Frames\LoadFrames.xml
 DataText\LoadDataText.xml
+Media\LoadMedia.xml
+Metrics\LoadMetrics.xml
 Initialize.lua

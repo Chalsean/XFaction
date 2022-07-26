@@ -234,7 +234,6 @@ function DTGuild:OnEnter(this)
 		_Tooltip:SetAutoHideDelay(XFG.DataText.AutoHide, this, function() DTGuild:OnLeave() end)
 		_Tooltip:EnableMouse(true)
 		_Tooltip:SetClampedToScreen(false)
-		_Tooltip:SetFrameStrata('FULLSCREEN_DIALOG')
 	end
 
 	_Tooltip:Clear()

@@ -50,7 +50,6 @@ function SystemFrame:SetKey(inKey)
 end
 
 function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRealm)
-	if(not XFG.Config.Chat.Login.Enable) then return end
     assert(type(inName) == 'string')
     assert(type(inUnitName) == 'string')
     assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
@@ -97,17 +96,20 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
 end
 
 function SystemFrame:DisplayLoginMessage(inMessage)
+    if(XFG.Config.Chat.Login.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     local _UnitData = inMessage:GetData()
     self:Display(inMessage:GetSubject(), _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
 end
 
 function SystemFrame:DisplayLogoutMessage(inMessage)
+    if(XFG.Config.Chat.Login.Enable == false) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm())
 end
 
 function SystemFrame:DisplayLocalOffline(inUnitData)
+    if(XFG.Config.Chat.Login.Enable == false) then return end
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', 'argument must be Unit object')
 
     local _Faction = inUnitData:GetFaction()

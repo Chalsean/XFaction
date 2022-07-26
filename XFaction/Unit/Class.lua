@@ -99,18 +99,6 @@ function Class:SetHex(inHex)
     return self:GetHex()
 end
 
-function Class:SetHex(inHex)
-    assert(type(inHex) == 'string')
-    self._Hex = inHex
-    return self:GetHex()
-end
-
 function Class:GetHex()
     return self._Hex
-end
-
-function Class:SetHex(inHex)
-    assert(type(inHex) == 'string')
-    self._Hex = inHex
-    return self:GetHex()
 end

@@ -4,6 +4,7 @@ local LogCategory = 'Initialize'
 function XFG:Init()
 	XFG.Expansions = ExpansionCollection:new(); XFG.Expansions:Initialize()
 	XFG.WoW = XFG.Expansions:GetCurrent()
+	XFG.Metrics = MetricCollection:new(); XFG.Metrics:Initialize()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
