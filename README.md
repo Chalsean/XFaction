@@ -62,7 +62,8 @@ The addon should provide the following functionalities:
 
 > ChatThrottleLib (*modified for BNet)
 
-> LibCompress
+> LibBabble
+- Race
 
 > LibDataBroker
 
