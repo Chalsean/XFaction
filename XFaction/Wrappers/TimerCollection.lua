@@ -90,42 +90,74 @@ end
 
 function TimerCollection:EnterInstance()
     for _, _Timer in self:Iterator() do
-        if(_Timer:IsEnabled() and _Timer:IsInstance() == false) then
+		try(function ()
+        if(_Timer:IsEnabled() and not _Timer:IsInstance()) then
             _Timer:Stop()
         end
+				end).
+		catch(function (inErrorMessage)
+				XFG:Error(LogCategory, 'Failed to stop timer [%s] upon entering instance: ' .. inErrorMessage, _Timer:GetID())
+				end)
     end
 end
 
 function TimerCollection:LeaveInstance()
     for _, _Timer in self:Iterator() do
-        if(_Timer:IsEnabled() == false) then
+		try(function ()
+        if(not _Timer:IsEnabled()) then
             _Timer:Start()
             if(_Timer:GetLastRan() < GetServerTime() - _Timer:GetDelta()) then
+						try(function ()
                 local _Function = _Timer:GetCallback()
                 _Function()
                 _Timer:SetLastRan(GetServerTime())
+								end).
+						catch(function (inErrorMessage)
+								XFG:Warn(LogCategory, 'Failed to execute stale timer [%s]: ' .. inErrorMessage, _Timer:GetID())
+								end)
             end
         end
+				end).
+		catch(function (inErrorMessage)
+				XFG:Error(LogCategory, 'Failed to start timer [%s] upon leaving instance: ' .. inErrorMessage, _Timer:GetID())
+			end)
     end
 end
 
 function TimerCollection:EnterCombat()
     for _, _Timer in self:Iterator() do
-        if(_Timer:IsEnabled() and _Timer:IsInstanceCombat() == false) then
+		try(function ()
+        if(_Timer:IsEnabled() and not _Timer:IsInstanceCombat()) then
             _Timer:Stop()
         end
+				end).
+		catch(function (inErrorMessage)
+				XFG:Error(LogCategory, 'Failed to stop timer during combat [%s]: ' .. inErrorMessage, _Timer:GetID())
+			end)
     end
 end
 
 function TimerCollection:LeaveCombat()
     for _, _Timer in self:Iterator() do
-        if(_Timer:IsEnabled() == false and _Timer:IsInstance()) then
-            _Timer:Start()
-            if(_Timer:GetLastRan() < GetServerTime() - _Timer:GetDelta()) then
-                local _Function = _Timer:GetCallback()
-                _Function()
-                _Timer:SetLastRan(GetServerTime())
-            end
+		try(function ()
+        if(not _Timer:IsEnabled() and _Timer:IsInstance()) then
+		
+					_Timer:Start()
+            	if(_Timer:GetLastRan() < GetServerTime() - _Timer:GetDelta()) then
+						try(function ()
+                	local _Function = _Timer:GetCallback()
+                	_Function()
+                	_Timer:SetLastRan(GetServerTime())
+								end).
+					catch(function (inErrorMessage)
+			XFG:Warn(LogCategory, 'Failed to execute stale timer [%s]: ' .. inErrorMessage, _Timer:GetID())
+		end)	
+            	end
+		end
+	end).
+		catch(function (inErrorMessage)
+				XFG:Error(LogCategory, 'Failed to start timer [%s] after leaving combat: ' .. inErrorMessage, _Timer:GetID())
+				end)
         end
     end
 end
