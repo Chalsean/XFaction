@@ -72,12 +72,13 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-    local _Message = nil
-    if(pcall(function () _Message = XFG:DecodeMessage(inEncodedMessage) end)) then
+	try(function ()
+    local _Message = XFG:DecodeMessage(inEncodedMessage)
         self:Process(_Message, inMessageTag)
-    else
-        XFG:Warn(LogCategory, 'Failed to decode received message [%s:%s:%s]', inSender, inMessageTag, inDistribution)
-    end    
+    end).
+	catch(function (inErrorMessage)
+        XFG:Warn(LogCategory, 'Failed to process received message [%s:%s:%s]: ' .. inErrorMessage, inSender, inMessageTag, inDistribution)
+    end)
 end
 
 function Inbox:Process(inMessage, inMessageTag)
@@ -155,7 +156,7 @@ function Inbox:Process(inMessage, inMessageTag)
     -- Process gchat/achievement messages
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
         if(XFG.Player.Unit:CanGuildListen() and not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
-            pcall(function() XFG.Frames.Chat:Display(inMessage) end)
+            XFG.Frames.Chat:Display(inMessage)
         end
         return
     end
@@ -183,7 +184,6 @@ function Inbox:Process(inMessage, inMessageTag)
         _UnitData:IsPlayer(false)
         if(XFG.Confederate:AddUnit(_UnitData)) then
             XFG:Info(LogCategory, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
-            XFG.DataText.Guild:RefreshBroker()
         end
 
         -- If unit has just logged in, reply with latest information
