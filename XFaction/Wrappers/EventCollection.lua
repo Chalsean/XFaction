@@ -67,7 +67,7 @@ end
 
 function EventCollection:AddEvent(inEvent)
     assert(type(inEvent) == 'table' and inEvent.__name ~= nil and inEvent.__name == 'Event', 'argument must be Event object')
-	if(self:Contains(inEvent:GetKey()) == false) then
+	if(not self:Contains(inEvent:GetKey())) then
 		self._EventCount = self._EventCount + 1
 	end
 	self._Events[inEvent:GetKey()] = inEvent
@@ -80,40 +80,65 @@ end
 
 function EventCollection:EnterInstance()
     for _, _Event in self:Iterator() do
-        if(_Event:IsEnabled() and _Event:IsInstance() == false) then
+		try(function ()
+        if(_Event:IsEnabled() and not _Event:IsInstance()) then
             _Event:Stop()
         end
+				end).
+		catch(function (inErrorMessage)
+				XFG:Warn(LogCategory, 'Failed to stop event listener [%s] upon entering instance: ' .. inErrorMessage, _Event:GetID())
+				end)
     end
 end
 
 function EventCollection:LeaveInstance()
     for _, _Event in self:Iterator() do
-        if(_Event:IsEnabled() == false and _Event:GetName() ~= 'Covenant') then
+		try(function ()
+        if(not _Event:IsEnabled() and _Event:GetName() ~= 'Covenant') then
             _Event:Start()
         end
+				end).
+		catch(function (inErrorMessage)
+				XFG:Error(LogCategory, 'Failed to start event listener [%s] upon exitting instance: ' .. inErrorMessage, _Event:GetID())
+				end)
     end
 end
 
 function EventCollection:EnterCombat()
     for _, _Event in self:Iterator() do
-        if(_Event:IsEnabled() and _Event:IsInstanceCombat() == false) then
+		try(function ()
+        if(_Event:IsEnabled() and not _Event:IsInstanceCombat()) then
             _Event:Stop()
         end
+				end).
+		catch(function (inErrorMessage)
+				XFG:Warn(LogCategory, 'Failed to stop event listener [%s] upon entering combat: ' .. inErrorMessage, _Event:GetID())
+				end)
     end
 end
 
 function EventCollection:LeaveCombat()
     for _, _Event in self:Iterator() do
-        if(_Event:IsEnabled() == false and _Event:IsInstance()) then
+		try(function ()
+        if(not _Event:IsEnabled() and _Event:IsInstance()) then
             _Event:Start()
         end
+				end).
+		catch(function (inErrorMessage)
+				XFG:Error(LogCategory, 'Failed to start event listener [%s] upon exitting combat: ' .. inErrorMessage, _Event:GetID())
+				end)
     end
 end
 
 -- Stop everything
 function EventCollection:Stop()
 	for _, _Event in XFG.Events:Iterator() do
+		try(function ()
         _Event:Stop()
 		_Event:IsEnabled(false)
+				end).
+		catch(function (inErrorMessage)
+				XFG:Error(LogCategory, 'Failed to shutdown event listener [%s]: ' .. inErrorMessage, _Event:GetID())
+				end)
 	end
 end
