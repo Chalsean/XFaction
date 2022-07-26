@@ -128,6 +128,8 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     if(_AddonTag == false) then
         return
     end
+	
+	try(function ()
 
     -- People can only whisper you if friend, so if you got a whisper you need to check friends cache
     if(not XFG.Friends:ContainsByGameID(tonumber(inSender))) then
@@ -149,7 +151,12 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
             end
         end
     end
+			end).
+	catch(function (inErrorMessage)
+			XFG:Warn(LogCategory, 'Failed to lookup BNet sender: ' .. inErrorMessage)
+			end)
 
+	try(function ()
     if(inEncodedMessage == 'PING') then
         BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
         return
@@ -164,8 +171,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     XFG:Debug(LogCategory, 'Received packet [%d:%d] of message [%s] from [%d]', _PacketNumber, _TotalPackets, _MessageKey, inSender)
     -- Temporary, remove after all upgraded to 3.3
     if(not _TotalPackets) then
-        XFG:Debug(LogCategory, 'Message is in pre-3.3 format, ignoring')
-        return
+				error('Message is in pre-3.3 format')
     end
 
     XFG.BNet:AddPacket(_MessageKey, _PacketNumber, _MessageData)
@@ -178,6 +184,10 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
             XFG:Warn(LogCategory, 'Failed to decode received message [%d:%s:%s]', inSender, _MessageKey, 'BNET')
         end
     end
+			end).
+	catch(function (inErrorMessage)
+			XFG:Error(LogCategory, 'Failed to process received BNet message: ' .. inErrorMessage)
+			end)
 end
 
 function BNet:Contains(inKey)
