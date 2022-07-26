@@ -6,4 +6,5 @@
     <Script file='Table\PairsByKeys.lua'/>
     <Script file='Table\RemoveKey.lua'/>
     <Script file='Number\FormatCurrency.lua'/>
+    <Script file='Exception\try-catch-finally.lua'/>
 </Ui>

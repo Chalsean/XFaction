@@ -61,9 +61,10 @@ _ProfessionData = {
 	[5] = '171,Alchemy,136240',
 	[6] = '773,Inscription,237171',
 	[7] = '165,Leatherworking,133611',
-	[8] = '333,Blacksmithing,136241',
+	[8] = '164,Blacksmithing,136241',
 	[9] = '755,Jewelcrafting,134071',
 	[10] = '393,Skinning,134366',
+	[11] = '333,Enchanting,136244'
 }
 
 ------------------------------------------------------------------------

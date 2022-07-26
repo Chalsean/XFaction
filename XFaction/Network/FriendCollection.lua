@@ -26,8 +26,8 @@ function FriendCollection:Initialize()
 				self:CheckFriend(i)
 			end
 			self:IsInitialized(true)
-		end)
-		.catch(function (inErrorMessage)
+		end).
+		catch(function (inErrorMessage)
 			XFG:Warn(LogCategory, 'Failed to initialize ' .. ObjectName .. ': ' .. inErrorMessage)
 		end)
 	end
@@ -158,7 +158,7 @@ local function CanLink(inAccountInfo)
 		if(_Realm == nil) then return false end
 
 		-- We don't want to link to neutral faction toons
-		if(_AccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
+		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
 
 		local _Faction = XFG.Factions:GetFactionByName(inAccountInfo.gameAccountInfo.factionName)
 		if(not XFG.Player.Faction:Equals(_Faction) or not XFG.Player.Realm:Equals(_Realm)) then
@@ -206,8 +206,8 @@ function FriendCollection:CheckFriend(inKey)
 			end
 			return true
 		end
-	end)
-	.catch(function (inErrorMessage)
+	end).
+	catch(function (inErrorMessage)
 	    XFG:Warn(LogCategory, 'Failed to check friend: ' .. inErrorMessage)
 	end)
 	return false
@@ -225,8 +225,8 @@ function FriendCollection:CheckFriends()
 		if(_LinksChanged) then
 			XFG.DataText.Links:RefreshBroker()
 		end
-	end)
-	.catch(function (inErrorMessage)
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to update BNet friends: ' .. inErrorMessage)
 	end)
 end
@@ -235,11 +235,12 @@ function FriendCollection:CreateBackup()
 	try(function ()
 	    XFG.DB.Backup.Friends = {}
 	    for _, _Friend in self:Iterator() do
-		if(_Friend:IsRunningAddon()) then
+			if(_Friend:IsRunningAddon()) then
 				table.insert(XFG.DB.Backup.Friends, _Friend:GetKey())
+			end
 		end
-	    end
-	.catch(function (inErrorMessage)
+	end).
+	catch(function (inErrorMessage)
 		table.insert(XFG.DB.Errors, 'Failed to create friend backup: ' .. inErrorMessage)
 	end)
 end
@@ -247,15 +248,15 @@ end
 function FriendCollection:RestoreBackup()
 	if(XFG.DB.Backup == nil or XFG.DB.Backup.Friends == nil) then return end
 	try(function ()		
-	    	for _, _Key in pairs (XFG.DB.Backup.Friends) do
+		for _, _Key in pairs (XFG.DB.Backup.Friends) do
 			if(XFG.Friends:Contains(_Key)) then
 				local _Friend = XFG.Friends:GetFriend(_Key)
 				_Friend:IsRunningAddon(true)
 				XFG:Info(LogCategory, "  Restored %s friend information from backup", _Friend:GetTag())
 			end
-	    	end
-	end)
-	.catch(function (inErrorMessage)
+	    end
+	end).
+	catch(function (inErrorMessage)
 		XFG:Warn(LogCategory, 'Failed to restore friend list: ' .. inErrorMessage)
 	end)
 end

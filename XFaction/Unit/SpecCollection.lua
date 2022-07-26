@@ -18,15 +18,15 @@ function SpecCollection:new()
 end
 
 function SpecCollection:Initialize()
-	if(self:IsInitialized() == false) then
-		for _, _SpecID in pairs (XFG.Settings.Specs) do
-			local _id, _name, _, _icon, _, _, _class = GetSpecializationInfoByID(_SpecID)
-			local _Spec = Spec:new()
-			_Spec:SetID(_id)
-			_Spec:Initialize()
-			self._Specs[_Spec:GetKey()] = _Spec
-			self._SpecCount = self._SpecCount + 1
-			XFG:Info(LogCategory, 'Initialized spec [%s]', _Spec:GetName())
+	if(not self:IsInitialized()) then
+		for _, _Spec in XFG.Lib.Spec:Iterator() do
+			local _NewSpec = Spec:new()
+			_NewSpec:SetID(_Spec.ID)
+			_NewSpec:SetKey(_Spec.ID)
+			_NewSpec:SetName(_Spec.Name)
+			_NewSpec:SetIconID(_Spec.Icon)
+			self:AddSpec(_NewSpec)
+			XFG:Info(LogCategory, 'Initialized spec [%s]', _NewSpec:GetName())
 		end
 		self:IsInitialized(true)
 	end
