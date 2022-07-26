@@ -21,8 +21,10 @@ function ChannelEvent:Initialize()
 		self:SetKey(math.GenerateUID())
 		XFG:RegisterEvent('CHAT_MSG_CHANNEL_NOTICE', XFG.Handlers.ChannelEvent.CallbackChannelNotice)
 		XFG:Info(LogCategory, 'Registered to receive CHAT_MSG_CHANNEL_NOTICE events')
-		XFG:RegisterEvent('CHANNEL_FLAGS_UPDATED', XFG.Handlers.ChannelEvent.CallbackChannelChange)
-		XFG:Info(LogCategory, 'Registered to receive CHANNEL_FLAGS_UPDATED events')
+		--XFG:RegisterEvent('CHANNEL_FLAGS_UPDATED', XFG.Handlers.ChannelEvent.CallbackChannelChange)
+		--XFG:Info(LogCategory, 'Registered to receive CHANNEL_FLAGS_UPDATED events')
+		XFG:RegisterEvent('UPDATE_CHAT_COLOR', XFG.Handlers.ChannelEvent.CallbackUpdateColor)
+		XFG:Info(LogCategory, 'Registered to receive UPDATE_CHAT_COLOR events')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -53,30 +55,27 @@ function ChannelEvent:SetKey(inKey)
     return self:GetKey()
 end
 
-function ChannelEvent:CallbackChannelNotice(inAction, _, _, inChannelName, _, _, inChannelType, inChannelNumber, inChannelShortName)
+function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelType, inChannelNumber, inChannelName)
 	try(function ()
 		local _Channel = XFG.Outbox:GetLocalChannel()
-		-- Fires when player leaves a channel
+		
 		if(inAction == 'YOU_LEFT') then
-			if(inChannelShortName == _Channel:GetShortName()) then
-				XFG:Error(LogCategory, 'Removed channel was the addon channel')
-				XFG.Channels:RemoveChannel(_Channel:GetKey())
+			if(inChannelName == _Channel:GetName()) then
+				XFG:Error(LogCategory, 'Removed channel was the addon channel')			
 				XFG.Outbox:VoidLocalChannel()
 			end
+			XFG.Channels:RemoveChannel(_Channel:GetKey())
 
-		-- Fires when player joins a channel
 		elseif(inAction == 'YOU_CHANGED') then
-			if(inChannelShortName == XFG.Settings.Network.Channel.Name and not XFG.Outbox:HasLocalChannel()) then
-				local _NewChannel = Channel:new()
-		    _NewChannel:SetKey(inChannelShortName)
+			XFG.Channels:SetChannelLast(_Channel:GetKey())
+
+		elseif(inAction == 'YOU_JOINED') then
+			local _NewChannel = Channel:new()
+		    _NewChannel:SetKey(inChannelName)
 		    _NewChannel:SetID(inChannelNumber)
-		    _NewChannel:SetShortName(inChannelShortName)
+		   	_NewChannel:SetName(inChannelName)
 		    XFG.Channels:AddChannel(_NewChannel)
-				XFG.Channels:SetChannelLast(_NewChannel:GetKey())
-		    XFG.Outbox:SetLocalChannel(_NewChannel)
-			elseif(XFG.Outbox:HasLocalChannel()) then
-				XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
-			end
+			XFG.Channels:SetChannelLast(_Channel:GetKey())
 		end
 	end)
 	.catch(function (inErrorMessage)
@@ -92,5 +91,26 @@ function ChannelEvent:CallbackChannelChange(inChannelIndex)
 	end)
 	.catch(function (inErrorMessage)
 		XFG:Error(LogCategory, 'Failure moving channel: ' .. inErrorMessage)
+	end)
+end
+
+function ChannelEvent:CallbackUpdateColor(inChannel, inR, inG, inB)
+	try(function ()
+		if(inChannel) then
+			local _ChannelID = tonumber(inChannel:match("(%d+)$"))
+			local _Channel = XFG.Channels:GetChannelByID(_ChannelID)
+			if(_Channel ~= nil) then
+				if(XFG.Config.Channels[_Channel:GetName()] == nil) then
+					XFG.Config.Channels[_Channel:GetName()] = {}
+				end
+				XFG.Config.Channels[_Channel:GetName()].R = inR
+				XFG.Config.Channels[_Channel:GetName()].G = inG
+				XFG.Config.Channels[_Channel:GetName()].B = inB
+				XFG:Debug(LogCategory, 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, _Channel:GetName())
+			end
+		end
+	end)
+	.catch(function (inErrorMessage)
+		XFG:Error(LogCategory, 'Failure capturing channel color: ' .. inErrorMessage)
 	end)
 end

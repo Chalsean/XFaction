@@ -80,8 +80,7 @@ function ChannelCollection:AddChannel(inChannel)
 		self._ChannelCount = self._ChannelCount + 1
 	end
 	self._Channels[inChannel:GetKey()] = inChannel
-	XFG.Cache.Channels[inChannel:GetKey()] = inChannel:GetShortName()
-	XFG:Debug(LogCategory, 'Added channel [%s]', inChannel:GetShortName())
+	XFG:Debug(LogCategory, 'Added channel [%s]', inChannel:GetName())
 	return self:Contains(inChannel:GetKey())
 end
 
@@ -107,13 +106,59 @@ end
 function ChannelCollection:SetChannelLast(inKey)
 	if(not XFG.Config.Chat.ChannelLast.Enable) then return end
 	if(not self:Contains(inKey)) then return end
+	
+	self:ScanChannels()
 	local _Channel = self:GetChannel(inKey)
-	local _TotalChannels = C_ChatInfo.GetNumActiveChannels()
-	if(_Channel:GetID() ~= _TotalChannels) then
-		XFG:Debug(LogCategory, 'Moving channel to last place [%s]', inKey)
-		for i = _Channel:GetID(), _TotalChannels - 1 do
-			C_ChatInfo.SwapChatChannelsByChannelIndex(i, i + 1)
+
+	for i = _Channel:GetID() + 1, 10 do
+		local _NextChannel = self:GetChannelByID(i)
+		if(_NextChannel ~= nil) then
+			XFG:Debug(LogCategory, 'Swapping [%d:%s] and [%d:%s]', _Channel:GetID(), _Channel:GetName(), _NextChannel:GetID(), _NextChannel:GetName())
+			C_ChatInfo.SwapChatChannelsByChannelIndex(_Channel:GetID(), i)
+			_NextChannel:SetID(_Channel:GetID())
+			_Channel:SetID(i)
 		end
-		_Channel:SetID(_TotalChannels)
 	end
+
+	for _, _Channel in self:Iterator() do
+		if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
+			local _Color = XFG.Config.Channels[_Channel:GetName()]
+			ChangeChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
+			XFG:Debug(LogCategory, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
+		end		
+	end
+end
+
+function ChannelCollection:ScanChannels()
+	try(function ()
+		local _Channels = {GetChannelList()}
+		local _IDs = {}
+		for i = 1, #_Channels, 3 do
+			local _ChannelID, _ChannelName, _Disabled = _Channels[i], _Channels[i+1], _Channels[i+2]
+			_IDs[_ChannelID] = true
+			if(self:Contains(_ChannelName)) then
+				local _Channel = self:GetChannel(_ChannelName)
+				if(_Channel:GetID() ~= _ChannelID) then
+					local _OldID = _Channel:GetID()
+					_Channel:SetID(_ChannelID)
+					XFG:Debug(LogCategory, 'Channel ID changed [%d:%d:%s]', _OldID, _Channel:GetID(), _Channel:GetName())
+				end
+			else
+				local _NewChannel = Channel:new()
+				_NewChannel:SetKey(_ChannelName)
+				_NewChannel:SetName(_ChannelName)
+				_NewChannel:SetID(_ChannelID)
+				self:AddChannel(_NewChannel)
+			end
+		end
+
+		for _, _Channel in self:Iterator() do
+			if(_IDs[_Channel:GetID()] == nil) then
+				self:RemoveChannel(_Channel)
+			end
+		end
+	end).
+	catch(function (inErrorMessage)
+		XFG:Warn(LogCategory, 'Failed to scan channels: ' .. inErrorMessage)
+	end)
 end

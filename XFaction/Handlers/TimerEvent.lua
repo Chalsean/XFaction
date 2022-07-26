@@ -65,7 +65,9 @@ function TimerEvent:CallbackLogin()
         XFG.Config = XFG.DataDB.profile
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
         if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
-        XFG:LoadConfigs()        
+		if(XFG.DB.Errors == nil) then XFG.DB.Errors = {} end
+		if(XFG.Config.Channels == nil) then XFG.Config.Channels = {} end
+        XFG:LoadConfigs()   
     end
 
     -- Ensure we get the player guid and faction without failure
@@ -241,6 +243,7 @@ function TimerEvent:CallbackLogin()
 					try(function ()			
 						_UnitData:Initialize(_MemberID)
 						if(_UnitData:IsOnline() and not XFG.Confederate:Contains(_UnitData:GetKey())) then
+							XFG:Debug(LogCategory, 'Adding local guild unit [%s:%s]', _UnitData:GetGUID(), _UnitData:GetName())
 							XFG.Confederate:AddUnit(_UnitData)
 						end
 					end).
@@ -277,7 +280,7 @@ function TimerEvent:CallbackLogin()
 				local _NewChannel = Channel:new()
 				_NewChannel:SetKey(_ChannelInfo.shortcut)
 				_NewChannel:SetID(_ChannelInfo.localID)
-				_NewChannel:SetShortName(_ChannelInfo.shortcut)
+				_NewChannel:SetName(_ChannelInfo.shortcut)
 				XFG.Channels:AddChannel(_NewChannel)            
 				XFG.Outbox:SetLocalChannel(_NewChannel)
 
@@ -335,7 +338,7 @@ function TimerEvent:CallbackLogin()
 				XFG.DataText.Soulbind:RefreshBroker()
 				XFG.DataText.Links:RefreshBroker()
 				wipe(XFG.DB.Backup)
-			end)			
+			end)
         end
     end
 end

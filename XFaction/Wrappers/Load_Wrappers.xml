@@ -3,6 +3,4 @@
     <Script file='EventCollection.lua'/>
     <Script file='Timer.lua'/>
     <Script file='TimerCollection.lua'/>
-    <Script file='Version.lua'/>
-    <Script file='WoWClient.lua'/>
 </Ui>

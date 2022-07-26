@@ -1,6 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Version'
-local LogCategory = 'WVersion'
+local LogCategory = 'CVersion'
 
 Version = {}
 

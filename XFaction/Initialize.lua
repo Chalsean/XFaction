@@ -2,7 +2,8 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Initialize'
 
 function XFG:Init()
-	XFG.WoW = WoWClient:new(); XFG.WoW:Initialize()
+	XFG.Expansions = ExpansionCollection:new(); XFG.Expansions:Initialize()
+	XFG.WoW = XFG.Expansions:GetCurrent()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()

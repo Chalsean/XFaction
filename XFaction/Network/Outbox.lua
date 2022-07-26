@@ -107,7 +107,7 @@ function Outbox:Send(inMessage)
     -- Broadcast on same realm/faction channel for multiple players
     elseif(self:HasLocalChannel()) then
         local _Channel = self:GetLocalChannel()
-        XFG:Debug(LogCategory, 'Broadcasting on channel [%s] with tag [%s]', _Channel:GetShortName(), XFG.Settings.Network.Message.Tag.LOCAL)
+        XFG:Debug(LogCategory, 'Broadcasting on channel [%s] with tag [%s]', _Channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
         XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'CHANNEL', _Channel:GetID())
     end
 end
