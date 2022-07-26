@@ -107,7 +107,7 @@ function BNet:Send(inMessage)
     -- Make sure all packets go to each target
     for _, _Friend in pairs (_Links) do
         for _Index, _Packet in ipairs (_Packets) do
-            XFG:Debug(LogCategory, "Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]", _Friend:GetName(), _Friend:GetGameID(), _Index, _TotalPackets, XFG.Settings.Network.Message.Tag.BNET, strlen(_Packet))
+            XFG:Debug(LogCategory, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', _Friend:GetName(), _Friend:GetGameID(), _Index, _TotalPackets, XFG.Settings.Network.Message.Tag.BNET, strlen(_Packet))
             -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
             BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _Packet, _, _Friend:GetGameID())
         end
@@ -176,13 +176,9 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     XFG.BNet:AddPacket(_MessageKey, _PacketNumber, _MessageData)
     if(XFG.BNet:HasAllPackets(_MessageKey, _TotalPackets)) then
-        XFG:Debug(LogCategory, "Received all packets for message [%s]", _MessageKey)
-        local _FullMessage
-        if(pcall(function () _FullMessage = XFG.BNet:RebuildMessage(_MessageKey, _TotalPackets) end)) then
-            XFG.Inbox:Process(_FullMessage, inMessageTag)
-        else
-            XFG:Warn(LogCategory, 'Failed to decode received message [%d:%s:%s]', inSender, _MessageKey, 'BNET')
-        end
+        XFG:Debug(LogCategory, 'Received all packets for message [%s]', _MessageKey)
+        local _FullMessage = XFG.BNet:RebuildMessage(_MessageKey, _TotalPackets)
+        XFG.Inbox:Process(_FullMessage, inMessageTag)
     end
 			end).
 	catch(function (inErrorMessage)
