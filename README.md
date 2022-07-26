@@ -71,6 +71,10 @@ The addon should provide the following functionalities:
 
 > LibQTip
 
+> LibProfession
+
+> LibRace
+
 > LibRealmInfo
 
 ### Optional Dependencies
