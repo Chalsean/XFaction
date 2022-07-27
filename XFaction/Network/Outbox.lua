@@ -81,7 +81,7 @@ function Outbox:Send(inMessage)
         inMessage:Initialize()
     end
 
-    XFG:Debug(LogCategory, "Sending message")
+    XFG:Debug(LogCategory, 'Attempting to send message')
     inMessage:ShallowPrint()
 
     if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then

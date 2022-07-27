@@ -57,8 +57,9 @@ XFG.Defaults = {
                 Guild = true,
                 Main = true
             },
-            ChannelLast = {
-                Enable = true,
+            Channel = {
+                Last = true,
+                Color = true,
             },
         },
         DataText = {

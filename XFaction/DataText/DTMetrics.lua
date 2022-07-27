@@ -115,7 +115,6 @@ function DTMetrics:OnEnter(this)
 	_Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _GuildName), self._HeaderFont, "LEFT", 3)
 	line = _Tooltip:AddLine()
 	local _CalendarTime = XFG.Metrics:GetStartCalendar()
-	XFG.Metrics:Print()
 	_Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DTMETRICS_HEADER'], _CalendarTime.hour, _CalendarTime.minute), self._HeaderFont, "LEFT", 3)
 
 	line = _Tooltip:AddLine()

@@ -87,6 +87,8 @@ L['GENERAL_DTTOKEN'] = '4. WoW Token (X): View current market price of WoW token
 --=========================================================================
 L['CHANNEL_LAST'] = 'Addon Channel Last'
 L['CHANNEL_LAST_TOOLTIP'] = 'XFaction will ensure its channel is always last in the channel list'
+L['CHANNEL_COLOR'] = 'Color Channels By Name'
+L['CHANNEL_COLOR_TOOLTIP'] = 'Switches from Blizzard default of coloring by # to ID'
 --=========================================================================
 -- Chat Specific
 --=========================================================================

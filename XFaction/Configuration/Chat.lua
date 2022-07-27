@@ -360,19 +360,27 @@ XFG.Options.args.Chat = {
 				},
 			}
 		},
-		ChannelLast = {
+		Channel = {
 			order = 4,
 			type = 'group',
 			name = XFG.Lib.Locale['CHANNEL'],
 			guiInline = true,
 			args = {
-				Enable = {
+				Last = {
 					order = 1,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHANNEL_LAST'],
 					desc = XFG.Lib.Locale['CHANNEL_LAST_TOOLTIP'],
-					get = function(info) return XFG.Config.Chat.ChannelLast[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Chat.ChannelLast[ info[#info] ] = value; end
+					get = function(info) return XFG.Config.Chat.Channel[ info[#info] ] end,
+					set = function(info, value) XFG.Config.Chat.Channel[ info[#info] ] = value; end
+				},
+				Color = {
+					order = 2,
+					type = 'toggle',
+					name = XFG.Lib.Locale['CHANNEL_COLOR'],
+					desc = XFG.Lib.Locale['CHANNEL_COLOR_TOOLTIP'],
+					get = function(info) return XFG.Config.Chat.Channel[ info[#info] ] end,
+					set = function(info, value) XFG.Config.Chat.Channel[ info[#info] ] = value; end
 				},
 			}
 		}

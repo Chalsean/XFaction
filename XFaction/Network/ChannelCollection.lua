@@ -104,7 +104,7 @@ function ChannelCollection:GetCount()
 end
 
 function ChannelCollection:SetChannelLast(inKey)
-	if(not XFG.Config.Chat.ChannelLast.Enable) then return end
+	if(not XFG.Config.Chat.Channel.Last) then return end
 	if(not self:Contains(inKey)) then return end
 	
 	self:ScanChannels()
@@ -120,12 +120,14 @@ function ChannelCollection:SetChannelLast(inKey)
 		end
 	end
 
-	for _, _Channel in self:Iterator() do
-		if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
-			local _Color = XFG.Config.Channels[_Channel:GetName()]
-			ChangeChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
-			XFG:Debug(LogCategory, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
-		end		
+	if(XFG.Config.Chat.Channel.Color) then
+		for _, _Channel in self:Iterator() do
+			if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
+				local _Color = XFG.Config.Channels[_Channel:GetName()]
+				ChangeChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
+				XFG:Debug(LogCategory, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
+			end		
+		end
 	end
 end
 

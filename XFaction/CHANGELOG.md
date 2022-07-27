@@ -9,8 +9,14 @@
 - Implemented try/catch/finally exception handling for all timers/events/inputs
 - Some refactoring to old non-C APIs for Classic support (incomplete)
 - Added Evoker/Dracthyr support, awaiting icons for specs
-- Added Metrics (X) DT that displays various total and average metrics
-  - See how many chat messages processed, how many BNet messages received/sent, etc.
+- Added Metrics (X) DT that displays the following total/average values:
+  - Total messages received
+  - BNet messages received
+  - BNet messages sent
+  - Local messages received
+  - Local messages sent
+  - Errors encountered
+  - Warnings encountered
 
 ### Version 3.4 [ 07.20.2022 ]
 [XFaction]
