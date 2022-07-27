@@ -139,6 +139,9 @@ XFG.Defaults = {
                 Label = false,
                 Faction = true
             },
+            Metric = {
+                Average = 60,
+            },
         },
         Confederate = {
             Config = 'XFn:Guild Name:GN\nXFc:ChannelName:ChannelPassword\nXFg:5:A:Alliance Guild:GA\nXFg:5:H:Horde Guild:GH\nXFg:5:A:Alliance Alt Guild:AGA\nXFa:Grand Alt\nXFt:A:AlphaTeam\nXFt:B:BetaTeam'

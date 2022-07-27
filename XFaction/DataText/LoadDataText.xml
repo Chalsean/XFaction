@@ -3,4 +3,5 @@
     <Script file='DTWoWToken.lua'/>
     <Script file='DTGuild.lua'/>
     <Script file='DTLinks.lua'/>
+    <Script file='DTMetrics.lua'/>
 </Ui>

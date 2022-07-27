@@ -991,5 +991,33 @@ XFG.Options.args.DataText = {
 				},
 			},
 		},
+		Metric = {
+			order = 3,
+			type = 'group',
+			name = XFG.Lib.Locale['DTMETRICS_NAME'],
+			guiInline = true,
+			args = {
+				Description = {
+					order = 1,
+					type = 'description',
+					fontSize = 'medium',
+					name = XFG.Lib.Locale['DT_CONFIG_BROKER']
+				},
+				Space = {
+					order = 2,
+					type = 'description',
+					name = '',
+				},
+				Average = {
+					order = 3,
+					type = 'range',
+					name = XFG.Lib.Locale['DTMETRICS_AVERAGE'],
+					desc = XFG.Lib.Locale['DTMETRICS_AVERAGE_TOOLTIP'],
+					min = 1, max = 60 * 60 * 24, step = 1,
+					get = function(info) return XFG.Config.DataText.Metric[ info[#info] ] end,
+					set = function(info, value) XFG.Config.DataText.Metric[ info[#info] ] = value; end
+				},
+			},
+		},
 	},	
 }

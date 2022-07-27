@@ -103,6 +103,9 @@ function Inbox:Process(inMessage, inMessageTag)
     end
 
     XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Messages):Increment()
+    if(inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
+        XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.ChannelReceive):Increment()
+    end
 
     -- Deserialize unit data
     if(inMessage:HasUnitData()) then

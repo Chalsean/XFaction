@@ -338,6 +338,7 @@ function TimerEvent:CallbackLogin()
 				XFG.DataText.Guild:RefreshBroker()
 				XFG.DataText.Soulbind:RefreshBroker()
 				XFG.DataText.Links:RefreshBroker()
+				XFG.DataText.Metrics:RefreshBroker()
 				wipe(XFG.DB.Backup)
 			end)
         end

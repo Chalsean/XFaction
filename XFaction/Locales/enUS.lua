@@ -235,6 +235,13 @@ L['DTSOULBIND_RIGHT_CLICK'] = '|cffFFFFFFRight Click:|r Change Soulbind'
 -------------------------
 -- Broker name
 L['DTTOKEN_NAME'] = 'WoW Token (X)'
+-------------------------
+-- DTMetrics
+-------------------------
+L['DTMETRICS_NAME'] = 'Metrics (X)'
+L['DTMETRICS_HEADER'] = 'Metrics Since: |cffffffff%02d:%02d|r (Server)'
+L['DTMETRICS_AVERAGE'] = 'Average Per Time'
+L['DTMETRICS_AVERAGE_TOOLTIP'] = '1 is average per second, 60 is average per minute, etc.'
 --=========================================================================
 -- Support Specific
 --=========================================================================

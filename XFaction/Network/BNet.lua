@@ -110,6 +110,7 @@ function BNet:Send(inMessage)
                 XFG:Debug(LogCategory, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', _Friend:GetName(), _Friend:GetGameID(), _Index, _TotalPackets, XFG.Settings.Network.Message.Tag.BNET, strlen(_Packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _Packet, _, _Friend:GetGameID())
+                XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.BNetSend):Increment()
             end
             inMessage:RemoveTarget(_Friend:GetTarget())
         end).
@@ -134,6 +135,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end
 
     try(function ()
+        XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.BNetReceive):Increment()
         -- People can only whisper you if friend, so if you got a whisper you need to check friends cache
         if(not XFG.Friends:ContainsByGameID(tonumber(inSender))) then
             XFG.Friends:CheckFriends()
@@ -162,6 +164,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     try(function ()
         if(inEncodedMessage == 'PING') then
             BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
+            XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.BNetSend):Increment()
             return
         elseif(inEncodedMessage == 'RE:PING') then
             return
@@ -247,5 +250,6 @@ end
 function BNet:PingFriend(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', 'argument must be a Friend object')
     XFG:Debug(LogCategory, 'Sending ping to [%s]', inFriend:GetTag())
-    BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())    
+    BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())
+    XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.BNetSend):Increment() 
 end

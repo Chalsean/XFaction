@@ -11,6 +11,7 @@ XFG.AddonName = addon
 XFG.Category = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XFG.Version = GetAddOnMetadata(addon, "Version")
+XFG.Start = GetServerTime()
 XFG.Handlers = {}
 
 XFG.Initialized = false
@@ -153,16 +154,18 @@ XFG.Settings = {
 	Metric = {
 		PurgeDelta = 60 * 10,
 		Names = {
-			Messages = 'Messages',
-			Data = 'DataMessages',
-			Login = 'LoginMessages',
-			Links = 'LinksMessages',
-			Logout = 'LogoutMessages',
-			Chat = 'ChatMessages',
-			Achievement = 'AchievementMessages',
-			BNet = 'BNetMessages',
-			Channel = 'ChannelMessages',
-			Forward = 'ForwardMessages',
+			Messages = 'Total Received',
+			Login = 'Login Receive',
+			Logout = 'Logout Receive',
+			Data = 'Data Receive',			
+			Links = 'Links Receive',			
+			Chat = 'GChat Receive',
+			Achievement = 'Achievement Receive',
+			Forward = 'Forward',
+			BNetSend = 'BNet Send',
+			BNetReceive = 'BNet Receive',
+			ChannelSend = 'Channel Send',
+			ChannelReceive = 'Channel Receive',
 		},
 	},
 }

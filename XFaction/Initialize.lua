@@ -24,6 +24,7 @@ function XFG:Init()
 	XFG.DataText.Links = DTLinks:new(); XFG.DataText.Links:Initialize()
 	XFG.DataText.Soulbind = DTSoulbind:new(); XFG.DataText.Soulbind:Initialize()
 	XFG.DataText.Token = DTToken:new(); XFG.DataText.Token:Initialize()
+	XFG.DataText.Metrics = DTMetrics:new(); XFG.DataText.Metrics:Initialize()
 end
 
 do

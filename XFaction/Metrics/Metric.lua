@@ -12,19 +12,17 @@ function Metric:new()
 
     self._Key = nil
     self._Name = nil
-    self._Data = nil
     self._Count = 0
-
+    
     return Object
 end
 
 function Metric:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+	XFG:SingleLine(LogCategory)
+	XFG:Debug(LogCategory, ObjectName .. ' Object')
+	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
     XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-    XFG:Debug(LogCategory, '  _Count (' .. type(self._Count) .. '): ' .. tostring(self._Count))
-    XFG:DataDumper(LogCategory, self._Data)
+	XFG:Debug(LogCategory, '  _Count (' .. type(self._Count) .. '): ' .. tostring(self._Count))
 end
 
 function Metric:GetKey()
@@ -48,39 +46,22 @@ function Metric:SetName(inName)
 end
 
 function Metric:Increment()
-    self:AddData(1)
-end
-
-function Metric:AddData(inData)
-    assert(type(inPath) == 'number')
-    if(self._Data == nil) then self._Data = {} end
-    local _Time = GetServerTime()
-    self._Data[_Time] = inData
     self._Count = self._Count + 1
+    if(self:GetName() == XFG.Settings.Metric.Names.Messages) then
+        XFG.DataText.Metrics:RefreshBroker()
+    end
 end
 
 function Metric:GetCount()
     return self._Count
 end
 
-function Metric:GetTotal()
-    local _Total = 0
-    for _, _Data in pairs (self._Data) do
-        _Total = _Total + _Data
-    end
-    return _Total
-end
-
-function Metric:GetAverage()
+function Metric:GetAverage(inPer)
     if(self:GetCount() == 0) then return 0 end
-    return self:GetTotal() / self:GetCount()
-end
-
-function Metric:Purge(inEpochTime)
-    for _Time, _ in pairs (self._Data) do
-        if(_Time < inEpochTime) then
-            self._Data[_Time] = nil
-            self._Total = self._Total - 1
-        end
+    assert(type(inPer) == 'number' or inPer == nil, 'argument must be number or nil')
+    local _Delta = GetServerTime() - XFG.Start
+    if(inPer ~= nil) then
+        _Delta = _Delta / inPer
     end
+    return self:GetCount() / _Delta
 end
