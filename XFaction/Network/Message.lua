@@ -214,7 +214,7 @@ end
 function Message:RemoveTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', "argument must be Target object")
     if(self:ContainsTarget(inTarget)) then
-        table.RemoveKey(self._Targets, inTarget:GetKey())
+        self._Targets[inTarget:GetKey()] = nil
         self._TargetCount = self._TargetCount - 1
     end
     return self:ContainsTarget(inTarget) == false

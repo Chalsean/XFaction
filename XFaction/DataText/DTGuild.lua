@@ -92,8 +92,7 @@ local function PreSort()
 
 		_UnitData.Level = _Unit:GetLevel()
 		_UnitData.Realm = _UnitRealm:GetName()
-		_UnitData.Guild = _UnitGuild:GetName()
-		_UnitData.Zone = _Unit:GetZone()
+		_UnitData.Guild = _UnitGuild:GetName()		
 		_UnitData.Name = _Unit:GetName()
 		_UnitData.UnitName = _Unit:GetUnitName()
 		_UnitData.Note = _Unit:GetNote()
@@ -104,6 +103,10 @@ local function PreSort()
 		_UnitData.ItemLevel = _Unit:GetItemLevel()
 		_UnitData.Raid = _Unit:GetRaidProgress()
 		_UnitData.PvP = _Unit:GetPvP()
+		_UnitData.Race = _Unit:GetRace():GetLocaleName()
+		_UnitData.Team = _Unit:GetTeam():GetName()
+		_UnitData.Class = _Unit:GetClass():GetHex()
+		_UnitData.Faction = _Unit:GetFaction():GetIconID()
 
 		if(_Unit:HasVersion()) then
 			_UnitData.Version = _Unit:GetVersion():GetKey()
@@ -115,35 +118,26 @@ local function PreSort()
 			_UnitData.Name = _Unit:GetName() .. " (" .. _Unit:GetMainName() .. ")"
 		end
 
-		_UnitData.Race = _Unit:GetRace():GetLocaleName()
-
-		local _Team = _Unit:GetTeam()
-		_UnitData.Team = _Team:GetName()
-
-		local _Class = _Unit:GetClass()
-		_UnitData.Class = _Class:GetHex()
-
-		local _Faction = _Unit:GetFaction()
-		_UnitData.Faction = _Faction:GetIconID()
-
 		if(_Unit:HasSpec()) then
-			local _Spec = _Unit:GetSpec()
-			_UnitData.Spec = _Spec:GetIconID()
+			_UnitData.Spec = _Unit:GetSpec():GetIconID()
 		end
 
 		if(_Unit:HasCovenant()) then
-			local _Covenant = _Unit:GetCovenant()
-			_UnitData.Covenant = _Covenant:GetIconID()
+			_UnitData.Covenant = _Unit:GetCovenant():GetIconID()
 		end
 
 		if(_Unit:HasProfession1()) then
-			local _Profession = _Unit:GetProfession1()
-			_UnitData.Profession1 = _Profession:GetIconID()
+			_UnitData.Profession1 = _Unit:GetProfession1():GetIconID()
 		end
 
 		if(_Unit:HasProfession2()) then
-			local _Profession = _Unit:GetProfession2()
-			_UnitData.Profession2 = _Profession:GetIconID()
+			_UnitData.Profession2 = _Unit:GetProfession2():GetIconID()
+		end
+
+		if(_Unit:HasZone()) then
+			_UnitData.Zone = _Unit:GetZone():GetLocaleName()
+		else
+			_UnitData.Zone = _Unit:GetZoneName()
 		end
 
 		table.insert(_List, _UnitData)

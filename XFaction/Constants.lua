@@ -37,12 +37,12 @@ XFG.Lib = {
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
 	Cmd = LibStub('AceConfigCmd-3.0'),
-	-- Libraries needed for Classic
 	Race = LibStub('LibRace'),
 	BabbleRace = LibStub('LibBabble-Race-3.0'),
 	Spec = LibStub('LibSpec'),
 	Class = LibStub('LibClass'),
 	Profession = LibStub('LibProfession'),
+	Tourist = LibStub('LibTourist-3.0'),
 }
 
 XFG.DataText = {

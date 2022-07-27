@@ -20,6 +20,7 @@ function Unit:new()
     self._Class = nil
     self._Spec = nil
     self._Zone = nil
+    self._ZoneName = nil
     self._Note = nil
     self._Online = false
     self._Status = nil
@@ -87,7 +88,15 @@ function Unit:Initialize(inMemberID)
     self:IsPlayer(_UnitData.isSelf)
     self:SetDungeonScore(_UnitData.overallDungeonScore or 0)
     self:SetAchievementPoints(_UnitData.achievementPoints or 0)
-    self:SetZone(_UnitData.zone or '?')
+
+    if(XFG.Zones:Contains(_UnitData.zone)) then
+        self:SetZone(XFG.Zones:GetZone(_UnitData.zone))
+    elseif(strlen(_UnitData.zone)) then
+        XFG.Zones:AddZoneName(_UnitData.zone)
+        self:SetZone(XFG.Zones:GetZone(_UnitData.zone))
+    else
+        self:SetZone(XFG.Zones:GetZone('?'))
+    end
 
     if(_UnitData.profession1ID ~= nil) then
         self:SetProfession1(XFG.Professions:GetProfession(_UnitData.profession1ID))
@@ -154,8 +163,8 @@ function Unit:Initialize(inMemberID)
             -- If in Oribos, enable Covenant event listener
             local _Event = XFG.Events:GetEvent('Covenant')   
             if(_Event ~= nil) then
-                if(self:GetZone() == 'Oribos') then
-                    if(_Event:IsEnabled() == false) then
+                if(self:GetZone():GetName() == 'Oribos') then
+                    if(not _Event:IsEnabled()) then
                         _Event:Start()
                     end
                 elseif(_Event:IsEnabled()) then
@@ -212,7 +221,6 @@ function Unit:Print()
     XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
     XFG:Debug(LogCategory, '  _Rank (' .. type(self._Rank) .. '): ' .. tostring(self._Rank))
     XFG:Debug(LogCategory, '  _Level (' .. type(self._Level) .. '): ' .. tostring(self._Level))
-    XFG:Debug(LogCategory, '  _Zone (' .. type(self._Zone) .. '): ' .. tostring(self._Zone))
     XFG:Debug(LogCategory, '  _Note (' .. type(self._Note) .. '): ' .. tostring(self._Note))
     XFG:Debug(LogCategory, '  _Online (' .. type(self._Online) .. '): ' .. tostring(self._Online))
     XFG:Debug(LogCategory, '  _Status (' .. type(self._Status) .. '): ' .. tostring(self._Status))
@@ -228,6 +236,11 @@ function Unit:Print()
     XFG:Debug(LogCategory, '  _PvP (' .. type(self._PvP) .. '): ' .. tostring(self._PvP))
     XFG:Debug(LogCategory, '  _GuildSpeak (' .. type(self._GuildSpeak) .. '): ' .. tostring(self._GuildSpeak))
     XFG:Debug(LogCategory, '  _GuildListen (' .. type(self._GuildListen) .. '): ' .. tostring(self._GuildListen))
+    if(self:HasZone()) then 
+        self._Zone:Print() 
+    else
+        XFG:Debug(LogCategory, '  _ZoneName (' .. type(self._ZoneName) .. '): ' .. tostring(self._ZoneName))
+    end
     if(self:HasVersion()) then self._Version:Print() end
     if(self:HasRealm()) then self._Realm:Print() end
     if(self:HasGuild()) then self._Guild:Print() end
@@ -238,7 +251,7 @@ function Unit:Print()
     if(self:HasCovenant()) then self._Covenant:Print() end
     if(self:HasSoulbind()) then self._Soulbind:Print() end
     if(self:HasProfession1()) then self._Profession1:Print() end
-    if(self:HasProfession2()) then self._Profession2:Print() end
+    if(self:HasProfession2()) then self._Profession2:Print() end    
 end
 
 function Unit:IsPlayer(inBoolean)
@@ -329,12 +342,16 @@ function Unit:SetLevel(inLevel)
     return self:GetLevel()
 end
 
+function Unit:HasZone()
+    return self._Zone
+end
+
 function Unit:GetZone()
     return self._Zone
 end
 
 function Unit:SetZone(inZone)
-    assert(type(inZone) == 'string')
+    assert(type(inZone) == 'table' and inZone.__name ~= nil and inZone.__name == 'Zone', 'argument must be Zone object')
     self._Zone = inZone
     return self:GetZone()
 end

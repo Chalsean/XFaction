@@ -87,6 +87,11 @@ function TimerEvent:CallbackLogin()
             XFG:Debug(LogCategory, 'Guild info is loaded, proceeding with setup')
             local _Timer = XFG.Timers:GetTimer('Login')
             XFG.Timers:RemoveTimer(_Timer)
+
+			for _, _ErrorText in ipairs(XFG.DB.Errors) do
+				XFG:Warn(LogCategory, _ErrorText)
+			end
+			XFG.DB.Errors = {}
 			
 			-- Critical path initialization, anything not caught needs to get bailed
 			try(function ()
@@ -220,6 +225,8 @@ function TimerEvent:CallbackLogin()
 				XFG.Classes = ClassCollection:new(); XFG.Classes:Initialize()
 				XFG.Specs = SpecCollection:new(); XFG.Specs:Initialize()		    
 				XFG.Professions = ProfessionCollection:new(); XFG.Professions:Initialize()
+				XFG.Continents = ContinentCollection:new(); XFG.Continents:Initialize()
+				XFG.Zones = ZoneCollection:new(); XFG.Zones:Initialize()
 						
 				if(XFG.WoW:IsRetail()) then
 					XFG.Covenants = CovenantCollection:new(); XFG.Covenants:Initialize()

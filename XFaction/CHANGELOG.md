@@ -10,6 +10,7 @@
 - Some refactoring to old non-C APIs for Classic support (incomplete)
 - Added Evoker/Dracthyr support, awaiting icons for specs
 - Prompts user when it detects a newer version available
+- Localized zone text
 - Added Metrics (X) DT that displays the following total/average values:
   - Total messages received
   - BNet messages received

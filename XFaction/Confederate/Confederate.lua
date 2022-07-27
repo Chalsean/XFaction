@@ -131,25 +131,35 @@ function Confederate:GetCount()
 end
 
 function Confederate:CreateBackup()
-    XFG.DB.Backup = {}
-    XFG.DB.Backup.Confederate = {}
-    for _UnitKey, _Unit in self:Iterator() do
-        if(_Unit:IsRunningAddon() and _Unit:IsPlayer() == false) then
-            XFG.DB.Backup.Confederate[_UnitKey] = {}
-            local _SerializedData = XFG:SerializeUnitData(_Unit)
-            XFG.DB.Backup.Confederate[_UnitKey] = _SerializedData
+    try(function ()
+        XFG.DB.Backup = {}
+        XFG.DB.Backup.Confederate = {}
+        for _UnitKey, _Unit in self:Iterator() do
+            if(_Unit:IsRunningAddon() and _Unit:IsPlayer() == false) then
+                XFG.DB.Backup.Confederate[_UnitKey] = {}
+                local _SerializedData = XFG:SerializeUnitData(_Unit)
+                XFG.DB.Backup.Confederate[_UnitKey] = _SerializedData
+            end
         end
-    end
+    end).
+    catch(function (inErrorMessage)
+        table.insert(XFG.DB.Errors, 'Failed to create confederate backup before reload: ' .. inErrorMessage)
+    end)
 end
 
 function Confederate:RestoreBackup()
     if(XFG.DB.Backup == nil or XFG.DB.Backup.Confederate == nil) then return end
     for _, _Data in pairs (XFG.DB.Backup.Confederate) do
-        local _UnitData = XFG:DeserializeUnitData(_Data)
-        if(self:AddUnit(_UnitData)) then
-            XFG:Info(LogCategory, '  Restored %s unit information from backup', _UnitData:GetUnitName())
-        end
-    end
+        try(function ()
+            local _UnitData = XFG:DeserializeUnitData(_Data)
+            if(self:AddUnit(_UnitData)) then
+                XFG:Info(LogCategory, '  Restored %s unit information from backup', _UnitData:GetUnitName())
+            end
+        end).
+        catch(function (inErrorMessage)
+            XFG:Warn(LogCategory, 'Failed to restore confederate unit: ' .. inErrorMessage)
+        end)
+    end    
 end
 
 function Confederate:GetCountByTarget(inTarget)

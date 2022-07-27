@@ -12,4 +12,8 @@
     <Script file='Covenant.lua'/>
     <Script file='CovenantCollection.lua'/>    
     <Script file='Unit.lua'/>
+    <Script file='Continent.lua'/>
+    <Script file='ContinentCollection.lua'/>
+    <Script file='Zone.lua'/>
+    <Script file='ZoneCollection.lua'/>
 </Ui>

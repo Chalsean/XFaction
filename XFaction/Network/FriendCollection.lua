@@ -241,22 +241,22 @@ function FriendCollection:CreateBackup()
 		end
 	end).
 	catch(function (inErrorMessage)
-		table.insert(XFG.DB.Errors, 'Failed to create friend backup: ' .. inErrorMessage)
+		table.insert(XFG.DB.Errors, 'Failed to create friend backup before reload: ' .. inErrorMessage)
 	end)
 end
 
 function FriendCollection:RestoreBackup()
-	if(XFG.DB.Backup == nil or XFG.DB.Backup.Friends == nil) then return end
-	try(function ()		
-		for _, _Key in pairs (XFG.DB.Backup.Friends) do
+	if(XFG.DB.Backup == nil or XFG.DB.Backup.Friends == nil) then return end		
+	for _, _Key in pairs (XFG.DB.Backup.Friends) do
+		try(function ()	
 			if(XFG.Friends:Contains(_Key)) then
 				local _Friend = XFG.Friends:GetFriend(_Key)
 				_Friend:IsRunningAddon(true)
 				XFG:Info(LogCategory, "  Restored %s friend information from backup", _Friend:GetTag())
 			end
-	    end
-	end).
-	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed to restore friend list: ' .. inErrorMessage)
-	end)
+		end).
+		catch(function (inErrorMessage)
+			XFG:Warn(LogCategory, 'Failed to restore friend list: ' .. inErrorMessage)
+		end)
+	end
 end

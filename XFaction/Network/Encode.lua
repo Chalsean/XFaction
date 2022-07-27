@@ -44,42 +44,38 @@ function XFG:SerializeUnitData(inUnitData)
 	_MessageData.A = _Race:GetKey()
 	_MessageData.B = inUnitData:GetAchievementPoints()
 	if(inUnitData:HasCovenant()) then
-		local _Covenant = inUnitData:GetCovenant()
-		_MessageData.C = _Covenant:GetKey()
+		_MessageData.C = inUnitData:GetCovenant():GetKey()
 	end
-	local _Faction = inUnitData:GetFaction()
-	_MessageData.F = _Faction:GetKey()
-	local _Guild = inUnitData:GetGuild()
-	_MessageData.G = _Guild:GetName()
-	local _Realm = inUnitData:GetRealm()
-	_MessageData.R = _Realm:GetID()
+	_MessageData.F = inUnitData:GetFaction():GetKey()
+	_MessageData.G = inUnitData:GetGuild():GetName()
+	_MessageData.R = inUnitData:GetRealm():GetID()
 	_MessageData.K = inUnitData:GetGUID()
 	_MessageData.I = inUnitData:GetItemLevel()
 	_MessageData.J = inUnitData:GetRank()
 	_MessageData.L = inUnitData:GetLevel()
 	_MessageData.N = inUnitData:GetNote()
-	local _Class = inUnitData:GetClass()
-	_MessageData.O = _Class:GetKey()
+	_MessageData.O = inUnitData:GetClass():GetKey()
 	if(inUnitData:HasProfession1()) then
-		local _Profession = inUnitData:GetProfession1()
-		_MessageData.P1 = _Profession:GetKey()
+		_MessageData.P1 = inUnitData:GetProfession1():GetKey()
 	end
 	if(inUnitData:HasProfession2()) then
-		local _Profession = inUnitData:GetProfession2()
-		_MessageData.P2 = _Profession:GetKey()
+		_MessageData.P2 = inUnitData:GetProfession2():GetKey()
 	end
 	if(inUnitData:HasSoulbind()) then
-		local _Soulbind = inUnitData:GetSoulbind()
-		_MessageData.S = _Soulbind:GetKey()
+		_MessageData.S = inUnitData:GetSoulbind():GetKey()
 	end	
 	_MessageData.U = inUnitData:GetUnitName()	
 	if(inUnitData:HasSpec()) then
-		local _Spec = inUnitData:GetSpec()
-		_MessageData.V = _Spec:GetKey()
+		_MessageData.V = inUnitData:GetSpec():GetKey()
 	end
 	_MessageData.X = inUnitData:GetVersion():GetKey()
 	_MessageData.Y = inUnitData:GetPvP()
-	_MessageData.Z = inUnitData:GetZone()
+
+	if(inUnitData:GetZone():HasID()) then
+		_MessageData.D = inUnitData:GetZone():GetID()
+	else
+		_MessageData.Z = inUnitData:GetZone():GetName()
+	end
 
 	return XFG:Serialize(_MessageData)
 end

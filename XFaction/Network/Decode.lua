@@ -88,7 +88,17 @@ function XFG:DeserializeUnitData(inData)
 	if(_DeserializedData.V ~= nil) then
 		_UnitData:SetSpec(XFG.Specs:GetSpec(_DeserializedData.V))
 	end
-	_UnitData:SetZone(_DeserializedData.Z)
+
+	if(_DeserializedData.D ~= nil and XFG.Zones:ContainsByID(tonumber(_DeserializedData.D))) then
+		_UnitData:SetZone(XFG.Zones:GetZoneByID(tonumber(_DeserializedData.D)))
+	elseif(_DeserializedData.Z == nil) then
+		_UnitData:SetZone(XFG.Zones:GetZone('?'))
+	else
+		if(not XFG.Zones:Contains(_DeserializedData.Z)) then
+			XFG.Zones:AddZoneName(_DeserializedData.Z)
+		end
+		_UnitData:SetZone(XFG.Zones:GetZone(_DeserializedData.Z))
+	end
 
 	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
 	if(_DeserializedData.Y ~= nil) then _UnitData:SetPvPString(_DeserializedData.Y) end

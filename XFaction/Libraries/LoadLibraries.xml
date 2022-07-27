@@ -14,14 +14,14 @@
     <Include file="Ace3\AceSerializer-3.0\AceSerializer-3.0.xml"/>  
     <Include file="Ace3\AceTimer-3.0\AceTimer-3.0.xml"/>
     <Include file="Ace3\AceBucket-3.0\AceBucket-3.0.xml"/>
+    <Include file='LibBabble-Race-3.0\lib.xml'/>
     <Include file='LibDeflate\lib.xml'/>
     <Script file='LibRealmInfo\LibRealmInfo.lua'/>
+    <Include file='LibTourist-3.0\lib.xml'/>
     <Include file="LibQTip-1.0\lib.xml"/>
     <Script file='LibDataBroker-1.1\LibDataBroker-1.1.lua'/>
-    <!-- Classic -->
     <Script file='LibClass\LibClass.lua'/>
     <Script file='LibProfession\LibProfession.lua'/>
     <Script file='LibRace\LibRace.lua'/>
-    <Include file='LibBabble-Race-3.0\lib.xml'/>
     <Script file='LibSpec\LibSpec.lua'/>
 </Ui>

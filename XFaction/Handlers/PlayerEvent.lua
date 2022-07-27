@@ -18,7 +18,7 @@ end
 
 
 function PlayerEvent:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
 
         if(XFG.WoW:IsRetail()) then
             XFG:CreateEvent('Covenant', 'COVENANT_CHOSEN', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
@@ -78,7 +78,7 @@ function PlayerEvent:CallbackZoneChanged()
             XFG:Info(LogCategory, 'Updated player data based on ZONE_CHANGED_NEW_AREA event')
             if(XFG.WoW:IsRetail()) then
                 local _Event = XFG.Events:GetEvent('Covenant')
-                if(XFG.Player.Unit:GetZone() == 'Oribos') then
+                if(XFG.Player.Unit:GetZone():GetName() == 'Oribos') then
                     if(_Event:IsEnabled() == false) then
                         _Event:Start()
                     end

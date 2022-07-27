@@ -167,25 +167,36 @@ function LinkCollection:BroadcastLinks()
 end
 
 function LinkCollection:CreateBackup()
-	local _LinksString = ''
-    for _, _Link in self:Iterator() do
-        _LinksString = _LinksString .. '|' .. _Link:GetString()
-    end
-	XFG.DB.Backup.Links = _LinksString
+	try(function ()
+		local _LinksString = ''
+		for _, _Link in self:Iterator() do
+			_LinksString = _LinksString .. '|' .. _Link:GetString()
+		end
+		XFG.DB.Backup.Links = _LinksString
+	end).
+	catch(function (inErrorMessage)
+		table.insert(XFG.DB.Errors, 'Failed to create links backup before reload: ' .. inErrorMessage)
+	end)
 end
 
 function LinkCollection:RestoreBackup()
+	
 	if(XFG.DB.Backup.Links ~= nil and strlen(XFG.DB.Backup.Links) > 0) then
-		local _Links = string.Split(XFG.DB.Backup.Links, '|')
-		for _, _Link in pairs (_Links) do
-			if(_Link ~= nil) then
-				local _NewLink = Link:new()
-				_NewLink:SetObjectFromString(_Link)
-				self:AddLink(_NewLink)
-				XFG:Debug(LogCategory, 'Restored link from backup [%s]', _NewLink:GetKey())
+		try(function ()
+			local _Links = string.Split(XFG.DB.Backup.Links, '|')
+			for _, _Link in pairs (_Links) do
+				if(_Link ~= nil) then
+					local _NewLink = Link:new()
+					_NewLink:SetObjectFromString(_Link)
+					self:AddLink(_NewLink)
+					XFG:Debug(LogCategory, 'Restored link from backup [%s]', _NewLink:GetKey())
+				end
 			end
-		end
-	end
+		end).
+		catch(function (inErrorMessage)
+			XFG:Warn(LogCategory, 'Failed to restore link information from backup: ' .. inErrorMessage)
+		end)
+	end	
 end
 
 function LinkCollection:PurgeStaleLinks(inEpochTime)
