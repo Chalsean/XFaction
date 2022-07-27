@@ -31,6 +31,10 @@ The addon should provide the following functionalities:
 <img src="https://user-images.githubusercontent.com/45693161/175842217-b00a8966-d6fd-4ad2-9cfb-2f821933fcee.png" width=200>
 
 
+> Metrics (X) DT
+- This will show various metrics about XFaction performance
+<img src="https://user-images.githubusercontent.com/45693161/181374308-c82a3fb4-7e9f-4cb3-85a2-e7252296d36d.png" width=200>
+
 
 > 2 miscellaneous DTs: Soulbind (X), WoW Token (X)
 - Soulbind: left click opens Soulbind frame, right click to change Soulbinds
