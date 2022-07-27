@@ -77,6 +77,10 @@ The addon should provide the following functionalities:
 
 > LibRealmInfo
 
+> LibSpec
+
+> LibTourist
+
 ### Optional Dependencies
 
 > _DebugLog
