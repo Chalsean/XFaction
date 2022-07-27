@@ -43,22 +43,27 @@ function ChatEvent:Print()
 end
 
 function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
-    -- If you are the sender, broadcast to other realms/factions
-    if(XFG.Player.GUID == inSenderGUID and XFG.Player.Unit:CanGuildSpeak()) then
-        local _NewMessage = GuildMessage:new()
-        _NewMessage:Initialize()
-        _NewMessage:SetFrom(XFG.Player.Unit:GetKey())
-        _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-        _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
-        _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
-        _NewMessage:SetGuild(XFG.Player.Guild)
-        _NewMessage:SetRealm(XFG.Player.Realm)
-        if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-            _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+    try(function ()
+        -- If you are the sender, broadcast to other realms/factions
+        if(XFG.Player.GUID == inSenderGUID and XFG.Player.Unit:CanGuildSpeak()) then
+            local _NewMessage = GuildMessage:new()
+            _NewMessage:Initialize()
+            _NewMessage:SetFrom(XFG.Player.Unit:GetKey())
+            _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+            _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
+            _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+            _NewMessage:SetGuild(XFG.Player.Guild)
+            _NewMessage:SetRealm(XFG.Player.Realm)
+            if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+                _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+            end
+            _NewMessage:SetData(inText)
+            XFG.Outbox:Send(_NewMessage, true)
         end
-        _NewMessage:SetData(inText)
-        XFG.Outbox:Send(_NewMessage, true)
-    end
+    end).
+    catch(function (inErrorMessage)
+        XFG:Warn(LogCategory, 'Failed to send gchat message: ' .. inErrorMessage)
+    end)
 end
 
 local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
@@ -98,13 +103,20 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
 end
 
 function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
-    if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
-        inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
-    -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
-        return true
-    elseif(XFG.Confederate:Contains(inGUID)) then
-        inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetUnit(inGUID))
-    end
-    return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
+    try(function ()
+        if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
+            inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
+        -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
+        elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
+            return true
+        elseif(XFG.Confederate:Contains(inGUID)) then
+            inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetUnit(inGUID))
+        end
+    end).
+    catch(function (inErrorMessage)
+        XFG:Warn(LogCategory, 'Failed to augment chat message: ' .. inErrorMessage)
+    end).
+    finally(function ()
+        return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
+    end)
 end

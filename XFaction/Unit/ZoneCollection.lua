@@ -168,7 +168,7 @@ function ZoneCollection:AddZoneName(inZoneName)
 		self:AddZone(_NewZone)
 		XFG:Info(LogCategory, 'Initialized zone [%s]', _NewZone:GetName())
 	end
-	return self:Contains(inZoneName)
+	return self:GetZone(inZoneName)
 end
 
 function ZoneCollection:Iterator()
