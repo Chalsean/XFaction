@@ -79,21 +79,14 @@ function SystemEvent:CallbackLogin()
 end
 
 function SystemEvent:ChatFilter(inEvent, inMessage, ...)
-    try(function ()
-        if(string.sub(inMessage, 1, strlen(XFG.Settings.Frames.Chat.Prepend)) == XFG.Settings.Frames.Chat.Prepend) then
-            inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
-            return false, inMessage, ...
-        -- Hide Blizz login/logout messages, we display our own, this is a double notification
-        elseif(not XFG.Config.Chat.Login.Enable and string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
-            return true
-        elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGOUT'])) then
-            return true    
-        end
-    end).
-    catch(function (inErrorMessage)
-        XFG:Warn(LogCategory, 'Failed to augment system message: ' .. inErrorMessage)
-    end).
-    finally(function ()
+    if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
+        inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
         return false, inMessage, ...
-    end)
+    -- Hide Blizz login/logout messages, we display our own, this is a double notification
+    elseif(not XFG.Config.Chat.Login.Enable and string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
+        return true
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGOUT'])) then
+        return true    
+    end
+    return false, inMessage, ...
 end

@@ -70,7 +70,7 @@ function PlayerEvent:CallbackPlayerChanged(inEvent)
     end).
     catch(function (inErrorMessage)
         XFG:Warn(LogCategory, 'Failed to update player information based on event [%s]: ' .. inErrorMessage, inEvent)
-    )
+    end)
 end
 
 -- Zone changes are kinda funky, during a zone change C_Club.GetMemberInfo returns a lot of nils
@@ -100,7 +100,7 @@ function PlayerEvent:CallbackZoneChanged()
         end).
         catch(function (inErrorMessage)
             XFG:Warn(LogCategory, 'Failed to update zone information based on event: ' .. inErrorMessage)
-        )
+        end)
     end
 end
 

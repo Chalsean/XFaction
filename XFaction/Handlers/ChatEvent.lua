@@ -103,20 +103,13 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
 end
 
 function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
-    try(function ()
-        if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
-            inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
-        -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
-        elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
-            return true
-        elseif(XFG.Confederate:Contains(inGUID)) then
-            inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetUnit(inGUID))
-        end
-    end).
-    catch(function (inErrorMessage)
-        XFG:Warn(LogCategory, 'Failed to augment chat message: ' .. inErrorMessage)
-    end).
-    finally(function ()
-        return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
-    end)
+    if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
+        inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
+    -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
+        return true
+    elseif(XFG.Confederate:Contains(inGUID)) then
+        inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetUnit(inGUID))
+    end
+    return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
