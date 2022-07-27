@@ -73,7 +73,7 @@ end
 
 function DTSoulbind:RefreshBroker()
 	if(XFG.Initialized) then
-		if(XFG.Player.Unit:HasCovenant()) then
+		if(XFG.Player.Unit and XFG.Player.Unit:HasCovenant()) then
 			local ActiveCovenant = XFG.Player.Unit:GetCovenant()
 			local _CovenantIconID = ActiveCovenant:GetIconID()
 
@@ -92,8 +92,7 @@ end
 
 function DTSoulbind:OnEnter(this)
 	if(XFG.Initialized == false) then return end
-	if(XFG.Player.Unit:HasCovenant() == false) then return end
-	if(XFG.Player.Unit:HasSoulbind() == false) then return end
+	if(not XFG.Player.Unit or not XFG.Player.Unit:HasCovenant() or not XFG.Player.Unit:HasSoulbind()) then return end
 	
 	local _Tooltip
 	if XFG.Lib.QT:IsAcquired(ObjectName) then

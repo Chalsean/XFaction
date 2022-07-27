@@ -24,7 +24,15 @@ local function DeserializeMessage(inSerializedMessage)
 	if(_MessageData.A ~= nil) then _Message:SetRemainingTargets(_MessageData.A) end
 	if(_MessageData.P ~= nil) then _Message:SetPacketNumber(_MessageData.P) end
 	if(_MessageData.Q ~= nil) then _Message:SetTotalPackets(_MessageData.Q) end
-	if(_MessageData.V ~= nil) then _Message:SetVersion(_MessageData.V) end
+	if(_MessageData.V ~= nil) then 
+		local _Version = XFG.Versions:GetVersion(_MessageData.V)
+		if(_Version == nil) then
+			_Version = Version:new()
+			_Version:SetKey(_MessageData.V)
+			XFG.Versions:AddVersion(_Version)
+		end
+		_Message:SetVersion(_Version) 
+	end
 
 	if(_Message.__name == 'GuildMessage') then
 		if(_MessageData.M ~= nil) then	_Message:SetMainName(_MessageData.M) end
@@ -84,7 +92,15 @@ function XFG:DeserializeUnitData(inData)
 
 	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
 	if(_DeserializedData.Y ~= nil) then _UnitData:SetPvPString(_DeserializedData.Y) end
-	if(_DeserializedData.X ~= nil) then _UnitData:SetVersion(_DeserializedData.X) end
+	if(_DeserializedData.X ~= nil) then 
+		local _Version = XFG.Versions:GetVersion(_DeserializedData.X)
+		if(_Version == nil) then
+			_Version = Version:new()
+			_Version:SetKey(_DeserializedData.X)
+			XFG.Versions:AddVersion(_Version)
+		end
+		_UnitData:SetVersion(_Version) 
+	end
 
 	-- If RaiderIO is installed, grab raid/mythic
 	pcall(function ()

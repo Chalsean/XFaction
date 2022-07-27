@@ -32,7 +32,7 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	_MessageData.A = inMessage:GetRemainingTargets()
 	_MessageData.P = inMessage:GetPacketNumber()
 	_MessageData.Q = inMessage:GetTotalPackets()
-	_MessageData.V = inMessage:GetVersion()
+	_MessageData.V = inMessage:GetVersion():GetKey()
 
 	return XFG:Serialize(_MessageData)
 end
@@ -77,7 +77,7 @@ function XFG:SerializeUnitData(inUnitData)
 		local _Spec = inUnitData:GetSpec()
 		_MessageData.V = _Spec:GetKey()
 	end
-	_MessageData.X = inUnitData:GetVersion()
+	_MessageData.X = inUnitData:GetVersion():GetKey()
 	_MessageData.Y = inUnitData:GetPvP()
 	_MessageData.Z = inUnitData:GetZone()
 

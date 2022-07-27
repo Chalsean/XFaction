@@ -57,11 +57,18 @@ XFG.Player = {
 XFG.Frames = {}
 XFG.Cache = {
 	Channels = {},
+	NewVersionNotify = false,
 }
 
 XFG.Settings = {
 	System = {
 		Roster = true,
+	},
+	Expansions = {
+		[WOW_PROJECT_MAINLINE] = 3601566,
+		[WOW_PROJECT_CLASSIC] = 630785,
+	--    [WOW_PROJECT_BURNING_CRUSADE_CLASSIC] = 630783,
+	--    [WOW_PROJECT_WRATH_OF_THE_LICH_KING_CLASSIC] = 630787,
 	},
 	Player = {
 		Heartbeat = 60 * 2,      -- Seconds between player status broadcast

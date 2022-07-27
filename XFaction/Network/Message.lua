@@ -84,8 +84,8 @@ function Message:Print()
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(LogCategory, "  _Version (" ..type(self._Version) .. "): ".. tostring(self._Version))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
+    if(self:HasVersion()) then self._Version:Print() end
     for _, _Target in pairs (self:GetTargets()) do
         _Target:Print()
     end
@@ -104,8 +104,8 @@ function Message:ShallowPrint()
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(LogCategory, "  _Version (" ..type(self._Version) .. "): ".. tostring(self._Version))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
+    if(self:HasVersion()) then self._Version:Print() end
 end
 
 function Message:GetKey()
@@ -288,12 +288,16 @@ function Message:HasUnitData()
     return self:GetSubject() == XFG.Settings.Network.Message.Subject.DATA or self:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN
 end
 
+function Message:HasVersion()
+    return self._Version ~= nil
+end
+
 function Message:GetVersion()
     return self._Version
 end
 
 function Message:SetVersion(inVersion)
-    assert(type(inVersion) == 'string')
+    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
     self._Version = inVersion
     return self:GetVersion()
 end

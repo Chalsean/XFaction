@@ -102,9 +102,16 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.Mailbox:AddMessage(inMessage)
     end
 
+    -- Increment metrics
     XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):Increment()
     if(inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
         XFG.Metrics:GetMetric(XFG.Settings.Metric.ChannelReceive):Increment()
+    end
+
+    -- Is a newer version available?
+    if(not XFG.Cache.NewVersionNotify and XFG.Version:IsNewer(inMessage:GetVersion())) then
+        print(format(XFG.Lib.Locale['NEW_VERSION'], XFG.Title))
+        XFG.Cache.NewVersionNotify = true
     end
 
     -- Deserialize unit data

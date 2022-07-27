@@ -220,7 +220,6 @@ function Unit:Print()
     XFG:Debug(LogCategory, '  _AchievementPoints (' .. type(self._AchievementPoints) .. '): ' .. tostring(self._AchievementPoints))
     XFG:Debug(LogCategory, '  _TimeStamp (' .. type(self._TimeStamp) .. '): ' .. tostring(self._TimeStamp))
     XFG:Debug(LogCategory, '  _RunningAddon (' .. type(self._RunningAddon) .. '): ' .. tostring(self._RunningAddon))
-    XFG:Debug(LogCategory, '  _Version (' .. type(self._Version) .. '): ' .. tostring(self._Version))
     XFG:Debug(LogCategory, '  _Alt (' .. type(self._Alt) .. '): ' .. tostring(self._Alt))
     XFG:Debug(LogCategory, '  _MainName (' .. type(self._MainName) .. '): ' .. tostring(self._MainName))
     XFG:Debug(LogCategory, '  _IsPlayer (' .. type(self._IsPlayer) .. '): ' .. tostring(self._IsPlayer))
@@ -229,6 +228,7 @@ function Unit:Print()
     XFG:Debug(LogCategory, '  _PvP (' .. type(self._PvP) .. '): ' .. tostring(self._PvP))
     XFG:Debug(LogCategory, '  _GuildSpeak (' .. type(self._GuildSpeak) .. '): ' .. tostring(self._GuildSpeak))
     XFG:Debug(LogCategory, '  _GuildListen (' .. type(self._GuildListen) .. '): ' .. tostring(self._GuildListen))
+    if(self:HasVersion()) then self._Version:Print() end
     if(self:HasRealm()) then self._Realm:Print() end
     if(self:HasGuild()) then self._Guild:Print() end
     if(self:HasTeam()) then self._Team:Print() end
@@ -644,7 +644,7 @@ function Unit:GetVersion()
 end
 
 function Unit:SetVersion(inVersion)
-    assert(type(inVersion) == 'string')
+    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
     self._Version = inVersion
     return self:GetVersion()
 end

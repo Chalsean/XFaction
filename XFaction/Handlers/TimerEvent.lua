@@ -92,7 +92,7 @@ function TimerEvent:CallbackLogin()
 			try(function ()
 
 				XFG:Info(LogCategory, 'WoW client version [%s:%s]', XFG.WoW:GetName(), XFG.WoW:GetVersion():GetKey())
-				XFG:Info(LogCategory, 'XFaction version [%s]', XFG.Version)
+				XFG:Info(LogCategory, 'XFaction version [%s]', XFG.Version:GetKey())
 
 				local _GuildInfo = C_Club.GetClubInfo(_GuildID)
 				XFG.Confederate = Confederate:new()    
@@ -249,11 +249,11 @@ function TimerEvent:CallbackLogin()
 						end
 					end).
 					catch(function (inErrorMessage)
-						XFG:Warn(LogCategory, 'Failed to query for guild member on initialization: ' .. _MemberID)
+						XFG:Warn(LogCategory, 'Failed to query for guild member [%d] on initialization: ' .. inErrorMessage, _MemberID)
 					end).
 					finally(function ()
-						if(_UnitData:IsPlayer()) then
-							XFG.Player.Unit:Print()            
+						if(_UnitData and _UnitData:IsPlayer()) then
+							_UnitData:Print()          
 						end			
 					end)
 				end

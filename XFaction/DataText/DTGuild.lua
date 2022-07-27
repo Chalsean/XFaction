@@ -106,9 +106,9 @@ local function PreSort()
 		_UnitData.PvP = _Unit:GetPvP()
 
 		if(_Unit:HasVersion()) then
-			_UnitData.Version = _Unit:GetVersion()
+			_UnitData.Version = _Unit:GetVersion():GetKey()
 		else
-			_UnitData.Version = '0'
+			_UnitData.Version = '0.0.0'
 		end
 
 		if(_Unit:IsAlt() and _Unit:HasMainName() and XFG.Config.DataText.Guild.Main) then

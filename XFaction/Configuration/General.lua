@@ -49,7 +49,7 @@ XFG.Options = {
 			args = {
 				Bar = {
 					order = 1,
-					name = format("|cffffffff%s|r", XFG.Version),
+					name = format("|cffffffff%s|r", type(XFG.Version) == 'string' and XFG.Version or XFG.Version:GetKey()),
 					type = 'header'
 				},	
 				DHeader = {

@@ -270,3 +270,4 @@ L['DTMETRICS_CONFIG_WARNING_TOOLTIP'] = 'Display the total # of warnings encount
 L['SUPPORT_UAT'] = 'User Acceptance Testing'
 L['DEBUG_PRINT'] = 'Click any button to ad-hoc print that datacollection to _DebugLog'
 L['DEBUG_ROSTER_TOOLTIP'] = 'Whether all confederate members send roster information'
+L['NEW_VERSION'] = '%s: A newer version is available, please consider updating'

@@ -4,13 +4,6 @@ local LogCategory = 'CCExpansion'
 
 ExpansionCollection = {}
 
-local _Expansions = {
-    [WOW_PROJECT_MAINLINE] = 3601566,
-    [WOW_PROJECT_CLASSIC] = 630785,
---    [WOW_PROJECT_BURNING_CRUSADE_CLASSIC] = 630783,
---    [WOW_PROJECT_WRATH_OF_THE_LICH_KING_CLASSIC] = 630787,
-}
-
 function ExpansionCollection:new()
     Object = {}
     setmetatable(Object, self)
@@ -38,7 +31,7 @@ function ExpansionCollection:Initialize()
 	if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
 
-        for _ExpansionID, _IconID in pairs(_Expansions) do
+        for _ExpansionID, _IconID in pairs(XFG.Settings.Expansions) do
             local _NewExpansion = Expansion:new()
             _NewExpansion:SetKey(_ExpansionID)
             _NewExpansion:SetID(_ExpansionID)
