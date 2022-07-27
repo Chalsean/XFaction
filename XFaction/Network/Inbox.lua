@@ -102,9 +102,9 @@ function Inbox:Process(inMessage, inMessageTag)
         XFG.Mailbox:AddMessage(inMessage)
     end
 
-    XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Messages):Increment()
+    XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):Increment()
     if(inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
-        XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.ChannelReceive):Increment()
+        XFG.Metrics:GetMetric(XFG.Settings.Metric.ChannelReceive):Increment()
     end
 
     -- Deserialize unit data
@@ -130,7 +130,6 @@ function Inbox:Process(inMessage, inMessageTag)
                 XFG:Debug(LogCategory, 'Randomly selected, forwarding message')
                 inMessage:SetType(XFG.Settings.Network.Type.BNET)
                 XFG.Outbox:Send(inMessage)
-                XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Forward):Increment()
             else
                 XFG:Debug(LogCategory, 'Not randomly selected, will not forward mesesage')
             end
@@ -138,7 +137,6 @@ function Inbox:Process(inMessage, inMessageTag)
             XFG:Debug(LogCategory, 'Node count under threshold, forwarding message')
             inMessage:SetType(XFG.Settings.Network.Type.BNET)
             XFG.Outbox:Send(inMessage)
-            XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Forward):Increment()
         end        
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
@@ -149,7 +147,6 @@ function Inbox:Process(inMessage, inMessageTag)
             inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
         end
         XFG.Outbox:Send(inMessage)
-        XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Forward):Increment()
     end
 
     --========================================
@@ -160,11 +157,6 @@ function Inbox:Process(inMessage, inMessageTag)
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
         if(XFG.Player.Unit:CanGuildListen() and not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             XFG.Frames.Chat:Display(inMessage)
-            if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT) then
-                XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Chat):Increment()
-            else
-                XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Achievement):Increment()
-            end
         end
         return
     end
@@ -173,7 +165,6 @@ function Inbox:Process(inMessage, inMessageTag)
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LINK) then
         XFG.Links:ProcessMessage(inMessage)
         XFG.DataText.Links:RefreshBroker()
-        XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Links):Increment()
         return
     end
 
@@ -183,7 +174,6 @@ function Inbox:Process(inMessage, inMessageTag)
         if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             XFG.Confederate:RemoveUnit(inMessage:GetFrom())
             XFG.Frames.System:DisplayLogoutMessage(inMessage)
-            XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Logout):Increment()
         end
         return
     end
@@ -198,7 +188,6 @@ function Inbox:Process(inMessage, inMessageTag)
 
         -- If unit has just logged in, reply with latest information
         if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
-            XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Login):Increment()
             -- Display system message that unit has logged on
             if(not XFG.Player.Guild:Equals(_UnitData:GetGuild())) then
                 XFG.Frames.System:DisplayLoginMessage(inMessage)
@@ -209,8 +198,6 @@ function Inbox:Process(inMessage, inMessageTag)
             --    XFG.Confederate:GetCountByTarget(XFG.Player.Target) <= XFG.Settings.Network.LoginLimit) then
             --     XFG.Outbox:WhisperUnitData(_UnitData:GetGUID(), XFG.Player.Unit)
             -- end    
-        else
-            XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Data):Increment()
         end
     end
 end

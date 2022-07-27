@@ -47,7 +47,7 @@ end
 
 function Metric:Increment()
     self._Count = self._Count + 1
-    if(self:GetName() == XFG.Settings.Metric.Names.Messages) then
+    if(self:GetName() == XFG.Settings.Metric.Messages) then
         XFG.DataText.Metrics:RefreshBroker()
     end
 end

@@ -1008,14 +1008,66 @@ XFG.Options.args.DataText = {
 					type = 'description',
 					name = '',
 				},
-				Average = {
+				Total = {
 					order = 3,
+					type = 'toggle',
+					name = XFG.Lib.Locale['DTMETRICS_CONFIG_TOTAL'],
+					desc = XFG.Lib.Locale['DTMETRICS_CONFIG_TOTAL_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Metric[ info[#info] ] end,
+					set = function(info, value) 
+						XFG.Config.DataText.Metric[ info[#info] ] = value; 
+						XFG.DataText.Metrics:RefreshBroker()
+					end
+				},
+				Average = {
+					order = 4,
+					type = 'toggle',
+					name = XFG.Lib.Locale['DTMETRICS_CONFIG_AVERAGE'],
+					desc = XFG.Lib.Locale['DTMETRICS_CONFIG_AVERAGE_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Metric[ info[#info] ] end,
+					set = function(info, value) 
+						XFG.Config.DataText.Metric[ info[#info] ] = value; 
+						XFG.DataText.Metrics:RefreshBroker()
+					end
+				},
+				Error = {
+					order = 5,
+					type = 'toggle',
+					name = XFG.Lib.Locale['DTMETRICS_CONFIG_ERROR'],
+					desc = XFG.Lib.Locale['DTMETRICS_CONFIG_ERROR_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Metric[ info[#info] ] end,
+					set = function(info, value) 
+						XFG.Config.DataText.Metric[ info[#info] ] = value; 
+						XFG.DataText.Metrics:RefreshBroker()
+					end
+				},
+				Warning = {
+					order = 6,
+					type = 'toggle',
+					name = XFG.Lib.Locale['DTMETRICS_CONFIG_WARNING'],
+					desc = XFG.Lib.Locale['DTMETRICS_CONFIG_WARNING_TOOLTIP'],
+					get = function(info) return XFG.Config.DataText.Metric[ info[#info] ] end,
+					set = function(info, value) 
+						XFG.Config.DataText.Metric[ info[#info] ] = value; 
+						XFG.DataText.Metrics:RefreshBroker()
+					end
+				},
+				Line3 = {
+					order = 7,
+					type = 'header',
+					name = ''
+				},
+				Rate = {
+					order = 8,
 					type = 'range',
-					name = XFG.Lib.Locale['DTMETRICS_AVERAGE'],
-					desc = XFG.Lib.Locale['DTMETRICS_AVERAGE_TOOLTIP'],
+					name = XFG.Lib.Locale['DTMETRICS_RATE'],
+					desc = XFG.Lib.Locale['DTMETRICS_RATE_TOOLTIP'],
 					min = 1, max = 60 * 60 * 24, step = 1,
 					get = function(info) return XFG.Config.DataText.Metric[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Metric[ info[#info] ] = value; end
+					set = function(info, value) 
+						XFG.Config.DataText.Metric[ info[#info] ] = value; 
+						XFG.DataText.Metrics:RefreshBroker()
+					end
 				},
 			},
 		},

@@ -64,8 +64,31 @@ end
 
 function DTMetrics:RefreshBroker()
 	if(XFG.Initialized) then
-		local _Metric = XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.Messages)
-		self._LDBObject.text = format('|cffffffff%.2f|r', _Metric:GetAverage(XFG.Config.DataText.Metric.Average))
+		local _Text = ''
+		local _Delimiter = false
+		if(XFG.Config.DataText.Metric.Total) then
+			_Text = _Text .. format('|cffffffff%d|r', XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):GetCount())
+			_Delimiter = true
+		end
+
+		if(XFG.Config.DataText.Metric.Average) then
+			if(_Delimiter) then _Text = _Text .. ' : ' end
+			_Text = _Text .. format('|cffffffff%.2f|r', XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):GetAverage(XFG.Config.DataText.Metric.Rate))
+			_Delimiter = true
+		end
+
+		if(XFG.Config.DataText.Metric.Error) then
+			if(_Delimiter) then _Text = _Text .. ' : ' end
+			_Text = _Text .. format('|cffFF4700%d|r', XFG.Metrics:GetMetric(XFG.Settings.Metric.Error):GetCount())
+			_Delimiter = true
+		end
+
+		if(XFG.Config.DataText.Metric.Warning) then
+			if(_Delimiter) then _Text = _Text .. ' : ' end
+			_Text = _Text .. format('|cffffff00%d|r', XFG.Metrics:GetMetric(XFG.Settings.Metric.Warning):GetCount())
+			_Delimiter = true
+		end
+		self._LDBObject.text = _Text
 	end
 end
 
@@ -99,9 +122,9 @@ function DTMetrics:OnEnter(this)
 	line = _Tooltip:AddLine()
 	line = _Tooltip:AddHeader()
 
-	_Tooltip:SetCell(line, 1, 'Metric', self._HeaderFont, 'LEFT')
-	_Tooltip:SetCell(line, 2, 'Total', self._HeaderFont, 'CENTER')
-	_Tooltip:SetCell(line, 3, 'Average', self._HeaderFont, 'RIGHT')
+	_Tooltip:SetCell(line, 1, XFG.Lib.Locale['DTMETRICS_HEADER_METRIC'], self._HeaderFont, 'LEFT')
+	_Tooltip:SetCell(line, 2, XFG.Lib.Locale['DTMETRICS_HEADER_TOTAL'], self._HeaderFont, 'CENTER')
+	_Tooltip:SetCell(line, 3, XFG.Lib.Locale['DTMETRICS_HEADER_AVERAGE'], self._HeaderFont, 'RIGHT')
 
 	line = _Tooltip:AddLine()
 	_Tooltip:AddSeparator()
@@ -111,7 +134,7 @@ function DTMetrics:OnEnter(this)
 		for _, _Metric in XFG.Metrics:Iterator() do
 			_Tooltip:SetCell(line, 1, _Metric:GetName(), self._RegularFont, 'LEFT')
 			_Tooltip:SetCell(line, 2, _Metric:GetCount(), self._RegularFont, 'CENTER')
-			_Tooltip:SetCell(line, 3, format("%.2f", _Metric:GetAverage(XFG.Config.DataText.Metric.Average)), self._RegularFont, 'RIGHT')
+			_Tooltip:SetCell(line, 3, format("%.2f", _Metric:GetAverage(XFG.Config.DataText.Metric.Rate)), self._RegularFont, 'RIGHT')
 			line = _Tooltip:AddLine()
 		end
 	end

@@ -1,3 +1,17 @@
+### Version 3.5 [ 07.31.2022 ]
+[XFaction]
+- Fixed spaces in channel listing causing addon to break
+- Fixed exception caused by friend playing neutral faction on same realm
+- Fixed random exception on initial login
+- Fixed receiving local guild logoff messages if login/logoff option unchecked
+- Fixed race condition with ElvUI chat handler
+- Readjust channel colors based on ID after Blizzard sets them by #
+- Implemented try/catch/finally exception handling for all timers/events/inputs
+- Some refactoring to old non-C APIs for Classic support (incomplete)
+- Added Evoker/Dracthyr support, awaiting icons for specs
+- Added Metrics (X) DT that displays various total and average metrics
+  - See how many chat messages processed, how many BNet messages received/sent, etc.
+
 ### Version 3.4 [ 07.20.2022 ]
 [XFaction]
 - Local guild logouts and gchat are now in XFaction format

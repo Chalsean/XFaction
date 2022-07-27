@@ -16,12 +16,18 @@ function XFG:Error(SubCategory, ...)
 	if status then
 	  if DLAPI then DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, res)) end
 	end
+	if(XFG.Metrics ~= nil) then
+		XFG.Metrics:GetMetric(XFG.Settings.Metric.Error):Increment()
+	end
 end
 
 function XFG:Warn(SubCategory, ...)
 	local status, res = pcall(format, ...)
 	if status then
 	  if DLAPI then DLAPI.DebugLog(XFG.Category, format('WARN~%s~3~%s', SubCategory, res)) end
+	end
+	if(XFG.Metrics ~= nil) then
+		XFG.Metrics:GetMetric(XFG.Settings.Metric.Warning):Increment()
 	end
 end
 

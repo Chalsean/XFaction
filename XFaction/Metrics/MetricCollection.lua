@@ -21,7 +21,7 @@ end
 
 function MetricCollection:Initialize()
 	if(not self._Initialized) then
-		for _, _MetricName in pairs (XFG.Settings.Metric.Names) do
+		for _, _MetricName in pairs (XFG.Settings.Metric) do
 			local _NewMetric = Metric:new()
 			_NewMetric:SetKey(_MetricName)
 			_NewMetric:SetName(_MetricName)
@@ -65,7 +65,7 @@ function MetricCollection:AddMetric(inMetric)
 end
 
 function MetricCollection:Iterator()
-	return next, self._Metrics, nil
+	return PairsByKeys(self._Metrics)
 end
 
 function MetricCollection:SetStartTime(inEpochTime)

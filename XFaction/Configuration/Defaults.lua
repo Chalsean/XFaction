@@ -140,7 +140,11 @@ XFG.Defaults = {
                 Faction = true
             },
             Metric = {
-                Average = 60,
+                Rate = 60,
+                Total = false,
+                Average = true,
+                Error = true,
+                Warning = true,
             },
         },
         Confederate = {

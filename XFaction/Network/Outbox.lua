@@ -109,7 +109,7 @@ function Outbox:Send(inMessage)
         local _Channel = self:GetLocalChannel()
         XFG:Debug(LogCategory, 'Broadcasting on channel [%s] with tag [%s]', _Channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
         XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'CHANNEL', _Channel:GetID())
-        XFG.Metrics:GetMetric(XFG.Settings.Metric.Names.ChannelSend):Increment()
+        XFG.Metrics:GetMetric(XFG.Settings.Metric.ChannelSend):Increment()
     end
 end
 
