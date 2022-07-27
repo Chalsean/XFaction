@@ -11,6 +11,7 @@
 - Added Evoker/Dracthyr support, awaiting icons for specs
 - Prompts user when it detects a newer version available
 - Localized zone text
+- Reduced message size by sending zone IDs instead of full text
 - Added Metrics (X) DT that displays the following total/average values:
   - Total messages received
   - BNet messages received

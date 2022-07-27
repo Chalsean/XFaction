@@ -75,6 +75,8 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     try(function ()
         local _Message = XFG:DecodeMessage(inEncodedMessage)
         self:Process(_Message, inMessageTag)
+        XFG.Metrics:GetMetric(XFG.Settings.Metric.ChannelReceive):Increment()
+        XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):Increment()
     end).
     catch(function (inErrorMessage)
         XFG:Warn(LogCategory, 'Failed to process received message: ' .. inErrorMessage)
@@ -100,12 +102,6 @@ function Inbox:Process(inMessage, inMessageTag)
         return
     else
         XFG.Mailbox:AddMessage(inMessage)
-    end
-
-    -- Increment metrics
-    XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):Increment()
-    if(inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
-        XFG.Metrics:GetMetric(XFG.Settings.Metric.ChannelReceive):Increment()
     end
 
     -- Is a newer version available?

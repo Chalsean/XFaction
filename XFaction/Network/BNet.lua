@@ -135,7 +135,9 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end
 
     try(function ()
+        -- Even though these may be part of a message, it still counts as a network transaction
         XFG.Metrics:GetMetric(XFG.Settings.Metric.BNetReceive):Increment()
+        XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):Increment()
         -- People can only whisper you if friend, so if you got a whisper you need to check friends cache
         if(not XFG.Friends:ContainsByGameID(tonumber(inSender))) then
             XFG.Friends:CheckFriends()
