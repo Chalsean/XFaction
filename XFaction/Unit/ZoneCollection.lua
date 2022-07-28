@@ -15,7 +15,6 @@ function ZoneCollection:new()
 	self._ZoneByID = {}
 	self._ZoneCount = 0
 	self._Initialized = false
-	self._Tourist = nil
 
     return Object
 end
@@ -24,14 +23,16 @@ function ZoneCollection:Initialize()
 	if(self:IsInitialized() == false) then
 		self:SetKey(math.GenerateUID())
 
-		local _ZoneIDs = XFG.Lib.Tourist:GetMapIDLookupTable()
-		self._Tourist = XFG.Lib.Tourist:GetLookupTable()
+		local _Tourist = LibStub('LibTourist-3.0')
+
+		local _ZoneIDs = _Tourist:GetMapIDLookupTable()
+		local _ZoneLocale = _Tourist:GetLookupTable()
 		local _AlreadyAdded = {}
 
 		for _ZoneID, _ZoneName in pairs (_ZoneIDs) do
 			if(strlen(_ZoneName) > 0) then
 				_ZoneID = tonumber(_ZoneID)
-				local _ContinentID = XFG.Lib.Tourist:GetContinentMapID(_ZoneID)
+				local _ContinentID = _Tourist:GetContinentMapID(_ZoneID)
 
 				if(not _AlreadyAdded[_ZoneName]) then
 					if(_ContinentID and tonumber(_ContinentID) == _ZoneID) then
@@ -42,8 +43,8 @@ function ZoneCollection:Initialize()
 							_NewContinent:SetKey(_ZoneName)
 							_NewContinent:AddID(_ZoneID)
 							_NewContinent:SetName(_ZoneName)
-							if(self._Tourist[_NewContinent:GetName()]) then
-								_NewContinent:SetLocaleName(self._Tourist[_NewContinent:GetName()])
+							if(_ZoneLocale[_NewContinent:GetName()]) then
+								_NewContinent:SetLocaleName(_ZoneLocale[_NewContinent:GetName()])
 							end
 							XFG.Continents:AddContinent(_NewContinent)
 							XFG:Info(LogCategory, 'Initialized continent [%s]', _NewContinent:GetName())
@@ -56,8 +57,8 @@ function ZoneCollection:Initialize()
 						_NewZone:SetKey(_ZoneName)
 						_NewZone:AddID(_ZoneID)
 						_NewZone:SetName(_ZoneName)
-						if(self._Tourist[_NewZone:GetName()]) then
-							_NewZone:SetLocaleName(self._Tourist[_NewZone:GetName()])
+						if(_ZoneLocale[_NewZone:GetName()]) then
+							_NewZone:SetLocaleName(_ZoneLocale[_NewZone:GetName()])
 						end
 						self:AddZone(_NewZone)
 						_AlreadyAdded[_NewZone:GetName()] = true
@@ -71,7 +72,7 @@ function ZoneCollection:Initialize()
 		end
 
 		for _, _Zone in self:Iterator() do
-			local _ContinentID = XFG.Lib.Tourist:GetContinentMapID(_Zone:GetID())
+			local _ContinentID = _Tourist:GetContinentMapID(_Zone:GetID())
 			if(_ContinentID) then
 				local _Continent = XFG.Continents:GetContinentByID(tonumber(_ContinentID))
 				if(_Continent) then
@@ -160,11 +161,6 @@ function ZoneCollection:AddZoneName(inZoneName)
 		_NewZone:Initialize()
 		_NewZone:SetKey(inZoneName)
 		_NewZone:SetName(inZoneName)
-
-		if(self._Tourist[_NewZone:GetName()]) then
-			_NewZone:SetLocaleName(self._Tourist[_NewZone:GetName()])
-		end
-
 		self:AddZone(_NewZone)
 		XFG:Info(LogCategory, 'Initialized zone [%s]', _NewZone:GetName())
 	end
