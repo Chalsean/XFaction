@@ -1,3 +1,7 @@
+### Version 3.6 [ 07.31.2022 ]
+[XFaction]
+- Reduced memory usage by 90%
+
 ### Version 3.5 [ 07.31.2022 ]
 [XFaction]
 - Fixed spaces in channel listing causing addon to break
