@@ -157,12 +157,16 @@ function LinkCollection:BroadcastLinks()
 	end
 
 	if(strlen(_LinksString) > 0) then
-		local _NewMessage = Message:new()
-		_NewMessage:Initialize()
-		_NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-		_NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LINK)
-		_NewMessage:SetData(_LinksString)
-		XFG.Outbox:Send(_NewMessage)  
+		local _Message = XFG.Factories.Message:CheckOut()
+		try(function ()
+			_Message:SetType(XFG.Settings.Network.Type.BROADCAST)
+			_Message:SetSubject(XFG.Settings.Network.Message.Subject.LINK)
+			_Message:SetData(_LinksString)
+			XFG.Outbox:Send(_Message) 
+		end).
+		finally(function ()
+			XFG.Factories.Message:CheckIn(_Message)
+		end)
 	end
 end
 

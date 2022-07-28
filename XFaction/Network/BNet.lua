@@ -186,7 +186,12 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         if(XFG.BNet:HasAllPackets(_MessageKey, _TotalPackets)) then
             XFG:Debug(LogCategory, "Received all packets for message [%s]", _MessageKey)
             local _FullMessage = XFG.BNet:RebuildMessage(_MessageKey, _TotalPackets)
-            XFG.Inbox:Process(_FullMessage, inMessageTag)
+            try(function ()                
+                XFG.Inbox:Process(_FullMessage, inMessageTag)
+            end).
+            finally(function ()
+                XFG.Factories.Message:CheckIn(_FullMessage)
+            end)
         end
     end).
     catch(function (inErrorMessage)

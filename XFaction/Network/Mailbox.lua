@@ -60,18 +60,13 @@ function Mailbox:Contains(inKey)
 	return self._Messages[inKey] ~= nil
 end
 
-function Mailbox:GetMessage(inKey)
-	assert(type(inKey) == 'string')
-    return self._Messages[inKey]
-end
-
-function Mailbox:AddMessage(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
-	if(self:Contains(inMessage:GetKey()) == false) then
+function Mailbox:AddMessage(inKey)
+    assert(type(inKey) == 'string')
+	if(not self:Contains(inKey)) then
 		self._MessageCount = self._MessageCount + 1
 	end
-	self._Messages[inMessage:GetKey()] = inMessage
-	return self:Contains(inMessage:GetKey())
+	self._Messages[inKey] = GetServerTime()
+	return self:Contains(inKey)
 end
 
 function Mailbox:RemoveMessage(inKey)
@@ -80,14 +75,14 @@ function Mailbox:RemoveMessage(inKey)
 		self._Messages[inKey] = nil
 		self._MessageCount = self._MessageCount - 1
 	end
-	return self:Contains(inKey) == false
+	return not self:Contains(inKey)
 end
 
 function Mailbox:Purge(inEpochTime)
 	assert(type(inEpochTime) == 'number')
-	for _, _Message in self:Iterator() do
-		if(_Message:GetTimeStamp() < inEpochTime) then
-			self:RemoveMessage(_Message:GetKey())
+	for _Key, _InsertTime in self:Iterator() do
+		if(_InsertTime < inEpochTime) then
+			self:RemoveMessage(_Key)
 		end
 	end
 end

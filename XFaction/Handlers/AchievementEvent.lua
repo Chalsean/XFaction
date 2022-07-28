@@ -40,18 +40,22 @@ function AchievementEvent:CallbackAchievement(inID)
     try(function ()
         local _, _Name, _, _, _, _, _, _, _, _, _, _IsGuild = GetAchievementInfo(inID)
         if(not _IsGuild and string.find(_Name, XFG.Lib.Locale['EXPLORE']) == nil) then
-            local _NewMessage = GuildMessage:new()
-            _NewMessage:Initialize()
-            _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-            _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.ACHIEVEMENT)
-            _NewMessage:SetData(inID) -- Leave as ID to localize on receiving end
-            if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-                _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
-            end
-            _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
-            _NewMessage:SetRealm(XFG.Player.Realm)
-            _NewMessage:SetGuild(XFG.Player.Guild)
-            XFG.Outbox:Send(_NewMessage)
+            local _Message = XFG.Factories.GuildMessage:CheckOut()
+            try(function ()
+                _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
+                _Message:SetSubject(XFG.Settings.Network.Message.Subject.ACHIEVEMENT)
+                _Message:SetData(inID) -- Leave as ID to localize on receiving end
+                if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+                    _Message:SetMainName(XFG.Player.Unit:GetMainName())
+                end
+                _Message:SetUnitName(XFG.Player.Unit:GetName())
+                _Message:SetRealm(XFG.Player.Realm)
+                _Message:SetGuild(XFG.Player.Guild)
+                XFG.Outbox:Send(_Message)
+            end).
+            finally(function ()
+                XFG.Factories.GuildMessage:CheckIn(_Message)
+            end)
         end
     end)
     .catch(function (inErrorMessage)

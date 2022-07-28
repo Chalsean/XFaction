@@ -234,6 +234,9 @@ function TimerEvent:CallbackLogin()
 				end
 				XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
 
+				-- Start the unit factory
+				XFG.Factories.Unit = UnitFactory:new(); XFG.Factories.Unit:Initialize()
+
 				-- If this is a reload, restore non-local guild members
 				try(function ()
 					if(XFG.DB.UIReload) then
@@ -242,17 +245,19 @@ function TimerEvent:CallbackLogin()
 				end).
 				catch(function (inErrorMessage)
 					XFG:Warn(LogCategory, 'Failed to restore units from backup: ' .. inErrorMessage)
-				end)
+				end)				
 
 				-- Scan local guild roster
 				XFG:Info(LogCategory, 'Initializing local guild roster')
 				for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
-					local _UnitData = Unit:new()
+					local _UnitData = XFG.Factories.Unit:CheckOut()
 					try(function ()			
 						_UnitData:Initialize(_MemberID)
 						if(_UnitData:IsOnline() and not XFG.Confederate:Contains(_UnitData:GetKey())) then
 							XFG:Debug(LogCategory, 'Adding local guild unit [%s:%s]', _UnitData:GetGUID(), _UnitData:GetName())
 							XFG.Confederate:AddUnit(_UnitData)
+						else
+							XFG.Factories.Unit:CheckIn(_UnitData)
 						end
 					end).
 					catch(function (inErrorMessage)
@@ -265,8 +270,12 @@ function TimerEvent:CallbackLogin()
 					end)
 				end
 
+				-- Start messaging factories
+				XFG.Factories.GuildMessage = GuildMessageFactory:new(); XFG.Factories.GuildMessage:Initialize()
+				XFG.Factories.Message = MessageFactory:new(); XFG.Factories.Message:Initialize()
+
 				-- Start network setup
-				XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()            
+				XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()
 				XFG.Outbox = Outbox:new()
 				XFG.Inbox = Inbox:new(); XFG.Inbox:Initialize()            
 				XFG.BNet = BNet:new(); BNet:Initialize()
@@ -326,6 +335,7 @@ function TimerEvent:CallbackLogin()
 				CreateTimer('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, false)
 				CreateTimer('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, false)
 				CreateTimer('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, false)
+				CreateTimer('Factories', XFG.Settings.Factories.Scan, XFG.Handlers.TimerEvent.CallbackFactories, true, false)
 
 				-- Ping friends to find out whos available for BNet
 				if(not XFG.DB.UIReload) then                
@@ -503,4 +513,12 @@ function TimerEvent:CallbackStaleLinks()
 		local _Timer = XFG.Timers:GetTimer('StaleLinks')
 		_Timer:SetLastRan(GetServerTime())
 	end)
+end
+
+-- Purge stale objects
+function TimerEvent:CallbackFactories()
+	local _PurgeTime = GetServerTime() - XFG.Settings.Factories.Purge
+	XFG.Factories.GuildMessage:Purge(_PurgeTime)
+	XFG.Factories.Message:Purge(_PurgeTime)
+	XFG.Factories.Unit:Purge(_PurgeTime)
 end

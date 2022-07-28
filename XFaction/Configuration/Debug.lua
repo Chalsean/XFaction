@@ -138,6 +138,12 @@ XFG.Options.args.Debug = {
 					name = XFG.Lib.Locale['ZONE'],
 					func = function(info) XFG.Zones:Print() end,
 				},
+				Factory = {
+					order = 22,
+					type = 'execute',
+					name = XFG.Lib.Locale['FACTORY'],
+					func = function(info) XFG.Factories.Unit:Print() end,
+				},
 			},
 		},
 	},

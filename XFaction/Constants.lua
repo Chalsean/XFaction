@@ -13,6 +13,7 @@ XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Start = GetServerTime()
 XFG.Handlers = {}
+XFG.Factories = {}
 
 XFG.Initialized = false
 
@@ -168,4 +169,8 @@ XFG.Settings = {
 		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
 		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
 	},
+	Factories = {
+		Scan = 60 * 7,
+		Purge = 60 * 30,
+	}
 }

@@ -46,19 +46,23 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
     try(function ()
         -- If you are the sender, broadcast to other realms/factions
         if(XFG.Player.GUID == inSenderGUID and XFG.Player.Unit:CanGuildSpeak()) then
-            local _NewMessage = GuildMessage:new()
-            _NewMessage:Initialize()
-            _NewMessage:SetFrom(XFG.Player.Unit:GetKey())
-            _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-            _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
-            _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
-            _NewMessage:SetGuild(XFG.Player.Guild)
-            _NewMessage:SetRealm(XFG.Player.Realm)
-            if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-                _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
-            end
-            _NewMessage:SetData(inText)
-            XFG.Outbox:Send(_NewMessage, true)
+            local _Message = XFG.Factories.GuildMessage:CheckOut()
+            try(function ()
+                _Message:SetFrom(XFG.Player.Unit:GetKey())
+                _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
+                _Message:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
+                _Message:SetUnitName(XFG.Player.Unit:GetUnitName())
+                _Message:SetGuild(XFG.Player.Guild)
+                _Message:SetRealm(XFG.Player.Realm)
+                if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+                    _Message:SetMainName(XFG.Player.Unit:GetMainName())
+                end
+                _Message:SetData(inText)
+                XFG.Outbox:Send(_Message, true)
+            end).
+            finally(function ()
+                XFG.Factories.GuildMessage:CheckIn(_Message)
+            end)
         end
     end).
     catch(function (inErrorMessage)

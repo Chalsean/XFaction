@@ -74,16 +74,15 @@ function Confederate:AddUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argument must be Unit object')
 
     if(self:Contains(inUnit:GetKey())) then 
-        local _CachedUnitData = self:GetUnit(inUnit:GetKey())       
-        if(inUnit:GetTimeStamp() < _CachedUnitData:GetTimeStamp()) then
-            return false
-        end
+        local _OldObject = self._Units[inUnit:GetKey()]
+        self._Units[inUnit:GetKey()] = inUnit
+        XFG.Factories.Unit:CheckIn(_OldObject)
     else
         self._UnitCount = self._UnitCount + 1
+        self._Units[inUnit:GetKey()] = inUnit
         XFG.DataText.Guild:RefreshBroker()
     end
-
-    self._Units[inUnit:GetKey()] = inUnit
+    
     if(inUnit:IsPlayer()) then
         XFG.Player.Unit = inUnit
     end
@@ -110,15 +109,20 @@ function Confederate:RemoveUnit(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
         local _Unit = self:GetUnit(inKey)
-        self._Units[inKey] = nil
-        self._UnitCount = self._UnitCount - 1
-        XFG.DataText.Guild:RefreshBroker()
-        if(XFG.Nodes:Contains(_Unit:GetName())) then
-            XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(_Unit:GetName()))
-            XFG.DataText.Links:RefreshBroker()
-        end
+        try(function ()
+            self._Units[inKey] = nil
+            self._UnitCount = self._UnitCount - 1
+            XFG.DataText.Guild:RefreshBroker()
+            if(XFG.Nodes:Contains(_Unit:GetName())) then
+                XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(_Unit:GetName()))
+                XFG.DataText.Links:RefreshBroker()
+            end
+        end).
+        finally(function ()
+            XFG.Factories.Unit:CheckIn(_Unit)
+        end)
         local _Target = XFG.Targets:GetTarget(_Unit:GetRealm(), _Unit:GetFaction())
-        self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1      
+        self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1
     end
 end
 

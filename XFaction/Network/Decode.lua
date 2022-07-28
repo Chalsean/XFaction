@@ -8,12 +8,11 @@ local function DeserializeMessage(inSerializedMessage)
 	if(_MessageData.S == XFG.Settings.Network.Message.Subject.GCHAT or
 	   _MessageData.S == XFG.Settings.Network.Message.Subject.LOGOUT or
 	   _MessageData.S == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
-		_Message = GuildMessage:new()
+		_Message = XFG.Factories.GuildMessage:CheckOut()
 	else
 	-- DATA, LOGIN, LINKS use Message class
-		_Message = Message:new()
+		_Message = XFG.Factories.Message:CheckOut()
 	end	
-	_Message:Initialize()
 	
 	if(_MessageData.K ~= nil) then	_Message:SetKey(_MessageData.K)	end
 	if(_MessageData.T ~= nil) then	_Message:SetTo(_MessageData.T)	end
@@ -53,7 +52,7 @@ end
 
 function XFG:DeserializeUnitData(inData)
 	local _, _DeserializedData = XFG:Deserialize(inData)
-	local _UnitData = Unit:new()
+	local _UnitData = XFG.Factories.Unit:CheckOut()
 	_UnitData:IsRunningAddon(true)
 	if(_DeserializedData.C ~= nil) then
 		_UnitData:SetCovenant(XFG.Covenants:GetCovenant(_DeserializedData.C))
@@ -113,7 +112,7 @@ function XFG:DeserializeUnitData(inData)
 	end
 
 	-- If RaiderIO is installed, grab raid/mythic
-	pcall(function ()
+	try(function ()
 		local RaiderIO = _G.RaiderIO
 		if(RaiderIO) then
 			local _RaiderIO = RaiderIO.GetProfile(_UnitData:GetName(), _UnitData:GetRealm():GetName())

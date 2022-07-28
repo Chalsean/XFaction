@@ -16,6 +16,7 @@ function Message:new()
     self._Type = nil
     self._Subject = nil
     self._EpochTime = nil
+    self._FactoryTime = nil
     self._TargetCount = 0
     self._Data = nil
     self._Initialized = false
@@ -34,11 +35,13 @@ function Message:newChildConstructor()
     self.parent = self
     
     self._Key = nil
+    self._FactoryKey = nil
     self._To = nil
     self._From = nil    
     self._Type = nil
     self._Subject = nil
-    self._EpochTime = nil    
+    self._EpochTime = nil
+    self._FactoryTime = nil 
     self._TargetCount = 0
     self._Data = nil
     self._Initialized = false
@@ -58,7 +61,7 @@ function Message:IsInitialized(inBoolean)
 end
 
 function Message:Initialize()
-    if(self:IsInitialized() == false) then
+    if(not self:IsInitialized()) then
         self._Targets = {}
         self:SetKey(math.GenerateUID())
         self:SetFrom(XFG.Player.Unit:GetKey())
@@ -75,6 +78,7 @@ function Message:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _FactoryKey (" .. type(self._FactoryKey) .. "): ".. tostring(self._FactoryKey))
     XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
     XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
@@ -82,6 +86,7 @@ function Message:Print()
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
+    XFG:Debug(LogCategory, "  _FactoryTime (" ..type(self._FactoryTime) .. "): ".. tostring(self._FactoryTime))
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
@@ -95,6 +100,7 @@ function Message:ShallowPrint()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _FactoryKey (" .. type(self._FactoryKey) .. "): ".. tostring(self._FactoryKey))
     XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
     XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
@@ -102,6 +108,7 @@ function Message:ShallowPrint()
     XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
     XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
     XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
+    XFG:Debug(LogCategory, "  _FactoryTime (" ..type(self._FactoryTime) .. "): ".. tostring(self._FactoryTime))
     XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
@@ -116,6 +123,16 @@ function Message:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
+end
+
+function Message:GetFactoryKey()
+    return self._FactoryKey
+end
+
+function Message:SetFactoryKey(inFactoryKey)
+    assert(type(inFactoryKey) == 'string')
+    self._FactoryKey = inFactoryKey
+    return self:GetFactoryKey()
 end
 
 function Message:GetTo()
@@ -166,6 +183,16 @@ function Message:SetTimeStamp(inEpochTime)
     assert(type(inEpochTime) == 'number')
     self._EpochTime = inEpochTime
     return self:GetTimeStamp()
+end
+
+function Message:GetFactoryTime()
+    return self._FactoryTime
+end
+
+function Message:SetFactoryTime(inEpochTime)
+    assert(type(inEpochTime) == 'number')
+    self._FactoryTime = inEpochTime
+    return self:GetFactoryTime()
 end
 
 function Message:GetData()
@@ -304,4 +331,19 @@ end
 
 function Message:IsMyMessage()
     return XFG.Player.Unit:GetGUID() == self:GetFrom()
+end
+
+function Message:FactoryReset()
+    self._To = nil
+    self._From = nil    
+    self._Type = nil
+    self._Subject = nil
+    self._EpochTime = nil
+    self._TargetCount = 0
+    self._Data = nil
+    self._Initialized = false
+    self._PacketNumber = 1
+    self._TotalPackets = 1
+    self._Version = nil
+    self:Initialize()
 end
