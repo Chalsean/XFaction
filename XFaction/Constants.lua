@@ -168,14 +168,4 @@ XFG.Settings = {
 		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
 		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
 	},
-	Quality = {
-		Cloak = {
-			[63352] = 'Shroud of Cooperation',
-			[63353] = 'Shroud of Cooperation',
-			[63206] = 'Wrap of Unity',
-			[63207] = 'Wrap of Unity',
-			[65274] = 'Cloak of Coordination',
-			[65360] = 'Cloak of Coordination',
-		},
-	},
 }

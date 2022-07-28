@@ -348,11 +348,6 @@ function TimerEvent:CallbackLogin()
 				XFG.DataText.Metrics:RefreshBroker()
 				wipe(XFG.DB.Backup)
 			end)
-
-			-- Misc Quality of Life stuff
-			try(function ()
-				XFG.Quality.Cloak = Cloak:new(); XFG.Quality.Cloak:Initialize()
-			end)
         end
     end
 end

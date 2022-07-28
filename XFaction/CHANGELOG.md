@@ -20,8 +20,6 @@
   - Local messages sent
   - Errors encountered
   - Warnings encountered
-- Added quality of life item under new option tab Quality
-  - Auto-equip spec equipment set cloak after using cloak teleport item
 
 ### Version 3.4 [ 07.20.2022 ]
 [XFaction]

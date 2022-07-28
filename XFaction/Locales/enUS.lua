@@ -267,13 +267,6 @@ L['DTMETRICS_CONFIG_ERROR_TOOLTIP'] = 'Display the total # of errors encountered
 L['DTMETRICS_CONFIG_WARNING'] = 'Total Warnings'
 L['DTMETRICS_CONFIG_WARNING_TOOLTIP'] = 'Display the total # of warnings encountered'
 --=========================================================================
--- Quality Specific
---=========================================================================
-L['QUALITY'] = 'Quality of Life'
-L['QUALITY_EQUIP_DESCRIPTION'] = 'Equipment Set'
-L['QUALITY_CLOAK_ENABLE'] = 'Enable Cloak Swap'
-L['QUALITY_CLOAK_TOOLTIP'] = 'Auto-swap cloak after teleport to spec equipment set'
---=========================================================================
 -- Support Specific
 --=========================================================================
 L['SUPPORT_UAT'] = 'User Acceptance Testing'
