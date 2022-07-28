@@ -25,4 +25,5 @@ Frames\LoadFrames.xml
 DataText\LoadDataText.xml
 Media\LoadMedia.xml
 Metrics\LoadMetrics.xml
+Quality\LoadQuality.xml
 Initialize.lua

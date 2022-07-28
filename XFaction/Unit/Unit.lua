@@ -89,9 +89,9 @@ function Unit:Initialize(inMemberID)
     self:SetDungeonScore(_UnitData.overallDungeonScore or 0)
     self:SetAchievementPoints(_UnitData.achievementPoints or 0)
 
-    if(XFG.Zones:Contains(_UnitData.zone)) then
+    if(_UnitData.zone and XFG.Zones:Contains(_UnitData.zone)) then
         self:SetZone(XFG.Zones:GetZone(_UnitData.zone))
-    elseif(strlen(_UnitData.zone)) then
+    elseif(_UnitData.zone and strlen(_UnitData.zone)) then
         XFG.Zones:AddZoneName(_UnitData.zone)
         self:SetZone(XFG.Zones:GetZone(_UnitData.zone))
     else
