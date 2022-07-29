@@ -117,11 +117,11 @@ function GuildMessage:Copy(inMessage)
     self._Initialized = inMessage:IsInitialized()
     self._PacketNumber = inMessage:GetPacketNumber()
     self._TotalPackets = inMessage:GetTotalPackets()
-    self._Version = inMessage:GetVersion()
     self._UnitName = inMessage:GetUnitName()
     self._MainName = inMessage:GetMainName()
     self._Guild = inMessage:GetGuild()
     self._Realm = inMessage:GetRealm()
+    if(self:HasVersion()) then self._Version:Print() end
     for _, _Target in pairs (self:GetTargets()) do
         self:RemoveTarget(_Target)
     end

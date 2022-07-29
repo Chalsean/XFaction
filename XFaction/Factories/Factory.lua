@@ -63,27 +63,10 @@ function Factory:Print()
     XFG:Debug(LogCategory, "  _CheckedOutCount (" ..type(self._CheckedOutCount) .. "): ".. tostring(self._CheckedOutCount))
     XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
     for _Key, _Object in self:CheckedInIterator() do
-        XFG:Debug(LogCategory, 'Available key: ' .. _Key)
         _Object:Print()
     end
     for _Key, _Object in self:CheckedOutIterator() do
-        XFG:Debug(LogCategory, 'Loaned key: ' .. _Key)
         _Object:Print()
-    end
-end
-
-function Factory:ShallowPrint()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _CheckedInCount (" .. type(self._CheckedInCount) .. "): ".. tostring(self._CheckedInCount))
-    XFG:Debug(LogCategory, "  _CheckedOutCount (" ..type(self._CheckedOutCount) .. "): ".. tostring(self._CheckedOutCount))
-    XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    for _Key, _Object in self:CheckedInIterator() do
-        XFG:Debug(LogCategory, 'Available key: ' .. _Key)
-    end
-    for _Key, _Object in self:CheckedOutIterator() do
-        XFG:Debug(LogCategory, 'Loaned key: ' .. _Key)
     end
 end
 
