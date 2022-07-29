@@ -5,6 +5,7 @@
 - Fixed random exception on initial login
 - Fixed receiving local guild logoff messages if login/logoff option unchecked
 - Fixed race condition with ElvUI chat handler
+- Fixed Guild right-click menu showing behind the tooltip (Zoombara)
 - Readjust channel colors based on ID after Blizzard sets them by #
 - Implemented try/catch/finally exception handling for all timers/events/inputs
 - Some refactoring to old non-C APIs for Classic support (incomplete)
