@@ -76,8 +76,8 @@ function GuildEvent:CallbackRosterUpdate()
             elseif(_UnitData:GetKey() ~= nil and XFG.Confederate:Contains(_UnitData:GetKey())) then
                 local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
                 if(not _CachedUnitData:IsPlayer()) then
-                    XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())
                     XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, _CachedUnitData:GetName(), _CachedUnitData:GetUnitName(), _CachedUnitData:GetMainName(), _CachedUnitData:GetGuild(), _CachedUnitData:GetRealm())
+                    XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())
                 end
             else
                 XFG.Factories.Unit:CheckIn(_UnitData)

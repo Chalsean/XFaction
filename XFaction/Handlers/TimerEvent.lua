@@ -236,6 +236,7 @@ function TimerEvent:CallbackLogin()
 
 				-- Start the unit factory
 				XFG.Factories.Unit = UnitFactory:new(); XFG.Factories.Unit:Initialize()
+				XFG:Info(LogCategory, 'Initialized Unit factory')
 
 				-- If this is a reload, restore non-local guild members
 				try(function ()
@@ -272,7 +273,9 @@ function TimerEvent:CallbackLogin()
 
 				-- Start messaging factories
 				XFG.Factories.GuildMessage = GuildMessageFactory:new(); XFG.Factories.GuildMessage:Initialize()
+				XFG:Info(LogCategory, 'Initialized GuildMessage factory')
 				XFG.Factories.Message = MessageFactory:new(); XFG.Factories.Message:Initialize()
+				XFG:Info(LogCategory, 'Initialized Message factory')
 
 				-- Start network setup
 				XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()

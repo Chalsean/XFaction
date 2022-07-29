@@ -117,12 +117,12 @@ function Confederate:RemoveUnit(inKey)
                 XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(_Unit:GetName()))
                 XFG.DataText.Links:RefreshBroker()
             end
+            local _Target = XFG.Targets:GetTarget(_Unit:GetRealm(), _Unit:GetFaction())
+            self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1
         end).
         finally(function ()
             XFG.Factories.Unit:CheckIn(_Unit)
-        end)
-        local _Target = XFG.Targets:GetTarget(_Unit:GetRealm(), _Unit:GetFaction())
-        self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1
+        end)        
     end
 end
 
