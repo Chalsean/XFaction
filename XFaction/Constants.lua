@@ -59,6 +59,7 @@ XFG.Quality = {}
 XFG.Cache = {
 	Channels = {},
 	NewVersionNotify = false,
+	FirstScan = {},
 }
 
 XFG.Settings = {

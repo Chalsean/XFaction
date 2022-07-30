@@ -83,7 +83,7 @@ function SystemEvent:ChatFilter(inEvent, inMessage, ...)
         inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
         return false, inMessage, ...
     -- Hide Blizz login/logout messages, we display our own, this is a double notification
-    elseif(not XFG.Config.Chat.Login.Enable and string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
         return true
     elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGOUT'])) then
         return true    

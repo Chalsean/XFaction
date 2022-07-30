@@ -4,33 +4,19 @@ local LogCategory = 'HEGuild'
 
 GuildEvent = {}
 
-function GuildEvent:new(inObject)
-    local _typeof = type(inObject)
-    local _newObject = true
-
-	assert(inObject == nil or
-	      (_typeof == 'table' and inObject.__name ~= nil and inObject.__name == ObjectName),
-	      "argument must be nil or " .. ObjectName .. " object")
-
-    if(typeof == 'table') then
-        Object = inObject
-        _newObject = false
-    else
-        Object = {}
-    end
+function GuildEvent:new()
+    Object = {}
     setmetatable(Object, self)
     self.__index = self
     self.__name = ObjectName
 
-    if(_newObject == true) then
-        self._Initialized = false
-    end
+    self._Initialized = false
 
     return Object
 end
 
 function GuildEvent:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
         -- This is the local guild roster scan for those not running the addon
         XFG:CreateEvent('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
 		self:IsInitialized(true)
@@ -58,29 +44,37 @@ function GuildEvent:CallbackRosterUpdate()
         try(function ()
             local _UnitData = Unit:new()
             _UnitData:Initialize(_MemberID)
-            if(_UnitData:IsOnline()) then
 
+            if(_UnitData:IsOnline()) then
                 -- If cache doesn't have unit, process
-                if(XFG.Confederate:Contains(_UnitData:GetKey()) == false) then
+                if(not XFG.Confederate:Contains(_UnitData:GetKey())) then
                     XFG.Confederate:AddUnit(_UnitData)
-    --                    XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGIN, _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
+                    -- Don't notify if first time seeing unit
+                    if(XFG.Cache.FirstScan[_MemberID]) then
+                        XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGIN, _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
+                    end
                 else
                     local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
                     -- If the player is running addon, do not process
-                    if(_CachedUnitData:IsRunningAddon() == false and _CachedUnitData:Equals(_UnitData) == false) then         
+                    if(not _CachedUnitData:IsRunningAddon() and not _CachedUnitData:Equals(_UnitData)) then         
                         XFG.Confederate:AddUnit(_UnitData)
                     end
                 end
-            elseif(_UnitData:GetKey() ~= nil and XFG.Confederate:Contains(_UnitData:GetKey())) then
+            -- They went offline and we saw them before doing so
+            elseif(XFG.Confederate:Contains(_UnitData:GetKey())) then
                 local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
                 if(not _CachedUnitData:IsPlayer()) then
                     XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())
                     XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, _CachedUnitData:GetName(), _CachedUnitData:GetUnitName(), _CachedUnitData:GetMainName(), _CachedUnitData:GetGuild(), _CachedUnitData:GetRealm())
                 end
             end
+
+            if(_UnitData:IsInitialized() and XFG.Cache.FirstScan[_MemberID] == nil) then
+                XFG.Cache.FirstScan[_MemberID] = true
+            end
         end).
         catch(function (inErrorMessage)
-            XFG:Warn(LogCategory, 'Failed to update unit information [%d]: ' .. inErrorMessage, _MemberID)
+            XFG:Warn(LogCategory, 'Failed to scan unit information [%d]: ' .. inErrorMessage, _MemberID)
         end)
     end
 end
