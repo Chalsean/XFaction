@@ -182,6 +182,15 @@ function TimerEvent:CallbackLogin()
 					end
 				end
 
+				for _RealmID, _RealmName in pairs (XFG.Settings.Confederate.DefaultRealms) do
+					local _NewRealm = Realm:new()
+					_NewRealm:SetKey(_RealmName)
+					_NewRealm:SetName(_RealmName)
+					_NewRealm:SetAPIName(_RealmName)
+					_NewRealm:SetIDs({_RealmID})
+					XFG.Realms:AddRealm(_NewRealm)
+				end
+
 				-- Backwards compat for EK
 				if(XFG.Teams:GetCount() == 0) then
 					XFG.Teams:Initialize()
@@ -250,18 +259,21 @@ function TimerEvent:CallbackLogin()
 					local _UnitData = Unit:new()
 					try(function ()			
 						_UnitData:Initialize(_MemberID)
-						if(_UnitData:IsOnline() and not XFG.Confederate:Contains(_UnitData:GetKey())) then
+						if(_UnitData:IsInitialized()) then
+							XFG.Cache.FirstScan[_MemberID] = true
+						end
+						if(_UnitData:IsOnline()) then
 							XFG:Debug(LogCategory, 'Adding local guild unit [%s:%s]', _UnitData:GetGUID(), _UnitData:GetName())
 							XFG.Confederate:AddUnit(_UnitData)
 						end
 					end).
 					catch(function (inErrorMessage)
-						XFG:Warn(LogCategory, 'Failed to query for guild member [%d] on initialization: ' .. inErrorMessage, _MemberID)
+						XFG:Debug(LogCategory, 'Failed to query for guild member [%d] on initialization: ' .. inErrorMessage, _MemberID)
 					end).
 					finally(function ()
 						if(_UnitData and _UnitData:IsPlayer()) then
 							_UnitData:Print()          
-						end			
+						end
 					end)
 				end
 
@@ -303,11 +315,22 @@ function TimerEvent:CallbackLogin()
 				XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
 				XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 				XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
+
+				-- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
+				try(function ()
+					if(not XFG.DB.UIReload) then
+						C_GuildInfo.GuildRoster()
+					end
+				end).
+				catch(function (inErrorMessage)
+					XFG:Warn(LogCategory, 'GuildRoster API call failed: ' .. inErrorMessage)
+				end)
 			end).
 			catch(function (inErrorMessage)
-				XFG:Error(LogCategory, 'Failed critical path initialization of XFaction: ' .. inErrorMessage)
+				XFG:Error(LogCategory, inErrorMessage)
+				print(XFG.Title .. ': Failed to start properly. ' .. inErrorMessage)
 				XFG:CancelAllTimers()
-				error(inErrorMessage)
+				return
 			end)
 	
 			try(function ()

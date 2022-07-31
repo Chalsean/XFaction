@@ -152,7 +152,7 @@ function DTSoulbind:OnClick(this, inButton)
 	if InCombatLockdown() then _G.UIErrorsFrame:AddMessage(E.InfoColor.._G.ERR_NOT_IN_COMBAT) return end
 
 	if(inButton == 'LeftButton') then
-		self._Tooltip:Hide()
+		if(self._Tooltip) then self._Tooltip:Hide() end
 		LoadAddOn("Blizzard_Soulbinds") 
 		local SoulbindFrame = SoulbindViewer 
 		if SoulbindFrame:IsVisible() then 
@@ -162,7 +162,7 @@ function DTSoulbind:OnClick(this, inButton)
 		end
 	elseif(inButton == 'RightButton') then
 		if(XFG.Player.Unit:HasCovenant()) then
-			self._Tooltip:Hide()
+			if(self._Tooltip) then self._Tooltip:Hide() end
 			local _Covenant = XFG.Player.Unit:GetCovenant()
 			local _CovenantName = _Covenant:GetName()
 			local _CovenantIconID = _Covenant:GetIconID()

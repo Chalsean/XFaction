@@ -62,17 +62,20 @@ function Unit:Initialize(inMemberID)
         _UnitData = C_Club.GetMemberInfoForSelf(XFG.Player.Guild:GetID())
     end
 
-    -- Odd but guildRank is nil during a zone transition
-    if(_UnitData == nil or _UnitData.guildRank == nil) then return end
-
+    -- Sometimes fails on initial login and odd, but guildRank is nil during a zone transition
+    if(_UnitData == nil or _UnitData.guildRank == nil) then
+        return
+    end
+ 
     self:SetGUID(_UnitData.guid)
     self:SetKey(self:GetGUID())
     self:IsOnline(_UnitData.presence == 1 or _UnitData.presence == 4 or _UnitData.presence == 5)
     if(self:IsOffline()) then
+        self:IsInitialized(true)
         return
     end
 
-    self:SetID(inMemberID)
+    self:SetID(_UnitData.memberId)
     self:SetName(_UnitData.name)
     self:SetUnitName(_UnitData.name .. '-' .. XFG.Player.Realm:GetAPIName())
 	self:SetLevel(_UnitData.level)	
@@ -260,6 +263,10 @@ function Unit:IsPlayer(inBoolean)
         self._IsPlayer = inBoolean
     end
     return self._IsPlayer
+end
+
+function Unit:HasKey()
+    return self._Key ~= nil
 end
 
 function Unit:GetKey()

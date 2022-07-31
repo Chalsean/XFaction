@@ -155,7 +155,7 @@ local function CanLink(inAccountInfo)
 
 		-- When a player is in Torghast, it will list realm as 0, no character name or faction
 		-- Bail out before it causes an exception
-		if(_Realm == nil) then return false end
+		if(_Realm == nil or _Realm:GetName() == 'Torghast') then return false end
 
 		-- We don't want to link to neutral faction toons
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end

@@ -59,6 +59,7 @@ XFG.Quality = {}
 XFG.Cache = {
 	Channels = {},
 	NewVersionNotify = false,
+	FirstScan = {},
 }
 
 XFG.Settings = {
@@ -81,6 +82,9 @@ XFG.Settings = {
 		DefaultTeams = {
 			U = 'Unknown',
 		},
+		DefaultRealms = {
+			[0] = 'Torghast',
+		}
 	},
 	LocalGuild = {
 		ScanTimer = 30,          -- Seconds between forced local guild scans
