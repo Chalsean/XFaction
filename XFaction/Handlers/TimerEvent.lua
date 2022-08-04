@@ -182,6 +182,15 @@ function TimerEvent:CallbackLogin()
 					end
 				end
 
+				for _RealmID, _RealmName in pairs (XFG.Settings.Confederate.DefaultRealms) do
+					local _NewRealm = Realm:new()
+					_NewRealm:SetKey(_RealmName)
+					_NewRealm:SetName(_RealmName)
+					_NewRealm:SetAPIName(_RealmName)
+					_NewRealm:SetIDs({_RealmID})
+					XFG.Realms:AddRealm(_NewRealm)
+				end
+
 				-- Backwards compat for EK
 				if(XFG.Teams:GetCount() == 0) then
 					XFG.Teams:Initialize()
@@ -318,9 +327,10 @@ function TimerEvent:CallbackLogin()
 				end)
 			end).
 			catch(function (inErrorMessage)
-				XFG:Error(LogCategory, 'Failed critical path initialization of XFaction: ' .. inErrorMessage)
+				XFG:Error(LogCategory, inErrorMessage)
+				print(XFG.Title .. ': Failed to start properly. ' .. inErrorMessage)
 				XFG:CancelAllTimers()
-				error(inErrorMessage)
+				return
 			end)
 	
 			try(function ()

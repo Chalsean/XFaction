@@ -76,10 +76,12 @@ end
 function Version:IsNewer(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
     -- Do not consider alpha/beta builds as newer
-    if(inVersion:GetPatch() == '0' or inVersion:GetPatch() % 2 == 1) then
+    if(inVersion:GetPatch() == 0 or inVersion:GetPatch() % 2 == 1) then
         return false
     end
-    if(self:GetMajor() < inVersion:GetMajor() or self:GetMinor() < inVersion:GetMinor()) then
+    if(self:GetMajor() < inVersion:GetMajor() or 
+      (self:GetMajor() == inVersion:GetMajor() and self:GetMinor() < inVersion:GetMinor()) or
+      (self:GetMajor() == inVersion:GetMajor() and self:GetMinor() == inVersion:GetMinor() and self:GetPatch() < inVersion:GetPatch())) then
         return true
     end
     return false
