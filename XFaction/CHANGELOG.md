@@ -1,3 +1,7 @@
+### Version 3.6 [ 07.31.2022 ]
+[XFaction]
+- Local guild logins are now in XFaction format
+
 ### Version 3.5 [ 07.31.2022 ]
 [XFaction]
 - Fixed spaces in channel listing causing addon to break
