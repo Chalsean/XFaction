@@ -124,8 +124,15 @@ L['CHAT_NO_PLAYER_FOUND'] = 'No player named '
 --=========================================================================
 L['NAMEPLATES'] = 'Nameplates'
 L['ELVUI'] = 'ElvUI'
-L['NAMEPLATE_CONFEDERATE'] = 'Confederate Guild Tag'
-L['NAMEPLATE_CONFEDERATE_TOOLTIP'] = 'Replace the guild name with confederate name in nameplates'
+L['NAMEPLATE_ELVUI_DESCRIPTION'] = 'Add more oUF tags that can be used in ElvUI UnitFrames'
+L['NAMEPLATE_ELVUI_CONFEDERATE'] = 'Name of the confederate'
+L['NAMEPLATE_ELVUI_CONFEDERATE_BRACKETS'] = 'Name of the confederate in <brackets>'
+L['NAMEPLATE_ELVUI_MAIN_NAME'] = "Name of the player's main toon"
+L['NAMEPLATE_ELVUI_MAIN_NAME_PARENTHESIS'] = "Name of the player's main toon in (parenthesis)"
+L['NAMEPLATE_ELVUI_TEAM'] = "Name of the player's raid team"
+L['NAMEPLATE_ELVUI_TEAM_PARENTHESIS'] = "Name of the player's raid team in (parenthesis)"
+L['NAMEPLATE_ELVUI_CONFEDERATE_TEAM'] = "Combination of the confederate name and name of the player's raid team"
+L['NAMEPLATE_ELVUI_CONFEDERATE_TEAM_BRACKETS'] = "Combination of the confederate name and name of the player's raid team in <brackets>"
 --=========================================================================
 -- DataText Specific
 --=========================================================================

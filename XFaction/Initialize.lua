@@ -14,12 +14,11 @@ function XFG:Init()
 
 	XFG.Events = EventCollection:new(); XFG.Events:Initialize()
 	XFG.Timers = TimerCollection:new(); XFG.Timers:Initialize()
+	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
+	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
 
 	-- A significant portion of start up is delayed due to guild information not being available yet
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()	
-
-	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
-	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
 
 	-- Initialize DTs
 	XFG.DataText.Guild = DTGuild:new(); XFG.DataText.Guild:Initialize()

@@ -88,6 +88,7 @@ function TimerEvent:CallbackLogin()
             local _Timer = XFG.Timers:GetTimer('Login')
             XFG.Timers:RemoveTimer(_Timer)
 
+			-- Log any reloadui errors encountered
 			for _, _ErrorText in ipairs(XFG.DB.Errors) do
 				XFG:Warn(LogCategory, _ErrorText)
 			end
@@ -182,6 +183,7 @@ function TimerEvent:CallbackLogin()
 					end
 				end
 
+				-- Setup default realms (Torghast)
 				for _RealmID, _RealmName in pairs (XFG.Settings.Confederate.DefaultRealms) do
 					local _NewRealm = Realm:new()
 					_NewRealm:SetKey(_RealmName)
@@ -277,6 +279,9 @@ function TimerEvent:CallbackLogin()
 					end)
 				end
 
+				-- Monitor other addons loading
+				XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
+
 				-- Start network setup
 				XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()            
 				XFG.Outbox = Outbox:new()
@@ -315,7 +320,6 @@ function TimerEvent:CallbackLogin()
 				XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
 				XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 				XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
-				XFG.Handlers.NameplateEvent = NameplateEvent:new(); XFG.Handlers.NameplateEvent:Initialize()
 
 				-- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
 				try(function ()
@@ -378,7 +382,6 @@ end
 
 function TimerEvent:CallbackDelayedStartTimer()
 	try(function ()
-		XFG.Frames.Chat:LoadElvUI()
 		if(not XFG.DB.UIReload) then
 			XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
 			XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)

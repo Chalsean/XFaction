@@ -102,7 +102,7 @@ function DTSoulbind:OnEnter(this)
 		self._Tooltip:SetHeaderFont(self._HeaderFont)
 		self._Tooltip:SetFont(self._RegularFont)
 		self._Tooltip:SmartAnchorTo(this)
-		self._Tooltip:SetAutoHideDelay(XFG.DataText.AutoHide, self._Tooltip)
+		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, self._Tooltip)
 		self._Tooltip:EnableMouse(true)
 		self._Tooltip:SetClampedToScreen(false)
 	end

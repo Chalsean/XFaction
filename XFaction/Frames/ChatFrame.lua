@@ -12,7 +12,6 @@ function ChatFrame:new()
 
     self._Key = nil
     self._Initialized = false
-    self._ElvUI = false     
     self._ElvUIModule = nil  
     self._ChatFrameHandler = nil
     
@@ -20,13 +19,9 @@ function ChatFrame:new()
 end
 
 function ChatFrame:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
 		self:SetKey(math.GenerateUID())
-        XFG:Info(LogCategory, 'Using default chat handler')
-        self._ChatFrameHandler = ChatFrame_MessageEventHandler
-        if(self:UseWIM()) then
-            XFG:Info(LogCategory, 'Using WIM for guild chat handler')
-        end
+        self:SetHandler()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -38,10 +33,6 @@ function ChatFrame:IsInitialized(inBoolean)
 		self._Initialized = inBoolean
 	end
 	return self._Initialized
-end
-
-function ChatFrame:UseWIM()
-	return IsAddOnLoaded('WIM') and WIM.modules.GuildChat.enabled
 end
 
 function ChatFrame:Print()
@@ -62,33 +53,22 @@ function ChatFrame:SetKey(inKey)
     return self:GetKey()
 end
 
-function ChatFrame:IsElvUI(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
-    if(inBoolean ~= nil) then
-        self._ElvUI = inBoolean
-    end
-    return self._ElvUI
-end
-
-function ChatFrame:LoadElvUI()
-    if(not self:IsElvUI()) then
-        if(IsAddOnLoaded('ElvUI')) then
-            local _Status, _Enabled = pcall(function()
-                return ElvUI[1].private.chat.enable
-            end)
-            if _Status and _Enabled then
-                XFG:Info(LogCategory, 'Using ElvUI chat handler')
-                self:IsElvUI(true)
-                self._ElvUIModule = ElvUI[1]:GetModule('Chat')
-                self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
-            else
-                XFG:Error(LogCategory, 'Failed to detect if elvui has chat enabled')
-                self._ChatFrameHandler = ChatFrame_MessageEventHandler
-            end
+function ChatFrame:SetHandler()
+    if(XFG.ElvUI) then
+        local _Status, _Enabled = pcall(function()
+            return XFG.ElvUI.private.chat.enable
+        end)
+        if _Status and _Enabled then
+            XFG:Info(LogCategory, 'Using ElvUI chat handler')
+            self._ElvUIModule = XFG.ElvUI:GetModule('Chat')
+            self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
         else
-            XFG:Info(LogCategory, 'Using default chat handler')
+            XFG:Error(LogCategory, 'Failed to detect if elvui has chat enabled')
             self._ChatFrameHandler = ChatFrame_MessageEventHandler
         end
+    else
+        XFG:Info(LogCategory, 'Using default chat handler')
+        self._ChatFrameHandler = ChatFrame_MessageEventHandler
     end
 end
 
@@ -173,8 +153,8 @@ function ChatFrame:Display(inMessage)
                         _Text = format('|cff%s%s|r', _Hex, _Text)
                     end
 
-                    if(_Event == 'GUILD' and self:UseWIM()) then
-                        WIM.modules.GuildChat:CHAT_MSG_GUILD(_Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                    if(_Event == 'GUILD' and XFG.WIM) then
+                        XFG.WIM:CHAT_MSG_GUILD(_Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
                     else
                         if(_Event ~= 'GUILD_ACHIEVEMENT') then _Text = XFG.Settings.Frames.Chat.Prepend .. _Text end
                         self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())

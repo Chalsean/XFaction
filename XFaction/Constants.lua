@@ -12,7 +12,11 @@ XFG.Category = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Start = GetServerTime()
+
+XFG.DataText = {}
+XFG.Frames = {}
 XFG.Handlers = {}
+XFG.Nameplates = {}
 
 XFG.Initialized = false
 
@@ -45,17 +49,11 @@ XFG.Lib = {
 	Tourist = LibStub('LibTourist-3.0'),
 }
 
-XFG.DataText = {
-	AutoHide = .25
-}
-
 XFG.Player = {
 	LastBroadcast = 0,
 	InInstance = false
 }
 
-XFG.Frames = {}
-XFG.Quality = {}
 XFG.Cache = {
 	Channels = {},
 	NewVersionNotify = false,

@@ -65,6 +65,14 @@ XFG.Defaults = {
         Nameplates = {
             Confederate = {
                 Enable = true,
+                ConfederateTag = '[confederate]',
+                ConfederateBracketsTag = '[confederate:brackets]',
+                MainNameTag = '[name:main]',
+                MainNameParenthesisTag = '[name:main-paren]',
+                TeamTag = '[team]',
+                TeamParenthesisTag = '[team-paren]',
+                ConfederateTeamTag = '[confederate:team]',
+                ConfederateTeamBracketsTag = '[confederate:team:brackets]',
             },
         },
         DataText = {
