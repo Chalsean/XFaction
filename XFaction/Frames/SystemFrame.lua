@@ -106,28 +106,3 @@ function SystemFrame:DisplayLogoutMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm())
 end
-
-function SystemFrame:DisplayLocalOffline(inUnitData)
-    assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', 'argument must be Unit object')
-
-    local _Faction = inUnitData:GetFaction()
-    local _Guild = inUnitData:GetGuild()
-    local _Message = ''
-    
-    if(XFG.Config.Chat.Login.Faction) then  
-        _Message = format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
-    end
-    
-    _Message = _Message .. inUnitData:GetName() .. ' '
-    
-    if(XFG.Config.Chat.Login.Main and _MainName ~= nil) then
-        _Message = _Message .. '(' .. _MainName .. ') '
-    end
-
-    if(XFG.Config.Chat.Login.Guild) then
-        _Message = _Message .. '<' .. _Guild:GetInitials() .. '> ' 
-    end
-    
-    _Message = _Message.. XFG.Lib.Locale['CHAT_LOGOUT']
-    SendSystemMessage(_Message) 
-end

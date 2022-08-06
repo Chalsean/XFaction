@@ -37,7 +37,7 @@ function TimerEvent:Initialize()
 end
 
 function TimerEvent:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
 	if(inBoolean ~= nil) then
 		self._Initialized = inBoolean
 	end
@@ -46,8 +46,8 @@ end
 
 function TimerEvent:Print()
     XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:Debug(LogCategory, ObjectName .. ' Object')
+    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 end
 
 function TimerEvent:CallbackLogin()
@@ -315,6 +315,7 @@ function TimerEvent:CallbackLogin()
 				XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
 				XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
 				XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
+				XFG.Handlers.NameplateEvent = NameplateEvent:new(); XFG.Handlers.NameplateEvent:Initialize()
 
 				-- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
 				try(function ()

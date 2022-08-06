@@ -120,6 +120,13 @@ L['CHAT_LOGIN'] = 'has come online.'
 L['CHAT_LOGOUT'] = 'has gone offline.'
 L['CHAT_NO_PLAYER_FOUND'] = 'No player named '
 --=========================================================================
+-- Nameplates Specific
+--=========================================================================
+L['NAMEPLATES'] = 'Nameplates'
+L['ELVUI'] = 'ElvUI'
+L['NAMEPLATE_CONFEDERATE'] = 'Confederate Guild Tag'
+L['NAMEPLATE_CONFEDERATE_TOOLTIP'] = 'Replace the guild name with confederate name in nameplates'
+--=========================================================================
 -- DataText Specific
 --=========================================================================
 L['DT_HEADER_CONFEDERATE'] = 'Confederate: |cffffffff%s|r'
