@@ -12,7 +12,7 @@ end
 
 function ElvUINameplate:Initialize()
 	if(not self:IsInitialized()) then
-        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.Confederate.ConfederateTag, '%[(%a-)%]')
+        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.ElvUI.ConfederateTag, '%[(%a-)%]')
         if(_StartIndex) then
             XFG.ElvUI:AddTag(_Tag, 'UNIT_NAME_UPDATE PLAYER_GUILD_UPDATE', function(inNameplate) 
                 if(UnitIsPlayer(inNameplate)) then
@@ -24,7 +24,7 @@ function ElvUINameplate:Initialize()
                 end 
             end)
         end
-        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.Confederate.ConfederateBracketsTag, '%[(%a-%A?%a-)%]')
+        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.ElvUI.ConfederateBracketsTag, '%[(%a-%A?%a-)%]')
         if(_StartIndex) then
             XFG.ElvUI:AddTag(_Tag, 'PLAYER_GUILD_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
@@ -37,7 +37,7 @@ function ElvUINameplate:Initialize()
                 end 
             end)
         end
-        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.Confederate.MainNameTag, '%[(%a-%A?%a-%A?%a-)%]')
+        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.ElvUI.MainNameTag, '%[(%a-%A?%a-%A?%a-)%]')
         if(_StartIndex) then
             XFG.ElvUI:AddTag(_Tag, 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
@@ -51,7 +51,7 @@ function ElvUINameplate:Initialize()
                 return _UnitName
             end)
         end
-        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.Confederate.MainNameParenthesisTag, '%[(%a-%A?%a-%A?%a-)%]')
+        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.ElvUI.MainNameParenthesisTag, '%[(%a-%A?%a-%A?%a-)%]')
         if(_StartIndex) then
             XFG.ElvUI:AddTag(_Tag, 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
@@ -63,7 +63,7 @@ function ElvUINameplate:Initialize()
                 end
             end)
         end
-        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.Confederate.TeamTag, '%[(%a-%A?%a-%A?%a-)%]')
+        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.ElvUI.TeamTag, '%[(%a-%A?%a-%A?%a-)%]')
         if(_StartIndex) then
             XFG.ElvUI:AddTag(_Tag, 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
@@ -72,7 +72,7 @@ function ElvUINameplate:Initialize()
                 end
             end)
         end
-        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.Confederate.TeamParenthesisTag, '%[(%a-%A?%a-%A?%a-)%]')
+        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.ElvUI.TeamParenthesisTag, '%[(%a-%A?%a-%A?%a-)%]')
         if(_StartIndex) then
             XFG.ElvUI:AddTag(_Tag, 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
@@ -81,7 +81,7 @@ function ElvUINameplate:Initialize()
                 end
             end)
         end
-        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.Confederate.ConfederateTeamTag, '%[(%a-%A?%a-%A?%a-)%]')
+        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.ElvUI.ConfederateTeamTag, '%[(%a-%A?%a-%A?%a-)%]')
         if(_StartIndex) then
             XFG.ElvUI:AddTag(_Tag, 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
@@ -92,7 +92,7 @@ function ElvUINameplate:Initialize()
                 return _GuildName
             end)
         end
-        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.Confederate.ConfederateTeamBracketsTag, '%[(%a-%A?%a-%A?%a-)%]')
+        local _StartIndex, _, _Tag = string.find(XFG.Config.Nameplates.ElvUI.ConfederateTeamBracketsTag, '%[(%a-%A?%a-%A?%a-)%]')
         if(_StartIndex) then
             XFG.ElvUI:AddTag(_Tag, 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)

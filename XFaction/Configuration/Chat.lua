@@ -5,158 +5,194 @@ XFG.Options.args.Chat = {
 	name = XFG.Lib.Locale['CHAT'],
 	order = 1,
 	type = 'group',
+	childGroups = 'tab',
 	args = {
 		GChat = {
 			order = 1,
 			type = 'group',
 			name = XFG.Lib.Locale['CHAT_GUILD'],
-			guiInline = true,
 			args = {
-				Enable = {
+				Header = {
 					order = 1,
-					type = 'toggle',
-					name = XFG.Lib.Locale['ENABLE'],
-					desc = XFG.Lib.Locale['CHAT_GUILD_TOOLTIP'],
-					get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['CHAT_GUILD_DESCRIPTION'],
+						},
+					}
 				},
 				Space1 = {
 					order = 2,
 					type = 'description',
 					name = '',
-					hidden = function()
-					    return (not XFG.Config.Chat.GChat.Enable)
-					end,
 				},
-				Faction = {
+				Options = {
 					order = 3,
-					type = 'toggle',
-					name = XFG.Lib.Locale['CHAT_FACTION'],
-					desc = XFG.Lib.Locale['CHAT_FACTION_TOOLTIP'],
-					hidden = function()
-					    return (not XFG.Config.Chat.GChat.Enable)
-					end,
-					get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
-				},
-				Guild = {
-					order = 4,
-					type = 'toggle',
-					name = XFG.Lib.Locale['CHAT_GUILD_NAME'],
-					desc = XFG.Lib.Locale['CHAT_GUILD_NAME_TOOLTIP'],
-					hidden = function()
-					    return (not XFG.Config.Chat.GChat.Enable)
-					end,
-					get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
-				},
-				Main = {
-					order = 5,
-					type = 'toggle',
-					name = XFG.Lib.Locale['CHAT_MAIN'],
-					desc = XFG.Lib.Locale['CHAT_MAIN_TOOLTIP'],
-					hidden = function()
-					    return (not XFG.Config.Chat.GChat.Enable)
-					end,
-					get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
-				},
-				Space2 = {
-					order = 6,
-					type = 'description',
+					type = 'group',
 					name = '',
-					hidden = function()
-					    return (not XFG.Config.Chat.GChat.Enable)
-					end,
+					inline = true,
+					args = {
+						Enable = {
+							order = 3,
+							type = 'toggle',
+							name = XFG.Lib.Locale['ENABLE'],
+							desc = XFG.Lib.Locale['CHAT_GUILD_TOOLTIP'],
+							get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
+							set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
+						},
+						Space1 = {
+							order = 4,
+							type = 'description',
+							name = '',
+						},
+						Faction = {
+							order = 5,
+							type = 'toggle',
+							name = XFG.Lib.Locale['CHAT_FACTION'],
+							desc = XFG.Lib.Locale['CHAT_FACTION_TOOLTIP'],
+							disabled = function()
+								return (not XFG.Config.Chat.GChat.Enable)
+							end,
+							get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
+							set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
+						},
+						Guild = {
+							order = 6,
+							type = 'toggle',
+							name = XFG.Lib.Locale['CHAT_GUILD_NAME'],
+							desc = XFG.Lib.Locale['CHAT_GUILD_NAME_TOOLTIP'],
+							disabled = function()
+								return (not XFG.Config.Chat.GChat.Enable)
+							end,
+							get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
+							set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
+						},
+						Main = {
+							order = 7,
+							type = 'toggle',
+							name = XFG.Lib.Locale['CHAT_MAIN'],
+							desc = XFG.Lib.Locale['CHAT_MAIN_TOOLTIP'],
+							disabled = function()
+								return (not XFG.Config.Chat.GChat.Enable)
+							end,
+							get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
+							set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
+						},
+						Space2 = {
+							order = 8,
+							type = 'description',
+							name = '',
+						},
+						CColor = {
+							order = 9,
+							type = 'toggle',
+							name = XFG.Lib.Locale['CHAT_CCOLOR'],
+							desc = XFG.Lib.Locale['CHAT_CCOLOR_TOOLTIP'],
+							disabled = function()
+								return (not XFG.Config.Chat.GChat.Enable)
+							end,
+							get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
+							set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
+						},
+						FColor = {
+							order = 10,
+							type = 'toggle',
+							name = XFG.Lib.Locale['CHAT_FCOLOR'],
+							desc = XFG.Lib.Locale['CHAT_FCOLOR_TOOLTIP'],
+							disabled = function()
+								return (not XFG.Config.Chat.GChat.Enable)
+							end,
+							get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
+							set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
+						},
+						Space3 = {
+							order = 11,
+							type = 'description',
+							name = '',
+						},
+						Color = {
+							order = 12,
+							type = 'color',
+							name = XFG.Lib.Locale['CHAT_FONT_COLOR'],
+							hidden = function()
+								return (not XFG.Config.Chat.GChat.Enable or XFG.Config.Chat.GChat.FColor or not XFG.Config.Chat.GChat.CColor)
+							end,
+							get = function()
+								return XFG.Config.Chat.GChat.Color.Red, XFG.Config.Chat.GChat.Color.Green, XFG.Config.Chat.GChat.Color.Blue
+							end,
+							set = function(_, inRed, inGreen, inBlue)
+								XFG.Config.Chat.GChat.Color.Red = inRed
+								XFG.Config.Chat.GChat.Color.Green = inGreen
+								XFG.Config.Chat.GChat.Color.Blue = inBlue
+							end,
+						},
+						AColor = {
+							order = 13,
+							type = 'color',
+							name = XFG.Lib.Locale['CHAT_FONT_ACOLOR'],
+							hidden = function()
+								return (not XFG.Config.Chat.GChat.Enable or not XFG.Config.Chat.GChat.FColor or not XFG.Config.Chat.GChat.CColor)
+							end,
+							get = function()
+								return XFG.Config.Chat.GChat.AColor.Red, XFG.Config.Chat.GChat.AColor.Green, XFG.Config.Chat.GChat.AColor.Blue
+							end,
+							set = function(_, inRed, inGreen, inBlue)
+								XFG.Config.Chat.GChat.AColor.Red = inRed
+								XFG.Config.Chat.GChat.AColor.Green = inGreen
+								XFG.Config.Chat.GChat.AColor.Blue = inBlue
+							end,
+						},
+						HColor = {
+							order = 14,
+							type = 'color',
+							name = XFG.Lib.Locale['CHAT_FONT_HCOLOR'],
+							hidden = function()
+								return (not XFG.Config.Chat.GChat.Enable or not XFG.Config.Chat.GChat.FColor or not XFG.Config.Chat.GChat.CColor)
+							end,
+							get = function()
+								return XFG.Config.Chat.GChat.HColor.Red, XFG.Config.Chat.GChat.HColor.Green, XFG.Config.Chat.GChat.HColor.Blue
+							end,
+							set = function(_, inRed, inGreen, inBlue)
+								XFG.Config.Chat.GChat.HColor.Red = inRed
+								XFG.Config.Chat.GChat.HColor.Green = inGreen
+								XFG.Config.Chat.GChat.HColor.Blue = inBlue
+							end,
+						},
+					}
 				},
-				CColor = {
-					order = 7,
-					type = 'toggle',
-					name = XFG.Lib.Locale['CHAT_CCOLOR'],
-					desc = XFG.Lib.Locale['CHAT_CCOLOR_TOOLTIP'],
-					hidden = function()
-						return (not XFG.Config.Chat.GChat.Enable)
-					end,
-					get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
-				},
-				FColor = {
-					order = 8,
-					type = 'toggle',
-					name = XFG.Lib.Locale['CHAT_FCOLOR'],
-					desc = XFG.Lib.Locale['CHAT_FCOLOR_TOOLTIP'],
-					hidden = function()
-						return (not XFG.Config.Chat.GChat.Enable)
-					end,
-					get = function(info) return XFG.Config.Chat.GChat[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Chat.GChat[ info[#info] ] = value; end
-				},
-				Space3 = {
-					order = 9,
-					type = 'description',
-					name = '',
-					hidden = function()
-					    return (not XFG.Config.Chat.GChat.Enable)
-					end,
-				},
-				Color = {
-					order = 10,
-					type = 'color',
-					name = XFG.Lib.Locale['CHAT_FONT_COLOR'],
-					hidden = function()
-						return (not XFG.Config.Chat.GChat.Enable or XFG.Config.Chat.GChat.FColor or not XFG.Config.Chat.GChat.CColor)
-					end,
-					get = function()
-						return XFG.Config.Chat.GChat.Color.Red, XFG.Config.Chat.GChat.Color.Green, XFG.Config.Chat.GChat.Color.Blue
-					end,
-					set = function(_, inRed, inGreen, inBlue)
-						XFG.Config.Chat.GChat.Color.Red = inRed
-						XFG.Config.Chat.GChat.Color.Green = inGreen
-						XFG.Config.Chat.GChat.Color.Blue = inBlue
-					end,
-				},
-				AColor = {
-					order = 11,
-					type = 'color',
-					name = XFG.Lib.Locale['CHAT_FONT_ACOLOR'],
-					hidden = function()
-						return (not XFG.Config.Chat.GChat.Enable or not XFG.Config.Chat.GChat.FColor or not XFG.Config.Chat.GChat.CColor)
-					end,
-					get = function()
-						return XFG.Config.Chat.GChat.AColor.Red, XFG.Config.Chat.GChat.AColor.Green, XFG.Config.Chat.GChat.AColor.Blue
-					end,
-					set = function(_, inRed, inGreen, inBlue)
-						XFG.Config.Chat.GChat.AColor.Red = inRed
-						XFG.Config.Chat.GChat.AColor.Green = inGreen
-						XFG.Config.Chat.GChat.AColor.Blue = inBlue
-					end,
-				},
-				HColor = {
-					order = 12,
-					type = 'color',
-					name = XFG.Lib.Locale['CHAT_FONT_HCOLOR'],
-					hidden = function()
-						return (not XFG.Config.Chat.GChat.Enable or not XFG.Config.Chat.GChat.FColor or not XFG.Config.Chat.GChat.CColor)
-					end,
-					get = function()
-						return XFG.Config.Chat.GChat.HColor.Red, XFG.Config.Chat.GChat.HColor.Green, XFG.Config.Chat.GChat.HColor.Blue
-					end,
-					set = function(_, inRed, inGreen, inBlue)
-						XFG.Config.Chat.GChat.HColor.Red = inRed
-						XFG.Config.Chat.GChat.HColor.Green = inGreen
-						XFG.Config.Chat.GChat.HColor.Blue = inBlue
-					end,
-				},
-			}
+			},
 		},
 		Achievement = {
 			order = 2,
 			type = 'group',
 			name = XFG.Lib.Locale['ACHIEVEMENT'],
-			guiInline = true,
 			args = {
-				Enable = {
+				Header = {
 					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['CHAT_ACHIEVEMENT_DESCRIPTION'],
+						},
+					}
+				},
+				Space1 = {
+					order = 2,
+					type = 'description',
+					name = '',
+				},
+				Enable = {
+					order = 3,
 					type = 'toggle',
 					name = XFG.Lib.Locale['ENABLE'],
 					desc = XFG.Lib.Locale['CHAT_ACHIEVEMENT_TOOLTIP'],
@@ -164,86 +200,77 @@ XFG.Options.args.Chat = {
 					set = function(info, value) XFG.Config.Chat.Achievement[ info[#info] ] = value; end
 				},
 				Space1 = {
-					order = 2,
+					order = 4,
 					type = 'description',
 					name = '',
-					hidden = function()
-						return (not XFG.Config.Chat.Achievement.Enable)
-					end,
 				},
 				Faction = {
-					order = 3,
+					order = 5,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHAT_FACTION'],
 					desc = XFG.Lib.Locale['CHAT_FACTION_TOOLTIP'],
-					hidden = function()
+					disabled = function()
 						return (not XFG.Config.Chat.Achievement.Enable)
 					end,
 					get = function(info) return XFG.Config.Chat.Achievement[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Achievement[ info[#info] ] = value; end
 				},
 				Guild = {
-					order = 4,
+					order = 6,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHAT_GUILD_NAME'],
 					desc = XFG.Lib.Locale['CHAT_GUILD_NAME_TOOLTIP'],
-					hidden = function()
+					disabled = function()
 						return (not XFG.Config.Chat.Achievement.Enable)
 					end,
 					get = function(info) return XFG.Config.Chat.Achievement[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Achievement[ info[#info] ] = value; end
 				},
 				Main = {
-					order = 5,
+					order = 7,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHAT_MAIN'],
 					desc = XFG.Lib.Locale['CHAT_MAIN_TOOLTIP'],
-					hidden = function()
+					disabled = function()
 						return (not XFG.Config.Chat.Achievement.Enable)
 					end,
 					get = function(info) return XFG.Config.Chat.Achievement[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Achievement[ info[#info] ] = value; end
 				},
 				Space2 = {
-					order = 6,
+					order = 8,
 					type = 'description',
 					name = '',
-					hidden = function()
-						return (not XFG.Config.Chat.Achievement.Enable)
-					end,
 				},
 				CColor = {
-					order = 7,
+					order = 9,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHAT_CCOLOR'],
 					desc = XFG.Lib.Locale['CHAT_CCOLOR_TOOLTIP'],
-					hidden = function()
+					disabled = function()
 						return (not XFG.Config.Chat.Achievement.Enable)
 					end,
 					get = function(info) return XFG.Config.Chat.Achievement[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Achievement[ info[#info] ] = value; end
 				},
 				FColor = {
-					order = 8,
+					order = 10,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHAT_FCOLOR'],
 					desc = XFG.Lib.Locale['CHAT_FCOLOR_TOOLTIP'],
-					hidden = function()
+					disabled = function()
 						return (not XFG.Config.Chat.Achievement.Enable)
 					end,
 					get = function(info) return XFG.Config.Chat.Achievement[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Achievement[ info[#info] ] = value; end
 				},
 				Space3 = {
-					order = 9,
+					order = 11,
 					type = 'description',
 					name = '',
-					hidden = function()
-					    return (not XFG.Config.Chat.Achievement.Enable)
-					end,
 				},
 				Color = {
-					order = 10,
+					order = 12,
 					type = 'color',
 					name = XFG.Lib.Locale['CHAT_FONT_COLOR'],
 					hidden = function()
@@ -259,7 +286,7 @@ XFG.Options.args.Chat = {
 					end,
 				},
 				AColor = {
-					order = 11,
+					order = 13,
 					type = 'color',
 					name = XFG.Lib.Locale['CHAT_FONT_ACOLOR'],
 					hidden = function()
@@ -275,7 +302,7 @@ XFG.Options.args.Chat = {
 					end,
 				},
 				HColor = {
-					order = 12,
+					order = 14,
 					type = 'color',
 					name = XFG.Lib.Locale['CHAT_FONT_HCOLOR'],
 					hidden = function()
@@ -296,10 +323,28 @@ XFG.Options.args.Chat = {
 			order = 3,
 			type = 'group',
 			name = XFG.Lib.Locale['CHAT_ONLINE'],
-			guiInline = true,
 			args = {
-				Enable = {
+				Header = {
 					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['CHAT_ONLINE_DESCRIPTION'],
+						},
+					}
+				},
+				Space1 = {
+					order = 2,
+					type = 'description',
+					name = '',
+				},
+				Enable = {
+					order = 3,
 					type = 'toggle',
 					name = XFG.Lib.Locale['ENABLE'],
 					desc = XFG.Lib.Locale['CHAT_ONLINE_TOOLTIP'],
@@ -307,9 +352,9 @@ XFG.Options.args.Chat = {
 					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
 				},
 				Sound = {
-					order = 2,
+					order = 4,
 					type = 'toggle',
-					hidden = function()
+					disabled = function()
 						return not XFG.Config.Chat.Login.Enable
 					end,
 					name = XFG.Lib.Locale['CHAT_ONLINE_SOUND'],
@@ -318,41 +363,38 @@ XFG.Options.args.Chat = {
 					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
 				},
 				Space1 = {
-					order = 3,
+					order = 5,
 					type = 'description',
 					name = '',
-					hidden = function()
-						return not XFG.Config.Chat.Login.Enable
-					end,
 				},
 				Faction = {
-					order = 4,
+					order = 6,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHAT_FACTION'],
 					desc = XFG.Lib.Locale['CHAT_FACTION_TOOLTIP'],
-					hidden = function()
+					disabled = function()
 						return not XFG.Config.Chat.Login.Enable
 					end,
 					get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
 				},
 				Guild = {
-					order = 5,
+					order = 7,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHAT_GUILD_NAME'],
 					desc = XFG.Lib.Locale['CHAT_GUILD_NAME_TOOLTIP'],
-					hidden = function()
+					disabled = function()
 						return not XFG.Config.Chat.Login.Enable
 					end,
 					get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
 					set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
 				},
 				Main = {
-					order = 6,
+					order = 8,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHAT_MAIN'],
 					desc = XFG.Lib.Locale['CHAT_MAIN_TOOLTIP'],
-					hidden = function()
+					disabled = function()
 						return not XFG.Config.Chat.Login.Enable
 					end,
 					get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
@@ -364,10 +406,28 @@ XFG.Options.args.Chat = {
 			order = 4,
 			type = 'group',
 			name = XFG.Lib.Locale['CHANNEL'],
-			guiInline = true,
 			args = {
-				Last = {
+				Header = {
 					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['CHAT_CHANNEL_DESCRIPTION'],
+						},
+					}
+				},
+				Space1 = {
+					order = 2,
+					type = 'description',
+					name = '',
+				},
+				Last = {
+					order = 3,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHANNEL_LAST'],
 					desc = XFG.Lib.Locale['CHANNEL_LAST_TOOLTIP'],
@@ -375,7 +435,7 @@ XFG.Options.args.Chat = {
 					set = function(info, value) XFG.Config.Chat.Channel[ info[#info] ] = value; end
 				},
 				Color = {
-					order = 2,
+					order = 4,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CHANNEL_COLOR'],
 					desc = XFG.Lib.Locale['CHANNEL_COLOR_TOOLTIP'],

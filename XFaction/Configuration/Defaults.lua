@@ -63,7 +63,7 @@ XFG.Defaults = {
             },
         },
         Nameplates = {
-            Confederate = {
+            ElvUI = {
                 Enable = true,
                 ConfederateTag = '[confederate]',
                 ConfederateBracketsTag = '[confederate:brackets]',
@@ -73,6 +73,16 @@ XFG.Defaults = {
                 TeamParenthesisTag = '[team-paren]',
                 ConfederateTeamTag = '[confederate:team]',
                 ConfederateTeamBracketsTag = '[confederate:team:brackets]',
+            },
+            Kui = {
+                Confederate = true,
+                Main = true,
+                Team = true,
+            },
+            Plater = {
+                Confederate = true,
+                Main = true,
+                Team = true,
             },
         },
         DataText = {

@@ -21,8 +21,12 @@ function AddonEvent:Initialize()
         -- In case they already loaded
         if(IsAddOnLoaded('ElvUI')) then
             self:CallbackAddonLoaded('ElvUI')
-        elseif(IsAddOnLoaded('WIM')) then
+        end
+        if(IsAddOnLoaded('WIM')) then
             self:CallbackAddonLoaded('WIM')
+        end
+        if(IsAddOnLoaded('Plater')) then
+            self:CallbackAddonLoaded('Plater')
         end
 		self:IsInitialized(true)
 	end
@@ -54,6 +58,8 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
             if(WIM.modules.GuildChat.enabled) then
                 XFG.WIM = WIM.modules.GuildChat
             end
+--        elseif(inAddonName == 'Plater') then
+--            XFG.Nameplates.Plater = PlaterNameplate:new(); XFG.Nameplates.Plater:Initialize()
         end
     end).
     catch(function (inErrorMessage)

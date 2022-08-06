@@ -73,7 +73,7 @@ L['ZONE'] = 'Zone'
 -- General (tab) Specific
 --=========================================================================
 L['GENERAL_DESCRIPTION'] = 'Enable roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.'
-L['GENERAL_DISCLAIMER'] = 'This addon is in beta stage and currently only Eternal Kingdom (EK) is being supported:'
+L['GENERAL_DISCLAIMER'] = 'This addon is recently coming out of alpha and beta testing. There are still some things rough around the edges but it continues to be actively developed. If you have any questions, please reference the Support tab.'
 L['GENERAL_WHAT'] = 'What is included'
 L['GENERAL_GUILD_CHAT'] = '1. Merged guild chat across guilds/realms/factions in the confederate'
 L['GENERAL_GUILD_CHAT_ACHIEVEMENT'] = '2. Personal achievements forwarded to confederate members in other guilds'
@@ -97,6 +97,7 @@ L['CHANNEL_COLOR_TOOLTIP'] = 'Switches from Blizzard default of coloring by # to
 L['CHAT_CCOLOR'] = 'Customize Color'
 L['CHAT_CCOLOR_TOOLTIP'] = 'Customize XFaction chat colors.'
 L['CHAT_GUILD'] = 'Guild Chat'
+L['CHAT_GUILD_DESCRIPTION'] = 'These options control how the guild chat messages are displayed to the chat frame.'
 L['CHAT_GUILD_TOOLTIP'] = 'See cross realm/faction guild chat'
 L['CHAT_FACTION'] = 'Show Faction'
 L['CHAT_FACTION_TOOLTIP'] = 'Show the faction icon for the sender'
@@ -111,20 +112,23 @@ L['CHAT_FONT_ACOLOR'] = 'Alliance Color'
 L['CHAT_FONT_HCOLOR'] = 'Horde Color'
 L['CHAT_OFFICER'] = 'Officer Chat'
 L['CHAT_OFFICER_TOOLTIP'] = 'See cross realm/faction officer chat'
+L['CHAT_ACHIEVEMENT_DESCRIPTION'] = 'These options control how the guild achievement messages are displayed to the chat frame.'
 L['CHAT_ACHIEVEMENT_TOOLTIP'] = 'See cross realm/faction individual achievements'
 L['CHAT_ONLINE'] = 'Online/Offline'
+L['CHAT_ONLINE_DESCRIPTION'] = 'These options control the guild members login/logout system messages.'
 L['CHAT_ONLINE_TOOLTIP'] = 'Show message for players logging in/out on other realms/faction'
 L['CHAT_ONLINE_SOUND'] = 'Play Sound'
 L['CHAT_ONLINE_SOUND_TOOLTIP'] = 'Play sound when any confederate member comes online'
 L['CHAT_LOGIN'] = 'has come online.'
 L['CHAT_LOGOUT'] = 'has gone offline.'
 L['CHAT_NO_PLAYER_FOUND'] = 'No player named '
+L['CHAT_CHANNEL_DESCRIPTION'] = 'These options control the addon custom channel behaviours.'
 --=========================================================================
 -- Nameplates Specific
 --=========================================================================
 L['NAMEPLATES'] = 'Nameplates'
 L['ELVUI'] = 'ElvUI'
-L['NAMEPLATE_ELVUI_DESCRIPTION'] = 'Add more oUF tags that can be used in ElvUI UnitFrames'
+L['NAMEPLATE_ELVUI_DESCRIPTION'] = 'Add oUF tags that can be used in ElvUI UnitFrames. Note the other player needs to be running XFaction in order for this to work properly.'
 L['NAMEPLATE_ELVUI_CONFEDERATE'] = 'Name of the confederate'
 L['NAMEPLATE_ELVUI_CONFEDERATE_BRACKETS'] = 'Name of the confederate in <brackets>'
 L['NAMEPLATE_ELVUI_MAIN_NAME'] = "Name of the player's main toon"
@@ -133,6 +137,22 @@ L['NAMEPLATE_ELVUI_TEAM'] = "Name of the player's raid team"
 L['NAMEPLATE_ELVUI_TEAM_PARENTHESIS'] = "Name of the player's raid team in (parenthesis)"
 L['NAMEPLATE_ELVUI_CONFEDERATE_TEAM'] = "Combination of the confederate name and name of the player's raid team"
 L['NAMEPLATE_ELVUI_CONFEDERATE_TEAM_BRACKETS'] = "Combination of the confederate name and name of the player's raid team in <brackets>"
+L['KUI'] = 'Kui'
+L['NAMEPLATE_KUI_DESCRIPTION'] = 'Options to modify tags shown on Kui nameplates.'
+L['NAMEPLATE_KUI_CONFEDERATE'] = 'Confederate Name'
+L['NAMEPLATE_KUI_CONFEDERATE_TOOLTIP'] = 'Replace guild name with confederate name'
+L['NAMEPLATE_KUI_MAIN'] = 'Main Name'
+L['NAMEPLATE_KUI_MAIN_TOOLTIP'] = "Append player's main raiding name to unit name"
+L['NAMEPLATE_KUI_TEAM'] = 'Team Name'
+L['NAMEPLATE_KUI_TEAM_TOOLTIP'] = "Append player's raid team name to confederate name"
+L['PLATER'] = 'Plater'
+L['NAMEPLATE_PLATER_DESCRIPTION'] = 'Modify Plater Nameplates'
+L['NAMEPLATE_PLATER_CONFEDERATE'] = 'Confederate Name'
+L['NAMEPLATE_PLATER_CONFEDERATE_TOOLTIP'] = 'Replace guild name with confederate name'
+L['NAMEPLATE_PLATER_MAIN'] = 'Main Name'
+L['NAMEPLATE_PLATER_MAIN_TOOLTIP'] = "Append player's main raiding name to unit name"
+L['NAMEPLATE_PLATER_TEAM'] = 'Team Name'
+L['NAMEPLATE_PLATER_TEAM_TOOLTIP'] = "Append player's raid team name to confederate name"
 --=========================================================================
 -- DataText Specific
 --=========================================================================
@@ -229,6 +249,7 @@ L['CONFEDERATE_LOAD'] = 'Load'
 -------------------------
 -- Broker name
 L['DTLINKS_NAME'] = 'Links (X)'
+L['DTLINKS_DESCRIPTION'] = 'Configuration options for the Links data broker. Links data broker displays all active BNet links the addon is currently using.'
 -- Header
 L['DTLINKS_HEADER_LINKS'] = 'Active BNet Links: |cffffffff%d|r'
 -------------------------
