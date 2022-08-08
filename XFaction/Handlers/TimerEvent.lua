@@ -212,7 +212,7 @@ function TimerEvent:CallbackLogin()
 				local _RealmName = GetRealmName()
 				XFG.Player.Realm = XFG.Realms:GetRealm(_RealmName)
 				if(XFG.Player.Realm == nil) then
-					error('Player is not on a supported realm [%s]', _RealmName)
+					error('Player is not on a supported realm: ' .. tostring(_RealmName))
 				end
 				-- Ensure player is on supported guild
 				XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildInfo.name)

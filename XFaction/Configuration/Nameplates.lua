@@ -167,50 +167,23 @@ XFG.Options.args.Nameplates = {
 							desc = XFG.Lib.Locale['NAMEPLATE_KUI_ICON_TOOLTIP'],
 							disabled = function () return not XFG.Config.Nameplates.Kui.Enable end,
 							get = function(info) return XFG.Config.Nameplates.Kui[ info[#info] ] end,
-							set = function(info, value) XFG.Config.Nameplates.Kui[ info[#info] ] = value; end
+							set = function(info, value) 
+								XFG.Config.Nameplates.Kui[ info[#info] ] = value
+								if(not value) then
+									XFG.Nameplates.Kui:StripIcons()
+								end
+							end
 						},
 						Bar = {
 							order = 3,
 							name = format("|cffffffff%s|r", XFG.Lib.Locale['NAMEPLATE_KUI_GUILD_TEXT']),
 							type = 'header'
 						},						
-						Prepend = {
-							order = 4,
-							type = 'select',
-							name = XFG.Lib.Locale['NAMEPLATE_KUI_GUILD_PREPEND'],
-							desc = XFG.Lib.Locale['NAMEPLATE_KUI_CONFEDERATE_TOOLTIP'],
-							values = {
-								Confederate = XFG.Lib.Locale['CONFEDERATE'],
-								ConfederateInitials = XFG.Lib.Locale['CONFEDERATE_INITIALS'],
-								Guild = XFG.Lib.Locale['GUILD'],
-								GuildInitials = XFG.Lib.Locale['GUILD_INITIALS'],
-								Team = XFG.Lib.Locale['TEAM'],
-							},
-							disabled = function () return not XFG.Config.Nameplates.Kui.Enable end,
-							get = function(info) return XFG.Config.Nameplates.Kui[ info[#info] ] end,
-							set = function(info, value) XFG.Config.Nameplates.Kui[ info[#info] ] = value; end
-						},
 						GuildName = {
-							order = 5,
+							order = 4,
 							type = 'select',
 							name = XFG.Lib.Locale['NAMEPLATE_KUI_GUILD_NAME'],
 							desc = XFG.Lib.Locale['NAMEPLATE_KUI_GUILD_INITIALS_TOOLTIP'],
-							values = {
-								Confederate = XFG.Lib.Locale['CONFEDERATE'],
-								ConfederateInitials = XFG.Lib.Locale['CONFEDERATE_INITIALS'],
-								Guild = XFG.Lib.Locale['GUILD'],
-								GuildInitials = XFG.Lib.Locale['GUILD_INITIALS'],
-								Team = XFG.Lib.Locale['TEAM'],
-							},
-							disabled = function () return not XFG.Config.Nameplates.Kui.Enable end,
-							get = function(info) return XFG.Config.Nameplates.Kui[ info[#info] ] end,
-							set = function(info, value) XFG.Config.Nameplates.Kui[ info[#info] ] = value; end
-						},
-						Append = {
-							order = 6,
-							type = 'select',
-							name = XFG.Lib.Locale['NAMEPLATE_KUI_GUILD_APPEND'],
-							desc = XFG.Lib.Locale['NAMEPLATE_KUI_MAIN_TOOLTIP'],
 							values = {
 								Confederate = XFG.Lib.Locale['CONFEDERATE'],
 								ConfederateInitials = XFG.Lib.Locale['CONFEDERATE_INITIALS'],

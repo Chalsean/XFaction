@@ -73,6 +73,8 @@ XFG.Defaults = {
                 TeamParenthesisTag = '[team-paren]',
                 ConfederateTeamTag = '[confederate:team]',
                 ConfederateTeamBracketsTag = '[confederate:team:brackets]',
+                ConfederateInitialsTeamBracketsTag = '[confederate-init:team:brackets]',
+                MemberIcon = '[confederate:icon]',
             },
             Kui = {
                 Enable = true,

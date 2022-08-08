@@ -30,6 +30,7 @@ XFG.Icons = {
 	Alliance = 2565243,
 	Horde = 463451,
 	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
+	Guild = [[|TInterface\COMMON\FavoritesIcon:30:30|t]],
 }
 
 XFG.Lib = {
