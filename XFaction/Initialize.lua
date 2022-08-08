@@ -2,6 +2,7 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Initialize'
 
 function XFG:Init()
+	XFG.Confederate = Confederate:new()
 	XFG.Expansions = ExpansionCollection:new(); XFG.Expansions:Initialize()
 	XFG.WoW = XFG.Expansions:GetCurrent()
 	XFG.Versions = VersionCollection:new(); XFG.Versions:Initialize()

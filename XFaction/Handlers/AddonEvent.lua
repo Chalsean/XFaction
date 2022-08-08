@@ -25,8 +25,8 @@ function AddonEvent:Initialize()
         if(IsAddOnLoaded('WIM')) then
             self:CallbackAddonLoaded('WIM')
         end
-        if(IsAddOnLoaded('Plater')) then
-            self:CallbackAddonLoaded('Plater')
+        if(IsAddOnLoaded('Kui_Nameplates')) then
+            self:CallbackAddonLoaded('Kui_Nameplates')
         end
 		self:IsInitialized(true)
 	end
@@ -58,8 +58,8 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
             if(WIM.modules.GuildChat.enabled) then
                 XFG.WIM = WIM.modules.GuildChat
             end
---        elseif(inAddonName == 'Plater') then
---            XFG.Nameplates.Plater = PlaterNameplate:new(); XFG.Nameplates.Plater:Initialize()
+        elseif(inAddonName == 'Kui_Nameplates') then
+            XFG.Nameplates.Kui = KuiNameplate:new(); XFG.Nameplates.Kui:Initialize()
         end
     end).
     catch(function (inErrorMessage)

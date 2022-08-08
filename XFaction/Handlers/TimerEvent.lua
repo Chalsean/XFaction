@@ -101,7 +101,6 @@ function TimerEvent:CallbackLogin()
 				XFG:Info(LogCategory, 'XFaction version [%s]', XFG.Version:GetKey())
 
 				local _GuildInfo = C_Club.GetClubInfo(_GuildID)
-				XFG.Confederate = Confederate:new()    
 				
 				-- Parse out configuration from guild information so GMs have control
 				local _XFData

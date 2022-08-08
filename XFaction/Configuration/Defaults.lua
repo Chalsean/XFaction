@@ -75,14 +75,11 @@ XFG.Defaults = {
                 ConfederateTeamBracketsTag = '[confederate:team:brackets]',
             },
             Kui = {
-                Confederate = true,
-                Main = true,
-                Team = true,
-            },
-            Plater = {
-                Confederate = true,
-                Main = true,
-                Team = true,
+                Enable = true,
+                Icon = true,
+                Prepend = '',
+                GuildName = 'Confederate',
+                Append = '',
             },
         },
         DataText = {
