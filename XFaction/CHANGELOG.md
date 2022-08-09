@@ -1,10 +1,12 @@
 ### Version 3.7
 [XFaction]
+- Better randomization algorithm on message forwards to reduce traffic
 - Added the following oUF tags for ElvUI NamePlates:
-  - Confederate name
+  - Confederate name, initials
+  - Guild initials
+  - Player's main raiding character
   - Team name
-  - Player's main name
-- Better randomization algorithm on message forwards
+  - Member icon
 
 ### Version 3.6
 [XFaction]
