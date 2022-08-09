@@ -129,7 +129,6 @@ XFG.Settings = {
 				Scan = 60 * 3,      -- Seconds between link scans for stale links
 				Stale = 60 * 10,    -- Seconds until considering a link stale
 				PercentStart = 10,  -- Number of links across confederate before random selection kicks in
-				PercentLevel = 50,  -- Randomization percentage
 			},
 		},
 		Message = {
