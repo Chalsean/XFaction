@@ -4,6 +4,7 @@
   - Confederate name
   - Team name
   - Player's main name
+- Better randomization algorithm on message forwards
 
 ### Version 3.6
 [XFaction]
