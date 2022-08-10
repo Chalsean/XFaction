@@ -20,7 +20,7 @@ The addon should provide the following functionalities:
 
 > ElvUI uOF tags
 - Confederate name/initials, guild initials, player's main raiding name/team and confederate member icon uOF tags added for use in ElvUI UnitFrames
-<img src="https://user-images.githubusercontent.com/45693161/183232611-6c568877-2e0f-4d6b-910e-b51510a9a424.png" width=300>
+<img src="https://user-images.githubusercontent.com/45693161/183232611-6c568877-2e0f-4d6b-910e-b51510a9a424.png" width=200>
 
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
