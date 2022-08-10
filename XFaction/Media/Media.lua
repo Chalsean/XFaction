@@ -66,3 +66,7 @@ function Media:SetPath(inPath)
     self._Path = inPath
     return self:GetPath()
 end
+
+function Media:GetTexture()
+    return format('%s', format(XFG.Icons.Texture, self:GetPath()))
+end

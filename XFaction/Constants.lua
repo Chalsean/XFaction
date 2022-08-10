@@ -12,12 +12,17 @@ XFG.Category = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Start = GetServerTime()
+
+XFG.DataText = {}
+XFG.Frames = {}
 XFG.Handlers = {}
+XFG.Nameplates = {}
 
 XFG.Initialized = false
 
 XFG.Icons = {
 	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
+	Texture = '|T%s:17:17|t',
 	WoWToken = 1121394,
 	Kyrian = 3257748,
 	Venthyr = 3257751,
@@ -26,6 +31,7 @@ XFG.Icons = {
 	Alliance = 2565243,
 	Horde = 463451,
 	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
+	Guild = 'ElvUI-Windtools-Healer',
 }
 
 XFG.Lib = {
@@ -45,17 +51,11 @@ XFG.Lib = {
 	Tourist = LibStub('LibTourist-3.0'),
 }
 
-XFG.DataText = {
-	AutoHide = .25
-}
-
 XFG.Player = {
 	LastBroadcast = 0,
 	InInstance = false
 }
 
-XFG.Frames = {}
-XFG.Quality = {}
 XFG.Cache = {
 	Channels = {},
 	NewVersionNotify = false,
@@ -130,7 +130,6 @@ XFG.Settings = {
 				Scan = 60 * 3,      -- Seconds between link scans for stale links
 				Stale = 60 * 10,    -- Seconds until considering a link stale
 				PercentStart = 10,  -- Number of links across confederate before random selection kicks in
-				PercentLevel = 50,  -- Randomization percentage
 			},
 		},
 		Message = {

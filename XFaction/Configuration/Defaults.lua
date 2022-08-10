@@ -62,6 +62,25 @@ XFG.Defaults = {
                 Color = true,
             },
         },
+        Nameplates = {
+            ElvUI = {
+                Enable = true,
+                ConfederateTag = '[confederate]',
+                ConfederateInitialsTag = '[confederate:initials]',
+                GuildInitialsTag = '[guild:initials]',
+                MainTag = '[main]',
+                MainParenthesisTag = '[main:parenthesis]',
+                TeamTag = '[team]',
+                MemberIcon = '[confederate:icon]',
+            },
+            Kui = {
+                Enable = true,
+                Icon = true,
+                Prepend = '',
+                GuildName = 'Confederate',
+                Append = '',
+            },
+        },
         DataText = {
             Guild = {
                 Column = '',
@@ -163,6 +182,7 @@ function XFG:LoadConfigs()
     XFG.Lib.Config:RegisterOptionsTable(XFG.Category, XFG.Options)
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, XFG.Category, nil, 'General')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Chat', XFG.Category, 'Chat')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Nameplates', XFG.Category, 'Nameplates')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'DataText', XFG.Category, 'DataText')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Confederate', XFG.Category, 'Confederate')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Support', XFG.Category, 'Support')

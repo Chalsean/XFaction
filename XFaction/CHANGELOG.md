@@ -1,8 +1,18 @@
-### Version 3.6 [ 07.31.2022 ]
+### Version 3.7
+[XFaction]
+- Better randomization algorithm on message forwards to reduce traffic
+- Added the following oUF tags for ElvUI NamePlates:
+  - Confederate name, initials
+  - Guild initials
+  - Player's main raiding character
+  - Team name
+  - Member icon
+
+### Version 3.6
 [XFaction]
 - Local guild logins are now in XFaction format
 
-### Version 3.5 [ 07.31.2022 ]
+### Version 3.5
 [XFaction]
 - Fixed spaces in channel listing causing addon to break
 - Fixed exception caused by friend playing neutral faction on same realm
@@ -26,13 +36,13 @@
   - Errors encountered
   - Warnings encountered
 
-### Version 3.4 [ 07.20.2022 ]
+### Version 3.4
 [XFaction]
 - Local guild logouts and gchat are now in XFaction format
 - Configurable team names (Zoombara)
 - Respects guild rank gchat speak/listen permissions
 
-### Version 3.3 [ 07.17.2022 ]
+### Version 3.3
 [XFaction]
 - Fixed ENK team association
 - Recognizes legacy EK notes

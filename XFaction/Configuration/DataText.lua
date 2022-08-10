@@ -58,12 +58,12 @@ XFG.Options.args.DataText = {
 	name = XFG.Lib.Locale['DATATEXT'],
 	order = 1,
 	type = 'group',
+	childGroups = 'tab',
 	args = {
 		Guild = {
 			order = 1,
 			type = 'group',
 			name = XFG.Lib.Locale['DTGUILD_NAME'],
-			guiInline = true,
 			args = {
 				Description = {
 					order = 1,
@@ -954,40 +954,55 @@ XFG.Options.args.DataText = {
 			order = 2,
 			type = 'group',
 			name = XFG.Lib.Locale['DTLINKS_NAME'],
-			guiInline = true,
 			args = {
-				Description = {
+				Header = {
 					order = 1,
-					type = 'description',
-					fontSize = 'medium',
-					name = XFG.Lib.Locale['DT_CONFIG_BROKER']
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['DTLINKS_DESCRIPTION'],
+						},
+					}
 				},
-				Space = {
+				Space1 = {
 					order = 2,
 					type = 'description',
 					name = '',
 				},
-				Faction = {
+				Broker = {
 					order = 3,
-					type = 'toggle',
-					name = XFG.Lib.Locale['FACTION'],
-					desc = XFG.Lib.Locale['DT_CONFIG_FACTION_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Link[ info[#info] ] end,
-					set = function(info, value) 
-						XFG.Config.DataText.Link[ info[#info] ] = value;
-						XFG.DataText.Links:RefreshBroker()
-					end
-				},
-				Label = {
-					order = 4,
-					type = 'toggle',
-					name = XFG.Lib.Locale['LABEL'],
-					desc = XFG.Lib.Locale['DT_CONFIG_LABEL_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Link[ info[#info] ] end,
-					set = function(info, value) 
-						XFG.Config.DataText.Link[ info[#info] ] = value;
-						XFG.DataText.Links:RefreshBroker()
-					end
+					type = 'group',
+					name = XFG.Lib.Locale['DT_CONFIG_BROKER'],
+					inline = true,
+					args = {
+						Faction = {
+							order = 1,
+							type = 'toggle',
+							name = XFG.Lib.Locale['FACTION'],
+							desc = XFG.Lib.Locale['DT_CONFIG_FACTION_TOOLTIP'],
+							get = function(info) return XFG.Config.DataText.Link[ info[#info] ] end,
+							set = function(info, value) 
+								XFG.Config.DataText.Link[ info[#info] ] = value;
+								XFG.DataText.Links:RefreshBroker()
+							end
+						},
+						Label = {
+							order = 2,
+							type = 'toggle',
+							name = XFG.Lib.Locale['LABEL'],
+							desc = XFG.Lib.Locale['DT_CONFIG_LABEL_TOOLTIP'],
+							get = function(info) return XFG.Config.DataText.Link[ info[#info] ] end,
+							set = function(info, value) 
+								XFG.Config.DataText.Link[ info[#info] ] = value;
+								XFG.DataText.Links:RefreshBroker()
+							end
+						},
+					},
 				},
 			},
 		},
@@ -995,7 +1010,6 @@ XFG.Options.args.DataText = {
 			order = 3,
 			type = 'group',
 			name = XFG.Lib.Locale['DTMETRICS_NAME'],
-			guiInline = true,
 			args = {
 				Description = {
 					order = 1,

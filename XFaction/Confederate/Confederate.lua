@@ -70,6 +70,15 @@ function Confederate:GetUnit(inKey)
     return self._Units[inKey]
 end
 
+function Confederate:GetUnitByName(inName)
+    assert(type(inName) == 'string')
+    for _, _Unit in self:Iterator() do
+        if(_Unit:GetName() == inName) then
+            return _Unit
+        end
+    end
+end
+
 function Confederate:AddUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argument must be Unit object')
 

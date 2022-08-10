@@ -1,7 +1,7 @@
 ## Interface: 90205
 ## Globe: check-classic
 ## Author: Chalsean (US-Proudmoore)
-## Version: 3.6.2
+## Version: 3.7.2
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
@@ -21,6 +21,7 @@ Handlers\LoadHandlers.xml
 Network\LoadNetwork.xml
 Unit\LoadUnit.xml
 Confederate\LoadConfederate.xml
+Nameplates\LoadNameplates.xml
 Frames\LoadFrames.xml
 DataText\LoadDataText.xml
 Media\LoadMedia.xml

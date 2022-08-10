@@ -3,7 +3,7 @@ Enable roster visibility and communication between guilds of a confederation, in
 
 ## Disclaimer
 
-This addon is recently coming out of alpha and beta testing. There are still some EK specific hardcoding.
+This addon is recently coming out of alpha and beta testing. There are still some things rough around the edges. Any questions, feel free to reach out.
  
 ## What is included
 The addon should provide the following functionalities:
@@ -16,6 +16,11 @@ The addon should provide the following functionalities:
 > Merged system messages across guilds/realms/factions in the confederate
 - When another player using the addon comes online/offline, you should see a system message as if they were local guild member
 <img src="https://user-images.githubusercontent.com/45693161/175836164-9aa7c46c-5b7c-4056-8d3f-ed5487b4debf.png" width=300>
+
+
+> ElvUI uOF tags
+- Confederate name/initials, guild initials, player's main raiding name/team and confederate member icon uOF tags added for use in ElvUI UnitFrames
+<img src="https://user-images.githubusercontent.com/45693161/183232611-6c568877-2e0f-4d6b-910e-b51510a9a424.png" width=300>
 
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:

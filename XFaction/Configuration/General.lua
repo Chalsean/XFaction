@@ -78,59 +78,6 @@ XFG.Options = {
 							fontSize = 'medium',
 							name = XFG.Lib.Locale['GENERAL_DISCLAIMER'],
 						},
-						Space1 = {
-							order = 2,
-							type = 'description',
-							name = '',
-						},
-						Realm = {
-							order = 3,
-							type = 'description',
-							fontSize = 'medium',
-							name = 'Proudmoore (US)'
-						},
-						EK = {
-							order = 4,
-							type = 'description',
-							fontSize = 'medium',
-							name = '- Eternal Kingdom'
-						},
-						ENK = {
-							order = 5,
-							type = 'description',
-							fontSize = 'medium',
-							name = '- Endless Kingdom'
-						},
-						EDK = {
-							order = 6,
-							type = 'description',
-							fontSize = 'medium',
-							name = '- Enduring Kingdom'
-						},
-						AK = {
-							order = 7,
-							type = 'description',
-							fontSize = 'medium',
-							name = '- Alternal Kingdom'
-						},
-						AK2 = {
-							order = 8,
-							type = 'description',
-							fontSize = 'medium',
-							name = '- Alternal Kingdom 2'
-						},
-						AK3 = {
-							order = 9,
-							type = 'description',
-							fontSize = 'medium',
-							name = '- Alternal Kingdom 3'
-						},
-						AK4 = {
-							order = 10,
-							type = 'description',
-							fontSize = 'medium',
-							name = '- Alternal Kingdom 4'
-						},
 					}
 				},
 				What = {

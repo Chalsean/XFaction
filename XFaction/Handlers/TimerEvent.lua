@@ -37,7 +37,7 @@ function TimerEvent:Initialize()
 end
 
 function TimerEvent:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
 	if(inBoolean ~= nil) then
 		self._Initialized = inBoolean
 	end
@@ -46,8 +46,8 @@ end
 
 function TimerEvent:Print()
     XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:Debug(LogCategory, ObjectName .. ' Object')
+    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 end
 
 function TimerEvent:CallbackLogin()
@@ -88,6 +88,7 @@ function TimerEvent:CallbackLogin()
             local _Timer = XFG.Timers:GetTimer('Login')
             XFG.Timers:RemoveTimer(_Timer)
 
+			-- Log any reloadui errors encountered
 			for _, _ErrorText in ipairs(XFG.DB.Errors) do
 				XFG:Warn(LogCategory, _ErrorText)
 			end
@@ -100,7 +101,6 @@ function TimerEvent:CallbackLogin()
 				XFG:Info(LogCategory, 'XFaction version [%s]', XFG.Version:GetKey())
 
 				local _GuildInfo = C_Club.GetClubInfo(_GuildID)
-				XFG.Confederate = Confederate:new()    
 				
 				-- Parse out configuration from guild information so GMs have control
 				local _XFData
@@ -182,6 +182,7 @@ function TimerEvent:CallbackLogin()
 					end
 				end
 
+				-- Setup default realms (Torghast)
 				for _RealmID, _RealmName in pairs (XFG.Settings.Confederate.DefaultRealms) do
 					local _NewRealm = Realm:new()
 					_NewRealm:SetKey(_RealmName)
@@ -211,7 +212,7 @@ function TimerEvent:CallbackLogin()
 				local _RealmName = GetRealmName()
 				XFG.Player.Realm = XFG.Realms:GetRealm(_RealmName)
 				if(XFG.Player.Realm == nil) then
-					error('Player is not on a supported realm [%s]', _RealmName)
+					error('Player is not on a supported realm: ' .. tostring(_RealmName))
 				end
 				-- Ensure player is on supported guild
 				XFG.Player.Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildInfo.name)
@@ -276,6 +277,9 @@ function TimerEvent:CallbackLogin()
 						end
 					end)
 				end
+
+				-- Monitor other addons loading
+				XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
 
 				-- Start network setup
 				XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()            
@@ -377,7 +381,6 @@ end
 
 function TimerEvent:CallbackDelayedStartTimer()
 	try(function ()
-		XFG.Frames.Chat:LoadElvUI()
 		if(not XFG.DB.UIReload) then
 			XFG.Channels:SetChannelLast(XFG.Outbox:GetLocalChannel():GetKey())
 			XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
