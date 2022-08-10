@@ -22,6 +22,7 @@ XFG.Initialized = false
 
 XFG.Icons = {
 	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
+	Texture = '|T%s:17:17|t',
 	WoWToken = 1121394,
 	Kyrian = 3257748,
 	Venthyr = 3257751,
@@ -30,7 +31,7 @@ XFG.Icons = {
 	Alliance = 2565243,
 	Horde = 463451,
 	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
-	Guild = [[|TInterface\COMMON\FavoritesIcon:30:30|t]],
+	Guild = 'ElvUI-Windtools-Healer',
 }
 
 XFG.Lib = {
