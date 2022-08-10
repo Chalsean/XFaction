@@ -83,7 +83,7 @@ function ElvUINameplate:Initialize()
                 local _GUID = UnitGUID(inNameplate)
                 local _GuildName = GetGuildInfo(inNameplate)
                 if(XFG.Confederate:Contains(_GUID) or XFG.Guilds:ContainsGuildName(_GuildName)) then
-                    return format('%s', format(XFG.Icons.Texture, XFG.Media:GetMedia(XFG.Icons.Guild):GetPath()))
+                    return XFG.Media:GetMedia(XFG.Icons.Guild):GetTexture()
                 end
             end)
         end
