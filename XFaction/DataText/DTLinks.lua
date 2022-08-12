@@ -114,7 +114,7 @@ function DTLinks:OnEnter(this)
 		_Tooltip:SetHeaderFont(self._HeaderFont)
 		_Tooltip:SetFont(self._RegularFont)
 		_Tooltip:SmartAnchorTo(this)
-		_Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() DTLinks:OnLeave() end)
+		_Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() XFG.DataText.Links:OnLeave() end)
 		_Tooltip:EnableMouse(true)
 		_Tooltip:SetClampedToScreen(false)
 	end
@@ -156,8 +156,8 @@ function DTLinks:OnEnter(this)
 				_ToName = format("|cffffff00%s|r", _Link:GetToNode():GetName())
 			end
 
-			_Tooltip:SetCell(line, _TargetColumn[_Link:GetFromNode():GetTarget():GetKey()], _FromName)
-			_Tooltip:SetCell(line, _TargetColumn[_Link:GetToNode():GetTarget():GetKey()], _ToName)
+			_Tooltip:SetCell(line, _TargetColumn[_Link:GetFromNode():GetTarget():GetKey()], _FromName, self._RegularFont)
+			_Tooltip:SetCell(line, _TargetColumn[_Link:GetToNode():GetTarget():GetKey()], _ToName, self._RegularFont)
 			
 			line = _Tooltip:AddLine()
 		end
