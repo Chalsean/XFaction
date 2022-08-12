@@ -69,6 +69,7 @@ L['ROSTER'] = 'Roster'
 L['DEBUG'] = 'Debug'
 L['CONTINENT'] = 'Continent'
 L['ZONE'] = 'Zone'
+L['FACTORY'] = 'Factory'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -319,3 +320,6 @@ L['SUPPORT_UAT'] = 'User Acceptance Testing'
 L['DEBUG_PRINT'] = 'Click any button to ad-hoc print that datacollection to _DebugLog'
 L['DEBUG_ROSTER_TOOLTIP'] = 'Whether all confederate members send roster information'
 L['NEW_VERSION'] = '%s: A newer version is available, please consider updating'
+L['FACTORY_MESSAGE'] = 'Factory (Message)'
+L['FACTORY_GUILD_MESSAGE'] = 'Factory (GMessage)'
+L['FACTORY_UNIT'] = 'Factory (Unit)'

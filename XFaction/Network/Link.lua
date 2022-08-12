@@ -11,6 +11,8 @@ function Link:new()
     self.__name = ObjectName
 
     self._Key = nil
+    self._FactoryKey = nil
+    self._FactoryTime = nil
     self._FromNode = nil
     self._ToNode = nil
     self._EpochTime = 0
@@ -51,6 +53,8 @@ function Link:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _FactoryKey (" .. type(self._FactoryKey) .. "): ".. tostring(self._FactoryKey))
+    XFG:Debug(LogCategory, "  _FactoryTime (" ..type(self._FactoryTime) .. "): ".. tostring(self._FactoryTime))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _EpochTime (" .. type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
     if(self:HasFromNode()) then
@@ -69,6 +73,16 @@ function Link:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
+end
+
+function Link:GetFactoryKey()
+    return self._FactoryKey
+end
+
+function Link:SetFactoryKey(inFactoryKey)
+    assert(type(inFactoryKey) == 'string')
+    self._FactoryKey = inFactoryKey
+    return self:GetFactoryKey()
 end
 
 function Link:IsMyLink()
@@ -112,21 +126,35 @@ function Link:SetObjectFromString(inLinkString)
     assert(type(inLinkString) == 'string')
 
     local _Nodes = string.Split(inLinkString, ';')
-    local _FromNode = Node:new()
-    _FromNode:SetObjectFromString(_Nodes[1])
-    if(not XFG.Nodes:Contains(_FromNode:GetKey())) then
-        XFG.Nodes:AddNode(_FromNode)
-    end
-    self:SetFromNode(XFG.Nodes:GetNode(_FromNode:GetKey()))
-    self:GetFromNode():IncrementLinkCount()
+    local _FromNode = nil
+    try(function ()
+        _FromNode = XFG.Factories.Node:CheckOut()
+        _FromNode:SetObjectFromString(_Nodes[1])
+        if(not XFG.Nodes:Contains(_FromNode:GetKey())) then
+            XFG.Nodes:AddNode(_FromNode)
+        end
+        self:SetFromNode(XFG.Nodes:GetNode(_FromNode:GetKey()))
+        self:GetFromNode():IncrementLinkCount()
+    end).
+    catch(function (inErrorMessage)
+        XFG:Warn(LogCategory, 'Failed to parse link node: ' .. inErrorMessage)
+        XFG.Factories.Node:CheckIn(_FromNode)
+    end)
 
-    local _ToNode = Node:new()
-    _ToNode:SetObjectFromString(_Nodes[2])
-    if(not XFG.Nodes:Contains(_ToNode:GetKey())) then
-        XFG.Nodes:AddNode(_ToNode)
-    end
-    self:SetToNode(XFG.Nodes:GetNode(_ToNode:GetKey()))
-    self:GetToNode():IncrementLinkCount()
+    local _ToNode = nil
+    try(function ()
+        _ToNode = XFG.Factories.Node:CheckOut()
+        _ToNode:SetObjectFromString(_Nodes[2])
+        if(not XFG.Nodes:Contains(_ToNode:GetKey())) then
+            XFG.Nodes:AddNode(_ToNode)
+        end
+        self:SetToNode(XFG.Nodes:GetNode(_ToNode:GetKey()))
+        self:GetToNode():IncrementLinkCount()
+    end).
+    catch(function (inErrorMessage)
+        XFG:Warn(LogCategory, 'Failed to parse link node: ' .. inErrorMessage)
+        XFG.Factories.Node:CheckIn(_ToNode)
+    end)
 
     self:Initialize()
     return self:IsInitialized()
@@ -147,4 +175,22 @@ function Link:SetTimeStamp(inEpochTime)
     assert(type(inEpochTime) == 'number')
     self._EpochTime = inEpochTime
     return self:GetTimeStamp()
+end
+
+function Link:GetFactoryTime()
+    return self._FactoryTime
+end
+
+function Link:SetFactoryTime(inEpochTime)
+    assert(type(inEpochTime) == 'number')
+    self._FactoryTime = inEpochTime
+    return self:GetFactoryTime()
+end
+
+function Link:FactoryReset()
+    self._Key = nil
+    self._FromNode = nil
+    self._ToNode = nil
+    self._EpochTime = 0
+    self._Initialized = false
 end

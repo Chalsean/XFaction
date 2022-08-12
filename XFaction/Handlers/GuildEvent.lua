@@ -42,7 +42,7 @@ end
 function GuildEvent:CallbackRosterUpdate()
     for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         try(function ()
-            local _UnitData = Unit:new()
+            local _UnitData = XFG.Factories.Unit:CheckOut()
             _UnitData:Initialize(_MemberID)
 
             if(_UnitData:IsInitialized()) then
@@ -59,15 +59,19 @@ function GuildEvent:CallbackRosterUpdate()
                         -- If the player is running addon, do not process
                         if(not _CachedUnitData:IsRunningAddon() and not _CachedUnitData:Equals(_UnitData)) then         
                             XFG.Confederate:AddUnit(_UnitData)
+                        else
+                            XFG.Factories.Unit:CheckIn(_UnitData)
                         end
                     end
                 -- They went offline and we scanned them before doing so
                 elseif(XFG.Confederate:Contains(_UnitData:GetKey())) then
                     local _CachedUnitData = XFG.Confederate:GetUnit(_UnitData:GetKey())
                     if(not _CachedUnitData:IsPlayer()) then
-                        XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())
                         XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, _CachedUnitData:GetName(), _CachedUnitData:GetUnitName(), _CachedUnitData:GetMainName(), _CachedUnitData:GetGuild(), _CachedUnitData:GetRealm())
+                        XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())                        
                     end
+                else
+                    XFG.Factories.Unit:CheckIn(_UnitData)
                 end
 
                 if(XFG.Cache.FirstScan[_MemberID] == nil) then

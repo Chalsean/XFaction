@@ -11,6 +11,8 @@ function Node:new()
     self.__name = ObjectName
 
     self._Key = nil
+    self._FactoryKey = nil
+    self._FactoryTime = nil
     self._Name = nil
     self._Target = nil
     self._Initialized = false
@@ -41,6 +43,8 @@ function Node:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+    XFG:Debug(LogCategory, "  _FactoryKey (" .. type(self._FactoryKey) .. "): ".. tostring(self._FactoryKey))
+    XFG:Debug(LogCategory, "  _FactoryTime (" ..type(self._FactoryTime) .. "): ".. tostring(self._FactoryTime))
     XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
     XFG:Debug(LogCategory, "  _Name (" .. type(self._Name) .. "): ".. tostring(self._Name))
     XFG:Debug(LogCategory, "  _LinkCount (" .. type(self._LinkCount) .. "): ".. tostring(self._LinkCount))
@@ -57,6 +61,16 @@ function Node:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
+end
+
+function Node:GetFactoryKey()
+    return self._FactoryKey
+end
+
+function Node:SetFactoryKey(inFactoryKey)
+    assert(type(inFactoryKey) == 'string')
+    self._FactoryKey = inFactoryKey
+    return self:GetFactoryKey()
 end
 
 function Node:IsMyNode()
@@ -131,5 +145,23 @@ function Node:DecrementLinkCount()
     if(self:GetLinkCount() == 0) then
         XFG.Nodes:RemoveNode(self)
     end
-    return self:GetLinkCount()
+end
+
+function Node:GetFactoryTime()
+    return self._FactoryTime
+end
+
+function Node:SetFactoryTime(inEpochTime)
+    assert(type(inEpochTime) == 'number')
+    self._FactoryTime = inEpochTime
+    return self:GetFactoryTime()
+end
+
+function Node:FactoryReset()
+    self._Key = nil
+    self._Name = nil
+    self._Target = nil
+    self._Initialized = false
+    self._LinkCount = 0
+    self:Initialize()
 end

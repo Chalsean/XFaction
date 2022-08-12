@@ -102,7 +102,7 @@ function DTSoulbind:OnEnter(this)
 		self._Tooltip:SetHeaderFont(self._HeaderFont)
 		self._Tooltip:SetFont(self._RegularFont)
 		self._Tooltip:SmartAnchorTo(this)
-		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, self._Tooltip)
+		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() XFG.DataText.Soulbind:OnLeave() end)
 		self._Tooltip:EnableMouse(true)
 		self._Tooltip:SetClampedToScreen(false)
 	end
@@ -187,13 +187,11 @@ function DTSoulbind:OnClick(this, inButton)
 	end
 end
 
-function DTSoulbind:OnLeave(this)
-	local _IsMouseOver = true
-	local _Status, _Error = pcall(function () _IsMouseOver = MouseIsOver(self._Tooltip) end)
-	if(_Status and _IsMouseOver == false) then 
-		if XFG.Lib.QT:IsAcquired(ObjectName) then self._Tooltip:Clear() end
-		self._Tooltip:Hide()
-		XFG.Lib.QT:Release(ObjectName)
-		self._Tooltip = nil
+function DTSoulbind:OnLeave()
+	if self._Tooltip and MouseIsOver(self._Tooltip) then
+	    return
+	else
+		XFG.Lib.QT:Release(self._Tooltip)
+        self._Tooltip = nil
 	end
 end

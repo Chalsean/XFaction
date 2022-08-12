@@ -225,7 +225,7 @@ function DTGuild:OnEnter(this)
 		_Tooltip:SetHeaderFont(self._HeaderFont)
 		_Tooltip:SetFont(self._RegularFont)
 		_Tooltip:SmartAnchorTo(this)
-		_Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() DTGuild:OnLeave() end)
+		_Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() XFG.DataText.Guild:OnLeave() end)
 		_Tooltip:EnableMouse(true)
 		_Tooltip:SetClampedToScreen(false)
 		_Tooltip:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -314,7 +314,7 @@ function DTGuild:OnEnter(this)
 				elseif(_UnitData[_ColumnName] ~= nil) then
 					_CellValue = format('|cffffffff%s|r', _UnitData[_ColumnName])
 				end
-				_Tooltip:SetCell(line, i, _CellValue)
+				_Tooltip:SetCell(line, i, _CellValue, self._RegularFont)
 			end
 
 	 		_Tooltip:SetLineScript(line, "OnMouseUp", LineClick, _UnitData.GUID)
