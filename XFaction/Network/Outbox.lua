@@ -76,6 +76,10 @@ end
 function Outbox:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.DATA) then return end
+    if(inMessage:IsInitialized() == false) then
+		-- Review: double check this isn't overriding the timestamp of the message
+        inMessage:Initialize()
+    end
 
     XFG:Debug(LogCategory, 'Attempting to send message')
     inMessage:ShallowPrint()
@@ -122,36 +126,24 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
         inUnitData:SetTimeStamp(_EpochTime)
         XFG.Player.LastBroadcast = inUnitData:GetTimeStamp()
     end
-
-    local _Message = nil
-    try(function ()
-        _Message = XFG.Factories.Message:CheckOut()
-        _Message:SetFrom(XFG.Player.Unit:GetKey())
-        _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
-        _Message:SetSubject(inSubject)
-        _Message:SetData(inUnitData)
-        self:Send(_Message)
-    end).
-    finally(function ()
-        XFG.Factories.Message:CheckIn(_Message)
-    end)
+    local _Message = Message:new()
+    _Message:Initialize()
+    _Message:SetFrom(XFG.Player.Unit:GetKey())
+    _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
+    _Message:SetSubject(inSubject)
+    _Message:SetData(inUnitData)
+    self:Send(_Message)
 end
 
 function Outbox:WhisperUnitData(inTo, inUnitData)
     assert(type(inTo) == 'string')
     assert(type(inUnitData) == 'table' and inUnitData.__name ~= nil and inUnitData.__name == 'Unit', 'argument must be Unit object')
-
-    local _Message = nil
-    try(function ()
-        _Message = XFG.Factories.Message:CheckOut()
-        _Message:SetTo(inTo)
-        _Message:SetFrom(XFG.Player.Unit:GetKey())
-        _Message:SetType(XFG.Settings.Network.Type.WHISPER)
-        _Message:SetSubject(XFG.Settings.Network.Message.Subject.DATA)
-        _Message:SetData(inUnitData)
-        self:Send(_Message)
-    end).
-    finally(function ()
-        XFG.Factories.Message:CheckIn(_Message)
-    end)
+    local _Message = Message:new()
+    _Message:Initialize()
+    _Message:SetTo(inTo)
+    _Message:SetFrom(XFG.Player.Unit:GetKey())
+    _Message:SetType(XFG.Settings.Network.Type.WHISPER)
+    _Message:SetSubject(XFG.Settings.Network.Message.Subject.DATA)
+    _Message:SetData(inUnitData)
+    self:Send(_Message)
 end

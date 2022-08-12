@@ -51,23 +51,18 @@ function SystemEvent:CallbackLogout()
         XFG.Friends:CreateBackup()
         XFG.Links:CreateBackup()
     else
-        local _Message = nil
-        try(function ()
-            local _Message = XFG.Factories.GuildMessage:CheckOut()
-            _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
-            _Message:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
-            if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-                _Message:SetMainName(XFG.Player.Unit:GetMainName())
-            end
-            _Message:SetGuild(XFG.Player.Guild)
-            _Message:SetRealm(XFG.Player.Realm)
-            _Message:SetUnitName(XFG.Player.Unit:GetName())
-            _Message:SetData(' ')
-            XFG.Outbox:Send(_Message)
-        end).
-        finally(function ()
-            XFG.Factories.GuildMessage:CheckIn(_Message)
-        end)
+        local _NewMessage = GuildMessage:new()
+        _NewMessage:Initialize()
+        _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
+        if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+            _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+        end
+        _NewMessage:SetGuild(XFG.Player.Guild)
+        _NewMessage:SetRealm(XFG.Player.Realm)
+        _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
+        _NewMessage:SetData(' ')
+        XFG.Outbox:Send(_NewMessage)
     end    
 end
 

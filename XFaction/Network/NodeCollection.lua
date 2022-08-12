@@ -70,15 +70,10 @@ end
 
 function NodeCollection:AddNode(inNode)
     assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
-	if(self:Contains(inNode:GetKey())) then
-		local _OldObject = self._Nodes[inNode:GetKey()]
-		self._Nodes[inNode:GetKey()] = inNode
-		XFG.Factories.Node:CheckIn(_OldObject)
-	else
+	if(not self:Contains(inNode:GetKey())) then
 		self._NodeCount = self._NodeCount + 1
-		self._Nodes[inNode:GetKey()] = inNode
 	end
-    
+    self._Nodes[inNode:GetKey()] = inNode
 	if(self._TargetCount[inNode:GetTarget():GetKey()] == nil) then
 		self._TargetCount[inNode:GetTarget():GetKey()] = 0
 	end
@@ -100,9 +95,7 @@ function NodeCollection:RemoveNode(inNode)
 			XFG.Links:RemoveLink(_Link)
 		end
 	end
-	local _Key = inNode:GetKey()
-	XFG.Factories.Node:CheckIn(inNode)
-    return not self:Contains(_Key)
+    return self:Contains(inNode:GetKey()) == false
 end
 
 function NodeCollection:Iterator()

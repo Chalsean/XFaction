@@ -21,8 +21,6 @@ function GuildMessage:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. " Object")
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _FactoryKey (" .. type(self._FactoryKey) .. "): ".. tostring(self._FactoryKey))
-    XFG:Debug(LogCategory, "  _FactoryTime (" ..type(self._FactoryTime) .. "): ".. tostring(self._FactoryTime))
     XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
     XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
     XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
@@ -130,24 +128,4 @@ function GuildMessage:Copy(inMessage)
     for _, _Target in pairs (inMessage:GetTargets()) do
         self:AddTarget(_Target)
     end
-end
-
-function GuildMessage:FactoryReset()
-    self._To = nil
-    self._From = nil    
-    self._Type = nil
-    self._Subject = nil
-    self._EpochTime = nil
-    self._TargetCount = 0
-    self._Data = nil
-    self._Initialized = false
-    self._PacketNumber = 1
-    self._TotalPackets = 1
-    self._Version = nil
-    self._Name = nil
-    self._UnitName = nil
-    self._MainName = nil
-    self._Guild = nil
-    self._Realm = nil
-    self:Initialize()
 end

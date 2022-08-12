@@ -72,22 +72,14 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
-    local _Message = nil
     try(function ()
-        _Message = XFG:DecodeMessage(inEncodedMessage)
+        local _Message = XFG:DecodeMessage(inEncodedMessage)
         self:Process(_Message, inMessageTag)
         XFG.Metrics:GetMetric(XFG.Settings.Metric.ChannelReceive):Increment()
         XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):Increment()
     end).
     catch(function (inErrorMessage)
         XFG:Warn(LogCategory, 'Failed to process received message: ' .. inErrorMessage)
-    end).
-    finally(function ()
-        if(_Message and _Message.__name == 'Message') then
-            XFG.Factories.Message:CheckIn(_Message)
-        elseif(_Message) then
-            XFG.Factories.GuildMessage:CheckIn(_Message)
-        end
     end)
 end
 
@@ -109,7 +101,7 @@ function Inbox:Process(inMessage, inMessageTag)
         --XFG:Debug(LogCategory, "This message has already been processed %s", inMessage:GetKey())
         return
     else
-        XFG.Mailbox:AddMessage(inMessage:GetKey())
+        XFG.Mailbox:AddMessage(inMessage)
     end
 
     -- Is a newer version available?

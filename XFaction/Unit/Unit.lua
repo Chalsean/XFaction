@@ -49,8 +49,6 @@ function Unit:new()
     self._PvP = ''
     self._GuildSpeak = true
     self._GuildListen = true
-    self._FactoryKey = nil
-    self._FactoryTime = nil
 
     return Object
 end
@@ -220,8 +218,6 @@ function Unit:Print()
 	XFG:DoubleLine(LogCategory)
 	XFG:Debug(LogCategory, ObjectName .. ' Object')
     XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
-    XFG:Debug(LogCategory, '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
     XFG:Debug(LogCategory, '  _GUID (' .. type(self._GUID) .. '): ' .. tostring(self._GUID))
     XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
 	XFG:Debug(LogCategory, '  _UnitName (' .. type(self._UnitName) .. '): ' .. tostring(self._UnitName))
@@ -281,16 +277,6 @@ function Unit:SetKey(inKey)
     assert(type(inKey) == 'string')
     self._Key = inKey
     return self:GetKey()
-end
-
-function Unit:GetFactoryKey()
-    return self._FactoryKey
-end
-
-function Unit:SetFactoryKey(inFactoryKey)
-    assert(type(inFactoryKey) == 'string')
-    self._FactoryKey = inFactoryKey
-    return self:GetFactoryKey()
 end
 
 function Unit:GetGUID()
@@ -576,16 +562,6 @@ function Unit:SetTimeStamp(inTimeStamp)
     return self:GetTimeStamp()
 end
 
-function Unit:GetFactoryTime()
-    return self._FactoryTime
-end
-
-function Unit:SetFactoryTime(inFactoryTime)
-    assert(type(inFactoryTime) == 'number')
-    self._FactoryTime = inFactoryTime
-    return self:GetFactoryTime()
-end
-
 function Unit:HasClass()
     return self._Class ~= nil
 end
@@ -852,46 +828,4 @@ function Unit:Equals(inUnit)
     -- A unit cannot change Class, do not consider
     
     return true
-end
-
-function Unit:FactoryReset()
-    self._Key = nil
-    self._GUID = nil
-    self._UnitName = nil
-    self._Name = nil
-    self._ID = 0
-    self._Rank = nil
-    self._Level = 60
-    self._Class = nil
-    self._Spec = nil
-    self._Zone = nil
-    self._ZoneName = nil
-    self._Note = nil
-    self._Online = false
-    self._Status = nil
-    self._Mobile = false
-    self._Race = nil
-    self._TimeStamp = nil
-    self._Covenant = nil
-    self._Soulbind = nil
-    self._Profession1 = nil
-    self._Profession2 = nil
-    self._DungeonScore = 0
-    self._AchievementPoints = 0
-    self._RunningAddon = false
-    self._Alt = false
-    self._MainName = nil
-    self._IsPlayer = false
-    self._IsOnMainGuild = false
-    self._Faction = nil
-    self._Team = nil
-    self._Initialized = false
-    self._Guild = nil
-    self._Realm = nil
-    self._Version = nil
-    self._ItemLevel = 0
-    self._RaidProgress = ''
-    self._PvP = ''
-    self._GuildSpeak = true
-    self._GuildListen = true
 end

@@ -8,10 +8,10 @@ local function DeserializeMessage(inSerializedMessage)
 	if(_MessageData.S == XFG.Settings.Network.Message.Subject.GCHAT or
 	   _MessageData.S == XFG.Settings.Network.Message.Subject.LOGOUT or
 	   _MessageData.S == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
-		_Message = XFG.Factories.GuildMessage:CheckOut()
+		_Message = GuildMessage:new()
 	else
 	-- DATA, LOGIN, LINKS use Message class
-	_Message = XFG.Factories.Message:CheckOut()
+		_Message = Message:new()
 	end	
 	_Message:Initialize()
 	
@@ -53,7 +53,7 @@ end
 
 function XFG:DeserializeUnitData(inData)
 	local _, _DeserializedData = XFG:Deserialize(inData)
-	local _UnitData = XFG.Factories.Unit:CheckOut()
+	local _UnitData = Unit:new()
 	_UnitData:IsRunningAddon(true)
 	if(_DeserializedData.C ~= nil) then
 		_UnitData:SetCovenant(XFG.Covenants:GetCovenant(_DeserializedData.C))
