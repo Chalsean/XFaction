@@ -15,8 +15,28 @@ function Confederate:new()
     self._Units = {}
     self._UnitCount = 0
     self._CountByTarget = {}
+    self._Initialized = false
+
+    self._GuildInfo = nil
+    self._ModifyGuildInfo = nil
     
     return Object
+end
+
+function Confederate:IsInitialized(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
+    if(inBoolean ~= nil) then
+        self._Initialized = inBoolean
+    end
+	return self._Initialized
+end
+
+function Confederate:Initialize()
+	if(not self:IsInitialized()) then
+        self:CanModifyGuildInfo(CanEditGuildInfo())
+        self:IsInitialized(true)
+	end
+	return self:IsInitialized()
 end
 
 function Confederate:Print()    
@@ -83,12 +103,12 @@ function Confederate:AddUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argument must be Unit object')
 
     if(self:Contains(inUnit:GetKey())) then 
-        local _OldObject = self._Units[inUnit:GetKey()]
-        self._Units[inUnit:GetKey()] = inUnit
-        XFG.Factories.Unit:CheckIn(_OldObject)
+        local _CachedUnitData = self:GetUnit(inUnit:GetKey())       
+        if(inUnit:GetTimeStamp() < _CachedUnitData:GetTimeStamp()) then
+            return false
+        end
     else
         self._UnitCount = self._UnitCount + 1
-        self._Units[inUnit:GetKey()] = inUnit
         XFG.DataText.Guild:RefreshBroker()
     end
 
@@ -119,20 +139,15 @@ function Confederate:RemoveUnit(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
         local _Unit = self:GetUnit(inKey)
-        try(function ()
-            self._Units[inKey] = nil
-            self._UnitCount = self._UnitCount - 1
-            XFG.DataText.Guild:RefreshBroker()
-            if(XFG.Nodes:Contains(_Unit:GetName())) then
-                XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(_Unit:GetName()))
-                XFG.DataText.Links:RefreshBroker()
-            end
-            local _Target = XFG.Targets:GetTarget(_Unit:GetRealm(), _Unit:GetFaction())
-            self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1      
-        end).
-        finally(function ()
-            XFG.Factories.Unit:CheckIn(_Unit)
-        end)
+        self._Units[inKey] = nil
+        self._UnitCount = self._UnitCount - 1
+        XFG.DataText.Guild:RefreshBroker()
+        if(XFG.Nodes:Contains(_Unit:GetName())) then
+            XFG.Nodes:RemoveNode(XFG.Nodes:GetNode(_Unit:GetName()))
+            XFG.DataText.Links:RefreshBroker()
+        end
+        local _Target = XFG.Targets:GetTarget(_Unit:GetRealm(), _Unit:GetFaction())
+        self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1      
     end
 end
 
@@ -179,4 +194,53 @@ end
 function Confederate:GetCountByTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', 'argument must be Target object')
     return self._CountByTarget[inTarget:GetKey()] or 0
+end
+
+function Confederate:CanModifyGuildInfo(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
+    if(inBoolean ~= nil) then
+        self._ModifyGuildInfo = inBoolean
+    elseif(not self:IsInitialized()) then
+        self:Initialize()
+    end
+    return self._ModifyGuildInfo
+end
+
+function Confederate:SaveGuildInfo()
+    if(self:CanModifyGuildInfo()) then
+        try(function ()
+            local _GuildInfo = C_Club.GetClubInfo(XFG.Player.Guild:GetID())
+            local _NewGuildInfo = ''
+            for _, _Line in ipairs(string.Split(_GuildInfo.description, '\n')) do
+                if(not string.find(_Line, 'XF')) then
+                    _NewGuildInfo = _NewGuildInfo .. _Line .. '\n'
+                end
+            end
+
+            _NewGuildInfo = _NewGuildInfo .. 'XFn:' .. XFG.Confederate:GetName() .. ':' .. XFG.Confederate:GetKey() .. '\n'
+            _NewGuildInfo = _NewGuildInfo .. 'XFc:' .. XFG.Outbox:GetLocalChannel():GetName() .. ':' .. XFG.Outbox:GetLocalChannel():GetPassword() .. '\n'
+            _NewGuildInfo = _NewGuildInfo .. 'XFa:' .. XFG.Settings.Confederate.AltRank .. '\n'
+
+            for _, _Guild in XFG.Guilds:Iterator() do
+                _NewGuildInfo = _NewGuildInfo .. 'XFg:' .. 
+                                _Guild:GetRealm():GetID() .. ':' ..
+                                _Guild:GetFaction():GetID() .. ':' ..
+                                _Guild:GetName() .. ':' ..
+                                _Guild:GetInitials() .. '\n'
+            end
+
+            for _, _Team in XFG.Teams:Iterator() do
+                if(XFG.Settings.Confederate.DefaultTeams[_Team:GetKey()] == nil and XFG.Settings.Teams[_Team:GetKey()] == nil) then
+                    _NewGuildInfo = _NewGuildInfo .. 'XFt:' .. _Team:GetKey() .. ':' .. _Team:GetName() .. '\n'
+                end
+            end
+
+            _NewGuildInfo = string.sub(_NewGuildInfo, 1, -2)
+            SetGuildInfoText(_NewGuildInfo)
+            XFG:Debug(LogCategory, 'Set new guild information: ' .. _NewGuildInfo)
+        end).
+        catch(function (inErrorMessage)
+            XFG:Warn(LogCategory, 'Failed to save guild information: ' .. inErrorMessage)
+        end)
+    end
 end

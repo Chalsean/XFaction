@@ -26,15 +26,17 @@ function Faction:Initialize()
             if(self._Name == 'Horde') then
                 self:SetIconID(463451)
                 self:SetLanguage('Orcish')
+                self:SetID('H')
             elseif(self._Name == 'Alliance') then
                 self:SetIconID(2565243)
                 self:SetLanguage('Common')
+                self:SetID('A')
             else
                 self:SetIconID(132311)
                 self:SetLanguage('Common')
+                self:SetID('N')
             end
         end
-        self:SetID(self._Key)
         self:IsInitialized(true)
     end
 end
@@ -51,6 +53,7 @@ function Faction:Print()
     XFG:SingleLine(LogCategory)
     XFG:Debug(LogCategory, ObjectName .. ' Object')
     XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
     XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
     XFG:Debug(LogCategory, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
     XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
@@ -81,7 +84,7 @@ function Faction:GetID()
 end
 
 function Faction:SetID(inID)
-    assert(type(inID) == 'number')
+    assert(type(inID) == 'string')
     self._ID = inID
     return self:GetID()
 end

@@ -14,7 +14,6 @@ XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Start = GetServerTime()
 
 XFG.DataText = {}
-XFG.Factories = {}
 XFG.Frames = {}
 XFG.Handlers = {}
 XFG.Nameplates = {}
@@ -38,7 +37,7 @@ XFG.Icons = {
 XFG.Lib = {
 	Deflate = LibStub:GetLibrary('LibDeflate'),
 	QT = LibStub('LibQTip-1.0'),
-	Realm = LibStub:GetLibrary('LibRealmInfo'),
+	Realm = LibStub:GetLibrary('LibRealm'),
 	Broker = LibStub('LibDataBroker-1.1'),
 	Config = LibStub('AceConfig-3.0'),
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
@@ -61,6 +60,8 @@ XFG.Cache = {
 	Channels = {},
 	NewVersionNotify = false,
 	FirstScan = {},
+	Realms = {},
+	Factions = {},
 }
 
 XFG.Settings = {
@@ -172,8 +173,4 @@ XFG.Settings = {
 		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
 		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
 	},
-	Factories = {
-		Scan = 60 * 7,
-		Purge = 60 * 30,
-	}
 }

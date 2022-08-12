@@ -17,4 +17,4 @@
 ## OptionalDeps: LibStub
 LibStub\LibStub.lua
 
-LibRealmInfo.lua
+LibRealm.lua

@@ -13,6 +13,7 @@ function Channel:new()
     self._Key = nil
     self._ID = nil
     self._Name = nil
+    self._Password = nil
     
     return _Object
 end
@@ -23,6 +24,7 @@ function Channel:Print()
     XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
     XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
     XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
+    XFG:Debug(LogCategory, "  _Password (" ..type(self._Password) .. "): ".. tostring(self._Password))
 end
 
 function Channel:GetKey()
@@ -53,4 +55,14 @@ function Channel:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
     return self:GetID()
+end
+
+function Channel:GetPassword()
+    return self._Password
+end
+
+function Channel:SetPassword(inPassword)
+    assert(type(inPassword) == 'string')
+    self._Password = inPassword
+    return self:GetPassword()
 end

@@ -8,7 +8,7 @@
 	https://www.wowinterface.com/downloads/info22987-LibRealmInfo
 ----------------------------------------------------------------------]]
 
-local MAJOR, MINOR = "LibRealmInfo", 13
+local MAJOR, MINOR = "LibRealm", 13
 assert(LibStub, MAJOR.." requires LibStub")
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
@@ -94,6 +94,32 @@ function lib:GetRealmInfo(name, region)
 
 	debug("No info found for realm", name, "in region", region)
 end
+
+------------------------------------------------------------------------
+
+function lib:GetAllRealms(region)
+	if not region or not validRegions[region] then
+		region = self:GetCurrentRegion()
+	end
+
+	if Unpack then
+		Unpack()
+	end
+
+	local _Realms = {}
+	for id, realm in pairs(realmData) do
+		if(realm.region == region and realm.name) then
+			_Realms[id] = {
+				Name = realm.name,
+				API = realm.nameForAPI,
+				IDs = shallowCopy(realm.connections)
+			}
+		end
+	end
+
+	return _Realms
+end
+
 
 ------------------------------------------------------------------------
 
@@ -216,7 +242,6 @@ function Unpack()
 
 	connectionData = nil
 	Unpack = nil
-	collectgarbage()
 
 	debug("Done unpacking data.")
 end

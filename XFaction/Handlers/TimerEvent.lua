@@ -139,20 +139,20 @@ function TimerEvent:CallbackLogin()
 						XFG.Settings.Network.Message.Tag.BNET = _Initials .. 'BNET'
 					-- Guild within the confederate
 					elseif(string.find(_Line, 'XFg')) then
-						local _RealmNumber, _FactionInitial, _GuildName, _GuildInitials = _Line:match('XFg:(.-):(.-):(.-):(.+)')
+						local _RealmNumber, _FactionID, _GuildName, _GuildInitials = _Line:match('XFg:(.-):(.-):(.-):(.+)')
 						local _, _RealmName = XFG.Lib.Realm:GetRealmInfoByID(_RealmNumber)
 						-- Create each realm once
 						if(XFG.Realms:Contains(_RealmName) == false) then
-						XFG:Info(LogCategory, 'Initializing realm [%s]', _RealmName)
-						local _NewRealm = Realm:new()
-						_NewRealm:SetKey(_RealmName)
-						_NewRealm:SetName(_RealmName)
-						_NewRealm:SetAPIName(string.gsub(_RealmName, '%s+', ''))
-						_NewRealm:Initialize()
-						XFG.Realms:AddRealm(_NewRealm)
+							XFG:Info(LogCategory, 'Initializing realm [%s]', _RealmName)
+							local _NewRealm = Realm:new()
+							_NewRealm:SetKey(_RealmName)
+							_NewRealm:SetName(_RealmName)
+							_NewRealm:SetAPIName(string.gsub(_RealmName, '%s+', ''))
+							_NewRealm:Initialize()
+							XFG.Realms:AddRealm(_NewRealm)
 						end
 						local _Realm = XFG.Realms:GetRealm(_RealmName)                    
-						local _Faction = XFG.Factions:GetFactionByName(_FactionInitial == 'A' and 'Alliance' or 'Horde')
+						local _Faction = XFG.Factions:GetFactionByID(_FactionID)
 
 						XFG:Info(LogCategory, 'Initializing guild %s <%s>', _GuildName, _GuildInitials)
 						local _NewGuild = Guild:new()
@@ -244,10 +244,6 @@ function TimerEvent:CallbackLogin()
 				end
 				XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
 
-				-- Start the unit factory
-				XFG.Factories.Unit = UnitFactory:new(); XFG.Factories.Unit:Initialize()
-				XFG:Info(LogCategory, 'Initialized Unit factory')
-
 				-- If this is a reload, restore non-local guild members
 				try(function ()
 					if(XFG.DB.UIReload) then
@@ -261,17 +257,15 @@ function TimerEvent:CallbackLogin()
 				-- Scan local guild roster
 				XFG:Info(LogCategory, 'Initializing local guild roster')
 				for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
-					local _UnitData = XFG.Factories.Unit:CheckOut()
+					local _UnitData = Unit:new()
 					try(function ()			
 						_UnitData:Initialize(_MemberID)
 						if(_UnitData:IsInitialized()) then
 							XFG.Cache.FirstScan[_MemberID] = true
 						end
-						if(_UnitData:IsOnline() and not XFG.Confederate:Contains(_UnitData:GetKey())) then
+						if(_UnitData:IsOnline()) then
 							XFG:Debug(LogCategory, 'Adding local guild unit [%s:%s]', _UnitData:GetGUID(), _UnitData:GetName())
 							XFG.Confederate:AddUnit(_UnitData)
-						else
-							XFG.Factories.Unit:CheckIn(_UnitData)
 						end
 					end).
 					catch(function (inErrorMessage)
@@ -286,16 +280,6 @@ function TimerEvent:CallbackLogin()
 
 				-- Monitor other addons loading
 				XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
-
-				-- Start factories
-				XFG.Factories.GuildMessage = GuildMessageFactory:new(); XFG.Factories.GuildMessage:Initialize()
-				XFG:Info(LogCategory, 'Initialized GuildMessage factory')
-				XFG.Factories.Message = MessageFactory:new(); XFG.Factories.Message:Initialize()
-				XFG:Info(LogCategory, 'Initialized Message factory')
-				XFG.Factories.Link = LinkFactory:new(); XFG.Factories.Link:Initialize()
-				XFG:Info(LogCategory, 'Initialized Link factory')
-				XFG.Factories.Node = NodeFactory:new(); XFG.Factories.Node:Initialize()
-				XFG:Info(LogCategory, 'Initialized Node factory')
 
 				-- Start network setup
 				XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()            
@@ -321,6 +305,9 @@ function TimerEvent:CallbackLogin()
 				_NewChannel:SetKey(_ChannelInfo.shortcut)
 				_NewChannel:SetID(_ChannelInfo.localID)
 				_NewChannel:SetName(_ChannelInfo.shortcut)
+				if(XFG.Settings.Network.Channel.Password ~= nil) then
+					_NewChannel:SetPassword(XFG.Settings.Network.Channel.Password)
+				end
 				XFG.Channels:AddChannel(_NewChannel)            
 				XFG.Outbox:SetLocalChannel(_NewChannel)
 
@@ -369,7 +356,6 @@ function TimerEvent:CallbackLogin()
 				CreateTimer('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, false)
 				CreateTimer('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, false)
 				CreateTimer('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, false)
-				CreateTimer('Factories', XFG.Settings.Factories.Scan, XFG.Handlers.TimerEvent.CallbackFactories, true, false)
 
 				-- Ping friends to find out whos available for BNet
 				if(not XFG.DB.UIReload) then                
@@ -390,6 +376,8 @@ function TimerEvent:CallbackLogin()
 				XFG.DataText.Soulbind:RefreshBroker()
 				XFG.DataText.Links:RefreshBroker()
 				XFG.DataText.Metrics:RefreshBroker()
+				
+				XFG:InitializeSetup()
 				wipe(XFG.DB.Backup)
 			end)
         end
@@ -546,14 +534,4 @@ function TimerEvent:CallbackStaleLinks()
 		local _Timer = XFG.Timers:GetTimer('StaleLinks')
 		_Timer:SetLastRan(GetServerTime())
 	end)
-end
-
--- Purge stale objects
-function TimerEvent:CallbackFactories()
-	local _PurgeTime = GetServerTime() - XFG.Settings.Factories.Purge
-	XFG.Factories.GuildMessage:Purge(_PurgeTime)
-	XFG.Factories.Message:Purge(_PurgeTime)
-	XFG.Factories.Unit:Purge(_PurgeTime)
-	XFG.Factories.Link:Purge(_PurgeTime)
-	XFG.Factories.Node:Purge(_PurgeTime)
 end

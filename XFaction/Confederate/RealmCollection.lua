@@ -19,9 +19,9 @@ function RealmCollection:new()
 end
 
 function RealmCollection:IsInitialized(inBoolean)
-    assert(inInitialized == nil or type(inInitialized) == 'boolean', 'argument needs to be nil or boolean')
-    if(inInitialized ~= nil) then
-        self._Initialized = inInitialized
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
+    if(inBoolean ~= nil) then
+        self._Initialized = inBoolean
     end
 	return self._Initialized
 end
@@ -29,6 +29,14 @@ end
 function RealmCollection:Initialize()
 	if(self:IsInitialized() == false) then
         self:SetKey(math.GenerateUID())
+		for _ID, _Data in pairs(XFG.Lib.Realm:GetAllRealms()) do
+			local _Realm = Realm:new()
+			_Realm:SetKey(_Data.Name)
+			_Realm:SetName(_Data.Name)
+			_Realm:SetAPIName(_Data.API)
+			_Realm:SetIDs(_Data.IDs)
+			XFG.Realms:AddRealm(_Realm)
+		end		
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -90,7 +98,7 @@ function RealmCollection:AddRealm(inRealm)
 	return self:Contains(inRealm:GetKey())
 end
 
-function RealmCollection:Iterator()
+function RealmCollection:Iterator()	
 	return next, self._Realms, nil
 end
 

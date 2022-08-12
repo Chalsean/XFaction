@@ -77,8 +77,17 @@ end
 
 function FactionCollection:GetFactionByName(inName)
 	assert(type(inName) == 'string')
-	for _, _Faction in pairs (self._Factions) do
+	for _, _Faction in self:Iterator() do
 		if(_Faction:GetName() == inName) then
+			return _Faction
+		end
+	end
+end
+
+function FactionCollection:GetFactionByID(inID)
+	assert(type(inID) == 'string')
+	for _, _Faction in self:Iterator() do
+		if(_Faction:GetID() == inID) then
 			return _Faction
 		end
 	end
