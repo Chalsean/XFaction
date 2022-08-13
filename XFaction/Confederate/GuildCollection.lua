@@ -96,3 +96,7 @@ end
 function GuildCollection:Iterator()
 	return next, self._Guilds, nil
 end
+
+function GuildCollection:GetCount()
+	return self._GuildCount
+end

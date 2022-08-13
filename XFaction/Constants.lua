@@ -62,6 +62,7 @@ XFG.Cache = {
 	FirstScan = {},
 	Realms = {},
 	Factions = {},
+	SetupGuild = {},
 }
 
 XFG.Settings = {
