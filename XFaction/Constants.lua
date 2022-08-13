@@ -63,6 +63,7 @@ XFG.Cache = {
 	Realms = {},
 	Factions = {},
 	SetupGuild = {},
+	Invites = {},
 }
 
 XFG.Settings = {
@@ -143,6 +144,7 @@ XFG.Settings = {
 				LOGIN = '4',
 				ACHIEVEMENT = '5',
 				LINK = '6',
+				JOIN = '7',
 			},
 			Tag = {},
 		},

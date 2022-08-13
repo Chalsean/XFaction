@@ -19,6 +19,11 @@ function GuildEvent:Initialize()
 	if(not self:IsInitialized()) then
         -- This is the local guild roster scan for those not running the addon
         XFG:CreateEvent('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
+        -- Hook player inviting someone, they will send broadcast if player joins
+        hooksecurefunc('GuildInvite', function(inInvitee) XFG.Invites[inInvitee] = true end)
+        XFG:Info(LogCategory, 'Post-hooked GuildInvite API')
+        XFG:RegisterEvent('CLUB_MEMBER_ADDED', XFG.Handlers.GuildEventCallbackMemberJoined)
+        XFG:Info(LogCategory, 'Registered for CLUB_MEMBER_ADDED events')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -79,4 +84,22 @@ function GuildEvent:CallbackRosterUpdate()
             XFG:Warn(LogCategory, 'Failed to scan unit information [%d]: ' .. inErrorMessage, _MemberID)
         end)
     end
+end
+
+function GuildEvent:GuildEventCallbackMemberJoined(inGuildID, inMemberID)
+    try(function ()
+        -- Technically probably dont need to check the guild id
+        if(inGuildID == XFG.Player.Guild:GetID()) then
+            local _UnitData = Unit:new()
+            _UnitData:Initialize(inMemberID)
+            -- Member that player invited joined, broadcast the join
+            if(XFG.Cache.Invites[_UnitData:GetName()]) then
+                XFG.Outbox:BroadcastUnitData(_UnitData, XFG.Settings.Network.Message.Subject.JOIN)
+                XFG.Cache.Invites[_UnitData:GetName()] = nil
+            end
+        end
+    end).
+    catch(function (inErrorMessage)
+        XFG:Warn(LogCategory, 'Failed to process new guild member: ' .. inErrorMessage)
+    end)
 end
