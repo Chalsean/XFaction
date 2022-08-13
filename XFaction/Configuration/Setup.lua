@@ -144,8 +144,15 @@ XFG.Options.args.Setup = {
 						},
 					}
 				},
-				Save = {
+				Add = {
 					order = 2,
+					type = 'execute',
+					name = XFG.Lib.Locale['SETUP_ADD_GUILD'],
+					disabled = function () return XFG.Cache.SetupGuild.Count ~= nil or not XFG.Confederate:CanModifyGuildInfo() end,
+					func = function() XFG:AddGuild() end,
+				},
+				Save = {
+					order = 3,
 					type = 'execute',
 					name = XFG.Lib.Locale['SAVE'],
 					disabled = function () return XFG.Options.args.Setup.args.Confederate.args.Save.disabled end,
@@ -169,14 +176,7 @@ XFG.Options.args.Setup = {
 							XFG:Error(LogCategory, 'Failed to save guild information: ' .. inErrorMessage)
 						end)						
 					end,
-				},
-				Add = {
-					order = 3,
-					type = 'execute',
-					name = XFG.Lib.Locale['SETUP_ADD_GUILD'],
-					disabled = true,
-					func = function() XFG:AddGuild() end,
-				},
+				},				
 				Space = {
 					order = 4,
 					type = 'description',

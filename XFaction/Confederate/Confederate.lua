@@ -236,7 +236,7 @@ function Confederate:SaveGuildInfo()
             end
 
             _NewGuildInfo = string.sub(_NewGuildInfo, 1, -2)
-            SetGuildInfoText(_NewGuildInfo)
+            --SetGuildInfoText(_NewGuildInfo)
             XFG:Debug(LogCategory, 'Set new guild information: ' .. _NewGuildInfo)
         end).
         catch(function (inErrorMessage)
