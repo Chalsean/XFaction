@@ -137,6 +137,7 @@ L['CHAT_ONLINE_SOUND'] = 'Play Sound'
 L['CHAT_ONLINE_SOUND_TOOLTIP'] = 'Play sound when any confederate member comes online'
 L['CHAT_LOGIN'] = 'has come online.'
 L['CHAT_LOGOUT'] = 'has gone offline.'
+L['CHAT_ACHIEVEMENT'] = 'has earned the achievement'
 L['CHAT_NO_PLAYER_FOUND'] = 'No player named '
 L['CHAT_CHANNEL_DESCRIPTION'] = 'These options control the addon custom channel behaviours.'
 --=========================================================================

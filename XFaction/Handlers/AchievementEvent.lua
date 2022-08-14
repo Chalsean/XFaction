@@ -17,6 +17,7 @@ end
 function AchievementEvent:Initialize()
 	if(not self:IsInitialized()) then
         XFG:RegisterEvent('ACHIEVEMENT_EARNED', XFG.Handlers.AchievementEvent.CallbackAchievement)
+        XFG:Info(LogCategory, 'Registered for ACHIEVEMENT_EARNED events')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -38,8 +39,16 @@ end
 
 function AchievementEvent:CallbackAchievement(inID)
     try(function ()
-        local _, _Name, _, _, _, _, _, _, _, _, _, _IsGuild = GetAchievementInfo(inID)
-        if(not _IsGuild and string.find(_Name, XFG.Lib.Locale['EXPLORE']) == nil) then
+        local _, _Name, _, _, _, _, _, _, _, _, _, _IsGuild, _, _EarnedBy = GetAchievementInfo(inID)
+        if(_IsGuild) then
+            XFG:Error(LogCategory, _EarnedBy)
+            local _UnitData = XFG.Confederate:GetUnitByName(_EarnedBy)    
+            if(_UnitData ~= nil) then
+                XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm(), _UnitData:GetGUID(), inID)
+            else
+                XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', _EarnedBy, _EarnedBy .. '-' .. XFG.Player.Realm:GetName(), nil, XFG.Player.Guild, XFG.Player.Realm, XFG.Player.Unit:GetGUID(), inID)
+            end
+        elseif(string.find(_Name, XFG.Lib.Locale['EXPLORE']) == nil) then
             local _NewMessage = GuildMessage:new()
             _NewMessage:Initialize()
             _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
@@ -53,8 +62,8 @@ function AchievementEvent:CallbackAchievement(inID)
             _NewMessage:SetGuild(XFG.Player.Guild)
             XFG.Outbox:Send(_NewMessage)
         end
-    end)
-    .catch(function (inErrorMessage)
+    end).
+    catch(function (inErrorMessage)
         XFG:Warn(LogCategory, 'Failed to send achievement message: ' .. inErrorMessage)
     end)    
 end

@@ -285,7 +285,9 @@ function Message:Copy(inMessage)
 end
 
 function Message:HasUnitData()
-    return self:GetSubject() == XFG.Settings.Network.Message.Subject.DATA or self:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN
+    return self:GetSubject() == XFG.Settings.Network.Message.Subject.DATA or 
+           self:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN or
+           self:GetSubject() == XFG.Settings.Network.Message.Subject.JOIN
 end
 
 function Message:HasVersion()

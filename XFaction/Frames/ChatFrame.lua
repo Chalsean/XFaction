@@ -72,21 +72,20 @@ function ChatFrame:SetHandler()
     end
 end
 
-function ChatFrame:Display(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'GuildMessage', 'argument must be a GuildMessage object')
+function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRealm, inFrom, inData)
+    assert(type(inName) == 'string')
+    assert(type(inUnitName) == 'string')
+    assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
+    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
 
-    local _Event = nil
-    local _ConfigNode = nil
+    local _Faction = inGuild:GetFaction()
+    local _Message = XFG.Settings.Frames.Chat.Prepend
 
-    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
-        _Event = 'GUILD_ACHIEVEMENT'
-        _ConfigNode = 'Achievement'
-    else
-        _Event = 'GUILD'
-        _ConfigNode = 'GChat'
-    end
-
+    if(inType == XFG.Settings.Network.Message.Subject.GCHAT) then inType = 'GUILD' end
+    if(inType == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then inType = 'GUILD_ACHIEVEMENT' end
+    local _ConfigNode = inType == 'GUILD' and 'GChat' or 'Achievement'
     if(not XFG.Config.Chat[_ConfigNode].Enable) then return end
+    XFG:Error(LogCategory, _ConfigNode)
 
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
@@ -95,25 +94,23 @@ function ChatFrame:Display(inMessage)
         _FrameTable = { GetChatWindowMessages(i) }
         local v
         for _, _FrameName in ipairs(_FrameTable) do
-            if _FrameName == _Event then
+            if _FrameName == inType then
                 local _Frame = 'ChatFrame' .. i
                 if _G[_Frame] then
 
                     local _Text = ''
-                    local _Guild = inMessage:GetGuild()                    
-                    local _Faction = _Guild:GetFaction()
 
                     if(XFG.Config.Chat[_ConfigNode].Faction) then  
                         _Text = _Text .. format('%s ', format(XFG.Icons.String, _Faction:GetIconID()))
                     end
 
-                    if(_Event == 'GUILD_ACHIEVEMENT') then
+                    if(inType == 'GUILD_ACHIEVEMENT') then
                         if(_Faction:Equals(XFG.Player.Faction)) then
                             _Text = _Text .. '%s '
                         else
-                            local _Friend = XFG.Friends:GetFriendByRealmUnitName(inMessage:GetRealm(), inMessage:GetName())
+                            local _Friend = XFG.Friends:GetFriendByRealmUnitName(inRealm, inName)
                             if(_Friend ~= nil) then
-                                _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inMessage:GetName(), _Friend:GetAccountID(), inMessage:GetName(), inMessage:GetName()) .. ' '
+                                _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inName, _Friend:GetAccountID(), inName, inName) .. ' '
                             else
                                 -- Maybe theyre in a bnet community together, no way to associate tho
                                 _Text = _Text .. '%s '
@@ -121,18 +118,18 @@ function ChatFrame:Display(inMessage)
                         end
                     end
 
-                    if(XFG.Config.Chat[_ConfigNode].Main and inMessage:GetMainName() ~= nil) then
-                        _Text = _Text .. '(' .. inMessage:GetMainName() .. ') '
+                    if(XFG.Config.Chat[_ConfigNode].Main and inMainName ~= nil) then
+                        _Text = _Text .. '(' .. inMainName .. ') '
                     end
 
                     if(XFG.Config.Chat[_ConfigNode].Guild) then
-                        _Text = _Text .. '<' .. _Guild:GetInitials() .. '> '
+                        _Text = _Text .. '<' .. inGuild:GetInitials() .. '> '
                     end
 
-                    if(_Event == 'GUILD_ACHIEVEMENT') then
-                        _Text = _Text .. XFG.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(GetAchievementLink(inMessage:GetData()), "(Player.-:.-:.-:.-:.-:)"  , inMessage:GetFrom() .. ':1:' .. date("%m:%d:%y:") ) .. '!'
+                    if(inType == 'GUILD_ACHIEVEMENT') then
+                        _Text = _Text .. XFG.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(GetAchievementLink(inData), "(Player.-:.-:.-:.-:.-:)"  , inFrom .. ':1:' .. date("%m:%d:%y:") ) .. '!'
                     else
-                        _Text = _Text .. inMessage:GetData()
+                        _Text = _Text .. inData
                     end
 
                     local _Hex = nil
@@ -145,7 +142,7 @@ function ChatFrame:Display(inMessage)
                     elseif(XFG.Config.Chat[_ConfigNode].FColor) then
                         _Hex = _Faction:GetName() == 'Horde' and 'E0000D' or '378DEF'
                     else
-                        local _Color = _G.ChatTypeInfo[_Event]
+                        local _Color = _G.ChatTypeInfo[inType]
                         _Hex = XFG:RGBPercToHex(_Color.r, _Color.g, _Color.b)
                     end
                    
@@ -153,15 +150,25 @@ function ChatFrame:Display(inMessage)
                         _Text = format('|cff%s%s|r', _Hex, _Text)
                     end
 
-                    if(_Event == 'GUILD' and XFG.WIM) then
-                        XFG.WIM:CHAT_MSG_GUILD(_Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                    if(inType == 'GUILD' and XFG.WIM) then
+                        XFG.WIM:CHAT_MSG_GUILD(_Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     else
-                        if(_Event ~= 'GUILD_ACHIEVEMENT') then _Text = XFG.Settings.Frames.Chat.Prepend .. _Text end
-                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. _Event, _Text, inMessage:GetUnitName(), XFG.Player.Faction:GetLanguage(), '', inMessage:GetUnitName(), '', 0, 0, '', 0, _, inMessage:GetFrom())
+                        _Text = XFG.Settings.Frames.Chat.Prepend .. _Text
+                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inType, _Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     end
                 end                                   
                 break
             end
         end
     end
+end
+
+function ChatFrame:DisplayGuildChat(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm(), inMessage:GetFrom(), inMessage:GetData())
+end
+
+function ChatFrame:DisplayAchievement(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm(), inMessage:GetFrom(), inMessage:GetData())
 end

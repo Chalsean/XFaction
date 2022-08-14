@@ -22,7 +22,7 @@ function GuildEvent:Initialize()
         -- Hook player inviting someone, they will send broadcast if player joins
         hooksecurefunc('GuildInvite', function(inInvitee) XFG.Invites[inInvitee] = true end)
         XFG:Info(LogCategory, 'Post-hooked GuildInvite API')
-        XFG:RegisterEvent('CLUB_MEMBER_ADDED', XFG.Handlers.GuildEventCallbackMemberJoined)
+        XFG:RegisterEvent('CLUB_MEMBER_ADDED', XFG.Handlers.GuildEvent.CallbackMemberJoined)
         XFG:Info(LogCategory, 'Registered for CLUB_MEMBER_ADDED events')
 		self:IsInitialized(true)
 	end
@@ -86,7 +86,7 @@ function GuildEvent:CallbackRosterUpdate()
     end
 end
 
-function GuildEvent:GuildEventCallbackMemberJoined(inGuildID, inMemberID)
+function GuildEvent:CallbackMemberJoined(inGuildID, inMemberID)
     try(function ()
         -- Technically probably dont need to check the guild id
         if(inGuildID == XFG.Player.Guild:GetID()) then

@@ -21,8 +21,8 @@ function ChatEvent:Initialize()
         XFG:Info(LogCategory, 'Registered for CHAT_MSG_GUILD events')
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.ChatFilter)
         XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD event filter')
-        --ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)
-        --XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)
+        XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -106,7 +106,7 @@ function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, 
     if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
     -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND']) or string.find(inMessage, XFG.Lib.Locale['CHAT_ACHIEVEMENT'])) then
         return true
     elseif(XFG.Confederate:Contains(inGUID)) then
         inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetUnit(inGUID))

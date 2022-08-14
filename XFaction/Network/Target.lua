@@ -76,3 +76,7 @@ function Target:Equals(inTarget)
     if(self:GetKey() ~= inTarget:GetKey()) then return false end
     return true
 end
+
+function Target:IsMyTarget()
+    return XFG.Player.Target:Equals(self)
+end

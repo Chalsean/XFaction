@@ -158,22 +158,28 @@ function Inbox:Process(inMessage, inMessageTag)
     -- Process message
     --========================================
 
-    -- Process gchat/achievement messages
-    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
+    -- Process GCHAT message
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT) then
         if(XFG.Player.Unit:CanGuildListen() and not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
-            XFG.Frames.Chat:Display(inMessage)
+            XFG.Frames.Chat:DisplayGuildChat(inMessage)
         end
         return
     end
 
-    -- Process link message
+    -- Process ACHIEVEMENT message
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
+        XFG.Frames.Chat:DisplayAchievement(inMessage)
+        return
+    end
+
+    -- Process LINK message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LINK) then
         XFG.Links:ProcessMessage(inMessage)
         XFG.DataText.Links:RefreshBroker()
         return
     end
 
-    -- Display system message that unit has logged off
+    -- Process LOGOUT message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         -- If own guild, GuildEvent will take care of logout
         if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
@@ -183,7 +189,9 @@ function Inbox:Process(inMessage, inMessageTag)
         return
     end
 
-    -- Process DATA/LOGIN messages
+    -- Process JOIN message
+
+    -- Process DATA/LOGIN message
     if(inMessage:HasUnitData()) then
         local _UnitData = inMessage:GetData()
         _UnitData:IsPlayer(false)
@@ -197,12 +205,6 @@ function Inbox:Process(inMessage, inMessageTag)
             if(not XFG.Player.Guild:Equals(_UnitData:GetGuild())) then
                 XFG.Frames.System:DisplayLoginMessage(inMessage)
             end
-            -- Reply if same realm/faction and under threshold
-            -- if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) and 
-            --    XFG.Player.Faction:Equals(_UnitData:GetFaction()) and 
-            --    XFG.Confederate:GetCountByTarget(XFG.Player.Target) <= XFG.Settings.Network.LoginLimit) then
-            --     XFG.Outbox:WhisperUnitData(_UnitData:GetGUID(), XFG.Player.Unit)
-            -- end    
         end
     end
 end

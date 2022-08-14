@@ -161,7 +161,7 @@ local function CanLink(inAccountInfo)
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
 
 		local _Faction = XFG.Factions:GetFactionByName(inAccountInfo.gameAccountInfo.factionName)
-		if(not XFG.Player.Faction:Equals(_Faction) or not XFG.Player.Realm:Equals(_Realm)) then
+		if(XFG.Targets:Contains(_Realm, _Faction) and (not XFG.Player.Faction:Equals(_Faction) or not XFG.Player.Realm:Equals(_Realm))) then
 			return true
 		end
 	end
@@ -174,6 +174,8 @@ function FriendCollection:CheckFriend(inKey)
 		if(_AccountInfo == nil) then
 			error('Received nil for friend [%d]', inKey)
 		end
+
+		XFG:DataDumper(LogCategory, _AccountInfo)
 
 		-- Did they go offline?
 		if(self:Contains(_AccountInfo.bnetAccountID)) then
