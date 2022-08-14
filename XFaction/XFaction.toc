@@ -1,7 +1,7 @@
 ## Interface: 90205
 ## Globe: check-classic
 ## Author: Chalsean (US-Proudmoore)
-## Version: 3.7.3
+## Version: 3.7.4
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
