@@ -100,6 +100,8 @@ L['SETUP_CONFEDERATE_INITIALS_TOOLTIP'] = 'Initials for your confederate, used t
 L['SETUP_CHANNEL_NAME_TOOLTIP'] = 'Channel name unique to your confederate, used to isolate message traffic'
 L['SETUP_CHANNEL_PASSWORD_TOOLTIP'] = 'Channel password to ensure players outside confederate cannot listen in'
 L['SETUP_ADD_GUILD'] = 'Add Guild'
+L['SETUP_GUILD_DESCRIPTION'] = 'Add, modify or delete guilds that are part of the confederate. Once all changes have been made, click the Save button to store in your guild information. The addon pulls setup from guild information so it is centralized and controlled by guild leadership.'
+L['SETUP_GUILD_MENU_TITLE'] = 'Confederate Guilds'
 --=========================================================================
 -- Channel Specific
 --=========================================================================

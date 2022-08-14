@@ -20,7 +20,7 @@ local function AddGuild()
 		order = i,
 		type = 'group',
 		name = 'Guild ' .. tostring(i),
-		inline = true,
+		--inline = true,
 		args = {
 			Name = {
 				order = 1,
@@ -71,6 +71,7 @@ local function AddGuild()
 			},
 		}
 	}
+	--LibStub("AceConfigRegistry-3.0"):NotifyChange("Config")
 end
 
 local function SaveGuild()
@@ -85,7 +86,7 @@ local function SaveGuild()
 			_NewGuild:SetFaction(XFG.Factions:GetFaction(XFG.Cache.SetupGuild.Faction))
 			_NewGuild:SetRealm(XFG.Realms:GetRealm(XFG.Cache.SetupGuild.Realm))							
 			XFG.Guilds:AddGuild(_NewGuild)
-			XFG.Cache.SetupGuild = {}
+			XFG:InitializeSetup()
 		end
 		XFG.Confederate:SaveGuildInfo() 
 		XFG.Options.args.Setup.args.Confederate.args.Save.disabled = true
@@ -234,7 +235,7 @@ XFG.Options.args.Setup = {
 							order = 1,
 							type = 'description',
 							fontSize = 'medium',
-							name = XFG.Lib.Locale['NAMEPLATE_KUI_DESCRIPTION'],
+							name = XFG.Lib.Locale['SETUP_GUILD_DESCRIPTION'],
 						},
 					}
 				},
@@ -260,8 +261,8 @@ XFG.Options.args.Setup = {
 				Options = {
 					order = 5,
 					type = 'group',
-					name = '',
-					inline = true,
+					childGroups = 'tree',
+					name = XFG.Lib.Locale['SETUP_GUILD_MENU_TITLE'],
 					disabled = function () return not XFG.Confederate:CanModifyGuildInfo() end,
 					args = {},
 				},			
@@ -353,14 +354,15 @@ function XFG:InitializeSetup()
 
 	sort(XFG.Cache.Factions)
 	sort(XFG.Cache.Realms)
+	XFG.Cache.SetupGuild = {}
 
 	local i = 1	
-	for _, _Guild in XFG.Guilds:Iterator() do
+	for _, _Guild in XFG.Guilds:SortedIterator() do
 		XFG.Options.args.Setup.args.Guilds.args.Options.args['Guild' .. i] = {
 			order = i,
 			type = 'group',
 			name = 'Guild ' .. tostring(i),
-			inline = true,
+			--inline = true,
 			args = {
 				Name = {
 					order = 1,

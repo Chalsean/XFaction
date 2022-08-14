@@ -97,6 +97,10 @@ function GuildCollection:Iterator()
 	return next, self._Guilds, nil
 end
 
+function GuildCollection:SortedIterator()
+	return PairsByKeys(self._Guilds)
+end
+
 function GuildCollection:GetCount()
 	return self._GuildCount
 end

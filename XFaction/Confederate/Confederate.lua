@@ -217,25 +217,36 @@ function Confederate:SaveGuildInfo()
                 end
             end
 
-            _NewGuildInfo = _NewGuildInfo .. 'XFn:' .. XFG.Confederate:GetName() .. ':' .. XFG.Confederate:GetKey() .. '\n'
-            _NewGuildInfo = _NewGuildInfo .. 'XFc:' .. XFG.Outbox:GetLocalChannel():GetName() .. ':' .. XFG.Outbox:GetLocalChannel():GetPassword() .. '\n'
-            _NewGuildInfo = _NewGuildInfo .. 'XFa:' .. XFG.Settings.Confederate.AltRank .. '\n'
+            local _XFInfo = ''
+
+            _XFInfo = _XFInfo .. 'XFn:' .. XFG.Confederate:GetName() .. ':' .. XFG.Confederate:GetKey() .. '\n'
+            _XFInfo = _XFInfo .. 'XFc:' .. XFG.Outbox:GetLocalChannel():GetName() .. ':' .. XFG.Outbox:GetLocalChannel():GetPassword() .. '\n'
+            _XFInfo = _XFInfo .. 'XFa:' .. XFG.Settings.Confederate.AltRank .. '\n'
 
             for _, _Guild in XFG.Guilds:Iterator() do
-                _NewGuildInfo = _NewGuildInfo .. 'XFg:' .. 
-                                _Guild:GetRealm():GetID() .. ':' ..
-                                _Guild:GetFaction():GetID() .. ':' ..
-                                _Guild:GetName() .. ':' ..
-                                _Guild:GetInitials() .. '\n'
+                _XFInfo = _XFInfo .. 'XFg:' .. 
+                          _Guild:GetRealm():GetID() .. ':' ..
+                          _Guild:GetFaction():GetID() .. ':' ..
+                          _Guild:GetName() .. ':' ..
+                          _Guild:GetInitials() .. '\n'
             end
 
             for _, _Team in XFG.Teams:Iterator() do
                 if(XFG.Settings.Confederate.DefaultTeams[_Team:GetKey()] == nil and XFG.Settings.Teams[_Team:GetKey()] == nil) then
-                    _NewGuildInfo = _NewGuildInfo .. 'XFt:' .. _Team:GetKey() .. ':' .. _Team:GetName() .. '\n'
+                    _XFInfo = _XFInfo .. 'XFt:' .. _Team:GetKey() .. ':' .. _Team:GetName() .. '\n'
                 end
             end
 
-            _NewGuildInfo = string.sub(_NewGuildInfo, 1, -2)
+            _XFInfo = string.sub(_XFInfo, 1, -2)
+
+            if(XFG.Config.Setup.Confederate.Compression) then
+                -- Serialize and compress XFaction data
+                local _Serialized = XFG:Serialize(_XFInfo)
+	            local _Compressed = XFG.Lib.Deflate:EncodeForPrint(XFG.Lib.Deflate:CompressDeflate(_Serialized, {level = XFG.Settings.Network.CompressionLevel}))
+                _NewGuildInfo = _NewGuildInfo .. 'XF:' .. _Compressed .. ':XF'
+            else
+                _NewGuildInfo = _NewGuildInfo .. _XFInfo
+            end
             --SetGuildInfoText(_NewGuildInfo)
             XFG:Debug(LogCategory, 'Set new guild information: ' .. _NewGuildInfo)
         end).

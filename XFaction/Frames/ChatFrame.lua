@@ -85,7 +85,6 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRe
     if(inType == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then inType = 'GUILD_ACHIEVEMENT' end
     local _ConfigNode = inType == 'GUILD' and 'GChat' or 'Achievement'
     if(not XFG.Config.Chat[_ConfigNode].Enable) then return end
-    XFG:Error(LogCategory, _ConfigNode)
 
     local _FrameTable
     -- There are multiple chat windows, each registers for certain types of messages to display

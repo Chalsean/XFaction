@@ -175,8 +175,6 @@ function FriendCollection:CheckFriend(inKey)
 			error('Received nil for friend [%d]', inKey)
 		end
 
-		XFG:DataDumper(LogCategory, _AccountInfo)
-
 		-- Did they go offline?
 		if(self:Contains(_AccountInfo.bnetAccountID)) then
 			if(CanLink(_AccountInfo) == false) then
