@@ -73,7 +73,7 @@ function BNet:Send(inMessage)
             inMessage:RemoveTarget(_Friend:GetTarget())
         end).
         catch(function (inErrorMessage)
-            XFG:Warn(ObjectName 'Failed to send packet to [%s]: ' .. inErrorMessage, _Friend:GetName())
+            XFG:Warn(ObjectName, 'Failed to send packet to [%s]: ' .. inErrorMessage, _Friend:GetName())
         end)
     end
 end
