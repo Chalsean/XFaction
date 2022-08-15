@@ -19,7 +19,7 @@ function Object:newChildConstructor()
     local _Object = {}
     setmetatable(_Object, self)
     self.__index = self
-    self.__name = ObjectName
+    self.__name = 'Object'
     self.parent = self
     
     self._Key = nil
