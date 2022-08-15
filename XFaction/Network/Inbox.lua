@@ -47,7 +47,6 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         XFG.Metrics:GetObject(XFG.Settings.Metric.Messages):Increment()
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, debug.traceback())
         XFG:Warn(ObjectName, 'Failed to process received message: ' .. inErrorMessage)
     end)
 end

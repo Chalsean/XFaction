@@ -92,14 +92,14 @@ function Confederate:RestoreBackup()
     for _, _Data in pairs (XFG.DB.Backup.Confederate) do
         try(function ()
             local _UnitData = XFG:DeserializeUnitData(_Data)
-            if(self:AddObject(_UnitData)) then
+            if(self:AddUnit(_UnitData)) then
                 XFG:Info(self:GetObjectName(), '  Restored %s unit information from backup', _UnitData:GetUnitName())
             end
         end).
         catch(function (inErrorMessage)
             XFG:Warn(self:GetObjectName(), 'Failed to restore confederate unit: ' .. inErrorMessage)
         end)
-    end    
+    end
 end
 
 function Confederate:GetCountByTarget(inTarget)

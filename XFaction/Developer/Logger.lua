@@ -14,7 +14,10 @@ end
 function XFG:Error(SubCategory, ...)
 	local status, res = pcall(format, ...)
 	if status then
-	  if DLAPI then DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, res)) end
+		if DLAPI then 
+			DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, res)) 
+			DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, debugstack())) 
+		end
 	end
 	if(XFG.Metrics ~= nil) then
 		XFG.Metrics:GetObject(XFG.Settings.Metric.Error):Increment()
@@ -24,7 +27,10 @@ end
 function XFG:Warn(SubCategory, ...)
 	local status, res = pcall(format, ...)
 	if status then
-	  if DLAPI then DLAPI.DebugLog(XFG.Category, format('WARN~%s~3~%s', SubCategory, res)) end
+		if DLAPI then 
+			DLAPI.DebugLog(XFG.Category, format('WARN~%s~3~%s', SubCategory, res)) 
+			DLAPI.DebugLog(XFG.Category, format('WARN~%s~3~%s', SubCategory, debugstack())) 
+		end
 	end
 	if(XFG.Metrics ~= nil) then
 		XFG.Metrics:GetObject(XFG.Settings.Metric.Warning):Increment()

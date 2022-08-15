@@ -480,7 +480,7 @@ end
 -- Periodically broadcast your links
 function TimerEvent:CallbackLinks()
 	try(function ()
-    		XFG.Links:BroadcastLinks()
+    	XFG.Links:BroadcastLinks()
 	end).
 	catch(function (inErrorMessage)
 		XFG:Warn(ObjectName, 'Failed to broadcast links: ' .. inErrorMessage)
