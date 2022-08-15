@@ -53,7 +53,7 @@ function ChannelCollection:ScanChannels()
 			local _ChannelID, _ChannelName, _Disabled = _Channels[i], _Channels[i+1], _Channels[i+2]
 			_IDs[_ChannelID] = true
 			if(self:Contains(_ChannelName)) then
-				local _Channel = self:GetChannel(_ChannelName)
+				local _Channel = self:GetObject(_ChannelName)
 				if(_Channel:GetID() ~= _ChannelID) then
 					local _OldID = _Channel:GetID()
 					_Channel:SetID(_ChannelID)
@@ -64,13 +64,13 @@ function ChannelCollection:ScanChannels()
 				_NewChannel:SetKey(_ChannelName)
 				_NewChannel:SetName(_ChannelName)
 				_NewChannel:SetID(_ChannelID)
-				self:AddChannel(_NewChannel)
+				self:AddObject(_NewChannel)
 			end
 		end
 
 		for _, _Channel in self:Iterator() do
 			if(_IDs[_Channel:GetID()] == nil) then
-				self:RemoveChannel(_Channel)
+				self:RemoveObject(_Channel)
 			end
 		end
 	end).
