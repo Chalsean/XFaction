@@ -41,9 +41,7 @@ function BNet:Send(inMessage)
             local _RandomNumber = math.random(1, _FriendCount)
             table.insert(_Links, _Friends[_RandomNumber])
         else
-            local _Realm = _Target:GetRealm()
-            local _Faction = _Target:GetFaction()
-            XFG:Debug(ObjectName, 'Unable to identify friends on target [%s:%s]', _Realm:GetName(), _Faction:GetName())
+            XFG:Debug(ObjectName, 'Unable to identify friends on target [%s:%s]', _Target:GetRealm():GetName(), _Target:GetFaction():GetName())
         end
     end
 
