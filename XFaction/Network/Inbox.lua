@@ -158,6 +158,10 @@ function Inbox:Process(inMessage, inMessageTag)
     end
 
     -- Process JOIN message
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.JOIN) then
+        XFG.Frames.System:DisplayJoinMessage(inMessage)
+        return
+    end
 
     -- Process DATA/LOGIN message
     if(inMessage:HasUnitData()) then

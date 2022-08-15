@@ -46,6 +46,8 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     
     if(inType == XFG.Settings.Network.Message.Subject.LOGOUT) then
         _Message = _Message .. XFG.Lib.Locale['CHAT_LOGOUT']
+    elseif(inType == XFG.Settings.Network.Message.Subject.JOIN) then
+        _Message = _Message .. XFG.Lib.Locale['CHAT_JOIN_CONFEDERATE']
     elseif(inType == XFG.Settings.Network.Message.Subject.LOGIN) then
         _Message = _Message .. XFG.Lib.Locale['CHAT_LOGIN']
         if(XFG.Config.Chat.Login.Sound and not XFG.Player.Guild:Equals(inGuild)) then
@@ -53,6 +55,12 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
         end
     end
     SendSystemMessage(_Message) 
+end
+
+function SystemFrame:DisplayJoinMessage(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    local _UnitData = inMessage:GetData()
+    self:Display(inMessage:GetSubject(), _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
 end
 
 function SystemFrame:DisplayLoginMessage(inMessage)

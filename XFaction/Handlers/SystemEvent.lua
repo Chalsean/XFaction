@@ -65,7 +65,9 @@ function SystemEvent:ChatFilter(inEvent, inMessage, ...)
     elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
         return true
     elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGOUT'])) then
-        return true    
+        return true
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_JOIN_GUILD'])) then
+        return true 
     end
     return false, inMessage, ...
 end
