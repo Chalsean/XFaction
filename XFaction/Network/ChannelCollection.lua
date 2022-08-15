@@ -22,7 +22,7 @@ function ChannelCollection:SetChannelLast(inKey)
 	if(not self:Contains(inKey)) then return end
 	
 	self:ScanChannels()
-	local _Channel = self:GetChannel(inKey)
+	local _Channel = self:GetObject(inKey)
 
 	for i = _Channel:GetID() + 1, 10 do
 		local _NextChannel = self:GetChannelByID(i)
