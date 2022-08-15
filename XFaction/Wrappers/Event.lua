@@ -121,4 +121,5 @@ function XFG:CreateEvent(inKey, inName, inCallback, inInstance, inInstanceCombat
         _Event:Start()
     end
     XFG.Events:AddObject(_Event)
+    XFG:Info('Event', 'Registered to receive %s events', inName)
 end
