@@ -25,11 +25,11 @@ local function DeserializeMessage(inSerializedMessage)
 	if(_MessageData.P ~= nil) then _Message:SetPacketNumber(_MessageData.P) end
 	if(_MessageData.Q ~= nil) then _Message:SetTotalPackets(_MessageData.Q) end
 	if(_MessageData.V ~= nil) then 
-		local _Version = XFG.Versions:GetVersion(_MessageData.V)
+		local _Version = XFG.Versions:GetObject(_MessageData.V)
 		if(_Version == nil) then
 			_Version = Version:new()
 			_Version:SetKey(_MessageData.V)
-			XFG.Versions:AddVersion(_Version)
+			XFG.Versions:AddObject(_Version)
 		end
 		_Message:SetVersion(_Version) 
 	end
@@ -56,13 +56,13 @@ function XFG:DeserializeUnitData(inData)
 	local _UnitData = Unit:new()
 	_UnitData:IsRunningAddon(true)
 	if(_DeserializedData.C ~= nil) then
-		_UnitData:SetCovenant(XFG.Covenants:GetCovenant(_DeserializedData.C))
+		_UnitData:SetCovenant(XFG.Covenants:GetObject(_DeserializedData.C))
 	end
-	_UnitData:SetFaction(XFG.Factions:GetFaction(_DeserializedData.F))
+	_UnitData:SetFaction(XFG.Factions:GetObject(_DeserializedData.F))
 	_UnitData:SetGUID(_DeserializedData.K)
 	_UnitData:SetKey(_DeserializedData.K)
-	_UnitData:SetClass(XFG.Classes:GetClass(_DeserializedData.O))
-	_UnitData:SetRace(XFG.Races:GetRace(_DeserializedData.A))
+	_UnitData:SetClass(XFG.Classes:GetObject(_DeserializedData.O))
+	_UnitData:SetRace(XFG.Races:GetObject(_DeserializedData.A))
 	local _UnitNameParts = string.Split(_DeserializedData.U, '-')
 	_UnitData:SetName(_UnitNameParts[1])
 	_UnitData:SetUnitName(_DeserializedData.U)
@@ -74,40 +74,40 @@ function XFG:DeserializeUnitData(inData)
 	_UnitData:SetNote(_DeserializedData.N)	
 	_UnitData:IsOnline(true)
 	if(_DeserializedData.P1 ~= nil) then
-		_UnitData:SetProfession1(XFG.Professions:GetProfession(_DeserializedData.P1))
+		_UnitData:SetProfession1(XFG.Professions:GetObject(_DeserializedData.P1))
 	end
 	if(_DeserializedData.P2 ~= nil) then
-		_UnitData:SetProfession2(XFG.Professions:GetProfession(_DeserializedData.P2))
+		_UnitData:SetProfession2(XFG.Professions:GetObject(_DeserializedData.P2))
 	end
 	_UnitData:IsRunningAddon(true)
 	if(_DeserializedData.S ~= nil) then
-		_UnitData:SetSoulbind(XFG.Soulbinds:GetSoulbind(_DeserializedData.S))
+		_UnitData:SetSoulbind(XFG.Soulbinds:GetObject(_DeserializedData.S))
 	end
 	local _EpochTime = GetServerTime()
 	_UnitData:SetTimeStamp(_EpochTime)
 	if(_DeserializedData.V ~= nil) then
-		_UnitData:SetSpec(XFG.Specs:GetSpec(_DeserializedData.V))
+		_UnitData:SetSpec(XFG.Specs:GetObject(_DeserializedData.V))
 	end
 
 	if(_DeserializedData.D ~= nil and XFG.Zones:ContainsByID(tonumber(_DeserializedData.D))) then
 		_UnitData:SetZone(XFG.Zones:GetZoneByID(tonumber(_DeserializedData.D)))
 	elseif(_DeserializedData.Z == nil) then
-		_UnitData:SetZone(XFG.Zones:GetZone('?'))
+		_UnitData:SetZone(XFG.Zones:GetObject('?'))
 	else
 		if(not XFG.Zones:Contains(_DeserializedData.Z)) then
-			XFG.Zones:AddZoneName(_DeserializedData.Z)
+			XFG.Zones:AddZone(_DeserializedData.Z)
 		end
-		_UnitData:SetZone(XFG.Zones:GetZone(_DeserializedData.Z))
+		_UnitData:SetZone(XFG.Zones:GetObject(_DeserializedData.Z))
 	end
 
 	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
 	if(_DeserializedData.Y ~= nil) then _UnitData:SetPvPString(_DeserializedData.Y) end
 	if(_DeserializedData.X ~= nil) then 
-		local _Version = XFG.Versions:GetVersion(_DeserializedData.X)
+		local _Version = XFG.Versions:GetObject(_DeserializedData.X)
 		if(_Version == nil) then
 			_Version = Version:new()
 			_Version:SetKey(_DeserializedData.X)
-			XFG.Versions:AddVersion(_Version)
+			XFG.Versions:AddObject(_Version)
 		end
 		_UnitData:SetVersion(_Version) 
 	end

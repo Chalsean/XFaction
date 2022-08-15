@@ -1,66 +1,48 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Message'
-local LogCategory = 'NMessage'
 
-Message = {}
+Message = Object:newChildConstructor()
 
 function Message:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-    
-    self._Key = nil
-    self._To = nil
-    self._From = nil
-    self._Type = nil
-    self._Subject = nil
-    self._EpochTime = nil
-    self._TargetCount = 0
-    self._Data = nil
-    self._Initialized = false
-    self._PacketNumber = 1
-    self._TotalPackets = 1
-    self._Version = nil
-
+    local _Object = Message.parent.new(self)
+    _Object.__name = 'Message'
+    _Object._To = nil
+    _Object._From = nil
+    _Object._Type = nil
+    _Object._Subject = nil
+    _Object._EpochTime = nil
+    _Object._Targets = nil
+    _Object._TargetCount = 0
+    _Object._Data = nil
+    _Object._Initialized = false
+    _Object._PacketNumber = 1
+    _Object._TotalPackets = 1
+    _Object._Version = nil
     return _Object
 end
 
 function Message:newChildConstructor()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-    self.parent = self
-    
-    self._Key = nil
-    self._To = nil
-    self._From = nil    
-    self._Type = nil
-    self._Subject = nil
-    self._EpochTime = nil    
-    self._TargetCount = 0
-    self._Data = nil
-    self._Initialized = false
-    self._PacketNumber = 1
-    self._TotalPackets = 1
-    self._Version = nil
-
+    local _Object = Message.parent.new(self)
+    _Object.__name = 'Message'
+    _Object.parent = self
+    _Object._To = nil
+    _Object._From = nil
+    _Object._Type = nil
+    _Object._Subject = nil
+    _Object._EpochTime = nil
+    _Object._Targets = nil
+    _Object._TargetCount = 0
+    _Object._Data = nil
+    _Object._Initialized = false
+    _Object._PacketNumber = 1
+    _Object._TotalPackets = 1
+    _Object._Version = nil
     return _Object
 end
 
-function Message:IsInitialized(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self._Initialized = inBoolean
-    end
-    return self._Initialized
-end
-
 function Message:Initialize()
-    if(self:IsInitialized() == false) then
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
         self._Targets = {}
-        self:SetKey(math.GenerateUID())
         self:SetFrom(XFG.Player.Unit:GetKey())
         local _EpochTime = GetServerTime()
         self:SetTimeStamp(_EpochTime)
@@ -72,19 +54,17 @@ function Message:Initialize()
 end
 
 function Message:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
-    XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
-    XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
-    XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
-    XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
-    XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
-    XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-    XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
-    XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
+    XFG:Debug(self:GetObjectName(), "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+    XFG:Debug(self:GetObjectName(), "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
+    XFG:Debug(self:GetObjectName(), "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
+    XFG:Debug(self:GetObjectName(), "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
+    XFG:Debug(self:GetObjectName(), "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
+    XFG:Debug(self:GetObjectName(), "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
+    XFG:Debug(self:GetObjectName(), "  _Data (" ..type(self._Data) .. ")")
+    XFG:Debug(self:GetObjectName(), "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
+    XFG:Debug(self:GetObjectName(), "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
     if(self:HasVersion()) then self._Version:Print() end
     for _, _Target in pairs (self:GetTargets()) do
         _Target:Print()
@@ -92,30 +72,17 @@ function Message:Print()
 end
 
 function Message:ShallowPrint()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
-    XFG:Debug(LogCategory, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
-    XFG:Debug(LogCategory, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
-    XFG:Debug(LogCategory, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
-    XFG:Debug(LogCategory, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
-    XFG:Debug(LogCategory, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
-    XFG:Debug(LogCategory, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-    XFG:Debug(LogCategory, "  _Data (" ..type(self._Data) .. ")")
-    XFG:Debug(LogCategory, "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(LogCategory, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
+    XFG:Debug(self:GetObjectName(), "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+    XFG:Debug(self:GetObjectName(), "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
+    XFG:Debug(self:GetObjectName(), "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
+    XFG:Debug(self:GetObjectName(), "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
+    XFG:Debug(self:GetObjectName(), "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
+    XFG:Debug(self:GetObjectName(), "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
+    XFG:Debug(self:GetObjectName(), "  _Data (" ..type(self._Data) .. ")")
+    XFG:Debug(self:GetObjectName(), "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
     if(self:HasVersion()) then self._Version:Print() end
-end
-
-function Message:GetKey()
-    return self._Key
-end
-
-function Message:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
 end
 
 function Message:GetTo()
@@ -254,33 +221,12 @@ function Message:SetRemainingTargets(inTargetString)
     self._TargetCount = 0
     local _Targets = string.Split(inTargetString, '|')
     for _, _TargetKey in pairs (_Targets) do
-        if(_TargetKey ~= nil and XFG.Targets:ContainsByKey(_TargetKey)) then
-            local _Target = XFG.Targets:GetTargetByKey(_TargetKey)
+        if(_TargetKey ~= nil and XFG.Targets:Contains(_TargetKey)) then
+            local _Target = XFG.Targets:GetObject(_TargetKey)
             if(not XFG.Player.Target:Equals(_Target)) then
                 self:AddTarget(_Target)
             end
         end
-    end
-end
-
-function Message:Copy(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
-    self._Key = inMessage:GetKey()
-    self._To = inMessage:GetTo()
-    self._From = inMessage:GetFrom()
-    self._Type = inMessage:GetType()
-    self._Subject = inMessage:GetSubject()
-    self._EpochTime = inMessage:GetTimeStamp()
-    self._Data = inMessage:GetData()
-    self._Initialized = inMessage:IsInitialized()
-    self._PacketNumber = inMessage:GetPacketNumber()
-    self._TotalPackets = inMessage:GetTotalPackets()
-    self._Version = inMessage:GetVersion()
-    for _, _Target in pairs (self:GetTargets()) do
-        self:RemoveTarget(_Target)
-    end
-    for _, _Target in pairs (inMessage:GetTargets()) do
-        self:AddTarget(_Target)
     end
 end
 

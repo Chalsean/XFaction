@@ -1,57 +1,20 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Outbox'
-local LogCategory = 'NOutbox'
 
-Outbox = {}
+Outbox = Object:newChildConstructor()
 
 function Outbox:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Initialized = false
-    self._LocalChannel = nil
-
+    local _Object = Outbox.parent.new(self)
+    _Object.__name = 'Outbox'
+    _Object._LocalChannel = nil
     return _Object
 end
 
-function Outbox:IsInitialized(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self._Initialized = inBoolean
-    end
-    return self._Initialized
-end
-
-function Outbox:Initialize()
-    if(self:IsInitialized() == false) then
-        self:SetKey(math.GenerateUID())
-        self:IsInitialized(true)
-    end
-    return self:IsInitialized()
-end
-
 function Outbox:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(LogCategory, "  _LocalChannel (" .. type(self._LocalChannel) .. ")")
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), "  _LocalChannel (" .. type(self._LocalChannel) .. ")")
     if(self._LocalChannel ~= nil) then
         self._LocalChannel:Print()
     end
-end
-
-function Outbox:GetKey()
-    return self._Key
-end
-
-function Outbox:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
 end
 
 function Outbox:HasLocalChannel()
@@ -81,7 +44,7 @@ function Outbox:Send(inMessage)
         inMessage:Initialize()
     end
 
-    XFG:Debug(LogCategory, 'Attempting to send message')
+    XFG:Debug(self:GetObjectName(), 'Attempting to send message')
     inMessage:ShallowPrint()
 
     if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
@@ -94,7 +57,7 @@ function Outbox:Send(inMessage)
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
         elseif(not inMessage:HasTargets() and inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST) then
-            XFG:Debug(LogCategory, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
+            XFG:Debug(self:GetObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
             inMessage:SetType(XFG.Settings.Network.Type.LOCAL)        
         end
     end
@@ -102,14 +65,14 @@ function Outbox:Send(inMessage)
     local _OutgoingData = XFG:EncodeMessage(inMessage, true)
     -- Whisper to same realm/faction player
     if(inMessage:GetType() == XFG.Settings.Network.Type.WHISPER) then 
-        XFG:Debug(LogCategory, 'Whispering [%s] with tag [%s]', inMessage:GetTo(), XFG.Settings.Network.Message.Tag.LOCAL)
+        XFG:Debug(self:GetObjectName(), 'Whispering [%s] with tag [%s]', inMessage:GetTo(), XFG.Settings.Network.Message.Tag.LOCAL)
         XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'WHISPER', inMessage:GetTo())
     -- Broadcast on same realm/faction channel for multiple players
     elseif(self:HasLocalChannel()) then
         local _Channel = self:GetLocalChannel()
-        XFG:Debug(LogCategory, 'Broadcasting on channel [%s] with tag [%s]', _Channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
+        XFG:Debug(self:GetObjectName(), 'Broadcasting on channel [%s] with tag [%s]', _Channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
         XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'CHANNEL', _Channel:GetID())
-        XFG.Metrics:GetMetric(XFG.Settings.Metric.ChannelSend):Increment()
+        XFG.Metrics:GetObject(XFG.Settings.Metric.ChannelSend):Increment()
     end
 end
 
@@ -120,7 +83,7 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     if(inUnitData:IsPlayer()) then
         local _EpochTime = GetServerTime()
         if(XFG.Player.LastBroadcast > _EpochTime - XFG.Settings.Player.MinimumHeartbeat) then 
-            XFG:Debug(LogCategory, 'Not sending broadcast, its been too recent')
+            XFG:Debug(self:GetObjectName(), 'Not sending broadcast, its been too recent')
             return 
         end
         inUnitData:SetTimeStamp(_EpochTime)

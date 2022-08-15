@@ -1,47 +1,28 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'AchievementEvent'
-local LogCategory = 'HEAchievement'
 
-AchievementEvent = {}
+AchievementEvent = Object:newChildConstructor()
 
 function AchievementEvent:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-    self._Initialized = false
-    
+    local _Object = AchievementEvent.parent.new(self)
+    _Object.__name = ObjectName
     return _Object
 end
 
 function AchievementEvent:Initialize()
 	if(not self:IsInitialized()) then
+        self:ParentInitialize()
         XFG:RegisterEvent('ACHIEVEMENT_EARNED', XFG.Handlers.AchievementEvent.CallbackAchievement)
-        XFG:Info(LogCategory, 'Registered for ACHIEVEMENT_EARNED events')
+        XFG:Info(self:GetObjectName(), 'Registered for ACHIEVEMENT_EARNED events')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
-end
-
-function AchievementEvent:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
-function AchievementEvent:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 end
 
 function AchievementEvent:CallbackAchievement(inID)
     try(function ()
         local _, _Name, _, _, _, _, _, _, _, _, _, _IsGuild, _, _EarnedBy = GetAchievementInfo(inID)
         if(_IsGuild) then
-            XFG:Error(LogCategory, _EarnedBy)
             local _UnitData = XFG.Confederate:GetUnitByName(_EarnedBy)    
             if(_UnitData ~= nil) then
                 XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm(), _UnitData:GetGUID(), inID)
@@ -64,6 +45,6 @@ function AchievementEvent:CallbackAchievement(inID)
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(LogCategory, 'Failed to send achievement message: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, 'Failed to send achievement message: ' .. inErrorMessage)
     end)    
 end

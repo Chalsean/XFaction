@@ -1,75 +1,25 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Guild'
-local LogCategory = 'CGuild'
 
-Guild = {}
+Guild = Object:newChildConstructor()
 
 function Guild:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._ID = nil        -- Only the player's guild will have an ID
-    self._StreamID = nil  -- Only the player's guild will have a StreamerID (this is gchat)
-    self._Name = nil
-    self._Initials = nil
-    self._Faction = nil
-    self._Realm = nil
-    self._Initialized = false
-
+    local _Object = Guild.parent.new(self)
+    _Object.__name = 'Guild'
+    _Object._ID = nil        -- Only the player's guild will have an ID
+    _Object._StreamID = nil  -- Only the player's guild will have a StreamerID (this is gchat)
+    _Object._Initials = nil
+    _Object._Faction = nil
+    _Object._Realm = nil
     return _Object
 end
 
-function Guild:IsInitialized(inInitialized)
-    assert(inInitialized == nil or type(inInitialized) == 'boolean', 'argument needs to be nil or boolean')
-    if(inInitialized ~= nil) then
-        self._Initialized = inInitialized
-    end
-	return self._Initialized
-end
-
-function Guild:Initialize()
-	if(self:IsInitialized() == false) then
-        self:SetKey(math.GenerateUID())
-        self:IsInitialized(true)
-	end
-	return self:IsInitialized()
-end
-
 function Guild:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(LogCategory, '  _StreamID (' .. type(self._StreamID) .. '): ' .. tostring(self._StreamID))
-    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-    XFG:Debug(LogCategory, '  _Initials (' .. type(self._Initials) .. '): ' .. tostring(self._Initials))
-    XFG:Debug(LogCategory, '  _Faction (' .. type(self._Faction) .. ')')
-    self._Faction:Print()
-    XFG:Debug(LogCategory, '  _Realm (' .. type(self._Realm) .. ')')
-    self._Realm:Print()
-end
-
-function Guild:GetKey()
-    return self._Key
-end
-
-function Guild:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
-end
-
-function Guild:GetName()
-    return self._Name
-end
-
-function Guild:SetName(inName)
-    assert(type(inName) == 'string')
-    self._Name = inName
-    return self:GetName()
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+    XFG:Debug(self:GetObjectName(), '  _StreamID (' .. type(self._StreamID) .. '): ' .. tostring(self._StreamID))
+    XFG:Debug(self:GetObjectName(), '  _Initials (' .. type(self._Initials) .. '): ' .. tostring(self._Initials))
+    if(self:HasFaction()) then self:GetFaction():Print() end
+    if(self:HasRealm()) then self:GetRealm():Print() end
 end
 
 function Guild:GetInitials()
@@ -96,10 +46,6 @@ function Guild:SetID(inID)
     return self:GetID()
 end
 
-function Guild:GetFaction()
-    return self._Faction
-end
-
 function Guild:HasStreamID()
     return self._StreamID ~= nil
 end
@@ -114,10 +60,22 @@ function Guild:SetStreamID(inStreamID)
     return self:GetStreamID()
 end
 
+function Guild:HasFaction()
+    return self._Faction ~= nil
+end
+
+function Guild:GetFaction()
+    return self._Faction
+end
+
 function Guild:SetFaction(inFaction)
     assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', 'argument must be Faction object')
     self._Faction = inFaction
     return self:GetFaction()
+end
+
+function Guild:HasRealm()
+    return self._Realm ~= nil
 end
 
 function Guild:GetRealm()
@@ -128,11 +86,4 @@ function Guild:SetRealm(inRealm)
     assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
     self._Realm = inRealm
     return self:GetRealm()
-end
-
-function Guild:Equals(inGuild)
-    if(inGuild == nil) then return false end
-    if(type(inGuild) ~= 'table' or inGuild.__name == nil or inGuild.__name ~= 'Guild') then return false end
-    if(self:GetKey() ~= inGuild:GetKey()) then return false end
-    return true
 end

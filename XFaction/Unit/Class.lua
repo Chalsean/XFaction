@@ -1,58 +1,27 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Class'
-local LogCategory = 'UClass'
 
-Class = {}
+Class = Object:newChildConstructor()
 
 function Class:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._ID = nil
-    self._Name = nil
-    self._APIName = nil
-    self._R = nil
-    self._G = nil
-    self._B = nil
-    self._Hex = nil
-
-    return Object
+    local _Object = Class.parent.new(self)
+    _Object.__name = 'Class'
+    _Object._ID = nil
+    _Object._APIName = nil
+    _Object._R = nil
+    _Object._G = nil
+    _Object._B = nil
+    _Object._Hex = nil
+    return _Object
 end
 
 function Class:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-    XFG:Debug(LogCategory, '  _APIName (' .. type(self._APIName) .. '): ' .. tostring(self._APIName))
-    XFG:Debug(LogCategory, '  _R (' .. type(self._R) .. '): ' .. tostring(self._R))
-    XFG:Debug(LogCategory, '  _G (' .. type(self._G) .. '): ' .. tostring(self._G))
-    XFG:Debug(LogCategory, '  _B (' .. type(self._B) .. '): ' .. tostring(self._B))
-    XFG:Debug(LogCategory, '  _Hex (' .. type(self._Hex) .. '): ' .. tostring(self._Hex))
-end
-
-function Class:GetKey()
-    return self._Key
-end
-
-function Class:SetKey(inKey)
-    assert(type(inKey) == 'number')
-    self._Key = inKey
-    return self:GetKey()
-end
-
-function Class:GetName()
-    return self._Name
-end
-
-function Class:SetName(inName)
-    assert(type(inName) == 'string')
-    self._Name = inName
-    return self:GetName()
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+    XFG:Debug(self:GetObjectName(), '  _APIName (' .. type(self._APIName) .. '): ' .. tostring(self._APIName))
+    XFG:Debug(self:GetObjectName(), '  _R (' .. type(self._R) .. '): ' .. tostring(self._R))
+    XFG:Debug(self:GetObjectName(), '  _G (' .. type(self._G) .. '): ' .. tostring(self._G))
+    XFG:Debug(self:GetObjectName(), '  _B (' .. type(self._B) .. '): ' .. tostring(self._B))
+    XFG:Debug(self:GetObjectName(), '  _Hex (' .. type(self._Hex) .. '): ' .. tostring(self._Hex))
 end
 
 function Class:GetID()

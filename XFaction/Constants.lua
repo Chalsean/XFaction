@@ -92,7 +92,8 @@ XFG.Settings = {
 	},
 	LocalGuild = {
 		ScanTimer = 30,          -- Seconds between forced local guild scans
-		LoginGiveUp = 60 * 5     -- Seconds before giving up on querying for guild on login
+		LoginGiveUp = 60 * 5,    -- Seconds before giving up on querying for guild on login
+		MaxGuildInfo = 500,      -- Maximum # of characters guild info can take
 	},
 	-- EK specific teams
 	Teams = {
@@ -116,6 +117,7 @@ XFG.Settings = {
 		ENKH = 'Social',
 		CC = 'CC'
 	},
+	Factions = {'Alliance', 'Horde', 'Neutral'},
 	Network = {
 		CompressionLevel = 6,
 		LoginLimit = 42,

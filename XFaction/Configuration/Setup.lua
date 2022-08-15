@@ -84,8 +84,8 @@ local function SaveGuild()
 			_NewGuild:SetName(XFG.Cache.SetupGuild.Name)
 			_NewGuild:SetInitials(XFG.Cache.SetupGuild.Initials)
 			_NewGuild:SetFaction(XFG.Factions:GetFaction(XFG.Cache.SetupGuild.Faction))
-			_NewGuild:SetRealm(XFG.Realms:GetRealm(XFG.Cache.SetupGuild.Realm))							
-			XFG.Guilds:AddGuild(_NewGuild)
+			_NewGuild:SetRealm(XFG.Realms:GetObject(XFG.Cache.SetupGuild.Realm))							
+			XFG.Guilds:AddObject(_NewGuild)
 			XFG:InitializeSetup()
 		end
 		XFG.Confederate:SaveGuildInfo() 
@@ -407,7 +407,7 @@ function XFG:InitializeSetup()
 					values = XFG.Cache.Realms,
 					get = function(info) return _Guild:GetRealm():GetKey() end,
 					set = function(info, value) 
-						_Guild:SetRealm(XFG.Realms:GetRealm(value))
+						_Guild:SetRealm(XFG.Realms:GetObject(value))
 						XFG.Options.args.Setup.args.Confederate.args.Save.disabled = false
 					end,
 				},

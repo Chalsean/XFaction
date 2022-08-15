@@ -1,100 +1,36 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'LinkCollection'
-local LogCategory = 'NCLink'
 
-LinkCollection = {}
+LinkCollection = ObjectCollection:newChildConstructor()
 
 function LinkCollection:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Links = {}
-    self._LinkCount = 0
-	self._EpochTime = nil
-    self._Initialized = false
-
-    return _Object
-end
-
-function LinkCollection:Initialize()
-	if(self:IsInitialized() == false) then
-		self:SetKey(math.GenerateUID())
-		self._EpochTime = 0
-		self:IsInitialized(true)
-	end
-	return self:IsInitialized()
-end
-
-function LinkCollection:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
-function LinkCollection:Print()
-	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _LinkCount (" .. type(self._LinkCount) .. "): ".. tostring(self._LinkCount))
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    for _, _Link in self:Iterator() do
-        _Link:Print()
-    end
-end
-
-function LinkCollection:GetKey()
-    return self._Key
-end
-
-function LinkCollection:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
-end
-
-function LinkCollection:Contains(inKey)
-	assert(type(inKey) == 'string')
-    return self._Links[inKey] ~= nil
-end
-
-function LinkCollection:GetLink(inKey)
-	assert(type(inKey) == 'string')
-    return self._Links[inKey]
+    local _Object = LinkCollection.parent.new(self)
+	_Object.__name = 'LinkCollection'
+	_Object._EpochTime = 0
+	return _Object
 end
 
 function LinkCollection:AddLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(not self:Contains(inLink:GetKey())) then
-		self._LinkCount = self._LinkCount + 1
+		self:AddObject(inLink)
 		inLink:GetFromNode():IncrementLinkCount()
 		inLink:GetToNode():IncrementLinkCount()
-		XFG:Info(LogCategory, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
-	end
-    self._Links[inLink:GetKey()] = inLink
-	XFG.DataText.Links:RefreshBroker()	
+		XFG:Info(self:GetObjectName(), 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
+		XFG.DataText.Links:RefreshBroker()	
+	end	
     return self:Contains(inLink:GetKey())	
 end
 
 function LinkCollection:RemoveLink(inLink)
     assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
 	if(self:Contains(inLink:GetKey())) then
-		self._LinkCount = self._LinkCount - 1
+		self:RemoveObject(inLink:GetKey())
 		inLink:GetFromNode():DecrementLinkCount()
 		inLink:GetToNode():DecrementLinkCount()
-		self._Links[inLink:GetKey()] = nil
-		XFG:Info(LogCategory, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
+		XFG:Info(self:GetObjectName(), 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
 		XFG.DataText.Links:RefreshBroker()
 	end
-    return self:Contains(inLink:GetKey()) == false
-end
-
-function LinkCollection:Iterator()
-	return next, self._Links, nil
+    return not self:Contains(inLink:GetKey())
 end
 
 -- A link message is a reset of the links for that node
@@ -114,7 +50,7 @@ function LinkCollection:ProcessMessage(inMessage)
 				_FromName = _NewLink:GetFromNode():GetName()
 			end
 		else
-			XFG:Warn(LogCategory, 'Failed to parse received links message')
+			XFG:Warn(self:GetObjectName(), 'Failed to parse received links message')
 			return
 		end
     end
@@ -123,7 +59,7 @@ function LinkCollection:ProcessMessage(inMessage)
 		-- Consider that we may have gotten link information from the other node
 		if(not _Link:IsMyLink() and (_Link:GetFromNode():GetName() == _FromName or _Link:GetToNode():GetName() == _FromName) and _Links[_Link:GetKey()] == nil) then
 			self:RemoveLink(_Link)
-			XFG:Debug(LogCategory, 'Removed link due to node broadcast [%s]', _Link:GetKey())
+			XFG:Debug(self:GetObjectName(), 'Removed link due to node broadcast [%s]', _Link:GetKey())
 		end
 	end
 	-- Add any new links and update timestamps of existing
@@ -133,21 +69,13 @@ function LinkCollection:ProcessMessage(inMessage)
 			_Link:SetTimeStamp(_EpochTime)
 		else
 			self:AddLink(_Link)
-			XFG:Debug(LogCategory, 'Added link due to node broadcast [%s]', _Link:GetKey())
+			XFG:Debug(self:GetObjectName(), 'Added link due to node broadcast [%s]', _Link:GetKey())
 		end
     end
 end
 
-function LinkCollection:GetCount()
-	return self._LinkCount
-end
-
-function LinkCollection:GetMyCount()
-	return self._MyLinkCount
-end
-
 function LinkCollection:BroadcastLinks()
-	XFG:Debug(LogCategory, 'Broadcasting links')
+	XFG:Debug(self:GetObjectName(), 'Broadcasting links')
 	self._EpochTime = GetServerTime()
 	local _LinksString = ''
 	for _, _Link in self:Iterator() do
@@ -189,12 +117,12 @@ function LinkCollection:RestoreBackup()
 					local _NewLink = Link:new()
 					_NewLink:SetObjectFromString(_Link)
 					self:AddLink(_NewLink)
-					XFG:Debug(LogCategory, 'Restored link from backup [%s]', _NewLink:GetKey())
+					XFG:Debug(self:GetObjectName(), 'Restored link from backup [%s]', _NewLink:GetKey())
 				end
 			end
 		end).
 		catch(function (inErrorMessage)
-			XFG:Warn(LogCategory, 'Failed to restore link information from backup: ' .. inErrorMessage)
+			XFG:Warn(self:GetObjectName(), 'Failed to restore link information from backup: ' .. inErrorMessage)
 		end)
 	end	
 end
@@ -203,8 +131,8 @@ function LinkCollection:PurgeStaleLinks(inEpochTime)
 	assert(type(inEpochTime) == 'number')
 	for _, _Link in self:Iterator() do
 		if(not _Link:IsMyLink() and _Link:GetTimeStamp() < inEpochTime) then
-			XFG:Debug(LogCategory, 'Removing stale link')
-			self:RemoveLink(_Link)
+			XFG:Debug(self:GetObjectName(), 'Removing stale link')
+			self:RemoveLink(_Link:GetKey())
 		end
 	end
 end

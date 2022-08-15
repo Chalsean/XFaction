@@ -1,56 +1,22 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'ChatFrame'
-local LogCategory = 'FChat'
 
-ChatFrame = {}
+ChatFrame = Object:newChildConstructor()
 
 function ChatFrame:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Initialized = false
-    self._ElvUIModule = nil  
-    self._ChatFrameHandler = nil
-    
+    local _Object = ChatFrame.parent.new(self)
+    _Object.__name = 'ChatFrame'
+    _Object._ElvUIModule = nil  
+    _Object._ChatFrameHandler = nil
     return _Object
 end
 
 function ChatFrame:Initialize()
 	if(not self:IsInitialized()) then
-		self:SetKey(math.GenerateUID())
+        self:ParentInitialize()
         self:SetHandler()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
-end
-
-function ChatFrame:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
-function ChatFrame:Print()
-	XFG:SingleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. ' Object')
-	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-	XFG:Debug(LogCategory, '  _ElvUI (' .. type(self._ElvUI) .. '): ' .. tostring(self._ElvUI))
-    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-end
-
-function ChatFrame:GetKey()
-    return self._Key
-end
-
-function ChatFrame:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
 end
 
 function ChatFrame:SetHandler()
@@ -59,15 +25,15 @@ function ChatFrame:SetHandler()
             return XFG.ElvUI.private.chat.enable
         end)
         if _Status and _Enabled then
-            XFG:Info(LogCategory, 'Using ElvUI chat handler')
+            XFG:Info(self:GetObjectName(), 'Using ElvUI chat handler')
             self._ElvUIModule = XFG.ElvUI:GetModule('Chat')
             self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
         else
-            XFG:Error(LogCategory, 'Failed to detect if elvui has chat enabled')
+            XFG:Error(self:GetObjectName(), 'Failed to detect if elvui has chat enabled')
             self._ChatFrameHandler = ChatFrame_MessageEventHandler
         end
     else
-        XFG:Info(LogCategory, 'Using default chat handler')
+        XFG:Info(self:GetObjectName(), 'Using default chat handler')
         self._ChatFrameHandler = ChatFrame_MessageEventHandler
     end
 end

@@ -1,40 +1,19 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Media'
-local LogCategory = 'MMedia'
 
-Media = {}
+Media = Object:newChildConstructor()
 
 function Media:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Type = nil
-    self._Name = nil
-    self._Path = nil
-
-    return Object
+    local _Object = Media.parent.new(self)
+    _Object.__name = 'Media'
+    _Object._Type = nil
+    _Object._Path = nil
+    return _Object
 end
 
 function Media:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _Type (' .. type(self._Type) .. '): ' .. tostring(self._Type))
-    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-    XFG:Debug(LogCategory, '  _Path (' .. type(self._Path) .. '): ' .. tostring(self._Path))
-end
-
-function Media:GetKey()
-    return self._Key
-end
-
-function Media:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), '  _Type (' .. type(self._Type) .. '): ' .. tostring(self._Type))
+    XFG:Debug(self:GetObjectName(), '  _Path (' .. type(self._Path) .. '): ' .. tostring(self._Path))
 end
 
 function Media:GetType()
@@ -45,16 +24,6 @@ function Media:SetType(inType)
     assert(type(inType) == 'string')
     self._Type = inType
     return self:GetType()
-end
-
-function Media:GetName()
-    return self._Name
-end
-
-function Media:SetName(inName)
-    assert(type(inName) == 'string')
-    self._Name = inName
-    return self:GetName()
 end
 
 function Media:GetPath()

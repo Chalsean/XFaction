@@ -1,80 +1,29 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Timer'
-local LogCategory = 'WTimer'
 
-Timer = {}
+Timer = Object:newChildConstructor()
 
 function Timer:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Name = nil
-    self._ID = nil
-    self._Delta = 0
-    self._Callback = nil
-    self._LastRan = 0
-    self._Enabled = false
-    self._Initialized = false
-    self._Instance = false
-    self._InstanceCombat = false
-    
-    return Object
-end
-
-function Timer:IsInitialized(inInitialized)
-    assert(inInitialized == nil or type(inInitialized) == 'boolean', 'argument needs to be nil or boolean')
-    if(inInitialized ~= nil) then
-        self._Initialized = inInitialized
-    end
-	return self._Initialized
-end
-
-function Timer:Initialize()
-	if(self:IsInitialized() == false) then
-        if(self:GetName() ~= nil) then
-            self:SetKey(self:GetName())
-        end
-        self:IsInitialized(true)
-	end
-	return self:IsInitialized()
+    local _Object = Timer.parent.new(self)
+    _Object.__name = 'Timer'
+    _Object._ID = nil
+    _Object._Delta = 0
+    _Object._Callback = nil
+    _Object._LastRan = 0
+    _Object._Enabled = false
+    _Object._Instance = false
+    _Object._InstanceCombat = false
+    return _Object
 end
 
 function Timer:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(LogCategory, '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
-    XFG:Debug(LogCategory, '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
-    XFG:Debug(LogCategory, '  _LastRan (' .. type(self._LastRan) .. '): ' .. tostring(self._LastRan))
-    XFG:Debug(LogCategory, '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
-    XFG:Debug(LogCategory, '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
-    XFG:Debug(LogCategory, '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
-    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-end
-
-function Timer:GetKey()
-    return self._Key
-end
-
-function Timer:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
-end
-
-function Timer:GetName()
-    return self._Name
-end
-
-function Timer:SetName(inName)
-    assert(type(inName) == 'string')
-    self._Name = inName
-    return self:GetName()
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+    XFG:Debug(self:GetObjectName(), '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
+    XFG:Debug(self:GetObjectName(), '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
+    XFG:Debug(self:GetObjectName(), '  _LastRan (' .. type(self._LastRan) .. '): ' .. tostring(self._LastRan))
+    XFG:Debug(self:GetObjectName(), '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
+    XFG:Debug(self:GetObjectName(), '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
+    XFG:Debug(self:GetObjectName(), '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
 end
 
 function Timer:GetID()
@@ -144,11 +93,11 @@ end
 function Timer:Start()
     self._ID = XFG:ScheduleRepeatingTimer(self:GetCallback(), self:GetDelta())
     self:IsEnabled(true)
-    XFG:Debug(LogCategory, 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
+    XFG:Debug(self:GetObjectName(), 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
 end
 
 function Timer:Stop()
     XFG:CancelTimer(self._ID)
     self:IsEnabled(false)
-    XFG:Debug(LogCategory, 'Stopped timer [%s]', self:GetName())
+    XFG:Debug(self:GetObjectName(), 'Stopped timer [%s]', self:GetName())
 end

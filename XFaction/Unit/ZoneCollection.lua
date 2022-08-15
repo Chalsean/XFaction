@@ -1,27 +1,17 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'ZoneCollection'
-local LogCategory = 'UCZone'
 
-ZoneCollection = {}
+ZoneCollection = ObjectCollection:newChildConstructor()
 
 function ZoneCollection:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-	self._Key = nil
-    self._Zones = {}
-	self._ZoneByID = {}
-	self._ZoneCount = 0
-	self._Initialized = false
-
-    return Object
+    local _Object = ZoneCollection.parent.new(self)
+	_Object.__name = 'ZoneCollection'
+	_Object._ZoneByID = {}
+    return _Object
 end
 
 function ZoneCollection:Initialize()
-	if(self:IsInitialized() == false) then
-		self:SetKey(math.GenerateUID())
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
 
 		local _Tourist = LibStub('LibTourist-3.0')
 
@@ -46,8 +36,8 @@ function ZoneCollection:Initialize()
 							if(_ZoneLocale[_NewContinent:GetName()]) then
 								_NewContinent:SetLocaleName(_ZoneLocale[_NewContinent:GetName()])
 							end
-							XFG.Continents:AddContinent(_NewContinent)
-							XFG:Info(LogCategory, 'Initialized continent [%s]', _NewContinent:GetName())
+							XFG.Continents:AddObject(_NewContinent)
+							XFG:Info(self:GetObjectName(), 'Initialized continent [%s]', _NewContinent:GetName())
 							_AlreadyAdded[_NewContinent:GetName()] = true
 						end
 
@@ -60,13 +50,13 @@ function ZoneCollection:Initialize()
 						if(_ZoneLocale[_NewZone:GetName()]) then
 							_NewZone:SetLocaleName(_ZoneLocale[_NewZone:GetName()])
 						end
-						self:AddZone(_NewZone)
+						self:AddObject(_NewZone)
 						_AlreadyAdded[_NewZone:GetName()] = true
 					end
 				elseif(XFG.Continents:Contains(_ZoneName)) then
-					XFG.Continents:GetContinent(_ZoneName):AddID(_ZoneID)
+					XFG.Continents:GetObject(_ZoneName):AddID(_ZoneID)
 				else
-					self:GetZone(_ZoneName):AddID(_ZoneID)
+					self:GetObject(_ZoneName):AddID(_ZoneID)
 				end
 			end
 		end
@@ -79,52 +69,13 @@ function ZoneCollection:Initialize()
 					_Zone:SetContinent(_Continent)
 				end
 			end			
-			XFG:Info(LogCategory, 'Initialized zone [%s]', _Zone:GetName())
+			XFG:Info(self:GetObjectName(), 'Initialized zone [%s]', _Zone:GetName())
 		end
 
-		local _NewZone = Zone:new()
-		_NewZone:Initialize()
-		_NewZone:SetKey('?')
-		_NewZone:SetName('?')
-		self:AddZone(_NewZone)
-
+		self:AddZone('?')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
-end
-
-function ZoneCollection:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
-function ZoneCollection:Print()
-	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. ' Object')
-	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-	XFG:Debug(LogCategory, '  _ZoneCount (' .. type(self._ZoneCount) .. '): ' .. tostring(self._ZoneCount))
-	XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-	for _, _Zone in self:Iterator() do
-		_Zone:Print()
-	end
-end
-
-function ZoneCollection:GetKey()
-    return self._Key
-end
-
-function ZoneCollection:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
-end
-
-function ZoneCollection:Contains(inKey)
-	assert(type(inKey) == 'string')
-    return self._Zones[inKey] ~= nil
 end
 
 function ZoneCollection:ContainsByID(inID)
@@ -132,41 +83,32 @@ function ZoneCollection:ContainsByID(inID)
 	return self._ZoneByID[inID] ~= nil
 end
 
-function ZoneCollection:GetZone(inKey)
-	assert(type(inKey) == 'string')
-    return self._Zones[inKey]
-end
-
 function ZoneCollection:GetZoneByID(inID)
 	assert(type(inID) == 'number')
 	return self._ZoneByID[inID]
 end
 
-function ZoneCollection:AddZone(inZone)
+function ZoneCollection:AddObject(inZone)
     assert(type(inZone) == 'table' and inZone.__name ~= nil and inZone.__name == 'Zone', 'argument must be Zone object')
 	if(not self:Contains(inZone:GetKey())) then
-		self._ZoneCount = self._ZoneCount + 1
+		self._ObjectCount = self._ObjectCount + 1
 	end		
-	self._Zones[inZone:GetKey()] = inZone
+	self._Objects[inZone:GetKey()] = inZone
 	for _, _ID in inZone:IDIterator() do
 		self._ZoneByID[_ID] = inZone
 	end
 	return self:Contains(inZone:GetKey())
 end
 
-function ZoneCollection:AddZoneName(inZoneName)
+function ZoneCollection:AddZone(inZoneName)
 	assert(type(inZoneName) == 'string')
 	if(not self:Contains(inZoneName)) then
 		local _NewZone = Zone:new()
 		_NewZone:Initialize()
 		_NewZone:SetKey(inZoneName)
 		_NewZone:SetName(inZoneName)
-		self:AddZone(_NewZone)
-		XFG:Info(LogCategory, 'Initialized zone [%s]', _NewZone:GetName())
+		self:AddObject(_NewZone)
+		XFG:Info(self:GetObjectName(), 'Initialized zone [%s]', _NewZone:GetName())
 	end
-	return self:GetZone(inZoneName)
-end
-
-function ZoneCollection:Iterator()
-	return next, self._Zones, nil
+	return self:GetObject(inZoneName)
 end

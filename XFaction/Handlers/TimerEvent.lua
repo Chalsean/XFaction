@@ -1,59 +1,28 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'TimerEvent'
-local LogCategory = 'HETimer'
 
-TimerEvent = {}
+TimerEvent = Object:newChildConstructor()
 
 function TimerEvent:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Initialized = false
-
-    return Object
-end
-
-local function CreateTimer(inName, inDelta, inCallback, inInstance, inInstanceCombat)
-    local _Timer = Timer:new()
-    _Timer:SetName(inName)
-    _Timer:Initialize()
-    _Timer:SetDelta(inDelta)
-    _Timer:SetCallback(inCallback)
-    _Timer:IsInstance(inInstance)
-    _Timer:IsInstanceCombat(inInstanceCombat)
-    _Timer:Start()
-    XFG.Timers:AddTimer(_Timer)
+    local _Object = TimerEvent.parent.new(self)
+    _Object.__name = ObjectName
+    return _Object
 end
 
 function TimerEvent:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
         XFG.Cache.LoginTimerStart = GetServerTime()
-        CreateTimer('Login', 1, XFG.Handlers.TimerEvent.CallbackLogin, true, true)
+        XFG.Timers:AddTimer('Login', 1, XFG.Handlers.TimerEvent.CallbackLogin, true, true)
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
-function TimerEvent:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
-function TimerEvent:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-end
-
 function TimerEvent:CallbackLogin()
     -- If havent gotten guild info after Xs, give up. probably not in a guild
     if(XFG.Cache.LoginTimerStart + XFG.Settings.LocalGuild.LoginGiveUp < GetServerTime()) then
-        XFG:Error(LogCategory, 'Did not detect a guild')
+        XFG:Error(ObjectName, 'Did not detect a guild')
         XFG.Timers:Stop()
         return
     end
@@ -84,21 +53,20 @@ function TimerEvent:CallbackLogin()
         -- Sanity check
         if(XFG.Player.GUID ~= nil and XFG.Player.Faction ~= nil and _GuildID ~= nil) then
             -- Now that guild info is available we can finish setup
-            XFG:Debug(LogCategory, 'Guild info is loaded, proceeding with setup')
-            local _Timer = XFG.Timers:GetTimer('Login')
-            XFG.Timers:RemoveTimer(_Timer)
+            XFG:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
+			XFG.Timers:RemoveTimer('Login')
 
 			-- Log any reloadui errors encountered
 			for _, _ErrorText in ipairs(XFG.DB.Errors) do
-				XFG:Warn(LogCategory, _ErrorText)
+				XFG:Warn(ObjectName, _ErrorText)
 			end
 			XFG.DB.Errors = {}
 			
 			-- Critical path initialization, anything not caught needs to get bailed
 			try(function ()
 
-				XFG:Info(LogCategory, 'WoW client version [%s:%s]', XFG.WoW:GetName(), XFG.WoW:GetVersion():GetKey())
-				XFG:Info(LogCategory, 'XFaction version [%s]', XFG.Version:GetKey())
+				XFG:Info(ObjectName, 'WoW client version [%s:%s]', XFG.WoW:GetName(), XFG.WoW:GetVersion():GetKey())
+				XFG:Info(ObjectName, 'XFaction version [%s]', XFG.Version:GetKey())
 
 				local _GuildInfo = C_Club.GetClubInfo(_GuildID)
 				
@@ -109,7 +77,7 @@ function TimerEvent:CallbackLogin()
 					-- Decompress and deserialize XFaction data
 					local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
 					local _, _Deserialized = XFG:Deserialize(_Decompressed)
-					XFG:Debug(LogCategory, 'Data from config %s', _Deserialized)
+					XFG:Debug(ObjectName, 'Data from config %s', _Deserialized)
 					_XFData = _Deserialized
 				else
 					_XFData = _GuildInfo.description
@@ -122,7 +90,7 @@ function TimerEvent:CallbackLogin()
 					-- Decompress and deserialize XFaction data
 					local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
 					local _, _Deserialized = XFG:Deserialize(_Decompressed)
-					XFG:Debug(LogCategory, 'Data from config %s', _Deserialized)
+					XFG:Debug(ObjectName, 'Data from config %s', _Deserialized)
 					_XFData = _Deserialized
 				else
 					_XFData = _GuildInfo.description
@@ -132,7 +100,7 @@ function TimerEvent:CallbackLogin()
 					-- Confederate information
 					if(string.find(_Line, 'XFn')) then                    
 						local _Name, _Initials = _Line:match('XFn:(.-):(.+)')
-						XFG:Info(LogCategory, 'Initializing confederate %s <%s>', _Name, _Initials)
+						XFG:Info(ObjectName, 'Initializing confederate %s <%s>', _Name, _Initials)
 						Confederate:SetName(_Name)
 						Confederate:SetKey(_Initials)
 						XFG.Settings.Network.Message.Tag.LOCAL = _Initials .. 'XF'
@@ -143,18 +111,18 @@ function TimerEvent:CallbackLogin()
 						local _, _RealmName = XFG.Lib.Realm:GetRealmInfoByID(_RealmNumber)
 						-- Create each realm once
 						if(XFG.Realms:Contains(_RealmName) == false) then
-							XFG:Info(LogCategory, 'Initializing realm [%s]', _RealmName)
+							XFG:Info(ObjectName, 'Initializing realm [%s]', _RealmName)
 							local _NewRealm = Realm:new()
 							_NewRealm:SetKey(_RealmName)
 							_NewRealm:SetName(_RealmName)
 							_NewRealm:SetAPIName(string.gsub(_RealmName, '%s+', ''))
 							_NewRealm:Initialize()
-							XFG.Realms:AddRealm(_NewRealm)
+							XFG.Realms:AddObject(_NewRealm)
 						end
-						local _Realm = XFG.Realms:GetRealm(_RealmName)                    
+						local _Realm = XFG.Realms:GetObject(_RealmName)
 						local _Faction = XFG.Factions:GetFactionByID(_FactionID)
 
-						XFG:Info(LogCategory, 'Initializing guild %s <%s>', _GuildName, _GuildInitials)
+						XFG:Info(ObjectName, 'Initializing guild %s <%s>', _GuildName, _GuildInitials)
 						local _NewGuild = Guild:new()
 						_NewGuild:Initialize()
 						_NewGuild:SetKey(_GuildInitials)
@@ -162,23 +130,24 @@ function TimerEvent:CallbackLogin()
 						_NewGuild:SetFaction(_Faction)
 						_NewGuild:SetRealm(_Realm)
 						_NewGuild:SetInitials(_GuildInitials)
-						XFG.Guilds:AddGuild(_NewGuild)
+						XFG.Guilds:AddObject(_NewGuild)
 					-- Local channel for same realm/faction communication
 					elseif(string.find(_Line, 'XFc')) then
 						XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password = _Line:match('XFc:(.-):(.*)')
 					-- If you keep your alts at a certain rank, this will flag them as alts in comms/DTs
 					elseif(string.find(_Line, 'XFa')) then
 						local _AltRank = _Line:match('XFa:(.+)')
-						XFG:Info(LogCategory, 'Initializing alt rank [%s]', _AltRank)
+						XFG:Info(ObjectName, 'Initializing alt rank [%s]', _AltRank)
 						XFG.Settings.Confederate.AltRank = _AltRank
 					elseif(string.find(_Line, 'XFt')) then
 						local _TeamInitial, _TeamName = _Line:match('XFt:(%a):(%a+)')
-						XFG:Info(LogCategory, 'Initializing team [%s][%s]', _TeamInitial, _TeamName)
+						XFG:Info(ObjectName, 'Initializing team [%s][%s]', _TeamInitial, _TeamName)
 						local _NewTeam = Team:new()
+						_NewTeam:Initialize()
 						_NewTeam:SetName(_TeamName)
 						_NewTeam:SetInitials(_TeamInitial)
-						_NewTeam:Initialize()
-						XFG.Teams:AddTeam(_NewTeam)
+						_NewTeam:SetKey(_TeamInitial)
+						XFG.Teams:AddObject(_NewTeam)
 					end
 				end
 
@@ -189,7 +158,7 @@ function TimerEvent:CallbackLogin()
 					_NewRealm:SetName(_RealmName)
 					_NewRealm:SetAPIName(_RealmName)
 					_NewRealm:SetIDs({_RealmID})
-					XFG.Realms:AddRealm(_NewRealm)
+					XFG.Realms:AddObject(_NewRealm)
 				end
 
 				-- Backwards compat for EK
@@ -199,18 +168,19 @@ function TimerEvent:CallbackLogin()
 
 				for _TeamInitial, _TeamName in pairs (XFG.Settings.Confederate.DefaultTeams) do
 					if(not XFG.Teams:Contains(_TeamInitial)) then
-						XFG:Info(LogCategory, 'Initializing default team [%s][%s]', _TeamInitial, _TeamName)
+						XFG:Info(ObjectName, 'Initializing default team [%s][%s]', _TeamInitial, _TeamName)
 						local _NewTeam = Team:new()
+						_NewTeam:Initialize()
 						_NewTeam:SetInitials(_TeamInitial)
 						_NewTeam:SetName(_TeamName)
-						_NewTeam:Initialize()
-						XFG.Teams:AddTeam(_NewTeam)
+						_NewTeam:SetKey(_TeamInitial)
+						XFG.Teams:AddObject(_NewTeam)
 					end
 				end
 
 				-- Ensure player is on supported realm
 				local _RealmName = GetRealmName()
-				XFG.Player.Realm = XFG.Realms:GetRealm(_RealmName)
+				XFG.Player.Realm = XFG.Realms:GetObject(_RealmName)
 				if(XFG.Player.Realm == nil) then
 					error('Player is not on a supported realm: ' .. tostring(_RealmName))
 				end
@@ -251,11 +221,11 @@ function TimerEvent:CallbackLogin()
 					end
 				end).
 				catch(function (inErrorMessage)
-					XFG:Warn(LogCategory, 'Failed to restore units from backup: ' .. inErrorMessage)
+					XFG:Warn(ObjectName, 'Failed to restore units from backup: ' .. inErrorMessage)
 				end)
 
 				-- Scan local guild roster
-				XFG:Info(LogCategory, 'Initializing local guild roster')
+				XFG:Info(ObjectName, 'Initializing local guild roster')
 				for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
 					local _UnitData = Unit:new()
 					try(function ()			
@@ -264,12 +234,12 @@ function TimerEvent:CallbackLogin()
 							XFG.Cache.FirstScan[_MemberID] = true
 						end
 						if(_UnitData:IsOnline()) then
-							XFG:Debug(LogCategory, 'Adding local guild unit [%s:%s]', _UnitData:GetGUID(), _UnitData:GetName())
-							XFG.Confederate:AddUnit(_UnitData)
+							XFG:Debug(ObjectName, 'Adding local guild unit [%s:%s]', _UnitData:GetGUID(), _UnitData:GetName())
+							XFG.Confederate:AddObject(_UnitData)
 						end
 					end).
 					catch(function (inErrorMessage)
-						XFG:Debug(LogCategory, 'Failed to query for guild member [%d] on initialization: ' .. inErrorMessage, _MemberID)
+						XFG:Debug(ObjectName, 'Failed to query for guild member [%d] on initialization: ' .. inErrorMessage, _MemberID)
 					end).
 					finally(function ()
 						if(_UnitData and _UnitData:IsPlayer()) then
@@ -299,7 +269,7 @@ function TimerEvent:CallbackLogin()
 				else
 					JoinChannelByName(XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password)
 				end
-				XFG:Info(LogCategory, 'Joined confederate channel [%s]', XFG.Settings.Network.Channel.Name)
+				XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Settings.Network.Channel.Name)
 				local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Settings.Network.Channel.Name)
 				local _NewChannel = Channel:new()
 				_NewChannel:SetKey(_ChannelInfo.shortcut)
@@ -308,13 +278,13 @@ function TimerEvent:CallbackLogin()
 				if(XFG.Settings.Network.Channel.Password ~= nil) then
 					_NewChannel:SetPassword(XFG.Settings.Network.Channel.Password)
 				end
-				XFG.Channels:AddChannel(_NewChannel)            
+				XFG.Channels:AddObject(_NewChannel)            
 				XFG.Outbox:SetLocalChannel(_NewChannel)
 
 				-- Start critical timers
-				CreateTimer('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, false)
-				CreateTimer('Links', XFG.Settings.Network.BNet.Link.Broadcast, XFG.Handlers.TimerEvent.CallbackLinks, true, false)		    		    
-				CreateTimer('Roster', XFG.Settings.LocalGuild.ScanTimer, XFG.Handlers.TimerEvent.CallbackGuildRoster, true, false)		    
+				XFG.Timers:AddTimer('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, false)
+				XFG.Timers:AddTimer('Links', XFG.Settings.Network.BNet.Link.Broadcast, XFG.Handlers.TimerEvent.CallbackLinks, true, false)		    		    
+				XFG.Timers:AddTimer('Roster', XFG.Settings.LocalGuild.ScanTimer, XFG.Handlers.TimerEvent.CallbackGuildRoster, true, false)		    
 
 				-- Register event handlers
 				XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()            
@@ -330,12 +300,12 @@ function TimerEvent:CallbackLogin()
 					end
 				end).
 				catch(function (inErrorMessage)
-					XFG:Warn(LogCategory, 'GuildRoster API call failed: ' .. inErrorMessage)
+					XFG:Warn(ObjectName, 'GuildRoster API call failed: ' .. inErrorMessage)
 				end)
 			end).
 			catch(function (inErrorMessage)
-				XFG:Error(LogCategory, inErrorMessage)
-				print(XFG.Title .. ': Failed to start properly. ' .. inErrorMessage)
+				XFG:Error(ObjectName, inErrorMessage)
+				--print(XFG.Title .. ': Failed to start properly. ' .. inErrorMessage)
 				XFG:CancelAllTimers()
 				return
 			end)
@@ -351,11 +321,11 @@ function TimerEvent:CallbackLogin()
 				XFG.Player.InInstance = _InInstance
 						
 				-- Non-critcal path initialization
-				CreateTimer('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, false, false)
-				CreateTimer('BNetMailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackBNetMailboxTimer, false, false)
-				CreateTimer('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, false)
-				CreateTimer('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, false)
-				CreateTimer('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, false)
+				XFG.Timers:AddTimer('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, false, false)
+				XFG.Timers:AddTimer('BNetMailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackBNetMailboxTimer, false, false)
+				XFG.Timers:AddTimer('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, false)
+				XFG.Timers:AddTimer('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, false)
+				XFG.Timers:AddTimer('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, false)
 
 				-- Ping friends to find out whos available for BNet
 				if(not XFG.DB.UIReload) then                
@@ -366,7 +336,7 @@ function TimerEvent:CallbackLogin()
 				XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 7)		    
 			end).
 			catch(function (inErrorMessage)
-				XFG:Warn(LogCategory, 'Failed non-critical path initialization of XFaction: ' .. inErrorMessage)
+				XFG:Warn(ObjectName, 'Failed non-critical path initialization of XFaction: ' .. inErrorMessage)
 			end).
 			finally(function ()
 				XFG.Initialized = true
@@ -393,7 +363,7 @@ function TimerEvent:CallbackDelayedStartTimer()
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed delayed start initialization: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, 'Failed delayed start initialization: ' .. inErrorMessage)
 	end).
 	finally(function ()
 		XFG.DB.UIReload = false
@@ -403,11 +373,11 @@ function TimerEvent:CallbackDelayedStartTimer()
 		-- For support reasons, it helps to know what addons are being used
 		for i = 1, GetNumAddOns() do
 			local _Name, _, _, _Enabled = GetAddOnInfo(i)
-			XFG:Debug(LogCategory, 'Addon is loaded [%s] enabled [%s]', _Name, tostring(_Enabled))
+			XFG:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', _Name, tostring(_Enabled))
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Debug(LogCategory, 'Failed to query for addon: ' .. inErrorMessage)
+		XFG:Debug(ObjectName, 'Failed to query for addon: ' .. inErrorMessage)
 	end)
 end
 
@@ -418,10 +388,10 @@ function TimerEvent:CallbackMailboxTimer()
 		XFG.Mailbox:Purge(_EpochTime)
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed to clean regular mailbox: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, 'Failed to clean regular mailbox: ' .. inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetTimer('Mailbox')
+		local _Timer = XFG.Timers:GetObject('Mailbox')
 		_Timer:SetLastRan(GetServerTime())
 	end)
 end
@@ -433,10 +403,10 @@ function TimerEvent:CallbackBNetMailboxTimer()
 		XFG.BNet:Purge(_EpochTime)
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed to clean BNet mailbox: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, 'Failed to clean BNet mailbox: ' .. inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetTimer('BNetMailbox')
+		local _Timer = XFG.Timers:GetObject('BNetMailbox')
 		_Timer:SetLastRan(GetServerTime())
 	end)
 end
@@ -448,10 +418,10 @@ function TimerEvent:CallbackOffline()
 		XFG.Confederate:OfflineUnits(_EpochTime)
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed to identify stale units: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, 'Failed to identify stale units: ' .. inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetTimer('Offline')
+		local _Timer = XFG.Timers:GetObject('Offline')
 		_Timer:SetLastRan(GetServerTime())
 	end)
 end
@@ -460,15 +430,15 @@ end
 function TimerEvent:CallbackHeartbeat()
 	try(function ()
 		if(XFG.Initialized and XFG.Player.LastBroadcast < GetServerTime() - XFG.Settings.Player.Heartbeat) then
-			XFG:Debug(LogCategory, "Sending heartbeat")
+			XFG:Debug(ObjectName, "Sending heartbeat")
 			XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.DATA)
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed to send heartbeat message: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, 'Failed to send heartbeat message: ' .. inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetTimer('Heartbeat')
+		local _Timer = XFG.Timers:GetObject('Heartbeat')
 		_Timer:SetLastRan(GetServerTime())
 	end)
 end
@@ -481,10 +451,10 @@ function TimerEvent:CallbackGuildRoster()
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed to call C_GuildInfo API: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, 'Failed to call C_GuildInfo API: ' .. inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetTimer('Roster')
+		local _Timer = XFG.Timers:GetObject('Roster')
 		_Timer:SetLastRan(GetServerTime())
 	end)
 end
@@ -499,10 +469,10 @@ function TimerEvent:CallbackPingFriends()
 	    end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed to ping friends: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, 'Failed to ping friends: ' .. inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetTimer('Ping')
+		local _Timer = XFG.Timers:GetObject('Ping')
 		_Timer:SetLastRan(GetServerTime())
 	end)
 end
@@ -513,10 +483,10 @@ function TimerEvent:CallbackLinks()
     		XFG.Links:BroadcastLinks()
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed to broadcast links: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, 'Failed to broadcast links: ' .. inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetTimer('Links')
+		local _Timer = XFG.Timers:GetObject('Links')
 		_Timer:SetLastRan(GetServerTime())
 	end)
 end
@@ -528,10 +498,10 @@ function TimerEvent:CallbackStaleLinks()
 		XFG.Links:PurgeStaleLinks(_EpochTime)
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(LogCategory, 'Failed to purge stale links: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, 'Failed to purge stale links: ' .. inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetTimer('StaleLinks')
+		local _Timer = XFG.Timers:GetObject('StaleLinks')
 		_Timer:SetLastRan(GetServerTime())
 	end)
 end
