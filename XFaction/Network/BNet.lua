@@ -36,7 +36,6 @@ function BNet:Send(inMessage)
         end
 
         -- You should only ever have to message one addon user per target
-        -- Something isnt working here
         local _FriendCount = table.getn(_Friends)
         if(_FriendCount > 0) then
             local _RandomNumber = math.random(1, _FriendCount)
