@@ -1,47 +1,26 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'SystemEvent'
-local LogCategory = 'HESystem'
-local TotalChannels = 10
 
-SystemEvent = {}
+SystemEvent = Object:newChildConstructor()
 
 function SystemEvent:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Initialized = false
-
-    return Object
+    local _Object = SystemEvent.parent.new(self)
+    _Object.__name = 'SystemEvent'
+    return _Object
 end
 
 function SystemEvent:Initialize()
 	if(not self:IsInitialized()) then
+        self:ParentInitialize()
         XFG:CreateEvent('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
-        XFG:Info(LogCategory, 'Created hook for pre-ReloadUI')
+        XFG:Info(self:GetObjectName(), 'Created hook for pre-ReloadUI')
         XFG:CreateEvent('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true, true)
-        XFG:Info(LogCategory, 'Created hook for loading screen')
+        XFG:Info(self:GetObjectName(), 'Created hook for loading screen')
         ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Handlers.SystemEvent.ChatFilter)
-        XFG:Info(LogCategory, 'Created CHAT_MSG_SYSTEM event filter')
+        XFG:Info(self:GetObjectName(), 'Created CHAT_MSG_SYSTEM event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
-end
-
-function SystemEvent:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
-function SystemEvent:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function SystemEvent:CallbackLogout()

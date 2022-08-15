@@ -1,20 +1,14 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Link'
-local LogCategory = 'NLink'
 
-Link = {}
+Link = Object:newChildConstructor()
 
 function Link:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
+    local _Object = Link.parent.new(self)
+    _Object.__name = 'Link'
 
-    self._Key = nil
-    self._FromNode = nil
-    self._ToNode = nil
-    self._EpochTime = 0
-    self._Initialized = false
+    _Object._FromNode = nil
+    _Object._ToNode = nil
+    _Object._EpochTime = 0
 
     return _Object
 end
@@ -27,16 +21,9 @@ local function GetLinkKey(inFromName, inToName)
 	return _Key
 end
 
-function Link:IsInitialized(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self._Initialized = inBoolean
-    end
-    return self._Initialized
-end
-
 function Link:Initialize()
-    if(self:IsInitialized() == false) then
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
         local _EpochTime = GetServerTime()
         self:SetTimeStamp(_EpochTime)
         if(self:HasFromNode() and self:HasToNode()) then
@@ -48,27 +35,10 @@ function Link:Initialize()
 end
 
 function Link:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(LogCategory, "  _EpochTime (" .. type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-    if(self:HasFromNode()) then
-        self:GetFromNode():Print()
-    end
-    if(self:HasToNode()) then
-        self:GetToNode():Print()
-    end
-end
-
-function Link:GetKey()
-    return self._Key
-end
-
-function Link:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), "  _EpochTime (" .. type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
+    if(self:HasFromNode()) then self:GetFromNode():Print() end
+    if(self:HasToNode()) then self:GetToNode():Print() end
 end
 
 function Link:IsMyLink()
@@ -117,7 +87,7 @@ function Link:SetObjectFromString(inLinkString)
     if(not XFG.Nodes:Contains(_FromNode:GetKey())) then
         XFG.Nodes:AddNode(_FromNode)
     end
-    self:SetFromNode(XFG.Nodes:GetNode(_FromNode:GetKey()))
+    self:SetFromNode(XFG.Nodes:GetObject(_FromNode:GetKey()))
     self:GetFromNode():IncrementLinkCount()
 
     local _ToNode = Node:new()
@@ -125,18 +95,11 @@ function Link:SetObjectFromString(inLinkString)
     if(not XFG.Nodes:Contains(_ToNode:GetKey())) then
         XFG.Nodes:AddNode(_ToNode)
     end
-    self:SetToNode(XFG.Nodes:GetNode(_ToNode:GetKey()))
+    self:SetToNode(XFG.Nodes:GetObject(_ToNode:GetKey()))
     self:GetToNode():IncrementLinkCount()
 
     self:Initialize()
     return self:IsInitialized()
-end
-
-function Link:Equals(inLink)
-    if(inLink == nil) then return false end
-    if(type(inLink) ~= 'table' or inLink.__name == nil or inLink.__name ~= 'Link') then return false end
-    if(self:GetKey() ~= inLink:GetKey()) then return false end
-    return true
 end
 
 function Link:GetTimeStamp()

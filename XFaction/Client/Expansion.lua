@@ -1,42 +1,21 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Expansion'
-local LogCategory = 'CExpansion'
 
-Expansion = {}
+Expansion = Object:newChildConstructor()
 
 function Expansion:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._ID = nil
-    self._Name = nil
-    self._IconID = nil
-    self._Version = nil
-    
-    return Object
+    local _Object = Expansion.parent.new(self)
+    _Object.__name = 'Expansion'
+    _Object._ID = nil
+    _Object._IconID = nil
+    _Object._Version = nil
+    return _Object
 end
 
 function Expansion:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-    XFG:Debug(LogCategory, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+    XFG:Debug(self:GetObjectName(), '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
     if(self:HasVersion()) then self:GetVersion():Print() end
-end
-
-function Expansion:GetKey()
-    return self._Key
-end
-
-function Expansion:SetKey(inKey)
-    assert(type(inKey) == 'number')
-    self._Key = inKey
-    return self:GetKey()
 end
 
 function Expansion:GetID()
@@ -47,16 +26,6 @@ function Expansion:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
     return self:GetID()
-end
-
-function Expansion:GetName()
-    return self._Name
-end
-
-function Expansion:SetName(inName)
-    assert(type(inName) == 'string')
-    self._Name = inName
-    return self:GetName()
 end
 
 function Expansion:GetIconID()

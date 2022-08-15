@@ -69,6 +69,9 @@ L['ROSTER'] = 'Roster'
 L['DEBUG'] = 'Debug'
 L['CONTINENT'] = 'Continent'
 L['ZONE'] = 'Zone'
+L['SETUP'] = 'Setup'
+L['COMPRESSION'] = 'Compression'
+L['SAVE'] = 'Save'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -84,6 +87,21 @@ L['GENERAL_DTGUILD'] = '1. Guild (X): Full roster visibility in the confederate'
 L['GENERAL_DTLINKS'] = '2. Links (X): Visibility of the active BNet links in the confederate used by the addon'
 L['GENERAL_DTSOULBIND'] = '3. Soulbind (X): View and change your active soulbind'
 L['GENERAL_DTTOKEN'] = '4. WoW Token (X): View current market price of WoW tokens'
+--=========================================================================
+-- Setup Specific
+--=========================================================================
+L['SETUP_CONFEDERATE_NAME'] = 'Confederate Name'
+L['SETUP_CONFEDERATE_INITIALS'] = 'Confederate Initials'
+L['SETUP_CHANNEL_NAME'] = 'Channel Name'
+L['SETUP_CHANNEL_PASSWORD'] = 'Channel Password'
+L['SETUP_COMPRESSION_TOOLTIP'] = 'Enable/Disable compression of text in guild information'
+L['SETUP_CONFEDERATE_NAME_TOOLTIP'] = 'Name for your confederate'
+L['SETUP_CONFEDERATE_INITIALS_TOOLTIP'] = 'Initials for your confederate, used to uniquely identify messages'
+L['SETUP_CHANNEL_NAME_TOOLTIP'] = 'Channel name unique to your confederate, used to isolate message traffic'
+L['SETUP_CHANNEL_PASSWORD_TOOLTIP'] = 'Channel password to ensure players outside confederate cannot listen in'
+L['SETUP_ADD_GUILD'] = 'Add Guild'
+L['SETUP_GUILD_DESCRIPTION'] = 'Add, modify or delete guilds that are part of the confederate. Once all changes have been made, click the Save button to store in your guild information. The addon pulls setup from guild information so it is centralized and controlled by guild leadership.'
+L['SETUP_GUILD_MENU_TITLE'] = 'Confederate Guilds'
 --=========================================================================
 -- Channel Specific
 --=========================================================================
@@ -121,6 +139,7 @@ L['CHAT_ONLINE_SOUND'] = 'Play Sound'
 L['CHAT_ONLINE_SOUND_TOOLTIP'] = 'Play sound when any confederate member comes online'
 L['CHAT_LOGIN'] = 'has come online.'
 L['CHAT_LOGOUT'] = 'has gone offline.'
+L['CHAT_ACHIEVEMENT'] = 'has earned the achievement'
 L['CHAT_NO_PLAYER_FOUND'] = 'No player named '
 L['CHAT_CHANNEL_DESCRIPTION'] = 'These options control the addon custom channel behaviours.'
 --=========================================================================

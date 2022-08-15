@@ -37,7 +37,7 @@ XFG.Icons = {
 XFG.Lib = {
 	Deflate = LibStub:GetLibrary('LibDeflate'),
 	QT = LibStub('LibQTip-1.0'),
-	Realm = LibStub:GetLibrary('LibRealmInfo'),
+	Realm = LibStub:GetLibrary('LibRealm'),
 	Broker = LibStub('LibDataBroker-1.1'),
 	Config = LibStub('AceConfig-3.0'),
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
@@ -60,6 +60,10 @@ XFG.Cache = {
 	Channels = {},
 	NewVersionNotify = false,
 	FirstScan = {},
+	Realms = {},
+	Factions = {},
+	SetupGuild = {},
+	Invites = {},
 }
 
 XFG.Settings = {
@@ -88,7 +92,8 @@ XFG.Settings = {
 	},
 	LocalGuild = {
 		ScanTimer = 30,          -- Seconds between forced local guild scans
-		LoginGiveUp = 60 * 5     -- Seconds before giving up on querying for guild on login
+		LoginGiveUp = 60 * 5,    -- Seconds before giving up on querying for guild on login
+		MaxGuildInfo = 500,      -- Maximum # of characters guild info can take
 	},
 	-- EK specific teams
 	Teams = {
@@ -112,6 +117,7 @@ XFG.Settings = {
 		ENKH = 'Social',
 		CC = 'CC'
 	},
+	Factions = {'Alliance', 'Horde', 'Neutral'},
 	Network = {
 		CompressionLevel = 6,
 		LoginLimit = 42,
@@ -140,6 +146,7 @@ XFG.Settings = {
 				LOGIN = '4',
 				ACHIEVEMENT = '5',
 				LINK = '6',
+				JOIN = '7',
 			},
 			Tag = {},
 		},

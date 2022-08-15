@@ -1,8 +1,6 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'ElvUINameplate'
-local LogCategory = 'NPElvUI'
 
-ElvUINameplate = Nameplate:newChildConstructor()
+ElvUINameplate = Object:newChildConstructor()
 
 function ElvUINameplate:new()
     local _Object = ElvUINameplate.parent.new(self)
@@ -12,6 +10,7 @@ end
 
 function ElvUINameplate:Initialize()
 	if(not self:IsInitialized()) then
+        self:ParentInitialize()
         if(XFG.Config.Nameplates.ElvUI.Enable) then
 
             XFG.Media:AddMedia(XFG.Icons.Guild, 'Icon')
@@ -41,7 +40,7 @@ function ElvUINameplate:Initialize()
                 local _GUID = UnitGUID(inNameplate)
                 local _GuildName = GetGuildInfo(inNameplate)
                 if(XFG.Confederate:Contains(_GUID)) then
-                    _GuildName = XFG.Confederate:GetUnit(_GUID):GetGuild():GetInitials()
+                    _GuildName = XFG.Confederate:GetObject(_GUID):GetGuild():GetInitials()
                 elseif(XFG.Guilds:ContainsGuildName(_GuildName)) then
                     _GuildName = XFG.Guilds:GetGuildByName(_GuildName):GetInitials()
                 end
@@ -54,7 +53,7 @@ function ElvUINameplate:Initialize()
                 local _GUID = UnitGUID(inNameplate)
                 local _UnitName = UnitName(inNameplate)
                 if(XFG.Confederate:Contains(_GUID)) then
-                    local _UnitData = XFG.Confederate:GetUnit(_GUID)
+                    local _UnitData = XFG.Confederate:GetObject(_GUID)
                     if(_UnitData:HasMainName()) then
                         _UnitName = _UnitData:GetMainName()
                     end
@@ -65,7 +64,7 @@ function ElvUINameplate:Initialize()
             XFG.ElvUI:AddTag('main:parenthesis', 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
                 if(XFG.Confederate:Contains(_GUID)) then
-                    local _UnitData = XFG.Confederate:GetUnit(_GUID)
+                    local _UnitData = XFG.Confederate:GetObject(_GUID)
                     if(_UnitData:HasMainName()) then
                         return '(' .. _UnitData:GetMainName() .. ')'
                     end
@@ -75,7 +74,7 @@ function ElvUINameplate:Initialize()
             XFG.ElvUI:AddTag('team', 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
                 if(XFG.Confederate:Contains(_GUID)) then
-                    return XFG.Confederate:GetUnit(_GUID):GetTeam():GetName()
+                    return XFG.Confederate:GetObject(_GUID):GetTeam():GetName()
                 end
             end)
             
@@ -83,7 +82,7 @@ function ElvUINameplate:Initialize()
                 local _GUID = UnitGUID(inNameplate)
                 local _GuildName = GetGuildInfo(inNameplate)
                 if(XFG.Confederate:Contains(_GUID) or XFG.Guilds:ContainsGuildName(_GuildName)) then
-                    return XFG.Media:GetMedia(XFG.Icons.Guild):GetTexture()
+                    return XFG.Media:GetObject(XFG.Icons.Guild):GetTexture()
                 end
             end)
         end

@@ -67,25 +67,25 @@ function DTMetrics:RefreshBroker()
 		local _Text = ''
 		local _Delimiter = false
 		if(XFG.Config.DataText.Metric.Total) then
-			_Text = _Text .. format('|cffffffff%d|r', XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):GetCount())
+			_Text = _Text .. format('|cffffffff%d|r', XFG.Metrics:GetObject(XFG.Settings.Metric.Messages):GetCount())
 			_Delimiter = true
 		end
 
 		if(XFG.Config.DataText.Metric.Average) then
 			if(_Delimiter) then _Text = _Text .. ' : ' end
-			_Text = _Text .. format('|cffffffff%.2f|r', XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):GetAverage(XFG.Config.DataText.Metric.Rate))
+			_Text = _Text .. format('|cffffffff%.2f|r', XFG.Metrics:GetObject(XFG.Settings.Metric.Messages):GetAverage(XFG.Config.DataText.Metric.Rate))
 			_Delimiter = true
 		end
 
 		if(XFG.Config.DataText.Metric.Error) then
 			if(_Delimiter) then _Text = _Text .. ' : ' end
-			_Text = _Text .. format('|cffFF4700%d|r', XFG.Metrics:GetMetric(XFG.Settings.Metric.Error):GetCount())
+			_Text = _Text .. format('|cffFF4700%d|r', XFG.Metrics:GetObject(XFG.Settings.Metric.Error):GetCount())
 			_Delimiter = true
 		end
 
 		if(XFG.Config.DataText.Metric.Warning) then
 			if(_Delimiter) then _Text = _Text .. ' : ' end
-			_Text = _Text .. format('|cffffff00%d|r', XFG.Metrics:GetMetric(XFG.Settings.Metric.Warning):GetCount())
+			_Text = _Text .. format('|cffffff00%d|r', XFG.Metrics:GetObject(XFG.Settings.Metric.Warning):GetCount())
 			_Delimiter = true
 		end
 		self._LDBObject.text = _Text

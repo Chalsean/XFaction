@@ -1,45 +1,26 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ChatEvent'
-local LogCategory = 'HEChat'
 
-ChatEvent = {}
+ChatEvent = Object:newChildConstructor()
 
 function ChatEvent:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Initialized = false
-
-    return Object
+    local _Object = ChatEvent.parent.new(self)
+    _Object.__name = ObjectName
+    return _Object
 end
 
 function ChatEvent:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
+        self:ParentInitialize()
         XFG:RegisterEvent('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.CallbackGuildMessage)
-        XFG:Info(LogCategory, 'Registered for CHAT_MSG_GUILD events')
+        XFG:Info(self:GetObjectName(), 'Registered for CHAT_MSG_GUILD events')
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.ChatFilter)
-        XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD event filter')
-        --ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)
-        --XFG:Info(LogCategory, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
+        XFG:Info(self:GetObjectName(), 'Created CHAT_MSG_GUILD event filter')
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)
+        XFG:Info(self:GetObjectName(), 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
-end
-
-function ChatEvent:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
-function ChatEvent:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
@@ -62,7 +43,7 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(LogCategory, 'Failed to send gchat message: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, 'Failed to send gchat message: ' .. inErrorMessage)
     end)
 end
 
@@ -106,10 +87,10 @@ function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, 
     if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
     -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND']) or string.find(inMessage, XFG.Lib.Locale['CHAT_ACHIEVEMENT'])) then
         return true
     elseif(XFG.Confederate:Contains(inGUID)) then
-        inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetUnit(inGUID))
+        inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetObject(inGUID))
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end

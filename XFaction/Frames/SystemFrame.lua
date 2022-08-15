@@ -1,52 +1,11 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'SystemFrame'
-local LogCategory = 'FSystem'
 
-SystemFrame = {}
+SystemFrame = Object:newChildConstructor()
 
 function SystemFrame:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Initialized = false
-
-    return Object
-end
-
-function SystemFrame:Initialize()
-	if(self:IsInitialized() == false) then
-		self:SetKey(math.GenerateUID())
-		self:IsInitialized(true)
-	end
-	return self:IsInitialized()
-end
-
-function SystemFrame:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
-function SystemFrame:Print()
-	XFG:SingleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. ' Object')
-	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-end
-
-function SystemFrame:GetKey()
-    return self._Key
-end
-
-function SystemFrame:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
+    local _Object = SystemFrame.parent.new(self)
+    _Object.__name = 'SystemFrame'
+    return _Object
 end
 
 function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRealm)

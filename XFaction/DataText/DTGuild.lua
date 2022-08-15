@@ -158,7 +158,7 @@ local function SetSortColumn(_, inColumnName)
 end
 
 local function LineClick(_, inUnitGUID, inMouseButton)
-	local _Unit = XFG.Confederate:GetUnit(inUnitGUID)
+	local _Unit = XFG.Confederate:GetObject(inUnitGUID)
 	local _Link = _Unit:GetLink()
 	if(_Link == nil) then return end
 

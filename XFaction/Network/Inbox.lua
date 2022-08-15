@@ -1,33 +1,18 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Inbox'
-local LogCategory = 'NInbox'
 
-Inbox = {}
+Inbox = Object:newChildConstructor()
 
 function Inbox:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Initialized = false
-
+    local _Object = Inbox.parent.new(self)
+    _Object.__name = ObjectName
     return _Object
 end
 
-function Inbox:IsInitialized(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self._Initialized = inBoolean
-    end
-    return self._Initialized
-end
-
 function Inbox:Initialize()
-    if(self:IsInitialized() == false) then
-        self:SetKey(math.GenerateUID())
-        XFG:Info(LogCategory, "Registering to receive [%s] messages", XFG.Settings.Network.Message.Tag.LOCAL)
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
+        XFG:Info(self:GetObjectName(), "Registering to receive [%s] messages", XFG.Settings.Network.Message.Tag.LOCAL)
         XFG:RegisterComm(XFG.Settings.Network.Message.Tag.LOCAL, 
                          function(inMessageType, inMessage, inDistribution, inSender) 
                             XFG.Inbox:Receive(inMessageType, inMessage, inDistribution, inSender)
@@ -37,28 +22,11 @@ function Inbox:Initialize()
     return self:IsInitialized()
 end
 
-function Inbox:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-end
-
-function Inbox:GetKey()
-    return self._Key
-end
-
-function Inbox:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
-end
-
 -- Channel and whisper traffic is received by this function
 -- BNet traffic is in the BNet class
 function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XFG:Debug(LogCategory, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
+    XFG:Debug(ObjectName, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
 
     -- If not a message from this addon, ignore
     local _AddonTag = false
@@ -68,18 +36,19 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
             break
         end
     end
-    if(_AddonTag == false) then
+    if(not _AddonTag) then
         return
     end
 
     try(function ()
         local _Message = XFG:DecodeMessage(inEncodedMessage)
-        self:Process(_Message, inMessageTag)
-        XFG.Metrics:GetMetric(XFG.Settings.Metric.ChannelReceive):Increment()
-        XFG.Metrics:GetMetric(XFG.Settings.Metric.Messages):Increment()
+        XFG.Inbox:Process(_Message, inMessageTag)
+        XFG.Metrics:GetObject(XFG.Settings.Metric.ChannelReceive):Increment()
+        XFG.Metrics:GetObject(XFG.Settings.Metric.Messages):Increment()
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(LogCategory, 'Failed to process received message: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, debug.traceback())
+        XFG:Warn(ObjectName, 'Failed to process received message: ' .. inErrorMessage)
     end)
 end
 
@@ -101,7 +70,7 @@ function Inbox:Process(inMessage, inMessageTag)
         --XFG:Debug(LogCategory, "This message has already been processed %s", inMessage:GetKey())
         return
     else
-        XFG.Mailbox:AddMessage(inMessage)
+        XFG.Mailbox:AddObject(inMessage)
     end
 
     -- Is a newer version available?
@@ -132,14 +101,14 @@ function Inbox:Process(inMessage, inMessageTag)
         if(_NodeCount > XFG.Settings.Network.BNet.Link.PercentStart) then
             local _Percentage = (XFG.Settings.Network.BNet.Link.PercentStart / _NodeCount) * 100
             if(math.random(1, 100) <= _Percentage) then
-                XFG:Debug(LogCategory, 'Randomly selected, forwarding message')
+                XFG:Debug(self:GetObjectName(), 'Randomly selected, forwarding message')
                 inMessage:SetType(XFG.Settings.Network.Type.BNET)
                 XFG.Outbox:Send(inMessage)
             else
-                XFG:Debug(LogCategory, 'Not randomly selected, will not forward mesesage')
+                XFG:Debug(self:GetObjectName(), 'Not randomly selected, will not forward mesesage')
             end
         else
-            XFG:Debug(LogCategory, 'Node count under threshold, forwarding message')
+            XFG:Debug(self:GetObjectName(), 'Node count under threshold, forwarding message')
             inMessage:SetType(XFG.Settings.Network.Type.BNET)
             XFG.Outbox:Send(inMessage)
         end        
@@ -158,37 +127,45 @@ function Inbox:Process(inMessage, inMessageTag)
     -- Process message
     --========================================
 
-    -- Process gchat/achievement messages
-    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
+    -- Process GCHAT message
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT) then
         if(XFG.Player.Unit:CanGuildListen() and not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
-            XFG.Frames.Chat:Display(inMessage)
+            XFG.Frames.Chat:DisplayGuildChat(inMessage)
         end
         return
     end
 
-    -- Process link message
+    -- Process ACHIEVEMENT message
+    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
+        XFG.Frames.Chat:DisplayAchievement(inMessage)
+        return
+    end
+
+    -- Process LINK message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LINK) then
         XFG.Links:ProcessMessage(inMessage)
         XFG.DataText.Links:RefreshBroker()
         return
     end
 
-    -- Display system message that unit has logged off
+    -- Process LOGOUT message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         -- If own guild, GuildEvent will take care of logout
         if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
-            XFG.Confederate:RemoveUnit(inMessage:GetFrom())
+            XFG.Confederate:RemoveObject(inMessage:GetFrom())
             XFG.Frames.System:DisplayLogoutMessage(inMessage)
         end
         return
     end
 
-    -- Process DATA/LOGIN messages
+    -- Process JOIN message
+
+    -- Process DATA/LOGIN message
     if(inMessage:HasUnitData()) then
         local _UnitData = inMessage:GetData()
         _UnitData:IsPlayer(false)
-        if(XFG.Confederate:AddUnit(_UnitData)) then
-            XFG:Info(LogCategory, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
+        if(XFG.Confederate:AddObject(_UnitData)) then
+            XFG:Info(self:GetObjectName(), "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
         end
 
         -- If unit has just logged in, reply with latest information
@@ -197,12 +174,6 @@ function Inbox:Process(inMessage, inMessageTag)
             if(not XFG.Player.Guild:Equals(_UnitData:GetGuild())) then
                 XFG.Frames.System:DisplayLoginMessage(inMessage)
             end
-            -- Reply if same realm/faction and under threshold
-            -- if(XFG.Player.Realm:Equals(_UnitData:GetRealm()) and 
-            --    XFG.Player.Faction:Equals(_UnitData:GetFaction()) and 
-            --    XFG.Confederate:GetCountByTarget(XFG.Player.Target) <= XFG.Settings.Network.LoginLimit) then
-            --     XFG.Outbox:WhisperUnitData(_UnitData:GetGUID(), XFG.Player.Unit)
-            -- end    
         end
     end
 end

@@ -1,79 +1,23 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'NodeCollection'
-local LogCategory = 'NCNode'
 
-NodeCollection = {}
+NodeCollection = ObjectCollection:newChildConstructor()
 
 function NodeCollection:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Nodes = {}
-    self._NodeCount = 0
-    self._Initialized = false
-	self._TargetCount = {}
-
+    local _Object = NodeCollection.parent.new(self)
+	_Object.__name = 'NodeCollection'
+	_Object._TargetCount = {}
     return _Object
 end
 
-function NodeCollection:Initialize()
-	if(self:IsInitialized() == false) then
-		self:SetKey(math.GenerateUID())
-		self:IsInitialized(true)
-	end
-	return self:IsInitialized()
-end
-
-function NodeCollection:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
 function NodeCollection:Print()
-	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-	XFG:Debug(LogCategory, "  _NodeCount (" .. type(self._NodeCount) .. "): ".. tostring(self._NodeCount))
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    for _, _Node in self:Iterator() do
-        _Node:Print()
-    end
-	XFG:Debug(LogCategory, '  _TargetCount (' .. type(self._TargetCount) .. '): ')
-	XFG:DataDumper(LogCategory, self._TargetCount)
-end
-
-function NodeCollection:GetKey()
-    return self._Key
-end
-
-function NodeCollection:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
-end
-
-function NodeCollection:Contains(inKey)
-	assert(type(inKey) == 'string')
-    return self._Nodes[inKey] ~= nil
-end
-
-function NodeCollection:GetNode(inKey)
-	assert(type(inKey) == 'string')
-    return self._Nodes[inKey]
+	self:ParentPrint()
+	XFG:Debug(self:GetObjectName(), '  _TargetCount (' .. type(self._TargetCount) .. '): ')
+	XFG:DataDumper(self:GetObjectName(), self._TargetCount)
 end
 
 function NodeCollection:AddNode(inNode)
     assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
-	if(not self:Contains(inNode:GetKey())) then
-		self._NodeCount = self._NodeCount + 1
-	end
-    self._Nodes[inNode:GetKey()] = inNode
+	self:AddObject(inNode)
 	if(self._TargetCount[inNode:GetTarget():GetKey()] == nil) then
 		self._TargetCount[inNode:GetTarget():GetKey()] = 0
 	end
@@ -83,10 +27,7 @@ end
 
 function NodeCollection:RemoveNode(inNode)
     assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
-	if(self:Contains(inNode:GetKey())) then
-		self._NodeCount = self._NodeCount - 1
-		self._Nodes[inNode:GetKey()] = nil
-	end
+	self:RemoveObject(inNode:GetKey())
 	if(self._TargetCount[inNode:GetTarget():GetKey()] ~= nil) then
 		self._TargetCount[inNode:GetTarget():GetKey()] = self._TargetCount[inNode:GetTarget():GetKey()] - 1
 	end
@@ -95,15 +36,7 @@ function NodeCollection:RemoveNode(inNode)
 			XFG.Links:RemoveLink(_Link)
 		end
 	end
-    return self:Contains(inNode:GetKey()) == false
-end
-
-function NodeCollection:Iterator()
-	return next, self._Nodes, nil
-end
-
-function NodeCollection:GetCount()
-	return self._NodeCount
+    return not self:Contains(inNode:GetKey())
 end
 
 function NodeCollection:GetTargetCount(inTarget)

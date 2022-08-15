@@ -170,6 +170,11 @@ XFG.Defaults = {
         Confederate = {
             Config = 'XFn:Guild Name:GN\nXFc:ChannelName:ChannelPassword\nXFg:5:A:Alliance Guild:GA\nXFg:5:H:Horde Guild:GH\nXFg:5:A:Alliance Alt Guild:AGA\nXFa:Grand Alt\nXFt:A:AlphaTeam\nXFt:B:BetaTeam'
         },
+        Setup = {
+            Confederate = {
+                Compression = true,
+            },
+        },
     }
 }
     
@@ -181,6 +186,7 @@ function XFG:LoadConfigs()
     XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.DataDB)
     XFG.Lib.Config:RegisterOptionsTable(XFG.Category, XFG.Options)
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, XFG.Category, nil, 'General')
+    --XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Setup', XFG.Category, 'Setup')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Chat', XFG.Category, 'Chat')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Nameplates', XFG.Category, 'Nameplates')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'DataText', XFG.Category, 'DataText')

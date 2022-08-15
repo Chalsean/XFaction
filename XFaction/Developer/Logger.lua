@@ -17,7 +17,7 @@ function XFG:Error(SubCategory, ...)
 	  if DLAPI then DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, res)) end
 	end
 	if(XFG.Metrics ~= nil) then
-		XFG.Metrics:GetMetric(XFG.Settings.Metric.Error):Increment()
+		XFG.Metrics:GetObject(XFG.Settings.Metric.Error):Increment()
 	end
 end
 
@@ -27,7 +27,7 @@ function XFG:Warn(SubCategory, ...)
 	  if DLAPI then DLAPI.DebugLog(XFG.Category, format('WARN~%s~3~%s', SubCategory, res)) end
 	end
 	if(XFG.Metrics ~= nil) then
-		XFG.Metrics:GetMetric(XFG.Settings.Metric.Warning):Increment()
+		XFG.Metrics:GetObject(XFG.Settings.Metric.Warning):Increment()
 	end
 end
 

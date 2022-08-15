@@ -1,65 +1,29 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Event'
-local LogCategory = 'WEvent'
 
-Event = {}
+Event = Object:newChildConstructor()
 
 function Event:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Name = nil
-    self._Delta = 0
-    self._Callback = nil
-    self._Enabled = false
-    self._Initialized = false
-    self._Instance = false
-    self._InstanceCombat = false
-    self._Bucket = false
-    
-    return Object
-end
-
-function Event:IsInitialized(inInitialized)
-    assert(inInitialized == nil or type(inInitialized) == 'boolean', 'argument needs to be nil or boolean')
-    if(inInitialized ~= nil) then        
-        self._Initialized = inInitialized
-    end
-	return self._Initialized
-end
-
-function Event:Initialize()
-	if(self:IsInitialized() == false) then
-        self:IsInitialized(true)
-	end
-	return self:IsInitialized()
+    local _Object = Event.parent.new(self)
+    _Object.__name = 'Event'
+    _Object._Name = nil
+    _Object._Delta = 0
+    _Object._Callback = nil
+    _Object._Enabled = false
+    _Object._Instance = false
+    _Object._InstanceCombat = false
+    _Object._Bucket = false
+    return _Object
 end
 
 function Event:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-    XFG:Debug(LogCategory, '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
-    XFG:Debug(LogCategory, '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
-    XFG:Debug(LogCategory, '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
-    XFG:Debug(LogCategory, '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
-    XFG:Debug(LogCategory, '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
-    XFG:Debug(LogCategory, '  _Bucket (' .. type(self._Bucket) .. '): ' .. tostring(self._Bucket))
-    XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-end
-
-function Event:GetKey()
-    return self._Key
-end
-
-function Event:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+    XFG:Debug(self:GetObjectName(), '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
+    XFG:Debug(self:GetObjectName(), '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
+    XFG:Debug(self:GetObjectName(), '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
+    XFG:Debug(self:GetObjectName(), '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
+    XFG:Debug(self:GetObjectName(), '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
+    XFG:Debug(self:GetObjectName(), '  _Bucket (' .. type(self._Bucket) .. '): ' .. tostring(self._Bucket))
 end
 
 function Event:GetName()
@@ -135,13 +99,13 @@ function Event:Start()
         XFG:RegisterEvent(self:GetName(), self:GetCallback(), self:GetName())
     end
     self:IsEnabled(true)
-    XFG:Debug(LogCategory, 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    XFG:Debug(self:GetObjectName(), 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
 end
 
 function Event:Stop()
     XFG:UnregisterEvent(self:GetName())
     self:IsEnabled(false)
-    XFG:Debug(LogCategory, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    XFG:Debug(self:GetObjectName(), 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
 end
 
 function XFG:CreateEvent(inKey, inName, inCallback, inInstance, inInstanceCombat, inBucket, inDelta)
@@ -156,5 +120,5 @@ function XFG:CreateEvent(inKey, inName, inCallback, inInstance, inInstanceCombat
     if(_Event:IsInstance() or XFG.Player.InInstance == false) then
         _Event:Start()
     end
-    XFG.Events:AddEvent(_Event)
+    XFG.Events:AddObject(_Event)
 end

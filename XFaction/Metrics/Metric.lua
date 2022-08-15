@@ -1,48 +1,17 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Metric'
-local LogCategory = 'MMetric'
 
-Metric = {}
+Metric = Object:newChildConstructor()
 
 function Metric:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Name = nil
-    self._Count = 0
-    
-    return Object
+    local _Object = Metric.parent.new(self)
+    _Object.__name = 'Metric'
+    _Object._Count = 0
+    return _Object
 end
 
 function Metric:Print()
-	XFG:SingleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. ' Object')
-	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-	XFG:Debug(LogCategory, '  _Count (' .. type(self._Count) .. '): ' .. tostring(self._Count))
-end
-
-function Metric:GetKey()
-    return self._Key
-end
-
-function Metric:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
-end
-
-function Metric:GetName()
-    return self._Name
-end
-
-function Metric:SetName(inName)
-    assert(type(inName) == 'string')
-    self._Name = inName
-    return self:GetName()
+    self:ParentPrint()
+	XFG:Debug(self:GetObjectName(), '  _Count (' .. type(self._Count) .. '): ' .. tostring(self._Count))
 end
 
 function Metric:Increment()

@@ -1,34 +1,21 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Version'
-local LogCategory = 'CVersion'
 
-Version = {}
+Version = Object:newChildConstructor()
 
 function Version:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Major = nil
-    self._Minor = nil
-    self._Patch = nil
-    
-    return Object
+    local _Object = Version.parent.new(self)
+    _Object.__name = 'Version'
+    _Object._Major = nil
+    _Object._Minor = nil
+    _Object._Patch = nil
+    return _Object
 end
 
 function Version:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. ' Object')
-    XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(LogCategory, '  _Major (' .. type(self._Major) .. '): ' .. tostring(self._Major))
-    XFG:Debug(LogCategory, '  _Minor (' .. type(self._Minor) .. '): ' .. tostring(self._Minor))
-    XFG:Debug(LogCategory, '  _Patch (' .. type(self._Patch) .. '): ' .. tostring(self._Patch))
-end
-
-function Version:GetKey()
-    return self._Key
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), '  _Major (' .. type(self._Major) .. '): ' .. tostring(self._Major))
+    XFG:Debug(self:GetObjectName(), '  _Minor (' .. type(self._Minor) .. '): ' .. tostring(self._Minor))
+    XFG:Debug(self:GetObjectName(), '  _Patch (' .. type(self._Patch) .. '): ' .. tostring(self._Patch))
 end
 
 function Version:SetKey(inKey)

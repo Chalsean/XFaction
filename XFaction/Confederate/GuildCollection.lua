@@ -1,73 +1,25 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'GuildCollection'
-local LogCategory = 'CCGuild'
 
-GuildCollection = {}
+GuildCollection = ObjectCollection:newChildConstructor()
 
 function GuildCollection:new()
-    Object = {}
-    setmetatable(Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-	self._Key = nil
-    self._Guilds = {}
-	self._Names = {}
-	self._GuildCount = 0
-	self._Initialized = false
-
-    return Object
-end
-
-function GuildCollection:IsInitialized(inBoolean)
-    assert(inInitialized == nil or type(inInitialized) == 'boolean', 'argument needs to be nil or boolean')
-    if(inInitialized ~= nil) then
-        self._Initialized = inInitialized
-    end
-	return self._Initialized
+    local _Object = GuildCollection.parent.new(self)
+	_Object.__name = 'GuildCollection'
+	_Object._Names = nil
+    return _Object
 end
 
 function GuildCollection:Initialize()
 	if(self:IsInitialized() == false) then
-        self:SetKey(math.GenerateUID())
+		self:ParentInitialize()
+		self._Names = {}
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
-function GuildCollection:Print()
-	XFG:DoubleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. ' Object')
-	XFG:Debug(LogCategory, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-	XFG:Debug(LogCategory, '  _GuildCount (' .. type(self._GuildCount) .. '): ' .. tostring(self._GuildCount))
-	XFG:Debug(LogCategory, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-	for _, _Guild in pairs (self._Guilds) do
-		_Guild:Print()
-	end
-end
-
-function GuildCollection:GetKey()
-    return self._Key
-end
-
-function GuildCollection:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self._Key = inKey
-    return self:GetKey()
-end
-
-function GuildCollection:Contains(inKey)
-	assert(type(inKey) == 'string')
-	return self._Guilds[inKey] ~= nil
-end
-
 function GuildCollection:ContainsGuildName(inGuildName)
 	return self._Names[inGuildName] ~= nil
-end
-
-function GuildCollection:GetGuild(inKey)
-	assert(type(inKey) == 'string')
-	return self._Guilds[inKey]
 end
 
 function GuildCollection:GetGuildByRealmGuildName(inRealm, inGuildName)
@@ -83,16 +35,12 @@ function GuildCollection:GetGuildByName(inGuildName)
 	return self._Names[inGuildName]
 end
 
-function GuildCollection:AddGuild(inGuild)
+function GuildCollection:AddObject(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
-	if(self:Contains(inGuild:GetKey()) == false) then
-		self._GuildCount = self._GuildCount + 1
+	if(not self:Contains(inGuild:GetKey())) then
+		self._ObjectCount = self._ObjectCount + 1
 	end
-	self._Guilds[inGuild:GetKey()] = inGuild
+	self._Objects[inGuild:GetKey()] = inGuild
 	self._Names[inGuild:GetName()] = inGuild
 	return self:Contains(inGuild:GetKey())
-end
-
-function GuildCollection:Iterator()
-	return next, self._Guilds, nil
 end

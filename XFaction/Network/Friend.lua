@@ -1,55 +1,34 @@
 local XFG, G = unpack(select(2, ...))
-local ObjectName = 'Friend'
-local LogCategory = 'NFriend'
 
-Friend = {}
+Friend = Object:newChildConstructor()
 
 function Friend:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
+    local _Object = Friend.parent.new(self)
+    _Object.__name = 'Friend'
 
-    self._Key = nil
-    self._ID = nil         -- This the "friend index" you use to look things up
-    self._AccountID = nil  -- This is the only constant ID
-    self._GameID = nil     -- This is the game ID you use to send whispers
-    self._AccountName = nil
-    self._Tag = nil
-    self._Target = nil
-    self._Name = nil
-    self._IsRunningAddon = false
-    self._DateTime = 0  -- Last time we heard from them via addon
-    self._MyLink = false
+    _Object._ID = nil         -- This the "friend index" you use to look things up
+    _Object._AccountID = nil  -- This is the only constant ID
+    _Object._GameID = nil     -- This is the game ID you use to send whispers
+    _Object._AccountName = nil
+    _Object._Tag = nil
+    _Object._Target = nil
+    _Object._IsRunningAddon = false
+    _Object._DateTime = 0  -- Last time we heard from them via addon
+    _Object._MyLink = false
 
     return _Object
 end
 
 function Friend:Print()
-    XFG:SingleLine(LogCategory)
-    XFG:Debug(LogCategory, ObjectName .. " Object")
-    XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
-    XFG:Debug(LogCategory, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    XFG:Debug(LogCategory, "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
-    XFG:Debug(LogCategory, "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
-    XFG:Debug(LogCategory, "  _AccountName (" ..type(self._AccountName) .. "): ".. tostring(self._AccountName))
-    XFG:Debug(LogCategory, "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
-    XFG:Debug(LogCategory, "  _Name (" ..type(self._Name) .. "): ".. tostring(self._Name))
-    XFG:Debug(LogCategory, "  _IsRunningAddon (" ..type(self._IsRunningAddon) .. "): ".. tostring(self._IsRunningAddon))
-    XFG:Debug(LogCategory, "  _MyLink (" ..type(self._MyLink) .. "): ".. tostring(self._MyLink))
-    if(self:HasTarget()) then
-        self._Target:Print()
-    end
-end
-
-function Friend:GetKey()
-    return self._Key
-end
-
-function Friend:SetKey(inKey)
-    assert(type(inKey) == 'number')
-    self._Key = inKey
-    return self:GetKey()
+    self:ParentPrint()
+    XFG:Debug(self:GetObjectName(), "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
+    XFG:Debug(self:GetObjectName(), "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
+    XFG:Debug(self:GetObjectName(), "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
+    XFG:Debug(self:GetObjectName(), "  _AccountName (" ..type(self._AccountName) .. "): ".. tostring(self._AccountName))
+    XFG:Debug(self:GetObjectName(), "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
+    XFG:Debug(self:GetObjectName(), "  _IsRunningAddon (" ..type(self._IsRunningAddon) .. "): ".. tostring(self._IsRunningAddon))
+    XFG:Debug(self:GetObjectName(), "  _MyLink (" ..type(self._MyLink) .. "): ".. tostring(self._MyLink))
+    if(self:HasTarget()) then self:GetTarget():Print() end
 end
 
 function Friend:GetID()
@@ -116,16 +95,6 @@ function Friend:SetTarget(inTarget)
     return self:GetTarget()
 end
 
-function Friend:GetName()
-    return self._Name
-end
-
-function Friend:SetName(inName)
-    assert(type(inName) == 'string')
-    self._Name = inName
-    return self:GetName()
-end
-
 function Friend:IsRunningAddon(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
     if(inBoolean ~= nil) then
@@ -147,14 +116,14 @@ end
 function Friend:CreateLink()
     if(self:IsRunningAddon() and self:HasTarget()) then
         local _NewLink = Link:new()
-        local _FromNode = XFG.Nodes:GetNode(XFG.Player.Unit:GetName())
+        local _FromNode = XFG.Nodes:GetObject(XFG.Player.Unit:GetName())
         if(_FromNode == nil) then
             _FromNode = Node:new(); _FromNode:Initialize()
             XFG.Nodes:AddNode(_FromNode)
         end
         _NewLink:SetFromNode(_FromNode)
 
-        local _ToNode = XFG.Nodes:GetNode(self:GetName())
+        local _ToNode = XFG.Nodes:GetObject(self:GetName())
         if(_ToNode == nil) then
             _ToNode = Node:new()
             _ToNode:SetKey(self:GetName())
