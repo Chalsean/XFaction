@@ -132,7 +132,7 @@ function LinkCollection:PurgeStaleLinks(inEpochTime)
 	for _, _Link in self:Iterator() do
 		if(not _Link:IsMyLink() and _Link:GetTimeStamp() < inEpochTime) then
 			XFG:Debug(self:GetObjectName(), 'Removing stale link')
-			self:RemoveLink(_Link:GetKey())
+			self:RemoveLink(_Link)
 		end
 	end
 end

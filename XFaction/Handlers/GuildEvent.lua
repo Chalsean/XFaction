@@ -35,7 +35,7 @@ function GuildEvent:CallbackRosterUpdate()
                 if(_UnitData:IsOnline()) then
                     -- If cache doesn't have unit, process
                     if(not XFG.Confederate:Contains(_UnitData:GetKey())) then
-                        XFG.Confederate:AddObject(_UnitData)
+                        XFG.Confederate:AddUnit(_UnitData)
                         -- Don't notify if first scan seeing unit
                         if(XFG.Cache.FirstScan[_MemberID]) then
                             XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGIN, _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
@@ -44,14 +44,14 @@ function GuildEvent:CallbackRosterUpdate()
                         local _CachedUnitData = XFG.Confederate:GetObject(_UnitData:GetKey())
                         -- If the player is running addon, do not process
                         if(not _CachedUnitData:IsRunningAddon() and not _CachedUnitData:Equals(_UnitData)) then         
-                            XFG.Confederate:AddObject(_UnitData)
+                            XFG.Confederate:AddUnit(_UnitData)
                         end
                     end
                 -- They went offline and we scanned them before doing so
                 elseif(XFG.Confederate:Contains(_UnitData:GetKey())) then
                     local _CachedUnitData = XFG.Confederate:GetObject(_UnitData:GetKey())
                     if(not _CachedUnitData:IsPlayer()) then
-                        XFG.Confederate:RemoveObject(_CachedUnitData:GetKey())
+                        XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())
                         XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, _CachedUnitData:GetName(), _CachedUnitData:GetUnitName(), _CachedUnitData:GetMainName(), _CachedUnitData:GetGuild(), _CachedUnitData:GetRealm())
                     end
                 end

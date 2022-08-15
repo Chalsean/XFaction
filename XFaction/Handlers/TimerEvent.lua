@@ -235,7 +235,7 @@ function TimerEvent:CallbackLogin()
 						end
 						if(_UnitData:IsOnline()) then
 							XFG:Debug(ObjectName, 'Adding local guild unit [%s:%s]', _UnitData:GetGUID(), _UnitData:GetName())
-							XFG.Confederate:AddObject(_UnitData)
+							XFG.Confederate:AddUnit(_UnitData)
 						end
 					end).
 					catch(function (inErrorMessage)

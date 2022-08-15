@@ -29,15 +29,11 @@ function Confederate:GetUnitByName(inName)
     end
 end
 
-function Confederate:AddObject(inUnit)
+function Confederate:AddUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argument must be Unit object')
-
-    if(not self:Contains(inUnit:GetKey())) then 
-        self._ObjectCount = self._ObjectCount + 1
-        XFG.DataText.Guild:RefreshBroker()
-    end
-
-    self._Objects[inUnit:GetKey()] = inUnit
+    
+    self:AddObject(inUnit)
+    XFG.DataText.Guild:RefreshBroker()
     if(inUnit:IsPlayer()) then
         XFG.Player.Unit = inUnit
     end
@@ -60,16 +56,14 @@ function Confederate:OfflineUnits(inEpochTime)
     end
 end
 
-function Confederate:RemoveObject(inKey)
+function Confederate:RemoveUnit(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
         local _Unit = self:GetObject(inKey)
-        self._Objects[inKey] = nil
-        self._ObjectCount = self._ObjectCount - 1
+        self:RemoveObject(inKey)
         XFG.DataText.Guild:RefreshBroker()
         if(XFG.Nodes:Contains(_Unit:GetName())) then
             XFG.Nodes:RemoveNode(XFG.Nodes:GetObject(_Unit:GetName()))
-            XFG.DataText.Links:RefreshBroker()
         end
         local _Target = XFG.Targets:GetTargetByRealmFaction(_Unit:GetRealm(), _Unit:GetFaction())
         self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1      

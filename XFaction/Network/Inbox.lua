@@ -152,7 +152,7 @@ function Inbox:Process(inMessage, inMessageTag)
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         -- If own guild, GuildEvent will take care of logout
         if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
-            XFG.Confederate:RemoveObject(inMessage:GetFrom())
+            XFG.Confederate:RemoveUnit(inMessage:GetFrom())
             XFG.Frames.System:DisplayLogoutMessage(inMessage)
         end
         return
@@ -164,7 +164,7 @@ function Inbox:Process(inMessage, inMessageTag)
     if(inMessage:HasUnitData()) then
         local _UnitData = inMessage:GetData()
         _UnitData:IsPlayer(false)
-        if(XFG.Confederate:AddObject(_UnitData)) then
+        if(XFG.Confederate:AddUnit(_UnitData)) then
             XFG:Info(self:GetObjectName(), "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
         end
 
