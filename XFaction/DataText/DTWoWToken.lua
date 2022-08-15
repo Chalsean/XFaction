@@ -2,26 +2,20 @@ local XFG, G = unpack(select(2, ...))
 local ObjectName = 'DTToken'
 local LogCategory = 'DTToken'
 
-DTToken = {}
+DTToken = Object:newChildConstructor()
 local Events = { 'PLAYER_ENTERING_WORLD', 'PLAYER_LOGIN', 'TOKEN_MARKET_PRICE_UPDATED' }
 
 function DTToken:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Initialized = false
-	self._LDBObject = nil
-	self._Price = 0
-    
+	local _Object = DTGuild.parent.new(self)
+    _Object.__name = 'DTToken'
+    _Object._LDBObject = nil
+	_Object._Price = 0    
     return _Object
 end
 
 function DTToken:Initialize()
-	if(self:IsInitialized() == false) then
-		self:SetKey(math.GenerateUID())      
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
 		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTTOKEN_NAME'])
 		for _, _Event in ipairs (Events) do
 			XFG:RegisterEvent(_Event, self.OnEvent)
@@ -33,31 +27,10 @@ function DTToken:Initialize()
 	return self:IsInitialized()
 end
 
-function DTToken:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
 function DTToken:Print()
-	XFG:SingleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+	self:ParentPrint()
 	XFG:Debug(LogCategory, "  _Price (" .. type(self._Price) .. "): ".. tostring(self._Price))
 	XFG:Debug(LogCategory, "  _LDBObject (" .. type(self._LDBObject) .. ")")
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
-end
-
-function DTToken:GetKey()
-	return self._Key
-end
-
-function DTToken:SetKey(inKey)
-	assert(type(inKey) == 'string')
-	self._Key = inKey
-	return self:GetKey()
 end
 
 function DTToken:GetPrice()
@@ -90,7 +63,5 @@ function DTToken:OnClick(self, button)
 	if button == "LeftButton" then
 		ToggleStoreUI()
 		TokenFrame_LoadUI()
-	elseif button == "RightButton" then
-		--C_WowTokenUI.StartTokenSell()
 	end
 end

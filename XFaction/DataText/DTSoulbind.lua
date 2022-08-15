@@ -13,26 +13,21 @@ local menuList = {
 	{ notCheckable = false }
 }
 
-DTSoulbind = {}
+DTSoulbind = Object:newChildConstructor()
 
 function DTSoulbind:new()
-    _Object = {}
-    setmetatable(_Object, self)
-    self.__index = self
-    self.__name = ObjectName
-
-    self._Key = nil
-    self._Initialized = false
-	self._HeaderFont = nil
-	self._RegularFont = nil
-	self._LDBObject = nil
-	self._Tooltip = nil
-    
+    local _Object = DTGuild.parent.new(self)
+    _Object.__name = 'DTSoulbind'
+	_Object._HeaderFont = nil
+	_Object._RegularFont = nil
+	_Object._LDBObject = nil
+	_Object._Tooltip = nil
     return _Object
 end
 
 function DTSoulbind:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
 		self._HeaderFont = CreateFont('_HeaderFont')
 		self._HeaderFont:SetTextColor(0.4,0.78,1)
 		self._RegularFont = CreateFont('_RegularFont')
@@ -51,24 +46,13 @@ function DTSoulbind:Initialize()
 	return self:IsInitialized()
 end
 
-function DTSoulbind:IsInitialized(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-	if(inBoolean ~= nil) then
-		self._Initialized = inBoolean
-	end
-	return self._Initialized
-end
-
 function DTSoulbind:Print()
-	XFG:SingleLine(LogCategory)
-	XFG:Debug(LogCategory, ObjectName .. " Object")
-	XFG:Debug(LogCategory, "  _Key (" .. type(self._Key) .. "): ".. tostring(self._Key))
+	self:ParentPrint()
 	XFG:Debug(LogCategory, "  _HeaderFont (" .. type(self._HeaderFont) .. "): ".. tostring(self._HeaderFont))
 	XFG:Debug(LogCategory, "  _RegularFont (" .. type(self._RegularFont) .. "): ".. tostring(self._RegularFont))
 	XFG:Debug(LogCategory, "  _Count (" .. type(self._Count) .. "): ".. tostring(self._Count))
 	XFG:Debug(LogCategory, "  _LDBObject (" .. type(self._LDBObject) .. ")")
 	XFG:Debug(LogCategory, "  _Tooltip (" .. type(self._Tooltip) .. ")")
-	XFG:Debug(LogCategory, "  _Initialized (" .. type(self._Initialized) .. "): ".. tostring(self._Initialized))
 end
 
 function DTSoulbind:RefreshBroker()
@@ -91,10 +75,9 @@ function DTSoulbind:RefreshBroker()
 end
 
 function DTSoulbind:OnEnter(this)
-	if(XFG.Initialized == false) then return end
+	if(not XFG.Initialized) then return end
 	if(not XFG.Player.Unit or not XFG.Player.Unit:HasCovenant() or not XFG.Player.Unit:HasSoulbind()) then return end
 	
-	local _Tooltip
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
 		self._Tooltip = XFG.Lib.QT:Acquire(ObjectName)		
 	else
@@ -102,7 +85,7 @@ function DTSoulbind:OnEnter(this)
 		self._Tooltip:SetHeaderFont(self._HeaderFont)
 		self._Tooltip:SetFont(self._RegularFont)
 		self._Tooltip:SmartAnchorTo(this)
-		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, self._Tooltip)
+		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function () XFG.DataText.Soulbind:OnLeave() end)
 		self._Tooltip:EnableMouse(true)
 		self._Tooltip:SetClampedToScreen(false)
 	end
@@ -125,18 +108,6 @@ function DTSoulbind:OnEnter(this)
 			self._Tooltip:AddLine(format(XFG.Lib.Locale['DTSOULBIND_INACTIVE'], _SoulbindName))
 		end
 	end
-
-	-- DT.tooltip:AddLine(' ')
-	-- for i = 1, table.getn(SB.SoulbindData[SB.ActiveSoulbindID].tree.nodes) do
-	-- 	if(SB.SoulbindData[SB.ActiveSoulbindID].tree.nodes[i].state == Enum.SoulbindNodeState.Selected and
-	-- 	   SB.SoulbindData[SB.ActiveSoulbindID].tree.nodes[i].conduitRank == 0) then
-	-- 		local IconID = SB.SoulbindData[SB.ActiveSoulbindID].tree.nodes[i].icon
-	-- 		local IconString = format(IconTokenString, IconID)
-	-- 		local SpellID = SB.SoulbindData[SB.ActiveSoulbindID].tree.nodes[i].spellID
-	-- 		local SpellName = GetSpellInfo(SpellID)
-	-- 		DT.tooltip:AddLine(format('%s %s', IconString, SpellName))
-	-- 	end
-	-- end
 
 	self._Tooltip:AddLine(' ')
 	self._Tooltip:AddSeparator()
@@ -186,12 +157,10 @@ function DTSoulbind:OnClick(this, inButton)
 end
 
 function DTSoulbind:OnLeave(this)
-	local _IsMouseOver = true
-	local _Status, _Error = pcall(function () _IsMouseOver = MouseIsOver(self._Tooltip) end)
-	if(_Status and _IsMouseOver == false) then 
-		if XFG.Lib.QT:IsAcquired(ObjectName) then self._Tooltip:Clear() end
-		self._Tooltip:Hide()
-		XFG.Lib.QT:Release(ObjectName)
-		self._Tooltip = nil
+	if self._Tooltip and MouseIsOver(self._Tooltip) then
+	    return
+	else
+        XFG.Lib.QT:Release(self._Tooltip)
+        self._Tooltip = nil
 	end
 end
