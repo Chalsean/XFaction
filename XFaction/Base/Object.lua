@@ -23,6 +23,7 @@ function Object:newChildConstructor()
     self.parent = self
     
     self._Key = nil
+    self._Name = nil
     self._Initialized = false
 
     return _Object
