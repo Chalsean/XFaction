@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'VersionCollection'
 
 VersionCollection = ObjectCollection:newChildConstructor()
 
 function VersionCollection:new()
     local _Object = VersionCollection.parent.new(self)
-	_Object.__name = 'VersionCollection'
+	_Object.__name = ObjectName
 	_Object._CurrentVersion = nil
 	_Object._DefaultVersion = nil
     return _Object
