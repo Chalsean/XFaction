@@ -1,8 +1,10 @@
 local XFG, G = unpack(select(2, ...))
 -- Odd but scoping globals to local is a performance boost
-local LogDebug = XFG.Debug
-local LogLine = XFG.SingleLine
 local ObjectName = 'Object'
+local Functions = {
+    LogDebug = XFG.Debug,
+    LogLine = XFG.SingleLine,
+}
 
 Object = {}
 
@@ -60,12 +62,12 @@ end
 
 -- Dynamically building strings is performance hit but this section is only executed if _DebugLog is enabled
 function Object:ParentPrint()
-    LogLine(ObjectName)
+    Functions.LogLine(ObjectName)
     -- String object that keeps value and pre-builds the log string for printing
-    LogDebug(ObjectName, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    LogDebug(ObjectName, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+    Functions.LogDebug(ObjectName, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+    Functions.LogDebug(ObjectName, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
     -- Boolean object
-    LogDebug(ObjectName, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
+    Functions.LogDebug(ObjectName, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 end
 
 function Object:GetKey()
