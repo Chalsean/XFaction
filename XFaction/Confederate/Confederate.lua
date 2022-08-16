@@ -10,7 +10,7 @@ local Functions = {
 	ContainsNode = XFG.Nodes.Contains,
 	RemoveNode = XFG.Nodes.RemoveNode,
 	GetNode = XFG.Nodes.GetObject,
-	SerializeUnitData = XFG:SerializeUnitData,
+	SerializeUnitData = XFG.SerializeUnitData,
 	DeserializeUnitData = XFG.DeserializeUnitData,
 }
 
