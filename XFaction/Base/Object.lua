@@ -1,4 +1,5 @@
 local XFG, G = unpack(select(2, ...))
+-- Odd but scoping globals to local is a performance boost
 local LogDebug = XFG.Debug
 local LogLine = XFG.SingleLine
 local ObjectName = 'Object'
