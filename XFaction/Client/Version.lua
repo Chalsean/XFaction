@@ -1,10 +1,12 @@
 local XFG, G = unpack(select(2, ...))
+local LogDebug = XFG.Debug
+local ObjectName = 'Version'
 
 Version = Object:newChildConstructor()
 
 function Version:new()
     local _Object = Version.parent.new(self)
-    _Object.__name = 'Version'
+    _Object.__name = ObjectName
     _Object._Major = nil
     _Object._Minor = nil
     _Object._Patch = nil
@@ -13,9 +15,9 @@ end
 
 function Version:Print()
     self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _Major (' .. type(self._Major) .. '): ' .. tostring(self._Major))
-    XFG:Debug(self:GetObjectName(), '  _Minor (' .. type(self._Minor) .. '): ' .. tostring(self._Minor))
-    XFG:Debug(self:GetObjectName(), '  _Patch (' .. type(self._Patch) .. '): ' .. tostring(self._Patch))
+    LogDebug(ObjectName, '  _Major (' .. type(self._Major) .. '): ' .. tostring(self._Major))
+    LogDebug(ObjectName, '  _Minor (' .. type(self._Minor) .. '): ' .. tostring(self._Minor))
+    LogDebug(ObjectName, '  _Patch (' .. type(self._Patch) .. '): ' .. tostring(self._Patch))
 end
 
 function Version:SetKey(inKey)
