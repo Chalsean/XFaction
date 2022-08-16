@@ -1,10 +1,15 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Faction'
+
+local Functions = {
+    LogDebug = XFG.Debug,    
+}
 
 Faction = Object:newChildConstructor()
 
 function Faction:new()
     local _Object = Faction.parent.new(self)
-    _Object.__name = 'Faction'
+    _Object.__name = ObjectName
     _Object._ID = nil
     _Object._IconID = nil
     _Object._Language = nil
@@ -35,8 +40,8 @@ end
 
 function Faction:Print()
     self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+    Functions.LogDebug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+    Functions.LogDebug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
 end
 
 function Faction:GetID()
