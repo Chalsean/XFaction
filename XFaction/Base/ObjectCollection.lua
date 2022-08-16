@@ -1,10 +1,13 @@
 local XFG, G = unpack(select(2, ...))
+local LogLine = XFG.DoubleLine
+local LogDebug = XFG.Debug
+local ObjectName = 'ObjectCollection'
 
 ObjectCollection = Object:newChildConstructor()
 
 function ObjectCollection:new()
     local _Object = ObjectCollection.parent.new(self)
-    _Object.__name = 'ObjectCollection'
+    _Object.__name = ObjectName
     _Object._Objects = nil
     _Object._ObjectCount = 0
     return _Object
@@ -12,7 +15,7 @@ end
 
 function ObjectCollection:newChildConstructor()
     local _Object = ObjectCollection.parent.new(self)
-    _Object.__name = 'ObjectCollection'
+    _Object.__name = ObjectName
     _Object.parent = self    
     _Object._Objects = nil
     _Object._ObjectCount = 0
@@ -38,10 +41,10 @@ function ObjectCollection:Print()
 end
 
 function ObjectCollection:ParentPrint()
-    XFG:DoubleLine(self:GetObjectName())
-    XFG:Debug(self:GetObjectName(), '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(self:GetObjectName(), '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-    XFG:Debug(self:GetObjectName(), '  _ObjectCount (' .. type(self._ObjectCount) .. '): ' .. tostring(self._ObjectCount))
+    LogLine(ObjectName)
+    LogDebug(ObjectName, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+    LogDebug(ObjectName, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
+    LogDebug(ObjectName, '  _ObjectCount (' .. type(self._ObjectCount) .. '): ' .. tostring(self._ObjectCount))
     for _, _Object in self:Iterator() do
         _Object:Print()
     end
