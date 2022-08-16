@@ -63,7 +63,7 @@ function Version:SetPatch(inPatch)
 end
 
 function Version:IsNewer(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
+    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == ObjectName, 'Wrong object type')
     -- Do not consider alpha/beta builds as newer
     if(inVersion:GetPatch() == 0 or inVersion:GetPatch() % 2 == 1) then
         return false
