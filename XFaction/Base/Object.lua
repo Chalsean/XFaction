@@ -1,4 +1,7 @@
 local XFG, G = unpack(select(2, ...))
+local LogDebug = XFG.Debug
+local LogLine = XFG.SingleLine
+local ObjectName = 'Object'
 
 Object = {}
 
@@ -6,7 +9,7 @@ function Object:new()
     local _Object = {}
     setmetatable(_Object, self)
     self.__index = self
-    self.__name = 'Object'
+    self.__name = ObjectName
 
     self._Key = nil
     self._Name = nil
@@ -19,7 +22,7 @@ function Object:newChildConstructor()
     local _Object = {}
     setmetatable(_Object, self)
     self.__index = self
-    self.__name = 'Object'
+    self.__name = ObjectName
     self.parent = self
     
     self._Key = nil
@@ -54,11 +57,12 @@ function Object:Print()
     self:ParentPrint()
 end
 
+-- Dynamically building strings is performance hit but this section is only executed if _DebugLog is enabled
 function Object:ParentPrint()
-    XFG:SingleLine(self:GetObjectName())
-    XFG:Debug(self:GetObjectName(), '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(self:GetObjectName(), '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-    XFG:Debug(self:GetObjectName(), '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
+    LogLine(ObjectName)
+    LogDebug(ObjectName, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+    LogDebug(ObjectName, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+    LogDebug(ObjectName, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
 end
 
 function Object:GetKey()
