@@ -85,7 +85,7 @@ The addon should provide the following functionalities:
 
 > LibRace
 
-> LibRealmInfo
+> LibRealmInfo (*modified)
 
 > LibSpec
 

@@ -3,7 +3,7 @@ local XFG, G = unpack(select(2, ...))
 Object = {}
 
 function Object:new()
-    _Object = {}
+    local _Object = {}
     setmetatable(_Object, self)
     self.__index = self
     self.__name = 'Object'
@@ -16,13 +16,14 @@ function Object:new()
 end
 
 function Object:newChildConstructor()
-    _Object = {}
+    local _Object = {}
     setmetatable(_Object, self)
     self.__index = self
-    self.__name = ObjectName
+    self.__name = 'Object'
     self.parent = self
     
     self._Key = nil
+    self._Name = nil
     self._Initialized = false
 
     return _Object

@@ -36,15 +36,12 @@ function BNet:Send(inMessage)
         end
 
         -- You should only ever have to message one addon user per target
-        -- Something isnt working here
         local _FriendCount = table.getn(_Friends)
         if(_FriendCount > 0) then
             local _RandomNumber = math.random(1, _FriendCount)
             table.insert(_Links, _Friends[_RandomNumber])
         else
-            local _Realm = _Target:GetRealm()
-            local _Faction = _Target:GetFaction()
-            XFG:Debug(ObjectName, 'Unable to identify friends on target [%s:%s]', _Realm:GetName(), _Faction:GetName())
+            XFG:Debug(ObjectName, 'Unable to identify friends on target [%s:%s]', _Target:GetRealm():GetName(), _Target:GetFaction():GetName())
         end
     end
 
@@ -76,7 +73,7 @@ function BNet:Send(inMessage)
             inMessage:RemoveTarget(_Friend:GetTarget())
         end).
         catch(function (inErrorMessage)
-            XFG:Warn(ObjectName 'Failed to send packet to [%s]: ' .. inErrorMessage, _Friend:GetName())
+            XFG:Warn(ObjectName, 'Failed to send packet to [%s]: ' .. inErrorMessage, _Friend:GetName())
         end)
     end
 end

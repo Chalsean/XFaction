@@ -33,13 +33,13 @@ end
 
 function Outbox:VoidLocalChannel()
     self._LocalChannel = nil
-    return self:HasLocalChannel() == false
+    return not self:HasLocalChannel()
 end
 
 function Outbox:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.DATA) then return end
-    if(inMessage:IsInitialized() == false) then
+    if(not inMessage:IsInitialized()) then
 		-- Review: double check this isn't overriding the timestamp of the message
         inMessage:Initialize()
     end

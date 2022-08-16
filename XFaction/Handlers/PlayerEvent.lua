@@ -88,7 +88,7 @@ function PlayerEvent:CallbackSkillChanged()
         local _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), XFG.Player.Unit:GetID())
         if(_UnitData.profession1ID ~= nil) then
             local _Profession = XFG.Professions:GetObject(_UnitData.profession1ID)
-            if(_Profession:Equals(XFG.Player.Unit:GetProfession1()) == false) then
+            if(not _Profession:Equals(XFG.Player.Unit:GetProfession1())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
                 XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
@@ -98,7 +98,7 @@ function PlayerEvent:CallbackSkillChanged()
 
         if(_UnitData.profession2ID ~= nil) then
             local _Profession = XFG.Professions:GetObject(_UnitData.profession2ID)
-            if(_Profession:Equals(XFG.Player.Unit:GetProfession2()) == false) then
+            if(not _Profession:Equals(XFG.Player.Unit:GetProfession2())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
                 XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
@@ -115,14 +115,14 @@ function PlayerEvent:CallbackInstance()
     try(function ()
         local _InInstance, _InstanceType = IsInInstance()
         -- Enter instance for first time
-        if(_InInstance and XFG.Player.InInstance == false) then
+        if(_InInstance and not XFG.Player.InInstance) then
             XFG:Debug(ObjectName, 'Entering instance, disabling some event listeners and timers')
             XFG.Player.InInstance = true
             XFG.Events:EnterInstance()
             XFG.Timers:EnterInstance()        
 
         -- Just leaving instance or UI reload
-        elseif(_InInstance == false and XFG.Player.InInstance) then
+        elseif(not _InInstance and XFG.Player.InInstance) then
             XFG:Debug(ObjectName, 'Leaving instance, enabling some event listeners and timers')
             XFG.Player.InInstance = false
             XFG.Events:LeaveInstance()
