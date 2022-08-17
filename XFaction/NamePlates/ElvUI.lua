@@ -1,4 +1,5 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'ElvUINameplate'
 
 ElvUINameplate = Object:newChildConstructor()
 

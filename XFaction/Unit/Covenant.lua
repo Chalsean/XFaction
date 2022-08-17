@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Covenant'
 
 Covenant = Object:newChildConstructor()
 
 function Covenant:new()
     local _Object = Covenant.parent.new(self)
-    _Object.__name = 'Covenant'
+    _Object.__name = ObjectName
     _Object._ID = 0
     _Object._SoulbindIDs = {}
     _Object._IconID = nil
@@ -26,10 +27,12 @@ function Covenant:Initialize()
 end
 
 function Covenant:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    for _Index, _SoulbindID in PairsByKeys (self._SoulbindIDs) do
-        XFG:Debug(self:GetObjectName(), '  _SoulbindID[' .. tostring(_Index) .. '] (' .. type(_SoulbindID) .. '): ' .. tostring(_SoulbindID))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        for _Index, _SoulbindID in PairsByKeys (self._SoulbindIDs) do
+            XFG:Debug(ObjectName, '  _SoulbindID[' .. tostring(_Index) .. '] (' .. type(_SoulbindID) .. '): ' .. tostring(_SoulbindID))
+        end
     end
 end
 

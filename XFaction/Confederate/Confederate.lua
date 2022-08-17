@@ -1,19 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Confederate'
 
-local Functions = {
-	LogDebug = XFG.Debug,
-	LogInfo = XFG.Info,
-	LogWarn = XFG.Warn,
-	GetTargetByRealmFaction = XFG.Targets.GetTargetByRealmFaction,
-	RefreshBroker = XFG.DataText.Guild.RefreshBroker,
-	ContainsNode = XFG.Nodes.Contains,
-	RemoveNode = XFG.Nodes.RemoveNode,
-	GetNode = XFG.Nodes.GetObject,
-	SerializeUnitData = XFG.SerializeUnitData,
-	DeserializeUnitData = XFG.DeserializeUnitData,
-}
-
 Confederate = ObjectCollection:newChildConstructor()
 
 function Confederate:new()
@@ -46,13 +33,20 @@ end
 function Confederate:AddUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argument must be Unit object')
     
-    self:AddObject(inUnit)
-    Functions.RefreshBroker()
+    if(self:Contains(inUnit:GetKey())) then
+        local _OldData = self:GetObject(inUnit:GetKey())
+        self:AddObject(inUnit)
+        XFG.Factories.Unit:CheckIn(_OldData)
+    else
+        self:AddObject(inUnit)
+        XFG.DataText.Guild:RefreshBroker()
+    end
+
     if(inUnit:IsPlayer()) then
         XFG.Player.Unit = inUnit
     end
 
-    local _Target = Functions.GetTargetByRealmFaction(inUnit:GetRealm(), inUnit:GetFaction())
+    local _Target = XFG.Targets:GetTargetByRealmFaction(inUnit:GetRealm(), inUnit:GetFaction())
     if(self._CountByTarget[_Target:GetKey()] == nil) then
         self._CountByTarget[_Target:GetKey()] = 0
     end
@@ -64,7 +58,7 @@ end
 function Confederate:OfflineUnits(inEpochTime)
     assert(type(inEpochTime) == 'number')
     for _, _Unit in self:Iterator() do
-        if(_Unit:IsPlayer() == false and _Unit:GetTimeStamp() < inEpochTime) then
+        if(not _Unit:IsPlayer() and _Unit:GetTimeStamp() < inEpochTime) then
             self:RemoveUnit(_Unit:GetKey())
         end
     end
@@ -75,12 +69,13 @@ function Confederate:RemoveUnit(inKey)
     if(self:Contains(inKey)) then
         local _Unit = self:GetObject(inKey)
         self:RemoveObject(inKey)
-        Functions.RefreshBroker()
-        if(Functions.ContainsNode(_Unit:GetName())) then
-            Functions.RemoveNode(Functions.GetNode(_Unit:GetName()))
+        XFG.DataText.Guild:RefreshBroker()
+        if(XFG.Nodes:Contains(_Unit:GetName())) then
+            XFG.Nodes:RemoveNode(XFG.Nodes:GetObject(_Unit:GetName()))
         end
-        local _Target = Functions.GetTargetByRealmFaction(_Unit:GetRealm(), _Unit:GetFaction())
-        self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1      
+        local _Target = XFG.Targets:GetTargetByRealmFaction(_Unit:GetRealm(), _Unit:GetFaction())
+        self._CountByTarget[_Target:GetKey()] = self._CountByTarget[_Target:GetKey()] - 1
+        XFG.Factories.Unit:CheckIn(_Unit)
     end
 end
 
@@ -91,13 +86,13 @@ function Confederate:CreateBackup()
         for _UnitKey, _Unit in self:Iterator() do
             if(_Unit:IsRunningAddon() and not _Unit:IsPlayer()) then
                 XFG.DB.Backup.Confederate[_UnitKey] = {}
-                local _SerializedData = Functions.SerializeUnitData(_Unit)
+                local _SerializedData = XFG:SerializeUnitData(_Unit)
                 XFG.DB.Backup.Confederate[_UnitKey] = _SerializedData
             end
         end
     end).
     catch(function (inErrorMessage)
-        table.insert(XFG.DB.Errors, 'Failed to create confederate backup before reload: ' .. inErrorMessage)
+        XFG.DB.Errors[#XFG.DB.Errors + 1] = 'Failed to create confederate backup before reload: ' .. inErrorMessage
     end)
 end
 
@@ -105,13 +100,14 @@ function Confederate:RestoreBackup()
     if(XFG.DB.Backup == nil or XFG.DB.Backup.Confederate == nil) then return end
     for _, _Data in pairs (XFG.DB.Backup.Confederate) do
         try(function ()
-            local _UnitData = Functions.DeserializeUnitData(_Data)
+            local _UnitData = XFG:DeserializeUnitData(_Data)
             if(self:AddUnit(_UnitData)) then
-                Functions.LogInfo(ObjectName, '  Restored %s unit information from backup', _UnitData:GetUnitName())
+                -- Although this is dynamically building a string, it only does this function on startup
+                XFG:Info(ObjectName, '  Restored %s unit information from backup', _UnitData:GetUnitName())
             end
         end).
         catch(function (inErrorMessage)
-            Functions.LogWarn(ObjectName, inErrorMessage)
+            XFG:Warn(ObjectName, inErrorMessage)
         end)
     end
 end
@@ -174,10 +170,10 @@ function Confederate:SaveGuildInfo()
                 _NewGuildInfo = _NewGuildInfo .. _XFInfo
             end
             --SetGuildInfoText(_NewGuildInfo)
-            Functions.LogDebug(ObjectName, 'Set new guild information: ' .. _NewGuildInfo)
+            XFG:Debug(ObjectName, 'Set new guild information: ' .. _NewGuildInfo)
         end).
         catch(function (inErrorMessage)
-            Functions.LogWarn(ObjectName, inErrorMessage)
+            XFG:Warn(ObjectName, inErrorMessage)
         end)
     end
 end

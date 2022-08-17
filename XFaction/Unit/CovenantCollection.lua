@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'CovenantCollection'
 
 CovenantCollection = ObjectCollection:newChildConstructor()
 
 function CovenantCollection:new()
 	local _Object = CovenantCollection.parent.new(self)
-	_Object.__name = 'CovenantCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 
@@ -17,7 +18,7 @@ function CovenantCollection:Initialize()
 				_NewCovenant:SetID(_CovenantID)
 				_NewCovenant:Initialize()
 				self:AddObject(_NewCovenant)
-				XFG:Info(self:GetObjectName(), 'Initialized covenant [%s]', _NewCovenant:GetName())
+				XFG:Info(ObjectName, 'Initialized covenant [%s]', _NewCovenant:GetName())
 			end
 		end
 		self:IsInitialized(true)

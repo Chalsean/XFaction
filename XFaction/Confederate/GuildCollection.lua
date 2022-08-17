@@ -10,7 +10,7 @@ function GuildCollection:new()
 end
 
 function GuildCollection:Initialize()
-	if(self:IsInitialized() == false) then
+	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self._Names = {}
 		self:IsInitialized(true)
@@ -23,7 +23,8 @@ function GuildCollection:ContainsGuildName(inGuildName)
 end
 
 function GuildCollection:GetGuildByRealmGuildName(inRealm, inGuildName)
-	assert(type(inGuildName) == 'string' and type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'arguments must be a Realm object and a string')	
+	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be a Realm object')	
+	assert(type(inGuildName) == 'string')
 	for _, _Guild in self:Iterator() do
 		if(inRealm:Equals(_Guild:GetRealm()) and _Guild:GetName() == inGuildName) then
 			return _Guild

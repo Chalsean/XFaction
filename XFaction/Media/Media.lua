@@ -1,19 +1,22 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Media'
 
 Media = Object:newChildConstructor()
 
 function Media:new()
     local _Object = Media.parent.new(self)
-    _Object.__name = 'Media'
+    _Object.__name = ObjectName
     _Object._Type = nil
     _Object._Path = nil
     return _Object
 end
 
 function Media:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _Type (' .. type(self._Type) .. '): ' .. tostring(self._Type))
-    XFG:Debug(self:GetObjectName(), '  _Path (' .. type(self._Path) .. '): ' .. tostring(self._Path))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _Type (' .. type(self._Type) .. '): ' .. tostring(self._Type))
+        XFG:Debug(ObjectName, '  _Path (' .. type(self._Path) .. '): ' .. tostring(self._Path))
+    end
 end
 
 function Media:GetType()

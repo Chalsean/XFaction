@@ -175,6 +175,10 @@ XFG.Defaults = {
                 Compression = true,
             },
         },
+        Debug = {
+            Enable = false,
+            Verbosity = 4,
+        },
     }
 }
     

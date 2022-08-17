@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'RaceCollection'
 
 RaceCollection = ObjectCollection:newChildConstructor()
 
 function RaceCollection:new()
 	local _Object = RaceCollection.parent.new(self)
-	_Object.__name = 'RaceCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 
@@ -24,7 +25,7 @@ function RaceCollection:Initialize()
 			end
 			_NewRace:SetFaction(XFG.Factions:GetFactionByName(_Race.Faction))
 			self:AddObject(_NewRace)
-			XFG:Info(self:GetObjectName(), 'Initialized race [%s]', _NewRace:GetName())
+			XFG:Info(ObjectName, 'Initialized race [%s]', _NewRace:GetName())
 		end
 		self:IsInitialized(true)
 	end

@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'TargetCollection'
 
 TargetCollection = ObjectCollection:newChildConstructor()
 
 function TargetCollection:new()
 	local _Object = TargetCollection.parent.new(self)
-	_Object.__name = 'TargetCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 
@@ -27,11 +28,11 @@ function TargetCollection:Initialize()
 			_NewTarget:SetFaction(_Faction)
 			
 			if(not self:Contains(_NewTarget:GetKey())) then	
-				XFG:Info(self:GetObjectName(), 'Initializing target [%s]', _Key)
+				XFG:Info(ObjectName, 'Initializing target [%s]', _Key)
 				self:AddObject(_NewTarget)
 			end
 			if(XFG.Player.Target == nil and _Realm:Equals(XFG.Player.Realm) and _Faction:Equals(XFG.Player.Faction)) then
-				XFG:Info(self:GetObjectName(), 'Initializing player target [%s]', _Key)
+				XFG:Info(ObjectName, 'Initializing player target [%s]', _Key)
 				XFG.Player.Target = _NewTarget
 			end
 		end

@@ -1,10 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'FactionCollection'
 
-local Functions = {
-	LogDebug = XFG.Debug,
-}
-
 FactionCollection = ObjectCollection:newChildConstructor()
 
 function FactionCollection:new()
@@ -17,7 +13,7 @@ function FactionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		for i, _FactionName in pairs (XFG.Settings.Factions) do
-			Functions.LogDebug(ObjectName, 'Initializing faction [%s]', _FactionName)
+			XFG:Debug(ObjectName, 'Initializing faction [%s]', _FactionName)
 			local _NewFaction = Faction:new()
 			_NewFaction:SetName(_FactionName)
 			_NewFaction:Initialize()

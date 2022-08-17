@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Unit'
 
-Unit = Object:newChildConstructor()
+Unit = FactoryObject:newChildConstructor()
 
 function Unit:new()
     local _Object = Unit.parent.new(self)
-    _Object.__name = 'Unit'
+    _Object.__name = ObjectName
 
     _Object._GUID = nil
     _Object._UnitName = nil
@@ -200,43 +201,47 @@ function Unit:Initialize(inMemberID)
 end
 
 function Unit:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _GUID (' .. type(self._GUID) .. '): ' .. tostring(self._GUID))
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-	XFG:Debug(self:GetObjectName(), '  _UnitName (' .. type(self._UnitName) .. '): ' .. tostring(self._UnitName))
-    XFG:Debug(self:GetObjectName(), '  _Rank (' .. type(self._Rank) .. '): ' .. tostring(self._Rank))
-    XFG:Debug(self:GetObjectName(), '  _Level (' .. type(self._Level) .. '): ' .. tostring(self._Level))
-    XFG:Debug(self:GetObjectName(), '  _Note (' .. type(self._Note) .. '): ' .. tostring(self._Note))
-    XFG:Debug(self:GetObjectName(), '  _Online (' .. type(self._Online) .. '): ' .. tostring(self._Online))
-    XFG:Debug(self:GetObjectName(), '  _Status (' .. type(self._Status) .. '): ' .. tostring(self._Status))
-    XFG:Debug(self:GetObjectName(), '  _DungeonScore (' .. type(self._DungeonScore) .. '): ' .. tostring(self._DungeonScore))
-    XFG:Debug(self:GetObjectName(), '  _AchievementPoints (' .. type(self._AchievementPoints) .. '): ' .. tostring(self._AchievementPoints))
-    XFG:Debug(self:GetObjectName(), '  _TimeStamp (' .. type(self._TimeStamp) .. '): ' .. tostring(self._TimeStamp))
-    XFG:Debug(self:GetObjectName(), '  _RunningAddon (' .. type(self._RunningAddon) .. '): ' .. tostring(self._RunningAddon))
-    XFG:Debug(self:GetObjectName(), '  _Alt (' .. type(self._Alt) .. '): ' .. tostring(self._Alt))
-    XFG:Debug(self:GetObjectName(), '  _MainName (' .. type(self._MainName) .. '): ' .. tostring(self._MainName))
-    XFG:Debug(self:GetObjectName(), '  _IsPlayer (' .. type(self._IsPlayer) .. '): ' .. tostring(self._IsPlayer))
-    XFG:Debug(self:GetObjectName(), '  _ItemLevel (' .. type(self._ItemLevel) .. '): ' .. tostring(self._ItemLevel))
-    XFG:Debug(self:GetObjectName(), '  _RaidProgress (' .. type(self._RaidProgress) .. '): ' .. tostring(self._RaidProgress))
-    XFG:Debug(self:GetObjectName(), '  _PvP (' .. type(self._PvP) .. '): ' .. tostring(self._PvP))
-    XFG:Debug(self:GetObjectName(), '  _GuildSpeak (' .. type(self._GuildSpeak) .. '): ' .. tostring(self._GuildSpeak))
-    XFG:Debug(self:GetObjectName(), '  _GuildListen (' .. type(self._GuildListen) .. '): ' .. tostring(self._GuildListen))
-    if(self:HasZone()) then 
-        self:GetZone():Print()
-    else
-        XFG:Debug(self:GetObjectName(), '  _ZoneName (' .. type(self._ZoneName) .. '): ' .. tostring(self._ZoneName))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
+        XFG:Debug(ObjectName, '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
+        XFG:Debug(ObjectName, '  _GUID (' .. type(self._GUID) .. '): ' .. tostring(self._GUID))
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _UnitName (' .. type(self._UnitName) .. '): ' .. tostring(self._UnitName))
+        XFG:Debug(ObjectName, '  _Rank (' .. type(self._Rank) .. '): ' .. tostring(self._Rank))
+        XFG:Debug(ObjectName, '  _Level (' .. type(self._Level) .. '): ' .. tostring(self._Level))
+        XFG:Debug(ObjectName, '  _Note (' .. type(self._Note) .. '): ' .. tostring(self._Note))
+        XFG:Debug(ObjectName, '  _Online (' .. type(self._Online) .. '): ' .. tostring(self._Online))
+        XFG:Debug(ObjectName, '  _Status (' .. type(self._Status) .. '): ' .. tostring(self._Status))
+        XFG:Debug(ObjectName, '  _DungeonScore (' .. type(self._DungeonScore) .. '): ' .. tostring(self._DungeonScore))
+        XFG:Debug(ObjectName, '  _AchievementPoints (' .. type(self._AchievementPoints) .. '): ' .. tostring(self._AchievementPoints))
+        XFG:Debug(ObjectName, '  _TimeStamp (' .. type(self._TimeStamp) .. '): ' .. tostring(self._TimeStamp))
+        XFG:Debug(ObjectName, '  _RunningAddon (' .. type(self._RunningAddon) .. '): ' .. tostring(self._RunningAddon))
+        XFG:Debug(ObjectName, '  _Alt (' .. type(self._Alt) .. '): ' .. tostring(self._Alt))
+        XFG:Debug(ObjectName, '  _MainName (' .. type(self._MainName) .. '): ' .. tostring(self._MainName))
+        XFG:Debug(ObjectName, '  _IsPlayer (' .. type(self._IsPlayer) .. '): ' .. tostring(self._IsPlayer))
+        XFG:Debug(ObjectName, '  _ItemLevel (' .. type(self._ItemLevel) .. '): ' .. tostring(self._ItemLevel))
+        XFG:Debug(ObjectName, '  _RaidProgress (' .. type(self._RaidProgress) .. '): ' .. tostring(self._RaidProgress))
+        XFG:Debug(ObjectName, '  _PvP (' .. type(self._PvP) .. '): ' .. tostring(self._PvP))
+        XFG:Debug(ObjectName, '  _GuildSpeak (' .. type(self._GuildSpeak) .. '): ' .. tostring(self._GuildSpeak))
+        XFG:Debug(ObjectName, '  _GuildListen (' .. type(self._GuildListen) .. '): ' .. tostring(self._GuildListen))
+        if(self:HasZone()) then 
+            self:GetZone():Print()
+        else
+            XFG:Debug(ObjectName, '  _ZoneName (' .. type(self._ZoneName) .. '): ' .. tostring(self._ZoneName))
+        end
+        if(self:HasVersion()) then self._Version:Print() end
+        if(self:HasRealm()) then self._Realm:Print() end
+        if(self:HasGuild()) then self._Guild:Print() end
+        if(self:HasTeam()) then self._Team:Print() end
+        if(self:HasRace()) then self._Race:Print() end
+        if(self:HasClass()) then self._Class:Print() end
+        if(self:HasSpec()) then self._Spec:Print() end
+        if(self:HasCovenant()) then self._Covenant:Print() end
+        if(self:HasSoulbind()) then self._Soulbind:Print() end
+        if(self:HasProfession1()) then self._Profession1:Print() end
+        if(self:HasProfession2()) then self._Profession2:Print() end    
     end
-    if(self:HasVersion()) then self._Version:Print() end
-    if(self:HasRealm()) then self._Realm:Print() end
-    if(self:HasGuild()) then self._Guild:Print() end
-    if(self:HasTeam()) then self._Team:Print() end
-    if(self:HasRace()) then self._Race:Print() end
-    if(self:HasClass()) then self._Class:Print() end
-    if(self:HasSpec()) then self._Spec:Print() end
-    if(self:HasCovenant()) then self._Covenant:Print() end
-    if(self:HasSoulbind()) then self._Soulbind:Print() end
-    if(self:HasProfession1()) then self._Profession1:Print() end
-    if(self:HasProfession2()) then self._Profession2:Print() end    
 end
 
 function Unit:IsPlayer(inBoolean)
@@ -790,4 +795,46 @@ function Unit:Equals(inUnit)
     -- A unit cannot change Class, do not consider
     
     return true
+end
+
+function Unit:FactoryReset()
+    self._Key = nil
+    self._GUID = nil
+    self._UnitName = nil
+    self._Name = nil
+    self._ID = 0
+    self._Rank = nil
+    self._Level = 60
+    self._Class = nil
+    self._Spec = nil
+    self._Zone = nil
+    self._ZoneName = nil
+    self._Note = nil
+    self._Online = false
+    self._Status = nil
+    self._Mobile = false
+    self._Race = nil
+    self._TimeStamp = nil
+    self._Covenant = nil
+    self._Soulbind = nil
+    self._Profession1 = nil
+    self._Profession2 = nil
+    self._DungeonScore = 0
+    self._AchievementPoints = 0
+    self._RunningAddon = false
+    self._Alt = false
+    self._MainName = nil
+    self._IsPlayer = false
+    self._IsOnMainGuild = false
+    self._Faction = nil
+    self._Team = nil
+    self._Initialized = false
+    self._Guild = nil
+    self._Realm = nil
+    self._Version = nil
+    self._ItemLevel = 0
+    self._RaidProgress = ''
+    self._PvP = ''
+    self._GuildSpeak = true
+    self._GuildListen = true
 end

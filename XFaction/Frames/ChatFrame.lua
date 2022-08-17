@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'ChatFrame'
 
 ChatFrame = Object:newChildConstructor()
 
 function ChatFrame:new()
     local _Object = ChatFrame.parent.new(self)
-    _Object.__name = 'ChatFrame'
+    _Object.__name = ObjectName
     _Object._ElvUIModule = nil  
     _Object._ChatFrameHandler = nil
     return _Object
@@ -25,15 +26,15 @@ function ChatFrame:SetHandler()
             return XFG.ElvUI.private.chat.enable
         end)
         if _Status and _Enabled then
-            XFG:Info(self:GetObjectName(), 'Using ElvUI chat handler')
+            XFG:Info(ObjectName, 'Using ElvUI chat handler')
             self._ElvUIModule = XFG.ElvUI:GetModule('Chat')
             self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
         else
-            XFG:Error(self:GetObjectName(), 'Failed to detect if elvui has chat enabled')
+            XFG:Error(ObjectName, 'Failed to detect if elvui has chat enabled')
             self._ChatFrameHandler = ChatFrame_MessageEventHandler
         end
     else
-        XFG:Info(self:GetObjectName(), 'Using default chat handler')
+        XFG:Info(ObjectName, 'Using default chat handler')
         self._ChatFrameHandler = ChatFrame_MessageEventHandler
     end
 end

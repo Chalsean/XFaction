@@ -16,9 +16,9 @@ function GuildEvent:Initialize()
         XFG:CreateEvent('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
         -- Hook player inviting someone, they will send broadcast if player joins
         hooksecurefunc('GuildInvite', function(inInvitee) XFG.Invites[inInvitee] = true end)
-        XFG:Info(self:GetObjectName(), 'Post-hooked GuildInvite API')
+        XFG:Info(ObjectName, 'Post-hooked GuildInvite API')
         XFG:RegisterEvent('CLUB_MEMBER_ADDED', XFG.Handlers.GuildEvent.CallbackMemberJoined)
-        XFG:Info(self:GetObjectName(), 'Registered for CLUB_MEMBER_ADDED events')
+        XFG:Info(ObjectName, 'Registered for CLUB_MEMBER_ADDED events')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -28,7 +28,7 @@ end
 function GuildEvent:CallbackRosterUpdate()
     for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         try(function ()
-            local _UnitData = Unit:new()
+            local _UnitData = XFG.Factories.Unit:CheckOut()
             _UnitData:Initialize(_MemberID)
 
             if(_UnitData:IsInitialized()) then
@@ -45,33 +45,41 @@ function GuildEvent:CallbackRosterUpdate()
                         -- If the player is running addon, do not process
                         if(not _CachedUnitData:IsRunningAddon() and not _CachedUnitData:Equals(_UnitData)) then         
                             XFG.Confederate:AddUnit(_UnitData)
+                        else
+                            XFG.Factories.Unit:CheckIn(_UnitData)
                         end
                     end
                 -- They went offline and we scanned them before doing so
                 elseif(XFG.Confederate:Contains(_UnitData:GetKey())) then
                     local _CachedUnitData = XFG.Confederate:GetObject(_UnitData:GetKey())
+                    XFG.Factories.Unit:CheckIn(_UnitData)
                     if(not _CachedUnitData:IsPlayer()) then
-                        XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())
                         XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, _CachedUnitData:GetName(), _CachedUnitData:GetUnitName(), _CachedUnitData:GetMainName(), _CachedUnitData:GetGuild(), _CachedUnitData:GetRealm())
-                    end
+                        XFG.Confederate:RemoveUnit(_CachedUnitData:GetKey())
+                    end                    
+                else
+                    XFG.Factories.Unit:CheckIn(_UnitData)
                 end
 
                 if(XFG.Cache.FirstScan[_MemberID] == nil) then
                     XFG.Cache.FirstScan[_MemberID] = true
                 end
+            else
+                XFG.Factories.Unit:CheckIn(_UnitData)
             end
         end).
         catch(function (inErrorMessage)
-            XFG:Warn(ObjectName, 'Failed to scan unit information [%d]: ' .. inErrorMessage, _MemberID)
+            XFG:Warn(ObjectName, inErrorMessage)
         end)
     end
 end
 
 function GuildEvent:CallbackMemberJoined(inGuildID, inMemberID)
+    local _UnitData = nil
     try(function ()
         -- Technically probably dont need to check the guild id
         if(inGuildID == XFG.Player.Guild:GetID()) then
-            local _UnitData = Unit:new()
+            _UnitData = XFG.Factories.Unit:CheckOut()
             _UnitData:Initialize(inMemberID)
             -- Member that player invited joined, broadcast the join
             if(XFG.Cache.Invites[_UnitData:GetName()]) then
@@ -81,6 +89,9 @@ function GuildEvent:CallbackMemberJoined(inGuildID, inMemberID)
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to process new guild member: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
+    end).
+    finally(function ()
+        XFG.Factories.Unit:CheckIn(_UnitData)
     end)
 end

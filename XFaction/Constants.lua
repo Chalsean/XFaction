@@ -12,8 +12,10 @@ XFG.Category = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Start = GetServerTime()
+XFG.DebugFlag = false
 
 XFG.DataText = {}
+XFG.Factories = {}
 XFG.Frames = {}
 XFG.Handlers = {}
 XFG.Nameplates = {}
@@ -177,5 +179,9 @@ XFG.Settings = {
 		ChannelReceive = XFG.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
 		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
 		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
+	},
+	Factories = {
+		Scan = 60 * 7,
+		Purge = 60 * 30,
 	},
 }

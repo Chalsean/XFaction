@@ -13,11 +13,11 @@ function ChatEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         XFG:RegisterEvent('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.CallbackGuildMessage)
-        XFG:Info(self:GetObjectName(), 'Registered for CHAT_MSG_GUILD events')
+        XFG:Info(ObjectName, 'Registered for CHAT_MSG_GUILD events')
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.ChatFilter)
-        XFG:Info(self:GetObjectName(), 'Created CHAT_MSG_GUILD event filter')
+        XFG:Info(ObjectName, 'Created CHAT_MSG_GUILD event filter')
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)
-        XFG:Info(self:GetObjectName(), 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
+        XFG:Info(ObjectName, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -27,23 +27,28 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
     try(function ()
         -- If you are the sender, broadcast to other realms/factions
         if(XFG.Player.GUID == inSenderGUID and XFG.Player.Unit:CanGuildSpeak()) then
-            local _NewMessage = GuildMessage:new()
-            _NewMessage:Initialize()
-            _NewMessage:SetFrom(XFG.Player.Unit:GetKey())
-            _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-            _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
-            _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
-            _NewMessage:SetGuild(XFG.Player.Guild)
-            _NewMessage:SetRealm(XFG.Player.Realm)
-            if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-                _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
-            end
-            _NewMessage:SetData(inText)
-            XFG.Outbox:Send(_NewMessage, true)
+            local _NewMessage = nil
+            try(function ()
+                _NewMessage = XFG.Factories.GuildMessage:CheckOut()
+                _NewMessage:SetFrom(XFG.Player.Unit:GetKey())
+                _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+                _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
+                _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
+                _NewMessage:SetGuild(XFG.Player.Guild)
+                _NewMessage:SetRealm(XFG.Player.Realm)
+                if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+                    _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+                end
+                _NewMessage:SetData(inText)
+                XFG.Outbox:Send(_NewMessage, true)
+            end).
+            finally(function ()
+                XFG.Factories.GuildMessage:CheckIn(_NewMessage)
+            end)
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to send gchat message: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
     end)
 end
 

@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Timer'
 
 Timer = Object:newChildConstructor()
 
 function Timer:new()
     local _Object = Timer.parent.new(self)
-    _Object.__name = 'Timer'
+    _Object.__name = ObjectName
     _Object._ID = nil
     _Object._Delta = 0
     _Object._Callback = nil
@@ -16,14 +17,16 @@ function Timer:new()
 end
 
 function Timer:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
-    XFG:Debug(self:GetObjectName(), '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
-    XFG:Debug(self:GetObjectName(), '  _LastRan (' .. type(self._LastRan) .. '): ' .. tostring(self._LastRan))
-    XFG:Debug(self:GetObjectName(), '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
-    XFG:Debug(self:GetObjectName(), '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
-    XFG:Debug(self:GetObjectName(), '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
+        XFG:Debug(ObjectName, '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
+        XFG:Debug(ObjectName, '  _LastRan (' .. type(self._LastRan) .. '): ' .. tostring(self._LastRan))
+        XFG:Debug(ObjectName, '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
+        XFG:Debug(ObjectName, '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
+        XFG:Debug(ObjectName, '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
+    end
 end
 
 function Timer:GetID()
@@ -93,11 +96,15 @@ end
 function Timer:Start()
     self._ID = XFG:ScheduleRepeatingTimer(self:GetCallback(), self:GetDelta())
     self:IsEnabled(true)
-    XFG:Debug(self:GetObjectName(), 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
+    if(XFG.DebugFlag) then
+        XFG:Debug(ObjectName, 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
+    end
 end
 
 function Timer:Stop()
     XFG:CancelTimer(self._ID)
     self:IsEnabled(false)
-    XFG:Debug(self:GetObjectName(), 'Stopped timer [%s]', self:GetName())
+    if(XFG.DebugFlag) then
+        XFG:Debug(ObjectName, 'Stopped timer [%s]', self:GetName())
+    end
 end

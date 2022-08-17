@@ -1,5 +1,4 @@
 local XFG, G = unpack(select(2, ...))
-local LogDebug = XFG.Debug
 local ObjectName = 'Expansion'
 
 Expansion = Object:newChildConstructor()
@@ -14,10 +13,12 @@ function Expansion:new()
 end
 
 function Expansion:Print()
-    self:ParentPrint()
-    LogDebug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    LogDebug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
-    if(self:HasVersion()) then self:GetVersion():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+        if(self:HasVersion()) then self:GetVersion():Print() end
+    end
 end
 
 function Expansion:GetID()

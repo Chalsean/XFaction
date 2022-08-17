@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Node'
 
 Node = Object:newChildConstructor()
 
 function Node:new()
     local _Object = Node.parent.new(self)
-    _Object.__name = 'Node'
+    _Object.__name = ObjectName
     _Object._Target = nil
     _Object._LinkCount = 0
     return _Object
@@ -22,9 +23,11 @@ function Node:Initialize()
 end
 
 function Node:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), "  _LinkCount (" .. type(self._LinkCount) .. "): ".. tostring(self._LinkCount))
-    if(self:HasTarget()) then self:GetTarget():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, "  _LinkCount (" .. type(self._LinkCount) .. "): ".. tostring(self._LinkCount))
+        if(self:HasTarget()) then self:GetTarget():Print() end
+    end
 end
 
 function Node:IsMyNode()

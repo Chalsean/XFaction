@@ -1,18 +1,21 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'NodeCollection'
 
 NodeCollection = ObjectCollection:newChildConstructor()
 
 function NodeCollection:new()
     local _Object = NodeCollection.parent.new(self)
-	_Object.__name = 'NodeCollection'
+	_Object.__name = ObjectName
 	_Object._TargetCount = {}
     return _Object
 end
 
 function NodeCollection:Print()
-	self:ParentPrint()
-	XFG:Debug(self:GetObjectName(), '  _TargetCount (' .. type(self._TargetCount) .. '): ')
-	XFG:DataDumper(self:GetObjectName(), self._TargetCount)
+	if(XFG.DebugFlag) then
+		self:ParentPrint()
+		XFG:Debug(ObjectName, '  _TargetCount (' .. type(self._TargetCount) .. '): ')
+		XFG:DataDumper(ObjectName, self._TargetCount)
+	end
 end
 
 function NodeCollection:AddNode(inNode)

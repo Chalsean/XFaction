@@ -1,10 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Faction'
 
-local Functions = {
-    LogDebug = XFG.Debug,    
-}
-
 Faction = Object:newChildConstructor()
 
 function Faction:new()
@@ -39,9 +35,11 @@ function Faction:Initialize()
 end
 
 function Faction:Print()
-    self:ParentPrint()
-    Functions.LogDebug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    Functions.LogDebug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+    end
 end
 
 function Faction:GetID()

@@ -40,6 +40,6 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to handle ADDON_LOADED event: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
     end)    
 end

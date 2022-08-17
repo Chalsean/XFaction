@@ -1,6 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 
-Message = Object:newChildConstructor()
+Message = FactoryObject:newChildConstructor()
 
 function Message:new()
     local _Object = Message.parent.new(self)
@@ -54,35 +54,43 @@ function Message:Initialize()
 end
 
 function Message:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
-    XFG:Debug(self:GetObjectName(), "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
-    XFG:Debug(self:GetObjectName(), "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
-    XFG:Debug(self:GetObjectName(), "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
-    XFG:Debug(self:GetObjectName(), "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
-    XFG:Debug(self:GetObjectName(), "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
-    XFG:Debug(self:GetObjectName(), "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-    XFG:Debug(self:GetObjectName(), "  _Data (" ..type(self._Data) .. ")")
-    XFG:Debug(self:GetObjectName(), "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
-    XFG:Debug(self:GetObjectName(), "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
-    if(self:HasVersion()) then self._Version:Print() end
-    for _, _Target in pairs (self:GetTargets()) do
-        _Target:Print()
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(self:GetObjectName(), "  _FactoryKey (" .. type(self._FactoryKey) .. "): ".. tostring(self._FactoryKey))
+        XFG:Debug(self:GetObjectName(), "  _FactoryTime (" .. type(self._FactoryTime) .. "): ".. tostring(self._FactoryTime))
+        XFG:Debug(self:GetObjectName(), "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
+        XFG:Debug(self:GetObjectName(), "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+        XFG:Debug(self:GetObjectName(), "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
+        XFG:Debug(self:GetObjectName(), "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
+        XFG:Debug(self:GetObjectName(), "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
+        XFG:Debug(self:GetObjectName(), "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
+        XFG:Debug(self:GetObjectName(), "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
+        XFG:Debug(self:GetObjectName(), "  _Data (" ..type(self._Data) .. ")")
+        XFG:Debug(self:GetObjectName(), "  _Initialized (" ..type(self._Initialized) .. "): ".. tostring(self._Initialized))
+        XFG:Debug(self:GetObjectName(), "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
+        if(self:HasVersion()) then self._Version:Print() end
+        for _, _Target in pairs (self:GetTargets()) do
+            _Target:Print()
+        end
     end
 end
 
 function Message:ShallowPrint()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
-    XFG:Debug(self:GetObjectName(), "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
-    XFG:Debug(self:GetObjectName(), "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
-    XFG:Debug(self:GetObjectName(), "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
-    XFG:Debug(self:GetObjectName(), "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
-    XFG:Debug(self:GetObjectName(), "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
-    XFG:Debug(self:GetObjectName(), "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-    XFG:Debug(self:GetObjectName(), "  _Data (" ..type(self._Data) .. ")")
-    XFG:Debug(self:GetObjectName(), "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
-    if(self:HasVersion()) then self._Version:Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(self:GetObjectName(), "  _FactoryKey (" .. type(self._FactoryKey) .. "): ".. tostring(self._FactoryKey))
+        XFG:Debug(self:GetObjectName(), "  _FactoryTime (" .. type(self._FactoryTime) .. "): ".. tostring(self._FactoryTime))
+        XFG:Debug(self:GetObjectName(), "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
+        XFG:Debug(self:GetObjectName(), "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
+        XFG:Debug(self:GetObjectName(), "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
+        XFG:Debug(self:GetObjectName(), "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
+        XFG:Debug(self:GetObjectName(), "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
+        XFG:Debug(self:GetObjectName(), "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
+        XFG:Debug(self:GetObjectName(), "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
+        XFG:Debug(self:GetObjectName(), "  _Data (" ..type(self._Data) .. ")")
+        XFG:Debug(self:GetObjectName(), "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
+        if(self:HasVersion()) then self._Version:Print() end
+    end
 end
 
 function Message:GetTo()
@@ -252,4 +260,20 @@ end
 
 function Message:IsMyMessage()
     return XFG.Player.Unit:GetGUID() == self:GetFrom()
+end
+
+function Message:FactoryReset()
+    self._To = nil
+    self._From = nil
+    self._Type = nil
+    self._Subject = nil
+    self._EpochTime = nil
+    self._Targets = nil
+    self._TargetCount = 0
+    self._Data = nil
+    self._Initialized = false
+    self._PacketNumber = 1
+    self._TotalPackets = 1
+    self._Version = nil
+    self:Initialize()
 end

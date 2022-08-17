@@ -1,4 +1,5 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Channel'
 
 Channel = Object:newChildConstructor()
 
@@ -11,9 +12,11 @@ function Channel:new()
 end
 
 function Channel:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), "  _Password (" ..type(self._Password) .. "): ".. tostring(self._Password))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
+        XFG:Debug(ObjectName, "  _Password (" ..type(self._Password) .. "): ".. tostring(self._Password))
+    end
 end
 
 function Channel:GetID()

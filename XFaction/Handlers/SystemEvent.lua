@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'SystemEvent'
 
 SystemEvent = Object:newChildConstructor()
 
 function SystemEvent:new()
     local _Object = SystemEvent.parent.new(self)
-    _Object.__name = 'SystemEvent'
+    _Object.__name = ObjectName
     return _Object
 end
 
@@ -13,10 +14,10 @@ function SystemEvent:Initialize()
         self:ParentInitialize()
         XFG:CreateEvent('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
-        XFG:Info(self:GetObjectName(), 'Pre-hooked ReloadUI')
+        XFG:Info(ObjectName, 'Pre-hooked ReloadUI')
         XFG:CreateEvent('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true, true)
         ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Handlers.SystemEvent.ChatFilter)
-        XFG:Info(self:GetObjectName(), 'Created CHAT_MSG_SYSTEM event filter')
+        XFG:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Link'
 
 Link = Object:newChildConstructor()
 
 function Link:new()
     local _Object = Link.parent.new(self)
-    _Object.__name = 'Link'
+    _Object.__name = ObjectName
 
     _Object._FromNode = nil
     _Object._ToNode = nil
@@ -35,10 +36,12 @@ function Link:Initialize()
 end
 
 function Link:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), "  _EpochTime (" .. type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-    if(self:HasFromNode()) then self:GetFromNode():Print() end
-    if(self:HasToNode()) then self:GetToNode():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, "  _EpochTime (" .. type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
+        if(self:HasFromNode()) then self:GetFromNode():Print() end
+        if(self:HasToNode()) then self:GetToNode():Print() end
+    end
 end
 
 function Link:IsMyLink()

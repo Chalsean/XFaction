@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Event'
 
 Event = Object:newChildConstructor()
 
 function Event:new()
     local _Object = Event.parent.new(self)
-    _Object.__name = 'Event'
+    _Object.__name = ObjectName
     _Object._Name = nil
     _Object._Delta = 0
     _Object._Callback = nil
@@ -16,14 +17,16 @@ function Event:new()
 end
 
 function Event:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-    XFG:Debug(self:GetObjectName(), '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
-    XFG:Debug(self:GetObjectName(), '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
-    XFG:Debug(self:GetObjectName(), '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
-    XFG:Debug(self:GetObjectName(), '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
-    XFG:Debug(self:GetObjectName(), '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
-    XFG:Debug(self:GetObjectName(), '  _Bucket (' .. type(self._Bucket) .. '): ' .. tostring(self._Bucket))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
+        XFG:Debug(ObjectName, '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
+        XFG:Debug(ObjectName, '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
+        XFG:Debug(ObjectName, '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
+        XFG:Debug(ObjectName, '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
+        XFG:Debug(ObjectName, '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
+        XFG:Debug(ObjectName, '  _Bucket (' .. type(self._Bucket) .. '): ' .. tostring(self._Bucket))
+    end
 end
 
 function Event:GetName()
@@ -99,13 +102,17 @@ function Event:Start()
         XFG:RegisterEvent(self:GetName(), self:GetCallback(), self:GetName())
     end
     self:IsEnabled(true)
-    XFG:Debug(self:GetObjectName(), 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    if(XFG.DebugFlag) then
+        XFG:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    end
 end
 
 function Event:Stop()
     XFG:UnregisterEvent(self:GetName())
     self:IsEnabled(false)
-    XFG:Debug(self:GetObjectName(), 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    if(XFG.DebugFlag) then
+        XFG:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    end
 end
 
 function XFG:CreateEvent(inKey, inName, inCallback, inInstance, inInstanceCombat, inBucket, inDelta)

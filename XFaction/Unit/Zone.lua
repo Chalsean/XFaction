@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Zone'
 
 Zone = Object:newChildConstructor()
 
 function Zone:new()
     local _Object = Zone.parent.new(self)
-    _Object.__name = 'Zone'
+    _Object.__name = ObjectName
     _Object._IDs = nil
     _Object._LocaleName = nil
     _Object._Continent = nil
@@ -21,11 +22,13 @@ function Zone:Initialize()
 end
 
 function Zone:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _LocaleName (' .. type(self._LocaleName) .. '): ' .. tostring(self._LocaleName))
-    XFG:Debug(self:GetObjectName(), '  IDs: ')
-    XFG:DataDumper(self:GetObjectName(), self._IDs)
-    if(self:HasContinent()) then self:GetContinent():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _LocaleName (' .. type(self._LocaleName) .. '): ' .. tostring(self._LocaleName))
+        XFG:Debug(ObjectName, '  IDs: ')
+        XFG:DataDumper(ObjectName, self._IDs)
+        if(self:HasContinent()) then self:GetContinent():Print() end
+    end
 end
 
 function Zone:HasID()
@@ -40,7 +43,7 @@ end
 
 function Zone:AddID(inID)
     assert(type(inID) == 'number')
-    table.insert(self._IDs, inID)
+    self._IDs[#self._IDs + 1] = inID
     return self:GetID()
 end
 

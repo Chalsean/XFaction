@@ -1,9 +1,5 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ObjectCollection'
-local Functions = {
-	LogLine = XFG.DoubleLine,
-	LogDebug = XFG.Debug,
-}
 
 ObjectCollection = Object:newChildConstructor()
 
@@ -43,12 +39,14 @@ function ObjectCollection:Print()
 end
 
 function ObjectCollection:ParentPrint()
-    Functions.LogLine(ObjectName)
-    Functions.LogDebug(ObjectName, '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    Functions.LogDebug(ObjectName, '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-    Functions.LogDebug(ObjectName, '  _ObjectCount (' .. type(self._ObjectCount) .. '): ' .. tostring(self._ObjectCount))
-    for _, _Object in self:Iterator() do
-        _Object:Print()
+    if(XFG.DebugFlag) then
+        XFG:DoubleLine(self:GetObjectName())
+        XFG:Debug(self:GetObjectName(), '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+        XFG:Debug(self:GetObjectName(), '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
+        XFG:Debug(self:GetObjectName(), '  _ObjectCount (' .. type(self._ObjectCount) .. '): ' .. tostring(self._ObjectCount))
+        for _, _Object in self:Iterator() do
+            _Object:Print()
+        end
     end
 end
 

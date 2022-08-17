@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Guild'
 
 Guild = Object:newChildConstructor()
 
 function Guild:new()
     local _Object = Guild.parent.new(self)
-    _Object.__name = 'Guild'
+    _Object.__name = ObjectName
     _Object._ID = nil        -- Only the player's guild will have an ID
     _Object._StreamID = nil  -- Only the player's guild will have a StreamerID (this is gchat)
     _Object._Initials = nil
@@ -14,12 +15,14 @@ function Guild:new()
 end
 
 function Guild:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), '  _StreamID (' .. type(self._StreamID) .. '): ' .. tostring(self._StreamID))
-    XFG:Debug(self:GetObjectName(), '  _Initials (' .. type(self._Initials) .. '): ' .. tostring(self._Initials))
-    if(self:HasFaction()) then self:GetFaction():Print() end
-    if(self:HasRealm()) then self:GetRealm():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _StreamID (' .. type(self._StreamID) .. '): ' .. tostring(self._StreamID))
+        XFG:Debug(ObjectName, '  _Initials (' .. type(self._Initials) .. '): ' .. tostring(self._Initials))
+        if(self:HasFaction()) then self:GetFaction():Print() end
+        if(self:HasRealm()) then self:GetRealm():Print() end
+    end
 end
 
 function Guild:GetInitials()

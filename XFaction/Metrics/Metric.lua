@@ -1,17 +1,20 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Metric'
 
 Metric = Object:newChildConstructor()
 
 function Metric:new()
     local _Object = Metric.parent.new(self)
-    _Object.__name = 'Metric'
+    _Object.__name = ObjectName
     _Object._Count = 0
     return _Object
 end
 
 function Metric:Print()
-    self:ParentPrint()
-	XFG:Debug(self:GetObjectName(), '  _Count (' .. type(self._Count) .. '): ' .. tostring(self._Count))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+	    XFG:Debug(self:GetObjectName(), '  _Count (' .. type(self._Count) .. '): ' .. tostring(self._Count))
+    end
 end
 
 function Metric:Increment()

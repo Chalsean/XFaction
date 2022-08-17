@@ -1,5 +1,4 @@
 local XFG, G = unpack(select(2, ...))
-local LogDebug = XFG.Debug
 local ObjectName = 'Version'
 
 Version = Object:newChildConstructor()
@@ -14,10 +13,12 @@ function Version:new()
 end
 
 function Version:Print()
-    self:ParentPrint()
-    LogDebug(ObjectName, '  _Major (' .. type(self._Major) .. '): ' .. tostring(self._Major))
-    LogDebug(ObjectName, '  _Minor (' .. type(self._Minor) .. '): ' .. tostring(self._Minor))
-    LogDebug(ObjectName, '  _Patch (' .. type(self._Patch) .. '): ' .. tostring(self._Patch))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _Major (' .. type(self._Major) .. '): ' .. tostring(self._Major))
+        XFG:Debug(ObjectName, '  _Minor (' .. type(self._Minor) .. '): ' .. tostring(self._Minor))
+        XFG:Debug(ObjectName, '  _Patch (' .. type(self._Patch) .. '): ' .. tostring(self._Patch))
+    end
 end
 
 function Version:SetKey(inKey)

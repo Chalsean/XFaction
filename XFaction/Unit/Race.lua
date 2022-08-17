@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Race'
 
 Race = Object:newChildConstructor()
 
 function Race:new()
     local _Object = Race.parent.new(self)
-    _Object.__name = 'Race'
+    _Object.__name = ObjectName
     _Object._LocaleName = nil
 	_Object._ID = nil
     _Object._Faction = nil
@@ -12,10 +13,12 @@ function Race:new()
 end
 
 function Race:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), '  _LocaleName (' .. type(self._LocaleName) .. '): ' .. tostring(self._LocaleName))
-    if(self:HasFaction()) then self:GetFaction():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _LocaleName (' .. type(self._LocaleName) .. '): ' .. tostring(self._LocaleName))
+        if(self:HasFaction()) then self:GetFaction():Print() end
+    end
 end
 
 function Race:GetLocaleName()

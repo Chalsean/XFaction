@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Friend'
 
 Friend = Object:newChildConstructor()
 
 function Friend:new()
     local _Object = Friend.parent.new(self)
-    _Object.__name = 'Friend'
+    _Object.__name = ObjectName
 
     _Object._ID = nil         -- This the "friend index" you use to look things up
     _Object._AccountID = nil  -- This is the only constant ID
@@ -20,15 +21,17 @@ function Friend:new()
 end
 
 function Friend:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
-    XFG:Debug(self:GetObjectName(), "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
-    XFG:Debug(self:GetObjectName(), "  _AccountName (" ..type(self._AccountName) .. "): ".. tostring(self._AccountName))
-    XFG:Debug(self:GetObjectName(), "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
-    XFG:Debug(self:GetObjectName(), "  _IsRunningAddon (" ..type(self._IsRunningAddon) .. "): ".. tostring(self._IsRunningAddon))
-    XFG:Debug(self:GetObjectName(), "  _MyLink (" ..type(self._MyLink) .. "): ".. tostring(self._MyLink))
-    if(self:HasTarget()) then self:GetTarget():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
+        XFG:Debug(ObjectName, "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
+        XFG:Debug(ObjectName, "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
+        XFG:Debug(ObjectName, "  _AccountName (" ..type(self._AccountName) .. "): ".. tostring(self._AccountName))
+        XFG:Debug(ObjectName, "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
+        XFG:Debug(ObjectName, "  _IsRunningAddon (" ..type(self._IsRunningAddon) .. "): ".. tostring(self._IsRunningAddon))
+        XFG:Debug(ObjectName, "  _MyLink (" ..type(self._MyLink) .. "): ".. tostring(self._MyLink))
+        if(self:HasTarget()) then self:GetTarget():Print() end
+    end
 end
 
 function Friend:GetID()

@@ -45,7 +45,7 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelTy
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed to update channel information based on event: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end)
 end
 
@@ -61,11 +61,13 @@ function ChannelEvent:CallbackUpdateColor(inChannel, inR, inG, inB)
 				XFG.Config.Channels[_Channel:GetName()].R = inR
 				XFG.Config.Channels[_Channel:GetName()].G = inG
 				XFG.Config.Channels[_Channel:GetName()].B = inB
-				XFG:Debug(ObjectName, 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, _Channel:GetName())
+				if(XFG.DebugFlag) then
+					XFG:Debug(ObjectName, 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, _Channel:GetName())
+				end
 			end
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Error(ObjectName, 'Failure capturing channel color: ' .. inErrorMessage)
+		XFG:Error(ObjectName, inErrorMessage)
 	end)
 end
