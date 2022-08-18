@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Mailbox'
 
 Mailbox = ObjectCollection:newChildConstructor()
 
 function Mailbox:new()
     local _Object = Mailbox.parent.new(self)
-	_Object.__name = 'Mailbox'
+	_Object.__name = ObjectName
 	return _Object
 end
 

@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'TimerCollection'
 
 TimerCollection = ObjectCollection:newChildConstructor()
 
 function TimerCollection:new()
     local _Object = TimerCollection.parent.new(self)
-	_Object.__name = 'TimerCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 

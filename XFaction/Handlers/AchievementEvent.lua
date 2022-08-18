@@ -13,10 +13,9 @@ function AchievementEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         XFG:RegisterEvent('ACHIEVEMENT_EARNED', XFG.Handlers.AchievementEvent.CallbackAchievement)
-        XFG:Info(self:GetObjectName(), 'Registered for ACHIEVEMENT_EARNED events')
+        XFG:Info(ObjectName, 'Registered for ACHIEVEMENT_EARNED events')
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function AchievementEvent:CallbackAchievement(inID)
@@ -30,21 +29,26 @@ function AchievementEvent:CallbackAchievement(inID)
                 XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', _EarnedBy, _EarnedBy .. '-' .. XFG.Player.Realm:GetName(), nil, XFG.Player.Guild, XFG.Player.Realm, XFG.Player.Unit:GetGUID(), inID)
             end
         elseif(string.find(_Name, XFG.Lib.Locale['EXPLORE']) == nil) then
-            local _NewMessage = GuildMessage:new()
-            _NewMessage:Initialize()
-            _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-            _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.ACHIEVEMENT)
-            _NewMessage:SetData(inID) -- Leave as ID to localize on receiving end
-            if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-                _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
-            end
-            _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
-            _NewMessage:SetRealm(XFG.Player.Realm)
-            _NewMessage:SetGuild(XFG.Player.Guild)
-            XFG.Outbox:Send(_NewMessage)
+            local _NewMessage = nil
+            try(function ()
+                _NewMessage = XFG.Factories.GuildMessage:CheckOut()
+                _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+                _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.ACHIEVEMENT)
+                _NewMessage:SetData(inID) -- Leave as ID to localize on receiving end
+                if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+                    _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+                end
+                _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
+                _NewMessage:SetRealm(XFG.Player.Realm)
+                _NewMessage:SetGuild(XFG.Player.Guild)
+                XFG.Outbox:Send(_NewMessage)
+            end).
+            finally(function ()
+                XFG.Factories.GuildMessage:CheckIn(_NewMessage)
+            end)
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to send achievement message: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
     end)    
 end

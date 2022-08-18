@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'EventCollection'
 
 EventCollection = ObjectCollection:newChildConstructor()
 
 function EventCollection:new()
     local _Object = EventCollection.parent.new(self)
-	_Object.__name = 'EventCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 

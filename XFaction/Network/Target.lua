@@ -1,19 +1,21 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Target'
 
 Target = Object:newChildConstructor()
 
 function Target:new()
     local _Object = Target.parent.new(self)
-    _Object.__name = 'Target'
+    _Object.__name = ObjectName
     _Object._Realm = nil
     _Object._Faction = nil
     return _Object
 end
 
 function Target:Print()
-    self:ParentPrint()
-    if(self:HasRealm()) then self:GetRealm():Print() end
-    if(self:HasFaction()) then self:GetFaction():Print() end
+    if(self:ParentPrint()) then
+        if(self:HasRealm()) then self:GetRealm():Print() end
+        if(self:HasFaction()) then self:GetFaction():Print() end
+    end
 end
 
 function Target:HasRealm()

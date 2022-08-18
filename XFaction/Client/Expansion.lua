@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Expansion'
 
 Expansion = Object:newChildConstructor()
 
 function Expansion:new()
     local _Object = Expansion.parent.new(self)
-    _Object.__name = 'Expansion'
+    _Object.__name = ObjectName
     _Object._ID = nil
     _Object._IconID = nil
     _Object._Version = nil
@@ -12,10 +13,12 @@ function Expansion:new()
 end
 
 function Expansion:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
-    if(self:HasVersion()) then self:GetVersion():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+        if(self:HasVersion()) then self:GetVersion():Print() end
+    end
 end
 
 function Expansion:GetID()
@@ -25,7 +28,6 @@ end
 function Expansion:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Expansion:GetIconID()
@@ -35,7 +37,6 @@ end
 function Expansion:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self._IconID = inIconID
-    return self:GetIconID()
 end
 
 function Expansion:IsRetail()
@@ -49,7 +50,6 @@ end
 function Expansion:SetVersion(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
 	self._Version = inVersion
-	return self:GetVersion()
 end
 
 function Expansion:GetVersion()

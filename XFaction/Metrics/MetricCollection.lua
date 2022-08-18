@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'MetricCollection'
 
 MetricCollection = ObjectCollection:newChildConstructor()
 
 function MetricCollection:new()
-	local _Object = Version.parent.new(self)
-    _Object.__name = 'Version'
+	local _Object = MetricCollection.parent.new(self)
+    _Object.__name = ObjectName
     _Object._StartTime = nil
 	_Object._StartCalendar = nil
     return _Object
@@ -27,8 +28,10 @@ function MetricCollection:Initialize()
 end
 
 function MetricCollection:Print()
-	self:ParentPrint()
-	XFG:Debug(self:GetObjectName(), '  _StartTime (' .. type(self._StartTime) .. '): ' .. tostring(self._StartTime))
+	if(XFG.DebugFlag) then
+		self:ParentPrint()
+		XFG:Debug(ObjectName, '  _StartTime (' .. type(self._StartTime) .. '): ' .. tostring(self._StartTime))
+	end
 end
 
 function MetricCollection:SetStartTime(inEpochTime)

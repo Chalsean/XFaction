@@ -21,5 +21,4 @@ function TeamCollection:Initialize()
 		end
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end

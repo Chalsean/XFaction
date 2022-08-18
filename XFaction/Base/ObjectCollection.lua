@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'ObjectCollection'
 
 ObjectCollection = Object:newChildConstructor()
 
 function ObjectCollection:new()
     local _Object = ObjectCollection.parent.new(self)
-    _Object.__name = 'ObjectCollection'
+    _Object.__name = ObjectName
     _Object._Objects = nil
     _Object._ObjectCount = 0
     return _Object
@@ -12,7 +13,7 @@ end
 
 function ObjectCollection:newChildConstructor()
     local _Object = ObjectCollection.parent.new(self)
-    _Object.__name = 'ObjectCollection'
+    _Object.__name = ObjectName
     _Object.parent = self    
     _Object._Objects = nil
     _Object._ObjectCount = 0
@@ -24,7 +25,6 @@ function ObjectCollection:Initialize()
         self:ParentInitialize()
         self:IsInitialized(true)
     end
-    return self:IsInitialized()
 end
 
 -- So can call parent init
@@ -38,12 +38,14 @@ function ObjectCollection:Print()
 end
 
 function ObjectCollection:ParentPrint()
-    XFG:DoubleLine(self:GetObjectName())
-    XFG:Debug(self:GetObjectName(), '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-    XFG:Debug(self:GetObjectName(), '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-    XFG:Debug(self:GetObjectName(), '  _ObjectCount (' .. type(self._ObjectCount) .. '): ' .. tostring(self._ObjectCount))
-    for _, _Object in self:Iterator() do
-        _Object:Print()
+    if(XFG.DebugFlag) then
+        XFG:DoubleLine(self:GetObjectName())
+        XFG:Debug(self:GetObjectName(), '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
+        XFG:Debug(self:GetObjectName(), '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
+        XFG:Debug(self:GetObjectName(), '  _ObjectCount (' .. type(self._ObjectCount) .. '): ' .. tostring(self._ObjectCount))
+        for _, _Object in self:Iterator() do
+            _Object:Print()
+        end
     end
 end
 
@@ -75,7 +77,6 @@ function ObjectCollection:AddObject(inObject)
 		self._ObjectCount = self._ObjectCount + 1
 	end
 	self._Objects[inObject:GetKey()] = inObject
-	return self:Contains(inObject:GetKey())
 end
 
 function ObjectCollection:RemoveObject(inKey)
@@ -84,5 +85,4 @@ function ObjectCollection:RemoveObject(inKey)
 		self._Objects[inKey] = nil
 		self._ObjectCount = self._ObjectCount - 1
 	end
-	return not self:Contains(inKey)
 end

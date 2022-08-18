@@ -1,6 +1,10 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'TimerEvent'
 
+local ServerTime = GetServerTime
+local GuildRosterEvent = C_GuildInfo.GuildRoster
+local InGuild = IsInGuild
+
 TimerEvent = Object:newChildConstructor()
 
 function TimerEvent:new()
@@ -12,7 +16,7 @@ end
 function TimerEvent:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-        XFG.Cache.LoginTimerStart = GetServerTime()
+        XFG.Cache.LoginTimerStart = ServerTime()
         XFG.Timers:AddTimer('Login', 1, XFG.Handlers.TimerEvent.CallbackLogin, true, true)
         self:IsInitialized(true)
 	end
@@ -21,7 +25,7 @@ end
 
 function TimerEvent:CallbackLogin()
     -- If havent gotten guild info after Xs, give up. probably not in a guild
-    if(XFG.Cache.LoginTimerStart + XFG.Settings.LocalGuild.LoginGiveUp < GetServerTime()) then
+    if(XFG.Cache.LoginTimerStart + XFG.Settings.LocalGuild.LoginGiveUp < ServerTime()) then
         XFG:Error(ObjectName, 'Did not detect a guild')
         XFG.Timers:Stop()
         return
@@ -32,6 +36,7 @@ function TimerEvent:CallbackLogin()
         XFG.DataDB = LibStub('AceDB-3.0'):New('XFactionDB', XFG.Defaults, true)
         XFG.DB = XFG.DataDB.char
         XFG.Config = XFG.DataDB.profile
+		XFG.DebugFlag = XFG.Config.Debug.Enable
         if(XFG.DB.Backup == nil) then XFG.DB.Backup = {} end
         if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
 		if(XFG.DB.Errors == nil) then XFG.DB.Errors = {} end
@@ -47,7 +52,7 @@ function TimerEvent:CallbackLogin()
         XFG.Player.Faction = XFG.Factions:GetFactionByName(UnitFactionGroup('player'))
     end
 
-    if(IsInGuild()) then
+    if(InGuild()) then
         -- Even though it says were in guild, the following call still may not work on initial login, hence the poller
         local _GuildID = C_Club.GetGuildClubId()
         -- Sanity check
@@ -108,18 +113,7 @@ function TimerEvent:CallbackLogin()
 					-- Guild within the confederate
 					elseif(string.find(_Line, 'XFg')) then
 						local _RealmNumber, _FactionID, _GuildName, _GuildInitials = _Line:match('XFg:(.-):(.-):(.-):(.+)')
-						local _, _RealmName = XFG.Lib.Realm:GetRealmInfoByID(_RealmNumber)
-						-- Create each realm once
-						if(XFG.Realms:Contains(_RealmName) == false) then
-							XFG:Info(ObjectName, 'Initializing realm [%s]', _RealmName)
-							local _NewRealm = Realm:new()
-							_NewRealm:SetKey(_RealmName)
-							_NewRealm:SetName(_RealmName)
-							_NewRealm:SetAPIName(string.gsub(_RealmName, '%s+', ''))
-							_NewRealm:Initialize()
-							XFG.Realms:AddObject(_NewRealm)
-						end
-						local _Realm = XFG.Realms:GetObject(_RealmName)
+						local _Realm = XFG.Realms:GetRealmByID(tonumber(_RealmNumber))
 						local _Faction = XFG.Factions:GetFactionByID(_FactionID)
 
 						XFG:Info(ObjectName, 'Initializing guild %s <%s>', _GuildName, _GuildInitials)
@@ -130,7 +124,7 @@ function TimerEvent:CallbackLogin()
 						_NewGuild:SetFaction(_Faction)
 						_NewGuild:SetRealm(_Realm)
 						_NewGuild:SetInitials(_GuildInitials)
-						XFG.Guilds:AddObject(_NewGuild)
+						XFG.Guilds:AddGuild(_NewGuild)
 					-- Local channel for same realm/faction communication
 					elseif(string.find(_Line, 'XFc')) then
 						XFG.Settings.Network.Channel.Name, XFG.Settings.Network.Channel.Password = _Line:match('XFc:(.-):(.*)')
@@ -214,6 +208,14 @@ function TimerEvent:CallbackLogin()
 				end
 				XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
 
+				-- Start up factories, used for object reuse (performance)
+				XFG.Factories.Message = MessageFactory:new(); XFG.Factories.Message:Initialize()
+				XFG.Factories.GuildMessage = GuildMessageFactory:new(); XFG.Factories.GuildMessage:Initialize()
+				XFG.Factories.Unit = UnitFactory:new(); XFG.Factories.Unit:Initialize()
+				XFG.Factories.Node = NodeFactory:new(); XFG.Factories.Node:Initialize()
+				XFG.Factories.Link = LinkFactory:new(); XFG.Factories.Link:Initialize()
+				XFG.Factories.Friend = FriendFactory:new(); XFG.Factories.Friend:Initialize()
+
 				-- If this is a reload, restore non-local guild members
 				try(function ()
 					if(XFG.DB.UIReload) then
@@ -227,19 +229,24 @@ function TimerEvent:CallbackLogin()
 				-- Scan local guild roster
 				XFG:Info(ObjectName, 'Initializing local guild roster')
 				for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
-					local _UnitData = Unit:new()
-					try(function ()			
+					local _UnitData = nil
+					try(function ()		
+						_UnitData = XFG.Factories.Unit:CheckOut()	
 						_UnitData:Initialize(_MemberID)
 						if(_UnitData:IsInitialized()) then
 							XFG.Cache.FirstScan[_MemberID] = true
-						end
-						if(_UnitData:IsOnline()) then
-							XFG:Debug(ObjectName, 'Adding local guild unit [%s:%s]', _UnitData:GetGUID(), _UnitData:GetName())
-							XFG.Confederate:AddUnit(_UnitData)
-						end
+							if(_UnitData:IsOnline()) then
+								XFG:Debug(ObjectName, 'Adding local guild unit [%s:%s]', _UnitData:GetGUID(), _UnitData:GetName())
+								XFG.Confederate:AddUnit(_UnitData)
+							else
+								XFG.Factories.Unit:CheckIn(_UnitData)
+							end
+						else
+							XFG.Factories.Unit:CheckIn(_UnitData)
+						end						
 					end).
 					catch(function (inErrorMessage)
-						XFG:Debug(ObjectName, 'Failed to query for guild member [%d] on initialization: ' .. inErrorMessage, _MemberID)
+						XFG:Debug(ObjectName, inErrorMessage)
 					end).
 					finally(function ()
 						if(_UnitData and _UnitData:IsPlayer()) then
@@ -296,7 +303,7 @@ function TimerEvent:CallbackLogin()
 				-- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
 				try(function ()
 					if(not XFG.DB.UIReload) then
-						C_GuildInfo.GuildRoster()
+						GuildRosterEvent()
 					end
 				end).
 				catch(function (inErrorMessage)
@@ -326,6 +333,7 @@ function TimerEvent:CallbackLogin()
 				XFG.Timers:AddTimer('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, false)
 				XFG.Timers:AddTimer('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, false)
 				XFG.Timers:AddTimer('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, false)
+				XFG.Timers:AddTimer('Factories', XFG.Settings.Factories.Scan, XFG.Handlers.TimerEvent.CallbackFactories, true, false)
 
 				-- Ping friends to find out whos available for BNet
 				if(not XFG.DB.UIReload) then                
@@ -363,7 +371,7 @@ function TimerEvent:CallbackDelayedStartTimer()
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed delayed start initialization: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
 		XFG.DB.UIReload = false
@@ -377,85 +385,77 @@ function TimerEvent:CallbackDelayedStartTimer()
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Debug(ObjectName, 'Failed to query for addon: ' .. inErrorMessage)
+		XFG:Debug(ObjectName, inErrorMessage)
 	end)
 end
 
 -- Cleanup mailbox
 function TimerEvent:CallbackMailboxTimer()
 	try(function ()
-		local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
-		XFG.Mailbox:Purge(_EpochTime)
+		XFG.Mailbox:Purge(ServerTime() - XFG.Settings.Network.Mailbox.Stale)
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed to clean regular mailbox: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetObject('Mailbox')
-		_Timer:SetLastRan(GetServerTime())
+		XFG.Timers:GetObject('Mailbox'):SetLastRan(ServerTime())
 	end)
 end
 
 -- Cleanup BNet mailbox
 function TimerEvent:CallbackBNetMailboxTimer()
 	try(function ()
-		local _EpochTime = GetServerTime() - XFG.Settings.Network.Mailbox.Stale
-		XFG.BNet:Purge(_EpochTime)
+		XFG.BNet:Purge(ServerTime() - XFG.Settings.Network.Mailbox.Stale)
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed to clean BNet mailbox: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetObject('BNetMailbox')
-		_Timer:SetLastRan(GetServerTime())
+		XFG.Timers:GetObject('BNetMailbox'):SetLastRan(ServerTime())
 	end)
 end
 
 -- If you haven't heard from a unit in X minutes, set them to offline
 function TimerEvent:CallbackOffline()
 	try(function ()
-		local _EpochTime = GetServerTime() - XFG.Settings.Confederate.UnitStale
-		XFG.Confederate:OfflineUnits(_EpochTime)
+		XFG.Confederate:OfflineUnits(ServerTime() - XFG.Settings.Confederate.UnitStale)
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed to identify stale units: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetObject('Offline')
-		_Timer:SetLastRan(GetServerTime())
+		XFG.Timers:GetObject('Offline'):SetLastRan(ServerTime())
 	end)
 end
 
 -- Periodically send update to avoid other considering you offline
 function TimerEvent:CallbackHeartbeat()
 	try(function ()
-		if(XFG.Initialized and XFG.Player.LastBroadcast < GetServerTime() - XFG.Settings.Player.Heartbeat) then
-			XFG:Debug(ObjectName, "Sending heartbeat")
+		if(XFG.Initialized and XFG.Player.LastBroadcast < ServerTime() - XFG.Settings.Player.Heartbeat) then
+			XFG:Debug(ObjectName, 'Sending heartbeat')
 			XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.DATA)
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed to send heartbeat message: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetObject('Heartbeat')
-		_Timer:SetLastRan(GetServerTime())
+		XFG.Timers:GetObject('Heartbeat'):SetLastRan(ServerTime())
 	end)
 end
 
 -- Periodically force a refresh
 function TimerEvent:CallbackGuildRoster()
 	try(function ()
-		if(XFG.Initialized and IsInGuild()) then
-			C_GuildInfo.GuildRoster()
+		if(XFG.Initialized and XFG.Player.Guild) then
+			GuildRosterEvent()
 		end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed to call C_GuildInfo API: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetObject('Roster')
-		_Timer:SetLastRan(GetServerTime())
+		XFG.Timers:GetObject('Roster'):SetLastRan(ServerTime())
 	end)
 end
 
@@ -469,11 +469,10 @@ function TimerEvent:CallbackPingFriends()
 	    end
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed to ping friends: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetObject('Ping')
-		_Timer:SetLastRan(GetServerTime())
+		XFG.Timers:GetObject('Ping'):SetLastRan(ServerTime())
 	end)
 end
 
@@ -483,25 +482,33 @@ function TimerEvent:CallbackLinks()
     	XFG.Links:BroadcastLinks()
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed to broadcast links: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetObject('Links')
-		_Timer:SetLastRan(GetServerTime())
+		XFG.Timers:GetObject('Links'):SetLastRan(ServerTime())
 	end)
 end
 
 -- Periodically purge stale links
 function TimerEvent:CallbackStaleLinks()
 	try(function ()
-		local _EpochTime = GetServerTime() - XFG.Settings.Network.BNet.Link.Stale
-		XFG.Links:PurgeStaleLinks(_EpochTime)
+		XFG.Links:PurgeStaleLinks(ServerTime() - XFG.Settings.Network.BNet.Link.Stale)
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, 'Failed to purge stale links: ' .. inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		local _Timer = XFG.Timers:GetObject('StaleLinks')
-		_Timer:SetLastRan(GetServerTime())
+		XFG.Timers:GetObject('StaleLinks'):SetLastRan(ServerTime())
 	end)
+end
+
+-- Purge stale objects
+function TimerEvent:CallbackFactories()
+	local _PurgeTime = ServerTime() - XFG.Settings.Factories.Purge
+	XFG.Factories.GuildMessage:Purge(_PurgeTime)
+	XFG.Factories.Message:Purge(_PurgeTime)
+	XFG.Factories.Unit:Purge(_PurgeTime)
+	XFG.Factories.Link:Purge(_PurgeTime)
+	XFG.Factories.Node:Purge(_PurgeTime)
+	XFG.Factories.Friend:Purge(_PurgeTime)
 end

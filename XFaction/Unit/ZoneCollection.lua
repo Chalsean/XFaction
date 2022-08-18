@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'ZoneCollection'
 
 ZoneCollection = ObjectCollection:newChildConstructor()
 
 function ZoneCollection:new()
     local _Object = ZoneCollection.parent.new(self)
-	_Object.__name = 'ZoneCollection'
+	_Object.__name = ObjectName
 	_Object._ZoneByID = {}
     return _Object
 end
@@ -37,7 +38,7 @@ function ZoneCollection:Initialize()
 								_NewContinent:SetLocaleName(_ZoneLocale[_NewContinent:GetName()])
 							end
 							XFG.Continents:AddObject(_NewContinent)
-							XFG:Info(self:GetObjectName(), 'Initialized continent [%s]', _NewContinent:GetName())
+							XFG:Info(ObjectName, 'Initialized continent [%s]', _NewContinent:GetName())
 							_AlreadyAdded[_NewContinent:GetName()] = true
 						end
 
@@ -69,13 +70,12 @@ function ZoneCollection:Initialize()
 					_Zone:SetContinent(_Continent)
 				end
 			end			
-			XFG:Info(self:GetObjectName(), 'Initialized zone [%s]', _Zone:GetName())
+			XFG:Info(ObjectName, 'Initialized zone [%s]', _Zone:GetName())
 		end
 
 		self:AddZone('?')
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function ZoneCollection:ContainsByID(inID)
@@ -97,7 +97,6 @@ function ZoneCollection:AddObject(inZone)
 	for _, _ID in inZone:IDIterator() do
 		self._ZoneByID[_ID] = inZone
 	end
-	return self:Contains(inZone:GetKey())
 end
 
 function ZoneCollection:AddZone(inZoneName)
@@ -108,7 +107,8 @@ function ZoneCollection:AddZone(inZoneName)
 		_NewZone:SetKey(inZoneName)
 		_NewZone:SetName(inZoneName)
 		self:AddObject(_NewZone)
-		XFG:Info(self:GetObjectName(), 'Initialized zone [%s]', _NewZone:GetName())
+		if(XFG.DebugFlag) then
+			XFG:Info(ObjectName, 'Initialized zone [%s]', _NewZone:GetName())
+		end
 	end
-	return self:GetObject(inZoneName)
 end

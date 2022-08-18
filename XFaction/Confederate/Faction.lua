@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Faction'
 
 Faction = Object:newChildConstructor()
 
 function Faction:new()
     local _Object = Faction.parent.new(self)
-    _Object.__name = 'Faction'
+    _Object.__name = ObjectName
     _Object._ID = nil
     _Object._IconID = nil
     _Object._Language = nil
@@ -34,9 +35,11 @@ function Faction:Initialize()
 end
 
 function Faction:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+    end
 end
 
 function Faction:GetID()
@@ -46,7 +49,6 @@ end
 function Faction:SetID(inID)
     assert(type(inID) == 'string')
     self._ID = inID
-    return self:GetID()
 end
 
 function Faction:GetIconID()
@@ -56,7 +58,6 @@ end
 function Faction:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self._IconID = inIconID
-    return self:GetIconID()
 end
 
 function Faction:GetLanguage()
@@ -66,5 +67,4 @@ end
 function Faction:SetLanguage(inLanguage)
     assert(type(inLanguage) == 'string')
     self._Language = inLanguage
-    return self:GetLanguage()
 end

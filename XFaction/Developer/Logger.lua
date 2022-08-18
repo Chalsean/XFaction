@@ -12,11 +12,13 @@ local function Format()
 end
 
 function XFG:Error(SubCategory, ...)
-	local status, res = pcall(format, ...)
-	if status then
-		if DLAPI then 
-			DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, res)) 
-			DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, debugstack())) 
+	if(XFG.DebugFlag) then
+		local status, res = pcall(format, ...)
+		if status then
+			if DLAPI then 
+				DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, res)) 
+				DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, debugstack())) 
+			end
 		end
 	end
 	if(XFG.Metrics ~= nil) then
@@ -25,11 +27,13 @@ function XFG:Error(SubCategory, ...)
 end
 
 function XFG:Warn(SubCategory, ...)
-	local status, res = pcall(format, ...)
-	if status then
-		if DLAPI then 
-			DLAPI.DebugLog(XFG.Category, format('WARN~%s~3~%s', SubCategory, res)) 
-			DLAPI.DebugLog(XFG.Category, format('WARN~%s~3~%s', SubCategory, debugstack())) 
+	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 2) then
+		local status, res = pcall(format, ...)
+		if status then
+			if DLAPI then 
+				DLAPI.DebugLog(XFG.Category, format('WARN~%s~2~%s', SubCategory, res)) 
+				DLAPI.DebugLog(XFG.Category, format('WARN~%s~2~%s', SubCategory, debugstack())) 
+			end
 		end
 	end
 	if(XFG.Metrics ~= nil) then
@@ -38,18 +42,22 @@ function XFG:Warn(SubCategory, ...)
 end
 
 function XFG:Info(SubCategory, ...)
-	local status, res = pcall(format, ...)
-	if status then
-		Format()
-		if DLAPI then DLAPI.DebugLog(XFG.Category, format('OK~%s~6~%s', SubCategory, res)) end
+	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 3) then
+		local status, res = pcall(format, ...)
+		if status then
+			Format()
+			if DLAPI then DLAPI.DebugLog(XFG.Category, format('OK~%s~3~%s', SubCategory, res)) end
+		end
 	end
 end
 
 function XFG:Debug(SubCategory, ...)
-	local status, res = pcall(format, ...)
-	if status then
-		Format()
-		if DLAPI then DLAPI.DebugLog(XFG.Category, format('%s~9~%s', SubCategory, res)) end
+	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 4) then
+		local status, res = pcall(format, ...)
+		if status then
+			Format()
+			if DLAPI then DLAPI.DebugLog(XFG.Category, format('%s~4~%s', SubCategory, res)) end
+		end
 	end
 end
 
@@ -67,13 +75,19 @@ local function TableToString(t, l, k)
 end
 
 function XFG:DataDumper(SubCategory, ...)
-	XFG:Debug(SubCategory, TableToString(..., 1, 'root'))
+	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 4) then
+		XFG:Debug(SubCategory, TableToString(..., 1, 'root'))
+	end
 end
 
 function XFG:SingleLine(SubCategory)
-	XFG:Debug(SubCategory, '-------------------------------------')
+	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 4) then
+		XFG:Debug(SubCategory, '-------------------------------------')
+	end
 end
 
 function XFG:DoubleLine(SubCategory)
-	XFG:Debug(SubCategory, '=====================================')
+	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 4) then
+		XFG:Debug(SubCategory, '=====================================')
+	end
 end

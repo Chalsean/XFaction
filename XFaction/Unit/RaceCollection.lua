@@ -1,18 +1,21 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'RaceCollection'
 
 RaceCollection = ObjectCollection:newChildConstructor()
 
 function RaceCollection:new()
 	local _Object = RaceCollection.parent.new(self)
-	_Object.__name = 'RaceCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 
 function RaceCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		local _LookupTable = XFG.Lib.BabbleRace:GetUnstrictLookupTable()
-		for _, _Race in XFG.Lib.Race:Iterator() do
+		local _RaceLib = LibStub('LibRace')
+		local _BabbleLib = LibStub('LibBabble-Race-3.0')
+		local _LookupTable = _BabbleLib:GetUnstrictLookupTable()
+		for _, _Race in _RaceLib:Iterator() do
 			local _NewRace = Race:new()
 			_NewRace:SetKey(_Race.ID)
 			_NewRace:SetID(_Race.ID)
@@ -24,11 +27,10 @@ function RaceCollection:Initialize()
 			end
 			_NewRace:SetFaction(XFG.Factions:GetFactionByName(_Race.Faction))
 			self:AddObject(_NewRace)
-			XFG:Info(self:GetObjectName(), 'Initialized race [%s]', _NewRace:GetName())
+			XFG:Info(ObjectName, 'Initialized race [%s]', _NewRace:GetName())
 		end
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function RaceCollection:GetRaceByName(inName, inFaction)

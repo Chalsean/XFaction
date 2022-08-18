@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Version'
 
 Version = Object:newChildConstructor()
 
 function Version:new()
     local _Object = Version.parent.new(self)
-    _Object.__name = 'Version'
+    _Object.__name = ObjectName
     _Object._Major = nil
     _Object._Minor = nil
     _Object._Patch = nil
@@ -12,10 +13,12 @@ function Version:new()
 end
 
 function Version:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _Major (' .. type(self._Major) .. '): ' .. tostring(self._Major))
-    XFG:Debug(self:GetObjectName(), '  _Minor (' .. type(self._Minor) .. '): ' .. tostring(self._Minor))
-    XFG:Debug(self:GetObjectName(), '  _Patch (' .. type(self._Patch) .. '): ' .. tostring(self._Patch))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _Major (' .. type(self._Major) .. '): ' .. tostring(self._Major))
+        XFG:Debug(ObjectName, '  _Minor (' .. type(self._Minor) .. '): ' .. tostring(self._Minor))
+        XFG:Debug(ObjectName, '  _Patch (' .. type(self._Patch) .. '): ' .. tostring(self._Patch))
+    end
 end
 
 function Version:SetKey(inKey)
@@ -26,8 +29,6 @@ function Version:SetKey(inKey)
     self:SetMajor(tonumber(_Parts[1]))
     self:SetMinor(tonumber(_Parts[2]))
     self:SetPatch(tonumber(_Parts[3]))
-
-    return self:GetKey()
 end
 
 function Version:GetMajor()
@@ -37,7 +38,6 @@ end
 function Version:SetMajor(inMajor)
     assert(type(inMajor) == 'number')
     self._Major = inMajor
-    return self:GetMajor()
 end
 
 function Version:GetMinor()
@@ -47,7 +47,6 @@ end
 function Version:SetMinor(inMinor)
     assert(type(inMinor) == 'number')
     self._Minor = inMinor
-    return self:GetMinor()
 end
 
 function Version:GetPatch()
@@ -57,11 +56,10 @@ end
 function Version:SetPatch(inPatch)
     assert(type(inPatch) == 'number')
     self._Patch = inPatch
-    return self:GetPatch()
 end
 
 function Version:IsNewer(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
+    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == ObjectName, 'argument must be Version object')
     -- Do not consider alpha/beta builds as newer
     if(inVersion:GetPatch() == 0 or inVersion:GetPatch() % 2 == 1) then
         return false

@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Class'
 
 Class = Object:newChildConstructor()
 
 function Class:new()
     local _Object = Class.parent.new(self)
-    _Object.__name = 'Class'
+    _Object.__name = ObjectName
     _Object._ID = nil
     _Object._APIName = nil
     _Object._R = nil
@@ -15,13 +16,15 @@ function Class:new()
 end
 
 function Class:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), '  _APIName (' .. type(self._APIName) .. '): ' .. tostring(self._APIName))
-    XFG:Debug(self:GetObjectName(), '  _R (' .. type(self._R) .. '): ' .. tostring(self._R))
-    XFG:Debug(self:GetObjectName(), '  _G (' .. type(self._G) .. '): ' .. tostring(self._G))
-    XFG:Debug(self:GetObjectName(), '  _B (' .. type(self._B) .. '): ' .. tostring(self._B))
-    XFG:Debug(self:GetObjectName(), '  _Hex (' .. type(self._Hex) .. '): ' .. tostring(self._Hex))
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _APIName (' .. type(self._APIName) .. '): ' .. tostring(self._APIName))
+        XFG:Debug(ObjectName, '  _R (' .. type(self._R) .. '): ' .. tostring(self._R))
+        XFG:Debug(ObjectName, '  _G (' .. type(self._G) .. '): ' .. tostring(self._G))
+        XFG:Debug(ObjectName, '  _B (' .. type(self._B) .. '): ' .. tostring(self._B))
+        XFG:Debug(ObjectName, '  _Hex (' .. type(self._Hex) .. '): ' .. tostring(self._Hex))
+    end
 end
 
 function Class:GetID()
@@ -31,7 +34,6 @@ end
 function Class:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Class:GetAPIName()
@@ -41,7 +43,6 @@ end
 function Class:SetAPIName(inAPIName)
     assert(type(inAPIName) == 'string')
     self._APIName = inAPIName
-    return self:GetAPIName()
 end
 
 function Class:GetRGB()
@@ -59,13 +60,11 @@ function Class:SetRGB(inR, inG, inB)
     self._R = inR
     self._G = inG
     self._B = inB
-    return self:GetRGB()
 end
 
 function Class:SetHex(inHex)
     assert(type(inHex) == 'string')
     self._Hex = inHex
-    return self:GetHex()
 end
 
 function Class:GetHex()

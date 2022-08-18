@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Guild'
 
 Guild = Object:newChildConstructor()
 
 function Guild:new()
     local _Object = Guild.parent.new(self)
-    _Object.__name = 'Guild'
+    _Object.__name = ObjectName
     _Object._ID = nil        -- Only the player's guild will have an ID
     _Object._StreamID = nil  -- Only the player's guild will have a StreamerID (this is gchat)
     _Object._Initials = nil
@@ -14,12 +15,14 @@ function Guild:new()
 end
 
 function Guild:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), '  _StreamID (' .. type(self._StreamID) .. '): ' .. tostring(self._StreamID))
-    XFG:Debug(self:GetObjectName(), '  _Initials (' .. type(self._Initials) .. '): ' .. tostring(self._Initials))
-    if(self:HasFaction()) then self:GetFaction():Print() end
-    if(self:HasRealm()) then self:GetRealm():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
+        XFG:Debug(ObjectName, '  _StreamID (' .. type(self._StreamID) .. '): ' .. tostring(self._StreamID))
+        XFG:Debug(ObjectName, '  _Initials (' .. type(self._Initials) .. '): ' .. tostring(self._Initials))
+        if(self:HasFaction()) then self:GetFaction():Print() end
+        if(self:HasRealm()) then self:GetRealm():Print() end
+    end
 end
 
 function Guild:GetInitials()
@@ -29,7 +32,6 @@ end
 function Guild:SetInitials(inInitials)
     assert(type(inInitials) == 'string')
     self._Initials = inInitials
-    return self:GetInitials()
 end
 
 function Guild:HasID()
@@ -43,7 +45,6 @@ end
 function Guild:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Guild:HasStreamID()
@@ -57,7 +58,6 @@ end
 function Guild:SetStreamID(inStreamID)
     assert(type(inStreamID) == 'number')
     self._StreamID = inStreamID
-    return self:GetStreamID()
 end
 
 function Guild:HasFaction()
@@ -71,7 +71,6 @@ end
 function Guild:SetFaction(inFaction)
     assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', 'argument must be Faction object')
     self._Faction = inFaction
-    return self:GetFaction()
 end
 
 function Guild:HasRealm()
@@ -85,5 +84,4 @@ end
 function Guild:SetRealm(inRealm)
     assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
     self._Realm = inRealm
-    return self:GetRealm()
 end

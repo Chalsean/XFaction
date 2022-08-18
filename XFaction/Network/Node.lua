@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Node'
 
-Node = Object:newChildConstructor()
+Node = FactoryObject:newChildConstructor()
 
 function Node:new()
     local _Object = Node.parent.new(self)
-    _Object.__name = 'Node'
+    _Object.__name = ObjectName
     _Object._Target = nil
     _Object._LinkCount = 0
     return _Object
@@ -18,13 +19,16 @@ function Node:Initialize()
         self:SetTarget(XFG.Player.Target)
         self:IsInitialized(true)
     end
-    return self:IsInitialized()
 end
 
 function Node:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), "  _LinkCount (" .. type(self._LinkCount) .. "): ".. tostring(self._LinkCount))
-    if(self:HasTarget()) then self:GetTarget():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
+        XFG:Debug(ObjectName, '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
+        XFG:Debug(ObjectName, '  _LinkCount (' .. type(self._LinkCount) .. '): ' .. tostring(self._LinkCount))
+        if(self:HasTarget()) then self:GetTarget():Print() end
+    end
 end
 
 function Node:IsMyNode()
@@ -40,9 +44,8 @@ function Node:GetTarget()
 end
 
 function Node:SetTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', "argument must be Target object")
+    assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', 'argument must be Target object')
     self._Target = inTarget
-    return self:GetTarget()
 end
 
 function Node:GetString()
@@ -50,16 +53,13 @@ function Node:GetString()
 end
 
 function Node:SetObjectFromString(inLinkString)
-    assert(type(inLinkString) == 'string')    
-
+    assert(type(inLinkString) == 'string')
     local _Node = string.Split(inLinkString, ':')  
     self:SetKey(_Node[1])
     self:SetName(_Node[1])
     local _Realm = XFG.Realms:GetRealmByID(tonumber(_Node[2]))
     local _Faction = XFG.Factions:GetObject(tonumber(_Node[3]))
     self:SetTarget(XFG.Targets:GetTargetByRealmFaction(_Realm, _Faction))
-
-    return self:IsInitialized(true)
 end
 
 function Node:GetLinkCount()
@@ -69,18 +69,24 @@ end
 function Node:SetLinkCount(inLinkCount)
     assert(type(inLinkCount) == 'number')
     self._LinkCount = inLinkCount
-    return self:GetLinkCount()
 end
 
 function Node:IncrementLinkCount()
     self._LinkCount = self._LinkCount + 1
-    return self:GetLinkCount()
 end
 
 function Node:DecrementLinkCount()
     self._LinkCount = self._LinkCount - 1
     if(self:GetLinkCount() == 0) then
-        XFG.Nodes:RemoveNode(self)
+        XFG.Factories.Node:CheckIn(self)
     end
-    return self:GetLinkCount()
+end
+
+function Node:FactoryReset()
+    self._Key = nil
+    self._Name = nil
+    self._Target = nil
+    self._LinkCount = 0
+    self._Initialized = false
+    self:Initialize()
 end

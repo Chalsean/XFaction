@@ -1,13 +1,12 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'DTToken'
-local LogCategory = 'DTToken'
 
 DTToken = Object:newChildConstructor()
 local Events = { 'PLAYER_ENTERING_WORLD', 'PLAYER_LOGIN', 'TOKEN_MARKET_PRICE_UPDATED' }
 
 function DTToken:new()
 	local _Object = DTGuild.parent.new(self)
-    _Object.__name = 'DTToken'
+    _Object.__name = ObjectName
     _Object._LDBObject = nil
 	_Object._Price = 0    
     return _Object
@@ -19,7 +18,7 @@ function DTToken:Initialize()
 		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTTOKEN_NAME'])
 		for _, _Event in ipairs (Events) do
 			XFG:RegisterEvent(_Event, self.OnEvent)
-			XFG:Info(LogCategory, "Registered for %s events", _Event)
+			XFG:Info(ObjectName, "Registered for %s events", _Event)
 		end
 
 		self:IsInitialized(true)
@@ -28,9 +27,11 @@ function DTToken:Initialize()
 end
 
 function DTToken:Print()
-	self:ParentPrint()
-	XFG:Debug(LogCategory, "  _Price (" .. type(self._Price) .. "): ".. tostring(self._Price))
-	XFG:Debug(LogCategory, "  _LDBObject (" .. type(self._LDBObject) .. ")")
+	if(XFG.DebugFlag) then
+		self:ParentPrint()
+		XFG:Debug(ObjectName, "  _Price (" .. type(self._Price) .. "): ".. tostring(self._Price))
+		XFG:Debug(ObjectName, "  _LDBObject (" .. type(self._LDBObject) .. ")")
+	end
 end
 
 function DTToken:GetPrice()
@@ -50,7 +51,7 @@ function DTToken:OnEvent(inEvent)
 		_Price = floor(_Price / 10000)
 		if(XFG.DataText.Token:GetPrice() ~= _Price) then
 			XFG.DataText.Token:SetPrice(_Price)
- 			XFG:Info(LogCategory, format("New token price [%d]", XFG.DataText.Token:GetPrice()))
+ 			XFG:Info(ObjectName, format("New token price [%d]", XFG.DataText.Token:GetPrice()))
 	 		local _Text = format('%s %s %s', format(XFG.Icons.String, XFG.Icons.WoWToken), FormatCurrency(XFG.DataText.Token:GetPrice()), XFG.Icons.Gold)
 			_Broker.text = _Text
 		end

@@ -1,17 +1,19 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'ClassCollection'
 
 ClassCollection = ObjectCollection:newChildConstructor()
 
 function ClassCollection:new()
 	local _Object = ClassCollection.parent.new(self)
-	_Object.__name = 'ClassCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 
 function ClassCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, _Class in XFG.Lib.Class:Iterator() do
+		local _Lib = LibStub('LibClass')
+		for _, _Class in _Lib:Iterator() do
 			local _NewClass = Class:new()
 			_NewClass:Initialize()
 			_NewClass:SetKey(_Class.ID)
@@ -21,11 +23,10 @@ function ClassCollection:Initialize()
 			_NewClass:SetRGB(_Class.R, _Class.G, _Class.B)
 			_NewClass:SetHex(_Class.Hex)
 			self:AddObject(_NewClass)
-			XFG:Info(self:GetObjectName(), 'Initialized class [%s]', _NewClass:GetName())
+			XFG:Info(ObjectName, 'Initialized class [%s]', _NewClass:GetName())
 		end
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function ClassCollection:GetClassByAPIName(inAPIName)

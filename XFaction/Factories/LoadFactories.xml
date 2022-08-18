@@ -1,0 +1,10 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Factory.lua'/>
+    <Script file='GuildMessageFactory.lua'/>
+    <Script file='MessageFactory.lua'/>
+    <Script file='LinkFactory.lua'/>
+    <Script file='NodeFactory.lua'/>
+    <Script file='FriendFactory.lua'/>
+    <Script file='UnitFactory.lua'/>
+    <Script file='FactoryObject.lua'/>
+</Ui>

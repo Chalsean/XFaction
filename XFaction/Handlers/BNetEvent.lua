@@ -14,7 +14,6 @@ function BNetEvent:Initialize()
         XFG:CreateEvent('Friend', 'BN_FRIEND_INFO_CHANGED', XFG.Handlers.BNetEvent.CallbackFriendInfo, true, true)
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 -- The friend API leaves much to be desired, it spams and will give you invalid indexes like 0

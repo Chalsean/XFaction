@@ -6,7 +6,7 @@ MediaCollection = ObjectCollection:newChildConstructor()
 
 function MediaCollection:new()
     local _Object = MediaCollection.parent.new(self)
-	_Object.__name = 'MediaCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 

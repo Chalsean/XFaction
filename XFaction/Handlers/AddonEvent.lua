@@ -23,7 +23,6 @@ function AddonEvent:Initialize()
         end
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function AddonEvent:CallbackAddonLoaded(inAddonName)
@@ -40,6 +39,6 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to handle ADDON_LOADED event: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
     end)    
 end

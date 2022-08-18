@@ -12,7 +12,7 @@ end
 function Inbox:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG:Info(self:GetObjectName(), "Registering to receive [%s] messages", XFG.Settings.Network.Message.Tag.LOCAL)
+        XFG:Info(ObjectName, "Registering to receive [%s] messages", XFG.Settings.Network.Message.Tag.LOCAL)
         XFG:RegisterComm(XFG.Settings.Network.Message.Tag.LOCAL, 
                          function(inMessageType, inMessage, inDistribution, inSender) 
                             XFG.Inbox:Receive(inMessageType, inMessage, inDistribution, inSender)
@@ -26,7 +26,9 @@ end
 -- BNet traffic is in the BNet class
 function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XFG:Debug(ObjectName, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
+    if(XFG.DebugFlag) then
+        XFG:Debug(ObjectName, "Received message [%s] from [%s] on [%s]", inMessageTag, inSender, inDistribution)
+    end
 
     -- If not a message from this addon, ignore
     local _AddonTag = false
@@ -40,14 +42,22 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         return
     end
 
+    local _Message = nil
     try(function ()
-        local _Message = XFG:DecodeMessage(inEncodedMessage)
+        _Message = XFG:DecodeMessage(inEncodedMessage)
         XFG.Inbox:Process(_Message, inMessageTag)
         XFG.Metrics:GetObject(XFG.Settings.Metric.ChannelReceive):Increment()
         XFG.Metrics:GetObject(XFG.Settings.Metric.Messages):Increment()
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to process received message: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
+    end).
+    finally(function ()
+        if(_Message and _Message:GetObjectName() == 'Message') then
+            XFG.Factories.Message:CheckIn(_Message)
+        else
+            XFG.Factories.GuildMessage:CheckIn(_Message)
+        end
     end)
 end
 
@@ -100,14 +110,14 @@ function Inbox:Process(inMessage, inMessageTag)
         if(_NodeCount > XFG.Settings.Network.BNet.Link.PercentStart) then
             local _Percentage = (XFG.Settings.Network.BNet.Link.PercentStart / _NodeCount) * 100
             if(math.random(1, 100) <= _Percentage) then
-                XFG:Debug(self:GetObjectName(), 'Randomly selected, forwarding message')
+                XFG:Debug(ObjectName, 'Randomly selected, forwarding message')
                 inMessage:SetType(XFG.Settings.Network.Type.BNET)
                 XFG.Outbox:Send(inMessage)
             else
-                XFG:Debug(self:GetObjectName(), 'Not randomly selected, will not forward mesesage')
+                XFG:Debug(ObjectName, 'Not randomly selected, will not forward mesesage')
             end
         else
-            XFG:Debug(self:GetObjectName(), 'Node count under threshold, forwarding message')
+            XFG:Debug(ObjectName, 'Node count under threshold, forwarding message')
             inMessage:SetType(XFG.Settings.Network.Type.BNET)
             XFG.Outbox:Send(inMessage)
         end        
@@ -167,8 +177,8 @@ function Inbox:Process(inMessage, inMessageTag)
     if(inMessage:HasUnitData()) then
         local _UnitData = inMessage:GetData()
         _UnitData:IsPlayer(false)
-        if(XFG.Confederate:AddUnit(_UnitData)) then
-            XFG:Info(self:GetObjectName(), "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
+        if(XFG.Confederate:AddUnit(_UnitData) and XFG.DebugFlag) then
+            XFG:Info(ObjectName, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
         end
 
         -- If unit has just logged in, reply with latest information

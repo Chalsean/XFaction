@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'ContinentCollection'
 
 ContinentCollection = ObjectCollection:newChildConstructor()
 
 function ContinentCollection:new()
 	local _Object = ContinentCollection.parent.new(self)
-	_Object.__name = 'ContinentCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 

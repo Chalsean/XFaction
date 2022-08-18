@@ -1,8 +1,6 @@
-local XFG, E, L, V, P, G = unpack(select(2, ...))
-
 function PairsByKeys (t, f)
 	local a = {}
-	for n in pairs(t) do table.insert(a, n) end
+	for n in pairs(t) do a[#a+1] = n end
 	table.sort(a, f)
 	local i = 0      -- iterator variable
 	local iter = function ()   -- iterator function

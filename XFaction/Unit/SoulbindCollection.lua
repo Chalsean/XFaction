@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'SoulbindCollection'
 
 SoulbindCollection = ObjectCollection:newChildConstructor()
 
 function SoulbindCollection:new()
 	local _Object = SoulbindCollection.parent.new(self)
-	_Object.__name = 'SoulbindCollection'
+	_Object.__name = ObjectName
     return _Object
 end
 
@@ -19,7 +20,7 @@ function SoulbindCollection:Initialize()
 					_Soulbind:Initialize()
 					_Soulbind:SetKey(_SoulbindID)									
 					self:AddObject(_Soulbind)
-					XFG:Info(self:GetObjectName(), 'Initialized soulbind [%s]', _Soulbind:GetName())
+					XFG:Info(ObjectName, 'Initialized soulbind [%s]', _Soulbind:GetName())
 				end
 			end
 		end

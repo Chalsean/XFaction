@@ -30,13 +30,12 @@ function PlayerEvent:Initialize()
 
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function PlayerEvent:CallbackPlayerChanged(inEvent) 
     try(function ()
         XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
-        XFG:Info(ObjectName, 'Updated player data based on %s event', inEvent)
+        --XFG:Info(ObjectName, 'Updated player data based on %s event', inEvent)
 
         if(inEvent ~= 'SOULBIND_ACTIVATED') then
             XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
@@ -47,7 +46,7 @@ function PlayerEvent:CallbackPlayerChanged(inEvent)
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to update player information based on event [%s]: ' .. inErrorMessage, inEvent)
+        XFG:Warn(ObjectName, inErrorMessage)
     end)
 end
 
@@ -77,7 +76,7 @@ function PlayerEvent:CallbackZoneChanged()
             end
         end).
         catch(function (inErrorMessage)
-            XFG:Warn(ObjectName, 'Failed to update zone information based on event: ' .. inErrorMessage)
+            XFG:Warn(ObjectName, inErrorMessage)
         end)
     end
 end
@@ -107,7 +106,7 @@ function PlayerEvent:CallbackSkillChanged()
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to update player profession information based on event: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
     end)
 end
 
@@ -119,7 +118,10 @@ function PlayerEvent:CallbackInstance()
             XFG:Debug(ObjectName, 'Entering instance, disabling some event listeners and timers')
             XFG.Player.InInstance = true
             XFG.Events:EnterInstance()
-            XFG.Timers:EnterInstance()        
+            XFG.Timers:EnterInstance()
+            if(not XFG.Config.Debug.Instance) then
+                XFG.DebugFlag = false
+            end
 
         -- Just leaving instance or UI reload
         elseif(not _InInstance and XFG.Player.InInstance) then
@@ -127,10 +129,11 @@ function PlayerEvent:CallbackInstance()
             XFG.Player.InInstance = false
             XFG.Events:LeaveInstance()
             XFG.Timers:LeaveInstance()
+            XFG.DebugFlag = XFG.Config.Debug.Enable
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to update event listeners and timers upon entering/leaving instance: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
     end)
 end
 
@@ -144,7 +147,7 @@ function PlayerEvent:CallbackEnterCombat()
             XFG.Timers:EnterCombat()
         end).
         catch(function (inErrorMessage)
-            XFG:Warn(ObjectName, 'Failed to update event listeners and timers upon entering combat: ' .. inErrorMessage)
+            XFG:Warn(ObjectName, inErrorMessage)
         end)
     end
 end
@@ -159,6 +162,6 @@ function PlayerEvent:CallbackLeaveCombat()
         end
     end).
     catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to update event listeners and timers upon exitting combat: ' .. inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
     end)
 end

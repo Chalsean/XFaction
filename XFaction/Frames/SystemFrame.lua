@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'SystemFrame'
 
 SystemFrame = Object:newChildConstructor()
 
 function SystemFrame:new()
     local _Object = SystemFrame.parent.new(self)
-    _Object.__name = 'SystemFrame'
+    _Object.__name = ObjectName
     return _Object
 end
 

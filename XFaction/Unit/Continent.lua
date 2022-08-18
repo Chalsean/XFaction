@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Continent'
 
 Continent = Object:newChildConstructor()
 
 function Continent:new()
     local _Object = Continent.parent.new(self)
-    _Object.__name = 'Continent'
+    _Object.__name = ObjectName
     _Object._IDs = nil
     _Object._LocaleName = nil
     return _Object
@@ -16,14 +17,15 @@ function Continent:Initialize()
 		self._IDs = {}
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function Continent:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), '  _LocaleName (' .. type(self._LocaleName) .. '): ' .. tostring(self._LocaleName))
-    XFG:Debug(self:GetObjectName(), '  IDs: ')
-    XFG:DataDumper(self:GetObjectName(), self._IDs)
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _LocaleName (' .. type(self._LocaleName) .. '): ' .. tostring(self._LocaleName))
+        XFG:Debug(ObjectName, '  IDs: ')
+        XFG:DataDumper(ObjectName, self._IDs)
+    end
 end
 
 function Continent:HasID(inID)
@@ -40,13 +42,11 @@ function Continent:GetID()
     if(#self._IDs > 0) then
         return self._IDs[1]
     end
-    return nil
 end
 
 function Continent:AddID(inID)
     assert(type(inID) == 'number')
-    table.insert(self._IDs, inID)
-    return self:GetID()
+    self._IDs[#self._IDs + 1] = inID
 end
 
 function Continent:GetLocaleName()
@@ -56,5 +56,4 @@ end
 function Continent:SetLocaleName(inName)
     assert(type(inName) == 'string')
     self._LocaleName = inName
-    return self:GetLocaleName()
 end

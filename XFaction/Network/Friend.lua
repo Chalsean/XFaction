@@ -1,10 +1,11 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Friend'
 
-Friend = Object:newChildConstructor()
+Friend = FactoryObject:newChildConstructor()
 
 function Friend:new()
     local _Object = Friend.parent.new(self)
-    _Object.__name = 'Friend'
+    _Object.__name = ObjectName
 
     _Object._ID = nil         -- This the "friend index" you use to look things up
     _Object._AccountID = nil  -- This is the only constant ID
@@ -20,15 +21,19 @@ function Friend:new()
 end
 
 function Friend:Print()
-    self:ParentPrint()
-    XFG:Debug(self:GetObjectName(), "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-    XFG:Debug(self:GetObjectName(), "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
-    XFG:Debug(self:GetObjectName(), "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
-    XFG:Debug(self:GetObjectName(), "  _AccountName (" ..type(self._AccountName) .. "): ".. tostring(self._AccountName))
-    XFG:Debug(self:GetObjectName(), "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
-    XFG:Debug(self:GetObjectName(), "  _IsRunningAddon (" ..type(self._IsRunningAddon) .. "): ".. tostring(self._IsRunningAddon))
-    XFG:Debug(self:GetObjectName(), "  _MyLink (" ..type(self._MyLink) .. "): ".. tostring(self._MyLink))
-    if(self:HasTarget()) then self:GetTarget():Print() end
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
+        XFG:Debug(ObjectName, '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
+        XFG:Debug(ObjectName, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
+        XFG:Debug(ObjectName, "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
+        XFG:Debug(ObjectName, "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
+        XFG:Debug(ObjectName, "  _AccountName (" ..type(self._AccountName) .. "): ".. tostring(self._AccountName))
+        XFG:Debug(ObjectName, "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
+        XFG:Debug(ObjectName, "  _IsRunningAddon (" ..type(self._IsRunningAddon) .. "): ".. tostring(self._IsRunningAddon))
+        XFG:Debug(ObjectName, "  _MyLink (" ..type(self._MyLink) .. "): ".. tostring(self._MyLink))
+        if(self:HasTarget()) then self:GetTarget():Print() end
+    end
 end
 
 function Friend:GetID()
@@ -115,27 +120,48 @@ end
 
 function Friend:CreateLink()
     if(self:IsRunningAddon() and self:HasTarget()) then
-        local _NewLink = Link:new()
-        local _FromNode = XFG.Nodes:GetObject(XFG.Player.Unit:GetName())
-        if(_FromNode == nil) then
-            _FromNode = Node:new(); _FromNode:Initialize()
-            XFG.Nodes:AddNode(_FromNode)
-        end
-        _NewLink:SetFromNode(_FromNode)
+        local _NewLink = nil
+        try(function ()
+            _NewLink = XFG.Factories.Link:CheckOut()
+            local _FromNode = XFG.Nodes:GetObject(XFG.Player.Unit:GetName())
+            if(_FromNode == nil) then
+                try(function ()
+                    _FromNode = XFG.Factories.Node:CheckOut()
+                    XFG.Nodes:AddNode(_FromNode)
+                end).
+                catch(function (inErrorMessage)
+                    XFG.Nodes:RemoveNode(_FromNode)
+                    XFG.Factories.Node:CheckIn(_FromNode)
+                    error(inErrorMessage)
+                end)
+            end
+            _NewLink:SetFromNode(_FromNode)
 
-        local _ToNode = XFG.Nodes:GetObject(self:GetName())
-        if(_ToNode == nil) then
-            _ToNode = Node:new()
-            _ToNode:SetKey(self:GetName())
-            _ToNode:SetName(self:GetName())
-            _ToNode:SetTarget(self:GetTarget())
-            XFG.Nodes:AddNode(_ToNode)
-        end
-        _NewLink:SetToNode(_ToNode)
+            local _ToNode = XFG.Nodes:GetObject(self:GetName())
+            if(_ToNode == nil) then
+                try(function ()
+                    _ToNode = XFG.Factories.Node:CheckOut()
+                    _ToNode:SetKey(self:GetName())
+                    _ToNode:SetName(self:GetName())
+                    _ToNode:SetTarget(self:GetTarget())
+                    XFG.Nodes:AddNode(_ToNode)
+                end).
+                catch(function (inErrorMessage)
+                    XFG.Nodes:RemoveNode(_ToNode)
+                    XFG.Factories.Node:CheckIn(_ToNode)
+                    error(inErrorMessage)
+                end)
+            end
+            _NewLink:SetToNode(_ToNode)
 
-        _NewLink:Initialize()
-        XFG.Links:AddLink(_NewLink)
-        XFG.DataText.Links:RefreshBroker()
+            _NewLink:Initialize()
+            XFG.Links:AddLink(_NewLink)
+            XFG.DataText.Links:RefreshBroker()
+        end).
+        catch(function (inErrorMessage)
+            XFG:Warn(ObjectName, inErrorMessage)
+            XFG.Factories.Link:CheckIn(_NewLink)
+        end)
     end
 end
 
@@ -145,4 +171,20 @@ function Friend:IsMyLink(inBoolean)
         self._MyLink = inBoolean
     end
     return self._MyLink
+end
+
+function Friend:FactoryReset()
+    self._Key = nil
+    self._Name = nil
+    self._ID = nil         
+    self._AccountID = nil  
+    self._GameID = nil     
+    self._AccountName = nil
+    self._Tag = nil
+    self._Target = nil
+    self._IsRunningAddon = false
+    self._DateTime = 0  
+    self._MyLink = false
+    self._Initialized = false
+    self:Initialize()
 end

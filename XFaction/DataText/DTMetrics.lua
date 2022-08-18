@@ -1,12 +1,11 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'DTMetrics'
-local LogCategory = 'DTMetrics'
 
 DTMetrics = Object:newChildConstructor()
 	
 function DTMetrics:new()
 	local _Object = DTGuild.parent.new(self)
-    _Object.__name = 'DTMetrics'
+    _Object.__name = ObjectName
 	_Object._HeaderFont = nil
 	_Object._RegularFont = nil
 	_Object._LDBObject = nil
@@ -36,12 +35,14 @@ function DTMetrics:Initialize()
 end
 
 function DTMetrics:Print()
-	self:ParentPrint()
-	XFG:Debug(LogCategory, "  _HeaderFont (" .. type(self._HeaderFont) .. "): ".. tostring(self._HeaderFont))
-	XFG:Debug(LogCategory, "  _RegularFont (" .. type(self._RegularFont) .. "): ".. tostring(self._RegularFont))
-	XFG:Debug(LogCategory, "  _Count (" .. type(self._Count) .. "): ".. tostring(self._Count))
-	XFG:Debug(LogCategory, "  _LDBObject (" .. type(self._LDBObject) .. ")")
-	XFG:Debug(LogCategory, "  _Tooltip (" .. type(_Tooltip) .. ")")
+	if(XFG.DebugFlag) then
+		self:ParentPrint()
+		XFG:Debug(ObjectName, "  _HeaderFont (" .. type(self._HeaderFont) .. "): ".. tostring(self._HeaderFont))
+		XFG:Debug(ObjectName, "  _RegularFont (" .. type(self._RegularFont) .. "): ".. tostring(self._RegularFont))
+		XFG:Debug(ObjectName, "  _Count (" .. type(self._Count) .. "): ".. tostring(self._Count))
+		XFG:Debug(ObjectName, "  _LDBObject (" .. type(self._LDBObject) .. ")")
+		XFG:Debug(ObjectName, "  _Tooltip (" .. type(_Tooltip) .. ")")
+	end
 end
 
 function DTMetrics:RefreshBroker()
