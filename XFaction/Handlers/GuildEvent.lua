@@ -17,10 +17,10 @@ function GuildEvent:Initialize()
         -- This is the local guild roster scan for those not running the addon
         XFG:CreateEvent('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
         -- Hook player inviting someone, they will send broadcast if player joins
-        hooksecurefunc('GuildInvite', function(inInvitee) XFG.Invites[inInvitee] = true end)
-        XFG:Info(ObjectName, 'Post-hooked GuildInvite API')
-        XFG:RegisterEvent('CLUB_MEMBER_ADDED', XFG.Handlers.GuildEvent.CallbackMemberJoined)
-        XFG:Info(ObjectName, 'Registered for CLUB_MEMBER_ADDED events')
+        -- hooksecurefunc('GuildInvite', function(inInvitee) XFG.Invites[inInvitee] = true end)
+        -- XFG:Info(ObjectName, 'Post-hooked GuildInvite API')
+        -- XFG:RegisterEvent('CLUB_MEMBER_ADDED', XFG.Handlers.GuildEvent.CallbackMemberJoined)
+        -- XFG:Info(ObjectName, 'Registered for CLUB_MEMBER_ADDED events')
 		self:IsInitialized(true)
 	end
 end

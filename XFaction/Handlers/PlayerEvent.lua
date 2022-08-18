@@ -118,7 +118,10 @@ function PlayerEvent:CallbackInstance()
             XFG:Debug(ObjectName, 'Entering instance, disabling some event listeners and timers')
             XFG.Player.InInstance = true
             XFG.Events:EnterInstance()
-            XFG.Timers:EnterInstance()        
+            XFG.Timers:EnterInstance()
+            if(not XFG.Config.Debug.Instance) then
+                XFG.DebugFlag = false
+            end
 
         -- Just leaving instance or UI reload
         elseif(not _InInstance and XFG.Player.InInstance) then
@@ -126,6 +129,7 @@ function PlayerEvent:CallbackInstance()
             XFG.Player.InInstance = false
             XFG.Events:LeaveInstance()
             XFG.Timers:LeaveInstance()
+            XFG.DebugFlag = XFG.Config.Debug.Enable
         end
     end).
     catch(function (inErrorMessage)

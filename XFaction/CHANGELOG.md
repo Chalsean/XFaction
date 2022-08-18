@@ -1,3 +1,9 @@
+### Version 3.9
+[XFaction]
+- Optimized performance
+- Local guild achievements are now in XFaction format
+- Option to enable/disable debug logging within instances
+
 ### Version 3.7
 [XFaction]
 - Better randomization algorithm on message forwards to reduce traffic
