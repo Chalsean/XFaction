@@ -1,6 +1,15 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Unit'
 
+local GetMemberInfo = C_Club.GetMemberInfo
+local GetMemberInfoForSelf = C_Club.GetMemberInfoForSelf
+local ServerTime = GetServerTime
+local GetPermissions = C_GuildInfo.GuildControlGetRankFlags
+local GetAverageIlvl = GetAverageItemLevel
+local GetSpecGroupID = GetSpecialization
+local GetSpecID = GetSpecializationInfo
+local GetPvPRating = GetPersonalRatedInfo
+
 Unit = FactoryObject:newChildConstructor()
 
 function Unit:new()
@@ -51,9 +60,9 @@ function Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number' or inMemberID == nil)
     local _UnitData
     if(inMemberID ~= nil) then
-        _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
+        _UnitData = GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
     else
-        _UnitData = C_Club.GetMemberInfoForSelf(XFG.Player.Guild:GetID())
+        _UnitData = GetMemberInfoForSelf(XFG.Player.Guild:GetID())
     end
 
     -- Sometimes fails on initial login and odd, but guildRank is nil during a zone transition
@@ -68,6 +77,12 @@ function Unit:Initialize(inMemberID)
         self:IsInitialized(true)
         return
     end
+    if(not self:IsPlayer() and 
+       XFG.Confederate:Contains(self:GetGUID()) and 
+       XFG.Confederate:GetObject(self:GetGUID()):IsRunningAddon()) then
+        self:IsInitialized(false)
+        return
+    end
 
     self:SetID(_UnitData.memberId)
     self:SetName(_UnitData.name)
@@ -76,7 +91,7 @@ function Unit:Initialize(inMemberID)
 	self:SetFaction(XFG.Player.Faction)
     self:SetGuild(XFG.Player.Guild)
     self:SetRealm(XFG.Player.Realm)
-    local _EpochTime = GetServerTime()
+    local _EpochTime = ServerTime()
     self:SetTimeStamp(_EpochTime or 0)
     self:SetClass(XFG.Classes:GetObject(_UnitData.classID))
     self:SetRace(XFG.Races:GetObject(_UnitData.race))
@@ -131,13 +146,13 @@ function Unit:Initialize(inMemberID)
         self:IsRunningAddon(true)
         self:SetVersion(XFG.Version)
 
-        local _Permissions = C_GuildInfo.GuildControlGetRankFlags(_UnitData.guildRankOrder)
+        local _Permissions = GetPermissions(_UnitData.guildRankOrder)
         if(_Permissions ~= nil) then
             self:CanGuildListen(_Permissions[1])
             self:CanGuildSpeak(_Permissions[2])
         end
         
-        local _ItemLevel = GetAverageItemLevel()
+        local _ItemLevel = GetAverageIlvl()
         if(type(_ItemLevel) == 'number') then
             _ItemLevel = math.floor(_ItemLevel)
             self:SetItemLevel(_ItemLevel)
@@ -172,9 +187,9 @@ function Unit:Initialize(inMemberID)
 
         -- The following call will randomly fail, retries seem to help
         for i = 1, 10 do
-            local _SpecGroupID = GetSpecialization()
+            local _SpecGroupID = GetSpecGroupID()
             if(_SpecGroupID ~= nil) then
-    	        local _SpecID = GetSpecializationInfo(_SpecGroupID)
+    	        local _SpecID = GetSpecID(_SpecGroupID)
                 if(_SpecID ~= nil and XFG.Specs:Contains(_SpecID)) then
                     self:SetSpec(XFG.Specs:GetObject(_SpecID))
                     break
@@ -186,7 +201,7 @@ function Unit:Initialize(inMemberID)
         local _HighestRating = 0
         local _HighestIndex = 1
         for i = 1, 3 do
-            local _PvPRating = GetPersonalRatedInfo(i)
+            local _PvPRating = GetPvPRating(i)
             if(_PvPRating > _HighestRating) then
                 _HighestRating = _PvPRating
                 _HighestIndex = i
@@ -264,7 +279,6 @@ function Unit:SetGUID(inGUID)
     assert(type(inGUID) == 'string')
     self._GUID = inGUID
     self:IsPlayer(self:GetGUID() == XFG.Player.GUID)
-    return self:GetGUID()
 end
 
 function Unit:GetID()
@@ -274,7 +288,6 @@ end
 function Unit:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Unit:GetUnitName()
@@ -284,7 +297,6 @@ end
 function Unit:SetUnitName(inUnitName)
     assert(type(inUnitName) == 'string')
     self._UnitName = inUnitName
-    return self:GetUnitName()
 end
 
 function Unit:GetRank()
@@ -302,8 +314,6 @@ function Unit:SetRank(inRank)
     if(inRank == 'Noble Citizen') then
         self:SetTeam(XFG.Teams:GetObject('S'))
     end
-
-    return self:GetRank()
 end
 
 function Unit:GetLevel()
@@ -313,7 +323,6 @@ end
 function Unit:SetLevel(inLevel)
     assert(type(inLevel) == 'number')
     self._Level = inLevel
-    return self:GetLevel()
 end
 
 function Unit:HasZone()
@@ -327,7 +336,6 @@ end
 function Unit:SetZone(inZone)
     assert(type(inZone) == 'table' and inZone.__name ~= nil and inZone.__name == 'Zone', 'argument must be Zone object')
     self._Zone = inZone
-    return self:GetZone()
 end
 
 function Unit:GetNote()
@@ -400,8 +408,6 @@ function Unit:SetNote(inNote)
         local _Team = XFG.Teams:GetObject('U')
         self:SetTeam(_Team)
     end
-
-    return self:GetNote()
 end
 
 function Unit:GetFaction()
@@ -411,7 +417,6 @@ end
 function Unit:SetFaction(inFaction)
     assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', 'argument must be a Faction object')
     self._Faction = inFaction
-    return self:GetFaction()
 end
 
 function Unit:IsOnline(inBoolean)
@@ -423,7 +428,7 @@ function Unit:IsOnline(inBoolean)
 end
 
 function Unit:IsOffline()
-    return self._Online == false
+    return not self._Online
 end
 
 function Unit:CanGuildSpeak(inBoolean)
@@ -449,7 +454,6 @@ end
 function Unit:SetDungeonScore(inScore)
     assert(type(inScore) == 'number')
     self._DungeonScore = inScore
-    return self:GetDungeonScore()
 end
 
 function Unit:GetRaidProgress()
@@ -468,7 +472,6 @@ function Unit:SetRaidProgress(inCurrent, inTotal, inDifficulty)
     else
         self._RaidProgress = self._RaidProgress .. 'N'
     end
-    return self:GetRaidProgress()
 end
 
 function Unit:GetPvP()
@@ -486,13 +489,11 @@ function Unit:SetPvP(inScore, inIndex)
     else
         self._PvP = self._PvP .. ' (10)'
     end
-    return self:GetPvP()
 end
 
 function Unit:SetPvPString(inString)
     assert(type(inString) == 'string')
     self._PvP = inString
-    return self:GetPvP()
 end
 
 function Unit:GetAchievementPoints()
@@ -502,7 +503,6 @@ end
 function Unit:SetAchievementPoints(inPoints)
     assert(type(inPoints) == 'number')
     self._AchievementPoints = inPoints
-    return self:GetAchievementPoints()
 end
 
 function Unit:HasRace()
@@ -516,7 +516,6 @@ end
 function Unit:SetRace(inRace)
     assert(type(inRace) == 'table' and inRace.__name ~= nil and inRace.__name == 'Race', 'argument must be Race object')
     self._Race = inRace
-    return self:GetRace()
 end
 
 function Unit:GetTimeStamp()
@@ -526,7 +525,6 @@ end
 function Unit:SetTimeStamp(inTimeStamp)
     assert(type(inTimeStamp) == 'number')
     self._TimeStamp = inTimeStamp
-    return self:GetTimeStamp()
 end
 
 function Unit:HasClass()
@@ -540,7 +538,6 @@ end
 function Unit:SetClass(inClass)
     assert(type(inClass) == 'table' and inClass.__name ~= nil and inClass.__name == 'Class', 'argument must be Class object')
     self._Class = inClass
-    return self:GetClass()
 end
 
 function Unit:HasSpec()
@@ -554,7 +551,6 @@ end
 function Unit:SetSpec(inSpec)
     assert(type(inSpec) == 'table' and inSpec.__name ~= nil and inSpec.__name == 'Spec', 'argument must be Spec object')
     self._Spec = inSpec
-    return self:GetSpec()
 end
 
 function Unit:HasCovenant()
@@ -568,7 +564,6 @@ end
 function Unit:SetCovenant(inCovenant)
     assert(type(inCovenant) == 'table' and inCovenant.__name ~= nil and inCovenant.__name == 'Covenant', 'argument must be Covenant object')
     self._Covenant = inCovenant
-    return self:GetCovenant()
 end
 
 function Unit:HasSoulbind()
@@ -582,12 +577,10 @@ end
 function Unit:SetSoulbind(inSoulbind)
     assert(type(inSoulbind) == 'table' and inSoulbind.__name ~= nil and inSoulbind.__name == 'Soulbind', 'argument must be Soulbind object')
     self._Soulbind = inSoulbind
-    return self:GetSoulbind()
 end
 
 function Unit:ClearSoulbind()
     self._Soulbind = nil
-    return self:HasSoulbind() == false
 end
 
 function Unit:HasProfession1()
@@ -601,7 +594,6 @@ end
 function Unit:SetProfession1(inProfession)
     assert(type(inProfession) == 'table' and inProfession.__name ~= nil and inProfession.__name == 'Profession', 'argument must be Profession object')
     self._Profession1 = inProfession
-    return self:GetProfession1()
 end
 
 function Unit:HasProfession2()
@@ -615,7 +607,6 @@ end
 function Unit:SetProfession2(inProfession)
     assert(type(inProfession) == 'table' and inProfession.__name ~= nil and inProfession.__name == 'Profession', 'argument must be Profession object')
     self._Profession2 = inProfession
-    return self:GetProfession2()
 end
 
 function Unit:IsRunningAddon(inBoolean)
@@ -637,7 +628,6 @@ end
 function Unit:SetVersion(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
     self._Version = inVersion
-    return self:GetVersion()
 end
 
 function Unit:IsAlt(inBoolean)
@@ -659,7 +649,6 @@ end
 function Unit:SetMainName(inMainName)
     assert(type(inMainName) == 'string')
     self._MainName = inMainName
-    return self:GetMainName()
 end
 
 function Unit:HasTeam()
@@ -673,7 +662,6 @@ end
 function Unit:SetTeam(inTeam)
     assert(type(inTeam) == 'table' and inTeam.__name ~= nil and inTeam.__name == 'Team', 'argument must be Team object')
     self._Team = inTeam
-    return self:GetTeam()
 end
 
 function Unit:HasRealm()
@@ -687,7 +675,6 @@ end
 function Unit:SetRealm(inRealm)
     assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
     self._Realm = inRealm
-    return self:GetRealm()
 end
 
 function Unit:HasGuild()
@@ -701,7 +688,6 @@ end
 function Unit:SetGuild(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
     self._Guild = inGuild
-    return self:GetGuild()
 end
 
 function Unit:GetItemLevel()
@@ -711,7 +697,6 @@ end
 function Unit:SetItemLevel(inItemLevel)
     assert(type(inItemLevel) == 'number')
     self._ItemLevel = inItemLevel
-    return self:GetItemLevel()
 end
 
 function Unit:IsSameFaction()

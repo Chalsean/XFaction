@@ -12,8 +12,10 @@ end
 function RaceCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		local _LookupTable = XFG.Lib.BabbleRace:GetUnstrictLookupTable()
-		for _, _Race in XFG.Lib.Race:Iterator() do
+		local _RaceLib = LibStub('LibRace')
+		local _BabbleLib = LibStub('LibBabble-Race-3.0')
+		local _LookupTable = _BabbleLib:GetUnstrictLookupTable()
+		for _, _Race in _RaceLib:Iterator() do
 			local _NewRace = Race:new()
 			_NewRace:SetKey(_Race.ID)
 			_NewRace:SetID(_Race.ID)
@@ -29,7 +31,6 @@ function RaceCollection:Initialize()
 		end
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function RaceCollection:GetRaceByName(inName, inFaction)

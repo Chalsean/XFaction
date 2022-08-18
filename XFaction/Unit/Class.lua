@@ -34,7 +34,6 @@ end
 function Class:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Class:GetAPIName()
@@ -44,7 +43,6 @@ end
 function Class:SetAPIName(inAPIName)
     assert(type(inAPIName) == 'string')
     self._APIName = inAPIName
-    return self:GetAPIName()
 end
 
 function Class:GetRGB()
@@ -62,13 +60,11 @@ function Class:SetRGB(inR, inG, inB)
     self._R = inR
     self._G = inG
     self._B = inB
-    return self:GetRGB()
 end
 
 function Class:SetHex(inHex)
     assert(type(inHex) == 'string')
     self._Hex = inHex
-    return self:GetHex()
 end
 
 function Class:GetHex()

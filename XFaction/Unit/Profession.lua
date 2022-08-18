@@ -26,7 +26,6 @@ end
 function Profession:SetID(inProfessionID)
     assert(type(inProfessionID) == 'number')
     self._ID = inProfessionID
-    return self:GetID()
 end
 
 function Profession:GetIconID()
@@ -36,5 +35,4 @@ end
 function Profession:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self._IconID = inIconID
-    return self:GetIconID()
 end

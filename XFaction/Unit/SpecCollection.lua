@@ -12,7 +12,8 @@ end
 function SpecCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, _Spec in XFG.Lib.Spec:Iterator() do
+		local _Lib = LibStub('LibSpec')
+		for _, _Spec in _Lib:Iterator() do
 			local _NewSpec = Spec:new()
 			_NewSpec:SetID(_Spec.ID)
 			_NewSpec:SetKey(_Spec.ID)
@@ -23,5 +24,4 @@ function SpecCollection:Initialize()
 		end
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end

@@ -20,7 +20,6 @@ function SystemEvent:Initialize()
         XFG:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function SystemEvent:CallbackLogout()

@@ -43,7 +43,6 @@ end
 function Covenant:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Covenant:GetIconID()
@@ -53,7 +52,6 @@ end
 function Covenant:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self._IconID = inIconID
-    return self:GetIconID()
 end
 
 function Covenant:SoulbindIterator()

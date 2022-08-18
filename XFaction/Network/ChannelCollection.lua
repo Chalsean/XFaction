@@ -1,6 +1,10 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ChannelCollection'
 
+local SwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
+local SetChatColor = ChangeChatColor
+local GetChannels = GetChannelList
+
 ChannelCollection = ObjectCollection:newChildConstructor()
 
 function ChannelCollection:new()
@@ -31,7 +35,7 @@ function ChannelCollection:SetChannelLast(inKey)
 			if(XFG.DebugFlag) then 
 				XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', _Channel:GetID(), _Channel:GetName(), _NextChannel:GetID(), _NextChannel:GetName()) 
 			end
-			C_ChatInfo.SwapChatChannelsByChannelIndex(_Channel:GetID(), i)
+			SwapChannels(_Channel:GetID(), i)
 			_NextChannel:SetID(_Channel:GetID())
 			_Channel:SetID(i)
 		end
@@ -41,7 +45,7 @@ function ChannelCollection:SetChannelLast(inKey)
 		for _, _Channel in self:Iterator() do
 			if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
 				local _Color = XFG.Config.Channels[_Channel:GetName()]
-				ChangeChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
+				SetChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
 				if(XFG.DebugFlag) then
 					XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
 				end
@@ -52,7 +56,7 @@ end
 
 function ChannelCollection:ScanChannels()
 	try(function ()
-		local _Channels = {GetChannelList()}
+		local _Channels = {GetChannels()}
 		local _IDs = {}
 		for i = 1, #_Channels, 3 do
 			local _ChannelID, _ChannelName, _Disabled = _Channels[i], _Channels[i+1], _Channels[i+2]

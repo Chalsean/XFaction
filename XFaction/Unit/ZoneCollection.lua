@@ -76,7 +76,6 @@ function ZoneCollection:Initialize()
 		self:AddZone('?')
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function ZoneCollection:ContainsByID(inID)
@@ -98,7 +97,6 @@ function ZoneCollection:AddObject(inZone)
 	for _, _ID in inZone:IDIterator() do
 		self._ZoneByID[_ID] = inZone
 	end
-	return self:Contains(inZone:GetKey())
 end
 
 function ZoneCollection:AddZone(inZoneName)
@@ -113,5 +111,4 @@ function ZoneCollection:AddZone(inZoneName)
 			XFG:Info(ObjectName, 'Initialized zone [%s]', _NewZone:GetName())
 		end
 	end
-	return self:GetObject(inZoneName)
 end

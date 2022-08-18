@@ -18,7 +18,6 @@ function Zone:Initialize()
 		self._IDs = {}
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function Zone:Print()
@@ -44,7 +43,6 @@ end
 function Zone:AddID(inID)
     assert(type(inID) == 'number')
     self._IDs[#self._IDs + 1] = inID
-    return self:GetID()
 end
 
 function Zone:GetLocaleName()
@@ -54,7 +52,6 @@ end
 function Zone:SetLocaleName(inName)
     assert(type(inName) == 'string')
     self._LocaleName = inName
-    return self:GetLocaleName()
 end
 
 function Zone:HasContinent()
@@ -69,7 +66,6 @@ end
 function Zone:SetContinent(inContinent)
     assert(type(inContinent) == 'table' and inContinent.__name ~= nil and inContinent.__name == 'Continent', 'argument must be Continent object')
     self._Continent = inContinent
-    return self:GetContinent()
 end
 
 function Zone:IDIterator()

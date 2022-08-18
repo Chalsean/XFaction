@@ -1,6 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Link'
 
+local ServerTime = GetServerTime
+
 Link = Object:newChildConstructor()
 
 function Link:new()
@@ -25,8 +27,7 @@ end
 function Link:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        local _EpochTime = GetServerTime()
-        self:SetTimeStamp(_EpochTime)
+        self:SetTimeStamp(ServerTime())
         if(self:HasFromNode() and self:HasToNode()) then
             self:SetKey(GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName()))
         end

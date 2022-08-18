@@ -27,13 +27,11 @@ function VersionCollection:Initialize()
 
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function VersionCollection:SetCurrent(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
 	self._CurrentVersion = inVersion
-	return self:GetCurrent()
 end
 
 function VersionCollection:GetCurrent()
@@ -43,7 +41,6 @@ end
 function VersionCollection:SetDefault(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
 	self._DefaultVersion = inVersion
-	return self:GetCurrent()
 end
 
 function VersionCollection:GetDefault()

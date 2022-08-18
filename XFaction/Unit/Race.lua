@@ -28,7 +28,6 @@ end
 function Race:SetLocaleName(inName)
     assert(type(inName) == 'string')
     self._LocaleName = inName
-    return self:GetLocaleName()
 end
 
 function Race:GetID()
@@ -38,7 +37,6 @@ end
 function Race:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Race:HasFaction()
@@ -52,5 +50,4 @@ end
 function Race:SetFaction(inFaction)
     assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', 'argument must be Faction object')
     self._Faction = inFaction
-    return self:GetFaction()
 end

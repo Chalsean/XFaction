@@ -30,7 +30,6 @@ function PlayerEvent:Initialize()
 
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function PlayerEvent:CallbackPlayerChanged(inEvent) 

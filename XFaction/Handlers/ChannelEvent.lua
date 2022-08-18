@@ -18,7 +18,6 @@ function ChannelEvent:Initialize()
 		XFG:Info(ObjectName, 'Registered to receive UPDATE_CHAT_COLOR events')
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelType, inChannelNumber, inChannelName)

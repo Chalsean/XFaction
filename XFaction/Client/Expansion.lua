@@ -28,7 +28,6 @@ end
 function Expansion:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Expansion:GetIconID()
@@ -38,7 +37,6 @@ end
 function Expansion:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self._IconID = inIconID
-    return self:GetIconID()
 end
 
 function Expansion:IsRetail()
@@ -52,7 +50,6 @@ end
 function Expansion:SetVersion(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
 	self._Version = inVersion
-	return self:GetVersion()
 end
 
 function Expansion:GetVersion()

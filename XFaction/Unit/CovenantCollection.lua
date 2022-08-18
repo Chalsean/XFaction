@@ -23,5 +23,4 @@ function CovenantCollection:Initialize()
 		end
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end

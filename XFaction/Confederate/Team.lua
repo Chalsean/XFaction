@@ -24,5 +24,4 @@ end
 function Team:SetInitials(inInitials)
     assert(type(inInitials) == 'string')
     self._Initials = inInitials
-    return self:GetInitials()
 end

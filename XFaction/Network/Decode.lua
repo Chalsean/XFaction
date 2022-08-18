@@ -1,5 +1,9 @@
 local XFG, G = unpack(select(2, ...))
-local LogCategory = 'NDecode'
+local LogCategory = 'Decode'
+
+local Deflate = XFG.Lib.Deflate
+local ServerTime = GetServerTime
+local RaiderIO = _G.RaiderIO
 
 local function DeserializeMessage(inSerializedMessage)
 	local _, _MessageData = XFG:Deserialize(inSerializedMessage)
@@ -83,8 +87,7 @@ function XFG:DeserializeUnitData(inData)
 	if(_DeserializedData.S ~= nil) then
 		_UnitData:SetSoulbind(XFG.Soulbinds:GetObject(_DeserializedData.S))
 	end
-	local _EpochTime = GetServerTime()
-	_UnitData:SetTimeStamp(_EpochTime)
+	_UnitData:SetTimeStamp(ServerTime())
 	if(_DeserializedData.V ~= nil) then
 		_UnitData:SetSpec(XFG.Specs:GetObject(_DeserializedData.V))
 	end
@@ -114,7 +117,6 @@ function XFG:DeserializeUnitData(inData)
 
 	-- If RaiderIO is installed, grab raid/mythic
 	pcall(function ()
-		local RaiderIO = _G.RaiderIO
 		if(RaiderIO) then
 			local _RaiderIO = RaiderIO.GetProfile(_UnitData:GetName(), _UnitData:GetRealm():GetName())
 			-- Raid
@@ -139,13 +141,13 @@ function XFG:DeserializeUnitData(inData)
 end
 
 function XFG:DecodeMessage(inEncodedMessage)
-	local _Decoded = XFG.Lib.Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
-	local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(_Decoded)	
+	local _Decoded = Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
+	local _Decompressed = Deflate:DecompressDeflate(_Decoded)	
 	return DeserializeMessage(_Decompressed)
 end
 
 function XFG:DecodeBNetMessage(inEncodedMessage)
-	local _Decoded = XFG.Lib.Deflate:DecodeForPrint(inEncodedMessage)
-	local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(_Decoded)	
+	local _Decoded = Deflate:DecodeForPrint(inEncodedMessage)
+	local _Decompressed = Deflate:DecompressDeflate(_Decoded)	
 	return DeserializeMessage(_Decompressed)
 end

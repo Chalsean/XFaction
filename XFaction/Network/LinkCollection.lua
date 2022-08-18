@@ -1,6 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'LinkCollection'
 
+local ServerTime = GetServerTime
+
 LinkCollection = ObjectCollection:newChildConstructor()
 
 function LinkCollection:new()
@@ -72,8 +74,7 @@ function LinkCollection:ProcessMessage(inMessage)
 	-- Add any new links and update timestamps of existing
 	for _, _Link in pairs (_Links) do
 		if(self:Contains(_Link:GetKey())) then
-			local _EpochTime = GetServerTime()
-			_Link:SetTimeStamp(_EpochTime)
+			_Link:SetTimeStamp(ServerTime())
 		else
 			self:AddLink(_Link)
 			if(XFG.DebugFlag) then
@@ -85,7 +86,7 @@ end
 
 function LinkCollection:BroadcastLinks()
 	XFG:Debug(ObjectName, 'Broadcasting links')
-	self._EpochTime = GetServerTime()
+	self._EpochTime = ServerTime()
 	local _LinksString = ''
 	for _, _Link in self:Iterator() do
 		if(_Link:IsMyLink()) then

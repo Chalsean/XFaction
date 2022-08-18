@@ -27,7 +27,6 @@ end
 function FactoryObject:SetFactoryKey(inFactoryKey)
     assert(type(inFactoryKey) == 'string')
     self._FactoryKey = inFactoryKey
-    return self:GetFactoryKey()
 end
 
 function FactoryObject:GetFactoryTime()
@@ -37,5 +36,4 @@ end
 function FactoryObject:SetFactoryTime(inFactoryTime)
     assert(type(inFactoryTime) == 'number')
     self._FactoryTime = inFactoryTime
-    return self:GetFactoryTime()
 end

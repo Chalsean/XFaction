@@ -12,7 +12,8 @@ end
 function ProfessionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, _Profession in XFG.Lib.Profession:Iterator() do
+		local _Lib = LibStub('LibProfession')
+		for _, _Profession in _Lib:Iterator() do
 			local _NewProfession = Profession:new()
 			_NewProfession:SetID(_Profession.ID)
 			_NewProfession:SetIconID(_Profession.Icon)

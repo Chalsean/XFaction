@@ -49,7 +49,6 @@ end
 function Faction:SetID(inID)
     assert(type(inID) == 'string')
     self._ID = inID
-    return self:GetID()
 end
 
 function Faction:GetIconID()
@@ -59,7 +58,6 @@ end
 function Faction:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self._IconID = inIconID
-    return self:GetIconID()
 end
 
 function Faction:GetLanguage()
@@ -69,5 +67,4 @@ end
 function Faction:SetLanguage(inLanguage)
     assert(type(inLanguage) == 'string')
     self._Language = inLanguage
-    return self:GetLanguage()
 end

@@ -38,13 +38,11 @@ function ExpansionCollection:Initialize()
 
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function ExpansionCollection:SetCurrent(inExpansion)
     assert(type(inExpansion) == 'table' and inExpansion.__name ~= nil and inExpansion.__name == 'Expansion', 'argument must be Expansion object')
 	self._CurrentExpansion = inExpansion
-	return self:GetCurrent()
 end
 
 function ExpansionCollection:GetCurrent()

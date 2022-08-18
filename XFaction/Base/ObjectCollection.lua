@@ -25,7 +25,6 @@ function ObjectCollection:Initialize()
         self:ParentInitialize()
         self:IsInitialized(true)
     end
-    return self:IsInitialized()
 end
 
 -- So can call parent init
@@ -78,7 +77,6 @@ function ObjectCollection:AddObject(inObject)
 		self._ObjectCount = self._ObjectCount + 1
 	end
 	self._Objects[inObject:GetKey()] = inObject
-	return self:Contains(inObject:GetKey())
 end
 
 function ObjectCollection:RemoveObject(inKey)
@@ -87,5 +85,4 @@ function ObjectCollection:RemoveObject(inKey)
 		self._Objects[inKey] = nil
 		self._ObjectCount = self._ObjectCount - 1
 	end
-	return not self:Contains(inKey)
 end

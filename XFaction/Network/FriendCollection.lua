@@ -1,6 +1,9 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'FriendCollection'
 
+local GetFriendCount = BNGetNumFriends
+local GetAccountInfo = C_BattleNet.GetFriendAccountInfo
+
 FriendCollection = ObjectCollection:newChildConstructor()
 
 function FriendCollection:new()
@@ -13,7 +16,7 @@ function FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		try(function ()
-			for i = 1, BNGetNumFriends() do
+			for i = 1, GetFriendCount() do
 				self:CheckFriend(i)
 			end
 			self:IsInitialized(true)
@@ -109,7 +112,7 @@ end
 
 function FriendCollection:CheckFriend(inKey)
 	try(function ()
-		local _AccountInfo = C_BattleNet.GetFriendAccountInfo(inKey)
+		local _AccountInfo = GetAccountInfo(inKey)
 		if(_AccountInfo == nil) then
 			error('Received nil for friend [%d]', inKey)
 		end
@@ -159,7 +162,7 @@ end
 function FriendCollection:CheckFriends()
 	try(function ()
 		local _LinksChanged = false
-		for i = 1, BNGetNumFriends() do
+		for i = 1, GetFriendCount() do
 			local _Changed = self:CheckFriend(i)
 			if(_Changed) then
 				_LinksChanged = true

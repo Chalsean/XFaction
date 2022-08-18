@@ -26,7 +26,6 @@ end
 function Spec:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Spec:GetIconID()
@@ -36,5 +35,4 @@ end
 function Spec:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self._IconID = inIconID
-    return self:GetIconID()
 end

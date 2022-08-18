@@ -16,7 +16,6 @@ function AchievementEvent:Initialize()
         XFG:Info(ObjectName, 'Registered for ACHIEVEMENT_EARNED events')
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function AchievementEvent:CallbackAchievement(inID)

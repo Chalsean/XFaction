@@ -15,7 +15,6 @@ function GuildCollection:Initialize()
 		self._Names = {}
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function GuildCollection:ContainsGuildName(inGuildName)
@@ -36,12 +35,11 @@ function GuildCollection:GetGuildByName(inGuildName)
 	return self._Names[inGuildName]
 end
 
-function GuildCollection:AddObject(inGuild)
+function GuildCollection:AddGuild(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
 	if(not self:Contains(inGuild:GetKey())) then
 		self._ObjectCount = self._ObjectCount + 1
 	end
 	self._Objects[inGuild:GetKey()] = inGuild
 	self._Names[inGuild:GetName()] = inGuild
-	return self:Contains(inGuild:GetKey())
 end

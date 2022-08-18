@@ -1,6 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Factory'
 
+local ServerTime = GetServerTime
+
 Factory = Object:newChildConstructor()
 
 function Factory:new()
@@ -31,7 +33,6 @@ function Factory:Initialize()
         self._CheckedOut = {}
         self:IsInitialized(true)
     end
-    return self:IsInitialized()
 end
 
 function Factory:Print()
@@ -75,7 +76,7 @@ end
 
 function Factory:CheckOut()
     assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil value')
-    local _CurrentTime = GetServerTime()
+    local _CurrentTime = ServerTime()
     for _, _Object in self:CheckedInIterator() do
         _Object:SetFactoryTime(_CurrentTime)
         self._CheckedIn[_Object:GetFactoryKey()] = nil
@@ -101,12 +102,11 @@ function Factory:CheckIn(inObject)
         self._CheckedOut[inObject:GetFactoryKey()] = nil
         self._CheckedOutCount = self._CheckedOutCount - 1
         inObject:FactoryReset()
-        local _CurrentTime = GetServerTime()
+        local _CurrentTime = ServerTime()
         inObject:SetFactoryTime(_CurrentTime)
         self._CheckedIn[inObject:GetFactoryKey()] = inObject
         self._CheckedInCount = self._CheckedInCount + 1         
     end
-    return self:IsAvailable(inObject:GetFactoryKey())
 end
 
 function Factory:Purge(inPurgeTime)

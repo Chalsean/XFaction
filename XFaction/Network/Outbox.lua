@@ -1,6 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Outbox'
 
+local ServerTime = GetServerTime
+
 Outbox = Object:newChildConstructor()
 
 function Outbox:new()
@@ -82,7 +84,7 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
 	if(inSubject == nil) then inSubject = XFG.Settings.Network.Message.Subject.DATA end
     -- Update the last sent time, dont need to heartbeat for awhile
     if(inUnitData:IsPlayer()) then
-        local _EpochTime = GetServerTime()
+        local _EpochTime = ServerTime()
         if(XFG.Player.LastBroadcast > _EpochTime - XFG.Settings.Player.MinimumHeartbeat) then 
             XFG:Debug(ObjectName, 'Not sending broadcast, its been too recent')
             return 

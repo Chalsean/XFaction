@@ -29,8 +29,6 @@ function Version:SetKey(inKey)
     self:SetMajor(tonumber(_Parts[1]))
     self:SetMinor(tonumber(_Parts[2]))
     self:SetPatch(tonumber(_Parts[3]))
-
-    return self:GetKey()
 end
 
 function Version:GetMajor()
@@ -40,7 +38,6 @@ end
 function Version:SetMajor(inMajor)
     assert(type(inMajor) == 'number')
     self._Major = inMajor
-    return self:GetMajor()
 end
 
 function Version:GetMinor()
@@ -50,7 +47,6 @@ end
 function Version:SetMinor(inMinor)
     assert(type(inMinor) == 'number')
     self._Minor = inMinor
-    return self:GetMinor()
 end
 
 function Version:GetPatch()
@@ -60,7 +56,6 @@ end
 function Version:SetPatch(inPatch)
     assert(type(inPatch) == 'number')
     self._Patch = inPatch
-    return self:GetPatch()
 end
 
 function Version:IsNewer(inVersion)

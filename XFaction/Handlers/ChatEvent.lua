@@ -20,7 +20,6 @@ function ChatEvent:Initialize()
         XFG:Info(ObjectName, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)

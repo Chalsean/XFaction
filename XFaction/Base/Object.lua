@@ -42,7 +42,6 @@ function Object:Initialize()
         self:ParentInitialize()
         self:IsInitialized(true)
     end
-    return self:IsInitialized()
 end
 
 -- So can call parent init in child objects

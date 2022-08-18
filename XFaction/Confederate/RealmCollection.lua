@@ -11,17 +11,17 @@ end
 function RealmCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _ID, _Data in pairs(XFG.Lib.Realm:GetAllRealms()) do
+		local _Lib = LibStub:GetLibrary('LibRealm')
+		for _ID, _Data in pairs(_Lib:GetAllRealms()) do
 			local _Realm = Realm:new()
 			_Realm:SetKey(_Data.Name)
 			_Realm:SetName(_Data.Name)
 			_Realm:SetAPIName(_Data.API)
 			_Realm:SetIDs(_Data.IDs)
 			XFG.Realms:AddObject(_Realm)
-		end		
+		end
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function RealmCollection:GetRealmByID(inID)

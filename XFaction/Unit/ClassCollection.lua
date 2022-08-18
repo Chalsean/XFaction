@@ -12,7 +12,8 @@ end
 function ClassCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, _Class in XFG.Lib.Class:Iterator() do
+		local _Lib = LibStub('LibClass')
+		for _, _Class in _Lib:Iterator() do
 			local _NewClass = Class:new()
 			_NewClass:Initialize()
 			_NewClass:SetKey(_Class.ID)
@@ -26,7 +27,6 @@ function ClassCollection:Initialize()
 		end
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 function ClassCollection:GetClassByAPIName(inAPIName)

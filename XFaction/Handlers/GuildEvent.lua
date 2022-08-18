@@ -1,6 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'GuildEvent'
 
+local GetClubMembers = C_Club.GetClubMembers
+
 GuildEvent = Object:newChildConstructor()
 
 function GuildEvent:new()
@@ -21,12 +23,11 @@ function GuildEvent:Initialize()
         XFG:Info(ObjectName, 'Registered for CLUB_MEMBER_ADDED events')
 		self:IsInitialized(true)
 	end
-	return self:IsInitialized()
 end
 
 -- The event doesn't tell you what has changed, only that something has changed
 function GuildEvent:CallbackRosterUpdate()
-    for _, _MemberID in pairs (C_Club.GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
+    for _, _MemberID in pairs (GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         try(function ()
             local _UnitData = XFG.Factories.Unit:CheckOut()
             _UnitData:Initialize(_MemberID)

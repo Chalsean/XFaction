@@ -31,7 +31,6 @@ end
 function Realm:SetAPIName(inName)
     assert(type(inName) == 'string')
     self._APIName = inName
-    return self:GetAPIName()
 end
 
 function Realm:GetID()
@@ -48,7 +47,6 @@ function Realm:SetIDs(inIDs)
     assert(type(inIDs) == 'table')
     self._IDs = inIDs
     self._IDCount = table.getn(self._IDs)
-    return self:GetIDs()
 end
 
 function Realm:IsConnected()

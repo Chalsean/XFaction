@@ -1,5 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 
+local ServerTime = GetServerTime
+
 Message = FactoryObject:newChildConstructor()
 
 function Message:new()
@@ -44,8 +46,7 @@ function Message:Initialize()
         self:ParentInitialize()
         self._Targets = {}
         self:SetFrom(XFG.Player.Unit:GetKey())
-        local _EpochTime = GetServerTime()
-        self:SetTimeStamp(_EpochTime)
+        self:SetTimeStamp(ServerTime())
         self:SetAllTargets()
         self:SetVersion(XFG.Version)
         self:IsInitialized(true)

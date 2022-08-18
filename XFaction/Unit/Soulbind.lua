@@ -19,7 +19,6 @@ function Soulbind:Initialize()
         end
         self:IsInitialized(true)
     end
-    return self:IsInitialized()
 end
 
 function Soulbind:Print()
@@ -36,5 +35,4 @@ end
 function Soulbind:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end

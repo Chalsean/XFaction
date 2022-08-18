@@ -39,18 +39,11 @@ XFG.Icons = {
 XFG.Lib = {
 	Deflate = LibStub:GetLibrary('LibDeflate'),
 	QT = LibStub('LibQTip-1.0'),
-	Realm = LibStub:GetLibrary('LibRealm'),
 	Broker = LibStub('LibDataBroker-1.1'),
 	Config = LibStub('AceConfig-3.0'),
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
 	Cmd = LibStub('AceConfigCmd-3.0'),
-	Race = LibStub('LibRace'),
-	BabbleRace = LibStub('LibBabble-Race-3.0'),
-	Spec = LibStub('LibSpec'),
-	Class = LibStub('LibClass'),
-	Profession = LibStub('LibProfession'),
-	Tourist = LibStub('LibTourist-3.0'),
 }
 
 XFG.Player = {
@@ -113,6 +106,7 @@ XFG.Settings = {
 		R = 'Reckoning',
 		S = 'Sellswords',
 		T = 'Tsunami',
+		W = 'Warlords',
 		Y = 'Gravity',
 		ENK = 'Social',
 		ENKA = 'Social',
