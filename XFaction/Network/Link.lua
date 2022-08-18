@@ -138,5 +138,5 @@ function Link:FactoryReset()
     self._FromNode = nil
     self._ToNode = nil
     self._EpochTime = 0
-    self:Initialize()
+    self._Initialized = false
 end

@@ -87,5 +87,6 @@ function Node:FactoryReset()
     self._Name = nil
     self._Target = nil
     self._LinkCount = 0
+    self._Initialized = false
     self:Initialize()
 end
