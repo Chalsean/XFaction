@@ -76,8 +76,8 @@ function FriendCollection:RemoveFriend(inKey)
 		if(XFG.Nodes:Contains(_Friend:GetName())) then
 			XFG.Nodes:RemoveNode(XFG.Nodes:GetObject(_Friend:GetName()))
 		end
-		self._FriendsCount = self._FriendsCount - 1
-		self._Friends[inKey] = nil		
+		self:RemoveObject(_Friend)
+		XFG.Factories.Friend:CheckIn(_Friend)
 	end
 end
 
@@ -117,7 +117,7 @@ function FriendCollection:CheckFriend(inKey)
 
 		-- Did they go offline?
 		if(self:Contains(_AccountInfo.bnetAccountID)) then
-			if(CanLink(_AccountInfo) == false) then
+			if(not CanLink(_AccountInfo)) then
 				local _Friend = XFG.Friends:GetObject(_AccountInfo.bnetAccountID)
 				self:RemoveObject(_Friend:GetKey())
 				if(XFG.DebugFlag) then
@@ -131,16 +131,23 @@ function FriendCollection:CheckFriend(inKey)
 			local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
 			local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
 			local _Target = XFG.Targets:GetTargetByRealmFaction(_Realm, _Faction)
-			local _NewFriend = Friend:new()
-			_NewFriend:SetKey(_AccountInfo.bnetAccountID)
-			_NewFriend:SetID(inKey)
-			_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
-			_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
-			_NewFriend:SetAccountName(_AccountInfo.accountName)
-			_NewFriend:SetTag(_AccountInfo.battleTag)
-			_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
-			_NewFriend:SetTarget(_Target)
-			self:AddObject(_NewFriend)
+			local _NewFriend = nil
+			try(function ()
+				_NewFriend = XFG.Factories.Friend:CheckOut()
+				_NewFriend:SetKey(_AccountInfo.bnetAccountID)
+				_NewFriend:SetID(inKey)
+				_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
+				_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
+				_NewFriend:SetAccountName(_AccountInfo.accountName)
+				_NewFriend:SetTag(_AccountInfo.battleTag)
+				_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
+				_NewFriend:SetTarget(_Target)
+				self:AddObject(_NewFriend)
+			end).
+			catch(function (inErrorMessage)
+				XFG.Factories.Friend:CheckIn(_NewFriend)
+				error(inErrorMessage)
+			end)
 			if(XFG.DebugFlag) then
 				XFG:Info(ObjectName, 'Friend logged into supported guild [%s:%d:%d:%d]', _NewFriend:GetTag(), _NewFriend:GetAccountID(), _NewFriend:GetID(), _NewFriend:GetGameID())
 			end
@@ -159,15 +166,8 @@ end
 
 function FriendCollection:CheckFriends()
 	try(function ()
-		local _LinksChanged = false
 		for i = 1, GetFriendCount() do
-			local _Changed = self:CheckFriend(i)
-			if(_Changed) then
-				_LinksChanged = true
-			end
-		end
-		if(_LinksChanged) then
-			XFG.DataText.Links:RefreshBroker()
+			self:CheckFriend(i)
 		end
 	end).
 	catch(function (inErrorMessage)

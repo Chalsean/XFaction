@@ -1,7 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Friend'
 
-Friend = Object:newChildConstructor()
+Friend = FactoryObject:newChildConstructor()
 
 function Friend:new()
     local _Object = Friend.parent.new(self)
@@ -23,6 +23,8 @@ end
 function Friend:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
+        XFG:Debug(ObjectName, '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
+        XFG:Debug(ObjectName, '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
         XFG:Debug(ObjectName, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
         XFG:Debug(ObjectName, "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
         XFG:Debug(ObjectName, "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
@@ -169,4 +171,20 @@ function Friend:IsMyLink(inBoolean)
         self._MyLink = inBoolean
     end
     return self._MyLink
+end
+
+function Friend:FactoryReset()
+    self._Key = nil
+    self._Name = nil
+    self._ID = nil         
+    self._AccountID = nil  
+    self._GameID = nil     
+    self._AccountName = nil
+    self._Tag = nil
+    self._Target = nil
+    self._IsRunningAddon = false
+    self._DateTime = 0  
+    self._MyLink = false
+    self._Initialized = false
+    self:Initialize()
 end

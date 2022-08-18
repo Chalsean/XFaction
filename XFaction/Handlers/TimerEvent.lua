@@ -208,12 +208,13 @@ function TimerEvent:CallbackLogin()
 				end
 				XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
 
-				-- Start up factories
+				-- Start up factories, used for object reuse (performance)
 				XFG.Factories.Message = MessageFactory:new(); XFG.Factories.Message:Initialize()
 				XFG.Factories.GuildMessage = GuildMessageFactory:new(); XFG.Factories.GuildMessage:Initialize()
 				XFG.Factories.Unit = UnitFactory:new(); XFG.Factories.Unit:Initialize()
 				XFG.Factories.Node = NodeFactory:new(); XFG.Factories.Node:Initialize()
 				XFG.Factories.Link = LinkFactory:new(); XFG.Factories.Link:Initialize()
+				XFG.Factories.Friend = FriendFactory:new(); XFG.Factories.Friend:Initialize()
 
 				-- If this is a reload, restore non-local guild members
 				try(function ()
@@ -509,4 +510,5 @@ function TimerEvent:CallbackFactories()
 	XFG.Factories.Unit:Purge(_PurgeTime)
 	XFG.Factories.Link:Purge(_PurgeTime)
 	XFG.Factories.Node:Purge(_PurgeTime)
+	XFG.Factories.Friend:Purge(_PurgeTime)
 end
