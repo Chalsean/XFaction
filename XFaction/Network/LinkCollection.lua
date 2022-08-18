@@ -36,52 +36,47 @@ function LinkCollection:RemoveLink(inLink)
 			XFG:Info(ObjectName, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
 		end
 		XFG.DataText.Links:RefreshBroker()
+		XFG.Factories.Link:CheckIn(inLink)
 	end
-    return not self:Contains(inLink:GetKey())
 end
 
 -- A link message is a reset of the links for that node
 function LinkCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
 	local _LinkStrings = string.Split(inMessage:GetData(), '|')
-	local _Links = {}
+	local _MessageLinks = {}
 	local _FromName = nil
 	-- Compile a list of the updated links
     for _, _LinkString in pairs (_LinkStrings) do
-		local _NewLink = Link:new()
-		if(pcall(function () _NewLink:SetObjectFromString(_LinkString) end)) then
-			-- Dont process players own links
-			if(_NewLink:IsMyLink() == false) then
-				_Links[_NewLink:GetKey()] = _NewLink
+		local _NewLink = nil
+		try(function ()
+			_NewLink = XFG.Factories.Link:CheckOut()
+			_NewLink:SetObjectFromString(_LinkString)
+			_MessageLinks[_NewLink:GetKey()] = true
+			-- Dont process players own links			
+			if(not _NewLink:IsMyLink() and not self:Contains(_NewLink:GetKey())) then
+				self:AddLink(_NewLink)
 				-- All links in the message should be "From" the same person
 				_FromName = _NewLink:GetFromNode():GetName()
+			else
+				XFG.Factories.Link:CheckIn(_NewLink)
 			end
-		else
-			XFG:Warn(ObjectName, 'Failed to parse received links message')
-			return
-		end
+		end).
+		catch(function (inErrorMessage)
+			XFG:Warn(ObjectName, inErrorMessage)
+			XFG.Factories.Link:CheckIn(_NewLink)
+		end)
     end
 	-- Remove any stale links
 	for _, _Link in self:Iterator() do
 		-- Consider that we may have gotten link information from the other node
-		if(not _Link:IsMyLink() and (_Link:GetFromNode():GetName() == _FromName or _Link:GetToNode():GetName() == _FromName) and _Links[_Link:GetKey()] == nil) then
+		if(not _Link:IsMyLink() and (_Link:GetFromNode():GetName() == _FromName or _Link:GetToNode():GetName() == _FromName) and _MessageLinks[_Link:GetKey()] == nil) then
 			self:RemoveLink(_Link)
 			if(XFG.DebugFlag) then
 				XFG:Debug(ObjectName, 'Removed link due to node broadcast [%s]', _Link:GetKey())
 			end
 		end
 	end
-	-- Add any new links and update timestamps of existing
-	for _, _Link in pairs (_Links) do
-		if(self:Contains(_Link:GetKey())) then
-			_Link:SetTimeStamp(ServerTime())
-		else
-			self:AddLink(_Link)
-			if(XFG.DebugFlag) then
-				XFG:Debug(ObjectName, 'Added link due to node broadcast [%s]', _Link:GetKey())
-			end
-		end
-    end
 end
 
 function LinkCollection:BroadcastLinks()
@@ -129,10 +124,17 @@ function LinkCollection:RestoreBackup()
 			local _Links = string.Split(XFG.DB.Backup.Links, '|')
 			for _, _Link in pairs (_Links) do
 				if(_Link ~= nil) then
-					local _NewLink = Link:new()
-					_NewLink:SetObjectFromString(_Link)
-					self:AddLink(_NewLink)
-					XFG:Debug(ObjectName, 'Restored link from backup [%s]', _NewLink:GetKey())
+					local _NewLink = nil
+					try(function ()
+						_NewLink = XFG.Factories.Link:CheckOut()
+						_NewLink:SetObjectFromString(_Link)
+						self:AddLink(_NewLink)
+						XFG:Debug(ObjectName, 'Restored link from backup [%s]', _NewLink:GetKey())
+					end).
+					catch(function (inErrorMessage)
+						XFG:Warn(ObjectName, inErrorMessage)
+						XFG.Factories.Link:CheckIn(_NewLink)
+					end)
 				end
 			end
 		end).

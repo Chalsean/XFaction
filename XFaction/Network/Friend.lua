@@ -118,27 +118,48 @@ end
 
 function Friend:CreateLink()
     if(self:IsRunningAddon() and self:HasTarget()) then
-        local _NewLink = Link:new()
-        local _FromNode = XFG.Nodes:GetObject(XFG.Player.Unit:GetName())
-        if(_FromNode == nil) then
-            _FromNode = Node:new(); _FromNode:Initialize()
-            XFG.Nodes:AddNode(_FromNode)
-        end
-        _NewLink:SetFromNode(_FromNode)
+        local _NewLink = nil
+        try(function ()
+            _NewLink = XFG.Factories.Link:CheckOut()
+            local _FromNode = XFG.Nodes:GetObject(XFG.Player.Unit:GetName())
+            if(_FromNode == nil) then
+                try(function ()
+                    _FromNode = XFG.Factories.Node:CheckOut()
+                    XFG.Nodes:AddNode(_FromNode)
+                end).
+                catch(function (inErrorMessage)
+                    XFG.Nodes:RemoveNode(_FromNode)
+                    XFG.Factories.Node:CheckIn(_FromNode)
+                    error(inErrorMessage)
+                end)
+            end
+            _NewLink:SetFromNode(_FromNode)
 
-        local _ToNode = XFG.Nodes:GetObject(self:GetName())
-        if(_ToNode == nil) then
-            _ToNode = Node:new()
-            _ToNode:SetKey(self:GetName())
-            _ToNode:SetName(self:GetName())
-            _ToNode:SetTarget(self:GetTarget())
-            XFG.Nodes:AddNode(_ToNode)
-        end
-        _NewLink:SetToNode(_ToNode)
+            local _ToNode = XFG.Nodes:GetObject(self:GetName())
+            if(_ToNode == nil) then
+                try(function ()
+                    _ToNode = XFG.Factories.Node:CheckOut()
+                    _ToNode:SetKey(self:GetName())
+                    _ToNode:SetName(self:GetName())
+                    _ToNode:SetTarget(self:GetTarget())
+                    XFG.Nodes:AddNode(_ToNode)
+                end).
+                catch(function (inErrorMessage)
+                    XFG.Nodes:RemoveNode(_ToNode)
+                    XFG.Factories.Node:CheckIn(_ToNode)
+                    error(inErrorMessage)
+                end)
+            end
+            _NewLink:SetToNode(_ToNode)
 
-        _NewLink:Initialize()
-        XFG.Links:AddLink(_NewLink)
-        XFG.DataText.Links:RefreshBroker()
+            _NewLink:Initialize()
+            XFG.Links:AddLink(_NewLink)
+            XFG.DataText.Links:RefreshBroker()
+        end).
+        catch(function (inErrorMessage)
+            XFG:Warn(ObjectName, inErrorMessage)
+            XFG.Factories.Link:CheckIn(_NewLink)
+        end)
     end
 end
 

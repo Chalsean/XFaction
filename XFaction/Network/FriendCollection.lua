@@ -25,7 +25,6 @@ function FriendCollection:Initialize()
 			XFG:Warn(ObjectName, inErrorMessage)
 		end)
 	end
-	return self:IsInitialized()
 end
 
 function FriendCollection:ContainsByFriendIndex(inFriendIndex)
@@ -80,7 +79,6 @@ function FriendCollection:RemoveFriend(inKey)
 		self._FriendsCount = self._FriendsCount - 1
 		self._Friends[inKey] = nil		
 	end
-	return not self:Contains(inKey)
 end
 
 function FriendCollection:HasFriends()

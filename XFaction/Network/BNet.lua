@@ -2,7 +2,6 @@ local XFG, G = unpack(select(2, ...))
 local BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 local ObjectName = 'BNet'
 
-local BNetSendData = BCTL.BNSendGameData
 local ServerTime = GetServerTime
 
 BNet = ObjectCollection:newChildConstructor()
@@ -72,7 +71,7 @@ function BNet:Send(inMessage)
                     XFG:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', _Friend:GetName(), _Friend:GetGameID(), _Index, _TotalPackets, XFG.Settings.Network.Message.Tag.BNET, strlen(_Packet))
                 end
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-                BNetSendData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _Packet, _, _Friend:GetGameID())
+                BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _Packet, _, _Friend:GetGameID())
                 XFG.Metrics:GetObject(XFG.Settings.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(_Friend:GetTarget())
@@ -129,7 +128,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     try(function ()
         if(inEncodedMessage == 'PING') then
-            BNetSendData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
+            BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
             XFG.Metrics:GetObject(XFG.Settings.Metric.BNetSend):Increment()
             return
         elseif(inEncodedMessage == 'RE:PING') then
@@ -226,6 +225,6 @@ function BNet:PingFriend(inFriend)
     if(XFG.DebugFlag) then
         XFG:Debug(ObjectName, 'Sending ping to [%s]', inFriend:GetTag())
     end
-    BNetSendData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())
+    BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())
     XFG.Metrics:GetObject(XFG.Settings.Metric.BNetSend):Increment() 
 end

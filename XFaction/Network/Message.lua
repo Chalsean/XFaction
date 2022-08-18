@@ -264,6 +264,7 @@ function Message:IsMyMessage()
 end
 
 function Message:FactoryReset()
+    self._Key = nil
     self._To = nil
     self._From = nil
     self._Type = nil

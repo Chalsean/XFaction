@@ -2,6 +2,8 @@
     <Script file='Factory.lua'/>
     <Script file='GuildMessageFactory.lua'/>
     <Script file='MessageFactory.lua'/>
+    <Script file='LinkFactory.lua'/>
+    <Script file='NodeFactory.lua'/>
     <Script file='UnitFactory.lua'/>
     <Script file='FactoryObject.lua'/>
 </Ui>
