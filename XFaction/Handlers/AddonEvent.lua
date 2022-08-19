@@ -21,6 +21,9 @@ function AddonEvent:Initialize()
         if(IsAddOnLoaded('WIM')) then
             self:CallbackAddonLoaded('WIM')
         end
+        if(IsAddOnLoaded('RaiderIO')) then
+            self:CallbackAddonLoaded('RaiderIO')
+        end
 		self:IsInitialized(true)
 	end
 end
@@ -36,6 +39,8 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
             if(WIM.modules.GuildChat.enabled) then
                 XFG.WIM = WIM.modules.GuildChat
             end
+        elseif(inAddonName == 'RaiderIO') then
+            XFG.RaidIO:IsLoaded(true)
         end
     end).
     catch(function (inErrorMessage)

@@ -52,6 +52,7 @@ function Unit:new()
     _Object._PvP = ''
     _Object._GuildSpeak = true
     _Object._GuildListen = true
+    _Object._Score = nil
 
     return _Object
 end
@@ -98,7 +99,6 @@ function Unit:Initialize(inMemberID)
     self:SetRank(_UnitData.guildRank)
     self:SetNote(_UnitData.memberNote or '?')
     self:IsPlayer(_UnitData.isSelf)
-    self:SetDungeonScore(_UnitData.overallDungeonScore or 0)
     self:SetAchievementPoints(_UnitData.achievementPoints or 0)
 
     if(_UnitData.zone and XFG.Zones:Contains(_UnitData.zone)) then
@@ -118,29 +118,10 @@ function Unit:Initialize(inMemberID)
         self:SetProfession2(XFG.Professions:GetObject(_UnitData.profession2ID))
     end
 
-    -- If RaiderIO is installed, grab raid/mythic
-    pcall(function ()
-    local RaiderIO = _G.RaiderIO
-        if(RaiderIO) then
-            local _RaiderIO = RaiderIO.GetProfile(self:HasMainName() and self:GetMainName() or self:GetName(), self:GetRealm():GetName())
-            -- Raid
-            if(_RaiderIO and _RaiderIO.raidProfile) then
-                local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
-                if(_TopProgress.isProgressPrev == nil or _TopProgress.IsProgressPrev == false) then
-                    self:SetRaidProgress(_TopProgress.progress.progressCount, _TopProgress.progress.raid.bossCount, _TopProgress.progress.difficulty)
-                end
-            end
-            -- M+
-            if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
-                local _Profile = _RaiderIO.mythicKeystoneProfile
-                if(_Profile.mainCurrentScore and _Profile.mainCurrentScore > 0) then
-                    self:SetDungeonScore(_Profile.mainCurrentScore)
-                elseif(_Profile.currentScore and _Profile.currentScore > 0) then
-                    self:SetDungeonScore(_Profile.currentScore)
-                end
-            end
-        end
-    end)
+    local _RaidIO = XFG.RaidIO:GetRaidIO(self)
+    if(_RaidIO ~= nil) then
+        self:SetRaidIO(_RaidIO)
+    end
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
@@ -228,7 +209,6 @@ function Unit:Print()
         XFG:Debug(ObjectName, '  _Note (' .. type(self._Note) .. '): ' .. tostring(self._Note))
         XFG:Debug(ObjectName, '  _Online (' .. type(self._Online) .. '): ' .. tostring(self._Online))
         XFG:Debug(ObjectName, '  _Status (' .. type(self._Status) .. '): ' .. tostring(self._Status))
-        XFG:Debug(ObjectName, '  _DungeonScore (' .. type(self._DungeonScore) .. '): ' .. tostring(self._DungeonScore))
         XFG:Debug(ObjectName, '  _AchievementPoints (' .. type(self._AchievementPoints) .. '): ' .. tostring(self._AchievementPoints))
         XFG:Debug(ObjectName, '  _TimeStamp (' .. type(self._TimeStamp) .. '): ' .. tostring(self._TimeStamp))
         XFG:Debug(ObjectName, '  _RunningAddon (' .. type(self._RunningAddon) .. '): ' .. tostring(self._RunningAddon))
@@ -236,7 +216,6 @@ function Unit:Print()
         XFG:Debug(ObjectName, '  _MainName (' .. type(self._MainName) .. '): ' .. tostring(self._MainName))
         XFG:Debug(ObjectName, '  _IsPlayer (' .. type(self._IsPlayer) .. '): ' .. tostring(self._IsPlayer))
         XFG:Debug(ObjectName, '  _ItemLevel (' .. type(self._ItemLevel) .. '): ' .. tostring(self._ItemLevel))
-        XFG:Debug(ObjectName, '  _RaidProgress (' .. type(self._RaidProgress) .. '): ' .. tostring(self._RaidProgress))
         XFG:Debug(ObjectName, '  _PvP (' .. type(self._PvP) .. '): ' .. tostring(self._PvP))
         XFG:Debug(ObjectName, '  _GuildSpeak (' .. type(self._GuildSpeak) .. '): ' .. tostring(self._GuildSpeak))
         XFG:Debug(ObjectName, '  _GuildListen (' .. type(self._GuildListen) .. '): ' .. tostring(self._GuildListen))
@@ -255,7 +234,8 @@ function Unit:Print()
         if(self:HasCovenant()) then self._Covenant:Print() end
         if(self:HasSoulbind()) then self._Soulbind:Print() end
         if(self:HasProfession1()) then self._Profession1:Print() end
-        if(self:HasProfession2()) then self._Profession2:Print() end    
+        if(self:HasProfession2()) then self._Profession2:Print() end  
+        if(self:HasRaidIO()) then self:GetRaidIO():Print() end
     end
 end
 
@@ -447,33 +427,6 @@ function Unit:CanGuildListen(inBoolean)
     return self._GuildListen
 end
 
-function Unit:GetDungeonScore()
-    return self._DungeonScore
-end
-
-function Unit:SetDungeonScore(inScore)
-    assert(type(inScore) == 'number')
-    self._DungeonScore = inScore
-end
-
-function Unit:GetRaidProgress()
-    return self._RaidProgress
-end
-
-function Unit:SetRaidProgress(inCurrent, inTotal, inDifficulty)
-    assert(type(inCurrent) == 'number')
-    assert(type(inTotal) == 'number')
-    assert(type(inDifficulty) == 'number')
-    self._RaidProgress = tostring(inCurrent) .. '/' .. tostring(inTotal) .. ' '
-    if(inDifficulty == 3) then
-        self._RaidProgress = self._RaidProgress .. 'M'
-    elseif(inDifficulty == 2) then
-        self._RaidProgress = self._RaidProgress .. 'H'
-    else
-        self._RaidProgress = self._RaidProgress .. 'N'
-    end
-end
-
 function Unit:GetPvP()
     return self._PvP
 end
@@ -503,6 +456,19 @@ end
 function Unit:SetAchievementPoints(inPoints)
     assert(type(inPoints) == 'number')
     self._AchievementPoints = inPoints
+end
+
+function Unit:HasRaidIO()
+    return self._RaidIO ~= nil
+end
+
+function Unit:GetRaidIO()
+    return self._RaidIO
+end
+
+function Unit:SetRaidIO(inRaidIO)
+    assert(type(inRaidIO) == 'table' and inRaidIO.__name ~= nil and inRaidIO.__name == 'RaidIO', 'argument must be RaidIO object')
+    self._RaidIO = inRaidIO
 end
 
 function Unit:HasRace()
@@ -730,7 +696,6 @@ function Unit:Equals(inUnit)
     if(self:GetZone() ~= inUnit:GetZone()) then return false end
     if(self:GetNote() ~= inUnit:GetNote()) then return false end
     if(self:IsOnline() ~= inUnit:IsOnline()) then return false end
-    if(self:GetDungeonScore() ~= inUnit:GetDungeonScore()) then return false end
     if(self:GetAchievementPoints() ~= inUnit:GetAchievementPoints()) then return false end    
     if(self:IsRunningAddon() ~= inUnit:IsRunningAddon()) then return false end
     if(self:IsAlt() ~= inUnit:IsAlt()) then return false end
@@ -738,7 +703,6 @@ function Unit:Equals(inUnit)
     if(self:GetRank() ~= inUnit:GetRank()) then return false end
     if(self:GetItemLevel() ~= inUnit:GetItemLevel()) then return false end
     if(self:GetPvP() ~= inUnit:GetPvP()) then return false end
-    if(self:GetRaidProgress() ~= inUnit:GetRaidProgress()) then return false end
 
     if(self:HasCovenant() == false and inUnit:HasCovenant()) then return false end
     if(self:HasCovenant()) then
@@ -775,6 +739,9 @@ function Unit:Equals(inUnit)
         local _CachedSpec = self:GetSpec()
         if(_CachedSpec:Equals(inUnit:GetSpec()) == false) then return false end
     end
+
+    if(not self:HasRaidIO() and inUnit:HasRaidIO()) then return false end
+    if(self:HasRaidIO() and not inUnit:HasRaidIO()) then return false end
     
     -- Do not consider TimeStamp
     -- A unit cannot change Class, do not consider

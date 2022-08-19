@@ -115,27 +115,10 @@ function XFG:DeserializeUnitData(inData)
 		_UnitData:SetVersion(_Version) 
 	end
 
-	-- If RaiderIO is installed, grab raid/mythic
-	pcall(function ()
-		if(RaiderIO) then
-			local _RaiderIO = RaiderIO.GetProfile(_UnitData:GetName(), _UnitData:GetRealm():GetName())
-			-- Raid
-			if(_RaiderIO and _RaiderIO.raidProfile) then
-				local _TopProgress = _RaiderIO.raidProfile.sortedProgress[1]
-				if(_TopProgress.isProgressPrev == nil or _TopProgress.IsProgressPrev == false) then
-					_UnitData:SetRaidProgress(_TopProgress.progress.progressCount, _TopProgress.progress.raid.bossCount, _TopProgress.progress.difficulty)
-				end
-			end
-			-- M+
-			if(_RaiderIO and _RaiderIO.mythicKeystoneProfile) then
-				if(_RaiderIO.mythicKeystoneProfile.mainCurrentScore > 0) then
-					_UnitData:SetDungeonScore(_RaiderIO.mythicKeystoneProfile.mainCurrentScore)
-				elseif(_RaiderIO.mythicKeystoneProfile.currentScore > 0) then
-					_UnitData:SetDungeonScore(_RaiderIO.mythicKeystoneProfile.currentScore)
-				end
-			end
-		end
-	end)
+	local _RaidIO = XFG.RaidIO:GetRaidIO(_UnitData)
+    if(_RaidIO ~= nil) then
+        _UnitData:SetRaidIO(_RaidIO)
+    end
 
 	return _UnitData
 end

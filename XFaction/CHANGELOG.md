@@ -1,6 +1,5 @@
 ### Version 3.9
 [XFaction]
-- Updated to 9.2.7
 - Optimized performance
 - Local guild achievements are now in XFaction format
 - Option to enable/disable debug logging within instances

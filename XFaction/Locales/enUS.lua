@@ -76,6 +76,7 @@ L['COMPRESSION'] = 'Compression'
 L['SAVE'] = 'Save'
 L['FACTORY'] = 'Factory'
 L['VERBOSITY'] = 'Verbosity'
+L['RAIDERIO'] = 'RaiderIO'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================

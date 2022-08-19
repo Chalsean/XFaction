@@ -89,6 +89,7 @@ end
 function Object:Equals(inObject)
     if(inObject == nil) then return false end
     if(type(inObject) ~= 'table' or inObject.__name == nil) then return false end
+    if(self:GetObjectName() ~= inObject:GetObjectName()) then return false end
     if(self:GetKey() ~= inObject:GetKey()) then return false end
     return true
 end

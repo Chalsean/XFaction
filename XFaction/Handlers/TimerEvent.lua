@@ -41,7 +41,10 @@ function TimerEvent:CallbackLogin()
         if(XFG.DB.UIReload == nil) then XFG.DB.UIReload = false end
 		if(XFG.DB.Errors == nil) then XFG.DB.Errors = {} end
 		if(XFG.Config.Channels == nil) then XFG.Config.Channels = {} end
-        XFG:LoadConfigs()   
+        XFG:LoadConfigs() 
+		
+		-- Monitor other addons loading
+		XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
     end
 
     -- Ensure we get the player guid and faction without failure
@@ -201,12 +204,11 @@ function TimerEvent:CallbackLogin()
 				XFG.Professions = ProfessionCollection:new(); XFG.Professions:Initialize()
 				XFG.Continents = ContinentCollection:new(); XFG.Continents:Initialize()
 				XFG.Zones = ZoneCollection:new(); XFG.Zones:Initialize()
-						
+										
 				if(XFG.WoW:IsRetail()) then
 					XFG.Covenants = CovenantCollection:new(); XFG.Covenants:Initialize()
 					XFG.Soulbinds = SoulbindCollection:new(); XFG.Soulbinds:Initialize()
 				end
-				XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
 
 				-- Start up factories, used for object reuse (performance)
 				XFG.Factories.Message = MessageFactory:new(); XFG.Factories.Message:Initialize()
@@ -254,9 +256,6 @@ function TimerEvent:CallbackLogin()
 						end
 					end)
 				end
-
-				-- Monitor other addons loading
-				XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
 
 				-- Start network setup
 				XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()            

@@ -69,15 +69,21 @@ function FriendCollection:GetFriendByRealmUnitName(inRealm, inName)
 	 end
 end
 
-function FriendCollection:RemoveFriend(inKey)
-	assert(type(inKey) == 'number')
-	if(self:Contains(inKey)) then
-		local _Friend = self:GetFriend(inKey)
-		if(XFG.Nodes:Contains(_Friend:GetName())) then
-			XFG.Nodes:RemoveNode(XFG.Nodes:GetObject(_Friend:GetName()))
-		end
-		self:RemoveObject(_Friend)
-		XFG.Factories.Friend:CheckIn(_Friend)
+function FriendCollection:RemoveFriend(inFriend)
+	assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', 'argument must be Friend object')
+	if(self:Contains(inFriend:GetKey())) then
+		try(function ()
+			if(XFG.Nodes:Contains(inFriend:GetName())) then
+				XFG.Nodes:RemoveNode(XFG.Nodes:GetObject(inFriend:GetName()))
+			end
+		end).
+		catch(function (inErrorMessage)
+			XFG:Warn(ObjectName, inErrorMessage)
+		end).
+		finally(function ()
+			self:RemoveObject(inFriend)
+			XFG.Factories.Friend:CheckIn(inFriend)
+		end)
 	end
 end
 
@@ -119,10 +125,10 @@ function FriendCollection:CheckFriend(inKey)
 		if(self:Contains(_AccountInfo.bnetAccountID)) then
 			if(not CanLink(_AccountInfo)) then
 				local _Friend = XFG.Friends:GetObject(_AccountInfo.bnetAccountID)
-				self:RemoveObject(_Friend:GetKey())
 				if(XFG.DebugFlag) then
 					XFG:Info(ObjectName, 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
 				end
+				self:RemoveFriend(_Friend)
 				return true
 			end
 
@@ -155,13 +161,11 @@ function FriendCollection:CheckFriend(inKey)
 			if(XFG.Initialized) then 
 				XFG.BNet:PingFriend(_NewFriend) 
 			end
-			return true
 		end
 	end).
 	catch(function (inErrorMessage)
 	    XFG:Warn(ObjectName, inErrorMessage)
 	end)
-	return false
 end
 
 function FriendCollection:CheckFriends()
@@ -196,7 +200,7 @@ function FriendCollection:RestoreBackup()
 			if(XFG.Friends:Contains(_Key)) then
 				local _Friend = XFG.Friends:GetObject(_Key)
 				_Friend:IsRunningAddon(true)
-				XFG:Info(ObjectName, "  Restored %s friend information from backup", _Friend:GetTag())
+				XFG:Info(ObjectName, '  Restored %s friend information from backup', _Friend:GetTag())
 			end
 		end).
 		catch(function (inErrorMessage)

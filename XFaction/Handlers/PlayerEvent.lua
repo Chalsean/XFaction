@@ -120,16 +120,17 @@ function PlayerEvent:CallbackInstance()
             XFG.Events:EnterInstance()
             XFG.Timers:EnterInstance()
             if(not XFG.Config.Debug.Instance) then
+                XFG:Debug(ObjectName, 'Disabling logging based on configuration')
                 XFG.DebugFlag = false
             end
 
         -- Just leaving instance or UI reload
         elseif(not _InInstance and XFG.Player.InInstance) then
+            XFG.DebugFlag = XFG.Config.Debug.Enable
             XFG:Debug(ObjectName, 'Leaving instance, enabling some event listeners and timers')
             XFG.Player.InInstance = false
             XFG.Events:LeaveInstance()
-            XFG.Timers:LeaveInstance()
-            XFG.DebugFlag = XFG.Config.Debug.Enable
+            XFG.Timers:LeaveInstance()            
         end
     end).
     catch(function (inErrorMessage)

@@ -97,7 +97,7 @@ function DTLinks:OnEnter(this)
 		self._Tooltip:SetHeaderFont(self._HeaderFont)
 		self._Tooltip:SetFont(self._RegularFont)
 		self._Tooltip:SmartAnchorTo(this)
-		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() XFG.DataText.Links:OnLeave() end)
+		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() DTLinks:OnLeave() end)
 		self._Tooltip:EnableMouse(true)
 		self._Tooltip:SetClampedToScreen(false)
 	end

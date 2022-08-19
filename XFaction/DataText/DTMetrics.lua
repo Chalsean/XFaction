@@ -86,7 +86,7 @@ function DTMetrics:OnEnter(this)
 		self._Tooltip:SetHeaderFont(self._HeaderFont)
 		self._Tooltip:SetFont(self._RegularFont)
 		self._Tooltip:SmartAnchorTo(this)
-		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() XFG.DataText.Metrics:OnLeave() end)
+		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() DTMetrics:OnLeave() end)
 		self._Tooltip:EnableMouse(true)
 		self._Tooltip:SetClampedToScreen(false)
 	end

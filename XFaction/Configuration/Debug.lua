@@ -30,7 +30,10 @@ XFG.Options.args.Debug = {
 					desc = XFG.Lib.Locale['DEBUG_LOG_INSTANCE_TOOLTIP'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					get = function(info) return XFG.Config.Debug[ info[#info] ] end,
-					set = function(info, value) XFG.Config.Debug[ info[#info] ] = value	end,
+					set = function(info, value) 
+						XFG.Config.Debug[ info[#info] ] = value
+						XFG.DebugFlag = XFG.Config.Debug.Enable
+					end,
 				},
 				Verbosity = {
 					order = 3,
@@ -190,50 +193,57 @@ XFG.Options.args.Debug = {
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Races:Print() end,
 				},
-				Realm = {
+				RaiderIO = {
 					order = 21,
+					type = 'execute',
+					name = XFG.Lib.Locale['RAIDERIO'],
+					disabled = function () return not XFG.Config.Debug.Enable end,
+					func = function(info) XFG.RaidIO:Print() end,					
+				},
+				Realm = {
+					order = 22,
 					type = 'execute',
 					name = XFG.Lib.Locale['REALM'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Realms:Print() end,
-				},
+				},				
 				Soulbind = {
-					order = 22,
+					order = 23,
 					type = 'execute',
 					name = XFG.Lib.Locale['SOULBIND'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Soulbinds:Print() end,					
 				},
 				Spec = {
-					order = 23,
+					order = 24,
 					type = 'execute',
 					name = XFG.Lib.Locale['SPEC'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Specs:Print() end,
 				},
 				Target = {
-					order = 24,
+					order = 25,
 					type = 'execute',
 					name = XFG.Lib.Locale['TARGET'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Targets:Print() end,
 				},
 				Team = {
-					order = 25,
+					order = 26,
 					type = 'execute',
 					name = XFG.Lib.Locale['TEAM'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Teams:Print() end,
 				},
 				Timer = {
-					order = 26,
+					order = 27,
 					type = 'execute',
 					name = XFG.Lib.Locale['TIMER'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Timers:Print() end,
 				},
 				Zone = {
-					order = 27,
+					order = 28,
 					type = 'execute',
 					name = XFG.Lib.Locale['ZONE'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
