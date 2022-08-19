@@ -169,7 +169,7 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Process JOIN message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.JOIN) then
-        XFG.Frames.System:DisplayJoinMessage(inMessage)
+        --XFG.Frames.System:DisplayJoinMessage(inMessage)
         return
     end
 
