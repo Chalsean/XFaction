@@ -145,7 +145,7 @@ local function SetSortColumn(_, inColumnName)
 end
 
 local function LineClick(_, inUnitGUID, inMouseButton)
-	local _Unit = XFG.Confederate:GetObject(inUnitGUID)
+	local _Unit = XFG.Confederate:Get(inUnitGUID)
 	local _Link = _Unit:GetLink()
 	if(_Link == nil) then return end
 
@@ -223,7 +223,7 @@ function DTGuild:OnEnter(this)
 	
 	if(XFG.Config.DataText.Guild.GuildName and XFG.Cache.DTGuildTotalEnabled > 4) then
 		local _GuildName = XFG.Player.Guild:GetName()
-		local _Guild = XFG.Guilds:GetGuildByRealmGuildName(XFG.Player.Realm, _GuildName)
+		local _Guild = XFG.Guilds:GetByRealmGuildName(XFG.Player.Realm, _GuildName)
 		_GuildName = _GuildName .. ' <' .. _Guild:GetInitials() .. '>'
 		self._Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_GUILD'], _GuildName), self._HeaderFont, "LEFT", 4)
 	end

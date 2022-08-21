@@ -5,7 +5,6 @@
     <Script file='Encode.lua'/>
     <Script file='Decode.lua'/>
     <Script file='Message.lua'/>
-    <Script file='GuildMessage.lua'/>
     <Script file='Mailbox.lua'/>
     <Script file='Channel.lua'/>
     <Script file='ChannelCollection.lua'/>

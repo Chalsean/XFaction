@@ -17,11 +17,11 @@ function GuildCollection:Initialize()
 	end
 end
 
-function GuildCollection:ContainsGuildName(inGuildName)
+function GuildCollection:ContainsName(inGuildName)
 	return self._Names[inGuildName] ~= nil
 end
 
-function GuildCollection:GetGuildByRealmGuildName(inRealm, inGuildName)
+function GuildCollection:GetByRealmGuildName(inRealm, inGuildName)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be a Realm object')	
 	assert(type(inGuildName) == 'string')
 	for _, _Guild in self:Iterator() do
@@ -31,15 +31,12 @@ function GuildCollection:GetGuildByRealmGuildName(inRealm, inGuildName)
 	end
 end
 
-function GuildCollection:GetGuildByName(inGuildName)
+function GuildCollection:GetByName(inGuildName)
 	return self._Names[inGuildName]
 end
 
-function GuildCollection:AddGuild(inGuild)
+function GuildCollection:Add(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
-	if(not self:Contains(inGuild:GetKey())) then
-		self._ObjectCount = self._ObjectCount + 1
-	end
-	self._Objects[inGuild:GetKey()] = inGuild
+	self.parent.Add(self, inGuild)
 	self._Names[inGuild:GetName()] = inGuild
 end

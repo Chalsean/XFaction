@@ -1,7 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Friend'
 
-Friend = FactoryObject:newChildConstructor()
+Friend = Object:newChildConstructor()
 
 function Friend:new()
     local _Object = Friend.parent.new(self)
@@ -23,8 +23,6 @@ end
 function Friend:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
-        XFG:Debug(ObjectName, '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
         XFG:Debug(ObjectName, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
         XFG:Debug(ObjectName, "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
         XFG:Debug(ObjectName, "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
@@ -122,45 +120,30 @@ function Friend:CreateLink()
     if(self:IsRunningAddon() and self:HasTarget()) then
         local _NewLink = nil
         try(function ()
-            _NewLink = XFG.Factories.Link:CheckOut()
-            local _FromNode = XFG.Nodes:GetObject(XFG.Player.Unit:GetName())
+            _NewLink = XFG.Links:Pop()
+            local _FromNode = XFG.Nodes:Get(XFG.Player.Unit:GetName())
             if(_FromNode == nil) then
-                try(function ()
-                    _FromNode = XFG.Factories.Node:CheckOut()
-                    XFG.Nodes:AddNode(_FromNode)
-                end).
-                catch(function (inErrorMessage)
-                    XFG.Nodes:RemoveNode(_FromNode)
-                    XFG.Factories.Node:CheckIn(_FromNode)
-                    error(inErrorMessage)
-                end)
+                _FromNode = XFG.Nodes:Pop()
+                XFG.Nodes:Add(_FromNode)
             end
             _NewLink:SetFromNode(_FromNode)
 
-            local _ToNode = XFG.Nodes:GetObject(self:GetName())
+            local _ToNode = XFG.Nodes:Get(self:GetName())
             if(_ToNode == nil) then
-                try(function ()
-                    _ToNode = XFG.Factories.Node:CheckOut()
-                    _ToNode:SetKey(self:GetName())
-                    _ToNode:SetName(self:GetName())
-                    _ToNode:SetTarget(self:GetTarget())
-                    XFG.Nodes:AddNode(_ToNode)
-                end).
-                catch(function (inErrorMessage)
-                    XFG.Nodes:RemoveNode(_ToNode)
-                    XFG.Factories.Node:CheckIn(_ToNode)
-                    error(inErrorMessage)
-                end)
+                _ToNode = XFG.Nodes:Pop()
+                _ToNode:SetKey(self:GetName())
+                _ToNode:SetName(self:GetName())
+                _ToNode:SetTarget(self:GetTarget())
+                XFG.Nodes:Add(_ToNode)
             end
             _NewLink:SetToNode(_ToNode)
 
             _NewLink:Initialize()
-            XFG.Links:AddLink(_NewLink)
-            XFG.DataText.Links:RefreshBroker()
+            XFG.Links:Add(_NewLink)
         end).
         catch(function (inErrorMessage)
             XFG:Warn(ObjectName, inErrorMessage)
-            XFG.Factories.Link:CheckIn(_NewLink)
+            XFG.Links:Push(_NewLink)
         end)
     end
 end
@@ -174,8 +157,7 @@ function Friend:IsMyLink(inBoolean)
 end
 
 function Friend:FactoryReset()
-    self._Key = nil
-    self._Name = nil
+    self:ParentFactoryReset()
     self._ID = nil         
     self._AccountID = nil  
     self._GameID = nil     
@@ -185,6 +167,5 @@ function Friend:FactoryReset()
     self._IsRunningAddon = false
     self._DateTime = 0  
     self._MyLink = false
-    self._Initialized = false
     self:Initialize()
 end

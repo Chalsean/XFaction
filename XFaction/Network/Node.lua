@@ -1,7 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Node'
 
-Node = FactoryObject:newChildConstructor()
+Node = Object:newChildConstructor()
 
 function Node:new()
     local _Object = Node.parent.new(self)
@@ -24,8 +24,6 @@ end
 function Node:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
-        XFG:Debug(ObjectName, '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
         XFG:Debug(ObjectName, '  _LinkCount (' .. type(self._LinkCount) .. '): ' .. tostring(self._LinkCount))
         if(self:HasTarget()) then self:GetTarget():Print() end
     end
@@ -57,9 +55,9 @@ function Node:SetObjectFromString(inLinkString)
     local _Node = string.Split(inLinkString, ':')  
     self:SetKey(_Node[1])
     self:SetName(_Node[1])
-    local _Realm = XFG.Realms:GetRealmByID(tonumber(_Node[2]))
-    local _Faction = XFG.Factions:GetObject(tonumber(_Node[3]))
-    self:SetTarget(XFG.Targets:GetTargetByRealmFaction(_Realm, _Faction))
+    local _Realm = XFG.Realms:GetByID(tonumber(_Node[2]))
+    local _Faction = XFG.Factions:Get(tonumber(_Node[3]))
+    self:SetTarget(XFG.Targets:GetByRealmFaction(_Realm, _Faction))
 end
 
 function Node:GetLinkCount()
@@ -78,15 +76,13 @@ end
 function Node:DecrementLinkCount()
     self._LinkCount = self._LinkCount - 1
     if(self:GetLinkCount() == 0) then
-        XFG.Factories.Node:CheckIn(self)
+        XFG.Nodes:Push(self)
     end
 end
 
 function Node:FactoryReset()
-    self._Key = nil
-    self._Name = nil
+    self:ParentFactoryReset()
     self._Target = nil
     self._LinkCount = 0
-    self._Initialized = false
     self:Initialize()
 end

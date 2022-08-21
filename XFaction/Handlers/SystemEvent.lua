@@ -12,10 +12,10 @@ end
 function SystemEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG:CreateEvent('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
+        XFG.Events:Add('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
         XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
         XFG:Info(ObjectName, 'Pre-hooked ReloadUI')
-        XFG:CreateEvent('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true, true)
+        XFG.Events:Add('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true, true)
         ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Handlers.SystemEvent.ChatFilter)
         XFG:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
 		self:IsInitialized(true)
@@ -25,22 +25,28 @@ end
 function SystemEvent:CallbackLogout()
     if(XFG.DB.UIReload) then 
         -- Backup information on reload to be restored
-        XFG.Confederate:CreateBackup()
-        XFG.Friends:CreateBackup()
-        XFG.Links:CreateBackup()
+        XFG.Confederate:Backup()
+        XFG.Friends:Backup()
+        XFG.Links:Backup()
     else
-        local _NewMessage = GuildMessage:new()
-        _NewMessage:Initialize()
-        _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-        _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
-        if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-            _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
-        end
-        _NewMessage:SetGuild(XFG.Player.Guild)
-        _NewMessage:SetRealm(XFG.Player.Realm)
-        _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
-        _NewMessage:SetData(' ')
-        XFG.Outbox:Send(_NewMessage)
+        local _NewMessage = nil
+        try(function ()        
+            _NewMessage = XFG.Mailbox:Pop()
+            _NewMessage:Initialize()
+            _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+            _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
+            if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
+                _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+            end
+            _NewMessage:SetGuild(XFG.Player.Guild)
+            _NewMessage:SetRealm(XFG.Player.Realm)
+            _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
+            _NewMessage:SetData(' ')
+            XFG.Outbox:Send(_NewMessage)
+        end).
+        finally(function ()
+            XFG.Mailbox:Push(_NewMessage)
+        end)
     end    
 end
 
@@ -52,7 +58,7 @@ end
 
 function SystemEvent:CallbackLogin()
     if(XFG.Outlook:HasLocalChannel()) then
-        XFG.Channels:SetChannelLast(XFG.Outlook:GetLocalChannel():GetKey())
+        XFG.Channels:SetLast(XFG.Outlook:GetLocalChannel():GetKey())
     end
 end
 

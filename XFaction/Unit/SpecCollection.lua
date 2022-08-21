@@ -19,7 +19,7 @@ function SpecCollection:Initialize()
 			_NewSpec:SetKey(_Spec.ID)
 			_NewSpec:SetName(_Spec.Name)
 			_NewSpec:SetIconID(_Spec.Icon)
-			self:AddObject(_NewSpec)
+			self:Add(_NewSpec)
 			XFG:Info(ObjectName, 'Initialized spec [%s]', _NewSpec:GetName())
 		end
 		self:IsInitialized(true)

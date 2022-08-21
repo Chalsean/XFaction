@@ -22,7 +22,7 @@ function XFG:Error(SubCategory, ...)
 		end
 	end
 	if(XFG.Metrics ~= nil) then
-		XFG.Metrics:GetObject(XFG.Settings.Metric.Error):Increment()
+		XFG.Metrics:Get(XFG.Settings.Metric.Error):Increment()
 	end
 end
 
@@ -37,7 +37,7 @@ function XFG:Warn(SubCategory, ...)
 		end
 	end
 	if(XFG.Metrics ~= nil) then
-		XFG.Metrics:GetObject(XFG.Settings.Metric.Warning):Increment()
+		XFG.Metrics:Get(XFG.Settings.Metric.Warning):Increment()
 	end
 end
 

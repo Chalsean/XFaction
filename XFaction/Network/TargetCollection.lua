@@ -29,7 +29,7 @@ function TargetCollection:Initialize()
 			
 			if(not self:Contains(_NewTarget:GetKey())) then	
 				XFG:Info(ObjectName, 'Initializing target [%s]', _Key)
-				self:AddObject(_NewTarget)
+				self:Add(_NewTarget)
 			end
 			if(XFG.Player.Target == nil and _Realm:Equals(XFG.Player.Realm) and _Faction:Equals(XFG.Player.Faction)) then
 				XFG:Info(ObjectName, 'Initializing player target [%s]', _Key)
@@ -48,9 +48,9 @@ function TargetCollection:ContainsByRealmFaction(inRealm, inFaction)
     return self:Contains(_Key)
 end
 
-function TargetCollection:GetTargetByRealmFaction(inRealm, inFaction)
+function TargetCollection:GetByRealmFaction(inRealm, inFaction)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
     assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
 	local _Key = GetTargetKey(inRealm, inFaction)
-    return self:GetObject(_Key)
+    return self:Get(_Key)
 end

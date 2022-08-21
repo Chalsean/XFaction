@@ -72,7 +72,7 @@ function BNet:Send(inMessage)
                 end
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _Packet, _, _Friend:GetGameID())
-                XFG.Metrics:GetObject(XFG.Settings.Metric.BNetSend):Increment()
+                XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(_Friend:GetTarget())
         end).
@@ -98,8 +98,8 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     try(function ()
         -- Even though these may be part of a message, it still counts as a network transaction
-        XFG.Metrics:GetObject(XFG.Settings.Metric.BNetReceive):Increment()
-        XFG.Metrics:GetObject(XFG.Settings.Metric.Messages):Increment()
+        XFG.Metrics:Get(XFG.Settings.Metric.BNetReceive):Increment()
+        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
         -- People can only whisper you if friend, so if you got a whisper you need to check friends cache
         if(not XFG.Friends:ContainsByGameID(tonumber(inSender))) then
             XFG.Friends:CheckFriends()
@@ -107,7 +107,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
         -- If you get it from BNet, they should be in your friend list and obviously they are running addon
         if(XFG.Friends:ContainsByGameID(tonumber(inSender))) then
-            local _Friend = XFG.Friends:GetFriendByGameID(tonumber(inSender))
+            local _Friend = XFG.Friends:GetByGameID(tonumber(inSender))
             if(_Friend ~= nil) then
                 _Friend:SetDateTime(ServerTime())
                 _Friend:IsRunningAddon(true)
@@ -129,7 +129,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     try(function ()
         if(inEncodedMessage == 'PING') then
             BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
-            XFG.Metrics:GetObject(XFG.Settings.Metric.BNetSend):Increment()
+            XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
             return
         elseif(inEncodedMessage == 'RE:PING') then
             return
@@ -147,7 +147,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
             error('Message is in pre-3.3 format, ignoring')
         end
 
-        XFG.BNet:AddPacket(_MessageKey, _PacketNumber, _MessageData)
+        XFG.BNet:Add(_MessageKey, _PacketNumber, _MessageData)
         if(XFG.BNet:HasAllPackets(_MessageKey, _TotalPackets)) then
             if(XFG.DebugFlag) then
                 XFG:Debug(ObjectName, "Received all packets for message [%s]", _MessageKey)
@@ -157,11 +157,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
                 XFG.Inbox:Process(_FullMessage, inMessageTag)
             end).
             finally(function ()
-                if(_FullMessage and _FullMessage:GetObjectName() == 'Message') then
-                    XFG.Factories.Message:CheckIn(_FullMessage)
-                else
-                    XFG.Factories.GuildMessage:CheckIn(_FullMessage)
-                end
+                XFG.Mailbox:Push(_FullMessage)
             end)
         end
     end).
@@ -170,7 +166,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end)
 end
 
-function BNet:AddPacket(inMessageKey, inPacketNumber, inData)
+function BNet:Add(inMessageKey, inPacketNumber, inData)
     assert(type(inMessageKey) == 'string')
     assert(type(inPacketNumber) == 'number')
     assert(type(inData) == 'string')
@@ -196,11 +192,11 @@ function BNet:RebuildMessage(inMessageKey, inTotalPackets)
     for i = 1, inTotalPackets do
         _Message = _Message .. self._Objects[inMessageKey][i]
     end
-    self:RemovePackets(inMessageKey)
+    self:Remove(inMessageKey)
     return XFG:DecodeBNetMessage(_Message)
 end
 
-function BNet:RemovePackets(inKey)
+function BNet:Remove(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
         self._Objects[inKey] = nil
@@ -213,7 +209,7 @@ function BNet:Purge(inEpochTime)
 	for _ID, _Objects in self:Iterator() do
         for _, _Packet in ipairs (_Objects) do
 		    if(_Packet:GetTimeStamp() < inEpochTime) then
-			    self:RemovePackets(_ID)
+			    self:Remove(_ID)
             end
             break
 		end
@@ -226,5 +222,5 @@ function BNet:PingFriend(inFriend)
         XFG:Debug(ObjectName, 'Sending ping to [%s]', inFriend:GetTag())
     end
     BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())
-    XFG.Metrics:GetObject(XFG.Settings.Metric.BNetSend):Increment() 
+    XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment() 
 end

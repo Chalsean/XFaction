@@ -9,14 +9,14 @@ local Deflate = XFG.Lib.Deflate
 local function SerializeMessage(inMessage, inEncodeUnitData)
 	local _MessageData = {}
 
-	if(inMessage.__name == 'GuildMessage') then
-		_MessageData.M = inMessage:GetMainName()
-		_MessageData.N = inMessage:GetName()
-		_MessageData.U = inMessage:GetUnitName()
-		local _Guild = inMessage:GetGuild()
-		_MessageData.G = _Guild:GetName()
-		local _Realm = inMessage:GetRealm()
-		_MessageData.R = _Realm:GetID()
+	_MessageData.M = inMessage:GetMainName()
+	_MessageData.N = inMessage:GetName()
+	_MessageData.U = inMessage:GetUnitName()
+	if(inMessage:HasGuild()) then
+		_MessageData.G = inMessage:GetGuild():GetName()
+	end
+	if(inMessage:HasRealm()) then
+		_MessageData.R = inMessage:GetRealm():GetID()
 	end
 
 	if(inMessage:HasUnitData() and inEncodeUnitData) then

@@ -9,7 +9,7 @@ function ContinentCollection:new()
     return _Object
 end
 
-function ContinentCollection:GetContinentByID(inID)
+function ContinentCollection:GetByID(inID)
 	assert(type(inID) == 'number')
 	for _, _Continent in self:Iterator() do
 		if(_Continent:HasID(inID)) then

@@ -9,6 +9,22 @@ function EventCollection:new()
     return _Object
 end
 
+function EventCollection:Add(inKey, inName, inCallback, inInstance, inInstanceCombat, inBucket, inDelta)
+    local _Event = Event:new()
+    _Event:SetKey(inKey)
+    _Event:SetName(inName)
+    _Event:SetCallback(inCallback)
+    _Event:IsInstance(inInstance)
+    _Event:IsInstanceCombat(inInstanceCombat)
+    if(inBucket ~= nil) then _Event:IsBucket(inBucket) end
+    if(inDelta ~= nil) then _Event:SetDelta(inDelta) end
+    if(_Event:IsInstance() or XFG.Player.InInstance == false) then
+        _Event:Start()
+    end
+    self.parent.Add(self, _Event)
+    XFG:Info('Event', 'Registered to receive %s events', inName)
+end
+
 function EventCollection:EnterInstance()
     for _, _Event in self:Iterator() do
         if(_Event:IsEnabled() and not _Event:IsInstance()) then

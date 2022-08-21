@@ -1,6 +1,9 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'MetricCollection'
 
+local ServerTime = C_DateAndTime.GetServerTimeLocal
+local CalendarTime = C_DateAndTime.GetCurrentCalendarTime
+
 MetricCollection = ObjectCollection:newChildConstructor()
 
 function MetricCollection:new()
@@ -15,13 +18,12 @@ function MetricCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		for _, _MetricName in pairs (XFG.Settings.Metric) do
-			local _NewMetric = Metric:new()
-			_NewMetric:SetKey(_MetricName)
-			_NewMetric:SetName(_MetricName)
-			self:AddObject(_NewMetric)
+			local _Metric = Metric:new()
+			_Metric:SetKey(_MetricName)
+			_Metric:SetName(_MetricName)
+			self:Add(_Metric)
 		end
-		local _Time = C_DateAndTime.GetServerTimeLocal()
-		self:SetStartTime(_Time)
+		self:SetStartTime(ServerTime())
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -37,7 +39,7 @@ end
 function MetricCollection:SetStartTime(inEpochTime)
 	assert(type(inEpochTime) == 'number')
 	self._StartTime = inEpochTime
-	self._StartCalendar = C_DateAndTime.GetCurrentCalendarTime()
+	self._StartCalendar = CalendarTime()
 	return self:GetStartTime()
 end
 

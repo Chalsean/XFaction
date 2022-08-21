@@ -18,13 +18,13 @@ function RealmCollection:Initialize()
 			_Realm:SetName(_Data.Name)
 			_Realm:SetAPIName(_Data.API)
 			_Realm:SetIDs(_Data.IDs)
-			XFG.Realms:AddObject(_Realm)
+			XFG.Realms:Add(_Realm)
 		end
 		self:IsInitialized(true)
 	end
 end
 
-function RealmCollection:GetRealmByID(inID)
+function RealmCollection:GetByID(inID)
 	assert(type(inID) == 'number')
 	for _, _Realm in self:Iterator() do
 		local _IDs = _Realm:GetIDs()
@@ -34,8 +34,4 @@ function RealmCollection:GetRealmByID(inID)
 			end
 		end
 	end
-end
-
-function RealmCollection:GetCurrentRealm()
-	return self._Objects[GetRealmName()]
 end

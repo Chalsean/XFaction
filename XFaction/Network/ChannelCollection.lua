@@ -13,7 +13,7 @@ function ChannelCollection:new()
     return _Object
 end
 
-function ChannelCollection:GetChannelByID(inID)
+function ChannelCollection:GetByID(inID)
 	assert(type(inID) == 'number')
 	for _, _Channel in self:Iterator() do
 		if(_Channel:GetID() == inID) then
@@ -22,15 +22,15 @@ function ChannelCollection:GetChannelByID(inID)
 	end
 end
 
-function ChannelCollection:SetChannelLast(inKey)
+function ChannelCollection:SetLast(inKey)
 	if(not XFG.Config.Chat.Channel.Last) then return end
 	if(not self:Contains(inKey)) then return end
 	
-	self:ScanChannels()
-	local _Channel = self:GetObject(inKey)
+	self:Scan()
+	local _Channel = self:Get(inKey)
 
 	for i = _Channel:GetID() + 1, 10 do
-		local _NextChannel = self:GetChannelByID(i)
+		local _NextChannel = self:GetByID(i)
 		if(_NextChannel ~= nil) then
 			if(XFG.DebugFlag) then 
 				XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', _Channel:GetID(), _Channel:GetName(), _NextChannel:GetID(), _NextChannel:GetName()) 
@@ -54,7 +54,7 @@ function ChannelCollection:SetChannelLast(inKey)
 	end
 end
 
-function ChannelCollection:ScanChannels()
+function ChannelCollection:Scan()
 	try(function ()
 		local _Channels = {GetChannels()}
 		local _IDs = {}
@@ -62,7 +62,7 @@ function ChannelCollection:ScanChannels()
 			local _ChannelID, _ChannelName, _Disabled = _Channels[i], _Channels[i+1], _Channels[i+2]
 			_IDs[_ChannelID] = true
 			if(self:Contains(_ChannelName)) then
-				local _Channel = self:GetObject(_ChannelName)
+				local _Channel = self:Get(_ChannelName)
 				if(_Channel:GetID() ~= _ChannelID) then
 					local _OldID = _Channel:GetID()
 					_Channel:SetID(_ChannelID)
@@ -75,13 +75,13 @@ function ChannelCollection:ScanChannels()
 				_NewChannel:SetKey(_ChannelName)
 				_NewChannel:SetName(_ChannelName)
 				_NewChannel:SetID(_ChannelID)
-				self:AddObject(_NewChannel)
+				self:Add(_NewChannel)
 			end
 		end
 
 		for _, _Channel in self:Iterator() do
 			if(_IDs[_Channel:GetID()] == nil) then
-				self:RemoveObject(_Channel)
+				self:Remove(_Channel:GetKey())
 			end
 		end
 	end).

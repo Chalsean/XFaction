@@ -17,7 +17,7 @@ function CovenantCollection:Initialize()
 				local _NewCovenant = Covenant:new()
 				_NewCovenant:SetID(_CovenantID)
 				_NewCovenant:Initialize()
-				self:AddObject(_NewCovenant)
+				self:Add(_NewCovenant)
 				XFG:Info(ObjectName, 'Initialized covenant [%s]', _NewCovenant:GetName())
 			end
 		end

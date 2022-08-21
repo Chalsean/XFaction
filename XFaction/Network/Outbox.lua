@@ -75,7 +75,7 @@ function Outbox:Send(inMessage)
             XFG:Debug(ObjectName, 'Broadcasting on channel [%s] with tag [%s]', _Channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
         end
         XFG:SendCommMessage(XFG.Settings.Network.Message.Tag.LOCAL, _OutgoingData, 'CHANNEL', _Channel:GetID())
-        XFG.Metrics:GetObject(XFG.Settings.Metric.ChannelSend):Increment()
+        XFG.Metrics:Get(XFG.Settings.Metric.ChannelSend):Increment()
     end
 end
 
@@ -94,7 +94,7 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
     end
     local _Message = nil
     try(function ()
-        _Message = XFG.Factories.Message:CheckOut()
+        _Message = XFG.Mailbox:Pop()
         _Message:Initialize()
         _Message:SetFrom(XFG.Player.Unit:GetKey())
         _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
@@ -103,6 +103,6 @@ function Outbox:BroadcastUnitData(inUnitData, inSubject)
         self:Send(_Message)
     end).
     finally(function ()
-        XFG.Factories.Message:CheckIn(_Message)
+        XFG.Mailbox:Push(_Message)
     end)
 end

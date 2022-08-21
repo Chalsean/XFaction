@@ -22,27 +22,9 @@ function ClassCollection:Initialize()
 			_NewClass:SetAPIName(_Class.API)
 			_NewClass:SetRGB(_Class.R, _Class.G, _Class.B)
 			_NewClass:SetHex(_Class.Hex)
-			self:AddObject(_NewClass)
+			self:Add(_NewClass)
 			XFG:Info(ObjectName, 'Initialized class [%s]', _NewClass:GetName())
 		end
 		self:IsInitialized(true)
-	end
-end
-
-function ClassCollection:GetClassByAPIName(inAPIName)
-	assert(type(inAPIName) == 'string')
-	for _, _Class in self:Iterator() do
-		if(_Class:GetAPIName() == inAPIName) then
-			return _Class
-		end
-	end
-end
-
-function ClassCollection:GetClassByName(inName)
-	assert(type(inName) == 'string')
-	for _, _Class in self:Iterator() do
-		if(_Class:GetName() == inName) then
-			return _Class
-		end
 	end
 end

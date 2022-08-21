@@ -54,7 +54,7 @@ function ObjectCollection:Contains(inKey)
 	return self._Objects[inKey] ~= nil
 end
 
-function ObjectCollection:GetObject(inKey)
+function ObjectCollection:Get(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Collection key must be string or number')
 	return self._Objects[inKey]
 end
@@ -71,7 +71,7 @@ function ObjectCollection:GetCount()
 	return self._ObjectCount
 end
 
-function ObjectCollection:AddObject(inObject)
+function ObjectCollection:Add(inObject)
     assert(type(inObject) == 'table' and inObject.__name ~= nil, 'argument must be an object')
 	if(not self:Contains(inObject:GetKey())) then
 		self._ObjectCount = self._ObjectCount + 1
@@ -79,7 +79,7 @@ function ObjectCollection:AddObject(inObject)
 	self._Objects[inObject:GetKey()] = inObject
 end
 
-function ObjectCollection:RemoveObject(inKey)
+function ObjectCollection:Remove(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Collection key must be string or number')
 	if(self:Contains(inKey)) then
 		self._Objects[inKey] = nil

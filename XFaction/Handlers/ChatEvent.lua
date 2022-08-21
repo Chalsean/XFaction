@@ -28,7 +28,8 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
         if(XFG.Player.GUID == inSenderGUID and XFG.Player.Unit:CanGuildSpeak()) then
             local _NewMessage = nil
             try(function ()
-                _NewMessage = XFG.Factories.GuildMessage:CheckOut()
+                _NewMessage = XFG.Mailbox:Pop()
+                _NewMessage:Initialize()
                 _NewMessage:SetFrom(XFG.Player.Unit:GetKey())
                 _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
                 _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
@@ -42,7 +43,7 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
                 XFG.Outbox:Send(_NewMessage, true)
             end).
             finally(function ()
-                XFG.Factories.GuildMessage:CheckIn(_NewMessage)
+                XFG.GMailbox:Push(_NewMessage)
             end)
         end
     end).
@@ -94,7 +95,7 @@ function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, 
     elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND']) or string.find(inMessage, XFG.Lib.Locale['CHAT_ACHIEVEMENT'])) then
         return true
     elseif(XFG.Confederate:Contains(inGUID)) then
-        inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:GetObject(inGUID))
+        inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:Get(inGUID))
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end

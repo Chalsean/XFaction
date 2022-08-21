@@ -13,7 +13,7 @@ end
 function Metric:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-	    XFG:Debug(self:GetObjectName(), '  _Count (' .. type(self._Count) .. '): ' .. tostring(self._Count))
+	    XFG:Debug(ObjectName, '  _Count (' .. type(self._Count) .. '): ' .. tostring(self._Count))
     end
 end
 

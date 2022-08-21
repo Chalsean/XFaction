@@ -45,19 +45,16 @@ function Inbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     local _Message = nil
     try(function ()
         _Message = XFG:DecodeMessage(inEncodedMessage)
+        XFG:Debug(ObjectName, 'Decoded message successfully')
         XFG.Inbox:Process(_Message, inMessageTag)
-        XFG.Metrics:GetObject(XFG.Settings.Metric.ChannelReceive):Increment()
-        XFG.Metrics:GetObject(XFG.Settings.Metric.Messages):Increment()
+        XFG.Metrics:Get(XFG.Settings.Metric.ChannelReceive):Increment()
+        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
     end).
     catch(function (inErrorMessage)
         XFG:Warn(ObjectName, inErrorMessage)
     end).
     finally(function ()
-        if(_Message and _Message:GetObjectName() == 'Message') then
-            XFG.Factories.Message:CheckIn(_Message)
-        else
-            XFG.Factories.GuildMessage:CheckIn(_Message)
-        end
+        XFG.Mailbox:Push(_Message)
     end)
 end
 
@@ -79,7 +76,7 @@ function Inbox:Process(inMessage, inMessageTag)
         --XFG:Debug(LogCategory, "This message has already been processed %s", inMessage:GetKey())
         return
     else
-        XFG.Mailbox:AddObject(inMessage)
+        XFG.Mailbox:Add(inMessage)
     end
 
     -- Is a newer version available?
@@ -153,7 +150,6 @@ function Inbox:Process(inMessage, inMessageTag)
     -- Process LINK message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LINK) then
         XFG.Links:ProcessMessage(inMessage)
-        XFG.DataText.Links:RefreshBroker()
         return
     end
 
@@ -161,7 +157,7 @@ function Inbox:Process(inMessage, inMessageTag)
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
         -- If own guild, GuildEvent will take care of logout
         if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
-            XFG.Confederate:RemoveUnit(inMessage:GetFrom())
+            XFG.Confederate:Remove(inMessage:GetFrom())
             XFG.Frames.System:DisplayLogoutMessage(inMessage)
         end
         return
@@ -177,7 +173,7 @@ function Inbox:Process(inMessage, inMessageTag)
     if(inMessage:HasUnitData()) then
         local _UnitData = inMessage:GetData()
         _UnitData:IsPlayer(false)
-        if(XFG.Confederate:AddUnit(_UnitData) and XFG.DebugFlag) then
+        if(XFG.Confederate:Add(_UnitData) and XFG.DebugFlag) then
             XFG:Info(ObjectName, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
         end
 

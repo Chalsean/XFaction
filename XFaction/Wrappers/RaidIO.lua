@@ -56,3 +56,10 @@ function RaidIO:Equals(inObject)
     if(self:GetDungeon() ~= inObject:GetDungeon()) then return false end
     return true
 end
+
+function RaidIO:FactoryReset()
+    self:ParentFactoryReset()
+    self._Raid = ''
+    self._Dungeon = 0
+    self:Initialize()
+end

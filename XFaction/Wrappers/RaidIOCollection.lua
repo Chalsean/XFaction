@@ -3,13 +3,17 @@ local ObjectName = 'RaidIOCollection'
 
 local RaiderIO = nil
 
-RaidIOCollection = ObjectCollection:newChildConstructor()
+RaidIOCollection = Factory:newChildConstructor()
 
 function RaidIOCollection:new()
     local _Object = RaidIOCollection.parent.new(self)
     _Object.__name = ObjectName
     _Object._Loaded = false
     return _Object
+end
+
+function RaidIOCollection:NewObject()
+    return RaidIO:new()
 end
 
 function RaidIOCollection:IsLoaded(inBoolean)
@@ -23,33 +27,31 @@ function RaidIOCollection:IsLoaded(inBoolean)
     return self._Loaded
 end
 
-function RaidIOCollection:ContainsUnit(inUnit)
+function RaidIOCollection:Get(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argument must be Unit object')
-    local _RaiderName = inUnit:HasMainName() and inUnit:GetMainName() or inUnit:GetName()
-    return self._Objects[_RaiderName] ~= nil
-end
-
-function RaidIOCollection:GetRaidIO(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argument must be Unit object')
-    local _RaiderName = inUnit:HasMainName() and inUnit:GetMainName() or inUnit:GetName()
-
-    if(not self:ContainsUnit(inUnit)) then
-        self:CacheUnit(inUnit)
+    if(not self:Contains(inUnit:GetKey())) then
+        self:Cache(inUnit)
     end
-
-    return self._Objects[_RaiderName]
+    return self.parent.Get(self, inUnit:GetKey())
 end
 
-function RaidIOCollection:CacheUnit(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argument must be Unit object')
-    
-    try(function ()
-        local _RaiderName = inUnit:HasMainName() and inUnit:GetMainName() or inUnit:GetName()
-        if(self:IsLoaded()) then
-            local _RaidIO = RaidIO:new(); _RaidIO:Initialize()
-            _RaidIO:SetKey(_RaiderName)
+function RaidIOCollection:Push(inRaidIO)
+    assert(type(inRaidIO) == 'table' and inRaidIO.__name ~= nil and inRaidIO.__name == 'RaidIO', 'argument must be RaidIO object')
+    if(self:Contains(inRaidIO:GetKey())) then
+        self:Remove(inRaidIO:GetKey())
+        self.parent.Push(self, inRaidIO)
+    end
+end
 
-            local _Profile = RaiderIO.GetProfile(_RaiderName, inUnit:GetRealm():GetName())
+function RaidIOCollection:Cache(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argument must be Unit object') 
+    try(function ()
+        if(self:IsLoaded()) then
+            local _RaidIO = self:Pop()
+            _RaidIO:Initialize()
+            _RaidIO:SetKey(inUnit:GetKey())
+
+            local _Profile = RaiderIO.GetProfile(inUnit:GetKey(), inUnit:GetRealm():GetName())
             -- Raid
             if(_Profile and _Profile.raidProfile) then
                 local _TopProgress = _Profile.raidProfile.sortedProgress[1]
@@ -66,7 +68,7 @@ function RaidIOCollection:CacheUnit(inUnit)
                 end
             end
 
-            self:AddObject(_RaidIO)
+            self:Add(_RaidIO)
         end
     end).
     catch(function (inErrorMessage)

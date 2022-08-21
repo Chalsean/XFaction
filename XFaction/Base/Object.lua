@@ -8,6 +8,8 @@ function Object:new()
     self.__index = self
     self.__name = ObjectName
 
+    self._FactoryKey = nil
+    self._FactoryTime = nil
     self._Key = nil
     self._Name = nil
     self._Initialized = false
@@ -22,6 +24,8 @@ function Object:newChildConstructor()
     self.__name = ObjectName
     self.parent = self
     
+    self._FactoryKey = nil
+    self._FactoryTime = nil
     self._Key = nil
     self._Name = nil
     self._Initialized = false
@@ -53,19 +57,37 @@ function Object:Print()
     self:ParentPrint()
 end
 
--- XFG.DebugFlag is used to avoid building dynamic strings when not logging
--- There is a flag check in the Logger functions but that is post argument evaluation, which trying to avoid due to how Lua interacts with strings
--- Its use falls into the following categories:
--- 1: If the log is only done during initialization, let it go thru
--- 2: If the string is static, let it go thru
--- 3: If the log line is necessary and dynamic and called a lot, wrap it in the XFG.DebugFlag call
 function Object:ParentPrint()
     if(XFG.DebugFlag) then
         XFG:SingleLine(self:GetObjectName())
+        if(self._FactoryKey ~= nil) then
+            XFG:Debug(self:GetObjectName(), '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
+        end
+        if(self._FactoryTime ~= nil) then
+            XFG:Debug(self:GetObjectName(), '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
+        end
         XFG:Debug(self:GetObjectName(), '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
         XFG:Debug(self:GetObjectName(), '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
         XFG:Debug(self:GetObjectName(), '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
     end
+end
+
+function Object:GetFactoryKey()
+    return self._FactoryKey
+end
+
+function Object:SetFactoryKey(inKey)
+    assert(type(inKey) == 'string' or type(inKey) == 'number', 'Object key must be string or number')
+    self._FactoryKey = inKey
+end
+
+function Object:GetFactoryTime()
+    return self._FactoryTime
+end
+
+function Object:SetFactoryTime(inFactoryTime)
+    assert(type(inFactoryTime) == 'number')
+    self._FactoryTime = inFactoryTime
 end
 
 function Object:GetKey()
@@ -96,4 +118,10 @@ end
 
 function Object:GetObjectName()
     return self.__name
+end
+
+function Object:ParentFactoryReset()
+    self._Key = nil
+    self._Name = nil
+    self._Initialized = false
 end

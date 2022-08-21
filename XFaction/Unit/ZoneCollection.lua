@@ -37,7 +37,7 @@ function ZoneCollection:Initialize()
 							if(_ZoneLocale[_NewContinent:GetName()]) then
 								_NewContinent:SetLocaleName(_ZoneLocale[_NewContinent:GetName()])
 							end
-							XFG.Continents:AddObject(_NewContinent)
+							XFG.Continents:Add(_NewContinent)
 							XFG:Info(ObjectName, 'Initialized continent [%s]', _NewContinent:GetName())
 							_AlreadyAdded[_NewContinent:GetName()] = true
 						end
@@ -51,13 +51,13 @@ function ZoneCollection:Initialize()
 						if(_ZoneLocale[_NewZone:GetName()]) then
 							_NewZone:SetLocaleName(_ZoneLocale[_NewZone:GetName()])
 						end
-						self:AddObject(_NewZone)
+						self:Add(_NewZone)
 						_AlreadyAdded[_NewZone:GetName()] = true
 					end
 				elseif(XFG.Continents:Contains(_ZoneName)) then
-					XFG.Continents:GetObject(_ZoneName):AddID(_ZoneID)
+					XFG.Continents:Get(_ZoneName):AddID(_ZoneID)
 				else
-					self:GetObject(_ZoneName):AddID(_ZoneID)
+					self:Get(_ZoneName):AddID(_ZoneID)
 				end
 			end
 		end
@@ -65,7 +65,7 @@ function ZoneCollection:Initialize()
 		for _, _Zone in self:Iterator() do
 			local _ContinentID = _Tourist:GetContinentMapID(_Zone:GetID())
 			if(_ContinentID) then
-				local _Continent = XFG.Continents:GetContinentByID(tonumber(_ContinentID))
+				local _Continent = XFG.Continents:GetByID(tonumber(_ContinentID))
 				if(_Continent) then
 					_Zone:SetContinent(_Continent)
 				end
@@ -83,17 +83,14 @@ function ZoneCollection:ContainsByID(inID)
 	return self._ZoneByID[inID] ~= nil
 end
 
-function ZoneCollection:GetZoneByID(inID)
+function ZoneCollection:GetByID(inID)
 	assert(type(inID) == 'number')
 	return self._ZoneByID[inID]
 end
 
-function ZoneCollection:AddObject(inZone)
+function ZoneCollection:Add(inZone)
     assert(type(inZone) == 'table' and inZone.__name ~= nil and inZone.__name == 'Zone', 'argument must be Zone object')
-	if(not self:Contains(inZone:GetKey())) then
-		self._ObjectCount = self._ObjectCount + 1
-	end		
-	self._Objects[inZone:GetKey()] = inZone
+	self.parent.Add(self, inZone)
 	for _, _ID in inZone:IDIterator() do
 		self._ZoneByID[_ID] = inZone
 	end
@@ -106,7 +103,7 @@ function ZoneCollection:AddZone(inZoneName)
 		_NewZone:Initialize()
 		_NewZone:SetKey(inZoneName)
 		_NewZone:SetName(inZoneName)
-		self:AddObject(_NewZone)
+		self:Add(_NewZone)
 		if(XFG.DebugFlag) then
 			XFG:Info(ObjectName, 'Initialized zone [%s]', _NewZone:GetName())
 		end

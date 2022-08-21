@@ -4,12 +4,16 @@ local ObjectName = 'FriendCollection'
 local GetFriendCount = BNGetNumFriends
 local GetAccountInfo = C_BattleNet.GetFriendAccountInfo
 
-FriendCollection = ObjectCollection:newChildConstructor()
+FriendCollection = Factory:newChildConstructor()
 
 function FriendCollection:new()
 	local _Object = FriendCollection.parent.new(self)
 	_Object.__name = ObjectName
 	return _Object
+end
+
+function FriendCollection:NewObject()
+	return Friend:new()
 end
 
 function FriendCollection:Initialize()
@@ -27,16 +31,6 @@ function FriendCollection:Initialize()
 	end
 end
 
-function FriendCollection:ContainsByFriendIndex(inFriendIndex)
-	assert(type(inFriendIndex) == 'number')
-	for _, _Friend in self:Iterator() do
-		if(_Friend:GetID() == inFriendIndex) then
-			return true
-		end
-	end
-	return false
-end
-
 function FriendCollection:ContainsByGameID(inGameID)
 	assert(type(inGameID) == 'number')
 	for _, _Friend in self:Iterator() do
@@ -47,7 +41,7 @@ function FriendCollection:ContainsByGameID(inGameID)
 	return false
 end
 
-function FriendCollection:GetFriendByGameID(inGameID)
+function FriendCollection:GetByGameID(inGameID)
 	assert(type(inGameID) == 'number')
 	for _, _Friend in self:Iterator() do
 		if(_Friend:GetGameID() == inGameID) then
@@ -56,7 +50,7 @@ function FriendCollection:GetFriendByGameID(inGameID)
 	end
 end
 
-function FriendCollection:GetFriendByRealmUnitName(inRealm, inName)
+function FriendCollection:GetByRealmUnitName(inRealm, inName)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
 	assert(type(inName) == 'string')
 	for _, _Friend in self:Iterator() do
@@ -69,20 +63,20 @@ function FriendCollection:GetFriendByRealmUnitName(inRealm, inName)
 	 end
 end
 
-function FriendCollection:RemoveFriend(inFriend)
+function FriendCollection:Remove(inFriend)
 	assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', 'argument must be Friend object')
 	if(self:Contains(inFriend:GetKey())) then
 		try(function ()
 			if(XFG.Nodes:Contains(inFriend:GetName())) then
-				XFG.Nodes:RemoveNode(XFG.Nodes:GetObject(inFriend:GetName()))
+				XFG.Nodes:Remove(XFG.Nodes:Get(inFriend:GetName()))
 			end
 		end).
 		catch(function (inErrorMessage)
 			XFG:Warn(ObjectName, inErrorMessage)
 		end).
 		finally(function ()
-			self:RemoveObject(inFriend)
-			XFG.Factories.Friend:CheckIn(inFriend)
+			self.parent.Remove(self, inFriend:GetKey())
+			self:Push(inFriend)
 		end)
 	end
 end
@@ -97,7 +91,7 @@ local function CanLink(inAccountInfo)
 	   inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
 
 	   	-- There's no need to store if they are not logged into realm/faction we care about
-		local _Realm = XFG.Realms:GetRealmByID(inAccountInfo.gameAccountInfo.realmID)
+		local _Realm = XFG.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
 
 		-- When a player is in Torghast, it will list realm as 0, no character name or faction
 		-- Bail out before it causes an exception
@@ -106,7 +100,7 @@ local function CanLink(inAccountInfo)
 		-- We don't want to link to neutral faction toons
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
 
-		local _Faction = XFG.Factions:GetFactionByName(inAccountInfo.gameAccountInfo.factionName)
+		local _Faction = XFG.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
 		if(XFG.Targets:ContainsByRealmFaction(_Realm, _Faction) and (not XFG.Player.Faction:Equals(_Faction) or not XFG.Player.Realm:Equals(_Realm))) then
 			return true
 		end
@@ -124,22 +118,22 @@ function FriendCollection:CheckFriend(inKey)
 		-- Did they go offline?
 		if(self:Contains(_AccountInfo.bnetAccountID)) then
 			if(not CanLink(_AccountInfo)) then
-				local _Friend = XFG.Friends:GetObject(_AccountInfo.bnetAccountID)
+				local _Friend = XFG.Friends:Get(_AccountInfo.bnetAccountID)
 				if(XFG.DebugFlag) then
 					XFG:Info(ObjectName, 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
 				end
-				self:RemoveFriend(_Friend)
+				self:Remove(_Friend)
 				return true
 			end
 
 		-- Did they come online on a supported realm/faction?
 		elseif(CanLink(_AccountInfo)) then
-			local _Realm = XFG.Realms:GetRealmByID(_AccountInfo.gameAccountInfo.realmID)
-			local _Faction = XFG.Factions:GetFactionByName(_AccountInfo.gameAccountInfo.factionName)
-			local _Target = XFG.Targets:GetTargetByRealmFaction(_Realm, _Faction)
+			local _Realm = XFG.Realms:GetByID(_AccountInfo.gameAccountInfo.realmID)
+			local _Faction = XFG.Factions:GetByName(_AccountInfo.gameAccountInfo.factionName)
+			local _Target = XFG.Targets:GetByRealmFaction(_Realm, _Faction)
 			local _NewFriend = nil
 			try(function ()
-				_NewFriend = XFG.Factories.Friend:CheckOut()
+				_NewFriend = self:Pop()
 				_NewFriend:SetKey(_AccountInfo.bnetAccountID)
 				_NewFriend:SetID(inKey)
 				_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
@@ -148,10 +142,10 @@ function FriendCollection:CheckFriend(inKey)
 				_NewFriend:SetTag(_AccountInfo.battleTag)
 				_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
 				_NewFriend:SetTarget(_Target)
-				self:AddObject(_NewFriend)
+				self:Add(_NewFriend)
 			end).
 			catch(function (inErrorMessage)
-				XFG.Factories.Friend:CheckIn(_NewFriend)
+				self:Push(_NewFriend)
 				error(inErrorMessage)
 			end)
 			if(XFG.DebugFlag) then
@@ -179,7 +173,7 @@ function FriendCollection:CheckFriends()
 	end)
 end
 
-function FriendCollection:CreateBackup()
+function FriendCollection:Backup()
 	try(function ()
 	    XFG.DB.Backup.Friends = {}
 	    for _, _Friend in self:Iterator() do
@@ -193,12 +187,12 @@ function FriendCollection:CreateBackup()
 	end)
 end
 
-function FriendCollection:RestoreBackup()
+function FriendCollection:Restore()
 	if(XFG.DB.Backup == nil or XFG.DB.Backup.Friends == nil) then return end		
 	for _, _Key in pairs (XFG.DB.Backup.Friends) do
 		try(function ()	
 			if(XFG.Friends:Contains(_Key)) then
-				local _Friend = XFG.Friends:GetObject(_Key)
+				local _Friend = XFG.Friends:Get(_Key)
 				_Friend:IsRunningAddon(true)
 				XFG:Info(ObjectName, '  Restored %s friend information from backup', _Friend:GetTag())
 			end

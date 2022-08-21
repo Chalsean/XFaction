@@ -11,7 +11,7 @@ function XFG:Init()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
 	XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize()
-	XFG.Teams = TeamCollection:new()
+	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
 	XFG.RaidIO = RaidIOCollection:new(); XFG.RaidIO:Initialize()
 
 	XFG.Events = EventCollection:new(); XFG.Events:Initialize()

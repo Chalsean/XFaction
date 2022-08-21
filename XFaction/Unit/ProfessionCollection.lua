@@ -19,7 +19,7 @@ function ProfessionCollection:Initialize()
 			_NewProfession:SetIconID(_Profession.Icon)
 			_NewProfession:SetName(_Profession.Name)
 			_NewProfession:SetKey(_Profession.ID)
-			self:AddObject(_NewProfession)
+			self:Add(_NewProfession)
 			XFG:Info(ObjectName, 'Initialized profession [%s]', _NewProfession:GetName())
 		end	
 		self:IsInitialized(true)

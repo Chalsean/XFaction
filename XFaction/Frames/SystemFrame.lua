@@ -28,7 +28,7 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     elseif(_Faction:Equals(XFG.Player.Faction)) then
         _Message = _Message .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
     else
-        local _Friend = XFG.Friends:GetFriendByRealmUnitName(inRealm, inName)
+        local _Friend = XFG.Friends:GetByRealmUnitName(inRealm, inName)
         if(_Friend ~= nil) then
             _Message = _Message .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetTag(), inName) .. ' '
         else

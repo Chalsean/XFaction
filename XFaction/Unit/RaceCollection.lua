@@ -25,19 +25,10 @@ function RaceCollection:Initialize()
 			else
 				_NewRace:SetLocaleName(_NewRace:GetName())
 			end
-			_NewRace:SetFaction(XFG.Factions:GetFactionByName(_Race.Faction))
-			self:AddObject(_NewRace)
+			_NewRace:SetFaction(XFG.Factions:GetByName(_Race.Faction))
+			self:Add(_NewRace)
 			XFG:Info(ObjectName, 'Initialized race [%s]', _NewRace:GetName())
 		end
 		self:IsInitialized(true)
-	end
-end
-
-function RaceCollection:GetRaceByName(inName, inFaction)
-	assert(type(inName) == 'string' and type(inFaction) == 'table')	
-	for _, _Race in pairs (self._Races) do
-		if(_Race:GetName() == inName and inFaction:Equals(_Race:GetFaction())) then
-			return _Race
-		end
 	end
 end

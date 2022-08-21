@@ -29,18 +29,18 @@ function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelTy
 				XFG:Error(ObjectName, 'Removed channel was the addon channel')			
 				XFG.Outbox:VoidLocalChannel()
 			end
-			XFG.Channels:RemoveObject(_Channel:GetKey())
+			XFG.Channels:Remove(_Channel:GetKey())
 
 		elseif(inAction == 'YOU_CHANGED') then
-			XFG.Channels:SetChannelLast(_Channel:GetKey())
+			XFG.Channels:SetLast(_Channel:GetKey())
 
 		elseif(inAction == 'YOU_JOINED') then
 			local _NewChannel = Channel:new()
 		    _NewChannel:SetKey(inChannelName)
 		    _NewChannel:SetID(inChannelNumber)
 		   	_NewChannel:SetName(inChannelName)
-		    XFG.Channels:AddObject(_NewChannel)
-			XFG.Channels:SetChannelLast(_Channel:GetKey())
+		    XFG.Channels:Add(_NewChannel)
+			XFG.Channels:SetLast(_Channel:GetKey())
 		end
 	end).
 	catch(function (inErrorMessage)
@@ -52,7 +52,7 @@ function ChannelEvent:CallbackUpdateColor(inChannel, inR, inG, inB)
 	try(function ()
 		if(inChannel) then
 			local _ChannelID = tonumber(inChannel:match("(%d+)$"))
-			local _Channel = XFG.Channels:GetChannelByID(_ChannelID)
+			local _Channel = XFG.Channels:GetByID(_ChannelID)
 			if(_Channel ~= nil) then
 				if(XFG.Config.Channels[_Channel:GetName()] == nil) then
 					XFG.Config.Channels[_Channel:GetName()] = {}

@@ -11,7 +11,7 @@ end
 function BNetEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG:CreateEvent('Friend', 'BN_FRIEND_INFO_CHANGED', XFG.Handlers.BNetEvent.CallbackFriendInfo, true, true)
+        XFG.Events:Add('Friend', 'BN_FRIEND_INFO_CHANGED', XFG.Handlers.BNetEvent.CallbackFriendInfo, true, true)
 		self:IsInitialized(true)
 	end
 end

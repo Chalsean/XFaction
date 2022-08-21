@@ -9,7 +9,7 @@ function TimerCollection:new()
     return _Object
 end
 
-function TimerCollection:AddTimer(inName, inDelta, inCallback, inInstance, inInstanceCombat)
+function TimerCollection:Add(inName, inDelta, inCallback, inInstance, inInstanceCombat)
     local _Timer = Timer:new()
     _Timer:Initialize()
     _Timer:SetKey(inName)
@@ -19,13 +19,13 @@ function TimerCollection:AddTimer(inName, inDelta, inCallback, inInstance, inIns
     _Timer:IsInstance(inInstance)
     _Timer:IsInstanceCombat(inInstanceCombat)
     _Timer:Start()
-    self:AddObject(_Timer)
+    self.parent.Add(self, _Timer)
 end
 
-function TimerCollection:RemoveTimer(inKey)
+function TimerCollection:Remove(inKey)
     if(self:Contains(inKey)) then
-        self:GetObject(inKey):Stop()
-        self:RemoveObject(inKey)
+        self:Get(inKey):Stop()
+        self.parent.Remove(self, inKey)
     end
 end
 

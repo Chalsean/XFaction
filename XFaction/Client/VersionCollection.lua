@@ -17,12 +17,12 @@ function VersionCollection:Initialize()
 
         local _CurrentVersion = Version:new()
         _CurrentVersion:SetKey(XFG.Version)
-        self:AddObject(_CurrentVersion)   
+        self:Add(_CurrentVersion)   
         self:SetCurrent(_CurrentVersion)
 
 		local _DefaultVersion = Version:new()
         _DefaultVersion:SetKey('0.0.0')
-        self:AddObject(_DefaultVersion)
+        self:Add(_DefaultVersion)
 		self:SetDefault(_DefaultVersion)
 
 		self:IsInitialized(true)

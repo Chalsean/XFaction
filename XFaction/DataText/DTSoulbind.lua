@@ -101,7 +101,7 @@ function DTSoulbind:OnEnter(this)
 	self._Tooltip:AddLine(' ')
 
 	for _, _SoulbindID in ActiveCovenant:SoulbindIterator() do
-		local _Soulbind = XFG.Soulbinds:GetObject(_SoulbindID)
+		local _Soulbind = XFG.Soulbinds:Get(_SoulbindID)
 		local _SoulbindName = _Soulbind:GetName()
 		if(ActiveSoulbind:GetKey() == _Soulbind:GetKey()) then
 			self._Tooltip:AddLine(format(XFG.Lib.Locale['DTSOULBIND_ACTIVE'], _SoulbindName))
@@ -142,7 +142,7 @@ function DTSoulbind:OnClick(this, inButton)
 			if(XFG.Player.Unit:HasSoulbind()) then
 				local _ActiveSoulbind = XFG.Player.Unit:GetSoulbind()
 				for i, _SoulbindID in _Covenant:SoulbindIterator() do
-					local _Soulbind = XFG.Soulbinds:GetObject(_SoulbindID)
+					local _Soulbind = XFG.Soulbinds:Get(_SoulbindID)
 					menuList[i+1].text = _Soulbind:GetName()
 					menuList[i+1].func = function() C_Soulbinds.ActivateSoulbind(_SoulbindID) end
 					if(_Soulbind:GetKey() == _ActiveSoulbind:GetKey()) then

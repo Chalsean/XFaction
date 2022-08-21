@@ -15,24 +15,24 @@ function ExpansionCollection:Initialize()
         self:ParentInitialize()
 
         for _ExpansionID, _IconID in pairs(XFG.Settings.Expansions) do
-            local _NewExpansion = Expansion:new()
-            _NewExpansion:SetKey(_ExpansionID)
-            _NewExpansion:SetID(_ExpansionID)
-            _NewExpansion:SetIconID(_IconID)
+            local _Expansion = Expansion:new()
+            _Expansion:SetKey(_ExpansionID)
+            _Expansion:SetID(_ExpansionID)
+            _Expansion:SetIconID(_IconID)
             if(_ExpansionID == WOW_PROJECT_MAINLINE) then
-                _NewExpansion:SetName('Retail')
+                _Expansion:SetName('Retail')
             elseif(_ExpansionID == WOW_PROJECT_CLASSIC) then
-                _NewExpansion:SetName('Classic')
+                _Expansion:SetName('Classic')
             end
-            XFG:Info(ObjectName, 'Initializing expansion [%s:%s]', _NewExpansion:GetName(), _NewExpansion:GetKey())
-            self:AddObject(_NewExpansion)
+            XFG:Info(ObjectName, 'Initializing expansion [%s:%s]', _Expansion:GetName(), _Expansion:GetKey())
+            self:Add(_Expansion)
 
             if(WOW_PROJECT_ID == _ExpansionID) then
-                self:SetCurrent(_NewExpansion)
+                self:SetCurrent(_Expansion)
                 local _WoWVersion = GetBuildInfo()
                 local _Version = Version:new()
                 _Version:SetKey(_WoWVersion)
-                _NewExpansion:SetVersion(_Version)
+                _Expansion:SetVersion(_Version)
             end
         end       
 

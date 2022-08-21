@@ -14,13 +14,13 @@ function ElvUINameplate:Initialize()
         self:ParentInitialize()
         if(XFG.Config.Nameplates.ElvUI.Enable) then
 
-            XFG.Media:AddMedia(XFG.Icons.Guild, 'Icon')
+            XFG.Media:Add(XFG.Icons.Guild, 'Icon')
 
             XFG.ElvUI:AddTag('confederate', 'UNIT_NAME_UPDATE PLAYER_GUILD_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
                 local _GuildName = GetGuildInfo(inNameplate)
                 -- The guild check is not correct, could have sharded in a guild of same name from another realm
-                if(XFG.Confederate:Contains(_GUID) or XFG.Guilds:ContainsGuildName(_GuildName)) then
+                if(XFG.Confederate:Contains(_GUID) or XFG.Guilds:ContainsName(_GuildName)) then
                     _GuildName = XFG.Confederate:GetName()
                 end
                 return _GuildName
@@ -29,7 +29,7 @@ function ElvUINameplate:Initialize()
             XFG.ElvUI:AddTag('confederate:initials', 'PLAYER_GUILD_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
                 local _GuildName = GetGuildInfo(inNameplate)
-                if(XFG.Confederate:Contains(_GUID) or XFG.Guilds:ContainsGuildName(_GuildName)) then
+                if(XFG.Confederate:Contains(_GUID) or XFG.Guilds:ContainsName(_GuildName)) then
                     _GuildName = XFG.Confederate:GetKey()
                 end
                 if(_GuildName) then
@@ -41,9 +41,9 @@ function ElvUINameplate:Initialize()
                 local _GUID = UnitGUID(inNameplate)
                 local _GuildName = GetGuildInfo(inNameplate)
                 if(XFG.Confederate:Contains(_GUID)) then
-                    _GuildName = XFG.Confederate:GetObject(_GUID):GetGuild():GetInitials()
-                elseif(XFG.Guilds:ContainsGuildName(_GuildName)) then
-                    _GuildName = XFG.Guilds:GetGuildByName(_GuildName):GetInitials()
+                    _GuildName = XFG.Confederate:Get(_GUID):GetGuild():GetInitials()
+                elseif(XFG.Guilds:ContainsName(_GuildName)) then
+                    _GuildName = XFG.Guilds:GetByName(_GuildName):GetInitials()
                 end
                 if(_GuildName) then
                     return format('<%s>', _GuildName)
@@ -54,7 +54,7 @@ function ElvUINameplate:Initialize()
                 local _GUID = UnitGUID(inNameplate)
                 local _UnitName = UnitName(inNameplate)
                 if(XFG.Confederate:Contains(_GUID)) then
-                    local _UnitData = XFG.Confederate:GetObject(_GUID)
+                    local _UnitData = XFG.Confederate:Get(_GUID)
                     if(_UnitData:HasMainName()) then
                         _UnitName = _UnitData:GetMainName()
                     end
@@ -65,7 +65,7 @@ function ElvUINameplate:Initialize()
             XFG.ElvUI:AddTag('main:parenthesis', 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
                 if(XFG.Confederate:Contains(_GUID)) then
-                    local _UnitData = XFG.Confederate:GetObject(_GUID)
+                    local _UnitData = XFG.Confederate:Get(_GUID)
                     if(_UnitData:HasMainName()) then
                         return '(' .. _UnitData:GetMainName() .. ')'
                     end
@@ -75,15 +75,15 @@ function ElvUINameplate:Initialize()
             XFG.ElvUI:AddTag('team', 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
                 if(XFG.Confederate:Contains(_GUID)) then
-                    return XFG.Confederate:GetObject(_GUID):GetTeam():GetName()
+                    return XFG.Confederate:Get(_GUID):GetTeam():GetName()
                 end
             end)
             
             XFG.ElvUI:AddTag('confederate:icon', 'UNIT_NAME_UPDATE', function(inNameplate) 
                 local _GUID = UnitGUID(inNameplate)
                 local _GuildName = GetGuildInfo(inNameplate)
-                if(XFG.Confederate:Contains(_GUID) or XFG.Guilds:ContainsGuildName(_GuildName)) then
-                    return XFG.Media:GetObject(XFG.Icons.Guild):GetTexture()
+                if(XFG.Confederate:Contains(_GUID) or XFG.Guilds:ContainsName(_GuildName)) then
+                    return XFG.Media:Get(XFG.Icons.Guild):GetTexture()
                 end
             end)
         end

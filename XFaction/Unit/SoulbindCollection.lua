@@ -19,7 +19,7 @@ function SoulbindCollection:Initialize()
 					_Soulbind:SetID(_SoulbindID)
 					_Soulbind:Initialize()
 					_Soulbind:SetKey(_SoulbindID)									
-					self:AddObject(_Soulbind)
+					self:Add(_Soulbind)
 					XFG:Info(ObjectName, 'Initialized soulbind [%s]', _Soulbind:GetName())
 				end
 			end

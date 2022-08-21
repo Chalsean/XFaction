@@ -31,7 +31,8 @@ function AchievementEvent:CallbackAchievement(inID)
         elseif(string.find(_Name, XFG.Lib.Locale['EXPLORE']) == nil) then
             local _NewMessage = nil
             try(function ()
-                _NewMessage = XFG.Factories.GuildMessage:CheckOut()
+                _NewMessage = XFG.Mailbox:Pop()
+                _NewMessage:Initialize()
                 _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
                 _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.ACHIEVEMENT)
                 _NewMessage:SetData(inID) -- Leave as ID to localize on receiving end
@@ -44,7 +45,7 @@ function AchievementEvent:CallbackAchievement(inID)
                 XFG.Outbox:Send(_NewMessage)
             end).
             finally(function ()
-                XFG.Factories.GuildMessage:CheckIn(_NewMessage)
+                XFG.Mailbox:Push(_NewMessage)
             end)
         end
     end).

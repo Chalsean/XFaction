@@ -3,7 +3,7 @@ local ObjectName = 'Link'
 
 local ServerTime = GetServerTime
 
-Link = FactoryObject:newChildConstructor()
+Link = Object:newChildConstructor()
 
 function Link:new()
     local _Object = Link.parent.new(self)
@@ -37,8 +37,6 @@ end
 function Link:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
-        XFG:Debug(ObjectName, '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
         XFG:Debug(ObjectName, "  _EpochTime (" .. type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
         if(self:HasFromNode()) then self:GetFromNode():Print() end
         if(self:HasToNode()) then self:GetToNode():Print() end
@@ -84,39 +82,25 @@ function Link:SetObjectFromString(inLinkString)
     assert(type(inLinkString) == 'string')
 
     local _Nodes = string.Split(inLinkString, ';')
-    local _FromNode = XFG.Factories.Node:CheckOut()
+    local _FromNode = XFG.Nodes:Pop()
     _FromNode:SetObjectFromString(_Nodes[1])
     if(XFG.Nodes:Contains(_FromNode:GetKey())) then
         local _Key = _FromNode:GetKey()
-        XFG.Factories.Node:CheckIn(_FromNode)
-        _FromNode = XFG.Nodes:GetObject(_Key)
+        XFG.Nodes:Push(_FromNode)
+        _FromNode = XFG.Nodes:Get(_Key)
     else
-        try(function ()
-            XFG.Nodes:AddNode(_FromNode)
-        end).
-        catch(function (inErrorMessage)
-            XFG.Nodes:RemoveNode(_FromNode)
-            XFG.Factories.Node:CheckIn(_FromNode)
-            error(inErrorMessage)
-        end)
+        XFG.Nodes:Add(_FromNode)
     end
     self:SetFromNode(_FromNode)
 
-    local _ToNode = XFG.Factories.Node:CheckOut()
+    local _ToNode = XFG.Nodes:Pop()
     _ToNode:SetObjectFromString(_Nodes[2])
     if(XFG.Nodes:Contains(_ToNode:GetKey())) then
         local _Key = _ToNode:GetKey()
-        XFG.Factories.Node:CheckIn(_ToNode)
-        _ToNode = XFG.Nodes:GetObject(_Key)
+        XFG.Nodes:Push(_ToNode)
+        _ToNode = XFG.Nodes:Get(_Key)
     else
-        try(function ()
-            XFG.Nodes:AddNode(_ToNode)
-        end).
-        catch(function (inErrorMessage)
-            XFG.Nodes:RemoveNode(_ToNode)
-            XFG.Factories.Node:CheckIn(_ToNode)
-            error(inErrorMessage)
-        end)
+        XFG.Nodes:Add(_ToNode)
     end
     self:SetToNode(_ToNode)
 
@@ -133,10 +117,8 @@ function Link:SetTimeStamp(inEpochTime)
 end
 
 function Link:FactoryReset()
-    self._Key = nil
-    self._Name = nil
+    self:ParentFactoryReset()
     self._FromNode = nil
     self._ToNode = nil
     self._EpochTime = 0
-    self._Initialized = false
 end

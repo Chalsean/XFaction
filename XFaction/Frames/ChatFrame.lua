@@ -74,7 +74,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRe
                         if(_Faction:Equals(XFG.Player.Faction)) then
                             _Text = _Text .. '%s '
                         else
-                            local _Friend = XFG.Friends:GetFriendByRealmUnitName(inRealm, inName)
+                            local _Friend = XFG.Friends:GetByRealmUnitName(inRealm, inName)
                             if(_Friend ~= nil) then
                                 _Text = _Text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inName, _Friend:GetAccountID(), inName, inName) .. ' '
                             else

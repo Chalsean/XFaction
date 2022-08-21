@@ -13,20 +13,20 @@ function PlayerEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         if(XFG.WoW:IsRetail()) then
-            XFG:CreateEvent('Covenant', 'COVENANT_CHOSEN', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
-            XFG:CreateEvent('Soulbind', 'SOULBIND_ACTIVATED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
-            XFG:CreateEvent('Mythic', 'CHALLENGE_MODE_COMPLETED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, true)
-            XFG:CreateEvent('Spec', 'ACTIVE_TALENT_GROUP_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
+            XFG.Events:Add('Covenant', 'COVENANT_CHOSEN', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
+            XFG.Events:Add('Soulbind', 'SOULBIND_ACTIVATED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
+            XFG.Events:Add('Mythic', 'CHALLENGE_MODE_COMPLETED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, true)
+            XFG.Events:Add('Spec', 'ACTIVE_TALENT_GROUP_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
         else
-            XFG:CreateEvent('Spec', 'CHARACTER_POINTS_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
+            XFG.Events:Add('Spec', 'CHARACTER_POINTS_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
         end
         
-        XFG:CreateEvent('Instance', 'PLAYER_ENTERING_WORLD', XFG.Handlers.PlayerEvent.CallbackInstance, true, false)
-        XFG:CreateEvent('EnterCombat', 'PLAYER_REGEN_DISABLED', XFG.Handlers.PlayerEvent.CallbackEnterCombat, true, true)
-        XFG:CreateEvent('LeaveCombat', 'PLAYER_REGEN_ENABLED', XFG.Handlers.PlayerEvent.CallbackLeaveCombat, true, true)
-        XFG:CreateEvent('Level', 'PLAYER_LEVEL_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
-        XFG:CreateEvent('Profession', 'SKILL_LINES_CHANGED', XFG.Handlers.PlayerEvent.CallbackSkillChanged, false, false)
-        XFG:CreateEvent('Zone', 'ZONE_CHANGED_NEW_AREA', XFG.Handlers.PlayerEvent.CallbackZoneChanged, false, false)
+        XFG.Events:Add('Instance', 'PLAYER_ENTERING_WORLD', XFG.Handlers.PlayerEvent.CallbackInstance, true, false)
+        XFG.Events:Add('EnterCombat', 'PLAYER_REGEN_DISABLED', XFG.Handlers.PlayerEvent.CallbackEnterCombat, true, true)
+        XFG.Events:Add('LeaveCombat', 'PLAYER_REGEN_ENABLED', XFG.Handlers.PlayerEvent.CallbackLeaveCombat, true, true)
+        XFG.Events:Add('Level', 'PLAYER_LEVEL_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
+        XFG.Events:Add('Profession', 'SKILL_LINES_CHANGED', XFG.Handlers.PlayerEvent.CallbackSkillChanged, false, false)
+        XFG.Events:Add('Zone', 'ZONE_CHANGED_NEW_AREA', XFG.Handlers.PlayerEvent.CallbackZoneChanged, false, false)
 
 		self:IsInitialized(true)
 	end
@@ -57,14 +57,14 @@ function PlayerEvent:CallbackZoneChanged()
         try(function ()
             local _ZoneName = GetRealZoneText()
             if(_ZoneName ~= nil and _ZoneName ~= XFG.Player.Unit:GetZone():GetName()) then
-                local _Zone = XFG.Zones:GetObject(_ZoneName)
+                local _Zone = XFG.Zones:Get(_ZoneName)
                 if(_Zone == nil) then
                     _Zone = XFG.Zones:AddZone(_ZoneName)
                 end
                 XFG.Player.Unit:SetZone(_Zone)
                 XFG:Info(ObjectName, 'Updated player data based on ZONE_CHANGED_NEW_AREA event')
                 if(XFG.WoW:IsRetail()) then
-                    local _Event = XFG.Events:GetObject('Covenant')
+                    local _Event = XFG.Events:Get('Covenant')
                     if(XFG.Player.Unit:GetZone():GetName() == 'Oribos') then
                         if(not _Event:IsEnabled()) then
                             _Event:Start()
@@ -86,7 +86,7 @@ function PlayerEvent:CallbackSkillChanged()
         -- We only care if player has learned/unlearned a profession, the rest is noise
         local _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), XFG.Player.Unit:GetID())
         if(_UnitData.profession1ID ~= nil) then
-            local _Profession = XFG.Professions:GetObject(_UnitData.profession1ID)
+            local _Profession = XFG.Professions:Get(_UnitData.profession1ID)
             if(not _Profession:Equals(XFG.Player.Unit:GetProfession1())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
@@ -96,7 +96,7 @@ function PlayerEvent:CallbackSkillChanged()
         end
 
         if(_UnitData.profession2ID ~= nil) then
-            local _Profession = XFG.Professions:GetObject(_UnitData.profession2ID)
+            local _Profession = XFG.Professions:Get(_UnitData.profession2ID)
             if(not _Profession:Equals(XFG.Player.Unit:GetProfession2())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')

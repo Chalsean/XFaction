@@ -15,7 +15,7 @@ function MediaCollection:Initialize()
 		self:ParentInitialize()
 		if(not XFG.WoW:IsRetail()) then
 			for _, _Spec in XFG.Specs:Iterator() do
-				self:AddMedia(tostring(_Spec:GetIconID()), 'Icon')
+				self:Add(tostring(_Spec:GetIconID()), 'Icon')
 			end			
 		end
 		self:IsInitialized(true)
@@ -23,7 +23,7 @@ function MediaCollection:Initialize()
 	return self:IsInitialized()
 end
 
-function MediaCollection:AddMedia(inName, inType)
+function MediaCollection:Add(inName, inType)
     assert(type(inName) == 'string')
 	assert(type(inType) == 'string')
 
@@ -33,7 +33,5 @@ function MediaCollection:AddMedia(inName, inType)
 	_NewMedia:SetName(inName)
 	_NewMedia:SetType(inType)
 	_NewMedia:SetPath(MediaPath .. inType .. '/' .. inName .. '.blp')
-	self:AddObject(_NewMedia)
-
-	return self:Contains(inName)
+	self.parent.Add(self, _NewMedia)
 end

@@ -14,17 +14,17 @@ function FactionCollection:Initialize()
 		self:ParentInitialize()
 		for i, _FactionName in pairs (XFG.Settings.Factions) do
 			XFG:Debug(ObjectName, 'Initializing faction [%s]', _FactionName)
-			local _NewFaction = Faction:new()
-			_NewFaction:SetName(_FactionName)
-			_NewFaction:Initialize()
-			_NewFaction:SetKey(i)
-			self:AddObject(_NewFaction)
+			local _Faction = Faction:new()
+			_Faction:SetName(_FactionName)
+			_Faction:Initialize()
+			_Faction:SetKey(i)
+			self:Add(_Faction)
 		end
 		self:IsInitialized(true)
 	end
 end
 
-function FactionCollection:GetFactionByName(inName)
+function FactionCollection:GetByName(inName)
 	assert(type(inName) == 'string')
 	for _, _Faction in self:Iterator() do
 		if(_Faction:GetName() == inName) then
@@ -33,7 +33,7 @@ function FactionCollection:GetFactionByName(inName)
 	end
 end
 
-function FactionCollection:GetFactionByID(inID)
+function FactionCollection:GetByID(inID)
 	assert(type(inID) == 'string')
 	for _, _Faction in self:Iterator() do
 		if(_Faction:GetID() == inID) then

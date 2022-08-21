@@ -10,7 +10,7 @@ local GetSpecGroupID = GetSpecialization
 local GetSpecID = GetSpecializationInfo
 local GetPvPRating = GetPersonalRatedInfo
 
-Unit = FactoryObject:newChildConstructor()
+Unit = Object:newChildConstructor()
 
 function Unit:new()
     local _Object = Unit.parent.new(self)
@@ -35,7 +35,6 @@ function Unit:new()
     _Object._Soulbind = nil
     _Object._Profession1 = nil
     _Object._Profession2 = nil
-    _Object._DungeonScore = 0
     _Object._AchievementPoints = 0
     _Object._RunningAddon = false
     _Object._Alt = false
@@ -48,11 +47,10 @@ function Unit:new()
     _Object._Realm = nil
     _Object._Version = nil
     _Object._ItemLevel = 0
-    _Object._RaidProgress = ''
     _Object._PvP = ''
     _Object._GuildSpeak = true
     _Object._GuildListen = true
-    _Object._Score = nil
+    _Object._RaidIO = nil
 
     return _Object
 end
@@ -73,18 +71,20 @@ function Unit:Initialize(inMemberID)
  
     self:SetGUID(_UnitData.guid)
     self:SetKey(self:GetGUID())
+
+    if(not self:IsPlayer() and 
+       XFG.Confederate:Contains(self:GetKey()) and 
+       XFG.Confederate:Get(self:GetKey()):IsRunningAddon()) then
+        self:IsInitialized(false)
+        return
+    end
+
     self:IsOnline(_UnitData.presence == 1 or _UnitData.presence == 4 or _UnitData.presence == 5)
     if(self:IsOffline()) then
         self:IsInitialized(true)
         return
     end
-    if(not self:IsPlayer() and 
-       XFG.Confederate:Contains(self:GetGUID()) and 
-       XFG.Confederate:GetObject(self:GetGUID()):IsRunningAddon()) then
-        self:IsInitialized(false)
-        return
-    end
-
+    
     self:SetID(_UnitData.memberId)
     self:SetName(_UnitData.name)
     self:SetUnitName(_UnitData.name .. '-' .. XFG.Player.Realm:GetAPIName())
@@ -94,31 +94,31 @@ function Unit:Initialize(inMemberID)
     self:SetRealm(XFG.Player.Realm)
     local _EpochTime = ServerTime()
     self:SetTimeStamp(_EpochTime or 0)
-    self:SetClass(XFG.Classes:GetObject(_UnitData.classID))
-    self:SetRace(XFG.Races:GetObject(_UnitData.race))
+    self:SetClass(XFG.Classes:Get(_UnitData.classID))
+    self:SetRace(XFG.Races:Get(_UnitData.race))
     self:SetRank(_UnitData.guildRank)
     self:SetNote(_UnitData.memberNote or '?')
     self:IsPlayer(_UnitData.isSelf)
     self:SetAchievementPoints(_UnitData.achievementPoints or 0)
 
     if(_UnitData.zone and XFG.Zones:Contains(_UnitData.zone)) then
-        self:SetZone(XFG.Zones:GetObject(_UnitData.zone))
+        self:SetZone(XFG.Zones:Get(_UnitData.zone))
     elseif(_UnitData.zone and strlen(_UnitData.zone)) then
         XFG.Zones:AddZone(_UnitData.zone)
-        self:SetZone(XFG.Zones:GetObject(_UnitData.zone))
+        self:SetZone(XFG.Zones:Get(_UnitData.zone))
     else
-        self:SetZone(XFG.Zones:GetObject('?'))
+        self:SetZone(XFG.Zones:Get('?'))
     end
 
     if(_UnitData.profession1ID ~= nil) then
-        self:SetProfession1(XFG.Professions:GetObject(_UnitData.profession1ID))
+        self:SetProfession1(XFG.Professions:Get(_UnitData.profession1ID))
     end
 
     if(_UnitData.profession2ID ~= nil) then
-        self:SetProfession2(XFG.Professions:GetObject(_UnitData.profession2ID))
+        self:SetProfession2(XFG.Professions:Get(_UnitData.profession2ID))
     end
 
-    local _RaidIO = XFG.RaidIO:GetRaidIO(self)
+    local _RaidIO = XFG.RaidIO:Get(self)
     if(_RaidIO ~= nil) then
         self:SetRaidIO(_RaidIO)
     end
@@ -142,19 +142,19 @@ function Unit:Initialize(inMemberID)
         if(XFG.WoW:IsRetail()) then
             local _CovenantID = C_Covenants.GetActiveCovenantID()
             if(XFG.Covenants:Contains(_CovenantID)) then
-                self:SetCovenant(XFG.Covenants:GetObject(_CovenantID))
+                self:SetCovenant(XFG.Covenants:Get(_CovenantID))
             end
 
             local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
             if(XFG.Soulbinds:Contains(_SoulbindID)) then
-                self:SetSoulbind(XFG.Soulbinds:GetObject(_SoulbindID))
+                self:SetSoulbind(XFG.Soulbinds:Get(_SoulbindID))
             else
                 -- If you switched covenants and target covenant you have not unlocked soulbinds
                 self:ClearSoulbind()
             end
 
             -- If in Oribos, enable Covenant event listener
-            local _Event = XFG.Events:GetObject('Covenant')   
+            local _Event = XFG.Events:Get('Covenant')   
             if(_Event ~= nil) then
                 if(self:GetZone():GetName() == 'Oribos') then
                     if(not _Event:IsEnabled()) then
@@ -172,7 +172,7 @@ function Unit:Initialize(inMemberID)
             if(_SpecGroupID ~= nil) then
     	        local _SpecID = GetSpecID(_SpecGroupID)
                 if(_SpecID ~= nil and XFG.Specs:Contains(_SpecID)) then
-                    self:SetSpec(XFG.Specs:GetObject(_SpecID))
+                    self:SetSpec(XFG.Specs:Get(_SpecID))
                     break
                 end
             end
@@ -199,8 +199,6 @@ end
 function Unit:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
-        XFG:Debug(ObjectName, '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
         XFG:Debug(ObjectName, '  _GUID (' .. type(self._GUID) .. '): ' .. tostring(self._GUID))
         XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
         XFG:Debug(ObjectName, '  _UnitName (' .. type(self._UnitName) .. '): ' .. tostring(self._UnitName))
@@ -292,7 +290,7 @@ function Unit:SetRank(inRank)
     end
     -- Temporary hardcoding until I can figure out how to accomodate all the EK rules
     if(inRank == 'Noble Citizen') then
-        self:SetTeam(XFG.Teams:GetObject('S'))
+        self:SetTeam(XFG.Teams:Get('S'))
     end
 end
 
@@ -324,13 +322,13 @@ end
 
 function Unit:SetMainTeam(inGuildInitials, inTeamInitial)
     if(inTeamInitial ~= nil and XFG.Teams:Contains(inTeamInitial)) then
-        self:SetTeam(XFG.Teams:GetObject(inTeamInitial))
+        self:SetTeam(XFG.Teams:Get(inTeamInitial))
     end
     if(inGuildInitials == 'EK') then inGuildInitials = 'EKA' end
     if(inGuildInitials == 'ENKA') then inGuildInitials = 'ENK' end
     if(inGuildInitials == 'ENKH') then inGuildInitials = 'ENK' end
     if(inGuildInitials ~= nil and XFG.Guilds:Contains(inGuildInitials)) then
-        local _Guild = XFG.Guilds:GetObject(inGuildInitials)
+        local _Guild = XFG.Guilds:Get(inGuildInitials)
         if(not _Guild:Equals(self:GetGuild())) then
             self:IsAlt(true)
             local _, _, _MainName = string.find(self._Note, '%s+([^%s%[%]]+)%s?')
@@ -339,7 +337,7 @@ function Unit:SetMainTeam(inGuildInitials, inTeamInitial)
             end                
         end
         if(XFG.Teams:Contains(_Guild:GetInitials())) then
-            self:SetTeam(XFG.Teams:GetObject(_Guild:GetInitials()))
+            self:SetTeam(XFG.Teams:Get(_Guild:GetInitials()))
         end
     end    
 end
@@ -383,9 +381,9 @@ function Unit:SetNote(inNote)
     end
 
     if(self:GetNote() == '?' and self:GetGuild():GetInitials() == 'ENK') then
-        self:SetTeam(XFG.Teams:GetObject(self:GetGuild():GetInitials()))
+        self:SetTeam(XFG.Teams:Get(self:GetGuild():GetInitials()))
     elseif(not self:HasTeam()) then
-        local _Team = XFG.Teams:GetObject('U')
+        local _Team = XFG.Teams:Get('U')
         self:SetTeam(_Team)
     end
 end
@@ -674,7 +672,7 @@ function Unit:GetLink()
         return format('player:%s', self:GetUnitName())
     end
 
-    local _Friend = XFG.Friends:GetFriendByRealmUnitName(self:GetRealm(), self:GetName())
+    local _Friend = XFG.Friends:GetByRealmUnitName(self:GetRealm(), self:GetName())
     if(_Friend ~= nil) then
         return format('BNplayer:%s:%d:0:WHISPER:%s', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetName())
     end
@@ -750,10 +748,9 @@ function Unit:Equals(inUnit)
 end
 
 function Unit:FactoryReset()
-    self._Key = nil
+    self:ParentFactoryReset()
     self._GUID = nil
     self._UnitName = nil
-    self._Name = nil
     self._ID = 0
     self._Rank = nil
     self._Level = 60
@@ -771,7 +768,6 @@ function Unit:FactoryReset()
     self._Soulbind = nil
     self._Profession1 = nil
     self._Profession2 = nil
-    self._DungeonScore = 0
     self._AchievementPoints = 0
     self._RunningAddon = false
     self._Alt = false
@@ -780,13 +776,12 @@ function Unit:FactoryReset()
     self._IsOnMainGuild = false
     self._Faction = nil
     self._Team = nil
-    self._Initialized = false
     self._Guild = nil
     self._Realm = nil
     self._Version = nil
     self._ItemLevel = 0
-    self._RaidProgress = ''
     self._PvP = ''
     self._GuildSpeak = true
     self._GuildListen = true
+    self._RaidIO = nil
 end
