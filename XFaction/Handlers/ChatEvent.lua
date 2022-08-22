@@ -43,7 +43,7 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
                 XFG.Outbox:Send(_NewMessage, true)
             end).
             finally(function ()
-                XFG.GMailbox:Push(_NewMessage)
+                XFG.Mailbox:Push(_NewMessage)
             end)
         end
     end).
