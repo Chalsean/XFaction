@@ -114,12 +114,14 @@ function Factory:Purge(inPurgeTime)
     assert(type(inPurgeTime) == 'number')
     for _, _Object in self:CheckedInIterator() do
         if(_Object:GetFactoryTime() < inPurgeTime) then
-            self:Remove(_Object:GetFactoryKey())
+			self._CheckedIn[_Object:GetFactoryKey()] = nil
+			self._CheckedInCount = self._CheckedInCount - 1
         end
     end
     for _, _Object in self:CheckedOutIterator() do
         if(_Object:GetFactoryTime() < inPurgeTime) then
-            self:CheckIn(_Object)
+            self._CheckedOut[_Object:GetFactoryKey()] = nil
+			self._CheckedOutCount = self._CheckedOutCount - 1
         end
     end
 end
