@@ -688,8 +688,6 @@ function Unit:Equals(inUnit)
     if(self:GetKey() ~= inUnit:GetKey()) then return false end
     if(self:GetGUID() ~= inUnit:GetGUID()) then return false end
     if(self:GetID() ~= inUnit:GetID()) then return false end
-    if(self:GetUnitName() ~= inUnit:GetUnitName()) then return false end
-    if(self:GetName() ~= inUnit:GetName()) then return false end
     if(self:GetLevel() ~= inUnit:GetLevel()) then return false end
     if(self:GetZone() ~= inUnit:GetZone()) then return false end
     if(self:GetNote() ~= inUnit:GetNote()) then return false end
@@ -726,12 +724,6 @@ function Unit:Equals(inUnit)
         if(_CachedProfession2:Equals(inUnit:GetProfession2()) == false) then return false end
     end
 
-    if(self:HasRace() == false and inUnit:HasRace()) then return false end
-    if(self:HasRace()) then
-        local _CachedRace = self:GetRace()
-        if(_CachedRace:Equals(inUnit:GetRace()) == false) then return false end
-    end
-    
     if(self:HasSpec() == false and inUnit:HasSpec()) then return false end
     if(self:HasSpec()) then
         local _CachedSpec = self:GetSpec()
@@ -740,9 +732,13 @@ function Unit:Equals(inUnit)
 
     if(not self:HasRaidIO() and inUnit:HasRaidIO()) then return false end
     if(self:HasRaidIO() and not inUnit:HasRaidIO()) then return false end
+	if(self:HasRaidIO() and not self:GetRaidIO():Equals(inUnit:GetRaidIO()) then return false end
     
     -- Do not consider TimeStamp
     -- A unit cannot change Class, do not consider
+	-- A unit cannot change Race while logged in, do not consider
+	-- A unit cannot change Name/UnitName while logged in, do not consider
+	-- A unit cannot change GUID while logged in, but it is the key so consider
     
     return true
 end
