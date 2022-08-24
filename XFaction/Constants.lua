@@ -19,6 +19,7 @@ XFG.Factories = {}
 XFG.Frames = {}
 XFG.Handlers = {}
 XFG.Nameplates = {}
+XFG.Mailbox = {}
 
 XFG.Initialized = false
 

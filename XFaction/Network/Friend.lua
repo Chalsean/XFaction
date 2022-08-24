@@ -170,3 +170,11 @@ function Friend:FactoryReset()
     self._MyLink = false
     self:Initialize()
 end
+
+function Friend:Ping()
+    if(XFG.DebugFlag) then
+        XFG:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
+    end
+    BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, self:GetGameID())
+    XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment() 
+end

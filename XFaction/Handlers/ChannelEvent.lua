@@ -22,12 +22,12 @@ end
 
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelType, inChannelNumber, inChannelName)
 	try(function ()
-		local _Channel = XFG.Outbox:GetLocalChannel()
+		local _Channel = XFG.Channels:GetLocalChannel()
 		
 		if(inAction == 'YOU_LEFT') then
 			if(inChannelName == _Channel:GetName()) then
 				XFG:Error(ObjectName, 'Removed channel was the addon channel')			
-				XFG.Outbox:VoidLocalChannel()
+				XFG.Channels:VoidLocalChannel()
 			end
 			XFG.Channels:Remove(_Channel:GetKey())
 

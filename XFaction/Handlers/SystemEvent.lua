@@ -57,8 +57,8 @@ function SystemEvent:CallbackReloadUI()
 end
 
 function SystemEvent:CallbackLogin()
-    if(XFG.Outlook:HasLocalChannel()) then
-        XFG.Channels:SetLast(XFG.Outlook:GetLocalChannel():GetKey())
+    if(XFG.Channels:HasLocalChannel()) then
+        XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
     end
 end
 

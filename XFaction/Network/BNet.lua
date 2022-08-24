@@ -15,11 +15,15 @@ end
 function BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', XFG.BNet.Receive)
+        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', XFG.Mailbox.BNet.BNetReceive)
         XFG:Info(ObjectName, 'Registered for BN_CHAT_MSG_ADDON events')
         self:IsInitialized(true)
     end
     return self:IsInitialized()
+end
+
+function BNet:DecodeMessage(inEncodedMessage)
+    return XFG:DecodeBNetMessage(inEncodedMessage)
 end
 
 function BNet:Send(inMessage)
@@ -74,12 +78,7 @@ function BNet:Send(inMessage)
     end    
 end
 
-function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
-
-    -- If not a message from this addon, ignore
-    if(not XFG.BNet:IsAddonTag(inMessageTag)) then
-        return
-    end
+function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     try(function ()
         -- Even though these may be part of a message, it still counts as a network transaction
@@ -106,12 +105,7 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
                 end
             end
         end
-    end).
-    catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, inErrorMessage)
-    end)
 
-    try(function ()
         if(inEncodedMessage == 'PING') then
             BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
             XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
@@ -120,49 +114,9 @@ function BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
             return
         end
 
-        -- Ensure this message has not already been processed
-        local _PacketNumber = tonumber(string.sub(inEncodedMessage, 1, 1))
-        local _TotalPackets = tonumber(string.sub(inEncodedMessage, 2, 2))
-        local _MessageKey = string.sub(inEncodedMessage, 3, 38)
-        local _MessageData = string.sub(inEncodedMessage, 39, -1)
-        if(XFG.DebugFlag) then
-            XFG:Debug(ObjectName, 'Received packet [%d:%d] of message [%s] from [%d]', _PacketNumber, _TotalPackets, _MessageKey, inSender)
-        end
-        -- Temporary, remove after all upgraded to 3.3
-        if(not _TotalPackets) then
-            error('Message is in pre-3.3 format, ignoring')
-        end
-
-        -- Ensure we have not already processed the overall message
-        if(XFG.BNet:Contains(_MessageKey)) then
-            return
-        end
-
-        XFG.BNet:AddPacket(_MessageKey, _PacketNumber, _MessageData)
-        if(XFG.BNet:HasAllPackets(_MessageKey, _TotalPackets)) then
-            if(XFG.DebugFlag) then
-                XFG:Debug(ObjectName, "Received all packets for message [%s]", _MessageKey)
-            end
-            local _EncodedMessage = XFG.BNet:RebuildMessage(_MessageKey, _TotalPackets)
-            local _FullMessage = XFG:DecodeBNetMessage(_EncodedMessage)
-            try(function ()
-                XFG.Inbox:Process(_FullMessage, inMessageTag)
-            end).
-            finally(function ()
-                XFG.Mailbox:Push(_FullMessage)
-            end)
-        end
+        XFG.Mailbox.BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end).
     catch(function (inErrorMessage)
         XFG:Warn(ObjectName, inErrorMessage)
-    end)
-end
-
-function BNet:PingFriend(inFriend)
-    assert(type(inFriend) == 'table' and inFriend.__name ~= nil and inFriend.__name == 'Friend', 'argument must be a Friend object')
-    if(XFG.DebugFlag) then
-        XFG:Debug(ObjectName, 'Sending ping to [%s]', inFriend:GetTag())
-    end
-    BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, inFriend:GetGameID())
-    XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment() 
+    end)    
 end

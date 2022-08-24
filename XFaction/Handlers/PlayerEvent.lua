@@ -38,7 +38,7 @@ function PlayerEvent:CallbackPlayerChanged(inEvent)
         --XFG:Info(ObjectName, 'Updated player data based on %s event', inEvent)
 
         if(inEvent ~= 'SOULBIND_ACTIVATED') then
-            XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
+            XFG.Player.Unit:Broadcast()
         end
 
         if(inEvent == 'COVENANT_CHOSEN' or inEvent == 'SOULBIND_ACTIVATED') then
@@ -90,7 +90,7 @@ function PlayerEvent:CallbackSkillChanged()
             if(not _Profession:Equals(XFG.Player.Unit:GetProfession1())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
-                XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
+                XFG.Player.Unit:Broadcast()
                 return
             end
         end
@@ -100,7 +100,7 @@ function PlayerEvent:CallbackSkillChanged()
             if(not _Profession:Equals(XFG.Player.Unit:GetProfession2())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
-                XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
+                XFG.Player.Unit:Broadcast()
                 return
             end
         end
