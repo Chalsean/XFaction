@@ -117,13 +117,13 @@ XFG.Settings = {
 	Network = {
 		CompressionLevel = 6,
 		LoginLimit = 42,
+		PacketSize = 425,
 		Channel = {
 			Total = 10,
 			Name = nil,
 			Password = nil
 		},
-		BNet = {
-			PacketSize = 420,
+		BNet = {			
 			Ping = {
 				Timer = 60,         -- Seconds between pinging friends
 			},
