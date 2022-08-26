@@ -9,6 +9,7 @@ local GetAverageIlvl = GetAverageItemLevel
 local GetSpecGroupID = GetSpecialization
 local GetSpecID = GetSpecializationInfo
 local GetPvPRating = GetPersonalRatedInfo
+local GetPlayerBNetInfo = BNGetInfo
 
 Unit = Object:newChildConstructor()
 

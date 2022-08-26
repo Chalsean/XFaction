@@ -6,37 +6,7 @@ ChatFrame = Object:newChildConstructor()
 function ChatFrame:new()
     local _Object = ChatFrame.parent.new(self)
     _Object.__name = ObjectName
-    _Object._ElvUIModule = nil  
-    _Object._ChatFrameHandler = nil
     return _Object
-end
-
-function ChatFrame:Initialize()
-	if(not self:IsInitialized()) then
-        self:ParentInitialize()
-        self:SetHandler()
-		self:IsInitialized(true)
-	end
-	return self:IsInitialized()
-end
-
-function ChatFrame:SetHandler()
-    if(XFG.ElvUI) then
-        local _Status, _Enabled = pcall(function()
-            return XFG.ElvUI.private.chat.enable
-        end)
-        if _Status and _Enabled then
-            XFG:Info(ObjectName, 'Using ElvUI chat handler')
-            self._ElvUIModule = XFG.ElvUI:GetModule('Chat')
-            self._ChatFrameHandler = function(...) self._ElvUIModule:FloatingChatFrame_OnEvent(...) end
-        else
-            XFG:Error(ObjectName, 'Failed to detect if elvui has chat enabled')
-            self._ChatFrameHandler = ChatFrame_MessageEventHandler
-        end
-    else
-        XFG:Info(ObjectName, 'Using default chat handler')
-        self._ChatFrameHandler = ChatFrame_MessageEventHandler
-    end
 end
 
 function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRealm, inFrom, inData)
@@ -120,7 +90,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRe
                         XFG.WIM:CHAT_MSG_GUILD(_Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     else
                         _Text = XFG.Settings.Frames.Chat.Prepend .. _Text
-                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inType, _Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
+                        ChatFrame_MessageEventHandler(_G[_Frame], 'CHAT_MSG_' .. inType, _Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     end
                 end                                   
                 break

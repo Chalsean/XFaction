@@ -21,6 +21,7 @@ function GuildEvent:Initialize()
         -- XFG:Info(ObjectName, 'Post-hooked GuildInvite API')
         -- XFG:RegisterEvent('CLUB_MEMBER_ADDED', XFG.Handlers.GuildEvent.CallbackMemberJoined)
         -- XFG:Info(ObjectName, 'Registered for CLUB_MEMBER_ADDED events')
+        XFG:RawHook('GetGuildInfo', true)
 		self:IsInitialized(true)
 	end
 end
@@ -95,4 +96,8 @@ function GuildEvent:CallbackMemberJoined(inGuildID, inMemberID)
     finally(function ()
         XFG.Confederate:Push(_UnitData)
     end)
+end
+
+function XFG:GetGuildInfo(inUnit)
+    return XFG.hooks.GetGuildInfo(inUnit)
 end

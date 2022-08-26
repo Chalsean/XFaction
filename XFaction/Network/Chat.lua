@@ -21,7 +21,7 @@ function Chat:Initialize()
 end
 
 function Chat:DecodeMessage(inEncodedMessage)
-    return XFG:DecodeMessage(inEncodedMessage)
+    return XFG:DecodeChatMessage(inEncodedMessage)
 end
 
 function Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
@@ -56,8 +56,8 @@ function Chat:Send(inMessage)
         end
     end
 
-    local _MessageData = XFG:EncodeMessage(inMessage, true)
-    local _Packets = self:SegmentMessage(_MessageData, inMessage:GetKey())
+    local _MessageData = XFG:EncodeChatMessage(inMessage, true)
+    local _Packets = self:SegmentMessage(_MessageData, inMessage:GetKey(), XFG.Settings.Network.Chat.PacketSize)
 
     -- Broadcast on same realm/faction channel for multiple players
     if(XFG.Channels:HasLocalChannel()) then
@@ -70,7 +70,7 @@ function Chat:Send(inMessage)
             if(XFG.DebugFlag) then
                 XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d]', _Index, #_Packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(_Packet))
             end
-            BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, _Packet, 'CHANNEL', _Channel:GetID())
+            XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, _Packet, 'CHANNEL', _Channel:GetID())
             XFG.Metrics:Get(XFG.Settings.Metric.ChannelSend):Increment()
         end
     end

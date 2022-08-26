@@ -53,6 +53,8 @@ function XFG:DeserializeUnitData(inData)
 	local _, _DeserializedData = XFG:Deserialize(inData)
 	local _UnitData = XFG.Confederate:Pop()
 	_UnitData:IsRunningAddon(true)
+	_UnitData:SetRace(XFG.Races:Get(_DeserializedData.A))
+	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
 	if(_DeserializedData.C ~= nil) then
 		_UnitData:SetCovenant(XFG.Covenants:Get(_DeserializedData.C))
 	end
@@ -60,7 +62,6 @@ function XFG:DeserializeUnitData(inData)
 	_UnitData:SetGUID(_DeserializedData.K)
 	_UnitData:SetKey(_DeserializedData.K)
 	_UnitData:SetClass(XFG.Classes:Get(_DeserializedData.O))
-	_UnitData:SetRace(XFG.Races:Get(_DeserializedData.A))
 	local _UnitNameParts = string.Split(_DeserializedData.U, '-')
 	_UnitData:SetName(_UnitNameParts[1])
 	_UnitData:SetUnitName(_DeserializedData.U)
@@ -97,7 +98,7 @@ function XFG:DeserializeUnitData(inData)
 		_UnitData:SetZone(XFG.Zones:Get(_DeserializedData.Z))
 	end
 
-	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
+	
 	if(_DeserializedData.Y ~= nil) then _UnitData:SetPvPString(_DeserializedData.Y) end
 	if(_DeserializedData.X ~= nil) then 
 		local _Version = XFG.Versions:Get(_DeserializedData.X)
@@ -117,7 +118,7 @@ function XFG:DeserializeUnitData(inData)
 	return _UnitData
 end
 
-function XFG:DecodeMessage(inEncodedMessage)
+function XFG:DecodeChatMessage(inEncodedMessage)
 	local _Decoded = Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
 	return DeserializeMessage(XFG.Mailbox.Chat:Pop(), _Decoded)
 end

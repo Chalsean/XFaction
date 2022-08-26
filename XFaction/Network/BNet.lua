@@ -1,5 +1,4 @@
 local XFG, G = unpack(select(2, ...))
-local BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 local ObjectName = 'BNet'
 
 local ServerTime = GetServerTime
@@ -57,7 +56,7 @@ function BNet:Send(inMessage)
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
     local _MessageData = XFG:EncodeBNetMessage(inMessage, true)
-    local _Packets = self:SegmentMessage(_MessageData, inMessage:GetKey())
+    local _Packets = self:SegmentMessage(_MessageData, inMessage:GetKey(), XFG.Settings.Network.BNet.PacketSize)
 
     -- Make sure all packets go to each target
     for _, _Friend in pairs (_Links) do
@@ -67,7 +66,7 @@ function BNet:Send(inMessage)
                     XFG:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', _Friend:GetName(), _Friend:GetGameID(), _Index, _TotalPackets, XFG.Settings.Network.Message.Tag.BNET, strlen(_Packet))
                 end
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-                BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _Packet, _, _Friend:GetGameID())
+                XFG.Lib.BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, _Packet, _, _Friend:GetGameID())
                 XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(_Friend:GetTarget())
@@ -107,7 +106,7 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
         end
 
         if(inEncodedMessage == 'PING') then
-            BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
+            XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
             XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
             return
         elseif(inEncodedMessage == 'RE:PING') then

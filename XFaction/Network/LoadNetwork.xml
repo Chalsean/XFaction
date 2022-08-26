@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file='BNet.lua'/>
-    <Script file='Chat.lua'/>
     <Script file='Encode.lua'/>
     <Script file='Decode.lua'/>
+    <Script file='BNet.lua'/>
+    <Script file='Chat.lua'/>    
     <Script file='Message.lua'/>    
     <Script file='Channel.lua'/>
     <Script file='ChannelCollection.lua'/>

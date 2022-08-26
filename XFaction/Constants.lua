@@ -46,6 +46,7 @@ XFG.Lib = {
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
 	Cmd = LibStub('AceConfigCmd-3.0'),
 }
+XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 
 XFG.Player = {
 	LastBroadcast = 0,
@@ -118,13 +119,16 @@ XFG.Settings = {
 	Network = {
 		CompressionLevel = 6,
 		LoginLimit = 42,
-		PacketSize = 425,
 		Channel = {
 			Total = 10,
 			Name = nil,
 			Password = nil
 		},
-		BNet = {			
+		Chat = {
+			PacketSize = 217,
+		},
+		BNet = {	
+			PacketSize = 425,		
 			Ping = {
 				Timer = 60,         -- Seconds between pinging friends
 			},

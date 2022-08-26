@@ -58,6 +58,7 @@ function TimerEvent:CallbackLogin()
     if(InGuild()) then
         -- Even though it says were in guild, the following call still may not work on initial login, hence the poller
         local _GuildID = C_Club.GetGuildClubId()
+
         -- Sanity check
         if(XFG.Player.GUID ~= nil and XFG.Player.Faction ~= nil and _GuildID ~= nil) then
             -- Now that guild info is available we can finish setup
@@ -316,15 +317,16 @@ function TimerEvent:CallbackLogin()
 						
 				-- Non-critcal path initialization
 				XFG.Timers:Add('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, false, false)
-				XFG.Timers:Add('BNetMailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackBNetMailboxTimer, false, false)
 				XFG.Timers:Add('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, false)
 				XFG.Timers:Add('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, false)
 				XFG.Timers:Add('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, false)
 
 				-- Ping friends to find out whos available for BNet
 				if(not XFG.DB.UIReload) then                
-					XFG.Handlers.TimerEvent:CallbackPingFriends()      
+					XFG.Handlers.TimerEvent:CallbackPingFriends()
 				end
+
+				--BNSendFriendInvite('Arono#11651', 'XFaction BNet Mesh')
 
 				-- This is stuff waiting a few seconds for ping responses or Blizz setup to finish
 				XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 7)		    
@@ -378,26 +380,14 @@ end
 -- Cleanup mailbox
 function TimerEvent:CallbackMailboxTimer()
 	try(function ()
-		XFG.Mailbox:Purge(ServerTime() - XFG.Settings.Network.Mailbox.Stale)
-	end).
-	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, inErrorMessage)
-	end).
-	finally(function ()
-		XFG.Timers:Get('Mailbox'):SetLastRan(ServerTime())
-	end)
-end
-
--- Cleanup BNet mailbox
-function TimerEvent:CallbackBNetMailboxTimer()
-	try(function ()
+		XFG.Mailbox.Chat:Purge(ServerTime() - XFG.Settings.Network.Mailbox.Stale)
 		XFG.Mailbox.BNet:Purge(ServerTime() - XFG.Settings.Network.Mailbox.Stale)
 	end).
 	catch(function (inErrorMessage)
 		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		XFG.Timers:Get('BNetMailbox'):SetLastRan(ServerTime())
+		XFG.Timers:Get('Mailbox'):SetLastRan(ServerTime())
 	end)
 end
 

@@ -114,6 +114,7 @@ function FriendCollection:CheckFriend(inKey)
 		if(_AccountInfo == nil) then
 			error('Received nil for friend [%d]', inKey)
 		end
+		_AccountInfo.ID = inKey
 
 		-- Did they go offline?
 		if(self:Contains(_AccountInfo.bnetAccountID)) then
@@ -128,20 +129,10 @@ function FriendCollection:CheckFriend(inKey)
 
 		-- Did they come online on a supported realm/faction?
 		elseif(CanLink(_AccountInfo)) then
-			local _Realm = XFG.Realms:GetByID(_AccountInfo.gameAccountInfo.realmID)
-			local _Faction = XFG.Factions:GetByName(_AccountInfo.gameAccountInfo.factionName)
-			local _Target = XFG.Targets:GetByRealmFaction(_Realm, _Faction)
 			local _NewFriend = nil
 			try(function ()
 				_NewFriend = self:Pop()
-				_NewFriend:SetKey(_AccountInfo.bnetAccountID)
-				_NewFriend:SetID(inKey)
-				_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
-				_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
-				_NewFriend:SetAccountName(_AccountInfo.accountName)
-				_NewFriend:SetTag(_AccountInfo.battleTag)
-				_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
-				_NewFriend:SetTarget(_Target)
+				_NewFriend:SetFromAccountInfo(_AccountInfo)
 				self:Add(_NewFriend)
 			end).
 			catch(function (inErrorMessage)
@@ -153,7 +144,7 @@ function FriendCollection:CheckFriend(inKey)
 			end
 			-- Ping them to see if they're running the addon
 			if(XFG.Initialized) then 
-				XFG.BNet:PingFriend(_NewFriend) 
+				_NewFriend:Ping()
 			end
 		end
 	end).

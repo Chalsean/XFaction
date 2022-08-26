@@ -190,3 +190,4 @@ function Confederate:SaveGuildInfo()
         end)
     end
 end
+

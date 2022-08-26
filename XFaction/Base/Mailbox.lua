@@ -74,12 +74,12 @@ function Mailbox:RemovePacket(inKey)
 	end
 end
 
-function Mailbox:SegmentMessage(inEncodedData, inMessageKey)
+function Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
 	assert(type(inEncodedData) == 'string')
 	local _Packets = {}
-    local _TotalPackets = ceil(strlen(inEncodedData) / XFG.Settings.Network.PacketSize)
+    local _TotalPackets = ceil(strlen(inEncodedData) / inPacketSize)
     for i = 1, _TotalPackets do
-        local _Segment = string.sub(inEncodedData, XFG.Settings.Network.PacketSize * (i - 1) + 1, XFG.Settings.Network.PacketSize * i)
+        local _Segment = string.sub(inEncodedData, inPacketSize * (i - 1) + 1, inPacketSize * i)
         _Segment = tostring(i) .. tostring(_TotalPackets) .. inMessageKey .. _Segment
         _Packets[#_Packets + 1] = _Segment
     end
@@ -98,10 +98,10 @@ function Mailbox:RebuildMessage(inKey, inTotalPackets)
     local _Message = ''
     -- Stitch the data back together again
     for i = 1, inTotalPackets do
-        _Message = _Message .. self._Objects[inKey][i]
+        _Message = _Message .. self._Packets[inKey][i]
     end
     self:RemovePacket(inKey)
-	return _MessageData
+	return _Message
 end
 
 function Mailbox:Purge(inEpochTime)
@@ -145,15 +145,15 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     local _MessageData = string.sub(inEncodedMessage, 39, -1)
 
     -- Temporary, remove after all upgraded to 3.10
-    if(not _TotalPackets) then
+    if(not _PacketNumber or _PacketNumber == 0 or not _TotalPackets or _TotalPackets == 0) then
         XFG:Debug(ObjectName, 'Message is in pre-3.10 format')
-        local _FullMessage = self:DecodeMessage(inEncodedMessage)
-        try(function ()
-            self:Process(_FullMessage, inMessageTag)
-        end).
-        finally(function ()
-            self:Push(_FullMessage)
-        end)
+        -- local _FullMessage = self:DecodeMessage(inEncodedMessage)
+        -- try(function ()
+        --     self:Process(_FullMessage, inMessageTag)
+        -- end).
+        -- finally(function ()
+        --     self:Push(_FullMessage)
+        -- end)
         return
     end
 
