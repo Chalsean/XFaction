@@ -40,7 +40,7 @@ function Factory:ParentInitialize()
     self._CheckedOut = {}
 end
 
-function Factory:Print()
+function Factory:ParentPrint()
     if(XFG.Debug) then
         XFG:DoubleLine(self:GetObjectName())
         XFG:Debug(self:GetObjectName(), '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))

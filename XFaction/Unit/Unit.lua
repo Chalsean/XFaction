@@ -732,7 +732,7 @@ function Unit:Equals(inUnit)
 
     if(not self:HasRaidIO() and inUnit:HasRaidIO()) then return false end
     if(self:HasRaidIO() and not inUnit:HasRaidIO()) then return false end
-	if(self:HasRaidIO() and not self:GetRaidIO():Equals(inUnit:GetRaidIO()) then return false end
+	if(self:HasRaidIO() and not self:GetRaidIO():Equals(inUnit:GetRaidIO())) then return false end
     
     -- Do not consider TimeStamp
     -- A unit cannot change Class, do not consider
