@@ -84,5 +84,4 @@ function Node:FactoryReset()
     self:ParentFactoryReset()
     self._Target = nil
     self._LinkCount = 0
-    self:Initialize()
 end
