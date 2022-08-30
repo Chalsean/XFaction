@@ -57,3 +57,7 @@ end
 function Realm:IsConnected()
     return self._IDCount > 1
 end
+
+function Realm:IDIterator()
+    return next, self._IDs, nil
+end

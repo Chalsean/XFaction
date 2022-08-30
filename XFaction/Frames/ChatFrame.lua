@@ -6,8 +6,6 @@ ChatFrame = Object:newChildConstructor()
 function ChatFrame:new()
     local _Object = ChatFrame.parent.new(self)
     _Object.__name = ObjectName
-    _Object._ElvUIModule = nil  
-    _Object._ChatFrameHandler = nil
     return _Object
 end
 
@@ -120,7 +118,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRe
                         XFG.WIM:CHAT_MSG_GUILD(_Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     else
                         _Text = XFG.Settings.Frames.Chat.Prepend .. _Text
-                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inType, _Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
+                        ChatFrame_MessageEventHandler(_G[_Frame], 'CHAT_MSG_' .. inType, _Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     end
                 end                                   
                 break
