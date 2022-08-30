@@ -155,8 +155,10 @@ function Inbox:Process(inMessage, inMessageTag)
 
     -- Process LOGOUT message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
-        -- If own guild, GuildEvent will take care of logout
-        if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
+        -- If own guild, GuildEvent will take care of logout        
+        if(not XFG.Player.Guild:Equals(inMessage:GetGuild()) or
+           not XFG.Player.Realm:Equals(inMessage:GetGuild():GetRealm()) or
+           not XFG.Player.Faction:Equals(inMessage:GetGuild():GetFaction())) then            
             XFG.Confederate:Remove(inMessage:GetFrom())
             XFG.Frames.System:DisplayLogoutMessage(inMessage)
         end

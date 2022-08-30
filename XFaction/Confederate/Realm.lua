@@ -7,6 +7,7 @@ function Realm:new()
     local _Object = Realm.parent.new(self)
     _Object.__name = ObjectName
     self._APIName = nil
+    self._ID = 0
     self._IDs = {}
     self._IDCount = 0
     return _Object
@@ -16,6 +17,7 @@ function Realm:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  _APIName (' .. type(self._APIName) .. '): ' .. tostring(self._APIName))
+        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
         XFG:Debug(ObjectName, '  _IDCount (' .. type(self._IDCount) .. '): ' .. tostring(self._IDCount))
         XFG:Debug(ObjectName, '  _IDs (' .. type(self._IDs) .. '): ')
         for _, _Value in pairs (self._IDs) do
@@ -34,9 +36,12 @@ function Realm:SetAPIName(inName)
 end
 
 function Realm:GetID()
-    if(self._IDCount > 0) then
-        return self._IDs[1]
-    end
+    return self._ID
+end
+
+function Realm:SetID(inID)
+    assert(type(inID) == 'number')
+    self._ID = inID
 end
 
 function Realm:GetIDs()
@@ -51,4 +56,8 @@ end
 
 function Realm:IsConnected()
     return self._IDCount > 1
+end
+
+function Realm:IDIterator()
+    return next, self._IDs, nil
 end

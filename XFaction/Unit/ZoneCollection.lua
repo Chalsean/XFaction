@@ -70,7 +70,7 @@ function ZoneCollection:Initialize()
 					_Zone:SetContinent(_Continent)
 				end
 			end			
-			XFG:Info(ObjectName, 'Initialized zone [%s]', _Zone:GetName())
+			--XFG:Info(ObjectName, 'Initialized zone [%s]', _Zone:GetName())
 		end
 
 		self:AddZone('?')

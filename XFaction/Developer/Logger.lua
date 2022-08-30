@@ -27,7 +27,7 @@ function XFG:Error(SubCategory, ...)
 end
 
 function XFG:Warn(SubCategory, ...)
-	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 2) then
+	if(XFG.DebugFlag and XFG.Cache.Verbosity >= 2) then
 		local status, res = pcall(format, ...)
 		if status then
 			if DLAPI then 
@@ -42,7 +42,7 @@ function XFG:Warn(SubCategory, ...)
 end
 
 function XFG:Info(SubCategory, ...)
-	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 3) then
+	if(XFG.DebugFlag and XFG.Cache.Verbosity >= 3) then
 		local status, res = pcall(format, ...)
 		if status then
 			Format()
@@ -52,7 +52,7 @@ function XFG:Info(SubCategory, ...)
 end
 
 function XFG:Debug(SubCategory, ...)
-	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 4) then
+	if(XFG.DebugFlag and XFG.Cache.Verbosity >= 4) then
 		local status, res = pcall(format, ...)
 		if status then
 			Format()
@@ -75,19 +75,19 @@ local function TableToString(t, l, k)
 end
 
 function XFG:DataDumper(SubCategory, ...)
-	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 4) then
+	if(XFG.DebugFlag and XFG.Cache.Verbosity >= 4) then
 		XFG:Debug(SubCategory, TableToString(..., 1, 'root'))
 	end
 end
 
 function XFG:SingleLine(SubCategory)
-	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 4) then
+	if(XFG.DebugFlag and XFG.Cache.Verbosity >= 4) then
 		XFG:Debug(SubCategory, '-------------------------------------')
 	end
 end
 
 function XFG:DoubleLine(SubCategory)
-	if(XFG.DebugFlag and XFG.Config.Debug.Verbosity >= 4) then
+	if(XFG.DebugFlag and XFG.Cache.Verbosity >= 4) then
 		XFG:Debug(SubCategory, '=====================================')
 	end
 end

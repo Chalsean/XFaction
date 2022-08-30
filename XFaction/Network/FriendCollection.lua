@@ -99,10 +99,13 @@ local function CanLink(inAccountInfo)
 
 		-- We don't want to link to neutral faction toons
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
-
 		local _Faction = XFG.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
-		if(XFG.Targets:ContainsByRealmFaction(_Realm, _Faction) and (not XFG.Player.Faction:Equals(_Faction) or not XFG.Player.Realm:Equals(_Realm))) then
-			return true
+
+		for _, _ID in _Realm:IDIterator() do
+			local _ConnectedRealm = XFG.Realms:GetByID(_ID)
+			if(XFG.Targets:ContainsByRealmFaction(_ConnectedRealm, _Faction) and (not XFG.Player.Faction:Equals(_Faction) or not XFG.Player.Realm:Equals(_ConnectedRealm))) then
+				return true, XFG.Targets:GetByRealmFaction(_ConnectedRealm, _Faction)
+			end
 		end
 	end
 	return false
@@ -115,9 +118,11 @@ function FriendCollection:CheckFriend(inKey)
 			error('Received nil for friend [%d]', inKey)
 		end
 
+		local _CanLink, _Target = CanLink(_AccountInfo)
+
 		-- Did they go offline?
 		if(self:Contains(_AccountInfo.bnetAccountID)) then
-			if(not CanLink(_AccountInfo)) then
+			if(not _CanLink) then
 				local _Friend = XFG.Friends:Get(_AccountInfo.bnetAccountID)
 				if(XFG.DebugFlag) then
 					XFG:Info(ObjectName, 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', _Friend:GetTag(), _Friend:GetAccountID(), _Friend:GetID(), _Friend:GetGameID())
@@ -127,10 +132,7 @@ function FriendCollection:CheckFriend(inKey)
 			end
 
 		-- Did they come online on a supported realm/faction?
-		elseif(CanLink(_AccountInfo)) then
-			local _Realm = XFG.Realms:GetByID(_AccountInfo.gameAccountInfo.realmID)
-			local _Faction = XFG.Factions:GetByName(_AccountInfo.gameAccountInfo.factionName)
-			local _Target = XFG.Targets:GetByRealmFaction(_Realm, _Faction)
+		elseif(_CanLink) then
 			local _NewFriend = nil
 			try(function ()
 				_NewFriend = self:Pop()
