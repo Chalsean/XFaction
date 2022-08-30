@@ -6,6 +6,8 @@ ChatFrame = Object:newChildConstructor()
 function ChatFrame:new()
     local _Object = ChatFrame.parent.new(self)
     _Object.__name = ObjectName
+    _Object._ElvUIModule = nil  
+    _Object._ChatFrameHandler = nil
     return _Object
 end
 
