@@ -118,7 +118,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRe
                         XFG.WIM:CHAT_MSG_GUILD(_Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     else
                         _Text = XFG.Settings.Frames.Chat.Prepend .. _Text
-                        ChatFrame_MessageEventHandler(_G[_Frame], 'CHAT_MSG_' .. inType, _Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
+                        self._ChatFrameHandler(_G[_Frame], 'CHAT_MSG_' .. inType, _Text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     end
                 end                                   
                 break
