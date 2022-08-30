@@ -169,8 +169,8 @@ L['KUI'] = 'Kui'
 L['NAMEPLATE_KUI_DESCRIPTION'] = 'Options to change Kui nameplates information. Upon selection, you will need to reload your UI to see the changes.'
 L['NAMEPLATE_ICON'] = 'Member Icon'
 L['NAMEPLATE_ICON_TOOLTIP'] = 'Display an icon next to confederate members name'
-L['NAMEPLATE_KUI_MAIN'] = 'Main Name'
-L['NAMEPLATE_KUI_MAIN_TOOLTIP'] = "Append player's main raiding name to unit name"
+L['NAMEPLATE_PLAYER_MAIN'] = 'Main Name'
+L['NAMEPLATE_PLAYER_MAIN_TOOLTIP'] = "Append player's main raiding name to unit name"
 L['NAMEPLATE_GUILD_HIDE'] = 'Hide Non-Confederate'
 L['NAMEPLATE_GUILD_HIDE_TOOLTIP'] = 'Hide non-confederate guild tags'
 --=========================================================================

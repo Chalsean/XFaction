@@ -163,9 +163,16 @@ XFG.Options.args.Nameplates = {
 									desc = XFG.Lib.Locale['NAMEPLATE_ICON_TOOLTIP'],
 									disabled = function () return not IsAddOnLoaded('Kui_Nameplates') or not XFG.Config.Nameplates.Kui.Enable end,
 									get = function(info) return XFG.Config.Nameplates.Kui[ info[#info] ] end,
-									set = function(info, value) 
-										XFG.Config.Nameplates.Kui[ info[#info] ] = value
-									end
+									set = function(info, value) XFG.Config.Nameplates.Kui[ info[#info] ] = value end
+								},
+								MainName = {
+									order = 2,
+									type = 'toggle',
+									name = XFG.Lib.Locale['NAMEPLATE_PLAYER_MAIN'],
+									desc = XFG.Lib.Locale['NAMEPLATE_PLAYER_MAIN_TOOLTIP'],
+									disabled = function () return not IsAddOnLoaded('Kui_Nameplates') or not XFG.Config.Nameplates.Kui.Enable end,
+									get = function(info) return XFG.Config.Nameplates.Kui[ info[#info] ] end,
+									set = function(info, value) XFG.Config.Nameplates.Kui[ info[#info] ] = value end
 								},
 							},
 						},
