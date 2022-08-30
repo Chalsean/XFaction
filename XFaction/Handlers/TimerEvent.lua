@@ -48,6 +48,8 @@ function TimerEvent:CallbackLogin()
 		
 		-- Monitor other addons loading
 		XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
+
+		XFG.DataText.Guild:SetFont()
     end
 
     -- Ensure we get the player guid and faction without failure
@@ -354,12 +356,15 @@ function TimerEvent:CallbackLogin()
 			end).
 			finally(function ()
 				XFG.Initialized = true
-
+				
 				-- Refresh brokers (theyve been waiting on XFG.Initialized flag)
+				XFG.DataText.Guild:SetFont()
 				XFG.DataText.Guild:RefreshBroker()
-				XFG.DataText.Soulbind:RefreshBroker()
+				XFG.DataText.Links:SetFont()
 				XFG.DataText.Links:RefreshBroker()
+				XFG.DataText.Metrics:SetFont()
 				XFG.DataText.Metrics:RefreshBroker()
+				XFG.DataText.Soulbind:RefreshBroker()				
 				
 				--XFG:InitializeSetup()
 				wipe(XFG.DB.Backup)

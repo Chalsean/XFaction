@@ -1,14 +1,10 @@
 local XFG, G = unpack(select(2, ...))
-if(KuiNameplates == nil) then
-    return
-end
-if(XFG.Nameplates == nil) then XFG.Nameplates = {} end
+if(KuiNameplates == nil) then return end
 XFG.Nameplates.Kui = KuiNameplates:NewPlugin('XFaction')
 
 local UnitIsPlayer = UnitIsPlayer
 local UnitGUID = UnitGUID
 
--- messages ####################################################################
 function XFG.Nameplates.Kui:Show(f)
     if(XFG.Config and XFG.Config.Nameplates.Kui.Enable and UnitIsPlayer(f.unit)) then
         if(XFG.Guilds:ContainsName(f.state.guild_text)) then

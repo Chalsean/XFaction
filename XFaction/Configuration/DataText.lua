@@ -60,6 +60,56 @@ XFG.Options.args.DataText = {
 	type = 'group',
 	childGroups = 'tab',
 	args = {
+		General = {
+			order = 1,
+			type = 'group',
+			name = XFG.Lib.Locale['DTGENERAL_NAME'],
+			args = {
+				Header = {
+					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['DTGENERAL_DESCRIPTION'],
+						},
+					}
+				},
+				Space1 = {
+					order = 2,
+					type = 'description',
+					name = '',
+				},
+				Font = {
+					name = XFG.Lib.Locale['DT_CONFIG_FONT'],
+					type = 'select',
+					order = 3,
+					dialogControl = 'LSM30_Font',
+					values = XFG.Lib.LSMList.font,
+					get = function(info) return XFG.Config.DataText[ info[#info] ] end,
+					set = function(info, value) 
+						XFG.Config.DataText[ info[#info] ] = value; 
+						XFG.DataText.Guild:SetFont()
+					end
+				},
+				FontSize = {
+					order = 4,
+					name = XFG.Lib.Locale['DT_CONFIG_FONT_SIZE'],
+					desc = XFG.Lib.Locale['DT_CONFIG_FONT_SIZE_TOOLTIP'],
+					type = 'range',
+					min = 6, max = 22, step = 1,
+					get = function(info) return XFG.Config.DataText[ info[#info] ] end,
+					set = function(info, value) 
+						XFG.Config.DataText[ info[#info] ] = value; 
+						XFG.DataText.Guild:SetFont()
+					end
+				},
+			},
+		},
 		Guild = {
 			order = 1,
 			type = 'group',
@@ -71,7 +121,7 @@ XFG.Options.args.DataText = {
 					fontSize = 'medium',
 					name = XFG.Lib.Locale['DTGUILD_BROKER_HEADER']
 				},
-				Space1 = {
+				Space = {
 					order = 2,
 					type = 'description',
 					name = '',
@@ -97,23 +147,23 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Line = {
-					order = 5,
+					order = 8,
 					type = 'header',
 					name = ''
 				},
 				Description1 = {
-					order = 6,
+					order = 9,
 					type = 'description',
 					fontSize = 'medium',
 					name = XFG.Lib.Locale['DTGUILD_CONFIG_HEADER']
 				},
 				Space2 = {
-					order = 6,
+					order = 10,
 					type = 'description',
 					name = '',
 				},
 				Confederate = {
-					order = 7,
+					order = 11,
 					type = 'toggle',
 					name = XFG.Lib.Locale['CONFEDERATE'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_CONFEDERATE_TOOLTIP'],
@@ -121,7 +171,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				GuildName = {
-					order = 8,
+					order = 12,
 					type = 'toggle',
 					name = XFG.Lib.Locale['GUILD'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_GUILD_TOOLTIP'],
@@ -129,7 +179,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				MOTD = {
-					order = 9,
+					order = 13,
 					type = 'toggle',
 					name = XFG.Lib.Locale['MOTD'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_MOTD_TOOLTIP'],
@@ -137,23 +187,23 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Line1 = {
-					order = 10,
+					order = 14,
 					type = 'header',
 					name = ''
 				},
 				Description2 = {
-					order = 11,
+					order = 15,
 					type = 'description',
 					fontSize = 'medium',
 					name = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_HEADER']
 				},
 				Space3 = {
-					order = 12,
+					order = 16,
 					type = 'description',
 					name = '',
 				},
 				Sort = {
-					order = 13,
+					order = 17,
 					type = 'select',
 					name = XFG.Lib.Locale['DTGUILD_CONFIG_SORT'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_SORT_TOOLTIP'],
@@ -177,12 +227,12 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Line2 = {
-					order = 14,
+					order = 18,
 					type = 'header',
 					name = ''
 				},
 				Column = {
-					order = 15,
+					order = 19,
 					type = 'select',
 					name = XFG.Lib.Locale['DTGUILD_SELECT_COLUMN'],
 					desc = XFG.Lib.Locale['DTGUILD_SELECT_COLUMN_TOOLTIP'],
@@ -211,13 +261,13 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value end
 				},
 				Space4 = {
-					order = 16,
+					order = 20,
 					type = 'description',
 					name = '',
 					--hidden = function()	return XFG.Config.DataText.Guild.Enable.Achievement	end,
 				},
 				Achievement = {
-					order = 17,
+					order = 21,
 					type = 'toggle',
 					name = XFG.Lib.Locale['ENABLE'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_TOOLTIP'],
@@ -229,7 +279,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				AchievementOrder = {
-					order = 18,
+					order = 22,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Achievement' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Achievement) end,
@@ -240,7 +290,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},				
 				AchievementAlignment = {
-					order = 19,
+					order = 23,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Achievement' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Achievement) end,
@@ -255,7 +305,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Covenant = {
-					order = 17,
+					order = 24,
 					type = 'toggle',
 					name = XFG.Lib.Locale['ENABLE'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_COVENANT_TOOLTIP'],
@@ -267,7 +317,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				CovenantOrder = {
-					order = 18,
+					order = 25,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Covenant' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Covenant) end,
@@ -278,7 +328,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				CovenantAlignment = {
-					order = 19,
+					order = 26,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Covenant' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Covenant) end,
@@ -293,7 +343,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Faction = {
-					order = 17,
+					order = 28,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Faction' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -305,7 +355,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				FactionOrder = {
-					order = 18,
+					order = 29,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Faction' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Faction) end,
@@ -316,7 +366,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				FactionAlignment = {
-					order = 19,
+					order = 30,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Faction' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Faction) end,
@@ -331,7 +381,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Guild = {
-					order = 17,
+					order = 31,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Guild' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -343,7 +393,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				GuildOrder = {
-					order = 18,
+					order = 32,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Guild' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Guild) end,
@@ -354,7 +404,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				GuildAlignment = {
-					order = 19,
+					order = 33,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Guild' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Guild) end,
@@ -369,7 +419,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				ItemLevel = {
-					order = 17,
+					order = 34,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'ItemLevel' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -381,7 +431,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				ItemLevelOrder = {
-					order = 18,
+					order = 35,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'ItemLevel' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.ItemLevel) end,
@@ -392,7 +442,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				ItemLevelAlignment = {
-					order = 19,
+					order = 36,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'ItemLevel' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.ItemLevel) end,
@@ -407,7 +457,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Level = {
-					order = 17,
+					order = 37,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Level' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -419,7 +469,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				LevelOrder = {
-					order = 18,
+					order = 38,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Level' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Level) end,
@@ -430,7 +480,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				LevelAlignment = {
-					order = 19,
+					order = 39,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Level' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Level) end,
@@ -445,7 +495,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},				
 				Dungeon = {
-					order = 17,
+					order = 40,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Dungeon' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -457,7 +507,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				DungeonOrder = {
-					order = 18,
+					order = 41,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Dungeon' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Dungeon) end,
@@ -468,7 +518,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				DungeonAlignment = {
-					order = 19,
+					order = 42,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Dungeon' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Dungeon) end,
@@ -483,7 +533,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Name = {
-					order = 17,
+					order = 43,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Name' end,
 					disabled = true,
@@ -497,7 +547,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				NameOrder = {
-					order = 18,
+					order = 44,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Name' end,
 					name = XFG.Lib.Locale['ORDER'],
@@ -507,7 +557,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				NameAlignment = {
-					order = 19,
+					order = 45,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Name' end,
 					name = XFG.Lib.Locale['ALIGNMENT'],
@@ -521,7 +571,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Main = {
-					order = 20,
+					order = 46,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Name' end,
 					name = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_ENABLE_MAIN'],
@@ -530,7 +580,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value; end
 				},
 				Note = {
-					order = 17,
+					order = 47,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Note' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -542,7 +592,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				NoteOrder = {
-					order = 18,
+					order = 48,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Note' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Note) end,
@@ -553,7 +603,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				NoteAlignment = {
-					order = 19,
+					order = 49,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Note' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Note) end,
@@ -568,7 +618,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Profession = {
-					order = 17,
+					order = 50,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Profession' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Profession) end,
@@ -581,7 +631,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				ProfessionOrder = {
-					order = 18,
+					order = 51,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Profession' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Profession) end,
@@ -592,7 +642,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				ProfessionAlignment = {
-					order = 19,
+					order = 52,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Profession' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Profession) end,
@@ -607,7 +657,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				PvP = {
-					order = 17,
+					order = 53,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'PvP' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -619,7 +669,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				PvPOrder = {
-					order = 18,
+					order = 54,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'PvP' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.PvP) end,
@@ -630,7 +680,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				PvPAlignment = {
-					order = 19,
+					order = 55,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'PvP' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.PvP) end,
@@ -645,7 +695,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Race = {
-					order = 17,
+					order = 56,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Race' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -657,7 +707,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				RaceOrder = {
-					order = 18,
+					order = 57,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Race' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Race) end,
@@ -668,7 +718,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				RaceAlignment = {
-					order = 19,
+					order = 58,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Race' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Race) end,
@@ -683,7 +733,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Raid = {
-					order = 17,
+					order = 59,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Raid' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -695,7 +745,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				RaidOrder = {
-					order = 18,
+					order = 60,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Raid' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Raid) end,
@@ -706,7 +756,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				RaidAlignment = {
-					order = 19,
+					order = 61,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Raid' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Raid) end,
@@ -721,7 +771,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Rank = {
-					order = 17,
+					order = 62,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Rank' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -733,7 +783,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				RankOrder = {
-					order = 18,
+					order = 63,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Rank' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Rank) end,
@@ -744,7 +794,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				RankAlignment = {
-					order = 19,
+					order = 64,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Rank' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Rank) end,
@@ -759,7 +809,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Realm = {
-					order = 17,
+					order = 65,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Realm' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -771,7 +821,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				RealmOrder = {
-					order = 18,
+					order = 66,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Realm' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Realm) end,
@@ -782,7 +832,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				RealmAlignment = {
-					order = 19,
+					order = 67,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Realm' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Realm) end,
@@ -797,7 +847,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Spec = {
-					order = 17,
+					order = 68,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Spec' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -809,7 +859,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				SpecOrder = {
-					order = 18,
+					order = 69,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Spec' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Spec) end,
@@ -820,7 +870,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				SpecAlignment = {
-					order = 19,
+					order = 70,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Spec' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Spec) end,
@@ -835,7 +885,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Team = {
-					order = 17,
+					order = 71,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Team' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -847,7 +897,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				TeamOrder = {
-					order = 18,
+					order = 72,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Team' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Team) end,
@@ -858,7 +908,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				TeamAlignment = {
-					order = 19,
+					order = 73,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Team' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Team) end,
@@ -873,7 +923,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Version = {
-					order = 17,
+					order = 74,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Version' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -885,7 +935,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				VersionOrder = {
-					order = 18,
+					order = 75,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Version' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Version) end,
@@ -896,7 +946,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				VersionAlignment = {
-					order = 19,
+					order = 76,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Version' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Version) end,
@@ -911,7 +961,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
 				Zone = {
-					order = 17,
+					order = 77,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Zone' end,
 					name = XFG.Lib.Locale['ENABLE'],
@@ -923,7 +973,7 @@ XFG.Options.args.DataText = {
 					end
 				},
 				ZoneOrder = {
-					order = 18,
+					order = 78,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Zone' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Zone) end,
@@ -934,7 +984,7 @@ XFG.Options.args.DataText = {
 					set = function(info, value) SelectedMenuItem(info[#info], value) end
 				},
 				ZoneAlignment = {
-					order = 19,
+					order = 79,
 					type = 'select',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Zone' end,
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Zone) end,

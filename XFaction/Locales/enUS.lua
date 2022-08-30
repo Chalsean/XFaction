@@ -181,6 +181,12 @@ L['DT_HEADER_GUILD'] = 'Guild: |cffffffff%s|r'
 L['DT_CONFIG_BROKER'] = 'Show Broker Fields'
 L['DT_CONFIG_LABEL_TOOLTIP'] = 'Show broker label'
 L['DT_CONFIG_FACTION_TOOLTIP'] = 'Show faction counts in broker label'
+L['DT_CONFIG_FONT'] = 'Font'
+L['DT_CONFIG_FONT_TOOLTIP'] = 'Select font style'
+L['DT_CONFIG_FONT_SIZE'] = 'Font Size'
+L['DT_CONFIG_FONT_SIZE_TOOLTIP'] = 'Select font size'
+L['DTGENERAL_NAME'] = 'General'
+L['DTGENERAL_DESCRIPTION'] = 'Settings that will apply to all XFaction datatext'
 -------------------------
 -- DTGuild (X)
 -------------------------

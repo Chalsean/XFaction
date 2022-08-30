@@ -17,11 +17,6 @@ end
 function DTMetrics:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		self._HeaderFont = CreateFont('_HeaderFont')
-		self._HeaderFont:SetTextColor(0.4,0.78,1)
-		self._RegularFont = CreateFont('_RegularFont')
-		self._RegularFont:SetTextColor(255,255,255)
-
 		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTMETRICS_NAME'], {
 			type = 'data source',
 			label = XFG.Lib.Locale['DTMETRICS_NAME'],
@@ -32,6 +27,15 @@ function DTMetrics:Initialize()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
+end
+
+function DTMetrics:SetFont()
+	self._HeaderFont = CreateFont('_HeaderFont')
+	self._HeaderFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
+	self._HeaderFont:SetTextColor(0.4,0.78,1)
+	self._RegularFont = CreateFont('_RegularFont')
+	self._RegularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
+	self._RegularFont:SetTextColor(255,255,255)
 end
 
 function DTMetrics:Print()
