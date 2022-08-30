@@ -50,16 +50,6 @@ function Node:GetString()
     return self:GetName() .. ':' .. self:GetTarget():GetRealm():GetID() .. ':' .. self:GetTarget():GetFaction():GetKey()
 end
 
-function Node:SetObjectFromString(inLinkString)
-    assert(type(inLinkString) == 'string')
-    local _Node = string.Split(inLinkString, ':')  
-    self:SetKey(_Node[1])
-    self:SetName(_Node[1])
-    local _Realm = XFG.Realms:GetByID(tonumber(_Node[2]))
-    local _Faction = XFG.Factions:Get(tonumber(_Node[3]))
-    self:SetTarget(XFG.Targets:GetByRealmFaction(_Realm, _Faction))
-end
-
 function Node:GetLinkCount()
     return self._LinkCount
 end
@@ -76,7 +66,7 @@ end
 function Node:DecrementLinkCount()
     self._LinkCount = self._LinkCount - 1
     if(self:GetLinkCount() == 0) then
-        XFG.Nodes:Push(self)
+        XFG.Nodes:Remove(self)
     end
 end
 
@@ -84,5 +74,4 @@ function Node:FactoryReset()
     self:ParentFactoryReset()
     self._Target = nil
     self._LinkCount = 0
-    self:Initialize()
 end

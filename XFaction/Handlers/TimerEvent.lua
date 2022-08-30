@@ -42,6 +42,9 @@ function TimerEvent:CallbackLogin()
 		if(XFG.DB.Errors == nil) then XFG.DB.Errors = {} end
 		if(XFG.Config.Channels == nil) then XFG.Config.Channels = {} end
         XFG:LoadConfigs() 
+
+		-- Cache it because on shutdown, XFG.Config gets unloaded while we're still logging
+		XFG.Cache.Verbosity = XFG.Config.Debug.Verbosity
 		
 		-- Monitor other addons loading
 		XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
@@ -127,7 +130,7 @@ function TimerEvent:CallbackLogin()
 						_NewGuild:SetName(_GuildName)
 						_NewGuild:SetFaction(_Faction)
 						_NewGuild:SetRealm(_Realm)
-						_NewGuild:SetInitials(_GuildInitials)
+						_NewGuild:SetInitials(_GuildInitials)						
 						XFG.Guilds:Add(_NewGuild)
 					-- Local channel for same realm/faction communication
 					elseif(string.find(_Line, 'XFc')) then
@@ -178,7 +181,19 @@ function TimerEvent:CallbackLogin()
 
 				-- Ensure player is on supported realm
 				local _RealmName = GetRealmName()
-				XFG.Player.Realm = XFG.Realms:Get(_RealmName)
+				local _LocalRealm = XFG.Realms:Get(_RealmName)
+				for _, _RealmID in _LocalRealm:IDIterator() do
+					local _ConnectedRealm = XFG.Realms:GetByID(_RealmID)
+					for _, _Guild in XFG.Guilds:Iterator() do
+						if(_Guild:GetRealm():Equals(_ConnectedRealm) and _Guild:GetFaction():Equals(XFG.Player.Faction)) then
+							if(not _LocalRealm:Equals(_ConnectedRealm)) then
+								XFG:Info(ObjectName, 'Switching from local realm [%s] to connected realm [%s]', _LocalRealm:GetName(), _ConnectedRealm:GetName())
+							end
+							XFG.Player.Realm = _ConnectedRealm
+							break
+						end
+					end
+				end
 				if(XFG.Player.Realm == nil) then
 					error('Player is not on a supported realm: ' .. tostring(_RealmName))
 				end

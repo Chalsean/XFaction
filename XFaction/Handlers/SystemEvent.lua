@@ -22,7 +22,7 @@ function SystemEvent:Initialize()
 	end
 end
 
-function SystemEvent:CallbackLogout()
+function SystemEvent:CallbackLogout()    
     if(XFG.DB.UIReload) then 
         -- Backup information on reload to be restored
         XFG.Confederate:Backup()
@@ -43,6 +43,9 @@ function SystemEvent:CallbackLogout()
             _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
             _NewMessage:SetData(' ')
             XFG.Outbox:Send(_NewMessage)
+        end).
+        catch(function (inErrorMessage)
+            XFG.DB.Errors[#XFG.DB.Errors + 1] = 'Failed to send logoff message: ' .. inErrorMessage
         end).
         finally(function ()
             XFG.Mailbox:Push(_NewMessage)

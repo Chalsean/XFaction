@@ -15,7 +15,7 @@ function Link:new()
 end
 
 -- Key is important here because it helps us avoid duplicate entries when both nodes broadcast the link
-local function GetLinkKey(inFromName, inToName)
+function XFG:GetLinkKey(inFromName, inToName)
 	assert(type(inFromName) == 'string')
     assert(type(inToName) == 'string')
     local _Key = (inFromName < inToName) and inFromName .. ':' .. inToName or inToName .. ':' .. inFromName
@@ -27,7 +27,7 @@ function Link:Initialize()
         self:ParentInitialize()
         self:SetTimeStamp(ServerTime())
         if(self:HasFromNode() and self:HasToNode()) then
-            self:SetKey(GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName()))
+            self:SetKey(XFG:GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName()))
         end
         self:IsInitialized(true)
     end
@@ -82,23 +82,13 @@ function Link:SetObjectFromString(inLinkString)
     assert(type(inLinkString) == 'string')
 
     local _Nodes = string.Split(inLinkString, ';')
-    local _FromNode = XFG.Nodes:Pop()
-    _FromNode:SetObjectFromString(_Nodes[1])
-    if(XFG.Nodes:Contains(_FromNode:GetKey())) then
-        local _Key = _FromNode:GetKey()
-        XFG.Nodes:Push(_FromNode)
-        _FromNode = XFG.Nodes:Get(_Key)
-    else
-        XFG.Nodes:Add(_FromNode)
-    end
+    local _FromNode = XFG.Nodes:SetNodeFromString(_Nodes[1])
     self:SetFromNode(_FromNode)
 
     local _ToNode = XFG.Nodes:Pop()
     _ToNode:SetObjectFromString(_Nodes[2])
     if(XFG.Nodes:Contains(_ToNode:GetKey())) then
-        local _Key = _ToNode:GetKey()
-        XFG.Nodes:Push(_ToNode)
-        _ToNode = XFG.Nodes:Get(_Key)
+        _ToNode = XFG.Nodes:Get(_ToNode:GetKey())
     else
         XFG.Nodes:Add(_ToNode)
     end

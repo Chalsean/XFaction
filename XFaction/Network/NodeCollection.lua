@@ -52,3 +52,19 @@ end
 function NodeCollection:GetTargetCount(inTarget)
 	return self._TargetCount[inTarget:GetKey()] or 0
 end
+
+function NodeCollection:SetNodeFromString(inNodeString)
+    assert(type(inNodeString) == 'string')
+    local _NodeData = string.Split(inNodeString, ':') 
+	if(self:Contains(_NodeData[1])) then
+		return self:Get(_NodeData[1])
+	end
+	local _Node = self:Pop()
+    _Node:SetKey(_NodeData[1])
+    _Node:SetName(_NodeData[1])
+    local _Realm = XFG.Realms:GetByID(tonumber(_NodeData[2]))
+    local _Faction = XFG.Factions:Get(tonumber(_NodeData[3]))
+    _Node:SetTarget(XFG.Targets:GetByRealmFaction(_Realm, _Faction))
+	self:Add(_Node)
+	return _Node
+end
