@@ -76,7 +76,8 @@ function LinkCollection:SetLinkFromString(inLinkString)
     local _FromNode = XFG.Nodes:SetNodeFromString(_Nodes[1])
     local _ToNode = XFG.Nodes:SetNodeFromString(_Nodes[2])
 
-	if(_FromNode:IsMyNode() or _ToNode:IsMyNode()) then
+	-- Can remove equality check once everyone updates to 3.9.6
+	if(_FromNode:IsMyNode() or _ToNode:IsMyNode() or _FromNode:Equals(_ToNode)) then
 		return nil
 	end
 
