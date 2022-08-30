@@ -33,7 +33,6 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
         if(inAddonName == 'ElvUI') then
             XFG:Info(ObjectName, 'ElvUI addon has loaded')
 			XFG.ElvUI = ElvUI[1]
-            XFG.Frames.Chat:SetHandler()
             XFG.Nameplates.ElvUI = ElvUINameplate:new(); XFG.Nameplates.ElvUI:Initialize()
         elseif(inAddonName == 'WIM') then
             if(WIM.modules.GuildChat.enabled) then

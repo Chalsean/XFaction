@@ -76,9 +76,8 @@ XFG.Defaults = {
             Kui = {
                 Enable = true,
                 Icon = true,
-                Prepend = '',
                 GuildName = 'Confederate',
-                Append = '',
+                Hide = false,
             },
         },
         DataText = {

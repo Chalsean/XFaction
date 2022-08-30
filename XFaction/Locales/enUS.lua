@@ -152,7 +152,10 @@ L['CHAT_CHANNEL_DESCRIPTION'] = 'These options control the addon custom channel 
 --=========================================================================
 L['NAMEPLATES'] = 'Nameplates'
 L['CONFEDERATE_INITIALS'] = 'Confederate Initials'
+L['CONFEDERATE_NAME'] = 'Confederate Name'
 L['GUILD_INITIALS'] = 'Guild Initials'
+L['GUILD_NAME'] = 'Guild Name'
+L['NAMEPLATE_GUILD_NAME_TOOLTIP'] = 'Replace guild name with the selected option if the guild is in the confederate'
 L['ELVUI'] = 'ElvUI'
 L['NAMEPLATE_ELVUI_DESCRIPTION'] = 'Add oUF tags that can be used in ElvUI UnitFrames. Note the other player needs to be running XFaction in order for this to work properly.'
 L['NAMEPLATE_ELVUI_CONFEDERATE'] = 'Name of the confederate'
@@ -163,31 +166,13 @@ L['NAMEPLATE_ELVUI_MAIN_PARENTHESIS'] = "Name of the player's main raiding chara
 L['NAMEPLATE_ELVUI_TEAM'] = "Name of the player's raid team"
 L['NAMEPLATE_ELVUI_MEMBER_ICON'] = 'Icon to represent whether the player is a member of the confederate'
 L['KUI'] = 'Kui'
-L['NAMEPLATE_KUI_DESCRIPTION'] = 'Options to modify tags shown on Kui nameplates.'
-L['NAMEPLATE_KUI_ICON'] = 'Member Icon'
-L['NAMEPLATE_KUI_ICON_TOOLTIP'] = 'Display an icon next to confederate members name'
-L['NAMEPLATE_KUI_GUILD_TEXT'] = 'Guild Text'
-L['NAMEPLATE_KUI_GUILD_PREPEND'] = 'Prepend'
-L['NAMEPLATE_KUI_GUILD_NAME'] = 'Name'
-L['NAMEPLATE_KUI_GUILD_APPEND'] = 'Append'
-L['NAMEPLATE_KUI_CONFEDERATE'] = 'Confederate Name'
-L['NAMEPLATE_KUI_CONFEDERATE_TOOLTIP'] = 'Replace guild name with confederate name'
-L['NAMEPLATE_KUI_GUILD_INITIALS'] = 'Guild Initials'
-L['NAMEPLATE_KUI_GUILD_INITIALS_TOOLTIP'] = 'Replace guild name with guild initials'
+L['NAMEPLATE_KUI_DESCRIPTION'] = 'Options to change Kui nameplates information. Upon selection, you will need to reload your UI to see the changes.'
+L['NAMEPLATE_ICON'] = 'Member Icon'
+L['NAMEPLATE_ICON_TOOLTIP'] = 'Display an icon next to confederate members name'
 L['NAMEPLATE_KUI_MAIN'] = 'Main Name'
 L['NAMEPLATE_KUI_MAIN_TOOLTIP'] = "Append player's main raiding name to unit name"
-L['NAMEPLATE_KUI_TEAM'] = 'Team Name'
-L['NAMEPLATE_KUI_TEAM_TOOLTIP'] = "Replace guild name with player's raid team name"
-L['NAMEPLATE_KUI_APPEND_TEAM'] = 'Append Team Name'
-L['NAMEPLATE_KUI_APPEND_TEAM_TOOLTIP'] = "Append player's raid team name to guild/confederate name"
-L['PLATER'] = 'Plater'
-L['NAMEPLATE_PLATER_DESCRIPTION'] = 'Modify Plater Nameplates'
-L['NAMEPLATE_PLATER_CONFEDERATE'] = 'Confederate Name'
-L['NAMEPLATE_PLATER_CONFEDERATE_TOOLTIP'] = 'Replace guild name with confederate name'
-L['NAMEPLATE_PLATER_MAIN'] = 'Main Name'
-L['NAMEPLATE_PLATER_MAIN_TOOLTIP'] = "Append player's main raiding name to unit name"
-L['NAMEPLATE_PLATER_TEAM'] = 'Team Name'
-L['NAMEPLATE_PLATER_TEAM_TOOLTIP'] = "Append player's raid team name to confederate name"
+L['NAMEPLATE_GUILD_HIDE'] = 'Hide Non-Confederate'
+L['NAMEPLATE_GUILD_HIDE_TOOLTIP'] = 'Hide non-confederate guild tags'
 --=========================================================================
 -- DataText Specific
 --=========================================================================
