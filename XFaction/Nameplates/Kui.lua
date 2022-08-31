@@ -9,7 +9,7 @@ function XFG.Nameplates.Kui:Show(f)
     if(XFG.Config and XFG.Config.Nameplates.Kui.Enable and UnitIsPlayer(f.unit)) then
         if(XFG.Config.Nameplates.Kui.MainName) then
             local _GUID = UnitGUID(f.unit)
-            if(XFG.Confederate:Contains(_GUID)) then
+            if(_GUID and XFG.Confederate:Contains(_GUID)) then
                 local _Unit = XFG.Confederate:Get(_GUID)
                 if(_Unit:HasMainName()) then
                     f.state.name = f.state.name .. ' (' .. _Unit:GetMainName() .. ')'
@@ -17,7 +17,7 @@ function XFG.Nameplates.Kui:Show(f)
             end
         end
 
-        if(XFG.Guilds:ContainsName(f.state.guild_text)) then
+        if(f.state.guild_text and XFG.Guilds:ContainsName(f.state.guild_text)) then
             if(XFG.Config.Nameplates.Kui.Icon) then
                 f.state.name = XFG.Media:Get(XFG.Icons.Guild):GetTexture() .. f.state.name
             end
@@ -27,7 +27,8 @@ function XFG.Nameplates.Kui:Show(f)
                 f.state.guild_text = XFG.Confederate:GetName()
             elseif(XFG.Config.Nameplates.Kui.GuildName == 'ConfederateInitials') then
                 f.state.guild_text = XFG.Confederate:GetKey()
-            elseif(XFG.Config.Nameplates.Kui.GuildName == 'Team') then                
+            elseif(XFG.Config.Nameplates.Kui.GuildName == 'Team') then  
+                local _GUID = UnitGUID(f.unit)              
                 if(XFG.Confederate:Contains(_GUID)) then
                     f.state.guild_text = XFG.Confederate:Get(_GUID):GetTeam():GetName()
                 else

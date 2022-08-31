@@ -294,8 +294,9 @@ function TimerEvent:CallbackLogin()
 				if(XFG.Settings.Network.Channel.Password ~= nil) then
 					_NewChannel:SetPassword(XFG.Settings.Network.Channel.Password)
 				end
-				XFG.Channels:Add(_NewChannel)            
+				XFG.Channels:Add(_NewChannel)
 				XFG.Outbox:SetLocalChannel(_NewChannel)
+				XFG.Channels:SetLast(_NewChannel:GetKey())
 
 				-- Start critical timers
 				XFG.Timers:Add('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, false)
