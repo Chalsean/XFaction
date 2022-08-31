@@ -1,3 +1,13 @@
+### Version 3.10
+[XFaction]
+- Implemented workaround to avoid Blizz API bug with community channels
+- Added the following options for Kui Nameplates:
+  - Confederate name, initials
+  - Guild initials
+  - Player's main raiding character
+  - Team name
+  - Member icon
+
 ### Version 3.9
 [XFaction]
 - Updated to 9.2.7
