@@ -139,30 +139,28 @@ function Unit:Initialize(inMemberID)
             self:SetItemLevel(_ItemLevel)
         end
 
-        if(XFG.WoW:IsRetail()) then
-            local _CovenantID = C_Covenants.GetActiveCovenantID()
-            if(XFG.Covenants:Contains(_CovenantID)) then
-                self:SetCovenant(XFG.Covenants:Get(_CovenantID))
-            end
+        local _CovenantID = C_Covenants.GetActiveCovenantID()
+        if(XFG.Covenants:Contains(_CovenantID)) then
+            self:SetCovenant(XFG.Covenants:Get(_CovenantID))
+        end
 
-            local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
-            if(XFG.Soulbinds:Contains(_SoulbindID)) then
-                self:SetSoulbind(XFG.Soulbinds:Get(_SoulbindID))
-            else
-                -- If you switched covenants and target covenant you have not unlocked soulbinds
-                self:ClearSoulbind()
-            end
+        local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
+        if(XFG.Soulbinds:Contains(_SoulbindID)) then
+            self:SetSoulbind(XFG.Soulbinds:Get(_SoulbindID))
+        else
+            -- If you switched covenants and target covenant you have not unlocked soulbinds
+            self:ClearSoulbind()
+        end
 
-            -- If in Oribos, enable Covenant event listener
-            local _Event = XFG.Events:Get('Covenant')   
-            if(_Event ~= nil) then
-                if(self:GetZone():GetName() == 'Oribos') then
-                    if(not _Event:IsEnabled()) then
-                        _Event:Start()
-                    end
-                elseif(_Event:IsEnabled()) then
-                    _Event:Stop()
+        -- If in Oribos, enable Covenant event listener
+        local _Event = XFG.Events:Get('Covenant')   
+        if(_Event ~= nil) then
+            if(self:GetZone():GetName() == 'Oribos') then
+                if(not _Event:IsEnabled()) then
+                    _Event:Start()
                 end
+            elseif(_Event:IsEnabled()) then
+                _Event:Stop()
             end
         end
 

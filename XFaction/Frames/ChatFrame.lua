@@ -71,7 +71,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRe
                     end
 
                     if(inType == 'GUILD_ACHIEVEMENT') then
-                        _Text = _Text .. XFG.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(GetAchievementLink(inData), "(Player.-:.-:.-:.-:.-:)"  , inFrom .. ':1:' .. date("%m:%d:%y:") ) .. '!'
+                        _Text = format(ACHIEVEMENT_BROADCAST, _Text, gsub(GetAchievementLink(inData), "(Player.-:.-:.-:.-:.-:)"  , inFrom .. ':1:' .. date("%m:%d:%y:") ))
                     else
                         _Text = _Text .. inData
                     end

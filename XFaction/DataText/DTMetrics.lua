@@ -109,8 +109,8 @@ function DTMetrics:OnEnter(this)
 	line = self._Tooltip:AddHeader()
 
 	self._Tooltip:SetCell(line, 1, XFG.Lib.Locale['DTMETRICS_HEADER_METRIC'], self._HeaderFont, 'LEFT')
-	self._Tooltip:SetCell(line, 2, XFG.Lib.Locale['DTMETRICS_HEADER_TOTAL'], self._HeaderFont, 'CENTER')
-	self._Tooltip:SetCell(line, 3, XFG.Lib.Locale['DTMETRICS_HEADER_AVERAGE'], self._HeaderFont, 'RIGHT')
+	self._Tooltip:SetCell(line, 2, TOTAL, self._HeaderFont, 'CENTER')
+	self._Tooltip:SetCell(line, 3, GMSURVEYRATING3, self._HeaderFont, 'RIGHT')
 
 	line = self._Tooltip:AddLine()
 	self._Tooltip:AddSeparator()

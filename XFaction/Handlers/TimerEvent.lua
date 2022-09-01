@@ -222,11 +222,8 @@ function TimerEvent:CallbackLogin()
 				XFG.Professions = ProfessionCollection:new(); XFG.Professions:Initialize()
 				XFG.Continents = ContinentCollection:new(); XFG.Continents:Initialize()
 				XFG.Zones = ZoneCollection:new(); XFG.Zones:Initialize()
-										
-				if(XFG.WoW:IsRetail()) then
-					XFG.Covenants = CovenantCollection:new(); XFG.Covenants:Initialize()
-					XFG.Soulbinds = SoulbindCollection:new(); XFG.Soulbinds:Initialize()
-				end
+				XFG.Covenants = CovenantCollection:new(); XFG.Covenants:Initialize()
+				XFG.Soulbinds = SoulbindCollection:new(); XFG.Soulbinds:Initialize()
 
 				-- If this is a reload, restore non-local guild members
 				try(function ()

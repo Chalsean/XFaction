@@ -173,7 +173,7 @@ XFG.Settings = {
 		BNetReceive = XFG.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
 		ChannelSend = XFG.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
 		ChannelReceive = XFG.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
-		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
+		Error = CHAT_MSG_COMBAT_LOG_ERROR,
 		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
 	},
 	Factories = {
