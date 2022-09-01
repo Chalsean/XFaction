@@ -87,6 +87,8 @@ The addon should provide the following functionalities:
 
 > LibRealmInfo (*modified)
 
+> LibSharedMedia
+
 > LibSpec
 
 > LibTourist

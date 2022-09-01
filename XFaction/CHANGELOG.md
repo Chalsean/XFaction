@@ -1,6 +1,8 @@
 ### Version 3.10
 [XFaction]
+- Selectable font type and size for Guild, Links and Metrics DTs
 - Implemented workaround to avoid Blizz API bug with community channels
+- Converted many localized text to Blizz globalstrings
 - Added the following options for Kui Nameplates:
   - Confederate name, initials
   - Guild initials
