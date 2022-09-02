@@ -15,14 +15,14 @@ XFG.Options.args.Chat = {
 				Header = {
 					order = 1,
 					type = 'group',
-					name = XFG.Lib.Locale['CHAT_GUILD'],
+					name = XFG.Lib.Locale['DESCRIPTION'],
 					inline = true,
 					args = {
 						Description = {
 							order = 1,
 							type = 'description',
 							fontSize = 'medium',
-							name = XFG.Lib.Locale['DESCRIPTION'],
+							name = XFG.Lib.Locale['CHAT_GUILD_DESCRIPTION'],
 						},
 					}
 				},

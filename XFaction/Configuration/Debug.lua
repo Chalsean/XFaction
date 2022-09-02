@@ -2,7 +2,7 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Config'
 
 XFG.Options.args.Debug = {
-	name = DEBUG_BUILD,
+	name = XFG.Lib.Locale['DEBUG'],
 	order = 1,
 	type = 'group',
 	args = {
@@ -15,7 +15,7 @@ XFG.Options.args.Debug = {
 				Enable = {
 					order = 1,
 					type = 'toggle',
-					name = ENABLE,
+					name = XFG.Lib.Locale['ENABLE'],
 					desc = XFG.Lib.Locale['DEBUG_LOG_ENABLE'],
 					get = function(info) return XFG.Config.Debug[ info[#info] ] end,
 					set = function(info, value) 
@@ -55,7 +55,7 @@ XFG.Options.args.Debug = {
 			args = {
 				Channel = {
 					order = 1,
-					name = CHANNEL,
+					name = XFG.Lib.Locale['CHANNEL'],
 					type = 'execute',
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function() XFG.Channels:Print() end,
@@ -63,7 +63,7 @@ XFG.Options.args.Debug = {
 				Class = {
 					order = 2,
 					type = 'execute',
-					name = CLASS,
+					name = XFG.Lib.Locale['CLASS'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function() XFG.Classes:Print() end,
 				},
@@ -77,7 +77,7 @@ XFG.Options.args.Debug = {
 				Continent = {
 					order = 4,
 					type = 'execute',
-					name = CONTINENT,
+					name = XFG.Lib.Locale['CONTINENT'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Continents:Print() end,
 				},
@@ -98,21 +98,21 @@ XFG.Options.args.Debug = {
 				Faction = {
 					order = 7,
 					type = 'execute',
-					name = FACTION,
+					name = XFG.Lib.Locale['FACTION'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Factions:Print() end,
 				},
 				Friend = {
 					order = 14,
 					type = 'execute',
-					name = FRIEND,
+					name = XFG.Lib.Locale['FRIEND'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Friends:Print() end,
 				},
 				Guild = {
 					order = 15,
 					type = 'execute',
-					name = GUILD,
+					name = XFG.Lib.Locale['GUILD'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Guilds:Print() end,
 				},
@@ -133,21 +133,21 @@ XFG.Options.args.Debug = {
 				Player = {
 					order = 18,
 					type = 'execute',
-					name = STATUS_TEXT_PLAYER,
+					name = XFG.Lib.Locale['PLAYER'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Player.Unit:Print() end,
 				},
 				Profession = {
 					order = 19,
 					type = 'execute',
-					name = 	TRADE_SKILLS,
+					name = 	XFG.Lib.Locale['PROFESSION'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Professions:Print() end,
 				},
 				Race = {
 					order = 20,
 					type = 'execute',
-					name = RACE,
+					name = XFG.Lib.Locale['RACE'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Races:Print() end,
 				},
@@ -161,7 +161,7 @@ XFG.Options.args.Debug = {
 				Realm = {
 					order = 22,
 					type = 'execute',
-					name = VAS_REALM_LABEL,
+					name = XFG.Lib.Locale['REALM'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Realms:Print() end,
 				},				
@@ -175,21 +175,21 @@ XFG.Options.args.Debug = {
 				Spec = {
 					order = 24,
 					type = 'execute',
-					name = SPECIALIZATION,
+					name = XFG.Lib.Locale['SPEC'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Specs:Print() end,
 				},
 				Target = {
 					order = 25,
 					type = 'execute',
-					name = STATUS_TEXT_TARGET,
+					name = XFG.Lib.Locale['TARGET'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Targets:Print() end,
 				},
 				Team = {
 					order = 26,
 					type = 'execute',
-					name = TEAM,
+					name = XFG.Lib.Locale['TEAM'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Teams:Print() end,
 				},
@@ -203,7 +203,7 @@ XFG.Options.args.Debug = {
 				Zone = {
 					order = 28,
 					type = 'execute',
-					name = ZONE,
+					name = XFG.Lib.Locale['ZONE'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Zones:Print() end,
 				},
