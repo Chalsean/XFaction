@@ -10,7 +10,18 @@ ChannelCollection = ObjectCollection:newChildConstructor()
 function ChannelCollection:new()
     local _Object = ChannelCollection.parent.new(self)
 	_Object.__name = ObjectName
+	_Object._LocalChannel = nil
     return _Object
+end
+
+function ChannelCollection:Print()
+    if(XFG.DebugFlag) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  _LocalChannel (' .. type(self._LocalChannel) .. ')')
+        if(self._LocalChannel ~= nil) then
+            self._LocalChannel:Print()
+        end
+    end
 end
 
 function ChannelCollection:GetByID(inID)
@@ -90,4 +101,21 @@ function ChannelCollection:Scan()
 	catch(function (inErrorMessage)
 		XFG:Warn(ObjectName, inErrorMessage)
 	end)
+end
+
+function ChannelCollection:HasLocalChannel()
+    return self._LocalChannel ~= nil
+end
+
+function ChannelCollection:GetLocalChannel()
+    return self._LocalChannel
+end
+
+function ChannelCollection:SetLocalChannel(inChannel)
+    assert(type(inChannel) == 'table' and inChannel.__name ~= nil and inChannel.__name == 'Channel', "argument must be Channel object")
+    self._LocalChannel = inChannel
+end
+
+function ChannelCollection:VoidLocalChannel()
+    self._LocalChannel = nil
 end

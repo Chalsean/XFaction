@@ -33,7 +33,7 @@ function PlayerEvent:CallbackPlayerChanged(inEvent)
         --XFG:Info(ObjectName, 'Updated player data based on %s event', inEvent)
 
         if(inEvent ~= 'SOULBIND_ACTIVATED') then
-            XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
+            XFG.Player.Unit:Broadcast()
         end
 
         if(inEvent == 'COVENANT_CHOSEN' or inEvent == 'SOULBIND_ACTIVATED') then
@@ -58,15 +58,13 @@ function PlayerEvent:CallbackZoneChanged()
                 end
                 XFG.Player.Unit:SetZone(_Zone)
                 XFG:Info(ObjectName, 'Updated player data based on ZONE_CHANGED_NEW_AREA event')
-                if(XFG.WoW:IsRetail()) then
-                    local _Event = XFG.Events:Get('Covenant')
-                    if(XFG.Player.Unit:GetZone():GetName() == 'Oribos') then
-                        if(not _Event:IsEnabled()) then
-                            _Event:Start()
-                        end
-                    elseif(_Event:IsEnabled()) then
-                        _Event:Stop()
+                local _Event = XFG.Events:Get('Covenant')
+                if(XFG.Player.Unit:GetZone():GetName() == 'Oribos') then
+                    if(not _Event:IsEnabled()) then
+                        _Event:Start()
                     end
+                elseif(_Event:IsEnabled()) then
+                    _Event:Stop()
                 end
             end
         end).
@@ -85,7 +83,7 @@ function PlayerEvent:CallbackSkillChanged()
             if(not _Profession:Equals(XFG.Player.Unit:GetProfession1())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
-                XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
+                XFG.Player.Unit:Broadcast()
                 return
             end
         end
@@ -95,7 +93,7 @@ function PlayerEvent:CallbackSkillChanged()
             if(not _Profession:Equals(XFG.Player.Unit:GetProfession2())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
-                XFG.Outbox:BroadcastUnitData(XFG.Player.Unit)
+                XFG.Player.Unit:Broadcast()
                 return
             end
         end

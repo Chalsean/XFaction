@@ -265,10 +265,8 @@ function TimerEvent:CallbackLogin()
 				end
 
 				-- Start network setup
-				XFG.Mailbox = Mailbox:new(); XFG.Mailbox:Initialize()
-				XFG.Outbox = Outbox:new()
-				XFG.Inbox = Inbox:new(); XFG.Inbox:Initialize()            
-				XFG.BNet = BNet:new(); BNet:Initialize()
+				XFG.Mailbox.Chat = Chat:new(); XFG.Mailbox.Chat:Initialize()
+				XFG.Mailbox.BNet = BNet:new(); XFG.Mailbox.BNet:Initialize()
 				XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()
 				XFG.Friends = FriendCollection:new(); XFG.Friends:Initialize()
 				XFG.Nodes = NodeCollection:new(); XFG.Nodes:Initialize()
@@ -292,7 +290,7 @@ function TimerEvent:CallbackLogin()
 					_NewChannel:SetPassword(XFG.Settings.Network.Channel.Password)
 				end
 				XFG.Channels:Add(_NewChannel)
-				XFG.Outbox:SetLocalChannel(_NewChannel)
+				XFG.Channels:SetLocalChannel(_NewChannel)
 				XFG.Channels:SetLast(_NewChannel:GetKey())
 
 				-- Start critical timers
@@ -336,7 +334,6 @@ function TimerEvent:CallbackLogin()
 						
 				-- Non-critcal path initialization
 				XFG.Timers:Add('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, true, false, false)
-				XFG.Timers:Add('BNetMailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackBNetMailboxTimer, true, false, false)
 				XFG.Timers:Add('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, true, false)
 				XFG.Timers:Add('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, true, false)
 				XFG.Timers:Add('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, true, false)
@@ -374,8 +371,7 @@ end
 function TimerEvent:CallbackDelayedStartTimer()
 	try(function ()
 		if(not XFG.DB.UIReload) then
-			XFG.Channels:SetLast(XFG.Outbox:GetLocalChannel():GetKey())
-			XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.LOGIN)
+			XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
 			XFG.Links:Broadcast()
 		end
 	end).
@@ -401,26 +397,14 @@ end
 -- Cleanup mailbox
 function TimerEvent:CallbackMailboxTimer()
 	try(function ()
-		XFG.Mailbox:Purge(ServerTime() - XFG.Settings.Network.Mailbox.Stale)
+		XFG.Mailbox.Chat:Purge(ServerTime() - XFG.Settings.Network.Mailbox.Stale)
+		XFG.Mailbox.BNet:Purge(ServerTime() - XFG.Settings.Network.Mailbox.Stale)
 	end).
 	catch(function (inErrorMessage)
 		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
 		XFG.Timers:Get('Mailbox'):SetLastRan(ServerTime())
-	end)
-end
-
--- Cleanup BNet mailbox
-function TimerEvent:CallbackBNetMailboxTimer()
-	try(function ()
-		XFG.BNet:Purge(ServerTime() - XFG.Settings.Network.Mailbox.Stale)
-	end).
-	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, inErrorMessage)
-	end).
-	finally(function ()
-		XFG.Timers:Get('BNetMailbox'):SetLastRan(ServerTime())
 	end)
 end
 
@@ -442,7 +426,7 @@ function TimerEvent:CallbackHeartbeat()
 	try(function ()
 		if(XFG.Initialized and XFG.Player.LastBroadcast < ServerTime() - XFG.Settings.Player.Heartbeat) then
 			XFG:Debug(ObjectName, 'Sending heartbeat')
-			XFG.Outbox:BroadcastUnitData(XFG.Player.Unit, XFG.Settings.Network.Message.Subject.DATA)
+			XFG.Player.Unit:Broadcast()
 		end
 	end).
 	catch(function (inErrorMessage)
@@ -473,7 +457,7 @@ function TimerEvent:CallbackPingFriends()
     try(function()
 	    for _, _Friend in XFG.Friends:Iterator() do
 			if(not _Friend:IsRunningAddon()) then
-				XFG.BNet:PingFriend(_Friend)
+				_Friend:Ping()
 			end
 	    end
 	end).

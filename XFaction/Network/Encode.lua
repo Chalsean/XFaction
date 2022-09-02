@@ -82,7 +82,7 @@ function XFG:SerializeUnitData(inUnitData)
 	return XFG:Serialize(_MessageData)
 end
 
-function XFG:EncodeMessage(inMessage, inEncodeUnitData)
+function XFG:EncodeChatMessage(inMessage, inEncodeUnitData)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
 	local _Serialized = SerializeMessage(inMessage, inEncodeUnitData)
 	local _Compressed = Deflate:CompressDeflate(_Serialized, {level = XFG.Settings.Network.CompressionLevel})

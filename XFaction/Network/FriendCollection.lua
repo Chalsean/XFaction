@@ -118,6 +118,7 @@ function FriendCollection:CheckFriend(inKey)
 			error('Received nil for friend [%d]', inKey)
 		end
 
+		_AccountInfo.ID = inKey
 		local _CanLink, _Target = CanLink(_AccountInfo)
 
 		-- Did they go offline?
@@ -136,14 +137,7 @@ function FriendCollection:CheckFriend(inKey)
 			local _NewFriend = nil
 			try(function ()
 				_NewFriend = self:Pop()
-				_NewFriend:SetKey(_AccountInfo.bnetAccountID)
-				_NewFriend:SetID(inKey)
-				_NewFriend:SetAccountID(_AccountInfo.bnetAccountID)
-				_NewFriend:SetGameID(_AccountInfo.gameAccountInfo.gameAccountID)
-				_NewFriend:SetAccountName(_AccountInfo.accountName)
-				_NewFriend:SetTag(_AccountInfo.battleTag)
-				_NewFriend:SetName(_AccountInfo.gameAccountInfo.characterName)
-				_NewFriend:SetTarget(_Target)
+				_NewFriend:SetFromAccountInfo(_AccountInfo)
 				self:Add(_NewFriend)
 			end).
 			catch(function (inErrorMessage)
@@ -155,7 +149,7 @@ function FriendCollection:CheckFriend(inKey)
 			end
 			-- Ping them to see if they're running the addon
 			if(XFG.Initialized) then 
-				XFG.BNet:PingFriend(_NewFriend) 
+				_NewFriend:Ping() 
 			end
 		end
 	end).

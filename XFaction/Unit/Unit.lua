@@ -9,6 +9,7 @@ local GetAverageIlvl = GetAverageItemLevel
 local GetSpecGroupID = GetSpecialization
 local GetSpecID = GetSpecializationInfo
 local GetPvPRating = GetPersonalRatedInfo
+local GetPlayerBNetInfo = BNGetInfo
 
 Unit = Object:newChildConstructor()
 
@@ -676,6 +677,34 @@ function Unit:GetLink()
     end
 
     return format('player:%s', self:GetUnitName())
+end
+
+function Unit:Broadcast(inSubject)
+    assert(type(inSubject) == 'string' or inSubject == nil)
+	if(inSubject == nil) then inSubject = XFG.Settings.Network.Message.Subject.DATA end
+    -- Update the last sent time, dont need to heartbeat for awhile
+    if(self:IsPlayer()) then
+        local _EpochTime = ServerTime()
+        if(XFG.Player.LastBroadcast > _EpochTime - XFG.Settings.Player.MinimumHeartbeat) then 
+            XFG:Debug(ObjectName, 'Not sending broadcast, its been too recent')
+            return 
+        end
+        self:SetTimeStamp(_EpochTime)
+        XFG.Player.LastBroadcast = self:GetTimeStamp()
+    end
+    local _Message = nil
+    try(function ()
+        _Message = XFG.Mailbox.Chat:Pop()
+        _Message:Initialize()
+        _Message:SetFrom(XFG.Player.Unit:GetKey())
+        _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
+        _Message:SetSubject(inSubject)
+        _Message:SetData(self)
+        XFG.Mailbox.Chat:Send(_Message)
+    end).
+    finally(function ()
+        XFG.Mailbox.Chat:Push(_Message)
+    end)
 end
 
 -- Usually a key check is enough for equality check, but use case is to detect any data differences

@@ -1,7 +1,7 @@
 local addon, Engine = ...
 local LogCategory = 'Constants'
 
-local XFG = LibStub('AceAddon-3.0'):NewAddon(addon, "AceConsole-3.0", "AceHook-3.0", "AceSerializer-3.0", "AceComm-3.0")
+local XFG = LibStub('AceAddon-3.0'):NewAddon(addon, "AceConsole-3.0", "AceHook-3.0", "AceSerializer-3.0")
 
 Engine[1] = XFG
 Engine[2] = G
@@ -18,6 +18,7 @@ XFG.DataText = {}
 XFG.Factories = {}
 XFG.Frames = {}
 XFG.Handlers = {}
+XFG.Mailbox = {}
 XFG.Nameplates = {}
 
 XFG.Initialized = false
@@ -46,6 +47,7 @@ XFG.Lib = {
 	LSM = LibStub('LibSharedMedia-3.0'),
 	LSMList = AceGUIWidgetLSMlists,
 }
+XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 
 XFG.Player = {
 	LastBroadcast = 0,
@@ -123,8 +125,11 @@ XFG.Settings = {
 			Name = nil,
 			Password = nil
 		},
-		BNet = {
-			PacketSize = 420,
+		Chat = {
+			PacketSize = 217,
+		},
+		BNet = {	
+			PacketSize = 425,	
 			Ping = {
 				Timer = 60,         -- Seconds between pinging friends
 			},

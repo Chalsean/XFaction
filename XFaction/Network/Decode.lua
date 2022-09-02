@@ -5,20 +5,20 @@ local Deflate = XFG.Lib.Deflate
 local ServerTime = GetServerTime
 local RaiderIO = _G.RaiderIO
 
-local function DeserializeMessage(inSerializedMessage)
-	local _, _MessageData = XFG:Deserialize(inSerializedMessage)
-	local _Message = XFG.Mailbox:Pop()
-	_Message:Initialize()
-	
-	if(_MessageData.K ~= nil) then	_Message:SetKey(_MessageData.K)	end
-	if(_MessageData.T ~= nil) then	_Message:SetTo(_MessageData.T)	end
-	if(_MessageData.F ~= nil) then _Message:SetFrom(_MessageData.F)	end	
-	if(_MessageData.S ~= nil) then _Message:SetSubject(_MessageData.S) end
-	if(_MessageData.Y ~= nil) then	_Message:SetType(_MessageData.Y) end	
-	if(_MessageData.I ~= nil) then	_Message:SetTimeStamp(_MessageData.I) end	
-	if(_MessageData.A ~= nil) then _Message:SetRemainingTargets(_MessageData.A) end
-	if(_MessageData.P ~= nil) then _Message:SetPacketNumber(_MessageData.P) end
-	if(_MessageData.Q ~= nil) then _Message:SetTotalPackets(_MessageData.Q) end
+local function DeserializeMessage(inObject, inCompressedData)
+	local _Decompressed = Deflate:DecompressDeflate(inCompressedData)
+	local _, _MessageData = XFG:Deserialize(_Decompressed)
+	inObject:Initialize()
+
+	if(_MessageData.K ~= nil) then inObject:SetKey(_MessageData.K)	end
+	if(_MessageData.T ~= nil) then inObject:SetTo(_MessageData.T)	end
+	if(_MessageData.F ~= nil) then inObject:SetFrom(_MessageData.F)	end
+	if(_MessageData.S ~= nil) then inObject:SetSubject(_MessageData.S) end
+	if(_MessageData.Y ~= nil) then inObject:SetType(_MessageData.Y) end	
+	if(_MessageData.I ~= nil) then inObject:SetTimeStamp(_MessageData.I) end	
+	if(_MessageData.A ~= nil) then inObject:SetRemainingTargets(_MessageData.A) end
+	if(_MessageData.P ~= nil) then inObject:SetPacketNumber(_MessageData.P) end
+	if(_MessageData.Q ~= nil) then inObject:SetTotalPackets(_MessageData.Q) end
 	if(_MessageData.V ~= nil) then 
 		local _Version = XFG.Versions:Get(_MessageData.V)
 		if(_Version == nil) then
@@ -26,32 +26,34 @@ local function DeserializeMessage(inSerializedMessage)
 			_Version:SetKey(_MessageData.V)
 			XFG.Versions:Add(_Version)
 		end
-		_Message:SetVersion(_Version) 
+		inObject:SetVersion(_Version)
 	end
 
-	if(_MessageData.M ~= nil) then _Message:SetMainName(_MessageData.M) end
-	if(_MessageData.U ~= nil) then _Message:SetUnitName(_MessageData.U) end
+	if(_MessageData.M ~= nil) then inObject:SetMainName(_MessageData.M) end
+	if(_MessageData.U ~= nil) then inObject:SetUnitName(_MessageData.U) end
 	if(_MessageData.N ~= nil) then 
-		_Message:SetName(_MessageData.N) 
+		inObject:SetName(_MessageData.N) 
 	elseif(_MessageData.U ~= nil) then
-		_Message:SetName(_Message:GetUnitName()) 
+		inObject:SetName(_Message:GetUnitName()) 
 	end
 	if(_MessageData.R ~= nil) then
-		_Message:SetRealm(XFG.Realms:GetByID(_MessageData.R))
+		inObject:SetRealm(XFG.Realms:GetByID(_MessageData.R))
 		if(_MessageData.G ~= nil) then
-			_Message:SetGuild(XFG.Guilds:GetByRealmGuildName(_Message:GetRealm(), _MessageData.G))
+			inObject:SetGuild(XFG.Guilds:GetByRealmGuildName(inObject:GetRealm(), _MessageData.G))
 		end
 	end		
 
 	-- Leave any UnitData serialized for now
-	_Message:SetData(_MessageData.D)
-	return _Message
+	inObject:SetData(_MessageData.D)
+	return inObject
 end
 
 function XFG:DeserializeUnitData(inData)
 	local _, _DeserializedData = XFG:Deserialize(inData)
 	local _UnitData = XFG.Confederate:Pop()
 	_UnitData:IsRunningAddon(true)
+	_UnitData:SetRace(XFG.Races:Get(_DeserializedData.A))
+	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
 	if(_DeserializedData.C ~= nil) then
 		_UnitData:SetCovenant(XFG.Covenants:Get(_DeserializedData.C))
 	end
@@ -59,7 +61,6 @@ function XFG:DeserializeUnitData(inData)
 	_UnitData:SetGUID(_DeserializedData.K)
 	_UnitData:SetKey(_DeserializedData.K)
 	_UnitData:SetClass(XFG.Classes:Get(_DeserializedData.O))
-	_UnitData:SetRace(XFG.Races:Get(_DeserializedData.A))
 	local _UnitNameParts = string.Split(_DeserializedData.U, '-')
 	_UnitData:SetName(_UnitNameParts[1])
 	_UnitData:SetUnitName(_DeserializedData.U)
@@ -96,7 +97,6 @@ function XFG:DeserializeUnitData(inData)
 		_UnitData:SetZone(XFG.Zones:Get(_DeserializedData.Z))
 	end
 
-	if(_DeserializedData.B ~= nil) then _UnitData:SetAchievementPoints(_DeserializedData.B) end
 	if(_DeserializedData.Y ~= nil) then _UnitData:SetPvPString(_DeserializedData.Y) end
 	if(_DeserializedData.X ~= nil) then 
 		local _Version = XFG.Versions:Get(_DeserializedData.X)
@@ -116,14 +116,12 @@ function XFG:DeserializeUnitData(inData)
 	return _UnitData
 end
 
-function XFG:DecodeMessage(inEncodedMessage)
+function XFG:DecodeChatMessage(inEncodedMessage)
 	local _Decoded = Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
-	local _Decompressed = Deflate:DecompressDeflate(_Decoded)	
-	return DeserializeMessage(_Decompressed)
+	return DeserializeMessage(XFG.Mailbox.Chat:Pop(), _Decoded)
 end
 
 function XFG:DecodeBNetMessage(inEncodedMessage)
 	local _Decoded = Deflate:DecodeForPrint(inEncodedMessage)
-	local _Decompressed = Deflate:DecompressDeflate(_Decoded)	
-	return DeserializeMessage(_Decompressed)
+	return DeserializeMessage(XFG.Mailbox.BNet:Pop(), _Decoded)
 end

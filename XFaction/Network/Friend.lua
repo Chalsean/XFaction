@@ -170,3 +170,26 @@ function Friend:FactoryReset()
     self._MyLink = false
     self:Initialize()
 end
+
+function Friend:Ping()
+    if(XFG.DebugFlag) then
+        XFG:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
+    end
+    XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, self:GetGameID())
+    XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment() 
+end
+
+function Friend:SetFromAccountInfo(inAccountInfo)
+    self:SetKey(inAccountInfo.bnetAccountID)
+    self:SetID(inAccountInfo.ID)
+    self:SetAccountID(inAccountInfo.bnetAccountID)
+    self:SetGameID(inAccountInfo.gameAccountInfo.gameAccountID)
+    self:SetAccountName(inAccountInfo.accountName)
+    self:SetTag(inAccountInfo.battleTag)
+    self:SetName(inAccountInfo.gameAccountInfo.characterName)
+
+    local _Realm = XFG.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
+    local _Faction = XFG.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
+    local _Target = XFG.Targets:GetByRealmFaction(_Realm, _Faction)
+    self:SetTarget(_Target)
+end

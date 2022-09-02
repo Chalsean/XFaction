@@ -89,7 +89,6 @@ end
 function Message:SetTo(inTo)
     assert(type(inTo) == 'string')
     self._To = inTo
-    return self:GetTo()
 end
 
 function Message:GetFrom()
@@ -99,7 +98,6 @@ end
 function Message:SetFrom(inFrom)
     assert(type(inFrom) == 'string')
     self._From = inFrom
-    return self:GetFrom()
 end
 
 function Message:GetType()
@@ -109,7 +107,6 @@ end
 function Message:SetType(inType)
     assert(type(inType) == 'string')
     self._Type = inType
-    return self:GetType()
 end
 
 function Message:GetSubject()
@@ -119,7 +116,6 @@ end
 function Message:SetSubject(inSubject)
     assert(type(inSubject) == 'string')
     self._Subject = inSubject
-    return self:GetSubject()
 end
 
 function Message:GetTimeStamp()
@@ -129,7 +125,6 @@ end
 function Message:SetTimeStamp(inEpochTime)
     assert(type(inEpochTime) == 'number')
     self._EpochTime = inEpochTime
-    return self:GetTimeStamp()
 end
 
 function Message:GetData()
@@ -138,7 +133,6 @@ end
 
 function Message:SetData(inData)
     self._Data = inData
-    return self:GetData()
 end
 
 function Message:GetPacketNumber()
@@ -148,7 +142,6 @@ end
 function Message:SetPacketNumber(inPacketNumber)
     assert(type(inPacketNumber) == 'number')
     self._PacketNumber = inPacketNumber
-    return self:GetPacketNumber()
 end
 
 function Message:GetTotalPackets()
@@ -158,7 +151,6 @@ end
 function Message:SetTotalPackets(inTotalPackets)
     assert(type(inTotalPackets) == 'number')
     self._TotalPackets = inTotalPackets
-    return self:GetTotalPackets()
 end
 
 function Message:ContainsTarget(inTarget)
@@ -172,7 +164,6 @@ function Message:AddTarget(inTarget)
         self._TargetCount = self._TargetCount + 1
     end
     self._Targets[inTarget:GetKey()] = inTarget
-    return self:ContainsTarget(inTarget)
 end
 
 function Message:RemoveTarget(inTarget)
@@ -181,7 +172,6 @@ function Message:RemoveTarget(inTarget)
         self._Targets[inTarget:GetKey()] = nil
         self._TargetCount = self._TargetCount - 1
     end
-    return self:ContainsTarget(inTarget) == false
 end
 
 function Message:SetAllTargets()
@@ -244,7 +234,6 @@ end
 function Message:SetVersion(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
     self._Version = inVersion
-    return self:GetVersion()
 end
 
 function Message:IsMyMessage()
@@ -258,7 +247,6 @@ end
 function Message:SetUnitName(inUnitName)
     assert(type(inUnitName) == 'string')
     self._UnitName = inUnitName
-    return self:GetUnitName()
 end
 
 function Message:HasMainName()
@@ -272,7 +260,6 @@ end
 function Message:SetMainName(inMainName)
     assert(type(inMainName) == 'string')
     self._MainName = inMainName
-    return self:GetMainName()
 end
 
 function Message:HasGuild()
@@ -286,7 +273,6 @@ end
 function Message:SetGuild(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
     self._Guild = inGuild
-    return self:GetGuild()
 end
 
 function Message:HasRealm()
@@ -300,7 +286,6 @@ end
 function Message:SetRealm(inRealm)
     assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
     self._Realm = inRealm
-    return self:GetRealm()
 end
 
 function Message:FactoryReset()

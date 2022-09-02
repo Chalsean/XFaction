@@ -113,15 +113,15 @@ function LinkCollection:Broadcast()
 
 	local _NewMessage = nil
 	try(function ()
-		_NewMessage = XFG.Mailbox:Pop()
+		_NewMessage = XFG.Mailbox.Chat:Pop()
 		_NewMessage:Initialize()
 		_NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
 		_NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LINK)
 		_NewMessage:SetData(_LinksString)
-		XFG.Outbox:Send(_NewMessage)  
+		XFG.Mailbox.Chat:Send(_NewMessage)  
 	end).
 	finally(function ()
-		XFG.Mailbox:Push(_NewMessage)
+		XFG.Mailbox.Chat:Push(_NewMessage)
 	end)
 end
 

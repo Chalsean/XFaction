@@ -1,6 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'DTToken'
 
+local GetCurrentMarketPrice = C_WowTokenPublic.GetCurrentMarketPrice
+
 DTToken = Object:newChildConstructor()
 local Events = { 'PLAYER_ENTERING_WORLD', 'PLAYER_LOGIN', 'TOKEN_MARKET_PRICE_UPDATED' }
 
@@ -46,7 +48,7 @@ end
 
 function DTToken:OnEvent(inEvent)
 	local _Broker = XFG.Lib.Broker:GetDataObjectByName(XFG.Lib.Locale['DTTOKEN_NAME'])
-	local _Price = C_WowTokenPublic.GetCurrentMarketPrice()
+	local _Price = GetCurrentMarketPrice()
 	if(_Price ~= nil) then
 		_Price = floor(_Price / 10000)
 		if(XFG.DataText.Token:GetPrice() ~= _Price) then
