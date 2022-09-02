@@ -17,7 +17,7 @@ function TimerEvent:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
         XFG.Cache.LoginTimerStart = ServerTime()
-        XFG.Timers:Add('Login', 1, XFG.Handlers.TimerEvent.CallbackLogin, true, true)
+        XFG.Timers:Add('Login', 1, XFG.Handlers.TimerEvent.CallbackLogin, false, true, true)
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -296,9 +296,9 @@ function TimerEvent:CallbackLogin()
 				XFG.Channels:SetLast(_NewChannel:GetKey())
 
 				-- Start critical timers
-				XFG.Timers:Add('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, false)
-				XFG.Timers:Add('Links', XFG.Settings.Network.BNet.Link.Broadcast, XFG.Handlers.TimerEvent.CallbackLinks, true, false)		    		    
-				XFG.Timers:Add('Roster', XFG.Settings.LocalGuild.ScanTimer, XFG.Handlers.TimerEvent.CallbackGuildRoster, true, false)		    
+				XFG.Timers:Add('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, true, false)
+				XFG.Timers:Add('Links', XFG.Settings.Network.BNet.Link.Broadcast, XFG.Handlers.TimerEvent.CallbackLinks, true, true, false)		    		    
+				XFG.Timers:Add('Roster', XFG.Settings.LocalGuild.ScanTimer, XFG.Handlers.TimerEvent.CallbackGuildRoster, true, true, false)		    
 
 				-- Register event handlers
 				XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()            
@@ -320,7 +320,7 @@ function TimerEvent:CallbackLogin()
 			catch(function (inErrorMessage)
 				XFG:Error(ObjectName, inErrorMessage)
 				--print(XFG.Title .. ': Failed to start properly. ' .. inErrorMessage)
-				XFG:CancelAllTimers()
+				XFG.Timers:Stop()
 				return
 			end)
 	
@@ -335,11 +335,11 @@ function TimerEvent:CallbackLogin()
 				XFG.Player.InInstance = _InInstance
 						
 				-- Non-critcal path initialization
-				XFG.Timers:Add('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, false, false)
-				XFG.Timers:Add('BNetMailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackBNetMailboxTimer, false, false)
-				XFG.Timers:Add('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, false)
-				XFG.Timers:Add('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, false)
-				XFG.Timers:Add('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, false)
+				XFG.Timers:Add('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, true, false, false)
+				XFG.Timers:Add('BNetMailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackBNetMailboxTimer, true, false, false)
+				XFG.Timers:Add('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, true, false)
+				XFG.Timers:Add('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, true, false)
+				XFG.Timers:Add('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, true, false)
 
 				-- Ping friends to find out whos available for BNet
 				if(not XFG.DB.UIReload) then                
@@ -347,7 +347,7 @@ function TimerEvent:CallbackLogin()
 				end
 
 				-- This is stuff waiting a few seconds for ping responses or Blizz setup to finish
-				XFG:ScheduleTimer(XFG.Handlers.TimerEvent.CallbackDelayedStartTimer, 7)		    
+				XFG.Timers:Add('DelayedStart', 7, XFG.Handlers.TimerEvent.CallbackDelayedStartTimer)
 			end).
 			catch(function (inErrorMessage)
 				XFG:Warn(ObjectName, 'Failed non-critical path initialization of XFaction: ' .. inErrorMessage)

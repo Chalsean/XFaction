@@ -9,18 +9,34 @@ function EventCollection:new()
     return _Object
 end
 
-function EventCollection:Add(inKey, inName, inCallback, inInstance, inInstanceCombat, inBucket, inDelta)
+function EventCollection:Initialize()
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
+        self._Frame = CreateFrame('Frame')
+        -- Handle the events as they happen
+        self._Frame:SetScript('OnEvent', function(self, inEvent, ...)
+            for _, _Event in XFG.Events:Iterator() do
+                if(_Event:IsEnabled() and _Event:GetName() == inEvent) then
+                    local _Function = _Event:GetCallback()
+                    _Function(self, ...)
+                end
+            end
+        end)
+        self:IsInitialized(true)
+    end
+end
+
+function EventCollection:Add(inKey, inName, inCallback, inInstance, inInstanceCombat)
     local _Event = Event:new()
     _Event:SetKey(inKey)
     _Event:SetName(inName)
     _Event:SetCallback(inCallback)
     _Event:IsInstance(inInstance)
     _Event:IsInstanceCombat(inInstanceCombat)
-    if(inBucket ~= nil) then _Event:IsBucket(inBucket) end
-    if(inDelta ~= nil) then _Event:SetDelta(inDelta) end
-    if(_Event:IsInstance() or XFG.Player.InInstance == false) then
+    if(_Event:IsInstance() or not XFG.Player.InInstance) then
         _Event:Start()
     end
+    self._Frame:RegisterEvent(inName)
     self.parent.Add(self, _Event)
     XFG:Info('Event', 'Registered to receive %s events', inName)
 end
@@ -62,6 +78,6 @@ end
 function EventCollection:Stop()
 	for _, _Event in XFG.Events:Iterator() do
         _Event:Stop()
-		_Event:IsEnabled(false)
 	end
+    self._Frame:UnregisterAllEvents()
 end

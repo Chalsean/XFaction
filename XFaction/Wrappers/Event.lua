@@ -12,7 +12,6 @@ function Event:new()
     _Object._Enabled = false
     _Object._Instance = false
     _Object._InstanceCombat = false
-    _Object._Bucket = false
     return _Object
 end
 
@@ -69,14 +68,6 @@ function Event:IsInstance(inBoolean)
 	return self._Instance
 end
 
-function Event:IsBucket(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self._Bucket = inBoolean
-    end
-	return self._Bucket
-end
-
 function Event:GetDelta()
     return self._Delta
 end
@@ -95,12 +86,14 @@ function Event:IsInstanceCombat(inBoolean)
 	return self._InstanceCombat
 end
 
-function Event:Start()
-    if(self:IsBucket()) then
-        XFG:RegisterBucketEvent({self:GetName()}, self:GetDelta(), self:GetCallback(), self:GetName())
-    else
-        XFG:RegisterEvent(self:GetName(), self:GetCallback(), self:GetName())
+local function GetFrame()
+    if(self._Frame == nil) then
+        CreateFrame(self:GetKey())
     end
+    return self._Frame
+end
+
+function Event:Start()
     self:IsEnabled(true)
     if(XFG.DebugFlag) then
         XFG:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
@@ -108,7 +101,6 @@ function Event:Start()
 end
 
 function Event:Stop()
-    XFG:UnregisterEvent(self:GetName())
     self:IsEnabled(false)
     if(XFG.DebugFlag) then
         XFG:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())

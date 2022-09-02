@@ -1,7 +1,7 @@
 local addon, Engine = ...
 local LogCategory = 'Constants'
 
-local XFG = LibStub('AceAddon-3.0'):NewAddon(addon, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceSerializer-3.0", "AceComm-3.0", "AceTimer-3.0", 'AceBucket-3.0')
+local XFG = LibStub('AceAddon-3.0'):NewAddon(addon, "AceConsole-3.0", "AceHook-3.0", "AceSerializer-3.0", "AceComm-3.0")
 
 Engine[1] = XFG
 Engine[2] = G
@@ -43,7 +43,6 @@ XFG.Lib = {
 	Config = LibStub('AceConfig-3.0'),
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
-	Cmd = LibStub('AceConfigCmd-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0'),
 	LSMList = AceGUIWidgetLSMlists,
 }

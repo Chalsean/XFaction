@@ -9,13 +9,14 @@ function TimerCollection:new()
     return _Object
 end
 
-function TimerCollection:Add(inName, inDelta, inCallback, inInstance, inInstanceCombat)
+function TimerCollection:Add(inName, inDelta, inCallback, inRepeat, inInstance, inInstanceCombat)
     local _Timer = Timer:new()
     _Timer:Initialize()
     _Timer:SetKey(inName)
     _Timer:SetName(inName)
     _Timer:SetDelta(inDelta)
     _Timer:SetCallback(inCallback)
+    _Timer:IsRepeat(inRepeat)
     _Timer:IsInstance(inInstance)
     _Timer:IsInstanceCombat(inInstanceCombat)
     _Timer:Start()
@@ -73,8 +74,7 @@ end
 
 -- Stop everything
 function TimerCollection:Stop()
-	XFG:CancelAllTimers()
 	for _, _Timer in self:Iterator() do
-		_Timer:IsEnabled(false)
+        _Timer:Stop()
 	end
 end

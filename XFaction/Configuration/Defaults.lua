@@ -200,8 +200,6 @@ function XFG:LoadConfigs()
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Support', XFG.Category, 'Support')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Debug', XFG.Category, 'Debug')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Profile', XFG.Category, 'Profile')
-
-    XFG.Lib.Cmd:CreateChatCommand('xfaction', XFG.Category)
 end
 
 function XFG:InitProfile()

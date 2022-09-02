@@ -15,8 +15,7 @@ end
 function BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG:RegisterEvent('BN_CHAT_MSG_ADDON', XFG.BNet.Receive)
-        XFG:Info(ObjectName, 'Registered for BN_CHAT_MSG_ADDON events')
+        XFG.Events:Add('BNetMessage', 'BN_CHAT_MSG_ADDON', XFG.BNet.Receive)
         self:IsInitialized(true)
     end
     return self:IsInitialized()

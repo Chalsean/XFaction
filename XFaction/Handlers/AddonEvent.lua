@@ -12,8 +12,7 @@ end
 function AddonEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG:RegisterEvent('ADDON_LOADED', XFG.Handlers.AddonEvent.CallbackAddonLoaded)
-        XFG:Info(ObjectName, 'Registered for ADDON_LOADED events')
+        XFG.Events:Add('AddonEvent', 'ADDON_LOADED', XFG.Handlers.AddonEvent.CallbackAddonLoaded)
         -- In case they already loaded
         if(IsAddOnLoaded('ElvUI')) then
             self:CallbackAddonLoaded('ElvUI')

@@ -17,7 +17,7 @@ function DTToken:Initialize()
 		self:ParentInitialize()
 		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTTOKEN_NAME'])
 		for _, _Event in ipairs (Events) do
-			XFG:RegisterEvent(_Event, self.OnEvent)
+			XFG.Events:Add('DTToken' .. _Event, _Event, XFG.DataText.Token.OnEvent)
 			XFG:Info(ObjectName, "Registered for %s events", _Event)
 		end
 
