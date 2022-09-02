@@ -12,9 +12,8 @@ end
 function SystemEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Events:Add('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
-        XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
-        XFG:Info(ObjectName, 'Pre-hooked ReloadUI')
+        XFG.Hooks:Add('ReloadUI', 'ReloadUI', XFG.Handlers.SystemEvent.CallbackReloadUI)
+        XFG.Events:Add('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)        
         XFG.Events:Add('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true, true)
         ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Handlers.SystemEvent.ChatFilter)
         XFG:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
@@ -31,7 +30,7 @@ function SystemEvent:CallbackLogout()
     else
         local _NewMessage = nil
         try(function ()        
-            _NewMessage = XFG.Mailbox:Pop()
+            _NewMessage = XFG.Mailbox.Chat:Pop()
             _NewMessage:Initialize()
             _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
             _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
@@ -42,13 +41,13 @@ function SystemEvent:CallbackLogout()
             _NewMessage:SetRealm(XFG.Player.Realm)
             _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
             _NewMessage:SetData(' ')
-            XFG.Outbox:Send(_NewMessage)
+            XFG.Mailbox.Chat:Send(_NewMessage)
         end).
         catch(function (inErrorMessage)
             XFG.DB.Errors[#XFG.DB.Errors + 1] = 'Failed to send logoff message: ' .. inErrorMessage
         end).
         finally(function ()
-            XFG.Mailbox:Push(_NewMessage)
+            XFG.Mailbox.Chat:Push(_NewMessage)
         end)
     end    
 end

@@ -15,6 +15,7 @@ function XFG:Init()
 	XFG.RaidIO = RaidIOCollection:new(); XFG.RaidIO:Initialize()
 
 	XFG.Events = EventCollection:new(); XFG.Events:Initialize()
+	XFG.Hooks = HookCollection:new(); XFG.Hooks:Initialize()
 	XFG.Timers = TimerCollection:new(); XFG.Timers:Initialize()
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
 	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()

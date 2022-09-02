@@ -1,6 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
     <Script file='Event.lua'/>
     <Script file='EventCollection.lua'/>
+    <Script file='Hook.lua'/>
+    <Script file='HookCollection.lua'/>
     <Script file='RaidIO.lua'/>
     <Script file='RaidIOCollection.lua'/>
     <Script file='Timer.lua'/>

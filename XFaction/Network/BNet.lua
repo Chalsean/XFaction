@@ -55,12 +55,7 @@ function BNet:Send(inMessage)
 
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
-    local _MessageData = nil
-    if(inMessage:HasSerialized() and not inMessage:IsDirty()) then
-        _MessageData = inMessage:GetSerialized()
-    else
-        _MessageData = XFG:EncodeBNetMessage(inMessage, true)
-    end
+    local _MessageData = XFG:EncodeBNetMessage(inMessage, true)
     local _Packets = self:SegmentMessage(_MessageData, inMessage:GetKey(), XFG.Settings.Network.BNet.PacketSize)
 
     -- Make sure all packets go to each target

@@ -1,13 +1,12 @@
 ## Interface: 90207
 ## Globe: check-classic
 ## Author: Chalsean (US-Proudmoore)
-## Version: 3.10.0
+## Version: 4.0.0
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: XFactionDB
-## OptionalDeps: Kui_Nameplates, RaiderIO, _DebugLog, ElvUI, BugSack, BugGrabber, WIM
 
 Libraries\LoadLibraries.xml
 Locales\LoadLocales.xml

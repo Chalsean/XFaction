@@ -36,7 +36,7 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	_MessageData.Q = inMessage:GetTotalPackets()
 	_MessageData.V = inMessage:GetVersion():GetKey()
 
-	return XFG:Serialize(_MessageData)
+	return pickle(_MessageData)
 end
 
 function XFG:SerializeUnitData(inUnitData)
@@ -79,7 +79,7 @@ function XFG:SerializeUnitData(inUnitData)
 		_MessageData.Z = inUnitData:GetZone():GetName()
 	end
 
-	return XFG:Serialize(_MessageData)
+	return pickle(_MessageData)
 end
 
 function XFG:EncodeChatMessage(inMessage, inEncodeUnitData)
