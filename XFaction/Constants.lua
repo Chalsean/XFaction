@@ -44,6 +44,8 @@ XFG.Lib = {
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
 	Cmd = LibStub('AceConfigCmd-3.0'),
+	LSM = LibStub('LibSharedMedia-3.0'),
+	LSMList = AceGUIWidgetLSMlists,
 }
 
 XFG.Player = {

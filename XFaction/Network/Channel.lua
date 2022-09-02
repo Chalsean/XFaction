@@ -8,6 +8,7 @@ function Channel:new()
     _Object.__name = 'Channel'
     _Object._ID = nil
     _Object._Password = nil
+    _Object._Community = false
     return _Object
 end
 
@@ -15,7 +16,7 @@ function Channel:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
         XFG:Debug(ObjectName, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-        XFG:Debug(ObjectName, "  _Password (" ..type(self._Password) .. "): ".. tostring(self._Password))
+        XFG:Debug(ObjectName, "  _Community (" ..type(self._Community) .. "): ".. tostring(self._Community))
     end
 end
 
@@ -26,7 +27,6 @@ end
 function Channel:SetID(inID)
     assert(type(inID) == 'number')
     self._ID = inID
-    return self:GetID()
 end
 
 function Channel:GetPassword()
@@ -36,5 +36,12 @@ end
 function Channel:SetPassword(inPassword)
     assert(type(inPassword) == 'string')
     self._Password = inPassword
-    return self:GetPassword()
+end
+
+function Channel:IsCommunity(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
+    if(inBoolean ~= nil) then
+        self._Community = inBoolean
+    end
+    return self._Community
 end

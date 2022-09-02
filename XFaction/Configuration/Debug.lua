@@ -140,7 +140,7 @@ XFG.Options.args.Debug = {
 				Profession = {
 					order = 19,
 					type = 'execute',
-					name = XFG.Lib.Locale['PROFESSION'],
+					name = 	XFG.Lib.Locale['PROFESSION'],
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Professions:Print() end,
 				},

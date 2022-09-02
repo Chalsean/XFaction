@@ -19,11 +19,6 @@ end
 function DTGuild:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		self._HeaderFont = CreateFont('_HeaderFont')
-		self._HeaderFont:SetTextColor(0.4,0.78,1)
-		self._RegularFont = CreateFont('_RegularFont')
-		self._RegularFont:SetTextColor(255,255,255)
-
 		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTGUILD_NAME'], {
 			type = 'data source',
 			label = XFG.Lib.Locale['DTGUILD_NAME'],
@@ -32,10 +27,18 @@ function DTGuild:Initialize()
 			OnClick = function(this, button) XFG.DataText.Guild:OnClick(this, button) end,
 		})
 		LDB_ANCHOR = self._LDBObject
-
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
+end
+
+function DTGuild:SetFont()
+	self._HeaderFont = CreateFont('_HeaderFont')
+	self._HeaderFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
+	self._HeaderFont:SetTextColor(0.4,0.78,1)
+	self._RegularFont = CreateFont('_RegularFont')
+	self._RegularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
+	self._RegularFont:SetTextColor(255,255,255)
 end
 
 function DTGuild:Print()

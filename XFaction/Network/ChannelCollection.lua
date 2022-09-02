@@ -31,7 +31,7 @@ function ChannelCollection:SetLast(inKey)
 
 	for i = _Channel:GetID() + 1, 10 do
 		local _NextChannel = self:GetByID(i)
-		if(_NextChannel ~= nil) then
+		if(_NextChannel ~= nil and not _NextChannel:IsCommunity()) then
 			if(XFG.DebugFlag) then 
 				XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', _Channel:GetID(), _Channel:GetName(), _NextChannel:GetID(), _NextChannel:GetName()) 
 			end
@@ -71,10 +71,12 @@ function ChannelCollection:Scan()
 					end
 				end
 			else
+				local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(_ChannelName)
 				local _NewChannel = Channel:new()
 				_NewChannel:SetKey(_ChannelName)
 				_NewChannel:SetName(_ChannelName)
 				_NewChannel:SetID(_ChannelID)
+				_NewChannel:IsCommunity(_ChannelInfo.channelType == 2)
 				self:Add(_NewChannel)
 			end
 		end

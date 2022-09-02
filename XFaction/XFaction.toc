@@ -7,6 +7,7 @@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: XFactionDB
+## OptionalDeps: Kui_Nameplates, RaiderIO, _DebugLog, ElvUI, BugSack, BugGrabber, WIM
 
 Libraries\LoadLibraries.xml
 Locales\LoadLocales.xml

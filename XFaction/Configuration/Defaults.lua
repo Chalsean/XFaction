@@ -81,6 +81,8 @@ XFG.Defaults = {
             },
         },
         DataText = {
+            Font = XFG.Lib.LSM:GetDefault('font'),
+            FontSize = 10,
             Guild = {
                 Column = '',
                 Label = false,
@@ -156,7 +158,7 @@ XFG.Defaults = {
             },
             Link = {
                 Label = false,
-                Faction = true
+                Faction = true,
             },
             Metric = {
                 Rate = 60,

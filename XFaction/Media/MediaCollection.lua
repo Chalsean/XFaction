@@ -10,19 +10,6 @@ function MediaCollection:new()
     return _Object
 end
 
-function MediaCollection:Initialize()
-	if(not self:IsInitialized()) then
-		self:ParentInitialize()
-		if(not XFG.WoW:IsRetail()) then
-			for _, _Spec in XFG.Specs:Iterator() do
-				self:Add(tostring(_Spec:GetIconID()), 'Icon')
-			end			
-		end
-		self:IsInitialized(true)
-	end
-	return self:IsInitialized()
-end
-
 function MediaCollection:Add(inName, inType)
     assert(type(inName) == 'string')
 	assert(type(inType) == 'string')

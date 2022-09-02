@@ -48,6 +48,8 @@ function TimerEvent:CallbackLogin()
 		
 		-- Monitor other addons loading
 		XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
+
+		XFG.DataText.Guild:SetFont()
     end
 
     -- Ensure we get the player guid and faction without failure
@@ -220,11 +222,8 @@ function TimerEvent:CallbackLogin()
 				XFG.Professions = ProfessionCollection:new(); XFG.Professions:Initialize()
 				XFG.Continents = ContinentCollection:new(); XFG.Continents:Initialize()
 				XFG.Zones = ZoneCollection:new(); XFG.Zones:Initialize()
-										
-				if(XFG.WoW:IsRetail()) then
-					XFG.Covenants = CovenantCollection:new(); XFG.Covenants:Initialize()
-					XFG.Soulbinds = SoulbindCollection:new(); XFG.Soulbinds:Initialize()
-				end
+				XFG.Covenants = CovenantCollection:new(); XFG.Covenants:Initialize()
+				XFG.Soulbinds = SoulbindCollection:new(); XFG.Soulbinds:Initialize()
 
 				-- If this is a reload, restore non-local guild members
 				try(function ()
@@ -292,8 +291,9 @@ function TimerEvent:CallbackLogin()
 				if(XFG.Settings.Network.Channel.Password ~= nil) then
 					_NewChannel:SetPassword(XFG.Settings.Network.Channel.Password)
 				end
-				XFG.Channels:Add(_NewChannel)            
+				XFG.Channels:Add(_NewChannel)
 				XFG.Outbox:SetLocalChannel(_NewChannel)
+				XFG.Channels:SetLast(_NewChannel:GetKey())
 
 				-- Start critical timers
 				XFG.Timers:Add('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, false)
@@ -354,12 +354,15 @@ function TimerEvent:CallbackLogin()
 			end).
 			finally(function ()
 				XFG.Initialized = true
-
+				
 				-- Refresh brokers (theyve been waiting on XFG.Initialized flag)
+				XFG.DataText.Guild:SetFont()
 				XFG.DataText.Guild:RefreshBroker()
-				XFG.DataText.Soulbind:RefreshBroker()
+				XFG.DataText.Links:SetFont()
 				XFG.DataText.Links:RefreshBroker()
+				XFG.DataText.Metrics:SetFont()
 				XFG.DataText.Metrics:RefreshBroker()
+				XFG.DataText.Soulbind:RefreshBroker()				
 				
 				--XFG:InitializeSetup()
 				wipe(XFG.DB.Backup)

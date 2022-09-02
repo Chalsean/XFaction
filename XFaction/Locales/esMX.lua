@@ -4,34 +4,16 @@ if not L then return end
 --=========================================================================
 -- Generic One Word Translations
 --=========================================================================
-L['NAME'] = 'Nombre'
-L['RACE'] = 'Raza'
-L['LEVEL'] = 'Nivel'
-L['REALM'] = 'Reino'
-L['GUILD'] = 'Hermandad'
-L['TEAM'] = 'Equipo'
-L['RANK'] = 'Rango'
-L['ZONE'] = 'Zona'
-L['NOTE'] = 'Nota'
 L['COVENANT'] = 'Curia'
 L['CONFEDERATE'] = 'Confederación'
 L['MOTD'] = 'Mensaje del día'
-L['FACTION'] = 'Facción'
-L['PROFESSION'] = 'Profesión'
-L['SPEC'] = 'Especialización'
-L['ENABLE'] = 'Activar'
-L['CHAT'] = 'Chat'
-L['ACHIEVEMENT'] = 'Logro'
 L['DATATEXT'] = 'DataText'
 L['SUPPORT'] = 'Soporte'
 L['RESOURCES'] = 'Rrecursos'
 L['DISCORD'] = 'Discord'
 L['GITHUB'] = 'GitHub'
 L['DEV'] = 'Ddesarrollo'
-L['DESCRIPTION'] = 'Descripción'
-L['GENERAL'] = 'General'
 L['DISCLAIMER'] = 'Advertencia'
-L['TRANSLATIONS'] = 'Traducciones'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -40,7 +22,6 @@ L['GENERAL_DISCLAIMER'] = 'Este addon está en fase alpha y actualmente solo da 
 L['GENERAL_WHAT'] = 'Que incluye'
 L['GENERAL_GUILD_CHAT'] = '1. Chat de hermandad vinculados a través de hermandades/reinos/facciones en la condeferación'
 L['GENERAL_GUILD_CHAT_ACHIEVEMENT'] = '2. Logros personales redireccioneados a los miembros de la conferecaión en otras hermandades'
-L['GENERAL_SYSTEM_MESSAGES'] = 'Mensajes del Sistema'
 L['GENERAL_SYSTEM_LOGIN'] = '1. Recibir notificaciones cuando un jugador usando el addon está en linea o se desconecta de la confederación'
 L['GENERAL_DATA_BROKERS'] = 'Agentes de datos'
 L['GENERAL_DTGUILD'] = '1. Hermandad (X): Lista completa de miembros visible en la confederación'
@@ -50,7 +31,6 @@ L['GENERAL_DTTOKEN'] = '4. Ficha de WoW (X): Ver el precio actual de la ficha de
 --=========================================================================
 -- Chat Specific
 --=========================================================================
-L['CHAT_GUILD'] = 'Chat de Hermandad'
 L['CHAT_GUILD_TOOLTIP'] = 'Ver chat de hermandad a través de facción y reinos '
 L['CHAT_FACTION'] = 'Mostrar facción'
 L['CHAT_FACTION_TOOLTIP'] = 'Mostrar el ícono de la facción del mensajero'
@@ -59,8 +39,6 @@ L['CHAT_GUILD_NAME_TOOLTIP'] = 'Mostrar el nombre de hermandad abreviado para el
 L['CHAT_MAIN'] = 'Mostrar nombre del personaje principal'
 L['CHAT_MAIN_TOOLTIP'] = 'Mostrar el nombre del personaje principal del mensajero si está en un personaje alterno'
 L['CHAT_FONT_COLOR'] = 'Color de Fuente'
-L['CHAT_OFFICER'] = 'Chat de Oficiales'
-L['CHAT_OFFICER_TOOLTIP'] = 'Ver el chat de oficiales a través de facción y reinos'
 L['CHAT_ACHIEVEMENT_TOOLTIP'] = 'Ver logros individuales a través de facción y reinos'
 L['CHAT_ONLINE'] = 'En linea/Desconectado'
 L['CHAT_ONLINE_TOOLTIP'] = 'Mostrar mensaje para los jugadores conectandose/desconectandose en otros reinos/faccón'
