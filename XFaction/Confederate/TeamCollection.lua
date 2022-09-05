@@ -1,20 +1,48 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'TeamCollection'
 
 TeamCollection = ObjectCollection:newChildConstructor()
 
 function TeamCollection:new()
-	local _Object = TeamCollection.parent.new(self)
-	_Object.__name = 'TeamCollection'
-    return _Object
+	local object = TeamCollection.parent.new(self)
+	object.__name = ObjectName
+    return object
 end
 
-function TeamCollection:EKInitialize()
-	for _Initials, _Name in pairs (XFG.Settings.Teams) do
-		local _NewTeam = Team:new()
-		_NewTeam:Initialize()
-		_NewTeam:SetName(_Name)
-		_NewTeam:SetInitials(_Initials)
-		_NewTeam:SetKey(_Initials)
-		self:Add(_NewTeam)
+function TeamCollection:Initialize()
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
+		if(#XFG.Cache.Teams > 0) then
+			XFG:Debug(ObjectName, 'Team information found in cache')
+			self:IsCached(true)
+			for _, data in ipairs (XFG.Cache.Teams) do
+				local team = Team:new()
+				team:Initialize()
+				team:SetName(data.name)
+				team:SetInitials(data.initial)
+				team:SetKey(data.initial)
+				XFG:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
+			end
+		else
+			for initials, name in pairs (XFG.Settings.Teams) do
+				local team = Team:new()
+				team:Initialize()
+				team:SetName(name)
+				team:SetInitials(initials)
+				team:SetKey(initials)
+				self:Add(team)
+				XFG:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
+			end
+		end
+		self:IsInitialized(true)
 	end
+end
+
+function TeamCollection:SetObjectFromString(inString)
+	assert(type(inString) == 'string')
+	local teamInitial, teamName = inString:match('XFt:(%a):(%a+)')
+	XFG.Cache.Teams[#XFG.Cache.Teams + 1] = {
+		initials = teamInitial,
+		name = teamName,
+	}
 end

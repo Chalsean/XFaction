@@ -4,47 +4,47 @@ local ObjectName = 'RaidIO'  -- Because RaiderIO is taken
 RaidIO = Object:newChildConstructor()
 
 function RaidIO:new()
-    local _Object = RaidIO.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Raid = ''
-    _Object._Dungeon = 0
-    return _Object
+    local object = RaidIO.parent.new(self)
+    object.__name = ObjectName
+    object.raid = ''
+    object.dungeon = 0
+    return object
 end
 
 function RaidIO:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _Raid (' .. type(self._Raid) .. '): ' .. tostring(self._Raid))
-        XFG:Debug(ObjectName, '  _Dungeon (' .. type(self._Dungeon) .. '): ' .. tostring(self._Dungeon))
+        XFG:Debug(ObjectName, '  raid (' .. type(self.raid) .. '): ' .. tostring(self.raid))
+        XFG:Debug(ObjectName, '  dungeon (' .. type(self.dungeon) .. '): ' .. tostring(self.dungeon))
     end
 end
 
 function RaidIO:GetRaid()
-    return self._Raid
+    return self.raid
 end
 
 function RaidIO:SetRaid(inCount, inTotal, inDifficulty)
     assert(type(inCount) == 'number')
     assert(type(inTotal) == 'number')
     assert(type(inDifficulty) == 'number')
-    local _Letter = nil
+    local letter = nil
     if(inDifficulty == 3) then
-        _Letter = 'M'
+        letter = 'M'
     elseif(inDifficulty == 2) then
-        _Letter = 'H'
+        letter = 'H'
     else
-        _Letter = 'N'
+        letter = 'N'
     end
-    self._Raid = tostring(inCount) .. '/' .. tostring(inTotal) .. ' ' .. _Letter
+    self.raid = tostring(inCount) .. '/' .. tostring(inTotal) .. ' ' .. letter
 end
 
 function RaidIO:GetDungeon()
-    return self._Dungeon
+    return self.dungeon
 end
 
 function RaidIO:SetDungeon(inScore)
     assert(type(inScore) == 'number')
-    self._Dungeon = inScore
+    self.dungeon = inScore
 end
 
 function RaidIO:Equals(inObject)
@@ -59,7 +59,7 @@ end
 
 function RaidIO:FactoryReset()
     self:ParentFactoryReset()
-    self._Raid = ''
-    self._Dungeon = 0
+    self.raid = ''
+    self.dungeon = 0
     self:Initialize()
 end

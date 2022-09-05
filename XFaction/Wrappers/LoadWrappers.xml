@@ -1,4 +1,8 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file='Config.lua'/>
+    <Script file='ConfigCollection.lua'/>
+    <Script file='Color.lua'/>
+    <Script file='ColorCollection.lua'/>
     <Script file='Event.lua'/>
     <Script file='EventCollection.lua'/>
     <Script file='Hook.lua'/>

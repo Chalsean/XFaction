@@ -4,39 +4,37 @@ local ObjectName = 'Media'
 Media = Object:newChildConstructor()
 
 function Media:new()
-    local _Object = Media.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Type = nil
-    _Object._Path = nil
-    return _Object
+    local object = Media.parent.new(self)
+    object.__name = ObjectName
+    object.type = nil
+    object.path = nil
+    return object
 end
 
 function Media:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _Type (' .. type(self._Type) .. '): ' .. tostring(self._Type))
-        XFG:Debug(ObjectName, '  _Path (' .. type(self._Path) .. '): ' .. tostring(self._Path))
+        XFG:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+        XFG:Debug(ObjectName, '  path (' .. type(self.path) .. '): ' .. tostring(self.path))
     end
 end
 
 function Media:GetType()
-    return self._Type
+    return self.type
 end
 
 function Media:SetType(inType)
     assert(type(inType) == 'string')
-    self._Type = inType
-    return self:GetType()
+    self.type = inType
 end
 
 function Media:GetPath()
-    return self._Path
+    return self.path
 end
 
 function Media:SetPath(inPath)
     assert(type(inPath) == 'string')
-    self._Path = inPath
-    return self:GetPath()
+    self.path = inPath
 end
 
 function Media:GetTexture()

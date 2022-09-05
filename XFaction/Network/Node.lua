@@ -4,11 +4,11 @@ local ObjectName = 'Node'
 Node = Object:newChildConstructor()
 
 function Node:new()
-    local _Object = Node.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Target = nil
-    _Object._LinkCount = 0
-    return _Object
+    local object = Node.parent.new(self)
+    object.__name = ObjectName
+    object.target = nil
+    object.linkCount = 0
+    return object
 end
 
 function Node:Initialize()
@@ -24,7 +24,7 @@ end
 function Node:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _LinkCount (' .. type(self._LinkCount) .. '): ' .. tostring(self._LinkCount))
+        XFG:Debug(ObjectName, '  linkCount (' .. type(self.linkCount) .. '): ' .. tostring(self.linkCount))
         if(self:HasTarget()) then self:GetTarget():Print() end
     end
 end
@@ -34,16 +34,16 @@ function Node:IsMyNode()
 end
 
 function Node:HasTarget()
-    return self._Target ~= nil
+    return self.target ~= nil
 end
 
 function Node:GetTarget()
-    return self._Target
+    return self.target
 end
 
 function Node:SetTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', 'argument must be Target object')
-    self._Target = inTarget
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+    self.target = inTarget
 end
 
 function Node:GetString()
@@ -51,20 +51,20 @@ function Node:GetString()
 end
 
 function Node:GetLinkCount()
-    return self._LinkCount
+    return self.linkCount
 end
 
 function Node:SetLinkCount(inLinkCount)
     assert(type(inLinkCount) == 'number')
-    self._LinkCount = inLinkCount
+    self.linkCount = inLinkCount
 end
 
 function Node:IncrementLinkCount()
-    self._LinkCount = self._LinkCount + 1
+    self.linkCount = self.linkCount + 1
 end
 
 function Node:DecrementLinkCount()
-    self._LinkCount = self._LinkCount - 1
+    self.linkCount = self.linkCount - 1
     if(self:GetLinkCount() == 0) then
         XFG.Nodes:Remove(self)
     end
@@ -72,6 +72,6 @@ end
 
 function Node:FactoryReset()
     self:ParentFactoryReset()
-    self._Target = nil
-    self._LinkCount = 0
+    self.target = nil
+    self.linkCount = 0
 end

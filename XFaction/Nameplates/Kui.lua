@@ -1,18 +1,18 @@
 local XFG, G = unpack(select(2, ...))
-if(KuiNameplates == nil) then return end
-XFG.Nameplates.Kui = KuiNameplates:NewPlugin('XFaction')
-
 local UnitIsPlayer = UnitIsPlayer
 local UnitGUID = UnitGUID
+
+if(KuiNameplates == nil) then return end
+XFG.Nameplates.Kui = KuiNameplates:NewPlugin('XFaction')
 
 function XFG.Nameplates.Kui:Show(f)
     if(XFG.Config and XFG.Config.Nameplates.Kui.Enable and UnitIsPlayer(f.unit)) then
         if(XFG.Config.Nameplates.Kui.MainName) then
-            local _GUID = UnitGUID(f.unit)
-            if(_GUID and XFG.Confederate:Contains(_GUID)) then
-                local _Unit = XFG.Confederate:Get(_GUID)
-                if(_Unit:HasMainName()) then
-                    f.state.name = f.state.name .. ' (' .. _Unit:GetMainName() .. ')'
+            local guid = UnitGUID(f.unit)
+            if(guid and XFG.Confederate:Contains(guid)) then
+                local unit = XFG.Confederate:Get(guid)
+                if(unit:HasMainName()) then
+                    f.state.name = f.state.name .. ' (' .. unit:GetMainName() .. ')'
                 end
             end
         end
@@ -28,9 +28,9 @@ function XFG.Nameplates.Kui:Show(f)
             elseif(XFG.Config.Nameplates.Kui.GuildName == 'ConfederateInitials') then
                 f.state.guild_text = XFG.Confederate:GetKey()
             elseif(XFG.Config.Nameplates.Kui.GuildName == 'Team') then  
-                local _GUID = UnitGUID(f.unit)              
-                if(XFG.Confederate:Contains(_GUID)) then
-                    f.state.guild_text = XFG.Confederate:Get(_GUID):GetTeam():GetName()
+                local guid = UnitGUID(f.unit)              
+                if(XFG.Confederate:Contains(guid)) then
+                    f.state.guild_text = XFG.Confederate:Get(guid):GetTeam():GetName()
                 else
                     f.state.guild_text = 'Unknown'
                 end

@@ -4,9 +4,9 @@ local ObjectName = 'Chat'
 Chat = Mailbox:newChildConstructor()
 
 function Chat:new()
-    local _Object = Chat.parent.new(self)
-    _Object.__name = ObjectName
-    return _Object
+    local object = Chat.parent.new(self)
+    object.__name = ObjectName
+    return object
 end
 
 function Chat:Initialize()
@@ -54,21 +54,21 @@ function Chat:Send(inMessage)
         end
     end
 
-    local _MessageData = XFG:EncodeChatMessage(inMessage, true)
-    local _Packets = self:SegmentMessage(_MessageData, inMessage:GetKey(), XFG.Settings.Network.Chat.PacketSize)
+    local messageData = XFG:EncodeChatMessage(inMessage, true)
+    local packets = self:SegmentMessage(messageData, inMessage:GetKey(), XFG.Settings.Network.Chat.PacketSize)
 
     -- Broadcast on same realm/faction channel for multiple players
     if(XFG.Channels:HasLocalChannel()) then
-        local _Channel = XFG.Channels:GetLocalChannel()
+        local channel = XFG.Channels:GetLocalChannel()
         if(XFG.DebugFlag) then
-            XFG:Debug(ObjectName, 'Broadcasting on channel [%s] with tag [%s]', _Channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
+            XFG:Debug(ObjectName, 'Broadcasting on channel [%s] with tag [%s]', channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
         end
 
-        for _Index, _Packet in ipairs (_Packets) do
+        for index, packet in ipairs (packets) do
             if(XFG.DebugFlag) then
-                XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d]', _Index, #_Packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(_Packet))
+                XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d]', index, #packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(packet))
             end
-            XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, _Packet, 'CHANNEL', _Channel:GetID())
+            XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())
             XFG.Metrics:Get(XFG.Settings.Metric.ChannelSend):Increment()
         end
     end

@@ -4,44 +4,44 @@ local ObjectName = 'Channel'
 Channel = Object:newChildConstructor()
 
 function Channel:new()
-    local _Object = Channel.parent.new(self)
-    _Object.__name = 'Channel'
-    _Object._ID = nil
-    _Object._Password = nil
-    _Object._Community = false
-    return _Object
+    local object = Channel.parent.new(self)
+    object.__name = 'Channel'
+    object.ID = nil
+    object.password = nil
+    object.community = false
+    return object
 end
 
 function Channel:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-        XFG:Debug(ObjectName, "  _Community (" ..type(self._Community) .. "): ".. tostring(self._Community))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
     end
 end
 
 function Channel:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Channel:SetID(inID)
     assert(type(inID) == 'number')
-    self._ID = inID
+    self.ID = inID
 end
 
 function Channel:GetPassword()
-    return self._Password
+    return self.password
 end
 
 function Channel:SetPassword(inPassword)
     assert(type(inPassword) == 'string')
-    self._Password = inPassword
+    self.password = inPassword
 end
 
 function Channel:IsCommunity(inBoolean)
     assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
     if(inBoolean ~= nil) then
-        self._Community = inBoolean
+        self.community = inBoolean
     end
-    return self._Community
+    return self.community
 end

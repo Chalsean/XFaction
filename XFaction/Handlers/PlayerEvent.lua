@@ -1,19 +1,19 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'PlayerEvent'
+local GetMemberInfo = C_Club.GetMemberInfo
 
 PlayerEvent = Object:newChildConstructor()
 
 function PlayerEvent:new()
-    local _Object = PlayerEvent.parent.new(self)
-    _Object.__name = ObjectName
-    return _Object
+    local object = PlayerEvent.parent.new(self)
+    object.__name = ObjectName
+    return object
 end
 
 function PlayerEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Events:Add('Covenant', 'COVENANT_CHOSEN', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false, false)
-        XFG.Events:Add('Soulbind', 'SOULBIND_ACTIVATED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)
+
         XFG.Events:Add('Mythic', 'CHALLENGE_MODE_COMPLETED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, true)
         XFG.Events:Add('Spec', 'ACTIVE_TALENT_GROUP_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true, false)        
         XFG.Events:Add('Instance', 'PLAYER_ENTERING_WORLD', XFG.Handlers.PlayerEvent.CallbackInstance, true, false)
@@ -31,14 +31,7 @@ function PlayerEvent:CallbackPlayerChanged(inEvent)
     try(function ()
         XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
         --XFG:Info(ObjectName, 'Updated player data based on %s event', inEvent)
-
-        if(inEvent ~= 'SOULBIND_ACTIVATED') then
-            XFG.Player.Unit:Broadcast()
-        end
-
-        if(inEvent == 'COVENANT_CHOSEN' or inEvent == 'SOULBIND_ACTIVATED') then
-            XFG.DataText.Soulbind:RefreshBroker()
-        end
+        XFG.Player.Unit:Broadcast()
     end).
     catch(function (inErrorMessage)
         XFG:Warn(ObjectName, inErrorMessage)
@@ -50,22 +43,14 @@ end
 function PlayerEvent:CallbackZoneChanged()
     if(XFG.Initialized) then 
         try(function ()
-            local _ZoneName = GetRealZoneText()
-            if(_ZoneName ~= nil and _ZoneName ~= XFG.Player.Unit:GetZone():GetName()) then
-                local _Zone = XFG.Zones:Get(_ZoneName)
-                if(_Zone == nil) then
-                    _Zone = XFG.Zones:AddZone(_ZoneName)
+            local zoneName = GetRealZoneText()
+            if(zoneName ~= nil and zoneName ~= XFG.Player.Unit:GetZone():GetName()) then
+                local zone = XFG.Zones:Get(zoneName)
+                if(zone == nil) then
+                    zone = XFG.Zones:AddZone(zoneName)
                 end
-                XFG.Player.Unit:SetZone(_Zone)
-                XFG:Info(ObjectName, 'Updated player data based on ZONE_CHANGED_NEW_AREA event')
-                local _Event = XFG.Events:Get('Covenant')
-                if(XFG.Player.Unit:GetZone():GetName() == 'Oribos') then
-                    if(not _Event:IsEnabled()) then
-                        _Event:Start()
-                    end
-                elseif(_Event:IsEnabled()) then
-                    _Event:Stop()
-                end
+                XFG.Player.Unit:SetZone(zone)
+                --XFG:Info(ObjectName, 'Updated player data based on ZONE_CHANGED_NEW_AREA event')
             end
         end).
         catch(function (inErrorMessage)
@@ -77,10 +62,10 @@ end
 function PlayerEvent:CallbackSkillChanged()
     try(function ()
         -- We only care if player has learned/unlearned a profession, the rest is noise
-        local _UnitData = C_Club.GetMemberInfo(XFG.Player.Guild:GetID(), XFG.Player.Unit:GetID())
-        if(_UnitData.profession1ID ~= nil) then
-            local _Profession = XFG.Professions:Get(_UnitData.profession1ID)
-            if(not _Profession:Equals(XFG.Player.Unit:GetProfession1())) then
+        local unitData = GetMemberInfo(XFG.Player.Guild:GetID(), XFG.Player.Unit:GetID())
+        if(unitData.profession1ID ~= nil) then
+            local profession = XFG.Professions:Get(unitData.profession1ID)
+            if(not profession:Equals(XFG.Player.Unit:GetProfession1())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
                 XFG.Player.Unit:Broadcast()
@@ -88,9 +73,9 @@ function PlayerEvent:CallbackSkillChanged()
             end
         end
 
-        if(_UnitData.profession2ID ~= nil) then
-            local _Profession = XFG.Professions:Get(_UnitData.profession2ID)
-            if(not _Profession:Equals(XFG.Player.Unit:GetProfession2())) then
+        if(unitData.profession2ID ~= nil) then
+            local profession = XFG.Professions:Get(unitData.profession2ID)
+            if(not profession:Equals(XFG.Player.Unit:GetProfession2())) then
                 XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
                 XFG:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
                 XFG.Player.Unit:Broadcast()
@@ -105,9 +90,9 @@ end
 
 function PlayerEvent:CallbackInstance()
     try(function ()
-        local _InInstance, _InstanceType = IsInInstance()
+        local inInstance = IsInInstance()
         -- Enter instance for first time
-        if(_InInstance and not XFG.Player.InInstance) then
+        if(inInstance and not XFG.Player.InInstance) then
             XFG:Debug(ObjectName, 'Entering instance, disabling some event listeners and timers')
             XFG.Player.InInstance = true
             XFG.Events:EnterInstance()
@@ -118,7 +103,7 @@ function PlayerEvent:CallbackInstance()
             end
 
         -- Just leaving instance or UI reload
-        elseif(not _InInstance and XFG.Player.InInstance) then
+        elseif(not inInstance and XFG.Player.InInstance) then
             XFG.DebugFlag = XFG.Config.Debug.Enable
             XFG:Debug(ObjectName, 'Leaving instance, enabling some event listeners and timers')
             XFG.Player.InInstance = false

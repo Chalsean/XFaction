@@ -3,9 +3,9 @@ local XFG, G = unpack(select(2, ...))
 BNetEvent = Object:newChildConstructor()
 
 function BNetEvent:new()
-    local _Object = BNetEvent.parent.new(self)
-    _Object.__name = 'BNetEvent'
-    return _Object
+    local object = BNetEvent.parent.new(self)
+    object.__name = 'BNetEvent'
+    return object
 end
 
 function BNetEvent:Initialize()

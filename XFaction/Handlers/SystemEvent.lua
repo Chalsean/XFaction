@@ -4,9 +4,9 @@ local ObjectName = 'SystemEvent'
 SystemEvent = Object:newChildConstructor()
 
 function SystemEvent:new()
-    local _Object = SystemEvent.parent.new(self)
-    _Object.__name = ObjectName
-    return _Object
+    local object = SystemEvent.parent.new(self)
+    object.__name = ObjectName
+    return object
 end
 
 function SystemEvent:Initialize()
@@ -21,46 +21,43 @@ function SystemEvent:Initialize()
 	end
 end
 
-function SystemEvent:CallbackLogout()    
-    if(XFG.DB.UIReload) then 
-        -- Backup information on reload to be restored
-        XFG.Confederate:Backup()
-        XFG.Friends:Backup()
-        XFG.Links:Backup()
+function SystemEvent:CallbackLogout()
+    if(XFG.Cache.UIReload) then 
+        -- Backup cache on reload to be restored
+        _G.XFCacheDB = XFG.Cache
     else
-        local _NewMessage = nil
+        local message = nil
         try(function ()        
-            _NewMessage = XFG.Mailbox.Chat:Pop()
-            _NewMessage:Initialize()
-            _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-            _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
+            message = XFG.Mailbox.Chat:Pop()
+            message:Initialize()
+            message:SetType(XFG.Settings.Network.Type.BROADCAST)
+            message:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
             if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-                _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+                message:SetMainName(XFG.Player.Unit:GetMainName())
             end
-            _NewMessage:SetGuild(XFG.Player.Guild)
-            _NewMessage:SetRealm(XFG.Player.Realm)
-            _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
-            _NewMessage:SetData(' ')
-            XFG.Mailbox.Chat:Send(_NewMessage)
+            message:SetGuild(XFG.Player.Guild)
+            message:SetRealm(XFG.Player.Realm)
+            message:SetUnitName(XFG.Player.Unit:GetName())
+            message:SetData(' ')
+            XFG.Mailbox.Chat:Send(message)
         end).
         catch(function (inErrorMessage)
-            XFG.DB.Errors[#XFG.DB.Errors + 1] = 'Failed to send logoff message: ' .. inErrorMessage
+            XFG.Cache.Errors[#XFG.Cache.Errors + 1] = 'Failed to send logoff message: ' .. inErrorMessage
         end).
         finally(function ()
-            XFG.Mailbox.Chat:Push(_NewMessage)
+            _G.XFCacheDB = nil
+            XFG.Mailbox.Chat:Push(message)            
         end)
     end    
 end
 
 function SystemEvent:CallbackReloadUI()
-    if(XFG.DB ~= nil) then
-        XFG.DB.UIReload = true
-    end
+    XFG.Cache.UIReload = true
 end
 
 function SystemEvent:CallbackLogin()
-    if(XFG.Outlook:HasLocalChannel()) then
-        XFG.Channels:SetLast(XFG.Outlook:GetLocalChannel():GetKey())
+    if(XFG.Channels:HasLocalChannel()) then
+        XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
     end
 end
 

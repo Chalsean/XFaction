@@ -1,7 +1,8 @@
 local addon, Engine = ...
 local LogCategory = 'Constants'
 
-local XFG = LibStub('AceAddon-3.0'):NewAddon(addon, "AceConsole-3.0")
+local XFG = {}
+setmetatable(XFG, self)
 
 Engine[1] = XFG
 Engine[2] = G
@@ -12,7 +13,7 @@ XFG.Category = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XFG.Version = GetAddOnMetadata(addon, "Version")
 XFG.Start = GetServerTime()
-XFG.DebugFlag = false
+XFG.DebugFlag = true
 
 XFG.DataText = {}
 XFG.Factories = {}
@@ -20,6 +21,7 @@ XFG.Frames = {}
 XFG.Handlers = {}
 XFG.Mailbox = {}
 XFG.Nameplates = {}
+XFG.Widgets = {}
 
 XFG.Initialized = false
 
@@ -41,27 +43,14 @@ XFG.Lib = {
 	Deflate = LibStub:GetLibrary('LibDeflate'),
 	QT = LibStub('LibQTip-1.0'),
 	Broker = LibStub('LibDataBroker-1.1'),
-	Config = LibStub('AceConfig-3.0'),
-	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
 	LSM = LibStub('LibSharedMedia-3.0'),
-	LSMList = AceGUIWidgetLSMlists,
 }
 XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 
 XFG.Player = {
 	LastBroadcast = 0,
 	InInstance = false
-}
-
-XFG.Cache = {
-	Channels = {},
-	NewVersionNotify = false,
-	FirstScan = {},
-	Realms = {},
-	Factions = {},
-	SetupGuild = {},
-	Invites = {},
 }
 
 XFG.Settings = {
@@ -119,11 +108,8 @@ XFG.Settings = {
 	Factions = {'Alliance', 'Horde', 'Neutral'},
 	Network = {
 		CompressionLevel = 9,
-		LoginLimit = 42,
 		Channel = {
 			Total = 10,
-			Name = nil,
-			Password = nil
 		},
 		Chat = {
 			PacketSize = 217,
@@ -157,7 +143,7 @@ XFG.Settings = {
 			WHISPER = '2',   -- Whisper only
 			LOCAL = '3',     -- Local Channel only
 			BNET = '4',      -- BNet only
-		},
+		},		
 		Mailbox = {
 			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
 			Stale = 60 * 5   -- Seconds until a message is considered stale
@@ -183,5 +169,11 @@ XFG.Settings = {
 	Factories = {
 		Scan = 60 * 7,
 		Purge = 60 * 30,
+	},
+	Profession = {
+		Total = 100,
+	},
+	Race = {
+		Total = 100,
 	},
 }

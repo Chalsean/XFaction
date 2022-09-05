@@ -1,115 +1,113 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Timer'
-
 local NewTicker = C_Timer.NewTicker
 local NewTimer = C_Timer.NewTimer
 
 Timer = Object:newChildConstructor()
 
 function Timer:new()
-    local _Object = Timer.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Handle = nil
-    _Object._Delta = 0
-    _Object._Callback = nil
-    _Object._LastRan = 0
-    _Object._Enabled = false
-    _Object._Repeat = false
-    _Object._Instance = false
-    _Object._InstanceCombat = false
-    return _Object
+    local object = Timer.parent.new(self)
+    object.__name = ObjectName
+    object.handle = nil
+    object.ID = nil
+    object.delta = 0
+    object.callback = nil
+    object.lastRan = 0
+    object.isEnabled = false
+    object.isRepeat = false
+    object.inInstance = false
+    object.inInstanceCombat = false
+    return object
 end
 
 function Timer:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
-        XFG:Debug(ObjectName, '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
-        XFG:Debug(ObjectName, '  _LastRan (' .. type(self._LastRan) .. '): ' .. tostring(self._LastRan))
-        XFG:Debug(ObjectName, '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
-        XFG:Debug(ObjectName, '  _Repeat (' .. type(self._Repeat) .. '): ' .. tostring(self._Repeat))
-        XFG:Debug(ObjectName, '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
-        XFG:Debug(ObjectName, '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
+        XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+        XFG:Debug(ObjectName, '  lastRan (' .. type(self.lastRan) .. '): ' .. tostring(self.lastRan))
+        XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+        XFG:Debug(ObjectName, '  isRepeat (' .. type(self.isRepeat) .. '): ' .. tostring(self.isRepeat))
+        XFG:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+        XFG:Debug(ObjectName, '  inInstanceCombat (' .. type(self.inInstanceCombat) .. '): ' .. tostring(self.inInstanceCombat))
     end
 end
 
 function Timer:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Timer:SetID(inID)
     assert(type(inID) == 'number')
-    self._ID = inID
-    return self:GetID()
+    self.ID = inID
 end
 
 function Timer:GetDelta()
-    return self._Delta
+    return self.delta
 end
 
 function Timer:SetDelta(inDelta)
     assert(type(inDelta) == 'number')
-    self._Delta = inDelta
-    return self:GetDelta()
+    self.delta = inDelta
 end
 
 function Timer:GetCallback()
-    return self._Callback
+    return self.callback
 end
 
 function Timer:SetCallback(inCallback)
     assert(type(inCallback) == 'function')
-    self._Callback = inCallback
+    self.callback = inCallback
     return self:GetCallback()
 end
 
 function Timer:GetLastRan()
-    return self._LastRan
+    return self.lastRan
 end
 
 function Timer:SetLastRan(inLastRan)
     assert(type(inLastRan) == 'number')
-    self._LastRan = inLastRan
-    return self:GetLastRan()
+    self.lastRan = inLastRan
 end
 
 function Timer:IsEnabled(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
-        self._Enabled = inBoolean
+        self.isEnabled = inBoolean
     end
-	return self._Enabled
+	return self.isEnabled
 end
 
 function Timer:IsRepeat(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
-        self._Repeat = inBoolean
+        self.isRepeat = inBoolean
     end
-	return self._Repeat
+	return self.isRepeat
 end
 
 function Timer:IsInstance(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
-        self._Instance = inBoolean
+        self.inInstance = inBoolean
     end
-	return self._Instance
+	return self.inInstance
 end
 
 function Timer:IsInstanceCombat(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
-        self._InstanceCombat = inBoolean
+        self.inInstanceCombat = inBoolean
     end
-	return self._InstanceCombat
+	return self.inInstanceCombat
 end
 
 function Timer:Start()
     if(self:IsRepeat()) then
-        self._Handle = NewTicker(self:GetDelta(), self:GetCallback())
+        self.handle = NewTicker(self:GetDelta(), self:GetCallback())
     else
-        self._Handle = NewTimer(self:GetDelta(), self:GetCallback())
+        self.handle = NewTimer(self:GetDelta(), self:GetCallback())
     end
     self:IsEnabled(true)
     if(XFG.DebugFlag) then
@@ -118,8 +116,8 @@ function Timer:Start()
 end
 
 function Timer:Stop()
-    if(self._Handle ~= nil and not self._Handle:IsCancelled()) then
-        self._Handle:Cancel()
+    if(self.handle ~= nil and not self.handle:IsCancelled()) then
+        self.handle:Cancel()
     end
     --XFG:CancelTimer(self._ID)
     self:IsEnabled(false)

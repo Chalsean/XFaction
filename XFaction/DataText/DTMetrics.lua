@@ -1,23 +1,24 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'DTMetrics'
+local CombatLockdown = InCombatLockdown
 
 DTMetrics = Object:newChildConstructor()
 	
 function DTMetrics:new()
-	local _Object = DTGuild.parent.new(self)
-    _Object.__name = ObjectName
-	_Object._HeaderFont = nil
-	_Object._RegularFont = nil
-	_Object._LDBObject = nil
-	_Object._Tooltip = nil
-	_Object._Count = 0    
-    return _Object
+	local object = DTGuild.parent.new(self)
+    object.__name = ObjectName
+	object.headerFont = nil
+	object.regularFont = nil
+	object.ldbObject = nil
+	object.tooltip = nil
+	object.count = 0    
+    return object
 end
 
 function DTMetrics:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		self._LDBObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTMETRICS_NAME'], {
+		self.ldbObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTMETRICS_NAME'], {
 			type = 'data source',
 			label = XFG.Lib.Locale['DTMETRICS_NAME'],
 		    OnEnter = function(this) XFG.DataText.Metrics:OnEnter(this) end,
@@ -30,109 +31,108 @@ function DTMetrics:Initialize()
 end
 
 function DTMetrics:SetFont()
-	self._HeaderFont = CreateFont('_HeaderFont')
-	self._HeaderFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
-	self._HeaderFont:SetTextColor(0.4,0.78,1)
-	self._RegularFont = CreateFont('_RegularFont')
-	self._RegularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
-	self._RegularFont:SetTextColor(255,255,255)
+	self.headerFont = CreateFont('headerFont')
+	self.headerFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
+	self.headerFont:SetTextColor(0.4,0.78,1)
+	self.regularFont = CreateFont('regularFont')
+	self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
+	self.regularFont:SetTextColor(255,255,255)
 end
 
 function DTMetrics:Print()
 	if(XFG.DebugFlag) then
 		self:ParentPrint()
-		XFG:Debug(ObjectName, "  _HeaderFont (" .. type(self._HeaderFont) .. "): ".. tostring(self._HeaderFont))
-		XFG:Debug(ObjectName, "  _RegularFont (" .. type(self._RegularFont) .. "): ".. tostring(self._RegularFont))
-		XFG:Debug(ObjectName, "  _Count (" .. type(self._Count) .. "): ".. tostring(self._Count))
-		XFG:Debug(ObjectName, "  _LDBObject (" .. type(self._LDBObject) .. ")")
-		XFG:Debug(ObjectName, "  _Tooltip (" .. type(_Tooltip) .. ")")
+		XFG:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
+		XFG:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
+		XFG:Debug(ObjectName, '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
+		XFG:Debug(ObjectName, '  ldbObject (' .. type(self.ldbObject) .. ')')
+		XFG:Debug(ObjectName, '  tooltip (' .. type(tooltip) .. ')')
 	end
 end
 
 function DTMetrics:RefreshBroker()
 	if(XFG.Initialized) then
-		local _Text = ''
-		local _Delimiter = false
-		if(XFG.Config.DataText.Metric.Total) then
-			_Text = _Text .. format('|cffffffff%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Messages):GetCount())
-			_Delimiter = true
-		end
+		local text = ''
+		local delimiter = false
+		-- if(XFG.Config.DataText.Metric.Total) then
+		-- 	text = text .. format('|cffffffff%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Messages):GetCount())
+		-- 	delimiter = true
+		-- end
 
-		if(XFG.Config.DataText.Metric.Average) then
-			if(_Delimiter) then _Text = _Text .. ' : ' end
-			_Text = _Text .. format('|cffffffff%.2f|r', XFG.Metrics:Get(XFG.Settings.Metric.Messages):GetAverage(XFG.Config.DataText.Metric.Rate))
-			_Delimiter = true
-		end
+		-- if(XFG.Config.DataText.Metric.Average) then
+		-- 	if(delimiter) then text = text .. ' : ' end
+		-- 	text = text .. format('|cffffffff%.2f|r', XFG.Metrics:Get(XFG.Settings.Metric.Messages):GetAverage(XFG.Config.DataText.Metric.Rate))
+		-- 	delimiter = true
+		-- end
 
-		if(XFG.Config.DataText.Metric.Error) then
-			if(_Delimiter) then _Text = _Text .. ' : ' end
-			_Text = _Text .. format('|cffFF4700%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Error):GetCount())
-			_Delimiter = true
-		end
+		-- if(XFG.Config.DataText.Metric.Error) then
+		-- 	if(delimiter) then text = text .. ' : ' end
+		-- 	text = text .. format('|cffFF4700%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Error):GetCount())
+		-- 	delimiter = true
+		-- end
 
-		if(XFG.Config.DataText.Metric.Warning) then
-			if(_Delimiter) then _Text = _Text .. ' : ' end
-			_Text = _Text .. format('|cffffff00%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Warning):GetCount())
-			_Delimiter = true
-		end
-		self._LDBObject.text = _Text
+		-- if(XFG.Config.DataText.Metric.Warning) then
+		-- 	if(delimiter) then text = text .. ' : ' end
+		-- 	text = text .. format('|cffffff00%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Warning):GetCount())
+		-- 	delimiter = true
+		-- end
+		self.ldbObject.text = text
 	end
 end
 
 function DTMetrics:OnEnter(this)
 	if(XFG.Initialized == false) then return end
-	if(InCombatLockdown()) then return end
+	if(CombatLockdown()) then return end
 
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
-		self._Tooltip = XFG.Lib.QT:Acquire(ObjectName)		
+		self.tooltip = XFG.Lib.QT:Acquire(ObjectName)		
 	else
-		self._Tooltip = XFG.Lib.QT:Acquire(ObjectName, 3)
-		self._Tooltip:SetHeaderFont(self._HeaderFont)
-		self._Tooltip:SetFont(self._RegularFont)
-		self._Tooltip:SmartAnchorTo(this)
-		self._Tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() DTMetrics:OnLeave() end)
-		self._Tooltip:EnableMouse(true)
-		self._Tooltip:SetClampedToScreen(false)
+		self.tooltip = XFG.Lib.QT:Acquire(ObjectName, 3)
+		self.tooltip:SetHeaderFont(self.headerFont)
+		self.tooltip:SetFont(self.regularFont)
+		self.tooltip:SmartAnchorTo(this)
+		self.tooltip:SetAutoHideDelay(XFG.Settings.DataText.AutoHide, this, function() DTMetrics:OnLeave() end)
+		self.tooltip:EnableMouse(true)
+		self.tooltip:SetClampedToScreen(false)
 	end
 
-	self._Tooltip:Clear()
+	self.tooltip:Clear()
 
-	local line = self._Tooltip:AddLine()
-	local _GuildName = XFG.Confederate:GetName()
-	self._Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], _GuildName), self._HeaderFont, "LEFT", 3)
-	line = self._Tooltip:AddLine()
-	local _CalendarTime = XFG.Metrics:GetStartCalendar()
-	self._Tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DTMETRICS_HEADER'], _CalendarTime.hour, _CalendarTime.minute), self._HeaderFont, "LEFT", 3)
+	local line = self.tooltip:AddLine()
+	self.tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], XFG.Confederate:GetName()), self.headerFont, 'LEFT', 3)
+	line = self.tooltip:AddLine()
+	local calendar = XFG.Metrics:GetStartCalendar()
+	self.tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self.headerFont, 'LEFT', 3)
 
-	line = self._Tooltip:AddLine()
-	line = self._Tooltip:AddLine()
-	line = self._Tooltip:AddHeader()
+	line = self.tooltip:AddLine()
+	line = self.tooltip:AddLine()
+	line = self.tooltip:AddHeader()
 
-	self._Tooltip:SetCell(line, 1, XFG.Lib.Locale['DTMETRICS_HEADER_METRIC'], self._HeaderFont, 'LEFT')
-	self._Tooltip:SetCell(line, 2, XFG.Lib.Locale['DTMETRICS_HEADER_TOTAL'], self._HeaderFont, 'CENTER')
-	self._Tooltip:SetCell(line, 3, XFG.Lib.Locale['DTMETRICS_HEADER_AVERAGE'], self._HeaderFont, 'RIGHT')
+	self.tooltip:SetCell(line, 1, XFG.Lib.Locale['DTMETRICS_HEADER_METRIC'], self.headerFont, 'LEFT')
+	self.tooltip:SetCell(line, 2, XFG.Lib.Locale['DTMETRICS_HEADER_TOTAL'], self.headerFont, 'CENTER')
+	self.tooltip:SetCell(line, 3, XFG.Lib.Locale['DTMETRICS_HEADER_AVERAGE'], self.headerFont, 'RIGHT')
 
-	line = self._Tooltip:AddLine()
-	self._Tooltip:AddSeparator()
-	line = self._Tooltip:AddLine()
+	line = self.tooltip:AddLine()
+	self.tooltip:AddSeparator()
+	line = self.tooltip:AddLine()
 
 	if(XFG.Initialized) then
-		for _, _Metric in XFG.Metrics:Iterator() do
-			self._Tooltip:SetCell(line, 1, _Metric:GetName(), self._RegularFont, 'LEFT')
-			self._Tooltip:SetCell(line, 2, _Metric:GetCount(), self._RegularFont, 'CENTER')
-			self._Tooltip:SetCell(line, 3, format("%.2f", _Metric:GetAverage(XFG.Config.DataText.Metric.Rate)), self._RegularFont, 'RIGHT')
-			line = self._Tooltip:AddLine()
+		for _, metric in XFG.Metrics:Iterator() do
+			self.tooltip:SetCell(line, 1, metric:GetName(), self.regularFont, 'LEFT')
+			self.tooltip:SetCell(line, 2, metric:GetCount(), self.regularFont, 'CENTER')
+			self.tooltip:SetCell(line, 3, format("%.2f", metric:GetAverage(XFG.Config.DataText.Metric.Rate)), self.regularFont, 'RIGHT')
+			line = self.tooltip:AddLine()
 		end
 	end
 
-	self._Tooltip:Show()
+	self.tooltip:Show()
 end
 
 function DTMetrics:OnLeave()
-	if self._Tooltip and MouseIsOver(self._Tooltip) then
+	if self.tooltip and MouseIsOver(self.tooltip) then
         return
     else
-        XFG.Lib.QT:Release(self._Tooltip)
-        self._Tooltip = nil
+        XFG.Lib.QT:Release(self.tooltip)
+        self.tooltip = nil
 	end
 end

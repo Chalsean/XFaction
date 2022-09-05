@@ -102,6 +102,9 @@ function lib:GetAllRealms(region)
 		region = self:GetCurrentRegion()
 	end
 
+	-- For beta testing only
+	region = 'US'
+
 	if Unpack then
 		Unpack()
 	end

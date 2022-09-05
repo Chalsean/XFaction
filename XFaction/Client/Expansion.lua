@@ -4,39 +4,39 @@ local ObjectName = 'Expansion'
 Expansion = Object:newChildConstructor()
 
 function Expansion:new()
-    local _Object = Expansion.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._ID = nil
-    _Object._IconID = nil
-    _Object._Version = nil
-    return _Object
+    local object = Expansion.parent.new(self)
+    object.__name = ObjectName
+    object.ID = nil
+    object.iconID = nil
+    object.version = nil
+    return object
 end
 
 function Expansion:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-        XFG:Debug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
         if(self:HasVersion()) then self:GetVersion():Print() end
     end
 end
 
 function Expansion:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Expansion:SetID(inID)
     assert(type(inID) == 'number')
-    self._ID = inID
+    self.ID = inID
 end
 
 function Expansion:GetIconID()
-    return self._IconID
+    return self.iconID
 end
 
 function Expansion:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
-    self._IconID = inIconID
+    self.iconID = inIconID
 end
 
 function Expansion:IsRetail()
@@ -44,14 +44,14 @@ function Expansion:IsRetail()
 end
 
 function Expansion:HasVersion()
-	return self._Version ~= nil
+	return self.version ~= nil
 end
 
 function Expansion:SetVersion(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
-	self._Version = inVersion
+    assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')
+	self.version = inVersion
 end
 
 function Expansion:GetVersion()
-	return self._Version
+	return self.version
 end

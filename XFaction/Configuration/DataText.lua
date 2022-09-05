@@ -84,18 +84,18 @@ XFG.Options.args.DataText = {
 					type = 'description',
 					name = '',
 				},
-				Font = {
-					name = XFG.Lib.Locale['DT_CONFIG_FONT'],
-					type = 'select',
-					order = 3,
-					dialogControl = 'LSM30_Font',
-					values = XFG.Lib.LSMList.font,
-					get = function(info) return XFG.Config.DataText[ info[#info] ] end,
-					set = function(info, value) 
-						XFG.Config.DataText[ info[#info] ] = value; 
-						XFG.DataText.Guild:SetFont()
-					end
-				},
+				-- Font = {
+				-- 	name = XFG.Lib.Locale['DT_CONFIG_FONT'],
+				-- 	type = 'select',
+				-- 	order = 3,
+				-- 	dialogControl = 'LSM30_Font',
+				-- 	values = XFG.Lib.LSMList.font,
+				-- 	get = function(info) return XFG.Config.DataText[ info[#info] ] end,
+				-- 	set = function(info, value) 
+				-- 		XFG.Config.DataText[ info[#info] ] = value; 
+				-- 		XFG.DataText.Guild:SetFont()
+				-- 	end
+				-- },
 				FontSize = {
 					order = 4,
 					name = XFG.Lib.Locale['DT_CONFIG_FONT_SIZE'],

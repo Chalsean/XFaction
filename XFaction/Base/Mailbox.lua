@@ -1,27 +1,26 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Mailbox'
-
 local ServerTime = GetServerTime
 
 Mailbox = Factory:newChildConstructor()
 
 function Mailbox:new()
-    local _Object = Mailbox.parent.new(self)
-	_Object.__name = ObjectName
-	_Object._Objects = nil
-    _Object._ObjectCount = 0   
-    _Object._Packets = nil
-	return _Object
+    local object = Mailbox.parent.new(self)
+	object.__name = ObjectName
+	object.objects = nil
+    object.objectCount = 0   
+    object.packets = nil
+	return object
 end
 
 function Mailbox:newChildConstructor()
-    local _Object = Mailbox.parent.new(self)
-    _Object.__name = ObjectName
-    _Object.parent = self 
-	_Object._Objects = nil
-    _Object._ObjectCount = 0   
-    _Object._Packets = nil
-    return _Object
+    local object = Mailbox.parent.new(self)
+    object.__name = ObjectName
+    object.parent = self 
+	object.objects = nil
+    object.objectCount = 0   
+    object.packets = nil
+    return object
 end
 
 function Mailbox:NewObject()
@@ -36,22 +35,22 @@ function Mailbox:Initialize()
 end
 
 function Mailbox:ParentInitialize()
-    self._Packets = {}
-    self._Objects = {}
-    self._CheckedIn = {}
-    self._CheckedOut = {}
-    self._Key = math.GenerateUID()
+    self.packets = {}
+    self.objects = {}
+    self.checkedIn = {}
+    self.checkedOut = {}
+    self.key = math.GenerateUID
 end
 
 function Mailbox:ContainsPacket(inKey)
 	assert(type(inKey) == 'string')
-	return self._Packets[inKey] ~= nil
+	return self.packets[inKey] ~= nil
 end
 
 function Mailbox:Add(inMessage)
-	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
+	assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 	if(not self:Contains(inMessage:GetKey())) then
-		self._Objects[inMessage:GetKey()] = ServerTime()
+		self.objects[inMessage:GetKey()] = ServerTime()
 	end
 end
 
@@ -60,68 +59,68 @@ function Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
     assert(type(inPacketNumber) == 'number')
     assert(type(inData) == 'string')
     if(not self:ContainsPacket(inMessageKey)) then
-        self._Packets[inMessageKey] = {}
-        self._Packets[inMessageKey].Count = 0
+        self.packets[inMessageKey] = {}
+        self.packets[inMessageKey].Count = 0
     end
-    self._Packets[inMessageKey][inPacketNumber] = inData
-    self._Packets[inMessageKey].Count = self._Packets[inMessageKey].Count + 1
+    self.packets[inMessageKey][inPacketNumber] = inData
+    self.packets[inMessageKey].Count = self.packets[inMessageKey].Count + 1
 end
 
 function Mailbox:RemovePacket(inKey)
 	assert(type(inKey) == 'string')
 	if(self:ContainsPacket(inKey)) then
-		self._Packets[inKey] = nil
+		self.packets[inKey] = nil
 	end
 end
 
 function Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
 	assert(type(inEncodedData) == 'string')
-	local _Packets = {}
-    local _TotalPackets = ceil(strlen(inEncodedData) / inPacketSize)
-    for i = 1, _TotalPackets do
-        local _Segment = string.sub(inEncodedData, inPacketSize * (i - 1) + 1, inPacketSize * i)
-        _Segment = tostring(i) .. tostring(_TotalPackets) .. inMessageKey .. _Segment
-        _Packets[#_Packets + 1] = _Segment
+	local packets = {}
+    local totalPackets = ceil(strlen(inEncodedData) / inPacketSize)
+    for i = 1, totalPackets do
+        local segment = string.sub(inEncodedData, inPacketSize * (i - 1) + 1, inPacketSize * i)
+        segment = tostring(i) .. tostring(totalPackets) .. inMessageKey .. segment
+        packets[#packets + 1] = segment
     end
-	return _Packets
+	return packets
 end
 
 function Mailbox:HasAllPackets(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     assert(type(inTotalPackets) == 'number')
-    if(self._Packets[inKey] == nil) then return false end
-    return self._Packets[inKey].Count == inTotalPackets
+    if(self.packets[inKey] == nil) then return false end
+    return self.packets[inKey].Count == inTotalPackets
 end
 
 function Mailbox:RebuildMessage(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
-    local _Message = ''
+    local message = ''
     -- Stitch the data back together again
     for i = 1, inTotalPackets do
-        _Message = _Message .. self._Packets[inKey][i]
+        message = message .. self.packets[inKey][i]
     end
     self:RemovePacket(inKey)
-	return _Message
+	return message
 end
 
 function Mailbox:Purge(inEpochTime)
 	assert(type(inEpochTime) == 'number')
-	for _Key, _ReceivedTime in self:Iterator() do
-		if(_ReceivedTime < inEpochTime) then
-			self:Remove(_Key)
+	for key, receivedTime in self:Iterator() do
+		if(receivedTime < inEpochTime) then
+			self:Remove(key)
 		end
 	end
 end
 
 function Mailbox:IsAddonTag(inTag)
-	local _AddonTag = false
-    for _, _Tag in pairs (XFG.Settings.Network.Message.Tag) do
-        if(inTag == _Tag) then
-            _AddonTag = true
+	local addonTag = false
+    for _, tag in pairs (XFG.Settings.Network.Message.Tag) do
+        if(inTag == tag) then
+            addonTag = true
             break
         end
     end
-	return _AddonTag
+	return addonTag
 end
 
 function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
@@ -139,13 +138,13 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     XFG:Debug(ObjectName, 'Received %s packet from %s', inDistribution, inSender)
 
     -- Ensure this message has not already been processed
-    local _PacketNumber = tonumber(string.sub(inEncodedMessage, 1, 1))
-    local _TotalPackets = tonumber(string.sub(inEncodedMessage, 2, 2))
-    local _MessageKey = string.sub(inEncodedMessage, 3, 38)
-    local _MessageData = string.sub(inEncodedMessage, 39, -1)
+    local packetNumber = tonumber(string.sub(inEncodedMessage, 1, 1))
+    local totalPackets = tonumber(string.sub(inEncodedMessage, 2, 2))
+    local messageKey = string.sub(inEncodedMessage, 3, 38)
+    local messageData = string.sub(inEncodedMessage, 39, -1)
 
     -- Temporary, remove after all upgraded to 3.10
-    if(not _PacketNumber or _PacketNumber == 0 or not _TotalPackets or _TotalPackets == 0) then
+    if(not packetNumber or packetNumber == 0 or not totalPackets or totalPackets == 0) then
         XFG:Debug(ObjectName, 'Message is in pre-4.0 format')
         -- local _FullMessage = self:DecodeMessage(inEncodedMessage)
         -- try(function ()
@@ -158,28 +157,28 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     end
 
     -- Ensure we have not already processed the overall message
-    if(XFG.Mailbox.BNet:Contains(_MessageKey) or XFG.Mailbox.Chat:Contains(_MessageKey)) then
+    if(XFG.Mailbox.BNet:Contains(messageKey) or XFG.Mailbox.Chat:Contains(messageKey)) then
         return
     end
 
-    self:AddPacket(_MessageKey, _PacketNumber, _MessageData)
-    if(self:HasAllPackets(_MessageKey, _TotalPackets)) then
+    self:AddPacket(messageKey, packetNumber, messageData)
+    if(self:HasAllPackets(messageKey, totalPackets)) then
         if(XFG.DebugFlag) then
-            XFG:Debug(ObjectName, "Received all packets for message [%s]", _MessageKey)
+            XFG:Debug(ObjectName, 'Received all packets for message [%s]', messageKey)
         end
-        local _EncodedMessage = self:RebuildMessage(_MessageKey, _TotalPackets)
-        local _FullMessage = self:DecodeMessage(_EncodedMessage)
+        local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
+        local fullMessage = self:DecodeMessage(encodedMessage)
         try(function ()
-            self:Process(_FullMessage, inMessageTag)
+            self:Process(fullMessage, inMessageTag)
         end).
         finally(function ()
-            self:Push(_FullMessage)
+            self:Push(fullMessage)
         end)
     end
 end
 
 function Mailbox:Process(inMessage, inMessageTag)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
+    assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
     -- Ignore own messages
     if(inMessage:GetFrom() == XFG.Player.GUID) then
@@ -211,10 +210,10 @@ function Mailbox:Process(inMessage, inMessageTag)
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
         -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
-        local _NodeCount = XFG.Nodes:GetTargetCount(XFG.Player.Target)
-        if(_NodeCount > XFG.Settings.Network.BNet.Link.PercentStart) then
-            local _Percentage = (XFG.Settings.Network.BNet.Link.PercentStart / _NodeCount) * 100
-            if(math.random(1, 100) <= _Percentage) then
+        local nodeCount = XFG.Nodes:GetTargetCount(XFG.Player.Target)
+        if(nodeCount > XFG.Settings.Network.BNet.Link.PercentStart) then
+            local percentage = (XFG.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
+            if(math.random(1, 100) <= percentage) then
                 XFG:Debug(ObjectName, 'Randomly selected, forwarding message')
                 inMessage:SetType(XFG.Settings.Network.Type.BNET)
                 XFG.Mailbox.BNet:Send(inMessage)
@@ -279,16 +278,16 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     -- Process DATA/LOGIN message
     if(inMessage:HasUnitData()) then
-        local _UnitData = inMessage:GetData()
-        _UnitData:IsPlayer(false)
-        if(XFG.Confederate:Add(_UnitData) and XFG.DebugFlag) then
-            XFG:Info(ObjectName, "Updated unit [%s] information based on message received", _UnitData:GetUnitName())
+        local unitData = inMessage:GetData()
+        unitData:IsPlayer(false)
+        if(XFG.Confederate:Add(unitData) and XFG.DebugFlag) then
+            XFG:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:GetUnitName())
         end
 
         -- If unit has just logged in, reply with latest information
         if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
             -- Display system message that unit has logged on
-            if(not XFG.Player.Guild:Equals(_UnitData:GetGuild())) then
+            if(not XFG.Player.Guild:Equals(unitData:GetGuild())) then
                 XFG.Frames.System:DisplayLoginMessage(inMessage)
             end
         end

@@ -1,6 +1,5 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Unit'
-
 local GetMemberInfo = C_Club.GetMemberInfo
 local GetMemberInfoForSelf = C_Club.GetMemberInfoForSelf
 local ServerTime = GetServerTime
@@ -14,63 +13,58 @@ local GetPlayerBNetInfo = BNGetInfo
 Unit = Object:newChildConstructor()
 
 function Unit:new()
-    local _Object = Unit.parent.new(self)
-    _Object.__name = ObjectName
+    local object = Unit.parent.new(self)
+    object.__name = ObjectName
 
-    _Object._GUID = nil
-    _Object._UnitName = nil
-    _Object._ID = 0  -- Note player ID is unique to a guild, not globally
-    _Object._Rank = nil
-    _Object._Level = 60
-    _Object._Class = nil
-    _Object._Spec = nil
-    _Object._Zone = nil
-    _Object._ZoneName = nil
-    _Object._Note = nil
-    _Object._Online = false
-    _Object._Status = nil
-    _Object._Mobile = false
-    _Object._Race = nil
-    _Object._TimeStamp = nil
-    _Object._Covenant = nil
-    _Object._Soulbind = nil
-    _Object._Profession1 = nil
-    _Object._Profession2 = nil
-    _Object._AchievementPoints = 0
-    _Object._RunningAddon = false
-    _Object._Alt = false
-    _Object._MainName = nil
-    _Object._IsPlayer = false
-    _Object._IsOnMainGuild = false
-    _Object._Faction = nil
-    _Object._Team = nil
-    _Object._Guild = nil
-    _Object._Realm = nil
-    _Object._Version = nil
-    _Object._ItemLevel = 0
-    _Object._PvP = ''
-    _Object._GuildSpeak = true
-    _Object._GuildListen = true
-    _Object._RaidIO = nil
+    object.guid = nil
+    object.unitName = nil
+    object.ID = 0  -- Note player ID is unique to a guild, not globally
+    object.rank = nil
+    object.level = 70
+    object.class = nil
+    object.spec = nil
+    object.zone = nil
+    object.zoneName = nil
+    object.note = nil
+    object.isOnline = false
+    object.race = nil
+    object.timeStamp = nil
+    object.profession1 = nil
+    object.profession2 = nil
+    object.achievements = 0
+    object.isRunningAddon = false
+    object.isAlt = false
+    object.mainName = nil
+    object.isPlayer = false
+    object.faction = nil
+    object.team = nil
+    object.guild = nil
+    object.realm = nil
+    object.version = nil
+    object.itemLevel = 0
+    object.pvp = ''
+    object.guildSpeak = true
+    object.guildListen = true
+    object.raidIO = nil
 
-    return _Object
+    return object
 end
 
 function Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number' or inMemberID == nil)
-    local _UnitData
+    local unitData
     if(inMemberID ~= nil) then
-        _UnitData = GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
+        unitData = GetMemberInfo(XFG.Player.Guild:GetID(), inMemberID)
     else
-        _UnitData = GetMemberInfoForSelf(XFG.Player.Guild:GetID())
+        unitData = GetMemberInfoForSelf(XFG.Player.Guild:GetID())
     end
 
     -- Sometimes fails on initial login and odd, but guildRank is nil during a zone transition
-    if(_UnitData == nil or _UnitData.guildRank == nil) then
+    if(unitData == nil or unitData.guildRank == nil) then
         return
     end
  
-    self:SetGUID(_UnitData.guid)
+    self:SetGUID(unitData.guid)
     self:SetKey(self:GetGUID())
 
     if(not self:IsPlayer() and 
@@ -80,115 +74,89 @@ function Unit:Initialize(inMemberID)
         return
     end
 
-    self:IsOnline(_UnitData.presence == 1 or _UnitData.presence == 4 or _UnitData.presence == 5)
+    self:IsOnline(unitData.presence == 1 or unitData.presence == 4 or unitData.presence == 5)
     if(self:IsOffline()) then
         self:IsInitialized(true)
         return
     end
     
-    self:SetID(_UnitData.memberId)
-    self:SetName(_UnitData.name)
-    self:SetUnitName(_UnitData.name .. '-' .. XFG.Player.Realm:GetAPIName())
-	self:SetLevel(_UnitData.level)	
+    self:SetID(unitData.memberId)
+    self:SetName(unitData.name)
+    self:SetUnitName(unitData.name .. '-' .. XFG.Player.Realm:GetAPIName())
+	self:SetLevel(unitData.level)	
 	self:SetFaction(XFG.Player.Faction)
     self:SetGuild(XFG.Player.Guild)
     self:SetRealm(XFG.Player.Realm)
-    local _EpochTime = ServerTime()
-    self:SetTimeStamp(_EpochTime or 0)
-    self:SetClass(XFG.Classes:Get(_UnitData.classID))
-    self:SetRace(XFG.Races:Get(_UnitData.race))
-    self:SetRank(_UnitData.guildRank)
-    self:SetNote(_UnitData.memberNote or '?')
-    self:IsPlayer(_UnitData.isSelf)
-    self:SetAchievementPoints(_UnitData.achievementPoints or 0)
+    self:SetTimeStamp(ServerTime())
+    self:SetClass(XFG.Classes:Get(unitData.classID))
+    self:SetRace(XFG.Races:Get(unitData.race))
+    self:SetRank(unitData.guildRank)
+    self:SetNote(unitData.memberNote or '?')
+    self:IsPlayer(unitData.isSelf)
+    self:SetAchievementPoints(unitData.achievementPoints or 0)
 
-    if(_UnitData.zone and XFG.Zones:Contains(_UnitData.zone)) then
-        self:SetZone(XFG.Zones:Get(_UnitData.zone))
-    elseif(_UnitData.zone and strlen(_UnitData.zone)) then
-        XFG.Zones:AddZone(_UnitData.zone)
-        self:SetZone(XFG.Zones:Get(_UnitData.zone))
+    if(unitData.zone and XFG.Zones:Contains(unitData.zone)) then
+        self:SetZone(XFG.Zones:Get(unitData.zone))
+    elseif(unitData.zone and strlen(unitData.zone)) then
+        XFG.Zones:AddZone(unitData.zone)
+        self:SetZone(XFG.Zones:Get(unitData.zone))
     else
         self:SetZone(XFG.Zones:Get('?'))
     end
 
-    if(_UnitData.profession1ID ~= nil) then
-        self:SetProfession1(XFG.Professions:Get(_UnitData.profession1ID))
+    if(unitData.profession1ID ~= nil) then
+        self:SetProfession1(XFG.Professions:Get(unitData.profession1ID))
     end
 
-    if(_UnitData.profession2ID ~= nil) then
-        self:SetProfession2(XFG.Professions:Get(_UnitData.profession2ID))
+    if(unitData.profession2ID ~= nil) then
+        self:SetProfession2(XFG.Professions:Get(unitData.profession2ID))
     end
 
-    local _RaidIO = XFG.RaidIO:Get(self)
-    if(_RaidIO ~= nil) then
-        self:SetRaidIO(_RaidIO)
+    local raidIO = XFG.RaidIO:Get(self)
+    if(raidIO ~= nil) then
+        self:SetRaidIO(raidIO)
     end
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
         self:SetVersion(XFG.Version)
 
-        local _Permissions = GetPermissions(_UnitData.guildRankOrder)
-        if(_Permissions ~= nil) then
-            self:CanGuildListen(_Permissions[1])
-            self:CanGuildSpeak(_Permissions[2])
+        local permissions = GetPermissions(unitData.guildRankOrder)
+        if(permissions ~= nil) then
+            self:CanGuildListen(permissions[1])
+            self:CanGuildSpeak(permissions[2])
         end
         
-        local _ItemLevel = GetAverageIlvl()
-        if(type(_ItemLevel) == 'number') then
-            _ItemLevel = math.floor(_ItemLevel)
-            self:SetItemLevel(_ItemLevel)
-        end
-
-        local _CovenantID = C_Covenants.GetActiveCovenantID()
-        if(XFG.Covenants:Contains(_CovenantID)) then
-            self:SetCovenant(XFG.Covenants:Get(_CovenantID))
-        end
-
-        local _SoulbindID = C_Soulbinds.GetActiveSoulbindID()
-        if(XFG.Soulbinds:Contains(_SoulbindID)) then
-            self:SetSoulbind(XFG.Soulbinds:Get(_SoulbindID))
-        else
-            -- If you switched covenants and target covenant you have not unlocked soulbinds
-            self:ClearSoulbind()
-        end
-
-        -- If in Oribos, enable Covenant event listener
-        local _Event = XFG.Events:Get('Covenant')   
-        if(_Event ~= nil) then
-            if(self:GetZone():GetName() == 'Oribos') then
-                if(not _Event:IsEnabled()) then
-                    _Event:Start()
-                end
-            elseif(_Event:IsEnabled()) then
-                _Event:Stop()
-            end
+        local itemLevel = GetAverageIlvl()
+        if(type(itemLevel) == 'number') then
+            itemLevel = math.floor(itemLevel)
+            self:SetItemLevel(itemLevel)
         end
 
         -- The following call will randomly fail, retries seem to help
         for i = 1, 10 do
-            local _SpecGroupID = GetSpecGroupID()
-            if(_SpecGroupID ~= nil) then
-    	        local _SpecID = GetSpecID(_SpecGroupID)
-                if(_SpecID ~= nil and XFG.Specs:Contains(_SpecID)) then
-                    self:SetSpec(XFG.Specs:Get(_SpecID))
+            local specGroupID = GetSpecGroupID()
+            if(specGroupID ~= nil) then
+    	        local specID = GetSpecID(specGroupID)
+                if(specID ~= nil and XFG.Specs:Contains(specID)) then
+                    self:SetSpec(XFG.Specs:Get(specID))
                     break
                 end
             end
         end        
 
         -- Highest PvP rating wins
-        local _HighestRating = 0
-        local _HighestIndex = 1
+        local highestRating = 0
+        local highestIndex = 1
         for i = 1, 3 do
-            local _PvPRating = GetPvPRating(i)
-            if(_PvPRating > _HighestRating) then
-                _HighestRating = _PvPRating
-                _HighestIndex = i
+            local pvpRating = GetPvPRating(i)
+            if(pvpRating > highestRating) then
+                highestRating = pvpRating
+                highestIndex = i
             end
         end
-        if(_HighestRating > 0) then
-            self:SetPvP(_HighestRating, _HighestIndex)
+        if(highestRating > 0) then
+            self:SetPvP(highestRating, highestIndex)
         end
     end
 
@@ -198,40 +166,37 @@ end
 function Unit:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _GUID (' .. type(self._GUID) .. '): ' .. tostring(self._GUID))
-        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-        XFG:Debug(ObjectName, '  _UnitName (' .. type(self._UnitName) .. '): ' .. tostring(self._UnitName))
-        XFG:Debug(ObjectName, '  _Rank (' .. type(self._Rank) .. '): ' .. tostring(self._Rank))
-        XFG:Debug(ObjectName, '  _Level (' .. type(self._Level) .. '): ' .. tostring(self._Level))
-        XFG:Debug(ObjectName, '  _Note (' .. type(self._Note) .. '): ' .. tostring(self._Note))
-        XFG:Debug(ObjectName, '  _Online (' .. type(self._Online) .. '): ' .. tostring(self._Online))
-        XFG:Debug(ObjectName, '  _Status (' .. type(self._Status) .. '): ' .. tostring(self._Status))
-        XFG:Debug(ObjectName, '  _AchievementPoints (' .. type(self._AchievementPoints) .. '): ' .. tostring(self._AchievementPoints))
-        XFG:Debug(ObjectName, '  _TimeStamp (' .. type(self._TimeStamp) .. '): ' .. tostring(self._TimeStamp))
-        XFG:Debug(ObjectName, '  _RunningAddon (' .. type(self._RunningAddon) .. '): ' .. tostring(self._RunningAddon))
-        XFG:Debug(ObjectName, '  _Alt (' .. type(self._Alt) .. '): ' .. tostring(self._Alt))
-        XFG:Debug(ObjectName, '  _MainName (' .. type(self._MainName) .. '): ' .. tostring(self._MainName))
-        XFG:Debug(ObjectName, '  _IsPlayer (' .. type(self._IsPlayer) .. '): ' .. tostring(self._IsPlayer))
-        XFG:Debug(ObjectName, '  _ItemLevel (' .. type(self._ItemLevel) .. '): ' .. tostring(self._ItemLevel))
-        XFG:Debug(ObjectName, '  _PvP (' .. type(self._PvP) .. '): ' .. tostring(self._PvP))
-        XFG:Debug(ObjectName, '  _GuildSpeak (' .. type(self._GuildSpeak) .. '): ' .. tostring(self._GuildSpeak))
-        XFG:Debug(ObjectName, '  _GuildListen (' .. type(self._GuildListen) .. '): ' .. tostring(self._GuildListen))
+        XFG:Debug(ObjectName, '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
+        XFG:Debug(ObjectName, '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
+        XFG:Debug(ObjectName, '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
+        XFG:Debug(ObjectName, '  note (' .. type(self.note) .. '): ' .. tostring(self.note))
+        XFG:Debug(ObjectName, '  isOnline (' .. type(self.isOnline) .. '): ' .. tostring(self.isOnline))
+        XFG:Debug(ObjectName, '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
+        XFG:Debug(ObjectName, '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
+        XFG:Debug(ObjectName, '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
+        XFG:Debug(ObjectName, '  isAlt (' .. type(self.isAlt) .. '): ' .. tostring(self.isAlt))
+        XFG:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
+        XFG:Debug(ObjectName, '  isPlayer (' .. type(self.isPlayer) .. '): ' .. tostring(self.isPlayer))
+        XFG:Debug(ObjectName, '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
+        XFG:Debug(ObjectName, '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
+        XFG:Debug(ObjectName, '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
+        XFG:Debug(ObjectName, '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
         if(self:HasZone()) then 
             self:GetZone():Print()
         else
-            XFG:Debug(ObjectName, '  _ZoneName (' .. type(self._ZoneName) .. '): ' .. tostring(self._ZoneName))
+            XFG:Debug(ObjectName, '  zoneName (' .. type(self.zoneName) .. '): ' .. tostring(self.zoneName))
         end
-        if(self:HasVersion()) then self._Version:Print() end
-        if(self:HasRealm()) then self._Realm:Print() end
-        if(self:HasGuild()) then self._Guild:Print() end
-        if(self:HasTeam()) then self._Team:Print() end
-        if(self:HasRace()) then self._Race:Print() end
-        if(self:HasClass()) then self._Class:Print() end
-        if(self:HasSpec()) then self._Spec:Print() end
-        if(self:HasCovenant()) then self._Covenant:Print() end
-        if(self:HasSoulbind()) then self._Soulbind:Print() end
-        if(self:HasProfession1()) then self._Profession1:Print() end
-        if(self:HasProfession2()) then self._Profession2:Print() end  
+        if(self:HasVersion()) then self.version:Print() end
+        if(self:HasRealm()) then self.realm:Print() end
+        if(self:HasGuild()) then self.guild:Print() end
+        if(self:HasTeam()) then self.team:Print() end
+        if(self:HasRace()) then self.race:Print() end
+        if(self:HasClass()) then self.class:Print() end
+        if(self:HasSpec()) then self.spec:Print() end
+        if(self:HasProfession1()) then self.profession1:Print() end
+        if(self:HasProfession2()) then self.profession2:Print() end  
         if(self:HasRaidIO()) then self:GetRaidIO():Print() end
     end
 end
@@ -239,50 +204,46 @@ end
 function Unit:IsPlayer(inBoolean)
     assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
-        self._IsPlayer = inBoolean
+        self.isPlayer = inBoolean
     end
-    return self._IsPlayer
-end
-
-function Unit:HasKey()
-    return self._Key ~= nil
+    return self.isPlayer
 end
 
 function Unit:GetGUID()
-    return self._GUID
+    return self.guid
 end
 
 function Unit:SetGUID(inGUID)
     assert(type(inGUID) == 'string')
-    self._GUID = inGUID
+    self.guid = inGUID
     self:IsPlayer(self:GetGUID() == XFG.Player.GUID)
 end
 
 function Unit:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Unit:SetID(inID)
     assert(type(inID) == 'number')
-    self._ID = inID
+    self.ID = inID
 end
 
 function Unit:GetUnitName()
-    return self._UnitName
+    return self.unitName
 end
 
 function Unit:SetUnitName(inUnitName)
     assert(type(inUnitName) == 'string')
-    self._UnitName = inUnitName
+    self.unitName = inUnitName
 end
 
 function Unit:GetRank()
-    return self._Rank
+    return self.rank
 end
 
 function Unit:SetRank(inRank)
     assert(type(inRank) == 'string')
-    self._Rank = inRank
+    self.rank = inRank
 
     if(inRank == XFG.Settings.Confederate.AltRank) then
         self:IsAlt(true)
@@ -294,29 +255,29 @@ function Unit:SetRank(inRank)
 end
 
 function Unit:GetLevel()
-    return self._Level
+    return self.level
 end
 
 function Unit:SetLevel(inLevel)
     assert(type(inLevel) == 'number')
-    self._Level = inLevel
+    self.level = inLevel
 end
 
 function Unit:HasZone()
-    return self._Zone
+    return self.zone
 end
 
 function Unit:GetZone()
-    return self._Zone
+    return self.zone
 end
 
 function Unit:SetZone(inZone)
     assert(type(inZone) == 'table' and inZone.__name ~= nil and inZone.__name == 'Zone', 'argument must be Zone object')
-    self._Zone = inZone
+    self.zone = inZone
 end
 
 function Unit:GetNote()
-    return self._Note
+    return self.note
 end
 
 function Unit:SetMainTeam(inGuildInitials, inTeamInitial)
@@ -327,339 +288,309 @@ function Unit:SetMainTeam(inGuildInitials, inTeamInitial)
     if(inGuildInitials == 'ENKA') then inGuildInitials = 'ENK' end
     if(inGuildInitials == 'ENKH') then inGuildInitials = 'ENK' end
     if(inGuildInitials ~= nil and XFG.Guilds:Contains(inGuildInitials)) then
-        local _Guild = XFG.Guilds:Get(inGuildInitials)
-        if(not _Guild:Equals(self:GetGuild())) then
+        local guild = XFG.Guilds:Get(inGuildInitials)
+        if(not guild:Equals(self:GetGuild())) then
             self:IsAlt(true)
-            local _, _, _MainName = string.find(self._Note, '%s+([^%s%[%]]+)%s?')
-            if(_MainName ~= nil) then
-                self:SetMainName(_MainName)
+            local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
+            if(mainName ~= nil) then
+                self:SetMainName(mainName)
             end                
         end
-        if(XFG.Teams:Contains(_Guild:GetInitials())) then
-            self:SetTeam(XFG.Teams:Get(_Guild:GetInitials()))
+        if(XFG.Teams:Contains(guild:GetInitials())) then
+            self:SetTeam(XFG.Teams:Get(guild:GetInitials()))
         end
     end    
 end
 
 function Unit:SetNote(inNote)
     assert(type(inNote) == 'string')
-    self._Note = inNote
+    self.note = inNote
 
     --================================
     -- EK standard notes logic
     --================================
 
     -- New team initial format on main
-    local _StartIndex, _, _TeamInitial = string.find(self._Note, '%[(%a)%]')
-    if(_StartIndex == 1) then
-        self:SetMainTeam(nil, _TeamInitial)
+    local startIndex, _, teamInitial = string.find(self.note, '%[(%a)%]')
+    if(startIndex == 1) then
+        self:SetMainTeam(nil, teamInitial)
     else
         -- No team format
-        local _StartIndex, _, _GuildInitials = string.find(self._Note, '%[(%a+)%]')
+        local startIndex, _, guildInitials = string.find(self.note, '%[(%a+)%]')
         if(_StartIndex == 1) then
-            self:SetMainTeam(_GuildInitials)            
+            self:SetMainTeam(guildInitials)            
         end
     end
 
     -- New team initial format on alt
-    local _StartIndex, _, _TeamInitial, _GuildInitials = string.find(self._Note, '%[(%a)-(%a+)')
-    if(_StartIndex == 1) then
-        self:SetMainTeam(_GuildInitials, _TeamInitial)
+    local startIndex, _, teamInitial, guildInitials = string.find(self.note, '%[(%a)-(%a+)')
+    if(startIndex == 1) then
+        self:SetMainTeam(guildInitials, teamInitial)
     else
         -- Some officer specific format
-        local _StartIndex, _, _GuildInitials = string.find(self._Note, '%[(%a%a-)-(%a-)%]')
-        if(_StartIndex == 1) then
-            self:SetMainTeam(_GuildInitials)
+        local startIndex, _, guildInitials = string.find(self.note, '%[(%a%a-)-(%a-)%]')
+        if(startIndex == 1) then
+            self:SetMainTeam(guildInitials)
         end 
     end
 
     -- Old team initial format on alt
-    local _StartIndex, _, _GuildInitials, _TeamInitial = string.find(self._Note, '%[(%a+)%]%s?%[(%a)%]%s?')
-    if(_StartIndex == 1) then
-        self:SetMainTeam(_GuildInitials, _TeamInitial)
+    local startIndex, _, guildInitials, teamInitial = string.find(self.note, '%[(%a+)%]%s?%[(%a)%]%s?')
+    if(startIndex == 1) then
+        self:SetMainTeam(guildInitials, teamInitial)
     end
 
     if(self:GetNote() == '?' and self:GetGuild():GetInitials() == 'ENK') then
         self:SetTeam(XFG.Teams:Get(self:GetGuild():GetInitials()))
     elseif(not self:HasTeam()) then
-        local _Team = XFG.Teams:Get('U')
-        self:SetTeam(_Team)
+        local team = XFG.Teams:Get('U')
+        self:SetTeam(team)
     end
 end
 
 function Unit:GetFaction()
-    return self._Faction
+    return self.faction
 end
 
 function Unit:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', 'argument must be a Faction object')
-    self._Faction = inFaction
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be a Faction object')
+    self.faction = inFaction
 end
 
 function Unit:IsOnline(inBoolean)
     assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
-        self._Online = inBoolean
+        self.isOnline = inBoolean
     end
-    return self._Online
+    return self.isOnline
 end
 
 function Unit:IsOffline()
-    return not self._Online
+    return not self.isOnline
 end
 
 function Unit:CanGuildSpeak(inBoolean)
     assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
-        self._GuildSpeak = inBoolean
+        self.guildSpeak = inBoolean
     end
-    return self._GuildSpeak
+    return self.guildSpeak
 end
 
 function Unit:CanGuildListen(inBoolean)
     assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
-        self._GuildListen = inBoolean
+        self.guildListen = inBoolean
     end
-    return self._GuildListen
+    return self.guildListen
 end
 
 function Unit:GetPvP()
-    return self._PvP
+    return self.pvp
 end
 
 function Unit:SetPvP(inScore, inIndex)
     assert(type(inScore) == 'number')
     assert(type(inIndex) == 'number')
-    self._PvP = tostring(inScore)
+    self.pvp = tostring(inScore)
     if(inIndex == 1) then
-        self._PvP = self._PvP .. ' (2)'
+        self.pvp = self.pvp .. ' (2)'
     elseif(inIndex == 2) then
-        self._PvP = self._PvP .. ' (3)'
+        self.pvp = self.pvp .. ' (3)'
     else
-        self._PvP = self._PvP .. ' (10)'
+        self.pvp = self.pvp .. ' (10)'
     end
 end
 
 function Unit:SetPvPString(inString)
     assert(type(inString) == 'string')
-    self._PvP = inString
+    self.pvp = inString
 end
 
 function Unit:GetAchievementPoints()
-    return self._AchievementPoints
+    return self.achievements
 end
 
 function Unit:SetAchievementPoints(inPoints)
     assert(type(inPoints) == 'number')
-    self._AchievementPoints = inPoints
+    self.achievements = inPoints
 end
 
 function Unit:HasRaidIO()
-    return self._RaidIO ~= nil
+    return self.raidIO ~= nil
 end
 
 function Unit:GetRaidIO()
-    return self._RaidIO
+    return self.raidIO
 end
 
 function Unit:SetRaidIO(inRaidIO)
-    assert(type(inRaidIO) == 'table' and inRaidIO.__name ~= nil and inRaidIO.__name == 'RaidIO', 'argument must be RaidIO object')
-    self._RaidIO = inRaidIO
+    assert(type(inRaidIO) == 'table' and inRaidIO.__name == 'RaidIO', 'argument must be RaidIO object')
+    self.raidIO = inRaidIO
 end
 
 function Unit:HasRace()
-    return self._Race ~= nil
+    return self.race ~= nil
 end
 
 function Unit:GetRace()
-    return self._Race
+    return self.race
 end
 
 function Unit:SetRace(inRace)
-    assert(type(inRace) == 'table' and inRace.__name ~= nil and inRace.__name == 'Race', 'argument must be Race object')
-    self._Race = inRace
+    assert(type(inRace) == 'table' and inRace.__name == 'Race', 'argument must be Race object')
+    self.race = inRace
 end
 
 function Unit:GetTimeStamp()
-    return self._TimeStamp
+    return self.timeStamp
 end
 
 function Unit:SetTimeStamp(inTimeStamp)
     assert(type(inTimeStamp) == 'number')
-    self._TimeStamp = inTimeStamp
+    self.timeStamp = inTimeStamp
 end
 
 function Unit:HasClass()
-    return self._Class ~= nil
+    return self.class ~= nil
 end
 
 function Unit:GetClass()
-    return self._Class
+    return self.class
 end
 
 function Unit:SetClass(inClass)
-    assert(type(inClass) == 'table' and inClass.__name ~= nil and inClass.__name == 'Class', 'argument must be Class object')
-    self._Class = inClass
+    assert(type(inClass) == 'table' and inClass.__name == 'Class', 'argument must be Class object')
+    self.class = inClass
 end
 
 function Unit:HasSpec()
-    return self._Spec ~= nil
+    return self.spec ~= nil
 end
 
 function Unit:GetSpec()
-    return self._Spec
+    return self.spec
 end
 
 function Unit:SetSpec(inSpec)
-    assert(type(inSpec) == 'table' and inSpec.__name ~= nil and inSpec.__name == 'Spec', 'argument must be Spec object')
-    self._Spec = inSpec
-end
-
-function Unit:HasCovenant()
-    return self._Covenant ~= nil and self._Covenant:GetKey() ~= nil
-end
-
-function Unit:GetCovenant()
-    return self._Covenant
-end
-
-function Unit:SetCovenant(inCovenant)
-    assert(type(inCovenant) == 'table' and inCovenant.__name ~= nil and inCovenant.__name == 'Covenant', 'argument must be Covenant object')
-    self._Covenant = inCovenant
-end
-
-function Unit:HasSoulbind()
-    return self._Soulbind ~= nil and self._Soulbind:GetKey() ~= nil
-end
-
-function Unit:GetSoulbind()
-    return self._Soulbind
-end
-
-function Unit:SetSoulbind(inSoulbind)
-    assert(type(inSoulbind) == 'table' and inSoulbind.__name ~= nil and inSoulbind.__name == 'Soulbind', 'argument must be Soulbind object')
-    self._Soulbind = inSoulbind
-end
-
-function Unit:ClearSoulbind()
-    self._Soulbind = nil
+    assert(type(inSpec) == 'table' and inSpec.__name == 'Spec', 'argument must be Spec object')
+    self.spec = inSpec
 end
 
 function Unit:HasProfession1()
-    return self._Profession1 ~= nil and self._Profession1:GetKey() ~= nil
+    return self.profession1 ~= nil and self.profession1:GetKey() ~= nil
 end
 
 function Unit:GetProfession1()
-    return self._Profession1
+    return self.profession1
 end
 
 function Unit:SetProfession1(inProfession)
-    assert(type(inProfession) == 'table' and inProfession.__name ~= nil and inProfession.__name == 'Profession', 'argument must be Profession object')
-    self._Profession1 = inProfession
+    assert(type(inProfession) == 'table' and inProfession.__name == 'Profession', 'argument must be Profession object')
+    self.profession1 = inProfession
 end
 
 function Unit:HasProfession2()
-    return self._Profession2 ~= nil and self._Profession2:GetKey() ~= nil
+    return self.profession2 ~= nil and self.profession2:GetKey() ~= nil
 end
 
 function Unit:GetProfession2()
-    return self._Profession2
+    return self.profession2
 end
 
 function Unit:SetProfession2(inProfession)
-    assert(type(inProfession) == 'table' and inProfession.__name ~= nil and inProfession.__name == 'Profession', 'argument must be Profession object')
-    self._Profession2 = inProfession
+    assert(type(inProfession) == 'table' and inProfession.__name == 'Profession', 'argument must be Profession object')
+    self.profession2 = inProfession
 end
 
 function Unit:IsRunningAddon(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
-        self._RunningAddon = inBoolean
+        self.isRunningAddon = inBoolean
     end
-    return self._RunningAddon
+    return self.isRunningAddon
 end
 
 function Unit:HasVersion()
-    return self._Version ~= nil
+    return self.version ~= nil
 end
 
 function Unit:GetVersion()
-    return self._Version
+    return self.version
 end
 
 function Unit:SetVersion(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
-    self._Version = inVersion
+    assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')
+    self.version = inVersion
 end
 
 function Unit:IsAlt(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
-        self._Alt = inBoolean
+        self.isAlt = inBoolean
     end
-    return self._Alt
+    return self.isAlt
 end
 
 function Unit:HasMainName()
-    return self._MainName ~= nil
+    return self.mainName ~= nil
 end
 
 function Unit:GetMainName()
-    return self._MainName
+    return self.mainName
 end
 
 function Unit:SetMainName(inMainName)
     assert(type(inMainName) == 'string')
-    self._MainName = inMainName
+    self.mainName = inMainName
 end
 
 function Unit:HasTeam()
-    return self._Team ~= nil
+    return self.team ~= nil
 end
 
 function Unit:GetTeam()
-    return self._Team
+    return self.team
 end
 
 function Unit:SetTeam(inTeam)
-    assert(type(inTeam) == 'table' and inTeam.__name ~= nil and inTeam.__name == 'Team', 'argument must be Team object')
-    self._Team = inTeam
+    assert(type(inTeam) == 'table' and inTeam.__name == 'Team', 'argument must be Team object')
+    self.team = inTeam
 end
 
 function Unit:HasRealm()
-    return self._Realm ~= nil
+    return self.realm ~= nil
 end
 
 function Unit:GetRealm()
-    return self._Realm
+    return self.realm
 end
 
 function Unit:SetRealm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-    self._Realm = inRealm
+    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
+    self.realm = inRealm
 end
 
 function Unit:HasGuild()
-    return self._Guild ~= nil
+    return self.guild ~= nil
 end
 
 function Unit:GetGuild()
-    return self._Guild
+    return self.guild
 end
 
 function Unit:SetGuild(inGuild)
-    assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
-    self._Guild = inGuild
+    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
+    self.guild = inGuild
 end
 
 function Unit:GetItemLevel()
-    return self._ItemLevel
+    return self.itemLevel
 end
 
 function Unit:SetItemLevel(inItemLevel)
     assert(type(inItemLevel) == 'number')
-    self._ItemLevel = inItemLevel
+    self.itemLevel = inItemLevel
 end
 
 function Unit:IsSameFaction()
@@ -671,9 +602,9 @@ function Unit:GetLink()
         return format('player:%s', self:GetUnitName())
     end
 
-    local _Friend = XFG.Friends:GetByRealmUnitName(self:GetRealm(), self:GetName())
-    if(_Friend ~= nil) then
-        return format('BNplayer:%s:%d:0:WHISPER:%s', _Friend:GetAccountName(), _Friend:GetAccountID(), _Friend:GetName())
+    local friend = XFG.Friends:GetByRealmUnitName(self:GetRealm(), self:GetName())
+    if(friend ~= nil) then
+        return format('BNplayer:%s:%d:0:WHISPER:%s', friend:GetAccountName(), friend:GetAccountID(), friend:GetName())
     end
 
     return format('player:%s', self:GetUnitName())
@@ -684,26 +615,26 @@ function Unit:Broadcast(inSubject)
 	if(inSubject == nil) then inSubject = XFG.Settings.Network.Message.Subject.DATA end
     -- Update the last sent time, dont need to heartbeat for awhile
     if(self:IsPlayer()) then
-        local _EpochTime = ServerTime()
-        if(XFG.Player.LastBroadcast > _EpochTime - XFG.Settings.Player.MinimumHeartbeat) then 
+        local epoch = ServerTime()
+        if(XFG.Player.LastBroadcast > epoch - XFG.Settings.Player.MinimumHeartbeat) then 
             XFG:Debug(ObjectName, 'Not sending broadcast, its been too recent')
             return 
         end
-        self:SetTimeStamp(_EpochTime)
+        self:SetTimeStamp(epoch)
         XFG.Player.LastBroadcast = self:GetTimeStamp()
     end
-    local _Message = nil
+    local message = nil
     try(function ()
-        _Message = XFG.Mailbox.Chat:Pop()
-        _Message:Initialize()
-        _Message:SetFrom(XFG.Player.Unit:GetKey())
-        _Message:SetType(XFG.Settings.Network.Type.BROADCAST)
-        _Message:SetSubject(inSubject)
-        _Message:SetData(self)
-        XFG.Mailbox.Chat:Send(_Message)
+        message = XFG.Mailbox.Chat:Pop()
+        message:Initialize()
+        message:SetFrom(XFG.Player.Unit:GetKey())
+        message:SetType(XFG.Settings.Network.Type.BROADCAST)
+        message:SetSubject(inSubject)
+        message:SetData(self)
+        XFG.Mailbox.Chat:Send(message)
     end).
     finally(function ()
-        XFG.Mailbox.Chat:Push(_Message)
+        XFG.Mailbox.Chat:Push(message)
     end)
 end
 
@@ -727,18 +658,6 @@ function Unit:Equals(inUnit)
     if(self:GetItemLevel() ~= inUnit:GetItemLevel()) then return false end
     if(self:GetPvP() ~= inUnit:GetPvP()) then return false end
 
-    if(self:HasCovenant() == false and inUnit:HasCovenant()) then return false end
-    if(self:HasCovenant()) then
-        local _CachedCovenant = self:GetCovenant()
-        if(_CachedCovenant:Equals(inUnit:GetCovenant()) == false) then return false end
-    end
-
-    if(self:HasSoulbind() == false and inUnit:HasSoulbind()) then return false end
-    if(self:HasSoulbind()) then
-        local _CachedSoulbind = self:GetSoulbind()
-        if(_CachedSoulbind:Equals(inUnit:GetSoulbind()) == false) then return false end
-    end
-    
     if(self:HasProfession1() == false and inUnit:HasProfession1()) then return false end
     if(self:HasProfession1()) then
         local _CachedProfession1 = self:GetProfession1()
@@ -772,39 +691,34 @@ end
 
 function Unit:FactoryReset()
     self:ParentFactoryReset()
-    self._GUID = nil
-    self._UnitName = nil
-    self._ID = 0
-    self._Rank = nil
-    self._Level = 60
-    self._Class = nil
-    self._Spec = nil
-    self._Zone = nil
-    self._ZoneName = nil
-    self._Note = nil
-    self._Online = false
-    self._Status = nil
-    self._Mobile = false
-    self._Race = nil
-    self._TimeStamp = nil
-    self._Covenant = nil
-    self._Soulbind = nil
-    self._Profession1 = nil
-    self._Profession2 = nil
-    self._AchievementPoints = 0
-    self._RunningAddon = false
-    self._Alt = false
-    self._MainName = nil
-    self._IsPlayer = false
-    self._IsOnMainGuild = false
-    self._Faction = nil
-    self._Team = nil
-    self._Guild = nil
-    self._Realm = nil
-    self._Version = nil
-    self._ItemLevel = 0
-    self._PvP = ''
-    self._GuildSpeak = true
-    self._GuildListen = true
-    self._RaidIO = nil
+    self.guid = nil
+    self.unitName = nil
+    self.ID = 0
+    self.rank = nil
+    self.level = 60
+    self.class = nil
+    self.spec = nil
+    self.zone = nil
+    self.zoneName = nil
+    self.note = nil
+    self.isOnline = false
+    self.race = nil
+    self.timeStamp = nil
+    self.profession1 = nil
+    self.profession2 = nil
+    self.achievements = 0
+    self.isRunningAddon = false
+    self.isAlt = false
+    self.mainName = nil
+    self.isPlayer = false
+    self.faction = nil
+    self.team = nil
+    self.guild = nil
+    self.realm = nil
+    self.version = nil
+    self.itemLevel = 0
+    self.pvp = ''
+    self.guildSpeak = true
+    self.guildListen = true
+    self.raidIO = nil
 end

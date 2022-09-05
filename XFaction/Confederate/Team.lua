@@ -4,24 +4,24 @@ local ObjectName = 'Team'
 Team = Object:newChildConstructor()
 
 function Team:new()
-    local _Object = Team.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Initials = nil
-    return _Object
+    local object = Team.parent.new(self)
+    object.__name = ObjectName
+    object.initials = nil
+    return object
 end
 
 function Team:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _Initials (' .. type(self._Initials) .. '): ' .. tostring(self._Initials))
+        XFG:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
     end
 end
 
 function Team:GetInitials()
-    return self._Initials
+    return self.initials
 end
 
 function Team:SetInitials(inInitials)
     assert(type(inInitials) == 'string')
-    self._Initials = inInitials
+    self.initials = inInitials
 end

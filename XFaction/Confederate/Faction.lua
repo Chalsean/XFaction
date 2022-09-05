@@ -4,19 +4,19 @@ local ObjectName = 'Faction'
 Faction = Object:newChildConstructor()
 
 function Faction:new()
-    local _Object = Faction.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._ID = nil
-    _Object._IconID = nil
-    _Object._Language = nil
-    return _Object
+    local object = Faction.parent.new(self)
+    object.__name = ObjectName
+    object.ID = nil
+    object.iconID = nil
+    object.language = nil
+    return object
 end
 
 function Faction:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         if(self:GetName() ~= nil) then
-            if(self._Name == 'Horde') then
+            if(self.name == 'Horde') then
                 self:SetIconID(463451)
                 self:SetLanguage('Orcish')
                 self:SetID('H')
@@ -37,34 +37,35 @@ end
 function Faction:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-        XFG:Debug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+        XFG:Debug(ObjectName, '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
     end
 end
 
 function Faction:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Faction:SetID(inID)
     assert(type(inID) == 'string')
-    self._ID = inID
+    self.ID = inID
 end
 
 function Faction:GetIconID()
-    return self._IconID
+    return self.iconID
 end
 
 function Faction:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
-    self._IconID = inIconID
+    self.iconID = inIconID
 end
 
 function Faction:GetLanguage()
-    return self._Language
+    return self.language
 end
 
 function Faction:SetLanguage(inLanguage)
     assert(type(inLanguage) == 'string')
-    self._Language = inLanguage
+    self.language = inLanguage
 end

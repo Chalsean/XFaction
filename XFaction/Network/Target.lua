@@ -4,11 +4,11 @@ local ObjectName = 'Target'
 Target = Object:newChildConstructor()
 
 function Target:new()
-    local _Object = Target.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Realm = nil
-    _Object._Faction = nil
-    return _Object
+    local object = Target.parent.new(self)
+    object.__name = ObjectName
+    object.realm = nil
+    object.faction = nil
+    return object
 end
 
 function Target:Print()
@@ -19,31 +19,31 @@ function Target:Print()
 end
 
 function Target:HasRealm()
-    return self._Realm ~= nil
+    return self.realm ~= nil
 end
 
 function Target:GetRealm()
-    return self._Realm
+    return self.realm
 end
 
 function Target:SetRealm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', "argument must be Realm object")
-    self._Realm = inRealm
+    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
+    self.realm = inRealm
     return self:GetRealm()
 end
 
 function Target:HasFaction()
-    return self._Faction ~= nil
+    return self.faction ~= nil
 end
 
 
 function Target:GetFaction()
-    return self._Faction
+    return self.faction
 end
 
 function Target:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', "argument must be Faction object")
-    self._Faction = inFaction
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
+    self.faction = inFaction
     return self:GetFaction()
 end
 

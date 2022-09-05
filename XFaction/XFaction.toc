@@ -6,7 +6,8 @@
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariables: XFactionDB
+## SavedVariables: XFCacheDB, XFConfigDB
+## Dependencies: _DebugLog, BugSack
 
 Libraries\LoadLibraries.xml
 Locales\LoadLocales.xml
@@ -16,6 +17,7 @@ Base\LoadBase.xml
 Developer\LoadDeveloper.xml
 Functions\LoadFunctions.xml
 Client\LoadClient.xml
+Widgets\LoadWidgets.xml
 Configuration\LoadConfigurations.xml
 Wrappers\LoadWrappers.xml
 Handlers\LoadHandlers.xml

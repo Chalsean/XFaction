@@ -1,26 +1,26 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'TimerCollection'
+local ServerTime = GetServerTime
 
 TimerCollection = ObjectCollection:newChildConstructor()
 
 function TimerCollection:new()
-    local _Object = TimerCollection.parent.new(self)
-	_Object.__name = ObjectName
-    return _Object
+    local object = TimerCollection.parent.new(self)
+	object.__name = ObjectName
+    return object
 end
 
 function TimerCollection:Add(inName, inDelta, inCallback, inRepeat, inInstance, inInstanceCombat)
-    local _Timer = Timer:new()
-    _Timer:Initialize()
-    _Timer:SetKey(inName)
-    _Timer:SetName(inName)
-    _Timer:SetDelta(inDelta)
-    _Timer:SetCallback(inCallback)
-    _Timer:IsRepeat(inRepeat)
-    _Timer:IsInstance(inInstance)
-    _Timer:IsInstanceCombat(inInstanceCombat)
-    _Timer:Start()
-    self.parent.Add(self, _Timer)
+    local timer = Timer:new()
+    timer:Initialize()
+    timer:SetKey(inName)
+    timer:SetName(inName)
+    timer:SetDelta(inDelta)
+    timer:SetCallback(inCallback)
+    timer:IsRepeat(inRepeat)
+    timer:IsInstance(inInstance)
+    timer:IsInstanceCombat(inInstanceCombat)
+    self.parent.Add(self, timer)
 end
 
 function TimerCollection:Remove(inKey)
@@ -31,50 +31,59 @@ function TimerCollection:Remove(inKey)
 end
 
 function TimerCollection:EnterInstance()
-    for _, _Timer in self:Iterator() do
-        if(_Timer:IsEnabled() and not _Timer:IsInstance()) then
-            _Timer:Stop()
+    for _, timer in self:Iterator() do
+        if(timer:IsEnabled() and not timer:IsInstance()) then
+            timer:Stop()
         end
     end
 end
 
 function TimerCollection:LeaveInstance()
-    for _, _Timer in self:Iterator() do
-        if(not _Timer:IsEnabled()) then
-            _Timer:Start()
-            if(_Timer:GetLastRan() < GetServerTime() - _Timer:GetDelta()) then
-                local _Function = _Timer:GetCallback()
+    for _, timer in self:Iterator() do
+        if(not timer:IsEnabled()) then
+            timer:Start()
+            local now = ServerTime()
+            if(timer:GetLastRan() < now - timer:GetDelta()) then
+                local _Function = timer:GetCallback()
                 _Function()
-                _Timer:SetLastRan(GetServerTime())
+                timer:SetLastRan(now)
             end
         end
     end
 end
 
 function TimerCollection:EnterCombat()
-    for _, _Timer in self:Iterator() do
-        if(_Timer:IsEnabled() and not _Timer:IsInstanceCombat()) then
-            _Timer:Stop()
+    for _, timer in self:Iterator() do
+        if(timer:IsEnabled() and not timer:IsInstanceCombat()) then
+            timer:Stop()
         end
     end
 end
 
 function TimerCollection:LeaveCombat()
-    for _, _Timer in self:Iterator() do
-        if(not _Timer:IsEnabled() and _Timer:IsInstance()) then
-            _Timer:Start()
-            if(_Timer:GetLastRan() < GetServerTime() - _Timer:GetDelta()) then
-                local _Function = _Timer:GetCallback()
+    for _, timer in self:Iterator() do
+        if(not timer:IsEnabled() and timer:IsInstance()) then
+            timer:Start()
+            local now = ServerTime()
+            if(timer:GetLastRan() < now - timer:GetDelta()) then
+                local _Function = timer:GetCallback()
                 _Function()
-                _Timer:SetLastRan(GetServerTime())
+                timer:SetLastRan(now)
             end
         end
     end
 end
 
+-- Start everything
+function TimerCollection:Start()
+	for _, timer in self:Iterator() do
+        timer:Start()
+	end
+end
+
 -- Stop everything
 function TimerCollection:Stop()
-	for _, _Timer in self:Iterator() do
-        _Timer:Stop()
+	for _, timer in self:Iterator() do
+        timer:Stop()
 	end
 end

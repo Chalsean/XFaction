@@ -4,70 +4,71 @@ local ObjectName = 'Hook'
 Hook = Object:newChildConstructor()
 
 function Hook:new()
-    local _Object = Hook.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Original = nil
-    _Object._OriginalFunction = nil
-    _Object._Callback = nil
-    _Object._Enabled = false
-    return _Object
+    local object = Hook.parent.new(self)
+    object.__name = ObjectName
+    object.original = nil
+    object.originalFunction = nil
+    object.callback = nil
+    object.isEnabled = false
+    return object
 end
 
 function Hook:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _Original (' .. type(self._Original) .. '): ' .. tostring(self._Original))
-        XFG:Debug(ObjectName, '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
-        XFG:Debug(ObjectName, '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
+        XFG:Debug(ObjectName, '  original (' .. type(self.original) .. '): ' .. tostring(self.original))
+        XFG:Debug(ObjectName, '  originalFunction (' .. type(self.originalFunction) .. '): ' .. tostring(self.originalFunction))
+        XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+        XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
     end
 end
 
 function Hook:HasOriginal()
-    return self._Original ~= nil
+    return self.original ~= nil
 end
 
 function Hook:GetOriginal()
-    return self._Original
+    return self.original
 end
 
 function Hook:GetOriginalFunction()
-    return self._OriginalFunction
+    return self.originalFunction
 end
 
 function Hook:SetOriginal(inOriginal)
     assert(type(inOriginal) == 'string')
-    self._Original = inOriginal
-    self._OriginalFunction = _G[inOriginal]
+    self.original = inOriginal
+    self.originalFunction = _G[inOriginal]
 end
 
 function Hook:HasCallback()
-    return self._Callback ~= nil
+    return self.callback ~= nil
 end
 
 function Hook:GetCallback()
-    return self._Callback
+    return self.callback
 end
 
 function Hook:SetCallback(inCallback)
     assert(type(inCallback) == 'function')
-    self._Callback = inCallback
+    self.callback = inCallback
 end
 
 function Hook:IsEnabled(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
-        self._Enabled = inBoolean
+        self.isEnabled = inBoolean
     end
-	return self._Enabled
+	return self.isEnabled
 end
 
 function Hook:Start()
     if(self:HasOriginal() and self:HasCallback()) then
-        local _Callback = self:GetCallback()
-        local _Original = self:GetOriginalFunction()
+        local callback = self:GetCallback()
+        local original = self:GetOriginalFunction()
         _G[self:GetOriginal()] = function(...)
-            _Callback(...)
-            _Original(...)
+            callback(...)
+            original(...)
         end
         self:IsEnabled(true)
         if(XFG.DebugFlag) then

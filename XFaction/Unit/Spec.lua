@@ -4,35 +4,35 @@ local ObjectName = 'Spec'
 Spec = Object:newChildConstructor()
 
 function Spec:new()
-    local _Object = Spec.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._ID = nil
-    _Object._IconID = nil
-    return _Object
+    local object = Spec.parent.new(self)
+    object.__name = ObjectName
+    object.ID = nil
+    object.iconID = nil
+    return object
 end
 
 function Spec:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-        XFG:Debug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
     end
 end
 
 function Spec:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Spec:SetID(inID)
     assert(type(inID) == 'number')
-    self._ID = inID
+    self.ID = inID
 end
 
 function Spec:GetIconID()
-    return self._IconID
+    return self.iconID
 end
 
 function Spec:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
-    self._IconID = inIconID
+    self.iconID = inIconID
 end

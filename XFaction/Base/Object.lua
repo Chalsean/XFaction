@@ -1,44 +1,45 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Object'
 
 Object = {}
 
 function Object:new()
-    local _Object = {}
-    setmetatable(_Object, self)
+    local object = {}
+    setmetatable(object, self)
     self.__index = self
     self.__name = ObjectName
 
-    self._FactoryKey = nil
-    self._FactoryTime = nil
-    self._Key = nil
-    self._Name = nil
-    self._Initialized = false
+    self.factoryKey = nil
+    self.factoryTime = nil
+    self.key = nil
+    self.name = nil
+    self.initialized = false
     
-    return _Object
+    return object
 end
 
 function Object:newChildConstructor()
-    local _Object = {}
-    setmetatable(_Object, self)
+    local object = {}
+    setmetatable(object, self)
     self.__index = self
     self.__name = ObjectName
     self.parent = self
     
-    self._FactoryKey = nil
-    self._FactoryTime = nil
-    self._Key = nil
-    self._Name = nil
-    self._Initialized = false
+    self.factoryKey = nil
+    self.factoryTime = nil
+    self.key = nil
+    self.name = nil
+    self.initialized = false
 
-    return _Object
+    return object
 end
 
 function Object:IsInitialized(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
     if(inBoolean ~= nil) then
-        self._Initialized = inBoolean
+        self.initialized = inBoolean
     end    
-    return self._Initialized
+    return self.initialized
 end
 
 function Object:Initialize()
@@ -50,7 +51,7 @@ end
 
 -- So can call parent init in child objects
 function Object:ParentInitialize()
-    self._Key = math.GenerateUID()
+    self.key = math.GenerateUID()
 end
 
 function Object:Print()
@@ -60,52 +61,56 @@ end
 function Object:ParentPrint()
     if(XFG.DebugFlag) then
         XFG:SingleLine(self:GetObjectName())
-        if(self._FactoryKey ~= nil) then
-            XFG:Debug(self:GetObjectName(), '  _FactoryKey (' .. type(self._FactoryKey) .. '): ' .. tostring(self._FactoryKey))
+        if(self.factoryKey ~= nil) then
+            XFG:Debug(self:GetObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))
         end
-        if(self._FactoryTime ~= nil) then
-            XFG:Debug(self:GetObjectName(), '  _FactoryTime (' .. type(self._FactoryTime) .. '): ' .. tostring(self._FactoryTime))
+        if(self.factoryTime ~= nil) then
+            XFG:Debug(self:GetObjectName(), '  factoryTime (' .. type(self.factoryTime) .. '): ' .. tostring(self.factoryTime))
         end
-        XFG:Debug(self:GetObjectName(), '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-        XFG:Debug(self:GetObjectName(), '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-        XFG:Debug(self:GetObjectName(), '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
+        XFG:Debug(self:GetObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
+        XFG:Debug(self:GetObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))
+        XFG:Debug(self:GetObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
     end
 end
 
 function Object:GetFactoryKey()
-    return self._FactoryKey
+    return self.factoryKey
 end
 
 function Object:SetFactoryKey(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Object key must be string or number')
-    self._FactoryKey = inKey
+    self.factoryKey = inKey
 end
 
 function Object:GetFactoryTime()
-    return self._FactoryTime
+    return self.factoryTime
 end
 
 function Object:SetFactoryTime(inFactoryTime)
     assert(type(inFactoryTime) == 'number')
-    self._FactoryTime = inFactoryTime
+    self.factoryTime = inFactoryTime
+end
+
+function Object:HasKey()
+    return self.key ~= nil
 end
 
 function Object:GetKey()
-    return self._Key
+    return self.key
 end
 
 function Object:SetKey(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Object key must be string or number')
-    self._Key = inKey
+    self.key = inKey
 end
 
 function Object:GetName()
-    return self._Name
+    return self.name
 end
 
 function Object:SetName(inName)
     assert(type(inName) == 'string')
-    self._Name = inName
+    self.name = inName
 end
 
 function Object:Equals(inObject)
@@ -121,7 +126,7 @@ function Object:GetObjectName()
 end
 
 function Object:ParentFactoryReset()
-    self._Key = nil
-    self._Name = nil
-    self._Initialized = false
+    self.key = nil
+    self.name = nil
+    self.initialized = false
 end

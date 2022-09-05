@@ -1,65 +1,66 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Version'
+local Split = string.Split
 
 Version = Object:newChildConstructor()
 
 function Version:new()
-    local _Object = Version.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Major = nil
-    _Object._Minor = nil
-    _Object._Patch = nil
-    return _Object
+    local object = Version.parent.new(self)
+    object.__name = ObjectName
+    object.major = nil
+    object.minor = nil
+    object.patch = nil
+    return object
 end
 
 function Version:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _Major (' .. type(self._Major) .. '): ' .. tostring(self._Major))
-        XFG:Debug(ObjectName, '  _Minor (' .. type(self._Minor) .. '): ' .. tostring(self._Minor))
-        XFG:Debug(ObjectName, '  _Patch (' .. type(self._Patch) .. '): ' .. tostring(self._Patch))
+        XFG:Debug(ObjectName, '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
+        XFG:Debug(ObjectName, '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
+        XFG:Debug(ObjectName, '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
     end
 end
 
 function Version:SetKey(inKey)
     assert(type(inKey) == 'string')
-    self._Key = inKey
+    self.key = inKey
 
-    local _Parts = string.Split(inKey, '.')
-    self:SetMajor(tonumber(_Parts[1]))
-    self:SetMinor(tonumber(_Parts[2]))
-    self:SetPatch(tonumber(_Parts[3]))
+    local parts = Split(inKey, '.')
+    self:SetMajor(tonumber(parts[1]))
+    self:SetMinor(tonumber(parts[2]))
+    self:SetPatch(tonumber(parts[3]))
 end
 
 function Version:GetMajor()
-    return self._Major
+    return self.major
 end
 
 function Version:SetMajor(inMajor)
     assert(type(inMajor) == 'number')
-    self._Major = inMajor
+    self.major = inMajor
 end
 
 function Version:GetMinor()
-    return self._Minor
+    return self.minor
 end
 
 function Version:SetMinor(inMinor)
     assert(type(inMinor) == 'number')
-    self._Minor = inMinor
+    self.minor = inMinor
 end
 
 function Version:GetPatch()
-    return self._Patch
+    return self.patch
 end
 
 function Version:SetPatch(inPatch)
     assert(type(inPatch) == 'number')
-    self._Patch = inPatch
+    self.patch = inPatch
 end
 
 function Version:IsNewer(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == ObjectName, 'argument must be Version object')
+    assert(type(inVersion) == 'table' and inVersion.__name == ObjectName, 'argument must be Version object')
     -- Do not consider alpha/beta builds as newer
     if(inVersion:GetPatch() == 0 or inVersion:GetPatch() % 2 == 1) then
         return false
