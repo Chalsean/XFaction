@@ -159,9 +159,9 @@ end
 function DTGuild:RefreshBroker()
 	if(XFG.Initialized) then
 		local text = ''  
-		-- if(XFG.Config.DataText.Guild.Label) then
-		-- 	text = XFG.Lib.Locale['GUILD'] .. ': '
-		-- end
+		if(XFG.Config.DataText.Guild.Label) then
+			text = XFG.Lib.Locale['GUILD'] .. ': '
+		end
 		text = format('%s|cff3CE13F%d', text, XFG.Confederate:GetCount())
 		self.ldbObject.text = text
 	end
@@ -325,7 +325,7 @@ function DTGuild:OnClick(this, inButton)
 	elseif(inButton == 'RightButton') then
 		if not InterfaceOptionsFrame or not InterfaceOptionsFrame:IsShown() then
 			InterfaceOptionsFrame:Show()
-			InterfaceOptionsFrame_OpenToCategory(XFG.Category)
+			InterfaceOptionsFrame_OpenToCategory(XFG.Name)
 		else
 			InterfaceOptionsFrame:Hide()
 		end

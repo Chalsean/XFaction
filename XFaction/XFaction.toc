@@ -16,10 +16,9 @@ Constants.lua
 Base\LoadBase.xml
 Developer\LoadDeveloper.xml
 Functions\LoadFunctions.xml
-Client\LoadClient.xml
-Widgets\LoadWidgets.xml
 Configuration\LoadConfigurations.xml
 Wrappers\LoadWrappers.xml
+Client\LoadClient.xml
 Handlers\LoadHandlers.xml
 Network\LoadNetwork.xml
 Unit\LoadUnit.xml

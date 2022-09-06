@@ -9,9 +9,9 @@ Engine[2] = G
 _G[addon] = Engine
 
 XFG.AddonName = addon
-XFG.Category = 'XFaction'
+XFG.Name = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
-XFG.Version = GetAddOnMetadata(addon, "Version")
+XFG.Version = GetAddOnMetadata(addon, 'Version')
 XFG.Start = GetServerTime()
 XFG.DebugFlag = true
 
@@ -21,6 +21,8 @@ XFG.Frames = {}
 XFG.Handlers = {}
 XFG.Mailbox = {}
 XFG.Nameplates = {}
+XFG.Options = {}
+XFG.UI = {}
 XFG.Widgets = {}
 
 XFG.Initialized = false
@@ -43,10 +45,16 @@ XFG.Lib = {
 	Deflate = LibStub:GetLibrary('LibDeflate'),
 	QT = LibStub('LibQTip-1.0'),
 	Broker = LibStub('LibDataBroker-1.1'),
-	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
+	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Name, true),
+	Config = LibStub('AceConfig-3.0'),
+	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0'),
+	LSMList = AceGUIWidgetLSMlists,
 }
 XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
+
+if(_G.XFConfigDB == nil) then _G.XFConfigDB = {} end
+if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
 
 XFG.Player = {
 	LastBroadcast = 0,

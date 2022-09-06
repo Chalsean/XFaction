@@ -30,7 +30,6 @@ function AddonEvent:Initialize()
 end
 
 local function InitializeCache()
-    if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
     XFG.Cache = _G.XFCacheDB
     if(XFG.Cache.UIReload == nil or not XFG.Cache.UIReload) then
         XFG:Info(ObjectName, 'Initializing cache')
@@ -62,20 +61,13 @@ local function InitializeCache()
     XFG.Cache.FirstScan = {}
 end
 
-local function LoadConfig()
-    if(_G.XFConfigDB == nil) then _G.XFConfigDB = {} end
-    XFG.Config = _G.XFConfigDB
-    XFG.Configs = ConfigCollection:new(); XFG.Configs:Initialize()
-    XFG.Configs:Add('Enable', true)
-end
-
 function AddonEvent:CallbackAddonLoaded(inAddonName)
     try(function ()
         if(GetAddOnEnableState(nil, inAddonName) > 0) then
-            if(inAddonName == XFG.Category) then
+            if(inAddonName == XFG.Name) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
-                LoadConfig()
+                XFG:LoadConfigs()
                 XFG.Player.GUID = XFG.Cache.Player.GUID
                 XFG.Player.Faction = XFG.Factions:GetByName(UnitFactionGroup('player'))
             elseif(inAddonName == 'ElvUI') then

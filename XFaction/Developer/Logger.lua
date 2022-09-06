@@ -3,7 +3,7 @@ local FormatSet = false
 
 local function Format()
 	if FormatSet == false and DLAPI and DLAPI.GetFormat and DLAPI.IsFormatRegistered then
-		local fmt = DLAPI.IsFormatRegistered(DLAPI.GetFormat(XFG.Category))
+		local fmt = DLAPI.IsFormatRegistered(DLAPI.GetFormat(XFG.Name))
 		if fmt and fmt.colWidth then
 			fmt.colWidth = { 0.05, 0.12, 0.1, 0.03, 1 - 0.05 - 0.12 - 0.1 - 0.03, }
 			FormatSet = true
@@ -16,8 +16,8 @@ function XFG:Error(SubCategory, ...)
 		local status, res = pcall(format, ...)
 		if status then
 			if DLAPI then 
-				DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, res)) 
-				DLAPI.DebugLog(XFG.Category, format('ERR~%s~1~%s', SubCategory, debugstack())) 
+				DLAPI.DebugLog(XFG.Name, format('ERR~%s~1~%s', SubCategory, res)) 
+				DLAPI.DebugLog(XFG.Name, format('ERR~%s~1~%s', SubCategory, debugstack())) 
 			end
 		end
 	--end
@@ -31,8 +31,8 @@ function XFG:Warn(SubCategory, ...)
 		local status, res = pcall(format, ...)
 		if status then
 			if DLAPI then 
-				DLAPI.DebugLog(XFG.Category, format('WARN~%s~2~%s', SubCategory, res)) 
-				DLAPI.DebugLog(XFG.Category, format('WARN~%s~2~%s', SubCategory, debugstack())) 
+				DLAPI.DebugLog(XFG.Name, format('WARN~%s~2~%s', SubCategory, res)) 
+				DLAPI.DebugLog(XFG.Name, format('WARN~%s~2~%s', SubCategory, debugstack())) 
 			end
 		end
 	--end
@@ -46,7 +46,7 @@ function XFG:Info(SubCategory, ...)
 		local status, res = pcall(format, ...)
 		if status then
 			Format()
-			if DLAPI then DLAPI.DebugLog(XFG.Category, format('OK~%s~3~%s', SubCategory, res)) end
+			if DLAPI then DLAPI.DebugLog(XFG.Name, format('OK~%s~3~%s', SubCategory, res)) end
 		end
 	--end
 end
@@ -56,7 +56,7 @@ function XFG:Debug(SubCategory, ...)
 		local status, res = pcall(format, ...)
 		if status then
 			Format()
-			if DLAPI then DLAPI.DebugLog(XFG.Category, format('%s~4~%s', SubCategory, res)) end
+			if DLAPI then DLAPI.DebugLog(XFG.Name, format('%s~4~%s', SubCategory, res)) end
 		end
 	--end
 end

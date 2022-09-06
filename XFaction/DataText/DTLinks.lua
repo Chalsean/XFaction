@@ -53,9 +53,9 @@ end
 function DTLinks:RefreshBroker()
 	if(XFG.Initialized) then
 		local text = ''
-		-- if(XFG.Config.DataText.Link.Label) then
-		-- 	text = XFG.Lib.Locale['LINKS'] .. ': '
-		-- end
+		if(XFG.Config.DataText.Link.Label) then
+			text = XFG.Lib.Locale['LINKS'] .. ': '
+		end
 
 		local names = {}
 		local allianceCount = 0
@@ -80,11 +80,11 @@ function DTLinks:RefreshBroker()
 			end
 		end
 
---		if(XFG.Config.DataText.Link.Faction) then
+		if(XFG.Config.DataText.Link.Faction) then
 			text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XFG.Links:GetCount(), allianceCount, hordeCount)
---		else
---			text = format('%s|cffffffff%d|r', text, XFG.Links:GetCount())
---		end
+		else
+			text = format('%s|cffffffff%d|r', text, XFG.Links:GetCount())
+		end
 		self.ldbObject.text = text
 	end
 end

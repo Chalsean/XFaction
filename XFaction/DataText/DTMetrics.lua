@@ -54,28 +54,28 @@ function DTMetrics:RefreshBroker()
 	if(XFG.Initialized) then
 		local text = ''
 		local delimiter = false
-		-- if(XFG.Config.DataText.Metric.Total) then
-		-- 	text = text .. format('|cffffffff%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Messages):GetCount())
-		-- 	delimiter = true
-		-- end
+		if(XFG.Config.DataText.Metric.Total) then
+			text = text .. format('|cffffffff%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Messages):GetCount())
+			delimiter = true
+		end
 
-		-- if(XFG.Config.DataText.Metric.Average) then
-		-- 	if(delimiter) then text = text .. ' : ' end
-		-- 	text = text .. format('|cffffffff%.2f|r', XFG.Metrics:Get(XFG.Settings.Metric.Messages):GetAverage(XFG.Config.DataText.Metric.Rate))
-		-- 	delimiter = true
-		-- end
+		if(XFG.Config.DataText.Metric.Average) then
+			if(delimiter) then text = text .. ' : ' end
+			text = text .. format('|cffffffff%.2f|r', XFG.Metrics:Get(XFG.Settings.Metric.Messages):GetAverage(XFG.Config.DataText.Metric.Rate))
+			delimiter = true
+		end
 
-		-- if(XFG.Config.DataText.Metric.Error) then
-		-- 	if(delimiter) then text = text .. ' : ' end
-		-- 	text = text .. format('|cffFF4700%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Error):GetCount())
-		-- 	delimiter = true
-		-- end
+		if(XFG.Config.DataText.Metric.Error) then
+			if(delimiter) then text = text .. ' : ' end
+			text = text .. format('|cffFF4700%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Error):GetCount())
+			delimiter = true
+		end
 
-		-- if(XFG.Config.DataText.Metric.Warning) then
-		-- 	if(delimiter) then text = text .. ' : ' end
-		-- 	text = text .. format('|cffffff00%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Warning):GetCount())
-		-- 	delimiter = true
-		-- end
+		if(XFG.Config.DataText.Metric.Warning) then
+			if(delimiter) then text = text .. ' : ' end
+			text = text .. format('|cffffff00%d|r', XFG.Metrics:Get(XFG.Settings.Metric.Warning):GetCount())
+			delimiter = true
+		end
 		self.ldbObject.text = text
 	end
 end

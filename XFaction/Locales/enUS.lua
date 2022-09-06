@@ -16,6 +16,7 @@ L['NOTE'] = 'Note'
 L['CLASS'] = 'Class'
 L['COVENANT'] = 'Covenant'
 L['CONFEDERATE'] = 'Confederate'
+L['COLLECTION'] = 'Collection'
 L['MOTD'] = 'MOTD'
 L['FACTION'] = 'Faction'
 L['PROFESSION'] = 'Profession'
@@ -167,12 +168,13 @@ L['DT_CONFIG_FONT'] = 'Font'
 L['DT_CONFIG_FONT_SIZE'] = 'Font Size'
 L['DT_CONFIG_FONT_TOOLTIP'] = 'Select font style'
 L['DT_CONFIG_FONT_SIZE_TOOLTIP'] = 'Select font size'
-L['DTGENERAL_DESCRIPTION'] = 'Settings that will apply to all XFaction datatext'
+L['DTGENERAL_DESCRIPTION'] = 'Settings that will apply to all XFaction data brokers'
 -------------------------
 -- DTGuild (X)
 -------------------------
 -- Broker name
 L['DTGUILD_NAME'] = 'Guild (X)'
+L['DTGUILD_DESCRIPTION'] = 'Guild data broker displays complete confederate roster.'
 -- Config
 L['DTGUILD_BROKER_HEADER'] = 'Broker Settings'
 L['DTGUILD_SELECT_COLUMN'] = 'Select Column'
@@ -256,7 +258,7 @@ L['CONFEDERATE_LOAD'] = 'Load'
 -------------------------
 -- Broker name
 L['DTLINKS_NAME'] = 'Links (X)'
-L['DTLINKS_DESCRIPTION'] = 'Configuration options for the Links data broker. Links data broker displays all active BNet links the addon is currently using.'
+L['DTLINKS_DESCRIPTION'] = 'Links data broker displays all active BNet links the addon is currently using.'
 -- Header
 L['DTLINKS_HEADER_LINKS'] = 'Active BNet Links: |cffffffff%d|r'
 -------------------------
@@ -285,6 +287,7 @@ L['DTTOKEN_NAME'] = 'WoW Token (X)'
 -- DTMetrics
 -------------------------
 L['DTMETRICS_NAME'] = 'Metrics (X)'
+L['DTMETRICS_DESCRIPTION'] = 'Metrics data broker displays statistical information about XFaction performance.'
 L['DTMETRICS_HEADER'] = 'Metrics Since: |cffffffff%02d:%02d|r (Server)'
 L['DTMETRICS_RATE'] = 'Average Rate'
 L['DTMETRICS_RATE_TOOLTIP'] = '1 is average per second, 60 is average per minute, etc.'

@@ -58,7 +58,7 @@ function ChannelCollection:GetByID(inID)
 end
 
 function ChannelCollection:SetLast(inKey)
-	--if(not XFG.Config.Chat.Channel.Last) then return end
+	if(not XFG.Config.Chat.Channel.Last) then return end
 	if(not self:Contains(inKey)) then return end
 	
 	self:Scan()
@@ -76,17 +76,17 @@ function ChannelCollection:SetLast(inKey)
 		end
 	end
 
-	-- if(XFG.Config.Chat.Channel.Color) then
-	-- 	for _, _Channel in self:Iterator() do
-	-- 		if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
-	-- 			local _Color = XFG.Config.Channels[_Channel:GetName()]
-	-- 			SetChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
-	-- 			if(XFG.DebugFlag) then
-	-- 				XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
-	-- 			end
-	-- 		end		
-	-- 	end
-	-- end
+	if(XFG.Config.Chat.Channel.Color) then
+		for _, _Channel in self:Iterator() do
+			if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
+				local _Color = XFG.Config.Channels[_Channel:GetName()]
+				SetChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
+				if(XFG.DebugFlag) then
+					XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
+				end
+			end		
+		end
+	end
 end
 
 function ChannelCollection:Scan()

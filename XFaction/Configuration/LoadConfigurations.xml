@@ -6,5 +6,4 @@
     <Script file='DataText.lua'/>
     <Script file='Support.lua'/>
     <Script file='Debug.lua'/>
-    <!--<Script file='Setup.lua'/>-->
 </Ui>
