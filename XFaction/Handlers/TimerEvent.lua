@@ -94,16 +94,6 @@ function TimerEvent:CallbackLogin()
 				XFG.Timers:Stop()
 				return
 			end)
-
-			try(function()
-				-- Refresh brokers (theyve been waiting on XFG.Initialized flag)
-				XFG.DataText.Guild:RefreshBroker()
-				XFG.DataText.Links:RefreshBroker()
-				XFG.DataText.Metrics:RefreshBroker()
-			end).
-			catch(function(inErrorMessage)
-				XFG:Warn(ObjectName, inErrorMessage)
-			end)
         end
     end
 end

@@ -33,12 +33,7 @@ function XFG:Init()
 
 	-- A significant portion of start up is delayed due to guild information not being available yet
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
-
-	-- Initialize DTs
-	XFG.DataText.Guild = DTGuild:new(); XFG.DataText.Guild:Initialize()
-	XFG.DataText.Links = DTLinks:new(); XFG.DataText.Links:Initialize()
 	XFG.DataText.Token = DTToken:new(); XFG.DataText.Token:Initialize()
-	XFG.DataText.Metrics = DTMetrics:new(); XFG.DataText.Metrics:Initialize()
 end
 
 do

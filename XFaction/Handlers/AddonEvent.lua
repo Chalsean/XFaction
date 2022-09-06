@@ -64,7 +64,10 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
             if(inAddonName == XFG.Name) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
-                XFG:LoadConfigs()                
+                XFG:LoadConfigs()
+                XFG.DataText.Guild = DTGuild:new(); XFG.DataText.Guild:Initialize()
+	            XFG.DataText.Links = DTLinks:new(); XFG.DataText.Links:Initialize()
+	            XFG.DataText.Metrics = DTMetrics:new(); XFG.DataText.Metrics:Initialize()
             elseif(inAddonName == 'ElvUI') then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 XFG.ElvUI = ElvUI[1]

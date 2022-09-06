@@ -28,6 +28,7 @@ function DTGuild:Initialize()
 			OnClick = function(this, button) XFG.DataText.Guild:OnClick(this, button) end,
 		})
 		LDB_ANCHOR = self.ldbObject
+		self:SetFont()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -35,10 +36,10 @@ end
 
 function DTGuild:SetFont()
 	self.headerFont = CreateFont('headerFont')
-	--self.headerFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
+	self.headerFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	self.headerFont:SetTextColor(0.4,0.78,1)
 	self.regularFont = CreateFont('regularFont')
-	--self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize)
+	self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	self.regularFont:SetTextColor(255,255,255)
 end
 
