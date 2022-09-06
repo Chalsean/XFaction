@@ -75,7 +75,7 @@ function XFG:SerializeUnitData(inUnitData)
 end
 
 function XFG:EncodeChatMessage(inMessage, inEncodeUnitData)
-	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
+	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be a Message type object')
 	local serialized = SerializeMessage(inMessage, inEncodeUnitData)
 	local compressed = Deflate:CompressDeflate(serialized, {level = XFG.Settings.Network.CompressionLevel})
 	return Deflate:EncodeForWoWAddonChannel(compressed)
@@ -83,7 +83,7 @@ end
 
 -- Have not been able to identify why, but bnet does not like the output of deflate
 function XFG:EncodeBNetMessage(inMessage)
-	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be a Message type object")
+	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be a Message type object')
 	local serialized = SerializeMessage(inMessage, true)
 	local compressed = Deflate:CompressDeflate(serialized, {level = XFG.Settings.Network.CompressionLevel})
 	return Deflate:EncodeForPrint(compressed)

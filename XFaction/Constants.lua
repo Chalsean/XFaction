@@ -62,6 +62,7 @@ XFG.Player = {
 XFG.Settings = {
 	System = {
 		Roster = true,
+		UIDLength = 11,
 	},
 	Expansions = {
 		[WOW_PROJECT_MAINLINE] = 3601566,

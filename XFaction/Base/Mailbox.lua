@@ -135,8 +135,8 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     -- Ensure this message has not already been processed
     local packetNumber = tonumber(string.sub(inEncodedMessage, 1, 1))
     local totalPackets = tonumber(string.sub(inEncodedMessage, 2, 2))
-    local messageKey = string.sub(inEncodedMessage, 3, 38)
-    local messageData = string.sub(inEncodedMessage, 39, -1)
+    local messageKey = string.sub(inEncodedMessage, 3, 3 + XFG.Settings.System.UIDLength - 1)
+    local messageData = string.sub(inEncodedMessage, 3 + XFG.Settings.System.UIDLength, -1)
 
     -- Temporary, remove after all upgraded to 4.0
     if(not packetNumber or packetNumber == 0 or not totalPackets or totalPackets == 0) then

@@ -1,8 +1,14 @@
--- Credit to jrus: https://gist.github.com/jrus/3197011
+local XFG, G = unpack(select(2, ...))
+local characters = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789_`!@:#$^.&*()-=+[]{}|<>/?'
+local characterArray = {}
+for character in characters:gmatch('.') do
+    characterArray[#characterArray + 1] = character
+end
+
 function math.GenerateUID()
-    local _Template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-    return string.gsub(_Template, '[xy]', function (c)
-        local v = (c == 'x') and random(0, 0xf) or random(8, 0xb)
-        return string.format('%x', v)
-    end)
+    local uid = ''
+    for i = 1, XFG.Settings.System.UIDLength do
+        uid = uid .. characterArray[math.random(1, #characterArray)] 
+    end
+    return uid
 end
