@@ -14,7 +14,6 @@ L['RANK'] = 'Rank'
 L['ZONE'] = 'Zone'
 L['NOTE'] = 'Note'
 L['CLASS'] = 'Class'
-L['COVENANT'] = 'Covenant'
 L['CONFEDERATE'] = 'Confederate'
 L['COLLECTION'] = 'Collection'
 L['MOTD'] = 'MOTD'
@@ -54,7 +53,6 @@ L['FRIEND'] = 'Friend'
 L['LINK'] = 'Link'
 L['PLAYER'] = 'Player'
 L['PROFESSION'] = 'Profession'
-L['SOULBIND'] = 'Soulbind'
 L['SPEC'] = 'Spec'
 L['TARGET'] = 'Target'
 L['TEAM'] = 'Team'
@@ -91,7 +89,7 @@ L['GENERAL_SYSTEM_LOGIN'] = '1. Receive notification when player using the addon
 L['GENERAL_DATA_BROKERS'] = 'Data Brokers'
 L['GENERAL_DTGUILD'] = '1. Guild (X): Full roster visibility in the confederate'
 L['GENERAL_DTLINKS'] = '2. Links (X): Visibility of the active BNet links in the confederate used by the addon'
-L['GENERAL_DTSOULBIND'] = '3. Soulbind (X): View and change your active soulbind'
+L['GENERAL_DTMETRICS'] = '3. Metrics (X): Displays statistical information about addon performance'
 L['GENERAL_DTTOKEN'] = '4. WoW Token (X): View current market price of WoW tokens'
 --=========================================================================
 -- Channel Specific
@@ -191,9 +189,6 @@ L['DTGUILD_CONFIG_COLUMN_ENABLE_MAIN'] = 'Append Main To Name'
 L['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_TOOLTIP'] = 'Show player total achievement points'
 L['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_ORDER_TOOLTIP'] = 'Column number the achievement points will be displayed in'
 L['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_ALIGNMENT_TOOLTIP'] = 'Achievement points text justification'
-L['DTGUILD_CONFIG_COLUMN_COVENANT_TOOLTIP'] = 'Show player covenant icon'
-L['DTGUILD_CONFIG_COLUMN_COVENANT_ORDER_TOOLTIP'] = 'Column number the covenant icon will be displayed in'
-L['DTGUILD_CONFIG_COLUMN_COVENANT_ALIGNMENT_TOOLTIP'] = 'Covenant icon alignment within the column'
 L['DTGUILD_CONFIG_COLUMN_DUNGEON_TOOLTIP'] = 'Show player mythic+ score'
 L['DTGUILD_CONFIG_COLUMN_DUNGEON_ORDER_TOOLTIP'] = 'Column number the mythic+ rating will be displayed in'
 L['DTGUILD_CONFIG_COLUMN_DUNGEON_ALIGNMENT_TOOLTIP'] = 'Mythic+ rating text justification'
@@ -261,23 +256,6 @@ L['DTLINKS_NAME'] = 'Links (X)'
 L['DTLINKS_DESCRIPTION'] = 'Links data broker displays all active BNet links the addon is currently using.'
 -- Header
 L['DTLINKS_HEADER_LINKS'] = 'Active BNet Links: |cffffffff%d|r'
--------------------------
--- DTSoulbind (X)
--------------------------
--- Broker name
-L['DTSOULBIND_NAME'] = 'Soulbind (X)'
--- Broker text
-L['DTSOULBIND_NO_COVENANT'] = 'No Covenant'
-L['DTSOULBIND_NO_SOULBIND'] = '%s No Soulbind'
--- Header
-L['DTSOULBIND_ACTIVE'] = '|cffFFFFFF%s: |cff00FF00Active|r'
-L['DTSOULBIND_INACTIVE'] = '|cffFFFFFF%s: |cffFF0000Inactive|r'
--- Config
-L['DTSOULBIND_CONFIG_CONDUIT'] = 'Show Conduits'
-L['DTSOULBIND_CONFIG_CONDUIT_TOOLTIP'] = 'Show active conduit icons'
--- Footer
-L['DTSOULBIND_LEFT_CLICK'] = '|cffFFFFFFLeft Click:|r Open Soulbind Frame'
-L['DTSOULBIND_RIGHT_CLICK'] = '|cffFFFFFFRight Click:|r Change Soulbind'
 -------------------------
 -- DTToken (X)
 -------------------------

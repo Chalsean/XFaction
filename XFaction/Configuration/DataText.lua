@@ -303,44 +303,6 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText.Guild.Alignment[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
 				},
-				Covenant = {
-					order = 24,
-					type = 'toggle',
-					name = ENABLE,
-					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_COVENANT_TOOLTIP'],
-					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Covenant' end,
-					get = function(info) return XFG.Config.DataText.Guild.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XFG.Config.DataText.Guild.Enable[ info[#info] ] = value
-						if(value) then AddedMenuItem(info[#info]) else RemovedMenuItem(info[#info]) end
-					end
-				},
-				CovenantOrder = {
-					order = 25,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Covenant' end,
-					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Covenant) end,
-					name = XFG.Lib.Locale['ORDER'],
-					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_COVENANT_ORDER_TOOLTIP'],
-					values = function () return OrderMenu() end,
-					get = function(info) if(XFG.Config.DataText.Guild.Enable.Covenant) then return tostring(XFG.Config.DataText.Guild.Order[ info[#info] ]) end end,
-					set = function(info, value) SelectedMenuItem(info[#info], value) end
-				},
-				CovenantAlignment = {
-					order = 26,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Covenant' end,
-					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Covenant) end,
-					name = XFG.Lib.Locale['ALIGNMENT'],
-					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_COVENANT_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XFG.Lib.Locale['CENTER'],
-						Left = XFG.Lib.Locale['LEFT'],
-						Right = XFG.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XFG.Config.DataText.Guild.Alignment[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
-				},
 				Faction = {
 					order = 28,
 					type = 'toggle',

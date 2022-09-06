@@ -81,13 +81,6 @@ XFG.Options.args.Debug = {
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Continents:Print() end,
 				},
-				Covenant = {
-					order = 5,
-					type = 'execute',
-					name = XFG.Lib.Locale['COVENANT'],
-					disabled = function () return not XFG.Config.Debug.Enable end,
-					func = function(info) XFG.Covenants:Print() end,
-				},
 				Event = {
 					order = 6,
 					type = 'execute',
@@ -165,13 +158,6 @@ XFG.Options.args.Debug = {
 					disabled = function () return not XFG.Config.Debug.Enable end,
 					func = function(info) XFG.Realms:Print() end,
 				},				
-				Soulbind = {
-					order = 23,
-					type = 'execute',
-					name = XFG.Lib.Locale['SOULBIND'],
-					disabled = function () return not XFG.Config.Debug.Enable end,
-					func = function(info) XFG.Soulbinds:Print() end,					
-				},
 				Spec = {
 					order = 24,
 					type = 'execute',
