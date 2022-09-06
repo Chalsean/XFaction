@@ -46,9 +46,6 @@ local function InitializeCache()
             UIReload = false,                    
             Verbosity = 4,
         }
-        XFG.Cache.Player.GUID = UnitGUID('player')
-        XFG.Cache.Player.Realm = GetRealmName()
-        XFG.Cache.Player.Realm = 'Proudmoore'        
     elseif(XFG.Cache.Errors ~= nil) then
         -- Log any reloadui errors encountered
         for _, _ErrorText in ipairs(XFG.Cache.Errors) do
@@ -67,9 +64,7 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
             if(inAddonName == XFG.Name) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
-                XFG:LoadConfigs()
-                XFG.Player.GUID = XFG.Cache.Player.GUID
-                XFG.Player.Faction = XFG.Factions:GetByName(UnitFactionGroup('player'))
+                XFG:LoadConfigs()                
             elseif(inAddonName == 'ElvUI') then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 XFG.ElvUI = ElvUI[1]

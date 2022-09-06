@@ -82,7 +82,7 @@ XFG.Defaults = {
             },
         },
         DataText = {
-            --Font = XFG.Lib.LSM:GetDefault('font'),
+            Font = XFG.Lib.LSM:GetDefault('font'),
             FontSize = 10,
             Guild = {
                 Column = '',

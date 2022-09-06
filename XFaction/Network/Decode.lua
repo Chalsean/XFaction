@@ -6,7 +6,7 @@ local RaiderIO = _G.RaiderIO
 
 local function DeserializeMessage(inObject, inCompressedData)
 	local decompressed = Deflate:DecompressDeflate(inCompressedData)
-	local _, messageData = unpickle(decompressed)
+	local messageData = unpickle(decompressed)
 	inObject:Initialize()
 
 	if(messageData.K ~= nil) then inObject:SetKey(messageData.K)	end
@@ -48,7 +48,7 @@ local function DeserializeMessage(inObject, inCompressedData)
 end
 
 function XFG:DeserializeUnitData(inData)
-	local _, deserializedData = XFG:Deserialize(inData)
+	local deserializedData = unpickle(inData)
 	local unit = XFG.Confederate:Pop()
 	unit:IsRunningAddon(true)
 	unit:SetRace(XFG.Races:Get(deserializedData.A))

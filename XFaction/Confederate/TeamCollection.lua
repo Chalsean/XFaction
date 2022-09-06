@@ -34,6 +34,19 @@ function TeamCollection:Initialize()
 				XFG:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
 			end
 		end
+
+		for initials, name in pairs (XFG.Settings.Confederate.DefaultTeams) do
+			if(not self:Contains(initials)) then
+				local team = Team:new()
+				team:Initialize()
+				team:SetName(name)
+				team:SetInitials(initials)
+				team:SetKey(initials)
+				self:Add(team)
+				XFG:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
+			end
+		end
+
 		self:IsInitialized(true)
 	end
 end

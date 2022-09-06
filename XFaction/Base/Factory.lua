@@ -1,7 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Factory'
 local ServerTime = GetServerTime
-local GenerateUID = math.GenerateUID
 
 Factory = ObjectCollection:newChildConstructor()
 
@@ -89,7 +88,7 @@ function Factory:Pop()
     end
 
     local newObject = self:NewObject()
-    newObject:SetFactoryKey(GenerateUID())
+    newObject:SetFactoryKey(math.GenerateUID())
     newObject:SetFactoryTime(currentTime)
     self.checkedOut[newObject:GetFactoryKey()] = newObject
     self.checkedOutCount = self.checkedOutCount + 1

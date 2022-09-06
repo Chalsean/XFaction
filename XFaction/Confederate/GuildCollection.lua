@@ -18,35 +18,32 @@ function GuildCollection:Initialize(inGuildID)
 		self:ParentInitialize()
 		self.names = {}
 
-		--local _GuildInfo = C_Club.GetClubInfo(inGuildID)
-		self.info = {}
-		self.info.name = 'Eternal Kingdom'
-		self.info.clubId = 1
+		self.info = C_Club.GetClubInfo(inGuildID)
 
-		if(XFG.Cache.Guilds == nil) then
+		--if(XFG.Cache.Guilds == nil) then
 			XFG.Cache.Guilds = {}
 			self:SetFromGuildInfo()
-		else
-			XFG:Debug(ObjectName, 'Guild information found in cache')
-			self:IsCached(true)
-			for _, data in ipairs (XFG.Cache.Guilds) do
-				local guild = Guild:new()
-				guild:Initialize()
-				guild:SetKey(data.Initials)
-				guild:SetName(data.Name)
-				guild:SetFaction(XFG.Factions:Get(data.Faction))
-				guild:SetRealm(XFG.Realms:Get(data.Realm))
-				guild:SetInitials(data.Initials)
-				if(data.ID ~= nil) then
-					guild:SetID(data.ID)
-					guild:SetStreamID(data.StreamID)
-					XFG.Player.Guild = guild
-				end
-				self.parent.Add(self, guild)
-				self.names[guild:GetName()] = guild
-				XFG:Info(ObjectName, 'Initialized guild [%s:%s]', guild:GetInitials(), guild:GetName())
-			end
-		end
+		-- else
+		-- 	XFG:Debug(ObjectName, 'Guild information found in cache')
+		-- 	--self:IsCached(true)
+		-- 	for _, data in ipairs (XFG.Cache.Guilds) do
+		-- 		local guild = Guild:new()
+		-- 		guild:Initialize()
+		-- 		guild:SetKey(data.Initials)
+		-- 		guild:SetName(data.Name)
+		-- 		guild:SetFaction(XFG.Factions:Get(data.Faction))
+		-- 		guild:SetRealm(XFG.Realms:Get(data.Realm))
+		-- 		guild:SetInitials(data.Initials)
+		-- 		if(data.ID ~= nil) then
+		-- 			guild:SetID(data.ID)
+		-- 			guild:SetStreamID(data.StreamID)
+		-- 			XFG.Player.Guild = guild
+		-- 		end
+		-- 		self.parent.Add(self, guild)
+		-- 		self.names[guild:GetName()] = guild
+		-- 		XFG:Info(ObjectName, 'Initialized guild [%s:%s]', guild:GetInitials(), guild:GetName())
+		-- 	end
+		-- end
 		self:IsInitialized(true)
 	end
 end
@@ -138,7 +135,7 @@ function GuildCollection:SetFromGuildInfo()
 	xfData = "XFn:Eternal Kingdom:EK\n" ..
 				"XFc:EKXFaction:pineapple\n" .. 
 				"XFg:5:A:Eternal Kingdom:EKA\n" ..
-				"XFg:5:H:Eternal Kingdom Horde:EKH\n" ..
+				"XFg:5:H:EK Horde:EKH\n" ..
 				"XFg:5:A:Endless Kingdom:ENK\n" ..
 				"XFg:5:A:Alternal Kingdom:AK\n" ..
 				"XFg:5:A:Alternal Kingdom Two:AK2\n" ..

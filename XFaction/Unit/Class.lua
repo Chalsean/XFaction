@@ -8,7 +8,10 @@ function Class:new()
     object.__name = ObjectName
     object.ID = nil
     object.apiName = nil
-    object.color = nil
+    object.r = nil
+    object.g = nil
+    object.b = nil
+    object.hex = nil
     return object
 end
 
@@ -17,7 +20,10 @@ function Class:Print()
         self:ParentPrint()
         XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
         XFG:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
-        if(self:HasColor()) then self:GetColor():Print() end
+        XFG:Debug(ObjectName, '  r (' .. type(self.r) .. '): ' .. tostring(self.r))
+        XFG:Debug(ObjectName, '  g (' .. type(self.g) .. '): ' .. tostring(self.g))
+        XFG:Debug(ObjectName, '  b (' .. type(self.b) .. '): ' .. tostring(self.b))
+        XFG:Debug(ObjectName, '  hex (' .. type(self.hex) .. '): ' .. tostring(self.hex))
     end
 end
 
@@ -39,15 +45,28 @@ function Class:SetAPIName(inAPIName)
     self.apiName = inAPIName
 end
 
-function Class:HasColor()
-    return self.color ~= nil
+function Class:GetRGB()
+    return self.r, self.g, self.b
 end
 
-function Class:GetColor()
-    return self.color
+function Class:GetRGBPercent()
+    return self.r / 255, self.g / 255, self.b / 255
 end
 
-function Class:SetColor(inColor)
-    assert(type(inColor) == 'table' and inColor.__name == 'Color', 'argument must be Color object')
-    self.color = inColor
+function Class:SetRGB(inR, inG, inB)
+    assert(type(inR) == 'number')
+    assert(type(inG) == 'number')
+    assert(type(inB) == 'number')
+    self.r = inR
+    self.g = inG
+    self.b = inB
+end
+
+function Class:SetHex(inHex)
+    assert(type(inHex) == 'string')
+    self.hex = inHex
+end
+
+function Class:GetHex()
+    return self.hex
 end

@@ -1,6 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ProfessionCollection'
-local GetProfessionByID = C_TradeSkillUI.GetTradeSkillLineInfoByID
+local GetAllProfessionIDs = C_TradeSkillUI.GetAllProfessionTradeSkillLines
+local GetProfessionName = C_TradeSkillUI.GetTradeSkillDisplayName
+local GetProfessionIcon = C_TradeSkillUI.GetTradeSkillTexture
 
 ProfessionCollection = ObjectCollection:newChildConstructor()
 
@@ -15,12 +17,11 @@ function ProfessionCollection:Initialize()
 		self:ParentInitialize()
 		if(not XFG.Cache.UIReload or XFG.Cache.Professions == nil) then
 			XFG.Cache.Professions = {}
-			local lib = LibStub('LibProfession')
-			for _, profession in lib:Iterator() do
+			for _, ID in ipairs (GetAllProfessionIDs()) do
 				XFG.Cache.Professions[#XFG.Cache.Professions + 1] = {
-					ID = profession.ID,
-					Name = profession.Name,
-					Icon = profession.Icon,
+					ID = ID,
+					Name = GetProfessionName(ID),
+					Icon = GetProfessionIcon(ID),
 				}
 			end
 		else

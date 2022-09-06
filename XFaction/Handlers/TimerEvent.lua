@@ -41,12 +41,11 @@ function TimerEvent:CallbackLogin()
         return
     end
 
-    --if(InGuild()) then
+    if(InGuild()) then
         -- Even though it says were in guild, the following call still may not work on initial login, hence the poller
         local guildID = C_Club.GetGuildClubId()
-		guildID = 1
-        -- Sanity check
-        --if(_GuildID ~= nil) then
+		-- Sanity check
+        if(guildID ~= nil) then
 			-- Critical path initialization, anything not caught needs to get bailed
 			try(function ()
 				-- Now that guild info is available we can finish setup
@@ -105,14 +104,14 @@ function TimerEvent:CallbackLogin()
 			catch(function(inErrorMessage)
 				XFG:Warn(ObjectName, inErrorMessage)
 			end)
-        --end
-    --end
+        end
+    end
 end
 
 function TimerEvent:CallbackDelayedStartTimer()
 	try(function ()
 		if(not XFG.Cache.UIReload) then
-			--XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
+			XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
 			XFG.Links:Broadcast()
 		end
 		-- For support reasons, it helps to know what addons are being used
@@ -175,7 +174,6 @@ end
 -- Periodically force a refresh
 function TimerEvent:CallbackGuildRoster()
 	try(function ()
-		XFG:DataDumper(ObjectName, XFConfigDB)
 		if(XFG.Initialized and XFG.Player.Guild) then
 			GuildRosterEvent()
 		end

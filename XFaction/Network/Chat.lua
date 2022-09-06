@@ -37,7 +37,7 @@ function Chat:Send(inMessage)
     inMessage:SetFrom(XFG.Player.GUID)
 
     XFG:Debug(ObjectName, 'Attempting to send message')
-    inMessage:ShallowPrint()
+    inMessage:Print()
 
     if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
         XFG.Mailbox.BNet:Send(inMessage)
@@ -59,6 +59,7 @@ function Chat:Send(inMessage)
 
     -- Broadcast on same realm/faction channel for multiple players
     if(XFG.Channels:HasLocalChannel()) then
+        self:Add(inMessage:GetKey())
         local channel = XFG.Channels:GetLocalChannel()
         if(XFG.DebugFlag) then
             XFG:Debug(ObjectName, 'Broadcasting on channel [%s] with tag [%s]', channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
@@ -70,6 +71,6 @@ function Chat:Send(inMessage)
             end
             XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())
             XFG.Metrics:Get(XFG.Settings.Metric.ChannelSend):Increment()
-        end
+        end        
     end
 end

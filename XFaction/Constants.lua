@@ -22,8 +22,6 @@ XFG.Handlers = {}
 XFG.Mailbox = {}
 XFG.Nameplates = {}
 XFG.Options = {}
-XFG.UI = {}
-XFG.Widgets = {}
 
 XFG.Initialized = false
 
@@ -37,6 +35,7 @@ XFG.Icons = {
 	Necrolord = 3257749,
 	Alliance = 2565243,
 	Horde = 463451,
+	Neutral = 132311,
 	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
 	Guild = 'ElvUI-Windtools-Healer',
 }
@@ -49,7 +48,6 @@ XFG.Lib = {
 	Config = LibStub('AceConfig-3.0'),
 	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0'),
-	LSMList = AceGUIWidgetLSMlists,
 }
 XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 

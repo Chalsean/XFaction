@@ -56,6 +56,7 @@ function BNet:Send(inMessage)
     -- Split once and then message all the targets
     local messageData = XFG:EncodeBNetMessage(inMessage, true)
     local packets = self:SegmentMessage(messageData, inMessage:GetKey(), XFG.Settings.Network.BNet.PacketSize)
+    self:Add(inMessage:GetKey())
 
     -- Make sure all packets go to each target
     for _, friend in pairs (links) do

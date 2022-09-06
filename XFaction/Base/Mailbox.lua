@@ -47,10 +47,10 @@ function Mailbox:ContainsPacket(inKey)
 	return self.packets[inKey] ~= nil
 end
 
-function Mailbox:Add(inMessage)
-	assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-	if(not self:Contains(inMessage:GetKey())) then
-		self.objects[inMessage:GetKey()] = ServerTime()
+function Mailbox:Add(inKey)
+	assert(type(inKey) == 'string')
+	if(not self:Contains(inKey)) then
+		self.objects[inKey] = ServerTime()
 	end
 end
 
@@ -125,11 +125,6 @@ end
 
 function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    -- Ignore if it's your own message
-	if(inSender == XFG.Player.Unit:GetUnitName()) then
-        return
-	end
-
     -- If not a message from this addon, ignore
     if(not self:IsAddonTag(inMessageTag)) then
         return
@@ -143,21 +138,15 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     local messageKey = string.sub(inEncodedMessage, 3, 38)
     local messageData = string.sub(inEncodedMessage, 39, -1)
 
-    -- Temporary, remove after all upgraded to 3.10
+    -- Temporary, remove after all upgraded to 4.0
     if(not packetNumber or packetNumber == 0 or not totalPackets or totalPackets == 0) then
         XFG:Debug(ObjectName, 'Message is in pre-4.0 format')
-        -- local _FullMessage = self:DecodeMessage(inEncodedMessage)
-        -- try(function ()
-        --     self:Process(_FullMessage, inMessageTag)
-        -- end).
-        -- finally(function ()
-        --     self:Push(_FullMessage)
-        -- end)
         return
     end
 
-    -- Ensure we have not already processed the overall message
+    -- Ignore if it's your own message or you've seen it before
     if(XFG.Mailbox.BNet:Contains(messageKey) or XFG.Mailbox.Chat:Contains(messageKey)) then
+        XFG:Debug(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
         return
     end
 
@@ -180,12 +169,6 @@ end
 function Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
-    -- Ignore own messages
-    if(inMessage:GetFrom() == XFG.Player.GUID) then
-        XFG:Debug(ObjectName, 'Ignoring own message')
-        return
-    end
-
     -- Is a newer version available?
     if(not XFG.Cache.NewVersionNotify and XFG.Version:IsNewer(inMessage:GetVersion())) then
         print(format(XFG.Lib.Locale['NEW_VERSION'], XFG.Title))
@@ -201,7 +184,8 @@ function Mailbox:Process(inMessage, inMessageTag)
         end
     end
 
-    inMessage:ShallowPrint()
+    self:Add(inMessage:GetKey())
+    inMessage:Print()
 
     --========================================
     -- Forward message

@@ -15,20 +15,21 @@ function XFG:Init()
 	XFG:Info(ObjectName, 'WoW client version [%s:%s]', XFG.WoW:GetName(), XFG.WoW:GetVersion():GetKey())
 	XFG:Info(ObjectName, 'XFaction version [%s]', XFG.Version:GetKey())
 
-	XFG.Colors = ColorCollection:new(); XFG.Colors:Initialize()
-	XFG.Metrics = MetricCollection:new(); XFG.Metrics:Initialize()
-
 	XFG.Hooks = HookCollection:new(); XFG.Hooks:Initialize()
 	XFG.Timers = TimerCollection:new(); XFG.Timers:Initialize()
 	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
 	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
+	XFG.Metrics = MetricCollection:new(); XFG.Metrics:Initialize()
 	XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
 
-	XFG.Player.InInstance = IsInInstance()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
 	XFG.Continents = ContinentCollection:new(); XFG.Continents:Initialize()
 	XFG.Zones = ZoneCollection:new(); XFG.Zones:Initialize()
+
+	XFG.Player.GUID = UnitGUID('player')
+	XFG.Player.Faction = XFG.Factions:GetByName(UnitFactionGroup('player'))
+	XFG.Player.InInstance = IsInInstance()
 
 	-- A significant portion of start up is delayed due to guild information not being available yet
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()

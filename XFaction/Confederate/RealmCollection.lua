@@ -40,7 +40,8 @@ function RealmCollection:Initialize()
 end
 
 function RealmCollection:SetPlayerRealm()
-	local localRealm = XFG.Realms:Get(XFG.Cache.Player.Realm)
+	--local localRealm = XFG.Realms:Get(GetRealmName())
+	local localRealm = XFG.Realms:Get('Proudmoore')
 	for _, realmID in localRealm:IDIterator() do
 		local connectedRealm = XFG.Realms:GetByID(realmID)
 		for _, guild in XFG.Guilds:Iterator() do

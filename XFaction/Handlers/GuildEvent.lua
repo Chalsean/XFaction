@@ -17,6 +17,8 @@ function GuildEvent:Initialize()
         -- This is the local guild roster scan for those not running the addon
         XFG.Events:Add('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
+        self:CallbackRosterUpdate()
+        XFG.Player.Unit:Print()
         GuildRosterEvent()
         -- Hook player inviting someone, they will send broadcast if player joins
         -- hooksecurefunc('GuildInvite', function(inInvitee) XFG.Invites[inInvitee] = true end)
@@ -29,10 +31,10 @@ end
 
 -- The event doesn't tell you what has changed, only that something has changed
 function GuildEvent:CallbackRosterUpdate()
-    XFG:Info(ObjectName, 'Scanning local guild roster')
+    XFG:Debug(ObjectName, 'Scanning local guild roster')
     for _, memberID in pairs (GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         local unitData = XFG.Confederate:Pop()
-        try(function ()            
+        try(function ()
             unitData:Initialize(memberID)
             if(unitData:IsInitialized()) then
                 if(unitData:IsOnline()) then
@@ -73,12 +75,7 @@ function GuildEvent:CallbackRosterUpdate()
         end).
         catch(function (inErrorMessage)
             XFG:Warn(ObjectName, inErrorMessage)
-        end).
-    	finally(function ()
-    		if(unitData and unitData:IsPlayer()) then
-    			unitData:Print()          
-    		end
-    	end)
+        end)
     end
 end
 

@@ -30,7 +30,6 @@ function Confederate:Initialize()
         catch(function (inErrorMessage)
             XFG:Warn(ObjectName, inErrorMessage)
         end)
-
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()

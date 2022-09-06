@@ -17,15 +17,15 @@ function Faction:Initialize()
         self:ParentInitialize()
         if(self:GetName() ~= nil) then
             if(self.name == 'Horde') then
-                self:SetIconID(463451)
+                self:SetIconID(XFG.Icons.Horde)
                 self:SetLanguage('Orcish')
                 self:SetID('H')
             elseif(self:GetName() == 'Alliance') then
-                self:SetIconID(2565243)
+                self:SetIconID(XFG.Icons.Alliance)
                 self:SetLanguage('Common')
                 self:SetID('A')
             else
-                self:SetIconID(132311)
+                self:SetIconID(XFG.Icons.Neutral)
                 self:SetLanguage('Common')
                 self:SetID('N')
             end
