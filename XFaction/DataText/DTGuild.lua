@@ -87,7 +87,7 @@ local function PreSort()
 		unitData.Achievement = unit:GetAchievementPoints()
 		unitData.Rank = unit:GetRank()
 		unitData.ItemLevel = unit:GetItemLevel()	
-		unitData.Race = unit:GetRace():GetLocaleName()
+		unitData.Race = unit:GetRace():GetName()
 		unitData.Team = unit:GetTeam():GetName()
 		unitData.Class = unit:GetClass():GetHex()
 		unitData.Faction = unit:GetFaction():GetIconID()
@@ -295,7 +295,7 @@ function DTGuild:OnEnter(this)
 						cellValue = format('%s', format(XFG.Icons.String, unitData[columnName]))
 					end
 				elseif(columnName == 'Name') then
-					cellValue = format('|cff%s%s|r', unitData.Class, unitData.Name)
+					cellValue = format('|c%s%s|r', unitData.Class, unitData.Name)
 				elseif(unitData[columnName] ~= nil) then
 					cellValue = format('|cffffffff%s|r', unitData[columnName])
 				end

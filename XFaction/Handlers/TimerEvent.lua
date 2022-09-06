@@ -86,7 +86,7 @@ function TimerEvent:CallbackLogin()
 				
 				-- Start all timers
 				XFG.Timers:Start()
-				XFG.Initialized = true				
+				XFG.Initialized = true
 			end).
 			catch(function (inErrorMessage)
 				XFG:Error(ObjectName, inErrorMessage)
