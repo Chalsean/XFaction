@@ -1,19 +1,21 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ChannelCollection'
-
 local SwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
 local SetChatColor = ChangeChatColor
 local GetChannels = GetChannelList
 
 ChannelCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function ChannelCollection:new()
     local object = ChannelCollection.parent.new(self)
 	object.__name = ObjectName
 	object.localChannel = nil
     return object
 end
+--#endregion
 
+--#region Initializers
 function ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -37,7 +39,9 @@ function ChannelCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Print
 function ChannelCollection:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -47,7 +51,9 @@ function ChannelCollection:Print()
         end
     end
 end
+--#endregion
 
+--#region Accessors
 function ChannelCollection:GetByID(inID)
 	assert(type(inID) == 'number')
 	for _, channel in self:Iterator() do
@@ -89,6 +95,25 @@ function ChannelCollection:SetLast(inKey)
 	end
 end
 
+function ChannelCollection:HasLocalChannel()
+    return self.localChannel ~= nil
+end
+
+function ChannelCollection:GetLocalChannel()
+    return self.localChannel
+end
+
+function ChannelCollection:SetLocalChannel(inChannel)
+    assert(type(inChannel) == 'table' and inChannel.__name == 'Channel', 'argument must be Channel object')
+    self.localChannel = inChannel
+end
+
+function ChannelCollection:VoidLocalChannel()
+    self.localChannel = nil
+end
+--#endregion
+
+--#region DataSet
 function ChannelCollection:Scan()
 	try(function ()
 		local channels = {GetChannels()}
@@ -126,20 +151,4 @@ function ChannelCollection:Scan()
 		XFG:Warn(ObjectName, inErrorMessage)
 	end)
 end
-
-function ChannelCollection:HasLocalChannel()
-    return self.localChannel ~= nil
-end
-
-function ChannelCollection:GetLocalChannel()
-    return self.localChannel
-end
-
-function ChannelCollection:SetLocalChannel(inChannel)
-    assert(type(inChannel) == 'table' and inChannel.__name == 'Channel', 'argument must be Channel object')
-    self.localChannel = inChannel
-end
-
-function ChannelCollection:VoidLocalChannel()
-    self.localChannel = nil
-end
+--#endregion

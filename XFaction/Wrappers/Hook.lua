@@ -3,6 +3,7 @@ local ObjectName = 'Hook'
 
 Hook = Object:newChildConstructor()
 
+--#region Constructors
 function Hook:new()
     local object = Hook.parent.new(self)
     object.__name = ObjectName
@@ -12,7 +13,9 @@ function Hook:new()
     object.isEnabled = false
     return object
 end
+--#endregion
 
+--#region Print
 function Hook:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -22,7 +25,9 @@ function Hook:Print()
         XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
     end
 end
+--#endregion
 
+--#region Accessors
 function Hook:HasOriginal()
     return self.original ~= nil
 end
@@ -61,7 +66,9 @@ function Hook:IsEnabled(inBoolean)
     end
 	return self.isEnabled
 end
+--#endregion
 
+--#region Start/Stop
 function Hook:Start()
     if(self:HasOriginal() and self:HasCallback()) then
         local callback = self:GetCallback()
@@ -86,3 +93,4 @@ function Hook:Stop()
         end
     end
 end
+--#endregion

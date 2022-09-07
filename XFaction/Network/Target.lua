@@ -3,6 +3,7 @@ local ObjectName = 'Target'
 
 Target = Object:newChildConstructor()
 
+--#region Constructors
 function Target:new()
     local object = Target.parent.new(self)
     object.__name = ObjectName
@@ -10,14 +11,18 @@ function Target:new()
     object.faction = nil
     return object
 end
+--#endregion
 
+--#region Print
 function Target:Print()
     if(self:ParentPrint()) then
         if(self:HasRealm()) then self:GetRealm():Print() end
         if(self:HasFaction()) then self:GetFaction():Print() end
     end
 end
+--#endregion
 
+--#region Accessors
 function Target:HasRealm()
     return self.realm ~= nil
 end
@@ -50,3 +55,4 @@ end
 function Target:IsMyTarget()
     return XFG.Player.Target:Equals(self)
 end
+--#endregion

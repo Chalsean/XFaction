@@ -1,6 +1,7 @@
 local addon, Engine = ...
 local LogCategory = 'Constants'
 
+--#region XFG Instantiation
 local XFG = {}
 setmetatable(XFG, self)
 
@@ -20,11 +21,38 @@ XFG.Factories = {}
 XFG.Frames = {}
 XFG.Handlers = {}
 XFG.Mailbox = {}
-XFG.Nameplates = {}
+XFG.Nameplates = {
+	ElvUI = {},
+}
 XFG.Options = {}
 
 XFG.Initialized = false
 
+XFG.Player = {
+	LastBroadcast = 0,
+	InInstance = false
+}
+--#endregion
+
+--#region Libraries
+XFG.Lib = {
+	Deflate = LibStub:GetLibrary('LibDeflate'),
+	QT = LibStub('LibQTip-1.0'),
+	Broker = LibStub('LibDataBroker-1.1'),
+	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Name, true),
+	Config = LibStub('AceConfig-3.0'),
+	ConfigDialog = LibStub('AceConfigDialog-3.0'),
+	LSM = LibStub('LibSharedMedia-3.0'),
+}
+XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
+--#endregion
+
+--#region Saved Variables
+if(_G.XFConfigDB == nil) then _G.XFConfigDB = {} end
+if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
+--#endregion
+
+--#region Program Settings
 XFG.Icons = {
 	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
 	Texture = '|T%s:17:17|t',
@@ -38,25 +66,6 @@ XFG.Icons = {
 	Neutral = 132311,
 	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
 	Guild = 'ElvUI-Windtools-Healer',
-}
-
-XFG.Lib = {
-	Deflate = LibStub:GetLibrary('LibDeflate'),
-	QT = LibStub('LibQTip-1.0'),
-	Broker = LibStub('LibDataBroker-1.1'),
-	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Name, true),
-	Config = LibStub('AceConfig-3.0'),
-	ConfigDialog = LibStub('AceConfigDialog-3.0'),
-	LSM = LibStub('LibSharedMedia-3.0'),
-}
-XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
-
-if(_G.XFConfigDB == nil) then _G.XFConfigDB = {} end
-if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
-
-XFG.Player = {
-	LastBroadcast = 0,
-	InInstance = false
 }
 
 XFG.Settings = {
@@ -184,3 +193,4 @@ XFG.Settings = {
 		Total = 100,
 	},
 }
+--#endregion

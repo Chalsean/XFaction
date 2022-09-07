@@ -4,6 +4,7 @@ local CombatLockdown = InCombatLockdown
 
 DTMetrics = Object:newChildConstructor()
 	
+--#region Constructors
 function DTMetrics:new()
 	local object = DTGuild.parent.new(self)
     object.__name = ObjectName
@@ -14,7 +15,9 @@ function DTMetrics:new()
 	object.count = 0    
     return object
 end
+--#endregion
 
+--#region Initializers
 function DTMetrics:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -38,7 +41,9 @@ function DTMetrics:SetFont()
 	self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	self.regularFont:SetTextColor(255,255,255)
 end
+--#endregion
 
+--#region Print
 function DTMetrics:Print()
 	if(XFG.DebugFlag) then
 		self:ParentPrint()
@@ -49,7 +54,9 @@ function DTMetrics:Print()
 		XFG:Debug(ObjectName, '  tooltip (' .. type(tooltip) .. ')')
 	end
 end
+--#endregion
 
+--#region Broker
 function DTMetrics:RefreshBroker()
 	if(XFG.Initialized) then
 		local text = ''
@@ -79,11 +86,14 @@ function DTMetrics:RefreshBroker()
 		self.ldbObject.text = text
 	end
 end
+--#endregion
 
+--#region OnEnter
 function DTMetrics:OnEnter(this)
 	if(XFG.Initialized == false) then return end
 	if(CombatLockdown()) then return end
 
+	--#region Configure Tooltip
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
 		self.tooltip = XFG.Lib.QT:Acquire(ObjectName)		
 	else
@@ -97,7 +107,9 @@ function DTMetrics:OnEnter(this)
 	end
 
 	self.tooltip:Clear()
+	--#endregion
 
+	--#region Header
 	local line = self.tooltip:AddLine()
 	self.tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], XFG.Confederate:GetName()), self.headerFont, 'LEFT', 3)
 	line = self.tooltip:AddLine()
@@ -107,7 +119,9 @@ function DTMetrics:OnEnter(this)
 	line = self.tooltip:AddLine()
 	line = self.tooltip:AddLine()
 	line = self.tooltip:AddHeader()
+	--#endregion
 
+	--#region Column Headers
 	self.tooltip:SetCell(line, 1, XFG.Lib.Locale['DTMETRICS_HEADER_METRIC'], self.headerFont, 'LEFT')
 	self.tooltip:SetCell(line, 2, XFG.Lib.Locale['DTMETRICS_HEADER_TOTAL'], self.headerFont, 'CENTER')
 	self.tooltip:SetCell(line, 3, XFG.Lib.Locale['DTMETRICS_HEADER_AVERAGE'], self.headerFont, 'RIGHT')
@@ -115,7 +129,9 @@ function DTMetrics:OnEnter(this)
 	line = self.tooltip:AddLine()
 	self.tooltip:AddSeparator()
 	line = self.tooltip:AddLine()
+	--#endregion
 
+	--#region Populate Table
 	if(XFG.Initialized) then
 		for _, metric in XFG.Metrics:Iterator() do
 			self.tooltip:SetCell(line, 1, metric:GetName(), self.regularFont, 'LEFT')
@@ -124,10 +140,13 @@ function DTMetrics:OnEnter(this)
 			line = self.tooltip:AddLine()
 		end
 	end
+	--#endregion
 
 	self.tooltip:Show()
 end
+--#endregion
 
+--#region OnLeave
 function DTMetrics:OnLeave()
 	if self.tooltip and MouseIsOver(self.tooltip) then
         return
@@ -136,3 +155,4 @@ function DTMetrics:OnLeave()
         self.tooltip = nil
 	end
 end
+--#endregion

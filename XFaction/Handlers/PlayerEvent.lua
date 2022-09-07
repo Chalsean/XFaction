@@ -4,12 +4,15 @@ local GetMemberInfo = C_Club.GetMemberInfo
 
 PlayerEvent = Object:newChildConstructor()
 
+--#region Constructors
 function PlayerEvent:new()
     local object = PlayerEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function PlayerEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -26,7 +29,9 @@ function PlayerEvent:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Callbacks
 function PlayerEvent:CallbackPlayerChanged(inEvent) 
     try(function ()
         XFG.Player.Unit:Initialize(XFG.Player.Unit:GetID())
@@ -144,3 +149,4 @@ function PlayerEvent:CallbackLeaveCombat()
         XFG:Warn(ObjectName, inErrorMessage)
     end)
 end
+--#endregion

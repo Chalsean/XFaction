@@ -3,6 +3,7 @@ local ObjectName = 'Media'
 
 Media = Object:newChildConstructor()
 
+--#region Constructors
 function Media:new()
     local object = Media.parent.new(self)
     object.__name = ObjectName
@@ -10,7 +11,9 @@ function Media:new()
     object.path = nil
     return object
 end
+--#endregion
 
+--#region Print
 function Media:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -18,7 +21,9 @@ function Media:Print()
         XFG:Debug(ObjectName, '  path (' .. type(self.path) .. '): ' .. tostring(self.path))
     end
 end
+--#endregion
 
+--#region Accessors
 function Media:GetType()
     return self.type
 end
@@ -40,3 +45,4 @@ end
 function Media:GetTexture()
     return format('%s', format(XFG.Icons.Texture, self:GetPath()))
 end
+--#endregion

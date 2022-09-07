@@ -5,6 +5,7 @@ local CombatLockdown = InCombatLockdown
 DTGuild = Object:newChildConstructor()
 local LDB_ANCHOR
 
+--#region Constructors
 function DTGuild:new()
 	local object = DTGuild.parent.new(self)
     object.__name = ObjectName
@@ -16,7 +17,9 @@ function DTGuild:new()
 	object.sortColumn = nil    
     return object
 end
+--#endregion
 
+--#region Initializers
 function DTGuild:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -42,7 +45,9 @@ function DTGuild:SetFont()
 	self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	self.regularFont:SetTextColor(255,255,255)
 end
+--#endregion
 
+--#region Print
 function DTGuild:Print()
 	if(XFG.DebugFlag) then
 		self:ParentPrint()
@@ -53,7 +58,26 @@ function DTGuild:Print()
 		XFG:Debug(ObjectName, '  tooltip (' .. type(tooltip) .. ')')
 	end
 end
+--#endregion
 
+--#region Broker
+function DTGuild:RefreshBroker()
+	if(XFG.Initialized) then
+		local text = ''  
+		if(XFG.Config.DataText.Guild.Label) then
+			text = XFG.Lib.Locale['GUILD'] .. ': '
+		end
+		text = format('%s|cff3CE13F%d', text, XFG.Confederate:GetCount())
+		self.ldbObject.text = text
+	end
+end
+
+function DTGuild:GetBroker()
+	return self.ldbObject
+end
+--#endregion
+
+--#region Sorting
 function DTGuild:IsReverseSort(inBoolean)
 	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
 	if(inBoolean ~= nil) then
@@ -142,7 +166,9 @@ local function SetSortColumn(_, inColumnName)
 	end
 	XFG.DataText.Guild:OnEnter(LDB_ANCHOR)
 end
+--#endregion
 
+--#region OnEnter
 local function LineClick(_, inUnitGUID, inMouseButton)
 	local unit = XFG.Confederate:Get(inUnitGUID)
 	local link = unit:GetLink()
@@ -157,25 +183,11 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 	end
 end
 
-function DTGuild:RefreshBroker()
-	if(XFG.Initialized) then
-		local text = ''  
-		if(XFG.Config.DataText.Guild.Label) then
-			text = XFG.Lib.Locale['GUILD'] .. ': '
-		end
-		text = format('%s|cff3CE13F%d', text, XFG.Confederate:GetCount())
-		self.ldbObject.text = text
-	end
-end
-
-function DTGuild:GetBroker()
-	return self.ldbObject
-end
-
 function DTGuild:OnEnter(this)
 	if(not XFG.Initialized) then return end
 	if(CombatLockdown()) then return end
 
+	--#region Configure Tooltip
 	local orderEnabled = {}
 	XFG.Cache.DTGuildTotalEnabled = 0
 	XFG.Cache.DTGuildTextEnabled = 0
@@ -218,6 +230,9 @@ function DTGuild:OnEnter(this)
 	end
 
 	self.tooltip:Clear()
+	--#endregion
+
+	--#region Header
 	local line = self.tooltip:AddLine()
 	
 	if(XFG.Config.DataText.Guild.GuildName and XFG.Cache.DTGuildTotalEnabled > 4) then
@@ -259,9 +274,11 @@ function DTGuild:OnEnter(this)
 		end
 		line = self.tooltip:AddLine()
 	end
-	line = self.tooltip:AddLine()
-	
+	line = self.tooltip:AddLine()	
 	line = self.tooltip:AddHeader()
+	--#endregion
+
+	--#region Column Headers
 	for i = 1, XFG.Cache.DTGuildTotalEnabled do
 		local columnName = orderEnabled[tostring(i)].ColumnName
 		if(not orderEnabled[tostring(i)].Icon) then
@@ -270,7 +287,9 @@ function DTGuild:OnEnter(this)
 		self.tooltip:SetCellScript(line, i, 'OnMouseUp', SetSortColumn, columnName)
 	end
 	self.tooltip:AddSeparator()
+	--#endregion
 
+	--#region Populate Table
 	if(XFG.Initialized) then
 
 		local list = PreSort()
@@ -305,11 +324,14 @@ function DTGuild:OnEnter(this)
 			self.tooltip:SetLineScript(line, "OnMouseUp", LineClick, unitData.GUID)
 		end
 	end
+	--#endregion
 
 	self.tooltip:UpdateScrolling(XFG.Config.DataText.Guild.Size)
 	self.tooltip:Show()
 end
+--#endregion
 
+--#region OnLeave
 function DTGuild:OnLeave()
 	if self.tooltip and MouseIsOver(self.tooltip) then
 	    return
@@ -318,7 +340,9 @@ function DTGuild:OnLeave()
         self.tooltip = nil
 	end
 end
+--#endregion
 
+--#region OnClick
 function DTGuild:OnClick(this, inButton)
 	if(InCombatLockdown()) then return end
 	if(inButton == 'LeftButton') then
@@ -332,3 +356,4 @@ function DTGuild:OnClick(this, inButton)
 		end
 	end
 end
+--#endregion

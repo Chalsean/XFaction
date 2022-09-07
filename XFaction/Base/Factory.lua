@@ -4,6 +4,7 @@ local ServerTime = GetServerTime
 
 Factory = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function Factory:new()
     local object = Factory.parent.new(self)
     object.__name = ObjectName
@@ -24,7 +25,9 @@ function Factory:newChildConstructor()
     object.checkedOutCount = 0
     return object
 end
+--#endregion
 
+--#region Initializers
 function Factory:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -38,7 +41,9 @@ function Factory:ParentInitialize()
     self.checkedIn = {}
     self.checkedOut = {}
 end
+--#endregion
 
+--#region Print
 function Factory:ParentPrint()
     if(XFG.Debug) then
         XFG:DoubleLine(self:GetObjectName())
@@ -56,7 +61,9 @@ function Factory:ParentPrint()
         end
     end
 end
+--#endregion
 
+--#region Iterators
 function Factory:CheckedInIterator()
 	return next, self.checkedIn, nil
 end
@@ -64,7 +71,9 @@ end
 function Factory:CheckedOutIterator()
 	return next, self.checkedOut, nil
 end
+--#endregion
 
+--#region Stack
 function Factory:IsLoaned(inKey)
     assert(type(inKey) == 'string')
     return self.checkedOut[inKey] ~= nil
@@ -108,7 +117,9 @@ function Factory:Push(inObject)
         self.checkedInCount = self.checkedInCount + 1         
     end
 end
+--#endregion
 
+--#region Janitorial
 function Factory:Purge(inPurgeTime)
     assert(type(inPurgeTime) == 'number')
     for _, object in self:CheckedInIterator() do
@@ -126,3 +137,4 @@ function Factory:Purge(inPurgeTime)
         end
     end
 end
+--#endregion

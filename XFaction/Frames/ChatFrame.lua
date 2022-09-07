@@ -3,12 +3,15 @@ local ObjectName = 'ChatFrame'
 
 ChatFrame = Object:newChildConstructor()
 
+--#region Constructors
 function ChatFrame:new()
     local object = ChatFrame.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function ChatFrame:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -16,7 +19,9 @@ function ChatFrame:Initialize()
 	end
 	return self:IsInitialized()
 end
+--#endregion
 
+--#region Display
 function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRealm, inFrom, inData)
     assert(type(inName) == 'string')
     assert(type(inUnitName) == 'string')
@@ -116,3 +121,4 @@ function ChatFrame:DisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm(), inMessage:GetFrom(), inMessage:GetData())
 end
+--#endregion

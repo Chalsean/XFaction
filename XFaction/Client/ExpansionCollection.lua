@@ -3,13 +3,16 @@ local ObjectName = 'ExpansionCollection'
 
 ExpansionCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function ExpansionCollection:new()
     local object = ExpansionCollection.parent.new(self)
 	object.__name = ObjectName
     object.currentExpansion = nil
     return object
 end
+--#endregion
 
+--#region Initializers
 function ExpansionCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -39,7 +42,9 @@ function ExpansionCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Accessors
 function ExpansionCollection:SetCurrent(inExpansion)
     assert(type(inExpansion) == 'table' and inExpansion.__name == 'Expansion', 'argument must be Expansion object')
 	self.currentExpansion = inExpansion
@@ -48,3 +53,4 @@ end
 function ExpansionCollection:GetCurrent()
 	return self.currentExpansion
 end
+--#endregion

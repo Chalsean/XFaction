@@ -6,6 +6,7 @@ local CombatLockdown = InCombatLockdown
 DTToken = Object:newChildConstructor()
 local Events = { 'PLAYER_ENTERING_WORLD', 'PLAYER_LOGIN', 'TOKEN_MARKET_PRICE_UPDATED' }
 
+--#region Constructors
 function DTToken:new()
 	local object = DTGuild.parent.new(self)
     object.__name = ObjectName
@@ -13,7 +14,9 @@ function DTToken:new()
 	object.price = 0    
     return object
 end
+--#endregion
 
+--#region Initializers
 function DTToken:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -27,7 +30,9 @@ function DTToken:Initialize()
 	end
 	return self:IsInitialized()
 end
+--#endregion
 
+--#region Print
 function DTToken:Print()
 	if(XFG.DebugFlag) then
 		self:ParentPrint()
@@ -35,7 +40,9 @@ function DTToken:Print()
 		XFG:Debug(ObjectName, '  ldbObject (' .. type(self.ldbObject) .. ')')
 	end
 end
+--#endregion
 
+--#region Accessors
 function DTToken:GetPrice()
 	return self.price
 end
@@ -44,7 +51,9 @@ function DTToken:SetPrice(inPrice)
 	assert(type(inPrice) == 'number')
 	self.price = inPrice
 end
+--#endregion
 
+--#region OnEvent
 function DTToken:OnEvent(inEvent)
 	local broker = XFG.Lib.Broker:GetDataObjectByName(XFG.Lib.Locale['DTTOKEN_NAME'])
 	local price = GetCurrentMarketPrice()
@@ -58,7 +67,9 @@ function DTToken:OnEvent(inEvent)
 		end
 	 end
 end
+--#endregion
 
+--#region OnClick
 function DTToken:OnClick(self, inButton)
 	if CombatLockdown() then return end
 	if(inButton == 'LeftButton') then
@@ -66,3 +77,4 @@ function DTToken:OnClick(self, inButton)
 		TokenFrame_LoadUI()
 	end
 end
+--#endregion

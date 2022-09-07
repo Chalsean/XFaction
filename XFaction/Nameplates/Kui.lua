@@ -1,11 +1,12 @@
 local XFG, G = unpack(select(2, ...))
+local ObjectName = 'Kui'
 local UnitIsPlayer = UnitIsPlayer
 local UnitGUID = UnitGUID
 
 if(KuiNameplates == nil) then return end
 XFG.Nameplates.Kui = KuiNameplates:NewPlugin('XFaction')
 
-function XFG.Nameplates.Kui:Show(f)
+function XFG.Nameplates.Kui:OnShow(f)
     if(XFG.Config and XFG.Config.Nameplates.Kui.Enable and UnitIsPlayer(f.unit)) then
         if(XFG.Config.Nameplates.Kui.MainName) then
             local guid = UnitGUID(f.unit)
@@ -42,10 +43,10 @@ function XFG.Nameplates.Kui:Show(f)
 end
 
 function XFG.Nameplates.Kui:UNIT_NAME_UPDATE(event,frame)
-    self:Show(frame)
+    self:OnShow(frame)
 end
 
 function XFG.Nameplates.Kui:OnEnable()
-    self:RegisterMessage('Show')
+    self:RegisterMessage('Show', 'OnShow')
     self:RegisterUnitEvent('UNIT_NAME_UPDATE')
 end

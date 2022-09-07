@@ -3,6 +3,7 @@ local ObjectName = 'Friend'
 
 Friend = Object:newChildConstructor()
 
+--#region Constructors
 function Friend:new()
     local object = Friend.parent.new(self)
     object.__name = ObjectName
@@ -18,7 +19,9 @@ function Friend:new()
 
     return object
 end
+--#endregion
 
+--#region Print
 function Friend:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -32,7 +35,9 @@ function Friend:Print()
         if(self:HasTarget()) then self:GetTarget():Print() end
     end
 end
+--#endregion
 
+--#region Accessors
 function Friend:GetID()
     return self.ID
 end
@@ -98,7 +103,9 @@ function Friend:IsRunningAddon(inBoolean)
     end
     return self.isRunningAddon
 end
+--#endregion
 
+--#region Link
 function Friend:CreateLink()
     if(self:IsRunningAddon() and self:HasTarget()) then
         local link = nil
@@ -139,20 +146,9 @@ function Friend:IsMyLink(inBoolean)
     end
     return self.myLink
 end
+--#endregion
 
-function Friend:FactoryReset()
-    self:ParentFactoryReset()
-    self.ID = nil         
-    self.accountID = nil  
-    self.gameID = nil     
-    self.accountName = nil
-    self.tag = nil
-    self.target = nil
-    self.isRunningAddon = false
-    self.myLink = false
-    self:Initialize()
-end
-
+--#region Network
 function Friend:Ping()
     if(XFG.DebugFlag) then
         XFG:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
@@ -160,7 +156,9 @@ function Friend:Ping()
     XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, self:GetGameID())
     XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment() 
 end
+--#endregion
 
+--#region DataSet
 function Friend:SetFromAccountInfo(inAccountInfo)
     self:SetKey(inAccountInfo.bnetAccountID)
     self:SetID(inAccountInfo.ID)
@@ -175,3 +173,19 @@ function Friend:SetFromAccountInfo(inAccountInfo)
     local target = XFG.Targets:GetByRealmFaction(realm, faction)
     self:SetTarget(target)
 end
+--#endregion
+
+--#region Janitorial
+function Friend:FactoryReset()
+    self:ParentFactoryReset()
+    self.ID = nil         
+    self.accountID = nil  
+    self.gameID = nil     
+    self.accountName = nil
+    self.tag = nil
+    self.target = nil
+    self.isRunningAddon = false
+    self.myLink = false
+    self:Initialize()
+end
+--#endregion

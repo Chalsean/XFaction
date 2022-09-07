@@ -3,12 +3,15 @@ local ObjectName = 'AchievementEvent'
 
 AchievementEvent = Object:newChildConstructor()
 
+--#region Constructors
 function AchievementEvent:new()
     local object = AchievementEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function AchievementEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -16,7 +19,9 @@ function AchievementEvent:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Callbacks
 function AchievementEvent:CallbackAchievement(inID)
     try(function ()
         local _, name, _, _, _, _, _, _, _, _, _, isGuild, _, earnedBy = GetAchievementInfo(inID)
@@ -52,3 +57,4 @@ function AchievementEvent:CallbackAchievement(inID)
         XFG:Warn(ObjectName, inErrorMessage)
     end)    
 end
+--#endregion

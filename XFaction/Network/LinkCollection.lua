@@ -4,6 +4,7 @@ local ServerTime = GetServerTime
 
 LinkCollection = Factory:newChildConstructor()
 
+--#region Constructors
 function LinkCollection:new()
     local object = LinkCollection.parent.new(self)
 	object.__name = ObjectName
@@ -13,7 +14,9 @@ end
 function LinkCollection:NewObject()
 	return Link:new()
 end
+--#endregion
 
+--#region Initializers
 function LinkCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -23,7 +26,9 @@ function LinkCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Hash
 function LinkCollection:Add(inLink)
     assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
 	if(not self:Contains(inLink:GetKey())) then
@@ -50,7 +55,9 @@ function LinkCollection:Remove(inLink)
 		self:Push(inLink)
 	end
 end
+--#endregion
 
+--#region DataSet
 -- A link message is a reset of the links for that node
 function LinkCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', 'argument must be Message object')
@@ -109,7 +116,9 @@ function LinkCollection:SetLinkFromString(inLinkString)
 
 	return key, fromNode:GetName()
 end
+--#endregion
 
+--#region Network
 function LinkCollection:Broadcast()
 	XFG:Debug(ObjectName, 'Broadcasting links')
 	local linksString = ''
@@ -136,7 +145,9 @@ function LinkCollection:Broadcast()
 		XFG.Mailbox.Chat:Push(message)
 	end)
 end
+--#endregion
 
+--#region Janitorial
 function LinkCollection:Backup()
 	try(function ()
 		local linksString = ''
@@ -173,3 +184,4 @@ function LinkCollection:Purge(inEpochTime)
 		end
 	end
 end
+--#endregion

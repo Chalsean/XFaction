@@ -3,12 +3,15 @@ local ObjectName = 'ChatEvent'
 
 ChatEvent = Object:newChildConstructor()
 
+--#region Constructors
 function ChatEvent:new()
     local object = ChatEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function ChatEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -20,7 +23,9 @@ function ChatEvent:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Callbacks
 function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
     try(function ()
         -- If you are the sender, broadcast to other realms/factions
@@ -98,3 +103,4 @@ function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, 
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
+--#endregion

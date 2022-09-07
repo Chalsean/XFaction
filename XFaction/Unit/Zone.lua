@@ -3,6 +3,7 @@ local ObjectName = 'Zone'
 
 Zone = Object:newChildConstructor()
 
+--#region Constructors
 function Zone:new()
     local object = Zone.parent.new(self)
     object.__name = ObjectName
@@ -11,7 +12,9 @@ function Zone:new()
     object.continent = nil
     return object
 end
+--#endregion
 
+--#region Initializers
 function Zone:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -19,7 +22,9 @@ function Zone:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Print
 function Zone:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -29,7 +34,9 @@ function Zone:Print()
         if(self:HasContinent()) then self:GetContinent():Print() end
     end
 end
+--#endregion
 
+--#region Hash
 function Zone:HasID()
     return #self.IDs > 0
 end
@@ -44,7 +51,9 @@ function Zone:AddID(inID)
     assert(type(inID) == 'number')
     self.IDs[#self.IDs + 1] = inID
 end
+--#endregion
 
+--#region Accessors
 function Zone:GetLocaleName()
     return self.localeName or self:GetName()
 end
@@ -67,7 +76,10 @@ function Zone:SetContinent(inContinent)
     assert(type(inContinent) == 'table' and inContinent.__name == 'Continent', 'argument must be Continent object')
     self.continent = inContinent
 end
+--#endregion
 
+--#region Iterators
 function Zone:IDIterator()
 	return next, self.IDs, nil
 end
+--#endregion

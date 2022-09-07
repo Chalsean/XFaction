@@ -3,12 +3,15 @@ local ObjectName = 'RealmCollection'
 
 RealmCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function RealmCollection:new()
 	local object = RealmCollection.parent.new(self)
 	object.__name = 'RealmCollection'
     return object
 end
+--#endregion
 
+--#region Initializers
 -- Realm information comes from disk, so no need to stick in cache
 function RealmCollection:Initialize()
 	if(not self:IsInitialized()) then
@@ -38,7 +41,20 @@ function RealmCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Accessors
+function RealmCollection:GetByID(inID)
+	assert(type(inID) == 'number')
+	for _, realm in self:Iterator() do
+		if(realm:GetID() == inID) then
+			return realm
+		end
+	end
+end
+--#endregion
+
+--#region DataSet
 function RealmCollection:SetPlayerRealm()
 	--local localRealm = XFG.Realms:Get(GetRealmName())
 	local localRealm = XFG.Realms:Get('Proudmoore')
@@ -58,12 +74,4 @@ function RealmCollection:SetPlayerRealm()
 		error('Player is not on a supported guild or realm: ' .. tostring(XFG.Player.Cache.Realm))
 	end
 end
-
-function RealmCollection:GetByID(inID)
-	assert(type(inID) == 'number')
-	for _, realm in self:Iterator() do
-		if(realm:GetID() == inID) then
-			return realm
-		end
-	end
-end
+--#endregion

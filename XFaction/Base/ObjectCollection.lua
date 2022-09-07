@@ -3,6 +3,7 @@ local ObjectName = 'ObjectCollection'
 
 ObjectCollection = Object:newChildConstructor()
 
+--#region Constructors
 function ObjectCollection:new()
     local object = ObjectCollection.parent.new(self)
     object.__name = ObjectName
@@ -21,7 +22,9 @@ function ObjectCollection:newChildConstructor()
     object.cached = false
     return object
 end
+--#endregion
 
+--#region Initializers
 function ObjectCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -42,7 +45,9 @@ function ObjectCollection:ParentInitialize()
     self:SetKey(math.GenerateUID())
     self.objects = {}
 end
+--#endregion
 
+--#region Print
 function ObjectCollection:Print()
     self:ParentPrint()
 end
@@ -58,7 +63,19 @@ function ObjectCollection:ParentPrint()
         end
     end
 end
+--#endregion
 
+--#region Iterators
+function ObjectCollection:Iterator()
+	return next, self.objects, nil
+end
+
+function ObjectCollection:SortedIterator()
+	return PairsByKeys(self.objects)
+end
+--#endregion
+
+--#region Hash
 function ObjectCollection:Contains(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Collection key must be string or number')
 	return self.objects[inKey] ~= nil
@@ -67,18 +84,6 @@ end
 function ObjectCollection:Get(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Collection key must be string or number')
 	return self.objects[inKey]
-end
-
-function ObjectCollection:Iterator()
-	return next, self.objects, nil
-end
-
-function ObjectCollection:SortedIterator()
-	return PairsByKeys(self.objects)
-end
-
-function ObjectCollection:GetCount()
-	return self.objectCount
 end
 
 function ObjectCollection:Add(inObject)
@@ -96,3 +101,10 @@ function ObjectCollection:Remove(inKey)
 		self.objectCount = self.objectCount - 1
 	end
 end
+--#endregion
+
+--#region Accessors
+function ObjectCollection:GetCount()
+	return self.objectCount
+end
+--#endregion

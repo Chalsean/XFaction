@@ -3,12 +3,15 @@ local ObjectName = 'ClassCollection'
 
 ClassCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function ClassCollection:new()
 	local _Object = ClassCollection.parent.new(self)
 	_Object.__name = ObjectName
     return _Object
 end
+--#endregion
 
+--#region Initializers
 function ClassCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -29,3 +32,4 @@ function ClassCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion

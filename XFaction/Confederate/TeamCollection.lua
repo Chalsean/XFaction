@@ -3,12 +3,15 @@ local ObjectName = 'TeamCollection'
 
 TeamCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function TeamCollection:new()
 	local object = TeamCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function TeamCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -50,7 +53,9 @@ function TeamCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region DataSet
 function TeamCollection:SetObjectFromString(inString)
 	assert(type(inString) == 'string')
 	local teamInitial, teamName = inString:match('XFt:(%a):(%a+)')
@@ -59,3 +64,4 @@ function TeamCollection:SetObjectFromString(inString)
 		name = teamName,
 	}
 end
+--#endregion

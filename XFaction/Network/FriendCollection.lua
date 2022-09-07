@@ -5,6 +5,7 @@ local GetAccountInfo = C_BattleNet.GetFriendAccountInfo
 
 FriendCollection = Factory:newChildConstructor()
 
+--#region Constructors
 function FriendCollection:new()
 	local object = FriendCollection.parent.new(self)
 	object.__name = ObjectName
@@ -14,7 +15,9 @@ end
 function FriendCollection:NewObject()
 	return Friend:new()
 end
+--#endregion
 
+--#region Initializers
 function FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -32,6 +35,12 @@ function FriendCollection:Initialize()
 		end)
 	end
 end
+--#endregion
+
+--#region Hash
+function FriendCollection:HasFriends()
+    return self:GetCount() > 0
+end
 
 function FriendCollection:ContainsByGameID(inGameID)
 	assert(type(inGameID) == 'number')
@@ -43,6 +52,26 @@ function FriendCollection:ContainsByGameID(inGameID)
 	return false
 end
 
+function FriendCollection:Remove(inFriend)
+	assert(type(inFriend) == 'table' and inFriend.__name == 'Friend', 'argument must be Friend object')
+	if(self:Contains(inFriend:GetKey())) then
+		try(function ()
+			if(XFG.Nodes:Contains(inFriend:GetName())) then
+				XFG.Nodes:Remove(XFG.Nodes:Get(inFriend:GetName()))
+			end
+		end).
+		catch(function (inErrorMessage)
+			XFG:Warn(ObjectName, inErrorMessage)
+		end).
+		finally(function ()
+			self.parent.Remove(self, inFriend:GetKey())
+			self:Push(inFriend)
+		end)
+	end
+end
+--#endregion
+
+--#region Accessors
 function FriendCollection:GetByGameID(inGameID)
 	assert(type(inGameID) == 'number')
 	for _, friend in self:Iterator() do
@@ -64,29 +93,9 @@ function FriendCollection:GetByRealmUnitName(inRealm, inName)
 		 end
 	 end
 end
+--#endregion
 
-function FriendCollection:Remove(inFriend)
-	assert(type(inFriend) == 'table' and inFriend.__name == 'Friend', 'argument must be Friend object')
-	if(self:Contains(inFriend:GetKey())) then
-		try(function ()
-			if(XFG.Nodes:Contains(inFriend:GetName())) then
-				XFG.Nodes:Remove(XFG.Nodes:Get(inFriend:GetName()))
-			end
-		end).
-		catch(function (inErrorMessage)
-			XFG:Warn(ObjectName, inErrorMessage)
-		end).
-		finally(function ()
-			self.parent.Remove(self, inFriend:GetKey())
-			self:Push(inFriend)
-		end)
-	end
-end
-
-function FriendCollection:HasFriends()
-    return self:GetCount() > 0
-end
-
+--#region DataSet
 local function CanLink(inAccountInfo)
 	if(inAccountInfo.isFriend and 
 	   inAccountInfo.gameAccountInfo.isOnline and 
@@ -171,7 +180,9 @@ function FriendCollection:CheckFriends()
 		XFG:Warn(ObjectName, inErrorMessage)
 	end)
 end
+--#endregion
 
+--#region Janitorial
 function FriendCollection:Backup()
 	try(function ()
 	    for _, friend in self:Iterator() do
@@ -199,3 +210,4 @@ function FriendCollection:Restore()
 		end)
 	end
 end
+--#endregion

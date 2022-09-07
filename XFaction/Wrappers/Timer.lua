@@ -5,6 +5,7 @@ local NewTimer = C_Timer.NewTimer
 
 Timer = Object:newChildConstructor()
 
+--#region Constructors
 function Timer:new()
     local object = Timer.parent.new(self)
     object.__name = ObjectName
@@ -19,7 +20,9 @@ function Timer:new()
     object.inInstanceCombat = false
     return object
 end
+--#endregion
 
+--#region Print
 function Timer:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -33,7 +36,9 @@ function Timer:Print()
         XFG:Debug(ObjectName, '  inInstanceCombat (' .. type(self.inInstanceCombat) .. '): ' .. tostring(self.inInstanceCombat))
     end
 end
+--#endregion
 
+--#region Accessors
 function Timer:GetID()
     return self.ID
 end
@@ -102,7 +107,9 @@ function Timer:IsInstanceCombat(inBoolean)
     end
 	return self.inInstanceCombat
 end
+--#endregion
 
+--#region Start/Stop
 function Timer:Start()
     if(self:IsRepeat()) then
         self.handle = NewTicker(self:GetDelta(), self:GetCallback())
@@ -125,3 +132,4 @@ function Timer:Stop()
         XFG:Debug(ObjectName, 'Stopped timer [%s]', self:GetName())
     end
 end
+--#endregion

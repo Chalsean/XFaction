@@ -3,12 +3,15 @@ local ObjectName = 'SystemFrame'
 
 SystemFrame = Object:newChildConstructor()
 
+--#region Constructors
 function SystemFrame:new()
     local object = SystemFrame.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Display
 function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRealm)
     if(not XFG.Config.Chat.Login.Enable) then return end
     assert(type(inName) == 'string')
@@ -74,3 +77,4 @@ function SystemFrame:DisplayLogoutMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm())
 end
+--#endregion

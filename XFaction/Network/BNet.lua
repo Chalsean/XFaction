@@ -4,12 +4,15 @@ local ServerTime = GetServerTime
 
 BNet = Mailbox:newChildConstructor()
 
+--#region Constructors
 function BNet:new()
     local object = BNet.parent.new(self)
 	object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -18,11 +21,9 @@ function BNet:Initialize()
     end
     return self:IsInitialized()
 end
+--#endregion
 
-function BNet:DecodeMessage(inEncodedMessage)
-    return XFG:DecodeBNetMessage(inEncodedMessage)
-end
-
+--#region Send
 function BNet:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
@@ -76,6 +77,12 @@ function BNet:Send(inMessage)
         end)
     end
 end
+--#endregion
+
+--#region Receive
+function BNet:DecodeMessage(inEncodedMessage)
+    return XFG:DecodeBNetMessage(inEncodedMessage)
+end
 
 function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
@@ -128,3 +135,4 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
         XFG:Warn(ObjectName, inErrorMessage)
     end)
 end
+--#endregion

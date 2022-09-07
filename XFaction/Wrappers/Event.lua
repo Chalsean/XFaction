@@ -3,6 +3,7 @@ local ObjectName = 'Event'
 
 Event = Object:newChildConstructor()
 
+--#region Constructors
 function Event:new()
     local object = Event.parent.new(self)
     object.__name = ObjectName
@@ -13,7 +14,9 @@ function Event:new()
     object.inInstanceCombat = false
     return object
 end
+--#endregion
 
+--#region Print
 function Event:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -24,7 +27,9 @@ function Event:Print()
         XFG:Debug(ObjectName, '  inInstanceCombat (' .. type(self.inInstanceCombat) .. '): ' .. tostring(self.inInstanceCombat))
     end
 end
+--#endregion
 
+--#region Accessors
 function Event:GetCallback()
     return self.callback
 end
@@ -66,7 +71,9 @@ function Event:IsInstanceCombat(inBoolean)
     end
 	return self.inInstanceCombat
 end
+--#endregion
 
+--#region Start/Stop
 function Event:Start()
     self:IsEnabled(true)
     if(XFG.DebugFlag) then
@@ -80,3 +87,4 @@ function Event:Stop()
         XFG:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
     end
 end
+--#endregion

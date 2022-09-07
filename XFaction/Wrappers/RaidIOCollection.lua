@@ -5,6 +5,7 @@ local RaiderIO = nil
 
 RaidIOCollection = Factory:newChildConstructor()
 
+--#region Constructors
 function RaidIOCollection:new()
     local object = RaidIOCollection.parent.new(self)
     object.__name = ObjectName
@@ -15,7 +16,9 @@ end
 function RaidIOCollection:NewObject()
     return RaidIO:new()
 end
+--#endregion
 
+--#region Initializers
 function RaidIOCollection:IsLoaded(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
@@ -26,21 +29,15 @@ function RaidIOCollection:IsLoaded(inBoolean)
     end    
     return self.isLoaded
 end
+--#endregion
 
+--#region Hash
 function RaidIOCollection:Get(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
     if(not self:Contains(inUnit:GetKey())) then
         self:Cache(inUnit)
     end
     return self.parent.Get(self, inUnit:GetKey())
-end
-
-function RaidIOCollection:Push(inRaidIO)
-    assert(type(inRaidIO) == 'table' and inRaidIO.__name == 'RaidIO', 'argument must be RaidIO object')
-    if(self:Contains(inRaidIO:GetKey())) then
-        self:Remove(inRaidIO:GetKey())
-        self.parent.Push(self, inRaidIO)
-    end
 end
 
 function RaidIOCollection:Cache(inUnit)
@@ -75,3 +72,14 @@ function RaidIOCollection:Cache(inUnit)
         XFG:Warn(ObjectName, inErrorMessage)
     end)
 end
+--#endregion
+
+--#region Stack
+function RaidIOCollection:Push(inRaidIO)
+    assert(type(inRaidIO) == 'table' and inRaidIO.__name == 'RaidIO', 'argument must be RaidIO object')
+    if(self:Contains(inRaidIO:GetKey())) then
+        self:Remove(inRaidIO:GetKey())
+        self.parent.Push(self, inRaidIO)
+    end
+end
+--#endregion

@@ -4,6 +4,7 @@ local GuildRosterEvent = C_GuildInfo.GuildRoster
 
 Confederate = Factory:newChildConstructor()
 
+--#region Constructors
 function Confederate:new()
     local object = Confederate.parent.new(self)
 	object.__name = ObjectName
@@ -16,7 +17,9 @@ end
 function Confederate:NewObject()
     return Unit:new()
 end
+--#endregion
 
+--#region Initializers
 function Confederate:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -34,16 +37,9 @@ function Confederate:Initialize()
 	end
 	return self:IsInitialized()
 end
+--#endregion
 
-function Confederate:GetUnitByName(inName)
-    assert(type(inName) == 'string')
-    for _, unit in self:Iterator() do
-        if(unit:GetName() == inName) then
-            return unit
-        end
-    end
-end
-
+--#region Hash
 function Confederate:Add(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
     
@@ -69,15 +65,6 @@ function Confederate:Add(inUnit)
     return true
 end
 
-function Confederate:OfflineUnits(inEpochTime)
-    assert(type(inEpochTime) == 'number')
-    for _, unit in self:Iterator() do
-        if(not unit:IsPlayer() and unit:GetTimeStamp() < inEpochTime) then
-            self:Remove(unit:GetKey())
-        end
-    end
-end
-
 function Confederate:Remove(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
@@ -92,7 +79,9 @@ function Confederate:Remove(inKey)
         self:Push(unit)
     end
 end
+--#endregion
 
+--#region Stack
 function Confederate:Push(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
     if(inUnit:HasRaidIO()) then
@@ -100,7 +89,35 @@ function Confederate:Push(inUnit)
     end
     self.parent.Push(self, inUnit)
 end
+--#endregion
 
+--#region Accessors
+function Confederate:GetUnitByName(inName)
+    assert(type(inName) == 'string')
+    for _, unit in self:Iterator() do
+        if(unit:GetName() == inName) then
+            return unit
+        end
+    end
+end
+
+function Confederate:GetCountByTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+    return self.countByTarget[inTarget:GetKey()] or 0
+end
+
+function Confederate:CanModifyGuildInfo(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
+    if(inBoolean ~= nil) then
+        self.modifyGuildInfo = inBoolean
+    elseif(not self:IsInitialized()) then
+        self:Initialize()
+    end
+    return self.modifyGuildInfo
+end
+--#endregion
+
+--#region Janitorial
 function Confederate:Backup()
     try(function ()
         for unitKey, unit in self:Iterator() do
@@ -131,17 +148,12 @@ function Confederate:Restore()
     end
 end
 
-function Confederate:GetCountByTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    return self.countByTarget[inTarget:GetKey()] or 0
-end
-
-function Confederate:CanModifyGuildInfo(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.modifyGuildInfo = inBoolean
-    elseif(not self:IsInitialized()) then
-        self:Initialize()
+function Confederate:OfflineUnits(inEpochTime)
+    assert(type(inEpochTime) == 'number')
+    for _, unit in self:Iterator() do
+        if(not unit:IsPlayer() and unit:GetTimeStamp() < inEpochTime) then
+            self:Remove(unit:GetKey())
+        end
     end
-    return self.modifyGuildInfo
 end
+--#endregion

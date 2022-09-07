@@ -3,13 +3,16 @@ local ObjectName = 'ZoneCollection'
 
 ZoneCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function ZoneCollection:new()
     local object = ZoneCollection.parent.new(self)
 	object.__name = ObjectName
 	object.zoneByID = {}
     return object
 end
+--#endregion
 
+--#region Initializers
 function ZoneCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -75,7 +78,9 @@ function ZoneCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Hash
 function ZoneCollection:ContainsByID(inID)
 	assert(type(inID) == 'number')
 	return self.zoneByID[inID] ~= nil
@@ -107,3 +112,4 @@ function ZoneCollection:AddZone(inZoneName)
 		end
 	end
 end
+--#endregion

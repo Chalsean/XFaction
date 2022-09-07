@@ -3,6 +3,7 @@ local ObjectName = 'Object'
 
 Object = {}
 
+--#region Constructors
 function Object:new()
     local object = {}
     setmetatable(object, self)
@@ -33,7 +34,9 @@ function Object:newChildConstructor()
 
     return object
 end
+--#endregion
 
+--#region Initializers
 function Object:IsInitialized(inBoolean)
     assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
     if(inBoolean ~= nil) then
@@ -53,7 +56,9 @@ end
 function Object:ParentInitialize()
     self.key = math.GenerateUID()
 end
+--#endregion
 
+--#region Print
 function Object:Print()
     self:ParentPrint()
 end
@@ -72,7 +77,9 @@ function Object:ParentPrint()
         XFG:Debug(self:GetObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
     end
 end
+--#endregion
 
+--#region Accessors
 function Object:GetFactoryKey()
     return self.factoryKey
 end
@@ -113,6 +120,12 @@ function Object:SetName(inName)
     self.name = inName
 end
 
+function Object:GetObjectName()
+    return self.__name
+end
+--#endregion
+
+--#region Operators
 function Object:Equals(inObject)
     if(inObject == nil) then return false end
     if(type(inObject) ~= 'table' or inObject.__name == nil) then return false end
@@ -120,13 +133,12 @@ function Object:Equals(inObject)
     if(self:GetKey() ~= inObject:GetKey()) then return false end
     return true
 end
+--#endregion
 
-function Object:GetObjectName()
-    return self.__name
-end
-
+--#region DataSet
 function Object:ParentFactoryReset()
     self.key = nil
     self.name = nil
     self.initialized = false
 end
+--#endregion

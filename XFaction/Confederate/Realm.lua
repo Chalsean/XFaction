@@ -3,6 +3,7 @@ local ObjectName = 'Realm'
 
 Realm = Object:newChildConstructor()
 
+--#region Constructors
 function Realm:new()
     local object = Realm.parent.new(self)
     object.__name = ObjectName
@@ -12,7 +13,9 @@ function Realm:new()
     object.IDCount = 0
     return object
 end
+--#endregion
 
+--#region Print
 function Realm:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -25,7 +28,15 @@ function Realm:Print()
         end
     end
 end
+--#endregion
 
+--#region Iterators
+function Realm:IDIterator()
+    return next, self.IDs, nil
+end
+--#endregion
+
+--#region Accessors
 function Realm:GetAPIName()
     return self.apiName
 end
@@ -57,7 +68,4 @@ end
 function Realm:IsConnected()
     return self.IDCount > 1
 end
-
-function Realm:IDIterator()
-    return next, self.IDs, nil
-end
+--#endregion

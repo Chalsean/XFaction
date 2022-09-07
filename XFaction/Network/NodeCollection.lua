@@ -3,6 +3,7 @@ local ObjectName = 'NodeCollection'
 
 NodeCollection = Factory:newChildConstructor()
 
+--#region Constructors
 function NodeCollection:new()
     local object = NodeCollection.parent.new(self)
 	object.__name = ObjectName
@@ -13,7 +14,9 @@ end
 function NodeCollection:NewObject()
 	return Node:new()
 end
+--#endregion
 
+--#region Print
 function NodeCollection:Print()
 	if(XFG.DebugFlag) then
 		self:ParentPrint()
@@ -21,7 +24,9 @@ function NodeCollection:Print()
 		XFG:DataDumper(ObjectName, self.targetCount)
 	end
 end
+--#endregion
 
+--#region Hash
 function NodeCollection:Add(inNode)
     assert(type(inNode) == 'table' and inNode.__name == 'Node', 'argument must be Node object')
 	self.parent.Add(self, inNode)
@@ -48,11 +53,15 @@ function NodeCollection:Remove(inNode)
 		self:Push(inNode)
 	end)
 end
+--#endregion
 
+--#region Accessors
 function NodeCollection:GetTargetCount(inTarget)
 	return self.targetCount[inTarget:GetKey()] or 0
 end
+--#endregion
 
+--#region DataSet
 function NodeCollection:SetNodeFromString(inNodeString)
     assert(type(inNodeString) == 'string')
     local nodeData = string.Split(inNodeString, ':') 
@@ -68,3 +77,4 @@ function NodeCollection:SetNodeFromString(inNodeString)
 	self:Add(node)
 	return node
 end
+--#endregion

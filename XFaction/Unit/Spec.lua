@@ -3,6 +3,7 @@ local ObjectName = 'Spec'
 
 Spec = Object:newChildConstructor()
 
+--#region Constructors
 function Spec:new()
     local object = Spec.parent.new(self)
     object.__name = ObjectName
@@ -10,7 +11,9 @@ function Spec:new()
     object.iconID = nil
     return object
 end
+--#endregion
 
+--#region Print
 function Spec:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -18,7 +21,9 @@ function Spec:Print()
         XFG:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
     end
 end
+--#endregion
 
+--#region Accessors
 function Spec:GetID()
     return self.ID
 end
@@ -36,3 +41,4 @@ function Spec:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self.iconID = inIconID
 end
+--#endregion

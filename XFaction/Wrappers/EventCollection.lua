@@ -3,13 +3,16 @@ local ObjectName = 'EventCollection'
 
 EventCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function EventCollection:new()
     local object = EventCollection.parent.new(self)
 	object.__name = ObjectName
     object.frame = nil
     return object
 end
+--#endregion
 
+--#region Initializers
 function EventCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -26,7 +29,9 @@ function EventCollection:Initialize()
         self:IsInitialized(true)
     end
 end
+--#endregion
 
+--#region Hash
 function EventCollection:Add(inKey, inName, inCallback, inInstance, inInstanceCombat)
     local event = Event:new()
     event:SetKey(inKey)
@@ -41,7 +46,9 @@ function EventCollection:Add(inKey, inName, inCallback, inInstance, inInstanceCo
     self.parent.Add(self, event)
     XFG:Info('Event', 'Registered to receive %s events', inName)
 end
+--#endregion
 
+--#region Start/Stop
 function EventCollection:EnterInstance()
     for _, event in self:Iterator() do
         if(event:IsEnabled() and not event:IsInstance()) then
@@ -81,3 +88,4 @@ function EventCollection:Stop()
 	end
     self.frame:UnregisterAllEvents()
 end
+--#endregion

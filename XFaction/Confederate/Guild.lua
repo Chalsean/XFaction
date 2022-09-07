@@ -3,6 +3,7 @@ local ObjectName = 'Guild'
 
 Guild = Object:newChildConstructor()
 
+--#region Constructors
 function Guild:new()
     local object = Guild.parent.new(self)
     object.__name = ObjectName
@@ -13,7 +14,9 @@ function Guild:new()
     object.realm = nil
     return object
 end
+--#endregion
 
+--#region Print
 function Guild:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -24,7 +27,9 @@ function Guild:Print()
         if(self:HasRealm()) then self:GetRealm():Print() end
     end
 end
+--#endregion
 
+--#region Accessors
 function Guild:GetInitials()
     return self.initials
 end
@@ -85,3 +90,4 @@ function Guild:SetRealm(inRealm)
     assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
     self.realm = inRealm
 end
+--#endregion

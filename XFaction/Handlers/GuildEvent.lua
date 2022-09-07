@@ -5,12 +5,15 @@ local GuildRosterEvent = C_GuildInfo.GuildRoster
 
 GuildEvent = Object:newChildConstructor()
 
+--#region Constructors
 function GuildEvent:new()
     local object = GuildEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function GuildEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -28,7 +31,9 @@ function GuildEvent:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Callbacks
 -- The event doesn't tell you what has changed, only that something has changed
 function GuildEvent:CallbackRosterUpdate()
     XFG:Debug(ObjectName, 'Scanning local guild roster')
@@ -100,3 +105,4 @@ function GuildEvent:CallbackMemberJoined(inGuildID, inMemberID)
         XFG.Confederate:Push(unitData)
     end)
 end
+--#endregion

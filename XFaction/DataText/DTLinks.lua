@@ -4,6 +4,7 @@ local CombatLockdown = InCombatLockdown
 
 DTLinks = Object:newChildConstructor()
 	
+--#region Constructors
 function DTLinks:new()
 	local object = DTGuild.parent.new(self)
     object.__name = ObjectName
@@ -14,7 +15,9 @@ function DTLinks:new()
 	object.count = 0    
     return object
 end
+--#endregion
 
+--#region Initializers
 function DTLinks:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -38,7 +41,9 @@ function DTLinks:SetFont()
 	self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	self.regularFont:SetTextColor(255,255,255)
 end
+--#endregion
 
+--#region Print
 function DTLinks:Print()
 	if(XFG.DebugFlag) then
 		self:ParentPrint()
@@ -49,7 +54,9 @@ function DTLinks:Print()
 		XFG:Debug(ObjectName, '  tooltip (' .. type(tooltip) .. ')')
 	end
 end
+--#endregion
 
+--#region Broker
 function DTLinks:RefreshBroker()
 	if(XFG.Initialized) then
 		local text = ''
@@ -88,11 +95,14 @@ function DTLinks:RefreshBroker()
 		self.ldbObject.text = text
 	end
 end
+--#endregion
 
+--#region OnEnter
 function DTLinks:OnEnter(this)
 	if(not XFG.Initialized) then return end
 	if(CombatLockdown()) then return end
 
+	--#region Configure Tooltip
 	local targetCount = XFG.Targets:GetCount() + 1
 	
 	if XFG.Lib.QT:IsAcquired(ObjectName) then
@@ -108,7 +118,9 @@ function DTLinks:OnEnter(this)
 	end
 
 	self.tooltip:Clear()
+	--#endregion
 
+	--#region Header
 	local line = self.tooltip:AddLine()
 	local guildName = XFG.Confederate:GetName()
 	self.tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_CONFEDERATE'], guildName), self.headerFont, 'LEFT', targetCount)
@@ -118,7 +130,9 @@ function DTLinks:OnEnter(this)
 	line = self.tooltip:AddLine()
 	line = self.tooltip:AddLine()
 	line = self.tooltip:AddHeader()
+	--#endregion
 
+	--#region Column Headers
 	local targetColumn = {}
 	local i = 1
 	for _, target in XFG.Targets:Iterator() do
@@ -131,7 +145,9 @@ function DTLinks:OnEnter(this)
 	line = self.tooltip:AddLine()
 	self.tooltip:AddSeparator()
 	line = self.tooltip:AddLine()
+	--#endregion
 
+	--#region Populate Table
 	if(XFG.Initialized) then
 		for _, link in XFG.Links:Iterator() do
 			local fromName = format('|cffffffff%s|r', link:GetFromNode():GetName())
@@ -150,10 +166,13 @@ function DTLinks:OnEnter(this)
 			line = self.tooltip:AddLine()
 		end
 	end
+	--#endregion
 
 	self.tooltip:Show()
 end
+--#endregion
 
+--#region OnLeave
 function DTLinks:OnLeave()
 	if self.tooltip and MouseIsOver(self.tooltip) then
         return
@@ -162,3 +181,4 @@ function DTLinks:OnLeave()
         self.tooltip = nil
 	end
 end
+--#endregion

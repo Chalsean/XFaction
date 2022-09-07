@@ -3,6 +3,7 @@ local ObjectName = 'Expansion'
 
 Expansion = Object:newChildConstructor()
 
+--#region Constructors
 function Expansion:new()
     local object = Expansion.parent.new(self)
     object.__name = ObjectName
@@ -11,7 +12,9 @@ function Expansion:new()
     object.version = nil
     return object
 end
+--#endregion
 
+--#region Print
 function Expansion:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -20,7 +23,9 @@ function Expansion:Print()
         if(self:HasVersion()) then self:GetVersion():Print() end
     end
 end
+--#endregion
 
+--#region Accessors
 function Expansion:GetID()
     return self.ID
 end
@@ -55,3 +60,4 @@ end
 function Expansion:GetVersion()
 	return self.version
 end
+--#endregion

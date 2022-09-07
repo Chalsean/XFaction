@@ -3,29 +3,36 @@ local ObjectName = 'SystemEvent'
 
 SystemEvent = Object:newChildConstructor()
 
+--#region Constructors
 function SystemEvent:new()
     local object = SystemEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function SystemEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         XFG.Hooks:Add('ReloadUI', 'ReloadUI', XFG.Handlers.SystemEvent.CallbackReloadUI)
-        XFG.Events:Add('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)        
+        XFG.Events:Add('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
+        -- Not sure this is necessary but don't feel like taking the risk of removing it
         XFG.Events:Add('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true, true)
         ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Handlers.SystemEvent.ChatFilter)
         XFG:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Callbacks
 function SystemEvent:CallbackLogout()
     if(XFG.Cache.UIReload) then 
         -- Backup cache on reload to be restored
         _G.XFCacheDB = XFG.Cache
     else
+        -- On a real logout, send a logout message to the confederate before shutting down
         local message = nil
         try(function ()        
             message = XFG.Mailbox.Chat:Pop()
@@ -75,3 +82,4 @@ function SystemEvent:ChatFilter(inEvent, inMessage, ...)
     end
     return false, inMessage, ...
 end
+--#endregion

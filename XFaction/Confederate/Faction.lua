@@ -3,6 +3,7 @@ local ObjectName = 'Faction'
 
 Faction = Object:newChildConstructor()
 
+--#region Constructors
 function Faction:new()
     local object = Faction.parent.new(self)
     object.__name = ObjectName
@@ -11,7 +12,9 @@ function Faction:new()
     object.language = nil
     return object
 end
+--#endregion
 
+--#region Initializers
 function Faction:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -33,7 +36,9 @@ function Faction:Initialize()
         self:IsInitialized(true)
     end
 end
+--#endregion
 
+--#region Print
 function Faction:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -42,7 +47,9 @@ function Faction:Print()
         XFG:Debug(ObjectName, '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
     end
 end
+--#endregion
 
+--#region Accessors
 function Faction:GetID()
     return self.ID
 end
@@ -69,3 +76,4 @@ function Faction:SetLanguage(inLanguage)
     assert(type(inLanguage) == 'string')
     self.language = inLanguage
 end
+--#endregion

@@ -4,6 +4,7 @@ local ServerTime = GetServerTime
 
 Message = Object:newChildConstructor()
 
+--#region Constructors
 function Message:new()
     local object = Message.parent.new(self)
     object.__name = 'Message'
@@ -25,7 +26,9 @@ function Message:new()
     object.realm = nil
     return object
 end
+--#endregion
 
+--#region Initializers
 function Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -38,7 +41,9 @@ function Message:Initialize()
     end
     return self:IsInitialized()
 end
+--#endregion
 
+--#region Print
 function Message:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -55,7 +60,9 @@ function Message:Print()
         if(self:HasVersion()) then self:GetVersion():Print() end
     end
 end
+--#endregion
 
+--#region Accessors
 function Message:GetTo()
     return self.to
 end
@@ -125,70 +132,6 @@ end
 function Message:SetTotalPackets(inTotalPackets)
     assert(type(inTotalPackets) == 'number')
     self.totalPackets = inTotalPackets
-end
-
-function Message:ContainsTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    return self.targets[inTarget:GetKey()] ~= nil
-end
-
-function Message:AddTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    if(not self:ContainsTarget(inTarget)) then
-        self.targetCount = self.targetCount + 1
-    end
-    self.targets[inTarget:GetKey()] = inTarget
-end
-
-function Message:RemoveTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    if(self:ContainsTarget(inTarget)) then
-        self.targets[inTarget:GetKey()] = nil
-        self.targetCount = self.targetCount - 1
-    end
-end
-
-function Message:SetAllTargets()
-    for _, target in XFG.Targets:Iterator() do
-        if(not target:Equals(XFG.Player.Target)) then
-            self:AddTarget(target)
-        end
-    end
-end
-
-function Message:HasTargets()
-    return self.targetCount > 0
-end
-
-function Message:GetTargets()
-    if(self:HasTargets()) then return self.targets end
-    return {}
-end
-
-function Message:GetTargetCount()
-    return self.targetCount
-end
-
-function Message:GetRemainingTargets()
-    local targetsString = ''
-    for _, target in pairs (self:GetTargets()) do
-        targetsString = targetsString .. '|' .. target:GetKey()
-    end
-    return targetsString
-end
-
-function Message:SetRemainingTargets(inTargetString)
-    wipe(self.targets)
-    self.targetCount = 0
-    local targets = string.Split(inTargetString, '|')
-    for _, key in pairs (targets) do
-        if(key ~= nil and XFG.Targets:Contains(key)) then
-            local target = XFG.Targets:Get(key)
-            if(not XFG.Player.Target:Equals(target)) then
-                self:AddTarget(target)
-            end
-        end
-    end
 end
 
 function Message:HasUnitData()
@@ -261,7 +204,75 @@ function Message:SetRealm(inRealm)
     assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
     self.realm = inRealm
 end
+--#endregion
 
+--#region Target
+function Message:ContainsTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+    return self.targets[inTarget:GetKey()] ~= nil
+end
+
+function Message:AddTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+    if(not self:ContainsTarget(inTarget)) then
+        self.targetCount = self.targetCount + 1
+    end
+    self.targets[inTarget:GetKey()] = inTarget
+end
+
+function Message:RemoveTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+    if(self:ContainsTarget(inTarget)) then
+        self.targets[inTarget:GetKey()] = nil
+        self.targetCount = self.targetCount - 1
+    end
+end
+
+function Message:SetAllTargets()
+    for _, target in XFG.Targets:Iterator() do
+        if(not target:Equals(XFG.Player.Target)) then
+            self:AddTarget(target)
+        end
+    end
+end
+
+function Message:HasTargets()
+    return self.targetCount > 0
+end
+
+function Message:GetTargets()
+    if(self:HasTargets()) then return self.targets end
+    return {}
+end
+
+function Message:GetTargetCount()
+    return self.targetCount
+end
+
+function Message:GetRemainingTargets()
+    local targetsString = ''
+    for _, target in pairs (self:GetTargets()) do
+        targetsString = targetsString .. '|' .. target:GetKey()
+    end
+    return targetsString
+end
+
+function Message:SetRemainingTargets(inTargetString)
+    wipe(self.targets)
+    self.targetCount = 0
+    local targets = string.Split(inTargetString, '|')
+    for _, key in pairs (targets) do
+        if(key ~= nil and XFG.Targets:Contains(key)) then
+            local target = XFG.Targets:Get(key)
+            if(not XFG.Player.Target:Equals(target)) then
+                self:AddTarget(target)
+            end
+        end
+    end
+end
+--#endregion
+
+--#region Janitorial
 function Message:FactoryReset()
     self:ParentFactoryReset()
     self.to = nil
@@ -281,3 +292,4 @@ function Message:FactoryReset()
     self.realm = nil
     self:Initialize()
 end
+--#endregion

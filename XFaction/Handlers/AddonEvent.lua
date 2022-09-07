@@ -5,12 +5,15 @@ local GetAddOnEnableState = GetAddOnEnableState
 
 AddonEvent = Object:newChildConstructor()
 
+--#region Constructors
 function AddonEvent:new()
     local object = AddonEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function AddonEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -57,10 +60,12 @@ local function InitializeCache()
     end
     XFG.Cache.FirstScan = {}
 end
+--#endregion
 
-local function StartElvUI()
+--#region Callbacks
+local function ElvUIOnLoad()
     if(XFG.Config ~= nil and XFG.ElvUI ~= nil) then
-        XFG.Nameplates.ElvUI = ElvUINameplate:new(); XFG.Nameplates.ElvUI:Initialize()
+        XFG.Nameplates.ElvUI:OnLoad()
     end
 end
 
@@ -71,14 +76,14 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
                 XFG:LoadConfigs()
-                StartElvUI()
+                ElvUIOnLoad()
                 XFG.DataText.Guild = DTGuild:new(); XFG.DataText.Guild:Initialize()
 	            XFG.DataText.Links = DTLinks:new(); XFG.DataText.Links:Initialize()
 	            XFG.DataText.Metrics = DTMetrics:new(); XFG.DataText.Metrics:Initialize()                
             elseif(inAddonName == 'ElvUI') then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 XFG.ElvUI = ElvUI[1]
-                StartElvUI()
+                ElvUIOnLoad()
             elseif(inAddonName == 'WIM') then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 if(WIM.modules.GuildChat.enabled) then
@@ -94,3 +99,4 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
         XFG:Warn(ObjectName, inErrorMessage)
     end)    
 end
+--#endregion

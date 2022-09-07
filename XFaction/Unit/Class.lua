@@ -3,6 +3,7 @@ local ObjectName = 'Class'
 
 Class = Object:newChildConstructor()
 
+--#region Constructors
 function Class:new()
     local object = Class.parent.new(self)
     object.__name = ObjectName
@@ -14,7 +15,9 @@ function Class:new()
     object.hex = nil
     return object
 end
+--#endregion
 
+--#region Print
 function Class:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -26,7 +29,9 @@ function Class:Print()
         XFG:Debug(ObjectName, '  hex (' .. type(self.hex) .. '): ' .. tostring(self.hex))
     end
 end
+--#endregion
 
+--#region Accessors
 function Class:GetID()
     return self.ID
 end
@@ -70,3 +75,4 @@ end
 function Class:GetHex()
     return self.hex
 end
+--#endregion

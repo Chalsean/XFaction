@@ -4,6 +4,7 @@ local Split = string.Split
 
 Version = Object:newChildConstructor()
 
+--#region Constructors
 function Version:new()
     local object = Version.parent.new(self)
     object.__name = ObjectName
@@ -12,7 +13,9 @@ function Version:new()
     object.patch = nil
     return object
 end
+--#endregion
 
+--#region Print
 function Version:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -21,7 +24,9 @@ function Version:Print()
         XFG:Debug(ObjectName, '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
     end
 end
+--#endregion
 
+--#region Accessors
 function Version:SetKey(inKey)
     assert(type(inKey) == 'string')
     self.key = inKey
@@ -72,3 +77,4 @@ function Version:IsNewer(inVersion)
     end
     return false
 end
+--#endregion

@@ -4,6 +4,7 @@ local ServerTime = GetServerTime
 
 Mailbox = Factory:newChildConstructor()
 
+--#region Constructors
 function Mailbox:new()
     local object = Mailbox.parent.new(self)
 	object.__name = ObjectName
@@ -26,7 +27,9 @@ end
 function Mailbox:NewObject()
 	return Message:new()
 end
+--#endregion
 
+--#region Initializers
 function Mailbox:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -41,7 +44,9 @@ function Mailbox:ParentInitialize()
     self.checkedOut = {}
     self.key = math.GenerateUID
 end
+--#endregion
 
+--#region Hash
 function Mailbox:ContainsPacket(inKey)
 	assert(type(inKey) == 'string')
 	return self.packets[inKey] ~= nil
@@ -72,7 +77,9 @@ function Mailbox:RemovePacket(inKey)
 		self.packets[inKey] = nil
 	end
 end
+--#endregion
 
+--#region Segmentation
 function Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
 	assert(type(inEncodedData) == 'string')
 	local packets = {}
@@ -102,16 +109,9 @@ function Mailbox:RebuildMessage(inKey, inTotalPackets)
     self:RemovePacket(inKey)
 	return message
 end
+--#endregion
 
-function Mailbox:Purge(inEpochTime)
-	assert(type(inEpochTime) == 'number')
-	for key, receivedTime in self:Iterator() do
-		if(receivedTime < inEpochTime) then
-			self:Remove(key)
-		end
-	end
-end
-
+--#region Receive
 function Mailbox:IsAddonTag(inTag)
 	local addonTag = false
     for _, tag in pairs (XFG.Settings.Network.Message.Tag) do
@@ -125,6 +125,7 @@ end
 
 function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
+    --#region Ignore message
     -- If not a message from this addon, ignore
     if(not self:IsAddonTag(inMessageTag)) then
         return
@@ -149,6 +150,7 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
         XFG:Debug(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
         return
     end
+    --#endregion
 
     self:AddPacket(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
@@ -187,10 +189,7 @@ function Mailbox:Process(inMessage, inMessageTag)
     self:Add(inMessage:GetKey())
     inMessage:Print()
 
-    --========================================
-    -- Forward message
-    --========================================
-
+    --#region Forwarding
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
         -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
@@ -219,11 +218,9 @@ function Mailbox:Process(inMessage, inMessageTag)
         end
         XFG.Mailbox.Chat:Send(inMessage)
     end
+    --#endregion
 
-    --========================================
-    -- Process message
-    --========================================
-
+    --#region Process message
     -- Process GCHAT message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT) then
         if(XFG.Player.Unit:CanGuildListen() and not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
@@ -276,4 +273,17 @@ function Mailbox:Process(inMessage, inMessageTag)
             end
         end
     end
+    --#endregion
 end
+--#endregion
+
+--#region Janitorial
+function Mailbox:Purge(inEpochTime)
+	assert(type(inEpochTime) == 'number')
+	for key, receivedTime in self:Iterator() do
+		if(receivedTime < inEpochTime) then
+			self:Remove(key)
+		end
+	end
+end
+--#endregion

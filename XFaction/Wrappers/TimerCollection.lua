@@ -4,12 +4,15 @@ local ServerTime = GetServerTime
 
 TimerCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function TimerCollection:new()
     local object = TimerCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Hash
 function TimerCollection:Add(inName, inDelta, inCallback, inRepeat, inInstance, inInstanceCombat)
     local timer = Timer:new()
     timer:Initialize()
@@ -29,7 +32,9 @@ function TimerCollection:Remove(inKey)
         self.parent.Remove(self, inKey)
     end
 end
+--#endregion
 
+--#region Start/Stop
 function TimerCollection:EnterInstance()
     for _, timer in self:Iterator() do
         if(timer:IsEnabled() and not timer:IsInstance()) then
@@ -87,3 +92,4 @@ function TimerCollection:Stop()
         timer:Stop()
 	end
 end
+--#endregion

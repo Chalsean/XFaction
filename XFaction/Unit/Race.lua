@@ -3,6 +3,7 @@ local ObjectName = 'Race'
 
 Race = Object:newChildConstructor()
 
+--#region Constructors
 function Race:new()
     local object = Race.parent.new(self)
     object.__name = ObjectName
@@ -10,7 +11,9 @@ function Race:new()
     object.faction = nil
     return object
 end
+--#endregion
 
+--#region Print
 function Race:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -18,7 +21,9 @@ function Race:Print()
         if(self:HasFaction()) then self:GetFaction():Print() end
     end
 end
+--#endregion
 
+--#region Accessors
 function Race:GetID()
     return self.ID
 end
@@ -40,3 +45,4 @@ function Race:SetFaction(inFaction)
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
     self.faction = inFaction
 end
+--#endregion

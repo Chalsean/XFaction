@@ -3,6 +3,7 @@ local ObjectName = 'Channel'
 
 Channel = Object:newChildConstructor()
 
+--#region Constructors
 function Channel:new()
     local object = Channel.parent.new(self)
     object.__name = 'Channel'
@@ -11,7 +12,9 @@ function Channel:new()
     object.community = false
     return object
 end
+--#endregion
 
+--#region Print
 function Channel:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -19,7 +22,9 @@ function Channel:Print()
         XFG:Debug(ObjectName, '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
     end
 end
+--#endregion
 
+--#region Accessors
 function Channel:GetID()
     return self.ID
 end
@@ -45,3 +50,4 @@ function Channel:IsCommunity(inBoolean)
     end
     return self.community
 end
+--#endregion

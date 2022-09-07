@@ -4,12 +4,15 @@ local GetSpecForClass = GetSpecializationInfoForClassID
 
 SpecCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function SpecCollection:new()
     local object = SpecCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function SpecCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -45,3 +48,4 @@ function SpecCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion

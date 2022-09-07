@@ -3,6 +3,7 @@ local ObjectName = 'Node'
 
 Node = Object:newChildConstructor()
 
+--#region Constructors
 function Node:new()
     local object = Node.parent.new(self)
     object.__name = ObjectName
@@ -10,7 +11,9 @@ function Node:new()
     object.linkCount = 0
     return object
 end
+--#endregion
 
+--#region Initializers
 function Node:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -20,7 +23,9 @@ function Node:Initialize()
         self:IsInitialized(true)
     end
 end
+--#endregion
 
+--#region Print
 function Node:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -28,7 +33,9 @@ function Node:Print()
         if(self:HasTarget()) then self:GetTarget():Print() end
     end
 end
+--#endregion
 
+--#region Accessors
 function Node:IsMyNode()
     return self:GetName() == XFG.Player.Unit:GetName()
 end
@@ -69,9 +76,12 @@ function Node:DecrementLinkCount()
         XFG.Nodes:Remove(self)
     end
 end
+--#endregion
 
+--#region Janitorial
 function Node:FactoryReset()
     self:ParentFactoryReset()
     self.target = nil
     self.linkCount = 0
 end
+--#endregion

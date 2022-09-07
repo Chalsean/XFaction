@@ -3,6 +3,7 @@ local ObjectName = 'GuildCollection'
 
 GuildCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function GuildCollection:new()
     local object = GuildCollection.parent.new(self)
 	object.__name = ObjectName
@@ -11,7 +12,9 @@ function GuildCollection:new()
 	object.info = nil
     return object
 end
+--#endregion
 
+--#region Initializers
 function GuildCollection:Initialize(inGuildID)
 	assert(type(inGuildID) == 'number')
 	if(not self:IsInitialized()) then
@@ -20,6 +23,7 @@ function GuildCollection:Initialize(inGuildID)
 
 		self.info = C_Club.GetClubInfo(inGuildID)
 
+		--BETA
 		--if(XFG.Cache.Guilds == nil) then
 			XFG.Cache.Guilds = {}
 			self:SetFromGuildInfo()
@@ -47,23 +51,11 @@ function GuildCollection:Initialize(inGuildID)
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Hash
 function GuildCollection:ContainsName(inGuildName)
 	return self.names[inGuildName] ~= nil
-end
-
-function GuildCollection:GetByRealmGuildName(inRealm, inGuildName)
-	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be a Realm object')	
-	assert(type(inGuildName) == 'string')
-	for _, guild in self:Iterator() do
-		if(inRealm:Equals(guild:GetRealm()) and guild:GetName() == inGuildName) then
-			return guild
-		end
-	end
-end
-
-function GuildCollection:GetByName(inGuildName)
-	return self.names[inGuildName]
 end
 
 function GuildCollection:Add(inGuild)
@@ -86,7 +78,25 @@ function GuildCollection:Add(inGuild)
 	self.names[inGuild:GetName()] = inGuild
 	XFG:Info(ObjectName, 'Initialized guild [%s:%s]', inGuild:GetInitials(), inGuild:GetName())
 end
+--#endregion
 
+--#region Accessors
+function GuildCollection:GetByRealmGuildName(inRealm, inGuildName)
+	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be a Realm object')	
+	assert(type(inGuildName) == 'string')
+	for _, guild in self:Iterator() do
+		if(inRealm:Equals(guild:GetRealm()) and guild:GetName() == inGuildName) then
+			return guild
+		end
+	end
+end
+
+function GuildCollection:GetByName(inGuildName)
+	return self.names[inGuildName]
+end
+--#endregion
+
+--#region DataSet
 function GuildCollection:SetObjectFromString(inString)
 	assert(type(inString) == 'string')
 
@@ -189,3 +199,4 @@ function GuildCollection:SetPlayerGuild()
 		end
 	end
 end
+--#endregion

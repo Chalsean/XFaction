@@ -3,12 +3,15 @@ local ObjectName = 'Chat'
 
 Chat = Mailbox:newChildConstructor()
 
+--#region Constructors
 function Chat:new()
     local object = Chat.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -17,20 +20,9 @@ function Chat:Initialize()
     end
     return self:IsInitialized()
 end
+--#endregion
 
-function Chat:DecodeMessage(inEncodedMessage)
-    return XFG:DecodeChatMessage(inEncodedMessage)
-end
-
-function Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
-    try(function ()
-        XFG.Mailbox.Chat:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
-    end).
-    catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, inErrorMessage)
-    end)
-end
-
+--#region Send
 function Chat:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.DATA) then return end
@@ -39,6 +31,7 @@ function Chat:Send(inMessage)
     XFG:Debug(ObjectName, 'Attempting to send message')
     inMessage:Print()
 
+    --#region BNet messaging for BNET/BROADCAST types
     if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
         XFG.Mailbox.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
@@ -53,7 +46,9 @@ function Chat:Send(inMessage)
             inMessage:SetType(XFG.Settings.Network.Type.LOCAL)        
         end
     end
+    --#endregion
 
+    --#region Chat channel messaging for BROADCAST/LOCAL types
     local messageData = XFG:EncodeChatMessage(inMessage, true)
     local packets = self:SegmentMessage(messageData, inMessage:GetKey(), XFG.Settings.Network.Chat.PacketSize)
 
@@ -73,4 +68,21 @@ function Chat:Send(inMessage)
             XFG.Metrics:Get(XFG.Settings.Metric.ChannelSend):Increment()
         end        
     end
+    --#endregion
 end
+--#endregion
+
+--#region Receive
+function Chat:DecodeMessage(inEncodedMessage)
+    return XFG:DecodeChatMessage(inEncodedMessage)
+end
+
+function Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+    try(function ()
+        XFG.Mailbox.Chat:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+    end).
+    catch(function (inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
+    end)
+end
+--#endregion

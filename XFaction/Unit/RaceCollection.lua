@@ -5,12 +5,15 @@ local GetRaceFactionInfo = C_CreatureInfo.GetFactionInfo
 
 RaceCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function RaceCollection:new()
 	local object = RaceCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function RaceCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -44,3 +47,4 @@ function RaceCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion

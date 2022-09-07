@@ -6,12 +6,15 @@ local GetProfessionIcon = C_TradeSkillUI.GetTradeSkillTexture
 
 ProfessionCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function ProfessionCollection:new()
 	local object = ProfessionCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function ProfessionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -41,3 +44,4 @@ function ProfessionCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion

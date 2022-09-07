@@ -3,6 +3,7 @@ local ObjectName = 'VersionCollection'
 
 VersionCollection = ObjectCollection:newChildConstructor()
 
+--#region Contructors
 function VersionCollection:new()
     local object = VersionCollection.parent.new(self)
 	object.__name = ObjectName
@@ -10,7 +11,9 @@ function VersionCollection:new()
 	object.defaultVersion = nil
     return object
 end
+--#endregion
 
+--#region Initializers
 function VersionCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -28,7 +31,9 @@ function VersionCollection:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Accessors
 function VersionCollection:SetCurrent(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')
 	self.currentVersion = inVersion
@@ -46,3 +51,4 @@ end
 function VersionCollection:GetDefault()
 	return self.defaultVersion
 end
+--#endregion

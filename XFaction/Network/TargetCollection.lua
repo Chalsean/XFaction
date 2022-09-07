@@ -3,12 +3,15 @@ local ObjectName = 'TargetCollection'
 
 TargetCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function TargetCollection:new()
 	local object = TargetCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 local function GetTargetKey(inRealm, inFaction)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
@@ -40,7 +43,9 @@ function TargetCollection:Initialize()
 	end
 	return self:IsInitialized()
 end
+--#endregion
 
+--#region Hash
 function TargetCollection:ContainsByRealmFaction(inRealm, inFaction)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
@@ -54,3 +59,4 @@ function TargetCollection:GetByRealmFaction(inRealm, inFaction)
 	local key = GetTargetKey(inRealm, inFaction)
     return self:Get(key)
 end
+--#endregion

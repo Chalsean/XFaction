@@ -3,12 +3,15 @@ local ObjectName = 'ChannelEvent'
 
 ChannelEvent = Object:newChildConstructor()
 
+--#region Constructors
 function ChannelEvent:new()
 	local object = ChannelEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
+--#region Initializers
 function ChannelEvent:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -17,7 +20,9 @@ function ChannelEvent:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Callbacks
 function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelType, inChannelNumber, inChannelName)
 	try(function ()
 		local channel = XFG.Channels:GetLocalChannel()
@@ -68,3 +73,4 @@ function ChannelEvent:CallbackUpdateColor(inChannel, inR, inG, inB)
 		XFG:Error(ObjectName, inErrorMessage)
 	end)
 end
+--#endregion

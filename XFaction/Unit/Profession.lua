@@ -3,6 +3,7 @@ local ObjectName = 'Profession'
 
 Profession = Object:newChildConstructor()
 
+--#region Constructors
 function Profession:new()
     local object = Profession.parent.new(self)
     object.__name = ObjectName
@@ -10,7 +11,9 @@ function Profession:new()
     object.iconID = nil
     return object
 end
+--#endregion
 
+--#region Print
 function Profession:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -18,7 +21,9 @@ function Profession:Print()
         XFG:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
     end
 end
+--#endregion
 
+--#region Accessors
 function Profession:GetID()
     return self.ID
 end
@@ -36,3 +41,4 @@ function Profession:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
     self.iconID = inIconID
 end
+--#endregion

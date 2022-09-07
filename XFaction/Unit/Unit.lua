@@ -12,6 +12,7 @@ local GetPlayerBNetInfo = BNGetInfo
 
 Unit = Object:newChildConstructor()
 
+--#region Constructors
 function Unit:new()
     local object = Unit.parent.new(self)
     object.__name = ObjectName
@@ -49,7 +50,9 @@ function Unit:new()
 
     return object
 end
+--#endregion
 
+--#region Initializers
 function Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number' or inMemberID == nil)
     local unitData
@@ -162,7 +165,9 @@ function Unit:Initialize(inMemberID)
 
     self:IsInitialized(true)
 end
+--#endregion
 
+--#region Print
 function Unit:Print()
     if(XFG.DebugFlag) then
         self:ParentPrint()
@@ -200,7 +205,9 @@ function Unit:Print()
         if(self:HasRaidIO()) then self:GetRaidIO():Print() end
     end
 end
+--#endregion
 
+--#region Accessors
 function Unit:IsPlayer(inBoolean)
     assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
@@ -609,7 +616,9 @@ function Unit:GetLink()
 
     return format('player:%s', self:GetUnitName())
 end
+--#endregion
 
+--#region Network
 function Unit:Broadcast(inSubject)
     assert(type(inSubject) == 'string' or inSubject == nil)
 	if(inSubject == nil) then inSubject = XFG.Settings.Network.Message.Subject.DATA end
@@ -637,7 +646,9 @@ function Unit:Broadcast(inSubject)
         XFG.Mailbox.Chat:Push(message)
     end)
 end
+--#endregion
 
+--#region Operators
 -- Usually a key check is enough for equality check, but use case is to detect any data differences
 function Unit:Equals(inUnit)
     if(inUnit == nil) then return false end
@@ -688,7 +699,9 @@ function Unit:Equals(inUnit)
     
     return true
 end
+--#endregion
 
+--#region Janitorial
 function Unit:FactoryReset()
     self:ParentFactoryReset()
     self.guid = nil
@@ -722,3 +735,4 @@ function Unit:FactoryReset()
     self.guildListen = true
     self.raidIO = nil
 end
+--#endregion
