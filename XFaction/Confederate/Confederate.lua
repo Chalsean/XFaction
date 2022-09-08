@@ -33,6 +33,10 @@ function Confederate:Initialize()
         catch(function (inErrorMessage)
             XFG:Warn(ObjectName, inErrorMessage)
         end)
+        self:SetName(XFG.Cache.Confederate.Name)
+        self:SetKey(XFG.Cache.Confederate.Key)
+        XFG:Info(ObjectName, 'Initialized confederate %s <%s>', self:GetName(), self:GetKey())
+
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()

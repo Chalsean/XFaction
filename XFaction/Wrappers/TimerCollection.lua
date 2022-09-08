@@ -12,6 +12,25 @@ function TimerCollection:new()
 end
 --#endregion
 
+--#region Initializers
+function TimerCollection:Initialize()
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
+
+        XFG.Timers:Add('Login', 1, XFG.Handlers.TimerEvent.CallbackLogin, true, true, true)
+		XFG.Timers:Add('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, true, false)
+        XFG.Timers:Add('Links', XFG.Settings.Network.BNet.Link.Broadcast, XFG.Handlers.TimerEvent.CallbackLinks, true, true, false)		    		    
+        XFG.Timers:Add('Roster', XFG.Settings.LocalGuild.ScanTimer, XFG.Handlers.TimerEvent.CallbackGuildRoster, true, true, false)		    				
+        XFG.Timers:Add('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, true, false, false)
+        XFG.Timers:Add('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, true, false)
+        XFG.Timers:Add('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, true, false)
+        XFG.Timers:Add('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, true, false)
+        XFG.Timers:Add('DelayedLogin', 7, XFG.Handlers.TimerEvent.CallbackDelayedLogin)
+
+        self:IsInitialized(true)
+    end
+end
+
 --#region Hash
 function TimerCollection:Add(inName, inDelta, inCallback, inRepeat, inInstance, inInstanceCombat)
     local timer = Timer:new()

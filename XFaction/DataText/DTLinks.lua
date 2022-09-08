@@ -27,7 +27,6 @@ function DTLinks:Initialize()
 		    OnEnter = function(this) XFG.DataText.Links:OnEnter(this) end,
 			OnLeave = function(this) XFG.DataText.Links:OnLeave(this) end,
 		})
-		self:SetFont()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -58,7 +57,7 @@ end
 
 --#region Broker
 function DTLinks:RefreshBroker()
-	if(XFG.Initialized) then
+	if(XFG.Initialized and self:IsInitialized()) then
 		local text = ''
 		if(XFG.Config.DataText.Link.Label) then
 			text = XFG.Lib.Locale['LINKS'] .. ': '

@@ -3,6 +3,7 @@ local ObjectName = 'TimerEvent'
 local ServerTime = GetServerTime
 local GuildRosterEvent = C_GuildInfo.GuildRoster
 local InGuild = IsInGuild
+local GetGuildClubId = C_Club.GetGuildClubId
 local LoginTime = ServerTime()
 
 TimerEvent = Object:newChildConstructor()
@@ -15,106 +16,85 @@ function TimerEvent:new()
 end
 --#endregion
 
---#region Initializers
-function TimerEvent:Initialize()
-	if(not self:IsInitialized()) then
-		self:ParentInitialize()
-
-		XFG.Timers:Add('Login', 1, XFG.Handlers.TimerEvent.CallbackLogin, true, true, true)
-		XFG.Timers:Add('Heartbeat', XFG.Settings.Player.Heartbeat, XFG.Handlers.TimerEvent.CallbackHeartbeat, true, true, false)
-        XFG.Timers:Add('Links', XFG.Settings.Network.BNet.Link.Broadcast, XFG.Handlers.TimerEvent.CallbackLinks, true, true, false)		    		    
-        XFG.Timers:Add('Roster', XFG.Settings.LocalGuild.ScanTimer, XFG.Handlers.TimerEvent.CallbackGuildRoster, true, true, false)		    				
-        XFG.Timers:Add('Mailbox', XFG.Settings.Network.Mailbox.Scan, XFG.Handlers.TimerEvent.CallbackMailboxTimer, true, false, false)
-        XFG.Timers:Add('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, true, false)
-        XFG.Timers:Add('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, true, false)
-        XFG.Timers:Add('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, true, false)
-        XFG.Timers:Add('DelayedLogin', 7, XFG.Handlers.TimerEvent.CallbackDelayedStartTimer)
-        XFG.Timers:Get('Login'):Start()
-
-        self:IsInitialized(true)
-	end
-	return self:IsInitialized()
-end
---#endregion
-
 --#region Callbacks
 --#region Login Callbacks
 function TimerEvent:CallbackLogin()
-    -- If havent gotten guild info after X seconds, give up. probably not in a guild
-    if(LoginTime + XFG.Settings.LocalGuild.LoginGiveUp < ServerTime()) then
-        XFG:Error(ObjectName, 'Did not detect a guild')
-        XFG.Timers:Stop()
-        return
-    end
-
-	-- For a time Blizz API says player is not in guild, even if they are
-	-- Its not clear what event fires (if any) when this data is available, hence the poller
-    if(InGuild()) then
-        -- Even though it says were in guild, theres a brief time where the following calls fails, hence the sanity check
-        local guildID = C_Club.GetGuildClubId()
-        if(guildID ~= nil) then
-			-- Critical path initialization, anything not caught needs to get bailed
-			try(function ()
+	try(function ()
+		-- For a time Blizz API says player is not in guild, even if they are
+		-- Its not clear what event fires (if any) when this data is available, hence the poller
+		if(InGuild()) then
+			-- Even though it says were in guild, theres a brief time where the following calls fails, hence the sanity check
+			local guildID = GetGuildClubId()
+			if(guildID ~= nil) then
 				-- Now that guild info is available we can finish setup
 				XFG:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
 				XFG.Timers:Remove('Login')
 
 				-- Confederate setup via guild info
+				XFG.Guilds:Initialize(guildID)
 				XFG.Confederate:Initialize()
-				XFG.Guilds = GuildCollection:new(); XFG.Guilds:Initialize(guildID)
 				XFG.Realms:SetPlayerRealm()
 				XFG.Guilds:SetPlayerGuild()
-				XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()						
-				XFG.Targets = TargetCollection:new(); XFG.Targets:Initialize()
+				XFG.Teams:Initialize()	
+				XFG.Targets:Initialize()	
 
 				-- Chat channel setup via guild info, player will start to receive messaging via chat channel
-				XFG.Channels = ChannelCollection:new(); XFG.Channels:Initialize()
-				XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
-				XFG.Mailbox.Chat = Chat:new(); XFG.Mailbox.Chat:Initialize()
-				XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
+				XFG.Channels:Initialize()
+				XFG.Handlers.ChannelEvent:Initialize()
+				XFG.Mailbox.Chat:Initialize()
+				XFG.Handlers.SystemEvent:Initialize()
 				
 				-- BNet setup, player will start to receive messaging via bnet
 				-- We want this to be after chat channel setup so we can forward messages
-				XFG.Nodes = NodeCollection:new(); XFG.Nodes:Initialize()
-				XFG.Links = LinkCollection:new(); XFG.Links:Initialize()
-				XFG.Friends = FriendCollection:new(); XFG.Friends:Initialize()
-				XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()
-				XFG.Mailbox.BNet = BNet:new(); XFG.Mailbox.BNet:Initialize()
+				XFG.Nodes:Initialize()
+				XFG.Links:Initialize()
+				XFG.Friends:Initialize()
+				XFG.Handlers.BNetEvent:Initialize()
+				XFG.Mailbox.BNet:Initialize()
 				
 				-- Some of this data (spec) is like guild where its not available for a time after initial login
 				-- Seems to align with guild data becoming available
-				XFG.Races = RaceCollection:new(); XFG.Races:Initialize()
-				XFG.Classes = ClassCollection:new(); XFG.Classes:Initialize()
-				XFG.Specs = SpecCollection:new(); XFG.Specs:Initialize()		    
-				XFG.Professions = ProfessionCollection:new(); XFG.Professions:Initialize()
+				XFG.Races:Initialize()
+				XFG.Classes:Initialize()
+				XFG.Specs:Initialize()		    
+				XFG.Professions:Initialize()
 
 				-- Scan local guild, player unit information is now available
-				XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
-				XFG.Handlers.SystemEvent = SystemEvent:new(); XFG.Handlers.SystemEvent:Initialize()
-				XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
+				XFG.Handlers.GuildEvent:Initialize()
+				XFG.Handlers.SystemEvent:Initialize()
+				XFG.Handlers.PlayerEvent:Initialize()
 
 				-- Player will start sending guild chat and achievement messages
 				-- We want this after player unit information is available because its included in the messages				
-				XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
-				XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()				
+				XFG.Handlers.ChatEvent:Initialize()
+				XFG.Handlers.AchievementEvent:Initialize()
 				
 				-- Start all timers
 				XFG.Timers:Start()
+			
+				-- DTs have been waiting on XFG.Initialized flag
 				XFG.Initialized = true
-			end).
-			catch(function (inErrorMessage)
-				XFG:Error(ObjectName, inErrorMessage)
-				--print(XFG.Title .. ': Failed to start properly. ' .. inErrorMessage)
-				XFG.Timers:Stop()
-				return
-			end)
-        end
-    end
+				XFG.DataText.Guild:SetFont()
+				XFG.DataText.Guild:RefreshBroker()
+				XFG.DataText.Links:RefreshBroker()
+				XFG.DataText.Metrics:RefreshBroker()
+			end
+		end
+		-- If havent gotten guild info after X seconds, give up. probably not in a guild
+		if(LoginTime + XFG.Settings.LocalGuild.LoginGiveUp < ServerTime()) then
+			error('Did not detect a guild')
+		end
+	end).
+	catch(function (inErrorMessage)
+		XFG:Error(ObjectName, inErrorMessage)
+		XFG:Stop()
+	end)
 end
 
-function TimerEvent:CallbackDelayedStartTimer()
+function TimerEvent:CallbackDelayedLogin()
 	try(function ()
 		if(not XFG.Cache.UIReload) then
+			-- These are delayed to see if we get any ping responses before broadcasting
 			XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
 			XFG.Links:Broadcast()
 		end

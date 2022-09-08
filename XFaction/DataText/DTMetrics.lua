@@ -27,7 +27,6 @@ function DTMetrics:Initialize()
 		    OnEnter = function(this) XFG.DataText.Metrics:OnEnter(this) end,
 			OnLeave = function(this) XFG.DataText.Metrics:OnLeave(this) end,
 		})
-		self:SetFont()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -58,7 +57,7 @@ end
 
 --#region Broker
 function DTMetrics:RefreshBroker()
-	if(XFG.Initialized) then
+	if(XFG.Initialized and self:IsInitialized()) then
 		local text = ''
 		local delimiter = false
 		if(XFG.Config.DataText.Metric.Total) then

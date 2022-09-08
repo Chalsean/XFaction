@@ -9,6 +9,7 @@ AddonEvent = Object:newChildConstructor()
 function AddonEvent:new()
     local object = AddonEvent.parent.new(self)
     object.__name = ObjectName
+    self.isLoaded = false
     return object
 end
 --#endregion
@@ -31,7 +32,19 @@ function AddonEvent:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Accessors
+function AddonEvent:IsLoaded(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
+    if(inBoolean ~= nil) then
+        self.isLoaded = inBoolean
+    end
+    return self.isLoaded
+end
+--#endregion
+
+--#region Cache
 local function InitializeCache()
     XFG.Cache = _G.XFCacheDB
     if(XFG.Cache.UIReload == nil or not XFG.Cache.UIReload) then
@@ -42,6 +55,7 @@ local function InitializeCache()
                 Friends = {},
             },
             Channel = {},
+            Confederate = {},
             Errors = {},
             NewVersionNotify = false,
             Player = {},
@@ -62,6 +76,37 @@ local function InitializeCache()
 end
 --#endregion
 
+--#region Configs
+function XFG:LoadConfigs()
+    -- Get AceDB up and running as early as possible, its not available until addon is loaded
+    XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFConfigDB', XFG.Defaults)
+    XFG.Config = XFG.ConfigDB.profile
+    XFG.DebugFlag = XFG.Config.Debug.Enable
+
+    -- Cache it because on shutdown, XFG.Config gets unloaded while we're still logging
+    XFG.Cache.Verbosity = XFG.Config.Debug.Verbosity
+
+    XFG.ConfigDB.RegisterCallback(self, 'OnProfileChanged', 'InitProfile')
+    XFG.ConfigDB.RegisterCallback(self, 'OnProfileCopied', 'InitProfile')
+    XFG.ConfigDB.RegisterCallback(self, 'OnProfileReset', 'InitProfile')
+
+    XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.ConfigDB)
+    XFG.Lib.Config:RegisterOptionsTable(XFG.Name, XFG.Options)
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, XFG.Name, nil, 'General')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Chat', XFG.Name, 'Chat')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Nameplates', XFG.Name, 'Nameplates')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'DataText', XFG.Name, 'DataText')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Support', XFG.Name, 'Support')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Debug', XFG.Name, 'Debug')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Profile', XFG.Name, 'Profile')
+end
+    
+function XFG:InitProfile()
+    -- When DB changes namespace (profile) the XFG.Config becomes invalid and needs to be reset
+    XFG.Config = XFG.ConfigDB.profile
+end
+--#endregion
+
 --#region Callbacks
 local function ElvUIOnLoad()
     if(XFG.Config ~= nil and XFG.ElvUI ~= nil) then
@@ -72,24 +117,22 @@ end
 function AddonEvent:CallbackAddonLoaded(inAddonName)
     try(function ()
         if(GetAddOnEnableState(nil, inAddonName) > 0) then
-            if(inAddonName == XFG.Name) then
+            if(inAddonName == XFG.Name and not XFG.Handlers.AddonEvent:IsLoaded()) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
                 XFG:LoadConfigs()
                 ElvUIOnLoad()
-                XFG.DataText.Guild = DTGuild:new(); XFG.DataText.Guild:Initialize()
-	            XFG.DataText.Links = DTLinks:new(); XFG.DataText.Links:Initialize()
-	            XFG.DataText.Metrics = DTMetrics:new(); XFG.DataText.Metrics:Initialize()                
-            elseif(inAddonName == 'ElvUI') then
+                XFG.Handlers.AddonEvent:IsLoaded(true)
+            elseif(inAddonName == 'ElvUI' and not XFG.ElvUI) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 XFG.ElvUI = ElvUI[1]
                 ElvUIOnLoad()
-            elseif(inAddonName == 'WIM') then
+            elseif(inAddonName == 'WIM' and not XFG.WIM) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 if(WIM.modules.GuildChat.enabled) then
                     XFG.WIM = WIM.modules.GuildChat
                 end
-            elseif(inAddonName == 'RaiderIO') then
+            elseif(inAddonName == 'RaiderIO' and not XFG.RaidIO) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 XFG.RaidIO:IsLoaded(true)
             end

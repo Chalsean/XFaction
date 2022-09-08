@@ -16,7 +16,7 @@ end
 function ObjectCollection:newChildConstructor()
     local object = ObjectCollection.parent.new(self)
     object.__name = ObjectName
-    object.parent = self    
+    object.parent = self
     object.objects = nil
     object.objectCount = 0
     object.cached = false

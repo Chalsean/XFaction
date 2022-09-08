@@ -25,7 +25,7 @@ function DTToken:Initialize()
 			XFG.Events:Add('DTToken' .. event, event, XFG.DataText.Token.OnEvent)
 			XFG:Info(ObjectName, 'Registered for %s events', event)
 		end
-
+		self:OnEvent()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

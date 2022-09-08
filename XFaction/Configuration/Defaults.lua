@@ -173,32 +173,3 @@ XFG.Defaults = {
         },
     }
 }
-
-function XFG:LoadConfigs()
-    -- Get AceDB up and running as early as possible, its not available until addon is loaded
-    XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFConfigDB', XFG.Defaults)
-    XFG.Config = XFG.ConfigDB.profile
-    XFG.DebugFlag = XFG.Config.Debug.Enable
-
-    -- Cache it because on shutdown, XFG.Config gets unloaded while we're still logging
-    XFG.Cache.Verbosity = XFG.Config.Debug.Verbosity
-
-    XFG.ConfigDB.RegisterCallback(self, 'OnProfileChanged', 'InitProfile')
-    XFG.ConfigDB.RegisterCallback(self, 'OnProfileCopied', 'InitProfile')
-    XFG.ConfigDB.RegisterCallback(self, 'OnProfileReset', 'InitProfile')
-
-    XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.ConfigDB)
-    XFG.Lib.Config:RegisterOptionsTable(XFG.Name, XFG.Options)
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, XFG.Name, nil, 'General')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Chat', XFG.Name, 'Chat')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Nameplates', XFG.Name, 'Nameplates')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'DataText', XFG.Name, 'DataText')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Support', XFG.Name, 'Support')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Debug', XFG.Name, 'Debug')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Profile', XFG.Name, 'Profile')
-end
-    
-function XFG:InitProfile()
-    -- When DB changes namespace (profile) the XFG.Config becomes invalid and needs to be reset
-    XFG.Config = XFG.ConfigDB.profile
-end

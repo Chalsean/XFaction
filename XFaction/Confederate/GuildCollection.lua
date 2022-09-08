@@ -23,31 +23,30 @@ function GuildCollection:Initialize(inGuildID)
 
 		self.info = C_Club.GetClubInfo(inGuildID)
 
-		--BETA
-		--if(XFG.Cache.Guilds == nil) then
+		if(XFG.Cache.Guilds == nil or XFG.Cache.Confederate == nil) then
 			XFG.Cache.Guilds = {}
 			self:SetFromGuildInfo()
-		-- else
-		-- 	XFG:Debug(ObjectName, 'Guild information found in cache')
-		-- 	--self:IsCached(true)
-		-- 	for _, data in ipairs (XFG.Cache.Guilds) do
-		-- 		local guild = Guild:new()
-		-- 		guild:Initialize()
-		-- 		guild:SetKey(data.Initials)
-		-- 		guild:SetName(data.Name)
-		-- 		guild:SetFaction(XFG.Factions:Get(data.Faction))
-		-- 		guild:SetRealm(XFG.Realms:Get(data.Realm))
-		-- 		guild:SetInitials(data.Initials)
-		-- 		if(data.ID ~= nil) then
-		-- 			guild:SetID(data.ID)
-		-- 			guild:SetStreamID(data.StreamID)
-		-- 			XFG.Player.Guild = guild
-		-- 		end
-		-- 		self.parent.Add(self, guild)
-		-- 		self.names[guild:GetName()] = guild
-		-- 		XFG:Info(ObjectName, 'Initialized guild [%s:%s]', guild:GetInitials(), guild:GetName())
-		-- 	end
-		-- end
+		else
+			XFG:Debug(ObjectName, 'Guild information found in cache')
+			self:IsCached(true)
+			for _, data in ipairs (XFG.Cache.Guilds) do
+				local guild = Guild:new()
+				guild:Initialize()
+				guild:SetKey(data.Initials)
+				guild:SetName(data.Name)
+				guild:SetFaction(XFG.Factions:Get(data.Faction))
+				guild:SetRealm(XFG.Realms:Get(data.Realm))
+				guild:SetInitials(data.Initials)
+				if(data.ID ~= nil) then
+					guild:SetID(data.ID)
+					guild:SetStreamID(data.StreamID)
+					XFG.Player.Guild = guild
+				end
+				self.parent.Add(self, guild)
+				self.names[guild:GetName()] = guild
+				XFG:Info(ObjectName, 'Initialized guild [%s:%s]', guild:GetInitials(), guild:GetName())
+			end
+		end
 		self:IsInitialized(true)
 	end
 end
@@ -70,7 +69,7 @@ function GuildCollection:Add(inGuild)
 
 	if(inGuild:HasID()) then
 		XFG.Cache.Guilds[#XFG.Cache.Guilds].ID = inGuild:GetID()
-		XFG.Cache.Guilds[#XFG.Cache.Guilds].streamID = inGuild:GetStreamID()
+		XFG.Cache.Guilds[#XFG.Cache.Guilds].StreamID = inGuild:GetStreamID()
 		XFG.Player.Guild = inGuild
 	end
 
@@ -142,6 +141,7 @@ function GuildCollection:SetFromGuildInfo()
 	-- 	_XFData = _GuildInfo.description
 	-- end
 
+	--BETA
 	xfData = "XFn:Eternal Kingdom:EK\n" ..
 				"XFc:EKXFaction:pineapple\n" .. 
 				"XFg:5:A:Eternal Kingdom:EKA\n" ..
@@ -157,11 +157,8 @@ function GuildCollection:SetFromGuildInfo()
 		-- Confederate information
 		if(string.find(line, 'XFn')) then                    
 			local name, initials = line:match('XFn:(.-):(.+)')
-			XFG:Info(ObjectName, 'Initializing confederate %s <%s>', name, initials)
-			Confederate:SetName(name)
-			Confederate:SetKey(initials)
-			XFG.Settings.Network.Message.Tag.LOCAL = initials .. 'XF'
-			XFG.Settings.Network.Message.Tag.BNET = initials .. 'BNET'
+			XFG.Cache.Confederate.Name = name
+			XFG.Cache.Confederate.Key = initials
 		-- Guild within the confederate
 		elseif(string.find(line, 'XFg')) then
 			self:SetObjectFromString(line)

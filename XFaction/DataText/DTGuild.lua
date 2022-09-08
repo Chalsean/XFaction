@@ -31,7 +31,6 @@ function DTGuild:Initialize()
 			OnClick = function(this, button) XFG.DataText.Guild:OnClick(this, button) end,
 		})
 		LDB_ANCHOR = self.ldbObject
-		self:SetFont()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -62,7 +61,7 @@ end
 
 --#region Broker
 function DTGuild:RefreshBroker()
-	if(XFG.Initialized) then
+	if(XFG.Initialized and self:IsInitialized()) then
 		local text = ''  
 		if(XFG.Config.DataText.Guild.Label) then
 			text = XFG.Lib.Locale['GUILD'] .. ': '

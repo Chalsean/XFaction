@@ -42,7 +42,7 @@ function Mailbox:ParentInitialize()
     self.objects = {}
     self.checkedIn = {}
     self.checkedOut = {}
-    self.key = math.GenerateUID
+    self.key = math.GenerateUID()
 end
 --#endregion
 
