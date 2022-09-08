@@ -1,5 +1,4 @@
-## Interface: 90207
-## Globe: check-classic
+## Interface: 100000
 ## Author: Chalsean (US-Proudmoore)
 ## Version: 4.0.0
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
@@ -7,7 +6,7 @@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: XFCacheDB, XFConfigDB
-## Dependencies: _DebugLog, BugSack
+## OptionalDeps: _DebugLog, BugSack
 
 Libraries\LoadLibraries.xml
 Locales\LoadLocales.xml
