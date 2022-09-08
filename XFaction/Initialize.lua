@@ -38,7 +38,7 @@ function XFG:Init()
 	XFG.Handlers.ChatEvent = ChatEvent:new()
 	XFG.Handlers.GuildEvent = GuildEvent:new()
 	XFG.Handlers.PlayerEvent = PlayerEvent:new()
-	XFG.Handlers.SystemEvent = SystemEvent:new()
+	XFG.Handlers.SystemEvent = SystemEvent:new(); 
 	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
 
 	-- Network
@@ -62,7 +62,8 @@ function XFG:Init()
 	-- Wrappers	
 	XFG.Hooks = HookCollection:new(); XFG.Hooks:Initialize()
 	XFG.Metrics = MetricCollection:new(); XFG.Metrics:Initialize()	
-	XFG.Timers = TimerCollection:new(); XFG.Timers:Initialize()	
+	XFG.Timers = TimerCollection:new(); XFG.Timers:Initialize()
+	XFG.Handlers.SystemEvent:Initialize()
 
 	-- Start poller for guild information
 	XFG.Timers:Get('Login'):Start()

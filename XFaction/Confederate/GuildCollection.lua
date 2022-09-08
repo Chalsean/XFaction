@@ -105,41 +105,29 @@ end
 function GuildCollection:SetFromGuildInfo()
 	-- Parse out configuration from guild information so GMs have control
 	local xfData
-	-- local _DataIn = string.match(_GuildInfo.description, 'XF:(.-):XF')
-	-- if (_DataIn ~= nil) then
-	-- 	-- Decompress and deserialize XFaction data
-	-- 	local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
-	-- 	local _, _Deserialized = XFG:Deserialize(_Decompressed)
-	-- 	XFG:Debug(ObjectName, 'Data from config %s', _Deserialized)
-	-- 	_XFData = _Deserialized
-	-- else
-	-- 	_XFData = _GuildInfo.description
-	-- end
+	local _DataIn = string.match(_GuildInfo.description, 'XF:(.-):XF')
+	if (_DataIn ~= nil) then
+		-- Decompress and deserialize XFaction data
+		local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
+		local _, _Deserialized = XFG:Deserialize(_Decompressed)
+		XFG:Debug(ObjectName, 'Data from config %s', _Deserialized)
+		xfData = _Deserialized
+	else
+		xfData = _GuildInfo.description
+	end
 
-	-- -- Parse out configuration from guild information so GMs have control
-	-- local _XFData
-	-- local _DataIn = string.match(_GuildInfo.description, 'XF:(.-):XF')
-	-- if (_DataIn ~= nil) then
-	-- 	-- Decompress and deserialize XFaction data
-	-- 	local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
-	-- 	local _, _Deserialized = XFG:Deserialize(_Decompressed)
-	-- 	XFG:Debug(ObjectName, 'Data from config %s', _Deserialized)
-	-- 	_XFData = _Deserialized
-	-- else
-	-- 	_XFData = _GuildInfo.description
-	-- end
-
-	--BETA
-	xfData = "XFn:Eternal Kingdom:EK\n" ..
-				"XFc:EKXFaction:pineapple\n" .. 
-				"XFg:5:A:Eternal Kingdom:EKA\n" ..
-				"XFg:5:H:EK Horde:EKH\n" ..
-				"XFg:5:A:Endless Kingdom:ENK\n" ..
-				"XFg:5:A:Alternal Kingdom:AK\n" ..
-				"XFg:5:A:Alternal Kingdom Two:AK2\n" ..
-				"XFg:5:A:Alternal Kingdom Three:AK3\n" ..
-				"XFg:5:H:Alternal Kingdom Four:AK4\n" ..
-				"XFa:Grand Alt"
+	-- Parse out configuration from guild information so GMs have control
+	local xfData
+	local _DataIn = string.match(_GuildInfo.description, 'XF:(.-):XF')
+	if (_DataIn ~= nil) then
+		-- Decompress and deserialize XFaction data
+		local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
+		local _, _Deserialized = XFG:Deserialize(_Decompressed)
+		XFG:Debug(ObjectName, 'Data from config %s', _Deserialized)
+		xfData = _Deserialized
+	else
+		xfData = _GuildInfo.description
+	end
 
 	for _, line in ipairs(string.Split(xfData, '\n')) do
 		-- Confederate information

@@ -56,8 +56,7 @@ end
 
 --#region DataSet
 function RealmCollection:SetPlayerRealm()
-	--local localRealm = XFG.Realms:Get(GetRealmName())
-	local localRealm = XFG.Realms:Get('Proudmoore')
+	local localRealm = XFG.Realms:Get(GetRealmName())
 	for _, realmID in localRealm:IDIterator() do
 		local connectedRealm = XFG.Realms:GetByID(realmID)
 		for _, guild in XFG.Guilds:Iterator() do

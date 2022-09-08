@@ -42,7 +42,6 @@ function TimerEvent:CallbackLogin()
 				XFG.Channels:Initialize()
 				XFG.Handlers.ChannelEvent:Initialize()
 				XFG.Mailbox.Chat:Initialize()
-				XFG.Handlers.SystemEvent:Initialize()
 				
 				-- BNet setup, player will start to receive messaging via bnet
 				-- We want this to be after chat channel setup so we can forward messages
