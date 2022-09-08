@@ -16,7 +16,6 @@ function TeamCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		if(#XFG.Cache.Teams > 0) then
-			XFG:Debug(ObjectName, 'Team information found in cache')
 			self:IsCached(true)
 			for _, data in ipairs (XFG.Cache.Teams) do
 				local team = Team:new()

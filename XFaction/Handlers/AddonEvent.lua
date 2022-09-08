@@ -46,8 +46,10 @@ end
 
 --#region Cache
 local function InitializeCache()
+    if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
     XFG.Cache = _G.XFCacheDB
-    if(XFG.Cache.UIReload == nil or not XFG.Cache.UIReload) then
+    --wipe(XFG.Cache)
+   if(XFG.Cache.UIReload == nil or not XFG.Cache.UIReload) then
         XFG:Info(ObjectName, 'Initializing cache')
         XFG.Cache = {
             Backup = {
@@ -78,6 +80,7 @@ end
 
 --#region Configs
 function XFG:LoadConfigs()
+    XFG:Info(ObjectName, 'Loading configs')
     -- Get AceDB up and running as early as possible, its not available until addon is loaded
     XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFConfigDB', XFG.Defaults)
     XFG.Config = XFG.ConfigDB.profile

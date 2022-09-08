@@ -47,11 +47,6 @@ XFG.Lib = {
 XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 --#endregion
 
---#region Saved Variables
-if(_G.XFConfigDB == nil) then _G.XFConfigDB = {} end
-if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
---#endregion
-
 --#region Program Settings
 XFG.Icons = {
 	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',

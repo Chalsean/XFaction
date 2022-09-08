@@ -22,8 +22,8 @@ function GuildCollection:Initialize(inGuildID)
 		self.names = {}
 
 		self.info = C_Club.GetClubInfo(inGuildID)
-
-		if(XFG.Cache.Guilds == nil or XFG.Cache.Confederate == nil) then
+		
+		if(XFG.Cache.Guilds == nil) then
 			XFG.Cache.Guilds = {}
 			self:SetFromGuildInfo()
 		else
@@ -38,7 +38,9 @@ function GuildCollection:Initialize(inGuildID)
 				guild:SetRealm(XFG.Realms:Get(data.Realm))
 				guild:SetInitials(data.Initials)
 				if(data.ID ~= nil) then
-					guild:SetID(data.ID)
+					guild:SetID(data.ID)					
+				end
+				if(data.StreamID ~= nil) then
 					guild:SetStreamID(data.StreamID)
 					XFG.Player.Guild = guild
 				end
@@ -59,20 +61,6 @@ end
 
 function GuildCollection:Add(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
-
-	XFG.Cache.Guilds[#XFG.Cache.Guilds + 1] = {
-		Initials = inGuild:GetInitials(),
-		Name = inGuild:GetName(),
-		Faction = inGuild:GetFaction():GetKey(),
-		Realm = inGuild:GetRealm():GetKey(),
-	}
-
-	if(inGuild:HasID()) then
-		XFG.Cache.Guilds[#XFG.Cache.Guilds].ID = inGuild:GetID()
-		XFG.Cache.Guilds[#XFG.Cache.Guilds].StreamID = inGuild:GetStreamID()
-		XFG.Player.Guild = inGuild
-	end
-
 	self.parent.Add(self, inGuild)
 	self.names[inGuild:GetName()] = inGuild
 	XFG:Info(ObjectName, 'Initialized guild [%s:%s]', inGuild:GetInitials(), inGuild:GetName())
@@ -177,7 +165,7 @@ function GuildCollection:SetFromGuildInfo()
 end
 
 function GuildCollection:SetPlayerGuild()
-	if(not self:IsCached()) then
+	if(not self:IsCached() or XFG.Player.Guild == nil) then
 		for _, guild in self:Iterator() do
 			if(guild:GetName() == self.info.name and XFG.Player.Realm:Equals(guild:GetRealm())) then
 				guild:SetID(self.info.clubId)
@@ -193,6 +181,25 @@ function GuildCollection:SetPlayerGuild()
 		end
 		if(XFG.Player.Guild == nil) then
 			error('Player is not on a supported guild or realm')
+		end
+		self:CacheGuilds()
+	end
+end
+--#endregion
+
+--#region Janitorial
+function GuildCollection:CacheGuilds()
+	for _, guild in self:Iterator() do
+		XFG.Cache.Guilds[#XFG.Cache.Guilds + 1] = {
+			Initials = guild:GetInitials(),
+			Name = guild:GetName(),
+			Faction = guild:GetFaction():GetKey(),
+			Realm = guild:GetRealm():GetKey(),
+		}	
+		if(guild:HasID()) then
+			XFG.Cache.Guilds[#XFG.Cache.Guilds].ID = guild:GetID()
+			XFG.Cache.Guilds[#XFG.Cache.Guilds].StreamID = guild:GetStreamID()
+			XFG.Player.Guild = guild
 		end
 	end
 end

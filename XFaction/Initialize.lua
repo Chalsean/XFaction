@@ -89,7 +89,6 @@ function XFG:Stop()
 	if(XFG.Events) then XFG.Events:Stop() end
 	if(XFG.Hooks) then XFG.Hooks:Stop() end
 	if(XFG.Timers) then XFG.Timers:Stop() end
-	wipe(XFG) -- BETA
 end
 
 do
