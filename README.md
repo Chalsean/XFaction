@@ -57,6 +57,9 @@ The addon should provide the following functionalities:
 - Config
 - DB
 - DBOptions
+- Locale
+
+> AceGUI-3.0-SharedMediaWidgets
 
 > ChatThrottleLib (*modified for BNet)
 
