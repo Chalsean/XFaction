@@ -3,7 +3,7 @@ Enable roster visibility and communication between guilds of a confederation, in
 
 ## Disclaimer
 
-This addon is recently coming out of alpha and beta testing. There are still some things rough around the edges. Any questions, feel free to reach out.
+This addon is recently coming out of alpha and beta testing. There are still some things rough around the edges. To setup, you will need to be able to edit your guild information tab. The setup can be somewhat tricky, so any questions, feel free to reach out.
  
 ## What is included
 The addon should provide the following functionalities:
