@@ -54,26 +54,11 @@ The addon should provide the following functionalities:
 ### Dependencies
 
 > Ace3
-- Addon
-- Bucket
-- Comm
 - Config
-- ConfigCmd
-- ConfigDialog
-- Console
 - DB
 - DBOptions
-- Event
-- GUI
-- Hook
-- Serializer
-- Timer
-- Stub
 
 > ChatThrottleLib (*modified for BNet)
-
-> LibBabble
-- Race
 
 > LibDataBroker
 
@@ -81,15 +66,11 @@ The addon should provide the following functionalities:
 
 > LibQTip
 
-> LibProfession
-
-> LibRace
-
 > LibRealmInfo (*modified)
 
 > LibSharedMedia
 
-> LibSpec
+> LibStub
 
 > LibTourist
 
