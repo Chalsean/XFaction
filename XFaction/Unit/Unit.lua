@@ -669,23 +669,14 @@ function Unit:Equals(inUnit)
     if(self:GetItemLevel() ~= inUnit:GetItemLevel()) then return false end
     if(self:GetPvP() ~= inUnit:GetPvP()) then return false end
 
-    if(self:HasProfession1() == false and inUnit:HasProfession1()) then return false end
-    if(self:HasProfession1()) then
-        local _CachedProfession1 = self:GetProfession1()
-        if(_CachedProfession1:Equals(inUnit:GetProfession1()) == false) then return false end
-    end
+    if(not self:HasProfession1() and inUnit:HasProfession1()) then return false end
+    if(self:HasProfession1() and not self:GetProfession1():Equals(inUnit:GetProfession1())) then return false end
 
-    if(self:HasProfession2() == false and inUnit:HasProfession2()) then return false end
-    if(self:HasProfession2()) then
-        local _CachedProfession2 = self:GetProfession2()
-        if(_CachedProfession2:Equals(inUnit:GetProfession2()) == false) then return false end
-    end
+    if(not self:HasProfession2() and inUnit:HasProfession2()) then return false end
+    if(self:HasProfession2() and not self:GetProfession2():Equals(inUnit:GetProfession2())) then return false end
 
-    if(self:HasSpec() == false and inUnit:HasSpec()) then return false end
-    if(self:HasSpec()) then
-        local _CachedSpec = self:GetSpec()
-        if(_CachedSpec:Equals(inUnit:GetSpec()) == false) then return false end
-    end
+    if(not self:HasSpec() and inUnit:HasSpec()) then return false end
+    if(self:HasSpec() and not self:GetSpec():Equals(inUnit:GetSpec())) then return false end
 
     if(not self:HasRaidIO() and inUnit:HasRaidIO()) then return false end
     if(self:HasRaidIO() and not inUnit:HasRaidIO()) then return false end

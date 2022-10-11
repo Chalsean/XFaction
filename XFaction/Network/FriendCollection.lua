@@ -85,12 +85,9 @@ function FriendCollection:GetByRealmUnitName(inRealm, inName)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
 	assert(type(inName) == 'string')
 	for _, friend in self:Iterator() do
-		 if(inName == friend:GetName()) then
-			 local target = friend:GetTarget()
-			 if(inRealm:Equals(target:GetRealm())) then
-				return friend
-			 end
-		 end
+		if(inName == friend:GetName() and inRealm:Equals(friend:GetTarget():GetRealm())) then
+			return friend
+		end
 	 end
 end
 --#endregion
