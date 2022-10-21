@@ -12,7 +12,7 @@ local function Format()
 end
 
 function XFG:Error(SubCategory, ...)
-	--if(XFG.DebugFlag) then
+	if(XFG.DebugFlag) then
 		local status, res = pcall(format, ...)
 		if status then
 			if DLAPI then 
@@ -20,14 +20,14 @@ function XFG:Error(SubCategory, ...)
 				DLAPI.DebugLog(XFG.Name, format('ERR~%s~1~%s', SubCategory, debugstack())) 
 			end
 		end
-	--end
+	end
 	if(XFG.Metrics ~= nil) then
 		XFG.Metrics:Get(XFG.Settings.Metric.Error):Increment()
 	end
 end
 
 function XFG:Warn(SubCategory, ...)
-	--if(XFG.DebugFlag and XFG.Cache.Verbosity >= 2) then
+	if(XFG.DebugFlag and ((XFG.Cache and XFG.Cache.Verbosity >= 2) or XFG.Cache == nil)) then
 		local status, res = pcall(format, ...)
 		if status then
 			if DLAPI then 
@@ -35,30 +35,30 @@ function XFG:Warn(SubCategory, ...)
 				DLAPI.DebugLog(XFG.Name, format('WARN~%s~2~%s', SubCategory, debugstack())) 
 			end
 		end
-	--end
+	end
 	if(XFG.Metrics ~= nil) then
 		XFG.Metrics:Get(XFG.Settings.Metric.Warning):Increment()
 	end
 end
 
 function XFG:Info(SubCategory, ...)
-	--if(XFG.DebugFlag and XFG.Cache.Verbosity >= 3) then
+	if(XFG.DebugFlag and ((XFG.Cache and XFG.Cache.Verbosity >= 3) or XFG.Cache == nil)) then
 		local status, res = pcall(format, ...)
 		if status then
 			Format()
 			if DLAPI then DLAPI.DebugLog(XFG.Name, format('OK~%s~3~%s', SubCategory, res)) end
 		end
-	--end
+	end
 end
 
 function XFG:Debug(SubCategory, ...)
-	--if(XFG.DebugFlag and XFG.Cache.Verbosity >= 4) then
+	if(XFG.DebugFlag and ((XFG.Cache and XFG.Cache.Verbosity >= 4) or XFG.Cache == nil)) then
 		local status, res = pcall(format, ...)
 		if status then
 			Format()
 			if DLAPI then DLAPI.DebugLog(XFG.Name, format('%s~4~%s', SubCategory, res)) end
 		end
-	--end
+	end
 end
 
 local function TableToString(t, l, k)
@@ -75,19 +75,19 @@ local function TableToString(t, l, k)
 end
 
 function XFG:DataDumper(SubCategory, ...)
-	--if(XFG.DebugFlag and XFG.Cache.Verbosity >= 4) then
+	if(XFG.DebugFlag and ((XFG.Cache and XFG.Cache.Verbosity >= 4) or XFG.Cache == nil)) then
 		XFG:Debug(SubCategory, TableToString(..., 1, 'root'))
-	--end
+	end
 end
 
 function XFG:SingleLine(SubCategory)
-	--if(XFG.DebugFlag and XFG.Cache.Verbosity >= 4) then
+	if(XFG.DebugFlag and ((XFG.Cache and XFG.Cache.Verbosity >= 4) or XFG.Cache == nil)) then
 		XFG:Debug(SubCategory, '-------------------------------------')
-	--end
+	end
 end
 
 function XFG:DoubleLine(SubCategory)
-	--if(XFG.DebugFlag and XFG.Cache.Verbosity >= 4) then
+	if(XFG.DebugFlag and ((XFG.Cache and XFG.Cache.Verbosity >= 4) or XFG.Cache == nil)) then
 		XFG:Debug(SubCategory, '=====================================')
-	--end
+	end
 end

@@ -168,7 +168,7 @@ XFG.Defaults = {
         },
         Debug = {
             Enable = false,
-            Verbosity = 4,
+            Verbosity = 2,
             Instance = false,
         },
     }

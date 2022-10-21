@@ -12,4 +12,5 @@
     <Include file='LibSharedMedia-3.0\lib.xml'/>
     <Script file='LibStub\LibStub.lua'/>
     <Include file='LibTourist-3.0\lib.xml'/>   
+    <Include file='MSA-Ace-3.0\MSA-Ace-3.0.xml'/>
 </Ui>

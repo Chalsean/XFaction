@@ -40,8 +40,8 @@ XFG.Lib = {
 	QT = LibStub('LibQTip-1.0'),
 	Broker = LibStub('LibDataBroker-1.1'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Name, true),
-	Config = LibStub('AceConfig-3.0'),
-	ConfigDialog = LibStub('AceConfigDialog-3.0'),
+	Config = LibStub('AceConfigRegistry-3.0'),
+	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0'),
 }
 XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
