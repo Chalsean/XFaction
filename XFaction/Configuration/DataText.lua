@@ -4,51 +4,51 @@ local LogCategory = 'Config'
 local function OrderMenu()
 	if(XFG.Cache.DTGuildTotalEnabled == nil) then XFG.Cache.DTGuildTotalEnabled = 0 end
 	if(XFG.Cache.DTGuildTotalEnabled == 0) then
-		for _Label, _Value in pairs (XFG.Config.DataText.Guild.Enable) do
-			if(_Value) then
-				_OrderLabel = _Label .. 'Order'
-				if(XFG.Config.DataText.Guild.Order[_OrderLabel] ~= 0) then
+		for label, value in pairs (XFG.Config.DataText.Guild.Enable) do
+			if(value) then
+				orderLabel = label .. 'Order'
+				if(XFG.Config.DataText.Guild.Order[orderLabel] ~= 0) then
 					XFG.Cache.DTGuildTotalEnabled = XFG.Cache.DTGuildTotalEnabled + 1
 				end
 			end
 		end
 	end
 
-	local _Menu = {}
+	local menu = {}
 	for i = 1, XFG.Cache.DTGuildTotalEnabled do
-		_Menu[tostring(i)] = i
+		menu[tostring(i)] = i
 	end
 
-	return _Menu
+	return menu
 end
 
 local function RemovedMenuItem(inColumnName)
-	local _Index = XFG.Config.DataText.Guild.Order[inColumnName .. 'Order']
+	local index = XFG.Config.DataText.Guild.Order[inColumnName .. 'Order']
 	XFG.Config.DataText.Guild.Order[inColumnName .. 'Order'] = 0
 	XFG.Cache.DTGuildTotalEnabled = XFG.Cache.DTGuildTotalEnabled - 1
-	for _ColumnName, _OrderNumber in pairs (XFG.Config.DataText.Guild.Order) do
-		if(_OrderNumber > _Index) then
-			XFG.Config.DataText.Guild.Order[_ColumnName] = _OrderNumber - 1
+	for columnName, orderNumber in pairs (XFG.Config.DataText.Guild.Order) do
+		if(orderNumber > index) then
+			XFG.Config.DataText.Guild.Order[columnName] = orderNumber - 1
 		end
 	end
 end
 
 local function AddedMenuItem(inColumnName)
-	local _OrderLabel = inColumnName .. 'Order'
+	local orderLabel = inColumnName .. 'Order'
 	XFG.Cache.DTGuildTotalEnabled = XFG.Cache.DTGuildTotalEnabled + 1
-	XFG.Config.DataText.Guild.Order[_OrderLabel] = XFG.Cache.DTGuildTotalEnabled
+	XFG.Config.DataText.Guild.Order[orderLabel] = XFG.Cache.DTGuildTotalEnabled
 end
 
 local function SelectedMenuItem(inColumnName, inSelection)
-	local _OldNumber = XFG.Config.DataText.Guild.Order[inColumnName]
-	local _NewNumber = tonumber(inSelection)
-	XFG.Config.DataText.Guild.Order[inColumnName] = _NewNumber
-	for _ColumnName, _OrderNumber in pairs (XFG.Config.DataText.Guild.Order) do
-		if(_ColumnName ~= inColumnName) then
-			if(_OldNumber < _NewNumber and _OrderNumber > _OldNumber and _OrderNumber <= _NewNumber) then
-				XFG.Config.DataText.Guild.Order[_ColumnName] = _OrderNumber - 1
-			elseif(_OldNumber > _NewNumber and _OrderNumber < _OldNumber and _OrderNumber >= _NewNumber) then
-				XFG.Config.DataText.Guild.Order[_ColumnName] = _OrderNumber + 1
+	local oldNumber = XFG.Config.DataText.Guild.Order[inColumnName]
+	local newNumber = tonumber(inSelection)
+	XFG.Config.DataText.Guild.Order[inColumnName] = newNumber
+	for columnName, orderNumber in pairs (XFG.Config.DataText.Guild.Order) do
+		if(columnName ~= inColumnName) then
+			if(oldNumber < newNumber and orderNumber > oldNumber and orderNumber <= newNumber) then
+				XFG.Config.DataText.Guild.Order[columnName] = orderNumber - 1
+			elseif(oldNumber > newNumber and orderNumber < oldNumber and orderNumber >= newNumber) then
+				XFG.Config.DataText.Guild.Order[columnName] = orderNumber + 1
 			end
 		end
 	end

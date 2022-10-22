@@ -44,9 +44,9 @@ function XFG.Nameplates.ElvUI:OnLoad()
             local guid = UnitGUID(inNameplate)
             local unitName = UnitName(inNameplate)
             if(XFG.Confederate:Contains(guid)) then
-                local _UnitData = XFG.Confederate:Get(guid)
-                if(_UnitData:HasMainName()) then
-                    unitName = _UnitData:GetMainName()
+                local unitData = XFG.Confederate:Get(guid)
+                if(unitData:HasMainName()) then
+                    unitName = unitData:GetMainName()
                 end
             end
             return unitName
@@ -55,9 +55,9 @@ function XFG.Nameplates.ElvUI:OnLoad()
         XFG.ElvUI:AddTag('main:parenthesis', 'UNIT_NAME_UPDATE', function(inNameplate) 
             local guid = UnitGUID(inNameplate)
             if(XFG.Confederate:Contains(guid)) then
-                local _UnitData = XFG.Confederate:Get(guid)
-                if(_UnitData:HasMainName()) then
-                    return '(' .. _UnitData:GetMainName() .. ')'
+                local unitData = XFG.Confederate:Get(guid)
+                if(unitData:HasMainName()) then
+                    return '(' .. unitData:GetMainName() .. ')'
                 end
             end
         end)

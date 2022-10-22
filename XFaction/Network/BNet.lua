@@ -86,12 +86,6 @@ function BNet:DecodeMessage(inEncodedMessage)
 end
 
 function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
-
-    -- If not a message from this addon, ignore
-    if(not self:IsAddonTag(inMessageTag)) then
-        return
-    end
-
     try(function ()
         -- Even though these may be part of a message, it still counts as a network transaction
         XFG.Metrics:Get(XFG.Settings.Metric.BNetReceive):Increment()
@@ -105,7 +99,6 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
         if(XFG.Friends:ContainsByGameID(tonumber(inSender))) then
             local friend = XFG.Friends:GetByGameID(tonumber(inSender))
             if(friend ~= nil) then
-                friend:SetDateTime(ServerTime())
                 friend:IsRunningAddon(true)
                 friend:CreateLink()
                 if(XFG.Verbosity) then

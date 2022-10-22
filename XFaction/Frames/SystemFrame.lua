@@ -63,14 +63,14 @@ end
 
 function SystemFrame:DisplayJoinMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    local _UnitData = inMessage:GetData()
-    self:Display(inMessage:GetSubject(), _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
+    local unitData = inMessage:GetData()
+    self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm())
 end
 
 function SystemFrame:DisplayLoginMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    local _UnitData = inMessage:GetData()
-    self:Display(inMessage:GetSubject(), _UnitData:GetName(), _UnitData:GetUnitName(), _UnitData:GetMainName(), _UnitData:GetGuild(), _UnitData:GetRealm())
+    local unitData = inMessage:GetData()
+    self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm())
 end
 
 function SystemFrame:DisplayLogoutMessage(inMessage)

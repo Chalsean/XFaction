@@ -5,9 +5,9 @@ ClassCollection = ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function ClassCollection:new()
-	local _Object = ClassCollection.parent.new(self)
-	_Object.__name = ObjectName
-    return _Object
+	local object = ClassCollection.parent.new(self)
+	object.__name = ObjectName
+    return object
 end
 --#endregion
 

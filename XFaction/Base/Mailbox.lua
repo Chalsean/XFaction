@@ -131,7 +131,7 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
         return
     end
 
-    XFG:Debug(ObjectName, 'Received %s packet from %s', inDistribution, inSender)
+    XFG:Trace(ObjectName, 'Received %s packet from %s', inDistribution, inSender)
 
     -- Ensure this message has not already been processed
     local packetNumber = tonumber(string.sub(inEncodedMessage, 1, 1))
@@ -179,10 +179,10 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     -- Deserialize unit data
     if(inMessage:HasUnitData()) then
-        local _UnitData = XFG:DeserializeUnitData(inMessage:GetData())
-        inMessage:SetData(_UnitData)
-        if(not _UnitData:HasVersion()) then
-            _UnitData:SetVersion(inMessage:GetVersion())
+        local unitData = XFG:DeserializeUnitData(inMessage:GetData())
+        inMessage:SetData(unitData)
+        if(not unitData:HasVersion()) then
+            unitData:SetVersion(inMessage:GetVersion())
         end
     end
 

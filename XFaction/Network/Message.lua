@@ -33,7 +33,7 @@ function Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.targets = {}
-        self:SetFrom(XFG.Player.Unit:GetKey())
+        self:SetFrom(XFG.Player.Unit:GetGUID())
         self:SetTimeStamp(ServerTime())
         self:SetAllTargets()
         self:SetVersion(XFG.Version)

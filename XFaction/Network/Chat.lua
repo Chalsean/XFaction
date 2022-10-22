@@ -27,7 +27,6 @@ end
 function Chat:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.DATA) then return end
-    inMessage:SetFrom(XFG.Player.GUID)
 
     XFG:Debug(ObjectName, 'Attempting to send message')
     inMessage:Print()

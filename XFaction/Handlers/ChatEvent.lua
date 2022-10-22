@@ -34,7 +34,7 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
             try(function ()
                 message = XFG.Mailbox.Chat:Pop()
                 message:Initialize()
-                message:SetFrom(XFG.Player.Unit:GetKey())
+                message:SetFrom(XFG.Player.Unit:GetGUID())
                 message:SetType(XFG.Settings.Network.Type.BROADCAST)
                 message:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
                 message:SetUnitName(XFG.Player.Unit:GetUnitName())

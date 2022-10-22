@@ -82,15 +82,11 @@ end
 function XFG:LoadConfigs()
     XFG:Info(ObjectName, 'Loading configs')
     -- Get AceDB up and running as early as possible, its not available until addon is loaded
-    XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFConfigDB', XFG.Defaults)
+    XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFactionDB', XFG.Defaults)
     XFG.Config = XFG.ConfigDB.profile
 
     -- Cache it because on shutdown, XFG.Config gets unloaded while we're still logging
-    if(XFG.Config.Debug.Enable) then
-        XFG.Verbosity = XFG.Config.Debug.Verbosity
-    else
-        XFG.Verbosity = 0
-    end
+    XFG.Verbosity = XFG.Config.Debug.Verbosity
 
     XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.ConfigDB)
     XFG.Lib.Config:RegisterOptionsTable(XFG.Name, XFG.Options, nil)

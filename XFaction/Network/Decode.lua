@@ -33,7 +33,7 @@ local function DeserializeMessage(inObject, inCompressedData)
 	if(messageData.N ~= nil) then 
 		inObject:SetName(messageData.N) 
 	elseif(messageData.U ~= nil) then
-		inObject:SetName(_Message:GetUnitName()) 
+		inObject:SetName(inObject:GetUnitName()) 
 	end
 	if(messageData.R ~= nil) then
 		inObject:SetRealm(XFG.Realms:GetByID(messageData.R))
