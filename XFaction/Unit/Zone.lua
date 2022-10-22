@@ -26,7 +26,7 @@ end
 
 --#region Print
 function Zone:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
         XFG:Debug(ObjectName, '  IDs: ')

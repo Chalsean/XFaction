@@ -17,7 +17,7 @@ end
 
 --#region Print
 function Hook:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  original (' .. type(self.original) .. '): ' .. tostring(self.original))
         XFG:Debug(ObjectName, '  originalFunction (' .. type(self.originalFunction) .. '): ' .. tostring(self.originalFunction))
@@ -78,7 +78,7 @@ function Hook:Start()
             original(...)
         end
         self:IsEnabled(true)
-        if(XFG.DebugFlag) then
+        if(XFG.Verbosity) then
             XFG:Debug(ObjectName, 'Started hook [%s]', self:GetKey())
         end
     end
@@ -88,7 +88,7 @@ function Hook:Stop()
     if(self:HasOriginal() and self:IsEnabled()) then
         _G[self:GetOriginal()] = self:GetOriginalFunction()
         self:IsEnabled(false)
-        if(XFG.DebugFlag) then
+        if(XFG.Verbosity) then
             XFG:Debug(ObjectName, 'Stopped hook [%s]', self:GetKey())
         end
     end

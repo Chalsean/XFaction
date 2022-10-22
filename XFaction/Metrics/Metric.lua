@@ -14,7 +14,7 @@ end
 
 --#region Print
 function Metric:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
 	    XFG:Debug(ObjectName, '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
     end

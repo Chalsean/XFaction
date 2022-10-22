@@ -64,7 +64,7 @@ function Object:Print()
 end
 
 function Object:ParentPrint()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         XFG:SingleLine(self:GetObjectName())
         if(self.factoryKey ~= nil) then
             XFG:Debug(self:GetObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))

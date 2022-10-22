@@ -36,7 +36,7 @@ end
 --#region Callbacks
 -- The event doesn't tell you what has changed, only that something has changed
 function GuildEvent:CallbackRosterUpdate()
-    XFG:Debug(ObjectName, 'Scanning local guild roster')
+    XFG:Trace(ObjectName, 'Scanning local guild roster')
     for _, memberID in pairs (GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         local unitData = XFG.Confederate:Pop()
         try(function ()

@@ -34,7 +34,7 @@ end
 
 --#region Print
 function MetricCollection:Print()
-	if(XFG.DebugFlag) then
+	if(XFG.Verbosity) then
 		self:ParentPrint()
 		XFG:Debug(ObjectName, '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
 	end

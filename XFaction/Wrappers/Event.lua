@@ -18,7 +18,7 @@ end
 
 --#region Print
 function Event:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
         XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
@@ -76,14 +76,14 @@ end
 --#region Start/Stop
 function Event:Start()
     self:IsEnabled(true)
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         XFG:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
     end
 end
 
 function Event:Stop()
     self:IsEnabled(false)
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         XFG:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
     end
 end

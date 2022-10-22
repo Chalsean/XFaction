@@ -35,7 +35,7 @@ function LinkCollection:Add(inLink)
 		self.parent.Add(self, inLink)
 		inLink:GetFromNode():IncrementLinkCount()
 		inLink:GetToNode():IncrementLinkCount()
-		if(XFG.DebugFlag) then
+		if(XFG.Verbosity) then
 			XFG:Info(ObjectName, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		end
 		XFG.DataText.Links:RefreshBroker()	
@@ -48,7 +48,7 @@ function LinkCollection:Remove(inLink)
 		self.parent.Remove(self, inLink:GetKey())
 		inLink:GetFromNode():DecrementLinkCount()
 		inLink:GetToNode():DecrementLinkCount()
-		if(XFG.DebugFlag) then
+		if(XFG.Verbosity) then
 			XFG:Info(ObjectName, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
 		end
 		XFG.DataText.Links:RefreshBroker()
@@ -78,7 +78,7 @@ function LinkCollection:ProcessMessage(inMessage)
 		if(link:GetFromNode():GetName() == sourceKey or link:GetToNode():GetName() == sourceKey) then
 			if(not link:IsMyLink() and linkKeys[link:GetKey()] == nil) then
 				self:Remove(link)
-				if(XFG.DebugFlag) then
+				if(XFG.Verbosity) then
 					XFG:Debug(ObjectName, 'Removed link due to node broadcast [%s]', link:GetKey())
 				end
 			else

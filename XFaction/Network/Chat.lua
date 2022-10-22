@@ -57,12 +57,12 @@ function Chat:Send(inMessage)
     if(XFG.Channels:HasLocalChannel()) then
         self:Add(inMessage:GetKey())
         local channel = XFG.Channels:GetLocalChannel()
-        if(XFG.DebugFlag) then
+        if(XFG.Verbosity) then
             XFG:Debug(ObjectName, 'Broadcasting on channel [%s] with tag [%s]', channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
         end
 
         for index, packet in ipairs (packets) do
-            if(XFG.DebugFlag) then
+            if(XFG.Verbosity) then
                 XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d]', index, #packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(packet))
             end
             XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())

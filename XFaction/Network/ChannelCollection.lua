@@ -43,7 +43,7 @@ end
 
 --#region Print
 function ChannelCollection:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  localChannel (' .. type(self.localChannel) .. ')')
         if(self.localChannel ~= nil) then
@@ -73,7 +73,7 @@ function ChannelCollection:SetLast(inKey)
 	for i = channel:GetID() + 1, 10 do
 		local nextChannel = self:GetByID(i)
 		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
-			if(XFG.DebugFlag) then 
+			if(XFG.Verbosity) then 
 				XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
 			end
 			SwapChannels(channel:GetID(), i)
@@ -87,7 +87,7 @@ function ChannelCollection:SetLast(inKey)
 			if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
 				local _Color = XFG.Config.Channels[_Channel:GetName()]
 				SetChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
-				if(XFG.DebugFlag) then
+				if(XFG.Verbosity) then
 					XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
 				end
 			end		
@@ -126,7 +126,7 @@ function ChannelCollection:Scan()
 				if(channel:GetID() ~= channelID) then
 					local oldID = channel:GetID()
 					channel:SetID(channelID)
-					if(XFG.DebugFlag) then
+					if(XFG.Verbosity) then
 						XFG:Debug(ObjectName, 'Channel ID changed [%d:%d:%s]', oldID, channel:GetID(), channel:GetName())
 					end
 				end

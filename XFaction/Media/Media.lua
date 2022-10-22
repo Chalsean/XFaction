@@ -15,7 +15,7 @@ end
 
 --#region Print
 function Media:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
         XFG:Debug(ObjectName, '  path (' .. type(self.path) .. '): ' .. tostring(self.path))

@@ -104,12 +104,12 @@ function PlayerEvent:CallbackInstance()
             XFG.Timers:EnterInstance()
             if(not XFG.Config.Debug.Instance) then
                 XFG:Debug(ObjectName, 'Disabling logging based on configuration')
-                XFG.DebugFlag = false
+                XFG.Verbosity = false
             end
 
         -- Just leaving instance or UI reload
         elseif(not inInstance and XFG.Player.InInstance) then
-            XFG.DebugFlag = XFG.Config.Debug.Enable
+            XFG.Verbosity = XFG.Config.Debug.Enable
             XFG:Debug(ObjectName, 'Leaving instance, enabling some event listeners and timers')
             XFG.Player.InInstance = false
             XFG.Events:LeaveInstance()

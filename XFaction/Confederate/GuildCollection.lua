@@ -104,29 +104,20 @@ end
 
 function GuildCollection:SetFromGuildInfo()
 	-- Parse out configuration from guild information so GMs have control
-	local xfData
-	local _DataIn = string.match(_GuildInfo.description, 'XF:(.-):XF')
-	if (_DataIn ~= nil) then
+	local xfData = ''
+	local compressed = string.match(self.info.description, 'XF:(.-):XF')
+	if (compressed ~= nil) then
 		-- Decompress and deserialize XFaction data
-		local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
-		local _, _Deserialized = XFG:Deserialize(_Decompressed)
-		XFG:Debug(ObjectName, 'Data from config %s', _Deserialized)
-		xfData = _Deserialized
+		local decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(compressed))
+		local _, deserialized = XFG:Deserialize(decompressed)
+		XFG:Debug(ObjectName, 'Data from config %s', deserialized)
+		xfData = deserialized
 	else
-		xfData = _GuildInfo.description
+		xfData = self.info.description
 	end
 
-	-- Parse out configuration from guild information so GMs have control
-	local xfData
-	local _DataIn = string.match(_GuildInfo.description, 'XF:(.-):XF')
-	if (_DataIn ~= nil) then
-		-- Decompress and deserialize XFaction data
-		local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(_DataIn))
-		local _, _Deserialized = XFG:Deserialize(_Decompressed)
-		XFG:Debug(ObjectName, 'Data from config %s', _Deserialized)
-		xfData = _Deserialized
-	else
-		xfData = _GuildInfo.description
+	if(not string.len(xfData)) then
+		error('Failed to find setup in guild information')
 	end
 
 	for _, line in ipairs(string.Split(xfData, '\n')) do

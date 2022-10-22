@@ -45,7 +45,7 @@ end
 
 --#region Print
 function Message:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
         XFG:Debug(ObjectName, '  from (' .. type(self.from) .. '): ' .. tostring(self.from))

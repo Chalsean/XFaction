@@ -23,7 +23,7 @@ end
 
 --#region Print
 function Friend:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
         XFG:Debug(ObjectName, '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
@@ -150,7 +150,7 @@ end
 
 --#region Network
 function Friend:Ping()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         XFG:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
     end
     XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, self:GetGameID())

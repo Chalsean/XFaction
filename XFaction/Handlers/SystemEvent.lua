@@ -52,7 +52,6 @@ function SystemEvent:CallbackLogout()
             XFG.Cache.Errors[#XFG.Cache.Errors + 1] = 'Failed to send logoff message: ' .. inErrorMessage
         end).
         finally(function ()
-            _G.XFCacheDB = nil
             XFG.Mailbox.Chat:Push(message)            
         end)
     end    

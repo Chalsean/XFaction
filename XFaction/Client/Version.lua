@@ -17,7 +17,7 @@ end
 
 --#region Print
 function Version:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
         XFG:Debug(ObjectName, '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))

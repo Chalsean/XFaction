@@ -169,7 +169,7 @@ end
 
 --#region Print
 function Unit:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
         XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))

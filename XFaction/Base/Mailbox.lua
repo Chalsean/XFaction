@@ -147,14 +147,14 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
 
     -- Ignore if it's your own message or you've seen it before
     if(XFG.Mailbox.BNet:Contains(messageKey) or XFG.Mailbox.Chat:Contains(messageKey)) then
-        XFG:Debug(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
+        XFG:Trace(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
         return
     end
     --#endregion
 
     self:AddPacket(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
-        if(XFG.DebugFlag) then
+        if(XFG.Verbosity) then
             XFG:Debug(ObjectName, 'Received all packets for message [%s]', messageKey)
         end
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
@@ -261,7 +261,7 @@ function Mailbox:Process(inMessage, inMessageTag)
     if(inMessage:HasUnitData()) then
         local unitData = inMessage:GetData()
         unitData:IsPlayer(false)
-        if(XFG.Confederate:Add(unitData) and XFG.DebugFlag) then
+        if(XFG.Confederate:Add(unitData) and XFG.Verbosity) then
             XFG:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:GetUnitName())
         end
 

@@ -53,14 +53,12 @@ function ObjectCollection:Print()
 end
 
 function ObjectCollection:ParentPrint()
-    if(XFG.DebugFlag) then
-        XFG:DoubleLine(self:GetObjectName())
-        XFG:Debug(self:GetObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
-        XFG:Debug(self:GetObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
-        XFG:Debug(self:GetObjectName(), '  objectCount (' .. type(self.objectCount) .. '): ' .. tostring(self.objectCount))
-        for _, object in self:Iterator() do
-            object:Print()
-        end
+    XFG:DoubleLine(self:GetObjectName())
+    XFG:Debug(self:GetObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
+    XFG:Debug(self:GetObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
+    XFG:Debug(self:GetObjectName(), '  objectCount (' .. type(self.objectCount) .. '): ' .. tostring(self.objectCount))
+    for _, object in self:Iterator() do
+        object:Print()
     end
 end
 --#endregion

@@ -49,7 +49,7 @@ local function InitializeCache()
     if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
     XFG.Cache = _G.XFCacheDB
     --wipe(XFG.Cache)
-   if(XFG.Cache.UIReload == nil or not XFG.Cache.UIReload) then
+    if(XFG.Cache.UIReload == nil or not XFG.Cache.UIReload) then
         XFG:Info(ObjectName, 'Initializing cache')
         XFG.Cache = {
             Backup = {
@@ -84,10 +84,13 @@ function XFG:LoadConfigs()
     -- Get AceDB up and running as early as possible, its not available until addon is loaded
     XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFConfigDB', XFG.Defaults)
     XFG.Config = XFG.ConfigDB.profile
-    XFG.DebugFlag = XFG.Config.Debug.Enable
 
     -- Cache it because on shutdown, XFG.Config gets unloaded while we're still logging
-    XFG.Cache.Verbosity = XFG.Config.Debug.Verbosity
+    if(XFG.Config.Debug.Enable) then
+        XFG.Verbosity = XFG.Config.Debug.Verbosity
+    else
+        XFG.Verbosity = 0
+    end
 
     XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.ConfigDB)
     XFG.Lib.Config:RegisterOptionsTable(XFG.Name, XFG.Options, nil)
@@ -102,11 +105,16 @@ function XFG:LoadConfigs()
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileChanged', 'InitProfile')
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileCopied', 'InitProfile')
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileReset', 'InitProfile')
+    XFG.ConfigDB.RegisterCallback(self, 'OnDatabaseShutdown', 'Shutdown')
 end
     
 function XFG:InitProfile()
     -- When DB changes namespace (profile) the XFG.Config becomes invalid and needs to be reset
     XFG.Config = XFG.ConfigDB.profile
+end
+
+function XFG:Shutdown()
+    wipe(_G.XFCacheDB)  
 end
 --#endregion
 

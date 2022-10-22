@@ -24,7 +24,7 @@ end
 
 --#region Print
 function Timer:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
         XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
         XFG:Debug(ObjectName, '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
@@ -117,7 +117,7 @@ function Timer:Start()
         self.handle = NewTimer(self:GetDelta(), self:GetCallback())
     end
     self:IsEnabled(true)
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         XFG:Debug(ObjectName, 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
     end
 end
@@ -128,7 +128,7 @@ function Timer:Stop()
     end
     --XFG:CancelTimer(self._ID)
     self:IsEnabled(false)
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         XFG:Debug(ObjectName, 'Stopped timer [%s]', self:GetName())
     end
 end

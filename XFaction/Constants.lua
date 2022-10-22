@@ -14,7 +14,7 @@ XFG.Name = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XFG.Version = GetAddOnMetadata(addon, 'Version')
 XFG.Start = GetServerTime()
-XFG.DebugFlag = true
+XFG.Verbosity = 4
 
 XFG.DataText = {}
 XFG.Factories = {}
