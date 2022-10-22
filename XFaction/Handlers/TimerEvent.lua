@@ -75,7 +75,9 @@ function TimerEvent:CallbackLogin()
 				XFG.Initialized = true
 				XFG.DataText.Guild:SetFont()
 				XFG.DataText.Guild:RefreshBroker()
+				XFG.DataText.Links:SetFont()
 				XFG.DataText.Links:RefreshBroker()
+				XFG.DataText.Metrics:SetFont()
 				XFG.DataText.Metrics:RefreshBroker()
 			end
 		end
