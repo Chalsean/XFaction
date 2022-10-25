@@ -3,44 +3,49 @@ local ObjectName = 'NodeCollection'
 
 NodeCollection = Factory:newChildConstructor()
 
+--#region Constructors
 function NodeCollection:new()
-    local _Object = NodeCollection.parent.new(self)
-	_Object.__name = ObjectName
-	_Object._TargetCount = {}
-    return _Object
+    local object = NodeCollection.parent.new(self)
+	object.__name = ObjectName
+	object.targetCount = {}
+    return object
 end
 
 function NodeCollection:NewObject()
 	return Node:new()
 end
+--#endregion
 
+--#region Print
 function NodeCollection:Print()
-	if(XFG.DebugFlag) then
+	if(XFG.Verbosity) then
 		self:ParentPrint()
-		XFG:Debug(ObjectName, '  _TargetCount (' .. type(self._TargetCount) .. '): ')
-		XFG:DataDumper(ObjectName, self._TargetCount)
+		XFG:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ')
+		XFG:DataDumper(ObjectName, self.targetCount)
 	end
 end
+--#endregion
 
+--#region Hash
 function NodeCollection:Add(inNode)
-    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
+    assert(type(inNode) == 'table' and inNode.__name == 'Node', 'argument must be Node object')
 	self.parent.Add(self, inNode)
-	if(self._TargetCount[inNode:GetTarget():GetKey()] == nil) then
-		self._TargetCount[inNode:GetTarget():GetKey()] = 0
+	if(self.targetCount[inNode:GetTarget():GetKey()] == nil) then
+		self.targetCount[inNode:GetTarget():GetKey()] = 0
 	end
-	self._TargetCount[inNode:GetTarget():GetKey()] = self._TargetCount[inNode:GetTarget():GetKey()] + 1
+	self.targetCount[inNode:GetTarget():GetKey()] = self.targetCount[inNode:GetTarget():GetKey()] + 1
 end
 
 function NodeCollection:Remove(inNode)
-    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
+    assert(type(inNode) == 'table' and inNode.__name == 'Node', 'argument must be Node object')
 	try(function ()
 		self.parent.Remove(self, inNode:GetKey())
-		if(self._TargetCount[inNode:GetTarget():GetKey()] ~= nil) then
-			self._TargetCount[inNode:GetTarget():GetKey()] = self._TargetCount[inNode:GetTarget():GetKey()] - 1
+		if(self.targetCount[inNode:GetTarget():GetKey()] ~= nil) then
+			self.targetCount[inNode:GetTarget():GetKey()] = self.targetCount[inNode:GetTarget():GetKey()] - 1
 		end
-		for _, _Link in XFG.Links:Iterator() do
-			if(_Link:GetFromNode():Equals(inNode) or _Link:GetToNode():Equals(inNode)) then
-				XFG.Links:Remove(_Link)
+		for _, link in XFG.Links:Iterator() do
+			if(link:GetFromNode():Equals(inNode) or link:GetToNode():Equals(inNode)) then
+				XFG.Links:Remove(link)
 			end
 		end
 	end).
@@ -48,23 +53,28 @@ function NodeCollection:Remove(inNode)
 		self:Push(inNode)
 	end)
 end
+--#endregion
 
+--#region Accessors
 function NodeCollection:GetTargetCount(inTarget)
-	return self._TargetCount[inTarget:GetKey()] or 0
+	return self.targetCount[inTarget:GetKey()] or 0
 end
+--#endregion
 
+--#region DataSet
 function NodeCollection:SetNodeFromString(inNodeString)
     assert(type(inNodeString) == 'string')
-    local _NodeData = string.Split(inNodeString, ':') 
-	if(self:Contains(_NodeData[1])) then
-		return self:Get(_NodeData[1])
+    local nodeData = string.Split(inNodeString, ':') 
+	if(self:Contains(nodeData[1])) then
+		return self:Get(nodeData[1])
 	end
-	local _Node = self:Pop()
-    _Node:SetKey(_NodeData[1])
-    _Node:SetName(_NodeData[1])
-    local _Realm = XFG.Realms:GetByID(tonumber(_NodeData[2]))
-    local _Faction = XFG.Factions:Get(tonumber(_NodeData[3]))
-    _Node:SetTarget(XFG.Targets:GetByRealmFaction(_Realm, _Faction))
-	self:Add(_Node)
-	return _Node
+	local node = self:Pop()
+    node:SetKey(nodeData[1])
+    node:SetName(nodeData[1])
+    local realm = XFG.Realms:GetByID(tonumber(nodeData[2]))
+    local faction = XFG.Factions:Get(tonumber(nodeData[3]))
+    node:SetTarget(XFG.Targets:GetByRealmFaction(realm, faction))
+	self:Add(node)
+	return node
 end
+--#endregion

@@ -3,85 +3,84 @@ local ObjectName = 'Friend'
 
 Friend = Object:newChildConstructor()
 
+--#region Constructors
 function Friend:new()
-    local _Object = Friend.parent.new(self)
-    _Object.__name = ObjectName
+    local object = Friend.parent.new(self)
+    object.__name = ObjectName
 
-    _Object._ID = nil         -- This the "friend index" you use to look things up
-    _Object._AccountID = nil  -- This is the only constant ID
-    _Object._GameID = nil     -- This is the game ID you use to send whispers
-    _Object._AccountName = nil
-    _Object._Tag = nil
-    _Object._Target = nil
-    _Object._IsRunningAddon = false
-    _Object._DateTime = 0  -- Last time we heard from them via addon
-    _Object._MyLink = false
+    object.ID = nil         -- This the "friend index" you use to look things up
+    object.accountID = nil  -- This is the only constant ID
+    object.gameID = nil     -- This is the game ID you use to send whispers
+    object.accountName = nil
+    object.tag = nil
+    object.target = nil
+    object.isRunningAddon = false
+    object.myLink = false
 
-    return _Object
+    return object
 end
+--#endregion
 
+--#region Print
 function Friend:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, "  _ID (" .. type(self._ID) .. "): ".. tostring(self._ID))
-        XFG:Debug(ObjectName, "  _AccountID (" .. type(self._AccountID) .. "): ".. tostring(self._AccountID))
-        XFG:Debug(ObjectName, "  _GameID (" .. type(self._GameID) .. "): ".. tostring(self._GameID))
-        XFG:Debug(ObjectName, "  _AccountName (" ..type(self._AccountName) .. "): ".. tostring(self._AccountName))
-        XFG:Debug(ObjectName, "  _Tag (" ..type(self._Tag) .. "): ".. tostring(self._Tag))
-        XFG:Debug(ObjectName, "  _IsRunningAddon (" ..type(self._IsRunningAddon) .. "): ".. tostring(self._IsRunningAddon))
-        XFG:Debug(ObjectName, "  _MyLink (" ..type(self._MyLink) .. "): ".. tostring(self._MyLink))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
+        XFG:Debug(ObjectName, '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
+        XFG:Debug(ObjectName, '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
+        XFG:Debug(ObjectName, '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
+        XFG:Debug(ObjectName, '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
+        XFG:Debug(ObjectName, '  myLink (' .. type(self.myLink) .. '): ' .. tostring(self.myLink))
         if(self:HasTarget()) then self:GetTarget():Print() end
     end
 end
+--#endregion
 
+--#region Accessors
 function Friend:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Friend:SetID(inID)
     assert(type(inID) == 'number')
-    self._ID = inID
-    return self:GetID()
+    self.ID = inID
 end
 
 function Friend:GetAccountID()
-    return self._AccountID
+    return self.accountID
 end
 
 function Friend:SetAccountID(inAccountID)
     assert(type(inAccountID) == 'number')
-    self._AccountID = inAccountID
-    return self:GetAccountID()
+    self.accountID = inAccountID
 end
 
 function Friend:GetGameID()
-    return self._GameID
+    return self.gameID
 end
 
 function Friend:SetGameID(inGameID)
     assert(type(inGameID) == 'number')
-    self._GameID = inGameID
-    return self:GetGameID()
+    self.gameID = inGameID
 end
 
 function Friend:GetAccountName()
-    return self._AccountName
+    return self.accountName
 end
 
 function Friend:SetAccountName(inAccountName)
     assert(type(inAccountName) == 'string')
-    self._AccountName = inAccountName
-    return self:GetAccountName()
+    self.accountName = inAccountName
 end
 
 function Friend:GetTag()
-    return self._Tag
+    return self.tag
 end
 
 function Friend:SetTag(inTag)
     assert(type(inTag) == 'string')
-    self._Tag = inTag
-    return self:GetTag()
+    self.tag = inTag
 end
 
 function Friend:HasTarget()
@@ -89,62 +88,53 @@ function Friend:HasTarget()
 end
 
 function Friend:GetTarget()
-    return self._Target
+    return self.target
 end
 
 function Friend:SetTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', "argument must be Target object")
-    self._Target = inTarget
-    return self:GetTarget()
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+    self.target = inTarget
 end
 
 function Friend:IsRunningAddon(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
-        self._IsRunningAddon = inBoolean
+        self.isRunningAddon = inBoolean
     end
-    return self._IsRunningAddon
+    return self.isRunningAddon
 end
+--#endregion
 
-function Friend:GetDateTime()
-    return self._DateTime
-end
-
-function Friend:SetDateTime(inDateTime)
-    assert(type(inDateTime) == 'number')
-    self._DateTime = inDateTime
-    return self:GetDateTime()
-end
-
+--#region Link
 function Friend:CreateLink()
     if(self:IsRunningAddon() and self:HasTarget()) then
-        local _NewLink = nil
+        local link = nil
         try(function ()
-            _NewLink = XFG.Links:Pop()
-            local _FromNode = XFG.Nodes:Get(XFG.Player.Unit:GetName())
-            if(_FromNode == nil) then
-                _FromNode = XFG.Nodes:Pop()
-                _FromNode:Initialize()
-                XFG.Nodes:Add(_FromNode)
+            link = XFG.Links:Pop()
+            local fromNode = XFG.Nodes:Get(XFG.Player.Unit:GetName())
+            if(fromNode == nil) then
+                fromNode = XFG.Nodes:Pop()
+                fromNode:Initialize()
+                XFG.Nodes:Add(fromNode)
             end
-            _NewLink:SetFromNode(_FromNode)
+            link:SetFromNode(fromNode)
 
-            local _ToNode = XFG.Nodes:Get(self:GetName())
-            if(_ToNode == nil) then
-                _ToNode = XFG.Nodes:Pop()
-                _ToNode:SetKey(self:GetName())
-                _ToNode:SetName(self:GetName())
-                _ToNode:SetTarget(self:GetTarget())
-                XFG.Nodes:Add(_ToNode)
+            local toNode = XFG.Nodes:Get(self:GetName())
+            if(toNode == nil) then
+                toNode = XFG.Nodes:Pop()
+                toNode:SetKey(self:GetName())
+                toNode:SetName(self:GetName())
+                toNode:SetTarget(self:GetTarget())
+                XFG.Nodes:Add(toNode)
             end
-            _NewLink:SetToNode(_ToNode)
+            link:SetToNode(toNode)
 
-            _NewLink:Initialize()
-            XFG.Links:Add(_NewLink)
+            link:Initialize()
+            XFG.Links:Add(link)
         end).
         catch(function (inErrorMessage)
             XFG:Warn(ObjectName, inErrorMessage)
-            XFG.Links:Push(_NewLink)
+            XFG.Links:Push(link)
         end)
     end
 end
@@ -152,21 +142,50 @@ end
 function Friend:IsMyLink(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
     if(inBoolean ~= nil) then
-        self._MyLink = inBoolean
+        self.myLink = inBoolean
     end
-    return self._MyLink
+    return self.myLink
 end
+--#endregion
 
+--#region Network
+function Friend:Ping()
+    if(XFG.Verbosity) then
+        XFG:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
+    end
+    XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, self:GetGameID())
+    XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment() 
+end
+--#endregion
+
+--#region DataSet
+function Friend:SetFromAccountInfo(inAccountInfo)
+    self:SetKey(inAccountInfo.bnetAccountID)
+    self:SetID(inAccountInfo.ID)
+    self:SetAccountID(inAccountInfo.bnetAccountID)
+    self:SetGameID(inAccountInfo.gameAccountInfo.gameAccountID)
+    self:SetAccountName(inAccountInfo.accountName)
+    self:SetTag(inAccountInfo.battleTag)
+    self:SetName(inAccountInfo.gameAccountInfo.characterName)
+
+    local realm = XFG.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
+    local faction = XFG.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
+    local target = XFG.Targets:GetByRealmFaction(realm, faction)
+    self:SetTarget(target)
+end
+--#endregion
+
+--#region Janitorial
 function Friend:FactoryReset()
     self:ParentFactoryReset()
-    self._ID = nil         
-    self._AccountID = nil  
-    self._GameID = nil     
-    self._AccountName = nil
-    self._Tag = nil
-    self._Target = nil
-    self._IsRunningAddon = false
-    self._DateTime = 0  
-    self._MyLink = false
+    self.ID = nil         
+    self.accountID = nil  
+    self.gameID = nil     
+    self.accountName = nil
+    self.tag = nil
+    self.target = nil
+    self.isRunningAddon = false
+    self.myLink = false
     self:Initialize()
 end
+--#endregion

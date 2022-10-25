@@ -1,28 +1,41 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'LinkCollection'
-
 local ServerTime = GetServerTime
 
 LinkCollection = Factory:newChildConstructor()
 
+--#region Constructors
 function LinkCollection:new()
-    local _Object = LinkCollection.parent.new(self)
-	_Object.__name = ObjectName
-	_Object._EpochTime = 0
-	return _Object
+    local object = LinkCollection.parent.new(self)
+	object.__name = ObjectName
+	return object
 end
 
 function LinkCollection:NewObject()
 	return Link:new()
 end
+--#endregion
 
+--#region Initializers
+function LinkCollection:Initialize()
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
+		if(XFG.Cache.UIReload) then
+			self:Restore()
+		end
+		self:IsInitialized(true)
+	end
+end
+--#endregion
+
+--#region Hash
 function LinkCollection:Add(inLink)
-    assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
+    assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
 	if(not self:Contains(inLink:GetKey())) then
 		self.parent.Add(self, inLink)
 		inLink:GetFromNode():IncrementLinkCount()
 		inLink:GetToNode():IncrementLinkCount()
-		if(XFG.DebugFlag) then
+		if(XFG.Verbosity) then
 			XFG:Info(ObjectName, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		end
 		XFG.DataText.Links:RefreshBroker()	
@@ -30,40 +43,47 @@ function LinkCollection:Add(inLink)
 end
 
 function LinkCollection:Remove(inLink)
-    assert(type(inLink) == 'table' and inLink.__name ~= nil and inLink.__name == 'Link', "argument must be Link object")
+    assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
 	if(self:Contains(inLink:GetKey())) then
 		self.parent.Remove(self, inLink:GetKey())
 		inLink:GetFromNode():DecrementLinkCount()
 		inLink:GetToNode():DecrementLinkCount()
-		if(XFG.DebugFlag) then
+		if(XFG.Verbosity) then
 			XFG:Info(ObjectName, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
 		end
 		XFG.DataText.Links:RefreshBroker()
 		self:Push(inLink)
 	end
 end
+--#endregion
 
+--#region DataSet
 -- A link message is a reset of the links for that node
 function LinkCollection:ProcessMessage(inMessage)
-	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', "argument must be Message object")
-	local _LinkStrings = string.Split(inMessage:GetData(), '|')
-	local _LinkKeys = {}
-	local _SourceKey = nil	
+	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', 'argument must be Message object')
+	local linkStrings = string.Split(inMessage:GetData(), '|')
+	local linkKeys = {}
+	local sourceKey = nil	
 	-- Add new links
-    for _, _LinkString in pairs (_LinkStrings) do
-		local _LinkKey, _From = self:SetLinkFromString(_LinkString)
-		if(_LinkKey ~= nil) then 
-			_LinkKeys[_LinkKey] = true 
-			_SourceKey = _From
+    for _, linkString in pairs (linkStrings) do
+		local linkKey, from = self:SetLinkFromString(linkString)
+		if(linkKey ~= nil) then 
+			linkKeys[linkKey] = true 
+			sourceKey = from
 		end
     end
-	-- Remove stale links
-	for _, _Link in self:Iterator() do
+	-- Remove stale links and update datetimes
+	for _, link in self:Iterator() do
 		-- Consider that we may have gotten link information from the other node
-		if(not _Link:IsMyLink() and (_Link:GetFromNode():GetName() == _SourceKey or _Link:GetToNode():GetName() == _SourceKey) and _LinkKeys[_Link:GetKey()] == nil) then
-			self:Remove(_Link)
-			if(XFG.DebugFlag) then
-				XFG:Debug(ObjectName, 'Removed link due to node broadcast [%s]', _Link:GetKey())
+		if(link:GetFromNode():GetName() == sourceKey or link:GetToNode():GetName() == sourceKey) then
+			if(not link:IsMyLink() and linkKeys[link:GetKey()] == nil) then
+				self:Remove(link)
+				if(XFG.Verbosity) then
+					XFG:Debug(ObjectName, 'Removed link due to node broadcast [%s]', link:GetKey())
+				end
+			else
+				-- Update datetime for janitor process
+				link:SetTimeStamp(ServerTime())
 			end
 		end
 	end
@@ -72,79 +92,81 @@ end
 function LinkCollection:SetLinkFromString(inLinkString)
     assert(type(inLinkString) == 'string')
 
-    local _Nodes = string.Split(inLinkString, ';')
-    local _FromNode = XFG.Nodes:SetNodeFromString(_Nodes[1])
-    local _ToNode = XFG.Nodes:SetNodeFromString(_Nodes[2])
+    local nodes = string.Split(inLinkString, ';')
+    local fromNode = XFG.Nodes:SetNodeFromString(nodes[1])
+    local toNode = XFG.Nodes:SetNodeFromString(nodes[2])
 
 	-- Can remove equality check once everyone updates to 3.9.6
-	if(_FromNode:IsMyNode() or _ToNode:IsMyNode() or _FromNode:Equals(_ToNode)) then
+	if(fromNode:IsMyNode() or toNode:IsMyNode() or fromNode:Equals(toNode)) then
 		return nil
 	end
 
-	local _LinkKey = XFG:GetLinkKey(_FromNode:GetName(), _ToNode:GetName())
-	if(self:Contains(_LinkKey)) then
-		return self:Get(_LinkKey), _FromNode:GetName()
+	local key = XFG:GetLinkKey(fromNode:GetName(), toNode:GetName())
+	if(self:Contains(key)) then
+		return self:Get(key), fromNode:GetName()
 	end
 
-	local _Link = self:Pop()
-	_Link:SetFromNode(_FromNode)
-	_Link:SetToNode(_ToNode)
-    _Link:Initialize()
-	self:Add(_Link)
-	_FromNode:IncrementLinkCount()
-	_ToNode:IncrementLinkCount()
+	local link = self:Pop()
+	link:SetFromNode(fromNode)
+	link:SetToNode(toNode)
+    link:Initialize()
+	self:Add(link)
+	fromNode:IncrementLinkCount()
+	toNode:IncrementLinkCount()
 
-	return _LinkKey, _FromNode:GetName()
+	return key, fromNode:GetName()
 end
+--#endregion
 
+--#region Network
 function LinkCollection:Broadcast()
 	XFG:Debug(ObjectName, 'Broadcasting links')
-	self._EpochTime = ServerTime()
-	local _LinksString = ''
-	local _HaveLinks = false
-	for _, _Link in self:Iterator() do
-		if(_Link:IsMyLink()) then
-			_HaveLinks = true
-			_LinksString = _LinksString .. '|' .. _Link:GetString()
+	local linksString = ''
+	local haveLinks = false
+	for _, link in self:Iterator() do
+		if(link:IsMyLink()) then
+			haveLinks = true
+			linksString = linksString .. '|' .. link:GetString()
 		end
 	end
 
-	if(not _HaveLinks) then return end
+	if(not haveLinks) then return end
 
-	local _NewMessage = nil
+	local message = nil
 	try(function ()
-		_NewMessage = XFG.Mailbox:Pop()
-		_NewMessage:Initialize()
-		_NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-		_NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LINK)
-		_NewMessage:SetData(_LinksString)
-		XFG.Outbox:Send(_NewMessage)  
+		message = XFG.Mailbox.Chat:Pop()
+		message:Initialize()
+		message:SetType(XFG.Settings.Network.Type.BROADCAST)
+		message:SetSubject(XFG.Settings.Network.Message.Subject.LINK)
+		message:SetData(linksString)
+		XFG.Mailbox.Chat:Send(message)  
 	end).
 	finally(function ()
-		XFG.Mailbox:Push(_NewMessage)
+		XFG.Mailbox.Chat:Push(message)
 	end)
 end
+--#endregion
 
+--#region Janitorial
 function LinkCollection:Backup()
 	try(function ()
-		local _LinksString = ''
-		for _, _Link in self:Iterator() do
-			_LinksString = _LinksString .. '|' .. _Link:GetString()
+		local linksString = ''
+		for _, link in self:Iterator() do
+			linksString = linksString .. '|' .. link:GetString()
 		end
-		XFG.DB.Backup.Links = _LinksString
+		XFG.Cache.Backup.Links = linksString
 	end).
 	catch(function (inErrorMessage)
-		XFG.DB.Errors[#XFG.DB.Errors + 1] = 'Failed to create links backup before reload: ' .. inErrorMessage
+		XFG.Cache.Errors[#XFG.Cache.Errors + 1] = 'Failed to create links backup before reload: ' .. inErrorMessage
 	end)
 end
 
 function LinkCollection:Restore()
-	
-	if(XFG.DB.Backup.Links ~= nil and strlen(XFG.DB.Backup.Links) > 0) then
+	if(XFG.Cache.Backup.Links ~= nil and strlen(XFG.Cache.Backup.Links) > 0) then
 		try(function ()
-			local _Links = string.Split(XFG.DB.Backup.Links, '|')
-			for _, _Link in pairs (_Links) do
-				self:SetLinkFromString(_Link)
+			local links = string.Split(XFG.Cache.Backup.Links, '|')
+			for _, link in pairs (links) do
+				self:SetLinkFromString(link)
 			end
 		end).
 		catch(function (inErrorMessage)
@@ -155,10 +177,11 @@ end
 
 function LinkCollection:Purge(inEpochTime)
 	assert(type(inEpochTime) == 'number')
-	for _, _Link in self:Iterator() do
-		if(not _Link:IsMyLink() and _Link:GetTimeStamp() < inEpochTime) then
+	for _, link in self:Iterator() do
+		if(not link:IsMyLink() and link:GetTimeStamp() < inEpochTime) then
 			XFG:Debug(ObjectName, 'Removing stale link')
-			self:Remove(_Link)
+			self:Remove(link)
 		end
 	end
 end
+--#endregion

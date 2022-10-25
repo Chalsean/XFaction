@@ -1,31 +1,32 @@
-## Interface: 90207
-## Globe: check-classic
+## Interface: 100002
 ## Author: Chalsean (US-Proudmoore)
-## Version: 3.10.0
+## Version: 4.0.2
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariables: XFactionDB
-## OptionalDeps: Kui_Nameplates, RaiderIO, _DebugLog, ElvUI, BugSack, BugGrabber, WIM
+## SavedVariables: XFCacheDB, XFactionDB
+## OptionalDeps: _DebugLog, BugSack, BugGrabber
 
 Libraries\LoadLibraries.xml
 Locales\LoadLocales.xml
 
 Constants.lua
-Base\LoadBase.xml
-Developer\LoadDeveloper.xml
 Functions\LoadFunctions.xml
+
+Base\LoadBase.xml
 Client\LoadClient.xml
-Configuration\LoadConfigurations.xml
-Wrappers\LoadWrappers.xml
-Handlers\LoadHandlers.xml
-Network\LoadNetwork.xml
-Unit\LoadUnit.xml
 Confederate\LoadConfederate.xml
-Nameplates\LoadNameplates.xml
-Frames\LoadFrames.xml
+Configuration\LoadConfigurations.xml
 DataText\LoadDataText.xml
+Developer\LoadDeveloper.xml
+Frames\LoadFrames.xml
+Handlers\LoadHandlers.xml
 Media\LoadMedia.xml
 Metrics\LoadMetrics.xml
+Nameplates\LoadNameplates.xml
+Network\LoadNetwork.xml
+Unit\LoadUnit.xml
+Wrappers\LoadWrappers.xml
+
 Initialize.lua

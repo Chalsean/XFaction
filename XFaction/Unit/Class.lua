@@ -3,70 +3,76 @@ local ObjectName = 'Class'
 
 Class = Object:newChildConstructor()
 
+--#region Constructors
 function Class:new()
-    local _Object = Class.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._ID = nil
-    _Object._APIName = nil
-    _Object._R = nil
-    _Object._G = nil
-    _Object._B = nil
-    _Object._Hex = nil
-    return _Object
+    local object = Class.parent.new(self)
+    object.__name = ObjectName
+    object.ID = nil
+    object.apiName = nil
+    object.r = nil
+    object.g = nil
+    object.b = nil
+    object.hex = nil
+    return object
 end
+--#endregion
 
+--#region Print
 function Class:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-        XFG:Debug(ObjectName, '  _APIName (' .. type(self._APIName) .. '): ' .. tostring(self._APIName))
-        XFG:Debug(ObjectName, '  _R (' .. type(self._R) .. '): ' .. tostring(self._R))
-        XFG:Debug(ObjectName, '  _G (' .. type(self._G) .. '): ' .. tostring(self._G))
-        XFG:Debug(ObjectName, '  _B (' .. type(self._B) .. '): ' .. tostring(self._B))
-        XFG:Debug(ObjectName, '  _Hex (' .. type(self._Hex) .. '): ' .. tostring(self._Hex))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
+        XFG:Debug(ObjectName, '  r (' .. type(self.r) .. '): ' .. tostring(self.r))
+        XFG:Debug(ObjectName, '  g (' .. type(self.g) .. '): ' .. tostring(self.g))
+        XFG:Debug(ObjectName, '  b (' .. type(self.b) .. '): ' .. tostring(self.b))
+        XFG:Debug(ObjectName, '  hex (' .. type(self.hex) .. '): ' .. tostring(self.hex))
     end
 end
+--#endregion
 
+--#region Accessors
 function Class:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Class:SetID(inID)
     assert(type(inID) == 'number')
-    self._ID = inID
+    self.ID = inID
 end
 
 function Class:GetAPIName()
-    return self._APIName
+    return self.apiName
 end
 
 function Class:SetAPIName(inAPIName)
     assert(type(inAPIName) == 'string')
-    self._APIName = inAPIName
+    self.apiName = inAPIName
 end
 
 function Class:GetRGB()
-    return self._R, self._G, self._B
+    return self.r, self.g, self.b
 end
 
 function Class:GetRGBPercent()
-    return self._R / 255, self._G / 255, self._B / 255
+    return self.r / 255, self.g / 255, self.b / 255
 end
 
 function Class:SetRGB(inR, inG, inB)
     assert(type(inR) == 'number')
     assert(type(inG) == 'number')
     assert(type(inB) == 'number')
-    self._R = inR
-    self._G = inG
-    self._B = inB
+    self.r = inR
+    self.g = inG
+    self.b = inB
 end
 
 function Class:SetHex(inHex)
     assert(type(inHex) == 'string')
-    self._Hex = inHex
+    self.hex = inHex
 end
 
 function Class:GetHex()
-    return self._Hex
+    return self.hex
 end
+--#endregion

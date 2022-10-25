@@ -3,61 +3,69 @@ local ObjectName = 'Realm'
 
 Realm = Object:newChildConstructor()
 
+--#region Constructors
 function Realm:new()
-    local _Object = Realm.parent.new(self)
-    _Object.__name = ObjectName
-    self._APIName = nil
-    self._ID = 0
-    self._IDs = {}
-    self._IDCount = 0
-    return _Object
+    local object = Realm.parent.new(self)
+    object.__name = ObjectName
+    object.apiName = nil
+    object.ID = 0
+    object.IDs = {}
+    object.IDCount = 0
+    return object
 end
+--#endregion
 
+--#region Print
 function Realm:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _APIName (' .. type(self._APIName) .. '): ' .. tostring(self._APIName))
-        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-        XFG:Debug(ObjectName, '  _IDCount (' .. type(self._IDCount) .. '): ' .. tostring(self._IDCount))
-        XFG:Debug(ObjectName, '  _IDs (' .. type(self._IDs) .. '): ')
-        for _, _Value in pairs (self._IDs) do
-            XFG:Debug(ObjectName, '  ID (' .. type(_Value) .. ') ' .. tostring(_Value))
+        XFG:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  IDCount (' .. type(self.IDCount) .. '): ' .. tostring(self.IDCount))
+        XFG:Debug(ObjectName, '  IDs (' .. type(self.IDs) .. '): ')
+        for _, value in pairs (self.IDs) do
+            XFG:Debug(ObjectName, '  ID (' .. type(value) .. ') ' .. tostring(value))
         end
     end
 end
+--#endregion
 
+--#region Iterators
+function Realm:IDIterator()
+    return next, self.IDs, nil
+end
+--#endregion
+
+--#region Accessors
 function Realm:GetAPIName()
-    return self._APIName
+    return self.apiName
 end
 
 function Realm:SetAPIName(inName)
     assert(type(inName) == 'string')
-    self._APIName = inName
+    self.apiName = inName
 end
 
 function Realm:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Realm:SetID(inID)
     assert(type(inID) == 'number')
-    self._ID = inID
+    self.ID = inID
 end
 
 function Realm:GetIDs()
-    return self._IDs
+    return self.IDs
 end
 
 function Realm:SetIDs(inIDs)
     assert(type(inIDs) == 'table')
-    self._IDs = inIDs
-    self._IDCount = table.getn(self._IDs)
+    self.IDs = inIDs
+    self.IDCount = table.getn(self.IDs)
 end
 
 function Realm:IsConnected()
-    return self._IDCount > 1
+    return self.IDCount > 1
 end
-
-function Realm:IDIterator()
-    return next, self._IDs, nil
-end
+--#endregion

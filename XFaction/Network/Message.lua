@@ -1,37 +1,39 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Message'
-
 local ServerTime = GetServerTime
 
 Message = Object:newChildConstructor()
 
+--#region Constructors
 function Message:new()
-    local _Object = Message.parent.new(self)
-    _Object.__name = 'Message'
-    _Object._To = nil
-    _Object._From = nil
-    _Object._Type = nil
-    _Object._Subject = nil
-    _Object._EpochTime = nil
-    _Object._Targets = nil
-    _Object._TargetCount = 0
-    _Object._Data = nil
-    _Object._Initialized = false
-    _Object._PacketNumber = 1
-    _Object._TotalPackets = 1
-    _Object._Version = nil
-    _Object._UnitName = nil
-    _Object._MainName = nil
-    _Object._Guild = nil
-    _Object._Realm = nil
-    return _Object
+    local object = Message.parent.new(self)
+    object.__name = 'Message'
+    object.to = nil
+    object.from = nil
+    object.type = nil
+    object.subject = nil
+    object.epochTime = nil
+    object.targets = nil
+    object.targetCount = 0
+    object.data = nil
+    object.initialized = false
+    object.packetNumber = 1
+    object.totalPackets = 1
+    object.version = nil
+    object.unitName = nil
+    object.mainName = nil
+    object.guild = nil
+    object.realm = nil
+    return object
 end
+--#endregion
 
+--#region Initializers
 function Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self._Targets = {}
-        self:SetFrom(XFG.Player.Unit:GetKey())
+        self.targets = {}
+        self:SetFrom(XFG.Player.Unit:GetGUID())
         self:SetTimeStamp(ServerTime())
         self:SetAllTargets()
         self:SetVersion(XFG.Version)
@@ -39,192 +41,97 @@ function Message:Initialize()
     end
     return self:IsInitialized()
 end
+--#endregion
 
+--#region Print
 function Message:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
-        XFG:Debug(ObjectName, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
-        XFG:Debug(ObjectName, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
-        XFG:Debug(ObjectName, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
-        XFG:Debug(ObjectName, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
-        XFG:Debug(ObjectName, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
-        XFG:Debug(ObjectName, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-        XFG:Debug(ObjectName, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
-        XFG:Debug(ObjectName, "  _MainName (" ..type(self._MainName) .. "): ".. tostring(self._MainName))
-        XFG:Debug(ObjectName, "  _Data (" ..type(self._Data) .. ")")
-        XFG:Debug(ObjectName, self._Data)
-        if(self:HasGuild()) then self:GetGuild():Print() end
-        if(self:HasRealm()) then self:GetRealm():Print() end
-        XFG:Debug(ObjectName, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
-        if(self:HasVersion()) then self._Version:Print() end
-        for _, _Target in pairs (self:GetTargets()) do
-            _Target:Print()
-        end
+        XFG:Debug(ObjectName, '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
+        XFG:Debug(ObjectName, '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
+        XFG:Debug(ObjectName, '  packetNumber (' .. type(self.packetNumber) .. '): ' .. tostring(self.packetNumber))
+        XFG:Debug(ObjectName, '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
+        XFG:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+        XFG:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
+        XFG:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
+        XFG:Debug(ObjectName, '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
+        XFG:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
+        XFG:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
+        if(self:HasVersion()) then self:GetVersion():Print() end
     end
 end
+--#endregion
 
-function Message:ShallowPrint()
-    if(XFG.DebugFlag) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, "  _To (" .. type(self._To) .. "): ".. tostring(self._To))
-        XFG:Debug(ObjectName, "  _From (" ..type(self._From) .. "): ".. tostring(self._From))
-        XFG:Debug(ObjectName, "  _PacketNumber (" ..type(self._PacketNumber) .. "): ".. tostring(self._PacketNumber))
-        XFG:Debug(ObjectName, "  _TotalPackets (" ..type(self._TotalPackets) .. "): ".. tostring(self._TotalPackets))
-        XFG:Debug(ObjectName, "  _Type (" ..type(self._Type) .. "): ".. tostring(self._Type))
-        XFG:Debug(ObjectName, "  _Subject (" ..type(self._Subject) .. "): ".. tostring(self._Subject))
-        XFG:Debug(ObjectName, "  _EpochTime (" ..type(self._EpochTime) .. "): ".. tostring(self._EpochTime))
-        XFG:Debug(ObjectName, "  _Data (" ..type(self._Data) .. ")")
-        XFG:Debug(ObjectName, "  _UnitName (" ..type(self._UnitName) .. "): ".. tostring(self._UnitName))
-        XFG:Debug(ObjectName, "  _MainName (" ..type(self._MainName) .. "): ".. tostring(self._MainName))
-        XFG:Debug(ObjectName, "  _TargetCount (" ..type(self._TargetCount) .. "): ".. tostring(self._TargetCount))
-        if(self:HasVersion()) then self._Version:Print() end
-    end
-end
-
+--#region Accessors
 function Message:GetTo()
-    return self._To
+    return self.to
 end
 
 function Message:SetTo(inTo)
     assert(type(inTo) == 'string')
-    self._To = inTo
-    return self:GetTo()
+    self.to = inTo
 end
 
 function Message:GetFrom()
-    return self._From
+    return self.from
 end
 
 function Message:SetFrom(inFrom)
     assert(type(inFrom) == 'string')
-    self._From = inFrom
-    return self:GetFrom()
+    self.from = inFrom
 end
 
 function Message:GetType()
-    return self._Type
+    return self.type
 end
 
 function Message:SetType(inType)
     assert(type(inType) == 'string')
-    self._Type = inType
-    return self:GetType()
+    self.type = inType
 end
 
 function Message:GetSubject()
-    return self._Subject
+    return self.subject
 end
 
 function Message:SetSubject(inSubject)
     assert(type(inSubject) == 'string')
-    self._Subject = inSubject
-    return self:GetSubject()
+    self.subject = inSubject
 end
 
 function Message:GetTimeStamp()
-    return self._EpochTime
+    return self.epochTime
 end
 
 function Message:SetTimeStamp(inEpochTime)
     assert(type(inEpochTime) == 'number')
-    self._EpochTime = inEpochTime
-    return self:GetTimeStamp()
+    self.epochTime = inEpochTime
 end
 
 function Message:GetData()
-    return self._Data
+    return self.data
 end
 
 function Message:SetData(inData)
-    self._Data = inData
-    return self:GetData()
+    self.data = inData
 end
 
 function Message:GetPacketNumber()
-    return self._PacketNumber
+    return self.packetNumber
 end
 
 function Message:SetPacketNumber(inPacketNumber)
     assert(type(inPacketNumber) == 'number')
-    self._PacketNumber = inPacketNumber
-    return self:GetPacketNumber()
+    self.packetNumber = inPacketNumber
 end
 
 function Message:GetTotalPackets()
-    return self._TotalPackets
+    return self.totalPackets
 end
 
 function Message:SetTotalPackets(inTotalPackets)
     assert(type(inTotalPackets) == 'number')
-    self._TotalPackets = inTotalPackets
-    return self:GetTotalPackets()
-end
-
-function Message:ContainsTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', "argument must be Target object")
-    return self._Targets[inTarget:GetKey()] ~= nil
-end
-
-function Message:AddTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', "argument must be Target object")
-    if(self:ContainsTarget(inTarget) == false) then
-        self._TargetCount = self._TargetCount + 1
-    end
-    self._Targets[inTarget:GetKey()] = inTarget
-    return self:ContainsTarget(inTarget)
-end
-
-function Message:RemoveTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name ~= nil and inTarget.__name == 'Target', "argument must be Target object")
-    if(self:ContainsTarget(inTarget)) then
-        self._Targets[inTarget:GetKey()] = nil
-        self._TargetCount = self._TargetCount - 1
-    end
-    return self:ContainsTarget(inTarget) == false
-end
-
-function Message:SetAllTargets()
-    for _, _Target in XFG.Targets:Iterator() do
-        if(not _Target:Equals(XFG.Player.Target)) then
-            self:AddTarget(_Target)
-        end
-    end
-end
-
-function Message:HasTargets()
-    return self._TargetCount > 0
-end
-
-function Message:GetTargets()
-    if(self:HasTargets()) then return self._Targets end
-    return {}
-end
-
-function Message:GetTargetCount()
-    return self._TargetCount
-end
-
-function Message:GetRemainingTargets()
-    local _TargetsString = ''
-    for _, _Target in pairs (self:GetTargets()) do
-        _TargetsString = _TargetsString .. '|' .. _Target:GetKey()
-    end
-    return _TargetsString
-end
-
-function Message:SetRemainingTargets(inTargetString)
-    wipe(self._Targets)
-    self._TargetCount = 0
-    local _Targets = string.Split(inTargetString, '|')
-    for _, _TargetKey in pairs (_Targets) do
-        if(_TargetKey ~= nil and XFG.Targets:Contains(_TargetKey)) then
-            local _Target = XFG.Targets:Get(_TargetKey)
-            if(not XFG.Player.Target:Equals(_Target)) then
-                self:AddTarget(_Target)
-            end
-        end
-    end
+    self.totalPackets = inTotalPackets
 end
 
 function Message:HasUnitData()
@@ -234,17 +141,16 @@ function Message:HasUnitData()
 end
 
 function Message:HasVersion()
-    return self._Version ~= nil
+    return self.version ~= nil
 end
 
 function Message:GetVersion()
-    return self._Version
+    return self.version
 end
 
 function Message:SetVersion(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name ~= nil and inVersion.__name == 'Version', 'argument must be Version object')
-    self._Version = inVersion
-    return self:GetVersion()
+    assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')
+    self.version = inVersion
 end
 
 function Message:IsMyMessage()
@@ -252,73 +158,138 @@ function Message:IsMyMessage()
 end
 
 function Message:GetUnitName()
-    return self._UnitName
+    return self.unitName
 end
 
 function Message:SetUnitName(inUnitName)
     assert(type(inUnitName) == 'string')
-    self._UnitName = inUnitName
-    return self:GetUnitName()
+    self.unitName = inUnitName
 end
 
 function Message:HasMainName()
-    return self._MainName ~= nil
+    return self.mainName ~= nil
 end
 
 function Message:GetMainName()
-    return self._MainName
+    return self.mainName
 end
 
 function Message:SetMainName(inMainName)
     assert(type(inMainName) == 'string')
-    self._MainName = inMainName
-    return self:GetMainName()
+    self.mainName = inMainName
 end
 
 function Message:HasGuild()
-    return self._Guild ~= nil
+    return self.guild ~= nil
 end
 
 function Message:GetGuild()
-    return self._Guild
+    return self.guild
 end
 
 function Message:SetGuild(inGuild)
-    assert(type(inGuild) == 'table' and inGuild.__name ~= nil and inGuild.__name == 'Guild', 'argument must be Guild object')
-    self._Guild = inGuild
-    return self:GetGuild()
+    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
+    self.guild = inGuild
 end
 
 function Message:HasRealm()
-    return self._Realm ~= nil
+    return self.realm ~= nil
 end
 
 function Message:GetRealm()
-    return self._Realm
+    return self.realm
 end
 
 function Message:SetRealm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-    self._Realm = inRealm
-    return self:GetRealm()
+    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
+    self.realm = inRealm
+end
+--#endregion
+
+--#region Target
+function Message:ContainsTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+    return self.targets[inTarget:GetKey()] ~= nil
 end
 
+function Message:AddTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+    if(not self:ContainsTarget(inTarget)) then
+        self.targetCount = self.targetCount + 1
+    end
+    self.targets[inTarget:GetKey()] = inTarget
+end
+
+function Message:RemoveTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+    if(self:ContainsTarget(inTarget)) then
+        self.targets[inTarget:GetKey()] = nil
+        self.targetCount = self.targetCount - 1
+    end
+end
+
+function Message:SetAllTargets()
+    for _, target in XFG.Targets:Iterator() do
+        if(not target:Equals(XFG.Player.Target)) then
+            self:AddTarget(target)
+        end
+    end
+end
+
+function Message:HasTargets()
+    return self.targetCount > 0
+end
+
+function Message:GetTargets()
+    if(self:HasTargets()) then return self.targets end
+    return {}
+end
+
+function Message:GetTargetCount()
+    return self.targetCount
+end
+
+function Message:GetRemainingTargets()
+    local targetsString = ''
+    for _, target in pairs (self:GetTargets()) do
+        targetsString = targetsString .. '|' .. target:GetKey()
+    end
+    return targetsString
+end
+
+function Message:SetRemainingTargets(inTargetString)
+    wipe(self.targets)
+    self.targetCount = 0
+    local targets = string.Split(inTargetString, '|')
+    for _, key in pairs (targets) do
+        if(key ~= nil and XFG.Targets:Contains(key)) then
+            local target = XFG.Targets:Get(key)
+            if(not XFG.Player.Target:Equals(target)) then
+                self:AddTarget(target)
+            end
+        end
+    end
+end
+--#endregion
+
+--#region Janitorial
 function Message:FactoryReset()
     self:ParentFactoryReset()
-    self._To = nil
-    self._From = nil
-    self._Type = nil
-    self._Subject = nil
-    self._EpochTime = nil
-    self._Targets = nil
-    self._TargetCount = 0
-    self._Data = nil
-    self._PacketNumber = 1
-    self._TotalPackets = 1
-    self._Version = nil
-    self._UnitName = nil
-    self._MainName = nil
-    self._Guild = nil
-    self._Realm = nil
+    self.to = nil
+    self.from = nil
+    self.type = nil
+    self.subject = nil
+    self.epochTime = nil
+    self.targets = nil
+    self.targetCount = 0
+    self.data = nil
+    self.packetNumber = 1
+    self.totalPackets = 1
+    self.version = nil
+    self.unitName = nil
+    self.mainName = nil
+    self.guild = nil
+    self.realm = nil
     self:Initialize()
 end
+--#endregion

@@ -3,36 +3,42 @@ local ObjectName = 'Profession'
 
 Profession = Object:newChildConstructor()
 
+--#region Constructors
 function Profession:new()
-    local _Object = Profession.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._ID = 0
-    _Object._IconID = nil
-    return _Object
+    local object = Profession.parent.new(self)
+    object.__name = ObjectName
+    object.ID = 0
+    object.iconID = nil
+    return object
 end
+--#endregion
 
+--#region Print
 function Profession:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-        XFG:Debug(ObjectName, '  _IconID (' .. type(self._IconID) .. '): ' .. tostring(self._IconID))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+        XFG:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
     end
 end
+--#endregion
 
+--#region Accessors
 function Profession:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Profession:SetID(inProfessionID)
     assert(type(inProfessionID) == 'number')
-    self._ID = inProfessionID
+    self.ID = inProfessionID
 end
 
 function Profession:GetIconID()
-    return self._IconID
+    return self.iconID
 end
 
 function Profession:SetIconID(inIconID)
     assert(type(inIconID) == 'number')
-    self._IconID = inIconID
+    self.iconID = inIconID
 end
+--#endregion

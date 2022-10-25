@@ -4,51 +4,51 @@ local LogCategory = 'Config'
 local function OrderMenu()
 	if(XFG.Cache.DTGuildTotalEnabled == nil) then XFG.Cache.DTGuildTotalEnabled = 0 end
 	if(XFG.Cache.DTGuildTotalEnabled == 0) then
-		for _Label, _Value in pairs (XFG.Config.DataText.Guild.Enable) do
-			if(_Value) then
-				_OrderLabel = _Label .. 'Order'
-				if(XFG.Config.DataText.Guild.Order[_OrderLabel] ~= 0) then
+		for label, value in pairs (XFG.Config.DataText.Guild.Enable) do
+			if(value) then
+				orderLabel = label .. 'Order'
+				if(XFG.Config.DataText.Guild.Order[orderLabel] ~= 0) then
 					XFG.Cache.DTGuildTotalEnabled = XFG.Cache.DTGuildTotalEnabled + 1
 				end
 			end
 		end
 	end
 
-	local _Menu = {}
+	local menu = {}
 	for i = 1, XFG.Cache.DTGuildTotalEnabled do
-		_Menu[tostring(i)] = i
+		menu[tostring(i)] = i
 	end
 
-	return _Menu
+	return menu
 end
 
 local function RemovedMenuItem(inColumnName)
-	local _Index = XFG.Config.DataText.Guild.Order[inColumnName .. 'Order']
+	local index = XFG.Config.DataText.Guild.Order[inColumnName .. 'Order']
 	XFG.Config.DataText.Guild.Order[inColumnName .. 'Order'] = 0
 	XFG.Cache.DTGuildTotalEnabled = XFG.Cache.DTGuildTotalEnabled - 1
-	for _ColumnName, _OrderNumber in pairs (XFG.Config.DataText.Guild.Order) do
-		if(_OrderNumber > _Index) then
-			XFG.Config.DataText.Guild.Order[_ColumnName] = _OrderNumber - 1
+	for columnName, orderNumber in pairs (XFG.Config.DataText.Guild.Order) do
+		if(orderNumber > index) then
+			XFG.Config.DataText.Guild.Order[columnName] = orderNumber - 1
 		end
 	end
 end
 
 local function AddedMenuItem(inColumnName)
-	local _OrderLabel = inColumnName .. 'Order'
+	local orderLabel = inColumnName .. 'Order'
 	XFG.Cache.DTGuildTotalEnabled = XFG.Cache.DTGuildTotalEnabled + 1
-	XFG.Config.DataText.Guild.Order[_OrderLabel] = XFG.Cache.DTGuildTotalEnabled
+	XFG.Config.DataText.Guild.Order[orderLabel] = XFG.Cache.DTGuildTotalEnabled
 end
 
 local function SelectedMenuItem(inColumnName, inSelection)
-	local _OldNumber = XFG.Config.DataText.Guild.Order[inColumnName]
-	local _NewNumber = tonumber(inSelection)
-	XFG.Config.DataText.Guild.Order[inColumnName] = _NewNumber
-	for _ColumnName, _OrderNumber in pairs (XFG.Config.DataText.Guild.Order) do
-		if(_ColumnName ~= inColumnName) then
-			if(_OldNumber < _NewNumber and _OrderNumber > _OldNumber and _OrderNumber <= _NewNumber) then
-				XFG.Config.DataText.Guild.Order[_ColumnName] = _OrderNumber - 1
-			elseif(_OldNumber > _NewNumber and _OrderNumber < _OldNumber and _OrderNumber >= _NewNumber) then
-				XFG.Config.DataText.Guild.Order[_ColumnName] = _OrderNumber + 1
+	local oldNumber = XFG.Config.DataText.Guild.Order[inColumnName]
+	local newNumber = tonumber(inSelection)
+	XFG.Config.DataText.Guild.Order[inColumnName] = newNumber
+	for columnName, orderNumber in pairs (XFG.Config.DataText.Guild.Order) do
+		if(columnName ~= inColumnName) then
+			if(oldNumber < newNumber and orderNumber > oldNumber and orderNumber <= newNumber) then
+				XFG.Config.DataText.Guild.Order[columnName] = orderNumber - 1
+			elseif(oldNumber > newNumber and orderNumber < oldNumber and orderNumber >= newNumber) then
+				XFG.Config.DataText.Guild.Order[columnName] = orderNumber + 1
 			end
 		end
 	end
@@ -89,11 +89,13 @@ XFG.Options.args.DataText = {
 					type = 'select',
 					order = 3,
 					dialogControl = 'LSM30_Font',
-					values = XFG.Lib.LSMList.font,
+					values = XFG.Lib.LSM:HashTable('font'),
 					get = function(info) return XFG.Config.DataText[ info[#info] ] end,
 					set = function(info, value) 
 						XFG.Config.DataText[ info[#info] ] = value; 
 						XFG.DataText.Guild:SetFont()
+						XFG.DataText.Links:SetFont()
+						XFG.DataText.Metrics:SetFont()
 					end
 				},
 				FontSize = {
@@ -106,6 +108,8 @@ XFG.Options.args.DataText = {
 					set = function(info, value) 
 						XFG.Config.DataText[ info[#info] ] = value; 
 						XFG.DataText.Guild:SetFont()
+						XFG.DataText.Links:SetFont()
+						XFG.DataText.Metrics:SetFont()
 					end
 				},
 			},
@@ -237,25 +241,24 @@ XFG.Options.args.DataText = {
 					name = XFG.Lib.Locale['DTGUILD_SELECT_COLUMN'],
 					desc = XFG.Lib.Locale['DTGUILD_SELECT_COLUMN_TOOLTIP'],
 					values = {
-						Achievement = TRANSMOG_SOURCE_5,
-						Covenant = XFG.Lib.Locale['COVENANT'],
-						Faction = FACTION,
-						Guild = GUILD,
-						ItemLevel = STAT_AVERAGE_ITEM_LEVEL,
-						Level = LEVEL,
-						Dungeon = CHALLENGES,
-						Name = CALENDAR_PLAYER_NAME,
-						Note = 	LABEL_NOTE,
-						Profession = TRADE_SKILLS,
-						PvP = PVP_ENABLED,
-						Race = RACE,
-						Raid = RAID,
-						Rank = RANK,
-						Realm = VAS_REALM_LABEL,
-						Spec = SPECIALIZATION,
-						Team = TEAM,
-						Version = GAME_VERSION_LABEL,
-						Zone = ZONE,
+						Achievement = XFG.Lib.Locale['ACHIEVEMENT'],
+						Faction = XFG.Lib.Locale['FACTION'],
+						Guild = XFG.Lib.Locale['GUILD'],
+						ItemLevel = XFG.Lib.Locale['ITEMLEVEL'],
+						Level = XFG.Lib.Locale['LEVEL'],            
+						Dungeon = XFG.Lib.Locale['DUNGEON'],
+                        Name = XFG.Lib.Locale['NAME'],
+						Note = 	XFG.Lib.Locale['NOTE'],
+						Profession = XFG.Lib.Locale['PROFESSION'],
+						PvP = XFG.Lib.Locale['PVP'],
+						Race = XFG.Lib.Locale['RACE'],
+						Raid = XFG.Lib.Locale['RAID'],
+						Rank = XFG.Lib.Locale['RANK'],
+						Realm = XFG.Lib.Locale['REALM'],
+						Spec = XFG.Lib.Locale['SPEC'],
+						Team = XFG.Lib.Locale['TEAM'],
+						Version = XFG.Lib.Locale['VERSION'],
+						Zone = XFG.Lib.Locale['ZONE'],
 					},
 					get = function(info) return XFG.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XFG.Config.DataText.Guild[ info[#info] ] = value end
@@ -296,44 +299,6 @@ XFG.Options.args.DataText = {
 					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Achievement) end,
 					name = XFG.Lib.Locale['ALIGNMENT'],
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XFG.Lib.Locale['CENTER'],
-						Left = XFG.Lib.Locale['LEFT'],
-						Right = XFG.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XFG.Config.DataText.Guild.Alignment[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
-				},
-				Covenant = {
-					order = 24,
-					type = 'toggle',
-					name = ENABLE,
-					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_COVENANT_TOOLTIP'],
-					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Covenant' end,
-					get = function(info) return XFG.Config.DataText.Guild.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XFG.Config.DataText.Guild.Enable[ info[#info] ] = value
-						if(value) then AddedMenuItem(info[#info]) else RemovedMenuItem(info[#info]) end
-					end
-				},
-				CovenantOrder = {
-					order = 25,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Covenant' end,
-					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Covenant) end,
-					name = XFG.Lib.Locale['ORDER'],
-					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_COVENANT_ORDER_TOOLTIP'],
-					values = function () return OrderMenu() end,
-					get = function(info) if(XFG.Config.DataText.Guild.Enable.Covenant) then return tostring(XFG.Config.DataText.Guild.Order[ info[#info] ]) end end,
-					set = function(info, value) SelectedMenuItem(info[#info], value) end
-				},
-				CovenantAlignment = {
-					order = 26,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Covenant' end,
-					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Covenant) end,
-					name = XFG.Lib.Locale['ALIGNMENT'],
-					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_COVENANT_ALIGNMENT_TOOLTIP'],
 					values = {
 						Center = XFG.Lib.Locale['CENTER'],
 						Left = XFG.Lib.Locale['LEFT'],

@@ -4,7 +4,6 @@ if not L then return end
 --=========================================================================
 -- Generic One Word Translations
 --=========================================================================
-L['COVENANT'] = 'Curia'
 L['CONFEDERATE'] = 'Confederación'
 L['MOTD'] = 'Mensaje del día'
 L['DATATEXT'] = 'DataText'
@@ -26,7 +25,6 @@ L['GENERAL_SYSTEM_LOGIN'] = '1. Recibir notificaciones cuando un jugador usando 
 L['GENERAL_DATA_BROKERS'] = 'Agentes de datos'
 L['GENERAL_DTGUILD'] = '1. Hermandad (X): Lista completa de miembros visible en la confederación'
 L['GENERAL_DTLINKS'] = '2. Vínculos (X): Vísibilidad de los vínculos activos de BNet en la confederación usados por el addon'
-L['GENERAL_DTSOULBIND'] = '3. Lazo de alma (X): Ver y cambiar tu lazo de alma activo'
 L['GENERAL_DTTOKEN'] = '4. Ficha de WoW (X): Ver el precio actual de la ficha de WoW'
 --=========================================================================
 -- Chat Specific
@@ -59,8 +57,6 @@ L['DTGUILD_CONFIG_CONFEDERATE_TOOLTIP'] = 'Mostrar el nombre de la confederació
 L['DTGUILD_CONFIG_GUILD_TOOLTIP'] = 'Mostrar el nombre de la hermandad actual'
 L['DTGUILD_CONFIG_MOTD_TOOLTIP'] = 'Mostrar el mensaje del día de la hermandad'
 L['DTGUILD_CONFIG_COLUMN_HEADER'] = 'Mostrar Columnas'
-L['DTGUILD_CONFIG_COLUMN_COVENANT_TOOLTIP'] = 'Mostrar el ícono de Cura del jugador'
-L['DTGUILD_CONFIG_COLUMN_FACTION_TOOLTIP'] = 'Mostrar el ícono de la Facción del jugador'
 L['DTGUILD_CONFIG_COLUMN_GUILD_TOOLTIP'] = 'Mostrar el nombre de la Hermandad del jugador'
 L['DTGUILD_CONFIG_COLUMN_LEVEL_TOOLTIP'] = 'Mostrar el nivel del jugador'
 L['DTGUILD_CONFIG_COLUMN_NOTE_TOOLTIP'] = 'Mostrar la nota del jugador'
@@ -91,23 +87,6 @@ L['DTSHARD_SHARD_ID'] = 'Fragmento: %d'
 -- Config
 L['DTSHARD_CONFIG_FORCE_CHECK'] = 'Comprobación forzada'
 L['DTSHARD_CONFIG_FORCE_CHECK_TOOLTIP'] = 'Segundos entre comprobaciónes de fragmentos sin eventos'
--------------------------
--- DTSoulbind (X)
--------------------------
--- Broker name
-L['DTSOULBIND_NAME'] = 'Lazo de alma (X)'
--- Broker text
-L['DTSOULBIND_NO_COVENANT'] = 'Sin Curia'
-L['DTSOULBIND_NO_SOULBIND'] = '%s Sin Lazo de Alma'
--- Header
-L['DTSOULBIND_ACTIVE'] = '|cffFFFFFF%s: |cff00FF00Activo|r'
-L['DTSOULBIND_INACTIVE'] = '|cffFFFFFF%s: |cffFF0000Inactivo|r'
--- Config
-L['DTSOULBIND_CONFIG_CONDUIT'] = 'Mostrar Conductos'
-L['DTSOULBIND_CONFIG_CONDUIT_TOOLTIP'] = 'Mostrar los íconos de los conductos activos'
--- Footer
-L['DTSOULBIND_LEFT_CLICK'] = '|cffFFFFFFClick Izquierdo:|r Abrir ventana de Lazo de Alma'
-L['DTSOULBIND_RIGHT_CLICK'] = '|cffFFFFFFClick Derecho:|r Cambiar Lazo de Alma'
 -------------------------
 -- DTToken (X)
 -------------------------

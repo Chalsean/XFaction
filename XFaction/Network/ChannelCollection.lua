@@ -1,23 +1,64 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ChannelCollection'
-
 local SwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
 local SetChatColor = ChangeChatColor
 local GetChannels = GetChannelList
 
 ChannelCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function ChannelCollection:new()
-    local _Object = ChannelCollection.parent.new(self)
-	_Object.__name = ObjectName
-    return _Object
+    local object = ChannelCollection.parent.new(self)
+	object.__name = ObjectName
+	object.localChannel = nil
+    return object
 end
+--#endregion
 
+--#region Initializers
+function ChannelCollection:Initialize()
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
+		if(XFG.Cache.Channel.Password == nil) then
+			JoinChannelByName(XFG.Cache.Channel.Name)
+		else
+			JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
+		end
+		XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)
+		local channelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Cache.Channel.Name)
+		local channel = Channel:new()
+		channel:SetKey(channelInfo.shortcut)
+		channel:SetID(channelInfo.localID)
+		channel:SetName(channelInfo.shortcut)
+		if(XFG.Cache.Channel.Password ~= nil) then
+			channel:SetPassword(XFG.Cache.Channel.Password)
+		end
+		self:Add(channel)
+		self:SetLocalChannel(channel)
+		self:SetLast(channel:GetKey())
+		self:IsInitialized(true)
+	end
+end
+--#endregion
+
+--#region Print
+function ChannelCollection:Print()
+    if(XFG.Verbosity) then
+        self:ParentPrint()
+        XFG:Debug(ObjectName, '  localChannel (' .. type(self.localChannel) .. ')')
+        if(self.localChannel ~= nil) then
+            self.localChannel:Print()
+        end
+    end
+end
+--#endregion
+
+--#region Accessors
 function ChannelCollection:GetByID(inID)
 	assert(type(inID) == 'number')
-	for _, _Channel in self:Iterator() do
-		if(_Channel:GetID() == inID) then
-			return _Channel
+	for _, channel in self:Iterator() do
+		if(channel:GetID() == inID) then
+			return channel
 		end
 	end
 end
@@ -27,17 +68,17 @@ function ChannelCollection:SetLast(inKey)
 	if(not self:Contains(inKey)) then return end
 	
 	self:Scan()
-	local _Channel = self:Get(inKey)
+	local channel = self:Get(inKey)
 
-	for i = _Channel:GetID() + 1, 10 do
-		local _NextChannel = self:GetByID(i)
-		if(_NextChannel ~= nil and not _NextChannel:IsCommunity()) then
-			if(XFG.DebugFlag) then 
-				XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', _Channel:GetID(), _Channel:GetName(), _NextChannel:GetID(), _NextChannel:GetName()) 
+	for i = channel:GetID() + 1, 10 do
+		local nextChannel = self:GetByID(i)
+		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
+			if(XFG.Verbosity) then 
+				XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
 			end
-			SwapChannels(_Channel:GetID(), i)
-			_NextChannel:SetID(_Channel:GetID())
-			_Channel:SetID(i)
+			SwapChannels(channel:GetID(), i)
+			nextChannel:SetID(channel:GetID())
+			channel:SetID(i)
 		end
 	end
 
@@ -46,7 +87,7 @@ function ChannelCollection:SetLast(inKey)
 			if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
 				local _Color = XFG.Config.Channels[_Channel:GetName()]
 				SetChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
-				if(XFG.DebugFlag) then
+				if(XFG.Verbosity) then
 					XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
 				end
 			end		
@@ -54,36 +95,55 @@ function ChannelCollection:SetLast(inKey)
 	end
 end
 
+function ChannelCollection:HasLocalChannel()
+    return self.localChannel ~= nil
+end
+
+function ChannelCollection:GetLocalChannel()
+    return self.localChannel
+end
+
+function ChannelCollection:SetLocalChannel(inChannel)
+    assert(type(inChannel) == 'table' and inChannel.__name == 'Channel', 'argument must be Channel object')
+    self.localChannel = inChannel
+end
+
+function ChannelCollection:VoidLocalChannel()
+    self.localChannel = nil
+end
+--#endregion
+
+--#region DataSet
 function ChannelCollection:Scan()
 	try(function ()
-		local _Channels = {GetChannels()}
-		local _IDs = {}
-		for i = 1, #_Channels, 3 do
-			local _ChannelID, _ChannelName, _Disabled = _Channels[i], _Channels[i+1], _Channels[i+2]
-			_IDs[_ChannelID] = true
-			if(self:Contains(_ChannelName)) then
-				local _Channel = self:Get(_ChannelName)
-				if(_Channel:GetID() ~= _ChannelID) then
-					local _OldID = _Channel:GetID()
-					_Channel:SetID(_ChannelID)
-					if(XFG.DebugFlag) then
-						XFG:Debug(ObjectName, 'Channel ID changed [%d:%d:%s]', _OldID, _Channel:GetID(), _Channel:GetName())
+		local channels = {GetChannels()}
+		local IDs = {}
+		for i = 1, #channels, 3 do
+			local channelID, channelName, disabled = channels[i], channels[i+1], channels[i+2]
+			IDs[channelID] = true
+			if(self:Contains(channelName)) then
+				local channel = self:Get(channelName)
+				if(channel:GetID() ~= channelID) then
+					local oldID = channel:GetID()
+					channel:SetID(channelID)
+					if(XFG.Verbosity) then
+						XFG:Debug(ObjectName, 'Channel ID changed [%d:%d:%s]', oldID, channel:GetID(), channel:GetName())
 					end
 				end
 			else
-				local _ChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(_ChannelName)
-				local _NewChannel = Channel:new()
-				_NewChannel:SetKey(_ChannelName)
-				_NewChannel:SetName(_ChannelName)
-				_NewChannel:SetID(_ChannelID)
-				_NewChannel:IsCommunity(_ChannelInfo.channelType == 2)
-				self:Add(_NewChannel)
+				local channelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(channelName)
+				local channel = Channel:new()
+				channel:SetKey(channelName)
+				channel:SetName(channelName)
+				channel:SetID(channelID)
+				channel:IsCommunity(channelInfo.channelType == 2)
+				self:Add(channel)
 			end
 		end
 
-		for _, _Channel in self:Iterator() do
-			if(_IDs[_Channel:GetID()] == nil) then
-				self:Remove(_Channel:GetKey())
+		for _, channel in self:Iterator() do
+			if(IDs[channel:GetID()] == nil) then
+				self:Remove(channel:GetKey())
 			end
 		end
 	end).
@@ -91,3 +151,4 @@ function ChannelCollection:Scan()
 		XFG:Warn(ObjectName, inErrorMessage)
 	end)
 end
+--#endregion

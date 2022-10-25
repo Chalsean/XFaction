@@ -3,51 +3,46 @@ local ObjectName = 'Race'
 
 Race = Object:newChildConstructor()
 
+--#region Constructors
 function Race:new()
-    local _Object = Race.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._LocaleName = nil
-	_Object._ID = nil
-    _Object._Faction = nil
-    return _Object
+    local object = Race.parent.new(self)
+    object.__name = ObjectName
+	object.ID = nil
+    object.faction = nil
+    return object
 end
+--#endregion
 
+--#region Print
 function Race:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _ID (' .. type(self._ID) .. '): ' .. tostring(self._ID))
-        XFG:Debug(ObjectName, '  _LocaleName (' .. type(self._LocaleName) .. '): ' .. tostring(self._LocaleName))
+        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
         if(self:HasFaction()) then self:GetFaction():Print() end
     end
 end
+--#endregion
 
-function Race:GetLocaleName()
-    return self._LocaleName
-end
-
-function Race:SetLocaleName(inName)
-    assert(type(inName) == 'string')
-    self._LocaleName = inName
-end
-
+--#region Accessors
 function Race:GetID()
-    return self._ID
+    return self.ID
 end
 
 function Race:SetID(inID)
     assert(type(inID) == 'number')
-    self._ID = inID
+    self.ID = inID
 end
 
 function Race:HasFaction()
-    return self._Faction ~= nil
+    return self.faction ~= nil
 end
 
 function Race:GetFaction()
-    return self._Faction
+    return self.faction
 end
 
 function Race:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name ~= nil and inFaction.__name == 'Faction', 'argument must be Faction object')
-    self._Faction = inFaction
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
+    self.faction = inFaction
 end
+--#endregion

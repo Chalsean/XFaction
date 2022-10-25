@@ -3,7 +3,7 @@ Enable roster visibility and communication between guilds of a confederation, in
 
 ## Disclaimer
 
-This addon is recently coming out of alpha and beta testing. There are still some things rough around the edges. Any questions, feel free to reach out.
+This addon is recently coming out of alpha and beta testing. There are still some things rough around the edges. To setup, you will need to be able to edit your guild information tab. The setup can be somewhat tricky, please visit the wiki/faq on how to setup for your guild. If you run into issues, feel free to reach out.
  
 ## What is included
 The addon should provide the following functionalities:
@@ -42,11 +42,8 @@ The addon should provide the following functionalities:
 <img src="https://user-images.githubusercontent.com/45693161/181374308-c82a3fb4-7e9f-4cb3-85a2-e7252296d36d.png" width=200>
 
 
-> 2 miscellaneous DTs: Soulbind (X), WoW Token (X)
-- Soulbind: left click opens Soulbind frame, right click to change Soulbinds
-<img src="https://user-images.githubusercontent.com/45693161/175836356-80c30337-bf55-471c-b54b-f18f01e0b02c.png" width=200>
-
-- WoW Token: Simply displays the current WoW token market price
+> WoW Token (X)
+- Simply displays the current WoW token market price
 <img src="https://user-images.githubusercontent.com/45693161/175836370-d6a40a6f-0356-4e47-9461-2f554ea3d7d4.png" width=200>
 
 ## Misc
@@ -54,26 +51,14 @@ The addon should provide the following functionalities:
 ### Dependencies
 
 > Ace3
-- Addon
-- Bucket
-- Comm
 - Config
-- ConfigCmd
-- ConfigDialog
-- Console
 - DB
 - DBOptions
-- Event
-- GUI
-- Hook
-- Serializer
-- Timer
-- Stub
+- Locale
+
+> AceGUI-3.0-SharedMediaWidgets
 
 > ChatThrottleLib (*modified for BNet)
-
-> LibBabble
-- Race
 
 > LibDataBroker
 
@@ -81,15 +66,11 @@ The addon should provide the following functionalities:
 
 > LibQTip
 
-> LibProfession
-
-> LibRace
-
 > LibRealmInfo (*modified)
 
 > LibSharedMedia
 
-> LibSpec
+> LibStub
 
 > LibTourist
 

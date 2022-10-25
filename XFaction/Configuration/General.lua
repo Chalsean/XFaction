@@ -138,11 +138,11 @@ XFG.Options = {
 									fontSize = 'medium',
 									name = XFG.Lib.Locale['GENERAL_DTLINKS']
 								},
-								DTSoulbind = {
+								DTMetrics = {
 									order = 3,
 									type = 'description',
 									fontSize = 'medium',
-									name = XFG.Lib.Locale['GENERAL_DTSOULBIND']
+									name = XFG.Lib.Locale['GENERAL_DTMETRICS']
 								},
 								DTToken = {
 									order = 4,

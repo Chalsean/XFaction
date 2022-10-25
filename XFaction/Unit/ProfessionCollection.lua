@@ -1,27 +1,47 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ProfessionCollection'
+local GetAllProfessionIDs = C_TradeSkillUI.GetAllProfessionTradeSkillLines
+local GetProfessionName = C_TradeSkillUI.GetTradeSkillDisplayName
+local GetProfessionIcon = C_TradeSkillUI.GetTradeSkillTexture
 
 ProfessionCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function ProfessionCollection:new()
-	local _Object = ProfessionCollection.parent.new(self)
-	_Object.__name = ObjectName
-    return _Object
+	local object = ProfessionCollection.parent.new(self)
+	object.__name = ObjectName
+    return object
 end
+--#endregion
 
+--#region Initializers
 function ProfessionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		local _Lib = LibStub('LibProfession')
-		for _, _Profession in _Lib:Iterator() do
-			local _NewProfession = Profession:new()
-			_NewProfession:SetID(_Profession.ID)
-			_NewProfession:SetIconID(_Profession.Icon)
-			_NewProfession:SetName(_Profession.Name)
-			_NewProfession:SetKey(_Profession.ID)
-			self:Add(_NewProfession)
-			XFG:Info(ObjectName, 'Initialized profession [%s]', _NewProfession:GetName())
+		if(not XFG.Cache.UIReload or XFG.Cache.Professions == nil) then
+			XFG.Cache.Professions = {}
+			for _, ID in ipairs (GetAllProfessionIDs()) do
+				XFG.Cache.Professions[#XFG.Cache.Professions + 1] = {
+					ID = ID,
+					Name = GetProfessionName(ID),
+					Icon = GetProfessionIcon(ID),
+				}
+			end
+		else
+			XFG:Debug(ObjectName, 'Profession information found in cache')
+		end
+
+		for _, data in ipairs(XFG.Cache.Professions) do
+			local profession = Profession:new()
+			profession:SetID(data.ID)
+			profession:SetIconID(data.Icon)
+			profession:SetName(data.Name)
+			profession:SetKey(data.ID)
+			self:Add(profession)
+			XFG:Info(ObjectName, 'Initialized profession [%d:%s]', profession:GetID(), profession:GetName())
 		end	
+	
 		self:IsInitialized(true)
 	end
 end
+--#endregion

@@ -2,7 +2,8 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Config'
 
 XFG.Defaults = {
-    profile = {        
+    profile = {  
+        Channels = {},      
         Chat = {
             GChat = {
                 Enable = true,
@@ -14,18 +15,18 @@ XFG.Defaults = {
                 Color = {
                     Red = 0.251,
                     Green = 1,
-                    Blue = 0.251
+                    Blue = 0.251,
                 },
                 AColor = {
                     Red = 0.216,
                     Green = 0.553,
-                    Blue = 0.937
+                    Blue = 0.937,
                 },
                 HColor = {
                     Red = 0.878,
                     Green = 0,
-                    Blue = 0.051
-                }
+                    Blue = 0.051,
+                },
             },
             Achievement = {
                 Enable = true,
@@ -37,25 +38,25 @@ XFG.Defaults = {
                 Color = {
                     Red = 0.251,
                     Green = 1,
-                    Blue = 0.251
+                    Blue = 0.251,
                 },
                 AColor = {
                     Red = 0.216,
                     Green = 0.553,
-                    Blue = 0.937
+                    Blue = 0.937,
                 },
                 HColor = {
                     Red = 0.878,
                     Green = 0,
-                    Blue = 0.051
-                }
+                    Blue = 0.051,
+                },
             },
             Login = {
                 Enable = true,
                 Sound = true,
                 Faction = true,
                 Guild = true,
-                Main = true
+                Main = true,
             },
             Channel = {
                 Last = true,
@@ -92,7 +93,6 @@ XFG.Defaults = {
                 Main = true,
                 Enable = {                    
                     Achievement = false,
-                    Covenant = true,
                     Dungeon = false,
                     Faction = true,
                     Guild = true,
@@ -113,28 +113,26 @@ XFG.Defaults = {
                 },
                 Order = {
                     AchievementOrder = 0,
-                    CovenantOrder = 5,
                     DungeonOrder = 0,
                     FactionOrder = 1,
-                    GuildOrder = 7,
+                    GuildOrder = 6,
                     ItemLevelOrder = 0,
                     LevelOrder = 2,
                     NameOrder = 4,
                     NoteOrder = 0,
-                    ProfessionOrder = 12,
+                    ProfessionOrder = 11,
                     PvPOrder = 0,
-                    RaceOrder = 6,
-                    RaidOrder = 9,
-                    RankOrder = 10,
+                    RaceOrder = 5,
+                    RaidOrder = 8,
+                    RankOrder = 9,
                     RealmOrder = 0,
                     SpecOrder = 3,
-                    TeamOrder = 8,
+                    TeamOrder = 7,
                     VersionOrder = 0,
-                    ZoneOrder = 11,
+                    ZoneOrder = 10,
                 },
                 Alignment = {
                     AchievementAlignment = 'Center',
-                    CovenantAlignment = 'Center',
                     FactionAlignment = 'Center',
                     GuildAlignment = 'Left',
                     ItemLevelAlignment = 'Center',
@@ -168,43 +166,8 @@ XFG.Defaults = {
                 Warning = true,
             },
         },
-        Confederate = {
-            Config = 'XFn:Guild Name:GN\nXFc:ChannelName:ChannelPassword\nXFg:5:A:Alliance Guild:GA\nXFg:5:H:Horde Guild:GH\nXFg:5:A:Alliance Alt Guild:AGA\nXFa:Grand Alt\nXFt:A:AlphaTeam\nXFt:B:BetaTeam'
-        },
-        Setup = {
-            Confederate = {
-                Compression = true,
-            },
-        },
         Debug = {
-            Enable = false,
-            Verbosity = 4,
-            Instance = false,
+            Verbosity = 0,
         },
     }
 }
-    
-function XFG:LoadConfigs()
-    XFG.DataDB.RegisterCallback(self, 'OnProfileChanged', 'InitProfile')
-	XFG.DataDB.RegisterCallback(self, 'OnProfileCopied', 'InitProfile')
-	XFG.DataDB.RegisterCallback(self, 'OnProfileReset', 'InitProfile')
-
-    XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.DataDB)
-    XFG.Lib.Config:RegisterOptionsTable(XFG.Category, XFG.Options)
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, XFG.Category, nil, 'General')
-    --XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Setup', XFG.Category, 'Setup')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Chat', XFG.Category, 'Chat')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Nameplates', XFG.Category, 'Nameplates')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'DataText', XFG.Category, 'DataText')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Confederate', XFG.Category, 'Confederate')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Support', XFG.Category, 'Support')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Debug', XFG.Category, 'Debug')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Category, 'Profile', XFG.Category, 'Profile')
-
-    XFG.Lib.Cmd:CreateChatCommand('xfaction', XFG.Category)
-end
-
-function XFG:InitProfile()
-    -- When DB changes namespace (profile) the XFG.Config becomes invalid and needs to be reset
-    XFG.Config = XFG.DataDB.profile
-end

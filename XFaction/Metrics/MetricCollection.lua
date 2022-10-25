@@ -1,52 +1,58 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'MetricCollection'
-
 local ServerTime = C_DateAndTime.GetServerTimeLocal
 local CalendarTime = C_DateAndTime.GetCurrentCalendarTime
 
 MetricCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function MetricCollection:new()
-	local _Object = MetricCollection.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._StartTime = nil
-	_Object._StartCalendar = nil
-    return _Object
+	local object = MetricCollection.parent.new(self)
+    object.__name = ObjectName
+    object.startTime = nil
+	object.startCalendar = nil
+    return object
 end
+--#endregion
 
+--#region Initializers
 function MetricCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, _MetricName in pairs (XFG.Settings.Metric) do
-			local _Metric = Metric:new()
-			_Metric:SetKey(_MetricName)
-			_Metric:SetName(_MetricName)
-			self:Add(_Metric)
+		for _, metricName in pairs (XFG.Settings.Metric) do
+			local metric = Metric:new()
+			metric:SetKey(metricName)
+			metric:SetName(metricName)
+			self:Add(metric)
 		end
 		self:SetStartTime(ServerTime())
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
+--#endregion
 
+--#region Print
 function MetricCollection:Print()
-	if(XFG.DebugFlag) then
+	if(XFG.Verbosity) then
 		self:ParentPrint()
-		XFG:Debug(ObjectName, '  _StartTime (' .. type(self._StartTime) .. '): ' .. tostring(self._StartTime))
+		XFG:Debug(ObjectName, '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
 	end
 end
+--#endregion
 
+--#region Accessors
 function MetricCollection:SetStartTime(inEpochTime)
 	assert(type(inEpochTime) == 'number')
-	self._StartTime = inEpochTime
-	self._StartCalendar = CalendarTime()
-	return self:GetStartTime()
+	self.startTime = inEpochTime
+	self.startCalendar = CalendarTime()
 end
 
 function MetricCollection:GetStartTime()
-	return self._StartTime
+	return self.startTime
 end
 
 function MetricCollection:GetStartCalendar()
-	return self._StartCalendar
+	return self.startCalendar
 end
+--#endregion

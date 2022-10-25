@@ -4,21 +4,24 @@ local MediaPath = 'Interface/Addons/XFaction/Media/'
 
 MediaCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function MediaCollection:new()
-    local _Object = MediaCollection.parent.new(self)
-	_Object.__name = ObjectName
-    return _Object
+    local object = MediaCollection.parent.new(self)
+	object.__name = ObjectName
+    return object
 end
+--#endregion
 
+--#region Hash
 function MediaCollection:Add(inName, inType)
     assert(type(inName) == 'string')
 	assert(type(inType) == 'string')
-
-	local _NewMedia = Media:new()
-	_NewMedia:Initialize()
-	_NewMedia:SetKey(inName)
-	_NewMedia:SetName(inName)
-	_NewMedia:SetType(inType)
-	_NewMedia:SetPath(MediaPath .. inType .. '/' .. inName .. '.blp')
-	self.parent.Add(self, _NewMedia)
+	local media = Media:new()
+	media:Initialize()
+	media:SetKey(inName)
+	media:SetName(inName)
+	media:SetType(inType)
+	media:SetPath(MediaPath .. inType .. '/' .. inName .. '.blp')
+	self.parent.Add(self, media)
 end
+--#endregion

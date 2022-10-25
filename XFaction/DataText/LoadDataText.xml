@@ -1,5 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file='DTSoulbind.lua'/>
     <Script file='DTWoWToken.lua'/>
     <Script file='DTGuild.lua'/>
     <Script file='DTLinks.lua'/>

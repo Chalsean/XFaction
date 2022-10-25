@@ -3,65 +3,67 @@ local ObjectName = 'SystemEvent'
 
 SystemEvent = Object:newChildConstructor()
 
+--#region Constructors
 function SystemEvent:new()
-    local _Object = SystemEvent.parent.new(self)
-    _Object.__name = ObjectName
-    return _Object
+    local object = SystemEvent.parent.new(self)
+    object.__name = ObjectName
+    return object
 end
+--#endregion
 
+--#region Initializers
 function SystemEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
+        XFG.Hooks:Add('ReloadUI', 'ReloadUI', XFG.Handlers.SystemEvent.CallbackReloadUI)
         XFG.Events:Add('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true, true)
-        XFG:Hook('ReloadUI', self.CallbackReloadUI, true)
-        XFG:Info(ObjectName, 'Pre-hooked ReloadUI')
+        -- Not sure this is necessary but don't feel like taking the risk of removing it
         XFG.Events:Add('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true, true)
         ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Handlers.SystemEvent.ChatFilter)
         XFG:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
-function SystemEvent:CallbackLogout()    
-    if(XFG.DB.UIReload) then 
-        -- Backup information on reload to be restored
-        XFG.Confederate:Backup()
-        XFG.Friends:Backup()
-        XFG.Links:Backup()
+--#region Callbacks
+function SystemEvent:CallbackLogout()
+    if(XFG.Cache.UIReload) then 
+        -- Backup cache on reload to be restored
+        _G.XFCacheDB = XFG.Cache
     else
-        local _NewMessage = nil
+        -- On a real logout, send a logout message to the confederate before shutting down
+        local message = nil
         try(function ()        
-            _NewMessage = XFG.Mailbox:Pop()
-            _NewMessage:Initialize()
-            _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-            _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
+            message = XFG.Mailbox.Chat:Pop()
+            message:Initialize()
+            message:SetType(XFG.Settings.Network.Type.BROADCAST)
+            message:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
             if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-                _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+                message:SetMainName(XFG.Player.Unit:GetMainName())
             end
-            _NewMessage:SetGuild(XFG.Player.Guild)
-            _NewMessage:SetRealm(XFG.Player.Realm)
-            _NewMessage:SetUnitName(XFG.Player.Unit:GetName())
-            _NewMessage:SetData(' ')
-            XFG.Outbox:Send(_NewMessage)
+            message:SetGuild(XFG.Player.Guild)
+            message:SetRealm(XFG.Player.Realm)
+            message:SetUnitName(XFG.Player.Unit:GetName())
+            message:SetData(' ')
+            XFG.Mailbox.Chat:Send(message)
         end).
         catch(function (inErrorMessage)
-            XFG.DB.Errors[#XFG.DB.Errors + 1] = 'Failed to send logoff message: ' .. inErrorMessage
+            XFG.Cache.Errors[#XFG.Cache.Errors + 1] = 'Failed to send logoff message: ' .. inErrorMessage
         end).
         finally(function ()
-            XFG.Mailbox:Push(_NewMessage)
+            XFG.Mailbox.Chat:Push(message)            
         end)
     end    
 end
 
 function SystemEvent:CallbackReloadUI()
-    if(XFG.DB ~= nil) then
-        XFG.DB.UIReload = true
-    end
+    XFG.Cache.UIReload = true
 end
 
 function SystemEvent:CallbackLogin()
-    if(XFG.Outlook:HasLocalChannel()) then
-        XFG.Channels:SetLast(XFG.Outlook:GetLocalChannel():GetKey())
+    if(XFG.Channels:HasLocalChannel()) then
+        XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
     end
 end
 
@@ -79,3 +81,4 @@ function SystemEvent:ChatFilter(inEvent, inMessage, ...)
     end
     return false, inMessage, ...
 end
+--#endregion

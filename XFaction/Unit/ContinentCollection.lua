@@ -4,16 +4,16 @@ local ObjectName = 'ContinentCollection'
 ContinentCollection = ObjectCollection:newChildConstructor()
 
 function ContinentCollection:new()
-	local _Object = ContinentCollection.parent.new(self)
-	_Object.__name = ObjectName
-    return _Object
+	local object = ContinentCollection.parent.new(self)
+	object.__name = ObjectName
+    return object
 end
 
 function ContinentCollection:GetByID(inID)
 	assert(type(inID) == 'number')
-	for _, _Continent in self:Iterator() do
-		if(_Continent:HasID(inID)) then
-			return _Continent
+	for _, continent in self:Iterator() do
+		if(continent:HasID(inID)) then
+			return continent
 		end
 	end
 end

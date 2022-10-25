@@ -3,65 +3,89 @@ local ObjectName = 'EventCollection'
 
 EventCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function EventCollection:new()
-    local _Object = EventCollection.parent.new(self)
-	_Object.__name = ObjectName
-    return _Object
+    local object = EventCollection.parent.new(self)
+	object.__name = ObjectName
+    object.frame = nil
+    return object
 end
+--#endregion
 
-function EventCollection:Add(inKey, inName, inCallback, inInstance, inInstanceCombat, inBucket, inDelta)
-    local _Event = Event:new()
-    _Event:SetKey(inKey)
-    _Event:SetName(inName)
-    _Event:SetCallback(inCallback)
-    _Event:IsInstance(inInstance)
-    _Event:IsInstanceCombat(inInstanceCombat)
-    if(inBucket ~= nil) then _Event:IsBucket(inBucket) end
-    if(inDelta ~= nil) then _Event:SetDelta(inDelta) end
-    if(_Event:IsInstance() or XFG.Player.InInstance == false) then
-        _Event:Start()
+--#region Initializers
+function EventCollection:Initialize()
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
+        self.frame = CreateFrame('Frame')
+        -- Handle the events as they happen
+        self.frame:SetScript('OnEvent', function(self, inEvent, ...)
+            for _, event in XFG.Events:Iterator() do
+                if(event:IsEnabled() and event:GetName() == inEvent) then
+                    local _Function = event:GetCallback()
+                    _Function(self, ...)
+                end
+            end
+        end)
+        self:IsInitialized(true)
     end
-    self.parent.Add(self, _Event)
+end
+--#endregion
+
+--#region Hash
+function EventCollection:Add(inKey, inName, inCallback, inInstance, inInstanceCombat)
+    local event = Event:new()
+    event:SetKey(inKey)
+    event:SetName(inName)
+    event:SetCallback(inCallback)
+    event:IsInstance(inInstance)
+    event:IsInstanceCombat(inInstanceCombat)
+    if(event:IsInstance() or not XFG.Player.InInstance) then
+        event:Start()
+    end
+    self.frame:RegisterEvent(inName)
+    self.parent.Add(self, event)
     XFG:Info('Event', 'Registered to receive %s events', inName)
 end
+--#endregion
 
+--#region Start/Stop
 function EventCollection:EnterInstance()
-    for _, _Event in self:Iterator() do
-        if(_Event:IsEnabled() and not _Event:IsInstance()) then
-            _Event:Stop()
+    for _, event in self:Iterator() do
+        if(event:IsEnabled() and not event:IsInstance()) then
+            event:Stop()
         end
     end
 end
 
 function EventCollection:LeaveInstance()
-    for _, _Event in self:Iterator() do
-        -- Can only change covenant in Oribos
-        if(not _Event:IsEnabled() and _Event:GetName() ~= 'Covenant') then
-            _Event:Start()
+    for _, event in self:Iterator() do
+        if(not event:IsEnabled()) then
+            event:Start()
         end
     end
 end
 
 function EventCollection:EnterCombat()
-    for _, _Event in self:Iterator() do
-        if(_Event:IsEnabled() and not _Event:IsInstanceCombat()) then
-            _Event:Stop()
+    for _, event in self:Iterator() do
+        if(event:IsEnabled() and not event:IsInstanceCombat()) then
+            event:Stop()
         end
     end
 end
 
 function EventCollection:LeaveCombat()
-    for _, _Event in self:Iterator() do
-        if(not _Event:IsEnabled() and _Event:IsInstance()) then
-            _Event:Start()
+    for _, event in self:Iterator() do
+        if(not event:IsEnabled() and event:IsInstance()) then
+            event:Start()
         end
     end
 end
 
 -- Stop everything
 function EventCollection:Stop()
-	for _, _Event in XFG.Events:Iterator() do
-        _Event:Stop()
-		_Event:IsEnabled(false)
+	for _, event in XFG.Events:Iterator() do
+        event:Stop()
 	end
+    self.frame:UnregisterAllEvents()
 end
+--#endregion

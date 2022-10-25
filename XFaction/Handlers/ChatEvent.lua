@@ -3,17 +3,19 @@ local ObjectName = 'ChatEvent'
 
 ChatEvent = Object:newChildConstructor()
 
+--#region Constructors
 function ChatEvent:new()
-    local _Object = ChatEvent.parent.new(self)
-    _Object.__name = ObjectName
-    return _Object
+    local object = ChatEvent.parent.new(self)
+    object.__name = ObjectName
+    return object
 end
+--#endregion
 
+--#region Initializers
 function ChatEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG:RegisterEvent('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.CallbackGuildMessage)
-        XFG:Info(ObjectName, 'Registered for CHAT_MSG_GUILD events')
+        XFG.Events:Add('GuildChat', 'CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.CallbackGuildMessage)
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.ChatFilter)
         XFG:Info(ObjectName, 'Created CHAT_MSG_GUILD event filter')
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)
@@ -21,29 +23,31 @@ function ChatEvent:Initialize()
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Callbacks
 function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
     try(function ()
         -- If you are the sender, broadcast to other realms/factions
         if(XFG.Player.GUID == inSenderGUID and XFG.Player.Unit:CanGuildSpeak()) then
-            local _NewMessage = nil
+            local message = nil
             try(function ()
-                _NewMessage = XFG.Mailbox:Pop()
-                _NewMessage:Initialize()
-                _NewMessage:SetFrom(XFG.Player.Unit:GetKey())
-                _NewMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
-                _NewMessage:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
-                _NewMessage:SetUnitName(XFG.Player.Unit:GetUnitName())
-                _NewMessage:SetGuild(XFG.Player.Guild)
-                _NewMessage:SetRealm(XFG.Player.Realm)
+                message = XFG.Mailbox.Chat:Pop()
+                message:Initialize()
+                message:SetFrom(XFG.Player.Unit:GetGUID())
+                message:SetType(XFG.Settings.Network.Type.BROADCAST)
+                message:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
+                message:SetUnitName(XFG.Player.Unit:GetUnitName())
+                message:SetGuild(XFG.Player.Guild)
+                message:SetRealm(XFG.Player.Realm)
                 if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
-                    _NewMessage:SetMainName(XFG.Player.Unit:GetMainName())
+                    message:SetMainName(XFG.Player.Unit:GetMainName())
                 end
-                _NewMessage:SetData(inText)
-                XFG.Outbox:Send(_NewMessage, true)
+                message:SetData(inText)
+                XFG.Mailbox.Chat:Send(message, true)
             end).
             finally(function ()
-                XFG.Mailbox:Push(_NewMessage)
+                XFG.Mailbox.Chat:Push(message)
             end)
         end
     end).
@@ -53,39 +57,39 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
 end
 
 local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
-    local _ConfigNode = inEvent == 'CHAT_MSG_GUILD' and 'GChat' or 'Achievement'
-    local _Event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
-    local _Text = ''
-    if(XFG.Config.Chat[_ConfigNode].Faction) then  
-        _Text = _Text .. format('%s ', format(XFG.Icons.String, inUnitData:GetFaction():GetIconID()))
+    local configNode = inEvent == 'CHAT_MSG_GUILD' and 'GChat' or 'Achievement'
+    local event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
+    local text = ''
+    if(XFG.Config.Chat[configNode].Faction) then  
+        text = text .. format('%s ', format(XFG.Icons.String, inUnitData:GetFaction():GetIconID()))
     end
-    if(XFG.Config.Chat[_ConfigNode].Main and inUnitData:IsAlt() and inUnitData:HasMainName()) then
-        _Text = _Text .. '(' .. inUnitData:GetMainName() .. ') '
+    if(XFG.Config.Chat[configNode].Main and inUnitData:IsAlt() and inUnitData:HasMainName()) then
+        text = text .. '(' .. inUnitData:GetMainName() .. ') '
     end
-    if(XFG.Config.Chat[_ConfigNode].Guild) then
-        _Text = _Text .. '<' .. inUnitData:GetGuild():GetInitials() .. '> '
+    if(XFG.Config.Chat[configNode].Guild) then
+        text = text .. '<' .. inUnitData:GetGuild():GetInitials() .. '> '
     end
-    _Text = _Text .. inMessage
+    text = text .. inMessage
 
-    local _Hex = nil
-    if(XFG.Config.Chat[_ConfigNode].CColor) then
-        if(XFG.Config.Chat[_ConfigNode].FColor) then
-            _Hex = inUnitData:GetFaction():GetName() == 'Horde' and XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].HColor.Red, XFG.Config.Chat[_ConfigNode].HColor.Green, XFG.Config.Chat[_ConfigNode].HColor.Blue) or XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].AColor.Red, XFG.Config.Chat[_ConfigNode].AColor.Green, XFG.Config.Chat[_ConfigNode].AColor.Blue)
+    local hex = nil
+    if(XFG.Config.Chat[configNode].CColor) then
+        if(XFG.Config.Chat[configNode].FColor) then
+            hex = inUnitData:GetFaction():GetName() == 'Horde' and XFG:RGBPercToHex(XFG.Config.Chat[configNode].HColor.Red, XFG.Config.Chat[configNode].HColor.Green, XFG.Config.Chat[configNode].HColor.Blue) or XFG:RGBPercToHex(XFG.Config.Chat[configNode].AColor.Red, XFG.Config.Chat[configNode].AColor.Green, XFG.Config.Chat[configNode].AColor.Blue)
         else
-            _Hex = XFG:RGBPercToHex(XFG.Config.Chat[_ConfigNode].Color.Red, XFG.Config.Chat[_ConfigNode].Color.Green, XFG.Config.Chat[_ConfigNode].Color.Blue)
+            hex = XFG:RGBPercToHex(XFG.Config.Chat[configNode].Color.Red, XFG.Config.Chat[configNode].Color.Green, XFG.Config.Chat[configNode].Color.Blue)
         end
-    elseif(XFG.Config.Chat[_ConfigNode].FColor) then
-        _Hex = inUnitData:GetFaction():GetName() == 'Horde' and 'E0000D' or '378DEF'
-    elseif(_G.ChatTypeInfo[_Event]) then
-        local _Color = _G.ChatTypeInfo[_Event]
-        _Hex = XFG:RGBPercToHex(_Color.r, _Color.g, _Color.b)
+    elseif(XFG.Config.Chat[configNode].FColor) then
+        hex = inUnitData:GetFaction():GetName() == 'Horde' and 'E0000D' or '378DEF'
+    elseif(_G.ChatTypeInfo[event]) then
+        local color = _G.ChatTypeInfo[event]
+        hex = XFG:RGBPercToHex(color.r, color.g, color.b)
     end
     
-    if _Hex ~= nil then
-        _Text = format('|cff%s%s|r', _Hex, _Text)
+    if hex ~= nil then
+        text = format('|cff%s%s|r', hex, text)
     end
 
-    return _Text
+    return text
 end
 
 function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
@@ -99,3 +103,4 @@ function ChatEvent:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, 
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
+--#endregion

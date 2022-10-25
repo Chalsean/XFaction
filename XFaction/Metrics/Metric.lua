@@ -3,37 +3,43 @@ local ObjectName = 'Metric'
 
 Metric = Object:newChildConstructor()
 
+--#region Constructors
 function Metric:new()
-    local _Object = Metric.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Count = 0
-    return _Object
+    local object = Metric.parent.new(self)
+    object.__name = ObjectName
+    object.count = 0
+    return object
 end
+--#endregion
 
+--#region Print
 function Metric:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
-	    XFG:Debug(ObjectName, '  _Count (' .. type(self._Count) .. '): ' .. tostring(self._Count))
+	    XFG:Debug(ObjectName, '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
     end
 end
+--#endregion
 
+--#region Accessors
 function Metric:Increment()
-    self._Count = self._Count + 1
+    self.count = self.count + 1
     if(self:GetName() == XFG.Settings.Metric.Messages) then
         XFG.DataText.Metrics:RefreshBroker()
     end
 end
 
 function Metric:GetCount()
-    return self._Count
+    return self.count
 end
 
 function Metric:GetAverage(inPer)
     if(self:GetCount() == 0) then return 0 end
     assert(type(inPer) == 'number' or inPer == nil, 'argument must be number or nil')
-    local _Delta = GetServerTime() - XFG.Start
+    local delta = GetServerTime() - XFG.Start
     if(inPer ~= nil) then
-        _Delta = _Delta / inPer
+        delta = delta / inPer
     end
-    return self:GetCount() / _Delta
+    return self:GetCount() / delta
 end
+--#endregion

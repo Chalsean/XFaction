@@ -1,27 +1,53 @@
 local addon, Engine = ...
 local LogCategory = 'Constants'
 
-local XFG = LibStub('AceAddon-3.0'):NewAddon(addon, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceSerializer-3.0", "AceComm-3.0", "AceTimer-3.0", 'AceBucket-3.0')
+--#region XFG Instantiation
+local XFG = {}
+setmetatable(XFG, self)
 
 Engine[1] = XFG
 Engine[2] = G
 _G[addon] = Engine
 
 XFG.AddonName = addon
-XFG.Category = 'XFaction'
+XFG.Name = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
-XFG.Version = GetAddOnMetadata(addon, "Version")
+XFG.Version = GetAddOnMetadata(addon, 'Version')
 XFG.Start = GetServerTime()
-XFG.DebugFlag = false
+XFG.Verbosity = 4
 
 XFG.DataText = {}
 XFG.Factories = {}
 XFG.Frames = {}
 XFG.Handlers = {}
-XFG.Nameplates = {}
+XFG.Mailbox = {}
+XFG.Nameplates = {
+	ElvUI = {},
+}
+XFG.Options = {}
 
 XFG.Initialized = false
 
+XFG.Player = {
+	LastBroadcast = 0,
+	InInstance = false
+}
+--#endregion
+
+--#region Libraries
+XFG.Lib = {
+	Deflate = LibStub:GetLibrary('LibDeflate'),
+	QT = LibStub('LibQTip-1.0'),
+	Broker = LibStub('LibDataBroker-1.1'),
+	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Name, true),
+	Config = LibStub('AceConfigRegistry-3.0'),
+	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
+	LSM = LibStub('LibSharedMedia-3.0'),
+}
+XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
+--#endregion
+
+--#region Program Settings
 XFG.Icons = {
 	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
 	Texture = '|T%s:17:17|t',
@@ -32,40 +58,15 @@ XFG.Icons = {
 	Necrolord = 3257749,
 	Alliance = 2565243,
 	Horde = 463451,
+	Neutral = 132311,
 	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
 	Guild = 'ElvUI-Windtools-Healer',
-}
-
-XFG.Lib = {
-	Deflate = LibStub:GetLibrary('LibDeflate'),
-	QT = LibStub('LibQTip-1.0'),
-	Broker = LibStub('LibDataBroker-1.1'),
-	Config = LibStub('AceConfig-3.0'),
-	ConfigDialog = LibStub('AceConfigDialog-3.0'),
-	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Category, true),
-	Cmd = LibStub('AceConfigCmd-3.0'),
-	LSM = LibStub('LibSharedMedia-3.0'),
-	LSMList = AceGUIWidgetLSMlists,
-}
-
-XFG.Player = {
-	LastBroadcast = 0,
-	InInstance = false
-}
-
-XFG.Cache = {
-	Channels = {},
-	NewVersionNotify = false,
-	FirstScan = {},
-	Realms = {},
-	Factions = {},
-	SetupGuild = {},
-	Invites = {},
 }
 
 XFG.Settings = {
 	System = {
 		Roster = true,
+		UIDLength = 11,
 	},
 	Expansions = {
 		[WOW_PROJECT_MAINLINE] = 3601566,
@@ -117,15 +118,15 @@ XFG.Settings = {
 	},
 	Factions = {'Alliance', 'Horde', 'Neutral'},
 	Network = {
-		CompressionLevel = 6,
-		LoginLimit = 42,
+		CompressionLevel = 9,
 		Channel = {
 			Total = 10,
-			Name = nil,
-			Password = nil
 		},
-		BNet = {
-			PacketSize = 420,
+		Chat = {
+			PacketSize = 217,
+		},
+		BNet = {	
+			PacketSize = 425,	
 			Ping = {
 				Timer = 60,         -- Seconds between pinging friends
 			},
@@ -153,7 +154,7 @@ XFG.Settings = {
 			WHISPER = '2',   -- Whisper only
 			LOCAL = '3',     -- Local Channel only
 			BNET = '4',      -- BNet only
-		},
+		},		
 		Mailbox = {
 			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
 			Stale = 60 * 5   -- Seconds until a message is considered stale
@@ -180,4 +181,11 @@ XFG.Settings = {
 		Scan = 60 * 7,
 		Purge = 60 * 30,
 	},
+	Profession = {
+		Total = 100,
+	},
+	Race = {
+		Total = 100,
+	},
 }
+--#endregion

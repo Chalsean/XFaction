@@ -1,31 +1,33 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Factory'
-
 local ServerTime = GetServerTime
 
 Factory = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function Factory:new()
-    local _Object = Factory.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._CheckedIn = nil
-    _Object._CheckedInCount = 0
-    _Object._CheckedOut = nil
-    _Object._CheckedOutCount = 0
-    return _Object
+    local object = Factory.parent.new(self)
+    object.__name = ObjectName
+    object.checkedIn = nil
+    object.checkedInCount = 0
+    object.checkedOut = nil
+    object.checkedOutCount = 0
+    return object
 end
 
 function Factory:newChildConstructor()
-    local _Object = Factory.parent.new(self)
-    _Object.__name = ObjectName
-    _Object.parent = self
-    _Object._CheckedIn = nil
-    _Object._CheckedInCount = 0
-    _Object._CheckedOut = nil
-    _Object._CheckedOutCount = 0
-    return _Object
+    local object = Factory.parent.new(self)
+    object.__name = ObjectName
+    object.parent = self
+    object.checkedIn = nil
+    object.checkedInCount = 0
+    object.checkedOut = nil
+    object.checkedOutCount = 0
+    return object
 end
+--#endregion
 
+--#region Initializers
 function Factory:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -35,95 +37,104 @@ end
 
 function Factory:ParentInitialize()
     self:SetKey(math.GenerateUID())
-    self._Objects = {}
-    self._CheckedIn = {}
-    self._CheckedOut = {}
+    self.objects = {}
+    self.checkedIn = {}
+    self.checkedOut = {}
 end
+--#endregion
 
+--#region Print
 function Factory:ParentPrint()
     if(XFG.Debug) then
         XFG:DoubleLine(self:GetObjectName())
-        XFG:Debug(self:GetObjectName(), '  _Key (' .. type(self._Key) .. '): ' .. tostring(self._Key))
-        XFG:Debug(self:GetObjectName(), '  _Initialized (' .. type(self._Initialized) .. '): ' .. tostring(self._Initialized))
-        XFG:Debug(self:GetObjectName(), "  _CheckedInCount (" .. type(self._CheckedInCount) .. "): ".. tostring(self._CheckedInCount))
-        XFG:Debug(self:GetObjectName(), "  _CheckedOutCount (" ..type(self._CheckedOutCount) .. "): ".. tostring(self._CheckedOutCount))
-        for _Key, _Object in self:CheckedInIterator() do
-            XFG:Debug(self:GetObjectName(), 'CheckedIn')
-            _Object:Print()
+        XFG:Debug(self:GetObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
+        XFG:Debug(self:GetObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
+        XFG:Debug(self:GetObjectName(), '  checkedInCount (' .. type(self.checkedInCount) .. '): ' .. tostring(self.checkedInCount))
+        XFG:Debug(self:GetObjectName(), '  checkedOutCount (' .. type(self.checkedOutCount) .. '): ' .. tostring(self.checkedOutCount))
+        for key, object in self:CheckedInIterator() do
+            XFG:Debug(self:GetObjectName(), 'checkedIn')
+            object:Print()
         end
-        for _Key, _Object in self:CheckedOutIterator() do
-            XFG:Debug(self:GetObjectName(), 'CheckedOut')
-            _Object:Print()
+        for key, object in self:CheckedOutIterator() do
+            XFG:Debug(self:GetObjectName(), 'checkedOut')
+            object:Print()
         end
     end
 end
+--#endregion
 
+--#region Iterators
 function Factory:CheckedInIterator()
-	return next, self._CheckedIn, nil
+	return next, self.checkedIn, nil
 end
 
 function Factory:CheckedOutIterator()
-	return next, self._CheckedOut, nil
+	return next, self.checkedOut, nil
 end
+--#endregion
 
+--#region Stack
 function Factory:IsLoaned(inKey)
     assert(type(inKey) == 'string')
-    return self._CheckedOut[inKey] ~= nil
+    return self.checkedOut[inKey] ~= nil
 end
 
 function Factory:IsAvailable(inKey)
     assert(type(inKey) == 'string')
-    return self._CheckedIn[inKey] ~= nil
+    return self.checkedIn[inKey] ~= nil
 end
 
 function Factory:Pop()
     assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil value')
-    local _CurrentTime = ServerTime()
-    for _, _Object in self:CheckedInIterator() do
-        _Object:SetFactoryTime(_CurrentTime)
-        self._CheckedIn[_Object:GetFactoryKey()] = nil
-        self._CheckedInCount = self._CheckedInCount - 1
-        self._CheckedOut[_Object:GetFactoryKey()] = _Object
-        self._CheckedOutCount = self._CheckedOutCount + 1
-        return _Object
+    local currentTime = ServerTime()
+    for _, object in self:CheckedInIterator() do
+        object:SetFactoryTime(currentTime)
+        self.checkedIn[object:GetFactoryKey()] = nil
+        self.checkedInCount = self.checkedInCount - 1
+        self.checkedOut[object:GetFactoryKey()] = object
+        self.checkedOutCount = self.checkedOutCount + 1
+        return object
     end
 
-    local _NewObject = self:NewObject()
-    _NewObject:SetFactoryKey(math.GenerateUID())
-    _NewObject:SetFactoryTime(_CurrentTime)
-    self._CheckedOut[_NewObject:GetFactoryKey()] = _NewObject
-    self._CheckedOutCount = self._CheckedOutCount + 1
+    local newObject = self:NewObject()
+    newObject:SetFactoryKey(math.GenerateUID())
+    newObject:SetFactoryTime(currentTime)
+    self.checkedOut[newObject:GetFactoryKey()] = newObject
+    self.checkedOutCount = self.checkedOutCount + 1
 
-    return _NewObject
+    return newObject
 end
 
 function Factory:Push(inObject)
     if(inObject == nil) then return end
     assert(type(inObject) == 'table' and inObject.__name ~= nil, 'argument must be an object')
     if(self:IsLoaned(inObject:GetFactoryKey())) then
-        self._CheckedOut[inObject:GetFactoryKey()] = nil
-        self._CheckedOutCount = self._CheckedOutCount - 1
+        self.checkedOut[inObject:GetFactoryKey()] = nil
+        self.checkedOutCount = self.checkedOutCount - 1
         inObject:FactoryReset()
         inObject:SetFactoryTime(ServerTime())
-        self._CheckedIn[inObject:GetFactoryKey()] = inObject
-        self._CheckedInCount = self._CheckedInCount + 1         
+        self.checkedIn[inObject:GetFactoryKey()] = inObject
+        self.checkedInCount = self.checkedInCount + 1         
     end
 end
+--#endregion
 
+--#region Janitorial
 function Factory:Purge(inPurgeTime)
     assert(type(inPurgeTime) == 'number')
-    for _, _Object in self:CheckedInIterator() do
-        if(_Object:GetFactoryTime() < inPurgeTime) then
-			self:Remove(_Object:GetKey())
-			self._CheckedIn[_Object:GetFactoryKey()] = nil
-			self._CheckedInCount = self._CheckedInCount - 1
+    for _, object in self:CheckedInIterator() do
+        if(object:GetFactoryTime() < inPurgeTime) then
+			self:Remove(object:GetKey())
+			self.checkedIn[object:GetFactoryKey()] = nil
+			self.checkedInCount = self.checkedInCount - 1
         end
     end
-    for _, _Object in self:CheckedOutIterator() do
-        if(_Object:GetFactoryTime() < inPurgeTime) then
-			self:Remove(_Object:GetKey())
-            self._CheckedOut[_Object:GetFactoryKey()] = nil
-			self._CheckedOutCount = self._CheckedOutCount - 1
+    for _, object in self:CheckedOutIterator() do
+        if(object:GetFactoryTime() < inPurgeTime) then
+			self:Remove(object:GetKey())
+            self.checkedOut[object:GetFactoryKey()] = nil
+			self.checkedOutCount = self.checkedOutCount - 1
         end
     end
 end
+--#endregion

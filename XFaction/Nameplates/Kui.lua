@@ -1,51 +1,57 @@
 local XFG, G = unpack(select(2, ...))
-if(KuiNameplates == nil) then return end
-XFG.Nameplates.Kui = KuiNameplates:NewPlugin('XFaction')
-
+local ObjectName = 'Kui'
 local UnitIsPlayer = UnitIsPlayer
 local UnitGUID = UnitGUID
 
-function XFG.Nameplates.Kui:Show(f)
-    if(XFG.Config and XFG.Config.Nameplates.Kui.Enable and UnitIsPlayer(f.unit)) then
-        if(XFG.Config.Nameplates.Kui.MainName) then
-            local _GUID = UnitGUID(f.unit)
-            if(_GUID and XFG.Confederate:Contains(_GUID)) then
-                local _Unit = XFG.Confederate:Get(_GUID)
-                if(_Unit:HasMainName()) then
-                    f.state.name = f.state.name .. ' (' .. _Unit:GetMainName() .. ')'
-                end
-            end
-        end
+if(KuiNameplates == nil) then return end
+XFG.Nameplates.Kui = KuiNameplates:NewPlugin('XFaction')
 
-        if(f.state.guild_text and XFG.Guilds:ContainsName(f.state.guild_text)) then
-            if(XFG.Config.Nameplates.Kui.Icon) then
-                f.state.name = XFG.Media:Get(XFG.Icons.Guild):GetTexture() .. f.state.name
-            end
-            if(XFG.Config.Nameplates.Kui.GuildName == 'GuildInitials') then
-                f.state.guild_text = XFG.Guilds:GetByName(f.state.guild_text):GetInitials()
-            elseif(XFG.Config.Nameplates.Kui.GuildName == 'Confederate') then
-                f.state.guild_text = XFG.Confederate:GetName()
-            elseif(XFG.Config.Nameplates.Kui.GuildName == 'ConfederateInitials') then
-                f.state.guild_text = XFG.Confederate:GetKey()
-            elseif(XFG.Config.Nameplates.Kui.GuildName == 'Team') then  
-                local _GUID = UnitGUID(f.unit)              
-                if(XFG.Confederate:Contains(_GUID)) then
-                    f.state.guild_text = XFG.Confederate:Get(_GUID):GetTeam():GetName()
-                else
-                    f.state.guild_text = 'Unknown'
+function XFG.Nameplates.Kui:OnShow(f)
+    try(function()
+        if(XFG.Initialized and XFG.Config.Nameplates.Kui.Enable and UnitIsPlayer(f.unit)) then
+            if(XFG.Config.Nameplates.Kui.MainName) then
+                local guid = UnitGUID(f.unit)
+                if(guid and XFG.Confederate:Contains(guid)) then
+                    local unit = XFG.Confederate:Get(guid)
+                    if(unit:HasMainName()) then
+                        f.state.name = f.state.name .. ' (' .. unit:GetMainName() .. ')'
+                    end
                 end
             end
-        elseif(XFG.Config.Nameplates.Kui.Hide) then
-            f.state.guild_text = ''
+
+            if(f.state.guild_text and XFG.Guilds:ContainsName(f.state.guild_text)) then
+                if(XFG.Config.Nameplates.Kui.Icon) then
+                    f.state.name = XFG.Media:Get(XFG.Icons.Guild):GetTexture() .. f.state.name
+                end
+                if(XFG.Config.Nameplates.Kui.GuildName == 'GuildInitials') then
+                    f.state.guild_text = XFG.Guilds:GetByName(f.state.guild_text):GetInitials()
+                elseif(XFG.Config.Nameplates.Kui.GuildName == 'Confederate') then
+                    f.state.guild_text = XFG.Confederate:GetName()
+                elseif(XFG.Config.Nameplates.Kui.GuildName == 'ConfederateInitials') then
+                    f.state.guild_text = XFG.Confederate:GetKey()
+                elseif(XFG.Config.Nameplates.Kui.GuildName == 'Team') then  
+                    local guid = UnitGUID(f.unit)              
+                    if(XFG.Confederate:Contains(guid)) then
+                        f.state.guild_text = XFG.Confederate:Get(guid):GetTeam():GetName()
+                    else
+                        f.state.guild_text = 'Unknown'
+                    end
+                end
+            elseif(XFG.Config.Nameplates.Kui.Hide) then
+                f.state.guild_text = ''
+            end
         end
-    end
+    end).
+    catch(function ()
+        XFG:Warn(ObjectName, 'Failed to update Kui nameplate')
+    end)
 end
 
 function XFG.Nameplates.Kui:UNIT_NAME_UPDATE(event,frame)
-    self:Show(frame)
+    self:OnShow(frame)
 end
 
 function XFG.Nameplates.Kui:OnEnable()
-    self:RegisterMessage('Show')
+    self:RegisterMessage('Show', 'OnShow')
     self:RegisterUnitEvent('UNIT_NAME_UPDATE')
 end

@@ -3,114 +3,88 @@ local ObjectName = 'Event'
 
 Event = Object:newChildConstructor()
 
+--#region Constructors
 function Event:new()
-    local _Object = Event.parent.new(self)
-    _Object.__name = ObjectName
-    _Object._Name = nil
-    _Object._Delta = 0
-    _Object._Callback = nil
-    _Object._Enabled = false
-    _Object._Instance = false
-    _Object._InstanceCombat = false
-    _Object._Bucket = false
-    return _Object
+    local object = Event.parent.new(self)
+    object.__name = ObjectName
+    object.delta = 0
+    object.callback = nil
+    object.isEnabled = false
+    object.inInstance = false
+    object.inInstanceCombat = false
+    return object
 end
+--#endregion
 
+--#region Print
 function Event:Print()
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         self:ParentPrint()
-        XFG:Debug(ObjectName, '  _Name (' .. type(self._Name) .. '): ' .. tostring(self._Name))
-        XFG:Debug(ObjectName, '  _Delta (' .. type(self._Delta) .. '): ' .. tostring(self._Delta))
-        XFG:Debug(ObjectName, '  _Callback (' .. type(self._Callback) .. '): ' .. tostring(self._Callback))
-        XFG:Debug(ObjectName, '  _Enabled (' .. type(self._Enabled) .. '): ' .. tostring(self._Enabled))
-        XFG:Debug(ObjectName, '  _Instance (' .. type(self._Instance) .. '): ' .. tostring(self._Instance))
-        XFG:Debug(ObjectName, '  _InstanceCombat (' .. type(self._InstanceCombat) .. '): ' .. tostring(self._InstanceCombat))
-        XFG:Debug(ObjectName, '  _Bucket (' .. type(self._Bucket) .. '): ' .. tostring(self._Bucket))
+        XFG:Debug(ObjectName, '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
+        XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+        XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+        XFG:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+        XFG:Debug(ObjectName, '  inInstanceCombat (' .. type(self.inInstanceCombat) .. '): ' .. tostring(self.inInstanceCombat))
     end
 end
+--#endregion
 
-function Event:GetName()
-    return self._Name
-end
-
-function Event:SetName(inName)
-    assert(type(inName) == 'string')
-    self._Name = inName
-    return self:GetName()
-end
-
-function Event:GetName()
-    return self._Name
-end
-
+--#region Accessors
 function Event:GetCallback()
-    return self._Callback
+    return self.callback
 end
 
 function Event:SetCallback(inCallback)
     assert(type(inCallback) == 'function')
-    self._Callback = inCallback
-    return self:GetCallback()
+    self.callback = inCallback
 end
 
 function Event:IsEnabled(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
-        self._Enabled = inBoolean
+        self.isEnabled = inBoolean
     end
-	return self._Enabled
+	return self.isEnabled
 end
 
 function Event:IsInstance(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
-        self._Instance = inBoolean
+        self.inInstance = inBoolean
     end
-	return self._Instance
-end
-
-function Event:IsBucket(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self._Bucket = inBoolean
-    end
-	return self._Bucket
+	return self.inInstance
 end
 
 function Event:GetDelta()
-    return self._Delta
+    return self.delta
 end
 
 function Event:SetDelta(inDelta)
     assert(type(inDelta) == 'number')
-    self._Delta = inDelta
-    return self._Delta
+    self.delta = inDelta
 end
 
 function Event:IsInstanceCombat(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
-        self._InstanceCombat = inBoolean
+        self.inInstanceCombat = inBoolean
     end
-	return self._InstanceCombat
+	return self.inInstanceCombat
 end
+--#endregion
 
+--#region Start/Stop
 function Event:Start()
-    if(self:IsBucket()) then
-        XFG:RegisterBucketEvent({self:GetName()}, self:GetDelta(), self:GetCallback(), self:GetName())
-    else
-        XFG:RegisterEvent(self:GetName(), self:GetCallback(), self:GetName())
-    end
     self:IsEnabled(true)
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         XFG:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
     end
 end
 
 function Event:Stop()
-    XFG:UnregisterEvent(self:GetName())
     self:IsEnabled(false)
-    if(XFG.DebugFlag) then
+    if(XFG.Verbosity) then
         XFG:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
     end
 end
+--#endregion

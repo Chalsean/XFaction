@@ -3,109 +3,113 @@ local ObjectName = 'ZoneCollection'
 
 ZoneCollection = ObjectCollection:newChildConstructor()
 
+--#region Constructors
 function ZoneCollection:new()
-    local _Object = ZoneCollection.parent.new(self)
-	_Object.__name = ObjectName
-	_Object._ZoneByID = {}
-    return _Object
+    local object = ZoneCollection.parent.new(self)
+	object.__name = ObjectName
+	object.zoneByID = {}
+    return object
 end
+--#endregion
 
+--#region Initializers
 function ZoneCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-		local _Tourist = LibStub('LibTourist-3.0')
+		local lib = LibStub('LibTourist-3.0')
+		local zoneIDs = lib:GetMapIDLookupTable()
+		local zoneLocale = lib:GetLookupTable()
+		local alreadyAdded = {}
 
-		local _ZoneIDs = _Tourist:GetMapIDLookupTable()
-		local _ZoneLocale = _Tourist:GetLookupTable()
-		local _AlreadyAdded = {}
+		for zoneID, zoneName in pairs (zoneIDs) do
+			if(strlen(zoneName) > 0) then
+				zoneID = tonumber(zoneID)
+				local continentID = lib:GetContinentMapID(zoneID)
 
-		for _ZoneID, _ZoneName in pairs (_ZoneIDs) do
-			if(strlen(_ZoneName) > 0) then
-				_ZoneID = tonumber(_ZoneID)
-				local _ContinentID = _Tourist:GetContinentMapID(_ZoneID)
-
-				if(not _AlreadyAdded[_ZoneName]) then
-					if(_ContinentID and tonumber(_ContinentID) == _ZoneID) then
-						_ContinentID = tonumber(_ContinentID)
-						if(not XFG.Continents:Contains(_ZoneName)) then
-							local _NewContinent = Continent:new()
-							_NewContinent:Initialize()
-							_NewContinent:SetKey(_ZoneName)
-							_NewContinent:AddID(_ZoneID)
-							_NewContinent:SetName(_ZoneName)
-							if(_ZoneLocale[_NewContinent:GetName()]) then
-								_NewContinent:SetLocaleName(_ZoneLocale[_NewContinent:GetName()])
+				if(not alreadyAdded[zoneName]) then
+					if(continentID and tonumber(continentID) == zoneID) then
+						continentID = tonumber(continentID)
+						if(not XFG.Continents:Contains(zoneName)) then
+							local continent = Continent:new()
+							continent:Initialize()
+							continent:SetKey(zoneName)
+							continent:AddID(zoneID)
+							continent:SetName(zoneName)
+							if(zoneLocale[continent:GetName()]) then
+								continent:SetLocaleName(zoneLocale[continent:GetName()])
 							end
-							XFG.Continents:Add(_NewContinent)
-							XFG:Info(ObjectName, 'Initialized continent [%s]', _NewContinent:GetName())
-							_AlreadyAdded[_NewContinent:GetName()] = true
+							XFG.Continents:Add(continent)
+							XFG:Info(ObjectName, 'Initialized continent [%s]', continent:GetName())
+							alreadyAdded[continent:GetName()] = true
 						end
 
-					elseif(not self:Contains(_ZoneName)) then
-						local _NewZone = Zone:new()
-						_NewZone:Initialize()
-						_NewZone:SetKey(_ZoneName)
-						_NewZone:AddID(_ZoneID)
-						_NewZone:SetName(_ZoneName)
-						if(_ZoneLocale[_NewZone:GetName()]) then
-							_NewZone:SetLocaleName(_ZoneLocale[_NewZone:GetName()])
+					elseif(not self:Contains(zoneName)) then
+						local zone = Zone:new()
+						zone:Initialize()
+						zone:SetKey(zoneName)
+						zone:AddID(zoneID)
+						zone:SetName(zoneName)
+						if(zoneLocale[zone:GetName()]) then
+							zone:SetLocaleName(zoneLocale[zone:GetName()])
 						end
-						self:Add(_NewZone)
-						_AlreadyAdded[_NewZone:GetName()] = true
+						self:Add(zone)
+						alreadyAdded[zone:GetName()] = true
 					end
-				elseif(XFG.Continents:Contains(_ZoneName)) then
-					XFG.Continents:Get(_ZoneName):AddID(_ZoneID)
+				elseif(XFG.Continents:Contains(zoneName)) then
+					XFG.Continents:Get(zoneName):AddID(zoneID)
 				else
-					self:Get(_ZoneName):AddID(_ZoneID)
+					self:Get(zoneName):AddID(zoneID)
 				end
 			end
 		end
 
-		for _, _Zone in self:Iterator() do
-			local _ContinentID = _Tourist:GetContinentMapID(_Zone:GetID())
-			if(_ContinentID) then
-				local _Continent = XFG.Continents:GetByID(tonumber(_ContinentID))
-				if(_Continent) then
-					_Zone:SetContinent(_Continent)
+		for _, zone in self:Iterator() do
+			local continentID = lib:GetContinentMapID(zone:GetID())
+			if(continentID) then
+				local continent = XFG.Continents:GetByID(tonumber(continentID))
+				if(continent) then
+					zone:SetContinent(continent)
 				end
-			end			
-			--XFG:Info(ObjectName, 'Initialized zone [%s]', _Zone:GetName())
+			end
 		end
 
 		self:AddZone('?')
 		self:IsInitialized(true)
 	end
 end
+--#endregion
 
+--#region Hash
 function ZoneCollection:ContainsByID(inID)
 	assert(type(inID) == 'number')
-	return self._ZoneByID[inID] ~= nil
+	return self.zoneByID[inID] ~= nil
 end
 
 function ZoneCollection:GetByID(inID)
 	assert(type(inID) == 'number')
-	return self._ZoneByID[inID]
+	return self.zoneByID[inID]
 end
 
 function ZoneCollection:Add(inZone)
-    assert(type(inZone) == 'table' and inZone.__name ~= nil and inZone.__name == 'Zone', 'argument must be Zone object')
+    assert(type(inZone) == 'table' and inZone.__name == 'Zone', 'argument must be Zone object')
 	self.parent.Add(self, inZone)
-	for _, _ID in inZone:IDIterator() do
-		self._ZoneByID[_ID] = inZone
+	for _, ID in inZone:IDIterator() do
+		self.zoneByID[ID] = inZone
 	end
 end
 
 function ZoneCollection:AddZone(inZoneName)
 	assert(type(inZoneName) == 'string')
 	if(not self:Contains(inZoneName)) then
-		local _NewZone = Zone:new()
-		_NewZone:Initialize()
-		_NewZone:SetKey(inZoneName)
-		_NewZone:SetName(inZoneName)
-		self:Add(_NewZone)
-		if(XFG.DebugFlag) then
-			XFG:Info(ObjectName, 'Initialized zone [%s]', _NewZone:GetName())
+		local zone = Zone:new()
+		zone:Initialize()
+		zone:SetKey(inZoneName)
+		zone:SetName(inZoneName)
+		self:Add(zone)
+		if(XFG.Verbosity) then
+			XFG:Info(ObjectName, 'Initialized zone [%s]', zone:GetName())
 		end
 	end
 end
+--#endregion
