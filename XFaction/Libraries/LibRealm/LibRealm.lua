@@ -102,9 +102,6 @@ function lib:GetAllRealms(region)
 		region = self:GetCurrentRegion()
 	end
 
-	-- For beta testing only
-	region = 'US'
-
 	if Unpack then
 		Unpack()
 	end
@@ -796,7 +793,7 @@ realmData = {
 [3209]="Azralon,PvE,ptBR,US,undefined",
 [3210]="Tol Barad,PvE,ptBR,US,undefined",
 [3234]="Gallywix,PvE,ptBR,US,undefined",
-[3296]="Benedictus,PvE,enUS,US,PTR",
+[3678]="Ambossar,PvE,enUS,US,EST",
 [3721]="Caelestrasz,PvE,enUS,US,AEST",
 [3722]="Aman'Thul,PvE,enUS,US,AEST",
 [3723]="Barthilas,PvE,enUS,US,AEST",
@@ -1283,7 +1280,6 @@ connectionData = {
 "1136,US,1136,83,109,129,1142",
 "1138,US,1138,89,107,130,1141,1346",
 "1146,US,1146",
-"3296,US,3296",
 "1147,US,1147,1353",
 "1151,US,1151,1350",
 "1165,US,1165,1377",
@@ -1296,6 +1292,7 @@ connectionData = {
 "1184,US,1184,1367,1375",
 "1185,US,1185,1372",
 "1190,US,1190,13",
+"1263,US,1263,3678",
 "1300,EU,1300",
 "1301,EU,1301",
 "1302,EU,539",
@@ -1385,7 +1382,6 @@ connectionData = {
 "3675,US,1365",
 "3676,US,1566",
 "3677,US,1373",
-"3678,US,1263",
 "3679,EU,577",
 "3680,EU,601",
 "3681,EU,622",
