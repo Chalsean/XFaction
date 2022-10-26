@@ -84,7 +84,7 @@ function Friend:SetTag(inTag)
 end
 
 function Friend:HasTarget()
-    return self._Target ~= nil
+    return self.target ~= nil
 end
 
 function Friend:GetTarget()
