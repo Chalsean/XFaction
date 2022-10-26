@@ -586,7 +586,6 @@ XFG.Options.args.DataText = {
 					order = 50,
 					type = 'toggle',
 					hidden = function () return XFG.Config.DataText.Guild.Column ~= 'Profession' end,
-					disabled = function () return (not XFG.Config.DataText.Guild.Enable.Profession) end,
 					name = ENABLE,
 					desc = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_PROFESSION_TOOLTIP'],
 					get = function(info) return XFG.Config.DataText.Guild.Enable[ info[#info] ] end,
