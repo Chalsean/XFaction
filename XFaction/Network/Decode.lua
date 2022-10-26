@@ -94,7 +94,7 @@ function XFG:DeserializeUnitData(inData)
 	if(deserializedData.X ~= nil) then 
 		local version = XFG.Versions:Get(deserializedData.X)
 		if(version == nil) then
-			version = version:new()
+			version = Version:new()
 			version:SetKey(deserializedData.X)
 			XFG.Versions:Add(version)
 		end
