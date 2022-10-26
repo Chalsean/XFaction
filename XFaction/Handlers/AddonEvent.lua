@@ -48,7 +48,7 @@ end
 local function InitializeCache()
     if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
     XFG.Cache = _G.XFCacheDB
-    --wipe(XFG.Cache)
+    
     if(XFG.Cache.UIReload == nil or not XFG.Cache.UIReload) then
         XFG:Info(ObjectName, 'Initializing cache')
         XFG.Cache = {
@@ -101,16 +101,11 @@ function XFG:LoadConfigs()
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileChanged', 'InitProfile')
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileCopied', 'InitProfile')
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileReset', 'InitProfile')
-    XFG.ConfigDB.RegisterCallback(self, 'OnDatabaseShutdown', 'Shutdown')
 end
     
 function XFG:InitProfile()
     -- When DB changes namespace (profile) the XFG.Config becomes invalid and needs to be reset
     XFG.Config = XFG.ConfigDB.profile
-end
-
-function XFG:Shutdown()
-    wipe(_G.XFCacheDB)  
 end
 --#endregion
 

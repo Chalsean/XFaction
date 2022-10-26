@@ -16,18 +16,6 @@ function LinkCollection:NewObject()
 end
 --#endregion
 
---#region Initializers
-function LinkCollection:Initialize()
-	if(not self:IsInitialized()) then
-		self:ParentInitialize()
-		if(XFG.Cache.UIReload) then
-			self:Restore()
-		end
-		self:IsInitialized(true)
-	end
-end
---#endregion
-
 --#region Hash
 function LinkCollection:Add(inLink)
     assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
@@ -78,9 +66,7 @@ function LinkCollection:ProcessMessage(inMessage)
 		if(link:GetFromNode():GetName() == sourceKey or link:GetToNode():GetName() == sourceKey) then
 			if(not link:IsMyLink() and linkKeys[link:GetKey()] == nil) then
 				self:Remove(link)
-				if(XFG.Verbosity) then
-					XFG:Debug(ObjectName, 'Removed link due to node broadcast [%s]', link:GetKey())
-				end
+				XFG:Debug(ObjectName, 'Removed link due to node broadcast [%s]', link:GetKey())
 			else
 				-- Update datetime for janitor process
 				link:SetTimeStamp(ServerTime())

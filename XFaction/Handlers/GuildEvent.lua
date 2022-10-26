@@ -46,6 +46,7 @@ function GuildEvent:CallbackRosterUpdate()
                     -- If cache doesn't have unit, process
                     if(not XFG.Confederate:Contains(unitData:GetKey())) then
                         XFG.Confederate:Add(unitData)
+                        XFG:Info(ObjectName, 'Added guild member via scan: %s', unitData:GetUnitName())
                         -- Don't notify if first scan seeing unit
                         if(XFG.Cache.FirstScan[memberID]) then
                             XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGIN, unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm())

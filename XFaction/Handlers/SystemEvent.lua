@@ -30,6 +30,9 @@ end
 function SystemEvent:CallbackLogout()
     if(XFG.Cache.UIReload) then 
         -- Backup cache on reload to be restored
+        XFG.Confederate:Backup()
+        XFG.Friends:Backup()
+        XFG.Links:Backup()
         _G.XFCacheDB = XFG.Cache
     else
         -- On a real logout, send a logout message to the confederate before shutting down
@@ -52,7 +55,8 @@ function SystemEvent:CallbackLogout()
             XFG.Cache.Errors[#XFG.Cache.Errors + 1] = 'Failed to send logoff message: ' .. inErrorMessage
         end).
         finally(function ()
-            XFG.Mailbox.Chat:Push(message)            
+            XFG.Mailbox.Chat:Push(message)
+            wipe(_G.XFCacheDB)         
         end)
     end    
 end

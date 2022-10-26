@@ -26,9 +26,6 @@ function Confederate:Initialize()
         -- If this is a reload, restore non-local guild members
         try(function ()
             self:CanModifyGuildInfo(CanEditGuildInfo())
-            if(XFG.Cache.UIReload) then
-                self:Restore()
-            end
         end).
         catch(function (inErrorMessage)
             XFG:Warn(ObjectName, inErrorMessage)
@@ -138,6 +135,7 @@ function Confederate:Backup()
 end
 
 function Confederate:Restore()
+    XFG:Debug(ObjectName, 'Restoring confederate members')
     for _, data in pairs (XFG.Cache.Backup.Confederate) do
         try(function ()
             local unitData = XFG:DeserializeUnitData(data)

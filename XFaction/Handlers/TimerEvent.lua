@@ -58,10 +58,16 @@ function TimerEvent:CallbackLogin()
 				XFG.Specs:Initialize()		    
 				XFG.Professions:Initialize()
 
+				-- Restore guild members from backup
+				if(XFG.Cache.UIReload) then	XFG.Confederate:Restore() end
+
 				-- Scan local guild, player unit information is now available
 				XFG.Handlers.GuildEvent:Initialize()
 				XFG.Handlers.SystemEvent:Initialize()
 				XFG.Handlers.PlayerEvent:Initialize()
+
+				-- Restore links from backup
+				if(XFG.Cache.UIReload) then XFG.Links:Backup() end
 
 				-- Player will start sending guild chat and achievement messages
 				-- We want this after player unit information is available because its included in the messages				
@@ -109,6 +115,10 @@ function TimerEvent:CallbackDelayedLogin()
 		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
+		XFG.Cache.Backup = {
+			Confederate = {},
+			Friends = {},
+		}
 		XFG.Cache.UIReload = false
 	end)
 end

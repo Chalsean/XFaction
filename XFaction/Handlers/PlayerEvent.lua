@@ -109,7 +109,6 @@ function PlayerEvent:CallbackInstance()
 
         -- Just leaving instance or UI reload
         elseif(not inInstance and XFG.Player.InInstance) then
-            XFG.Verbosity = XFG.Config.Debug.Enable
             XFG:Debug(ObjectName, 'Leaving instance, enabling some event listeners and timers')
             XFG.Player.InInstance = false
             XFG.Events:LeaveInstance()
