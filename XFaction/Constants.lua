@@ -43,6 +43,7 @@ XFG.Lib = {
 	Config = LibStub('AceConfigRegistry-3.0'),
 	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0'),
+	Serializer = LibStub('AceSerializer-3.0'),
 }
 XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 --#endregion
