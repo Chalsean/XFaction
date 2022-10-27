@@ -34,11 +34,9 @@ end
 
 --#region Print
 function DTToken:Print()
-	if(XFG.Verbosity) then
-		self:ParentPrint()
-		XFG:Debug(ObjectName, '  price (' .. type(self.price) .. '): ' .. tostring(self.price))
-		XFG:Debug(ObjectName, '  ldbObject (' .. type(self.ldbObject) .. ')')
-	end
+	self:ParentPrint()
+	XFG:Debug(ObjectName, '  price (' .. type(self.price) .. '): ' .. tostring(self.price))
+	XFG:Debug(ObjectName, '  ldbObject (' .. type(self.ldbObject) .. ')')
 end
 --#endregion
 

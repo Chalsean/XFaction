@@ -64,18 +64,16 @@ function Object:Print()
 end
 
 function Object:ParentPrint()
-    if(XFG.Verbosity) then
-        XFG:SingleLine(self:GetObjectName())
-        if(self.factoryKey ~= nil) then
-            XFG:Debug(self:GetObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))
-        end
-        if(self.factoryTime ~= nil) then
-            XFG:Debug(self:GetObjectName(), '  factoryTime (' .. type(self.factoryTime) .. '): ' .. tostring(self.factoryTime))
-        end
-        XFG:Debug(self:GetObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
-        XFG:Debug(self:GetObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))
-        XFG:Debug(self:GetObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
+    XFG:SingleLine(self:GetObjectName())
+    if(self.factoryKey ~= nil) then
+        XFG:Debug(self:GetObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))
     end
+    if(self.factoryTime ~= nil) then
+        XFG:Debug(self:GetObjectName(), '  factoryTime (' .. type(self.factoryTime) .. '): ' .. tostring(self.factoryTime))
+    end
+    XFG:Debug(self:GetObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
+    XFG:Debug(self:GetObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))
+    XFG:Debug(self:GetObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
 end
 --#endregion
 

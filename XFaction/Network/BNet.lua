@@ -17,7 +17,7 @@ function BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XFG.Settings.Network.Message.Tag.BNET = XFG.Confederate:GetKey() .. 'BNET'
-        XFG.Events:Add('BNetMessage', 'BN_CHAT_MSG_ADDON', XFG.Mailbox.BNet.BNetReceive)
+        XFG.Events:Add('BNetMessage', 'BN_CHAT_MSG_ADDON', XFG.Mailbox.BNet.BNetReceive, true, true)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -45,7 +45,7 @@ function BNet:Send(inMessage)
         if(friendCount > 0) then
             local randomNumber = math.random(1, friendCount)
             links[#links + 1] = friends[randomNumber]
-        elseif(XFG.Verbosity) then
+        else
             XFG:Debug(ObjectName, 'Unable to identify friends on target [%s:%s]', target:GetRealm():GetName(), target:GetFaction():GetName())
         end
     end
@@ -64,9 +64,7 @@ function BNet:Send(inMessage)
     for _, friend in pairs (links) do
         try(function ()
             for index, packet in ipairs (packets) do
-                if(XFG.Verbosity) then
-                    XFG:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:GetName(), friend:GetGameID(), index, #packets, XFG.Settings.Network.Message.Tag.BNET, strlen(packet))
-                end
+                XFG:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:GetName(), friend:GetGameID(), index, #packets, XFG.Settings.Network.Message.Tag.BNET, strlen(packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 XFG.Lib.BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, packet, _, friend:GetGameID())
                 XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
@@ -101,12 +99,10 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
             if(friend ~= nil) then
                 friend:IsRunningAddon(true)
                 friend:CreateLink()
-                if(XFG.Verbosity) then
-                    if(inEncodedMessage == 'PING') then
-                        XFG:Debug(ObjectName, 'Received ping from [%s]', friend:GetTag())
-                    elseif(inEncodedMessage == 'RE:PING') then
-                        XFG:Debug(ObjectName, '[%s] Responded to ping', friend:GetTag())
-                    end
+                if(inEncodedMessage == 'PING') then
+                    XFG:Debug(ObjectName, 'Received ping from [%s]', friend:GetTag())
+                elseif(inEncodedMessage == 'RE:PING') then
+                    XFG:Debug(ObjectName, '[%s] Responded to ping', friend:GetTag())
                 end
             end
         end

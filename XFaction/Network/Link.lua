@@ -32,12 +32,10 @@ end
 
 --#region Print
 function Link:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
-        if(self:HasFromNode()) then self:GetFromNode():Print() end
-        if(self:HasToNode()) then self:GetToNode():Print() end
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
+    if(self:HasFromNode()) then self:GetFromNode():Print() end
+    if(self:HasToNode()) then self:GetToNode():Print() end
 end
 --#endregion
 

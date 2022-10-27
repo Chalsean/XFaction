@@ -133,9 +133,7 @@ function FriendCollection:CheckFriend(inKey)
 		if(self:Contains(accountInfo.bnetAccountID)) then
 			if(not canLink) then
 				local friend = XFG.Friends:Get(accountInfo.bnetAccountID)
-				if(XFG.Verbosity) then
-					XFG:Info(ObjectName, 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
-				end
+				XFG:Info(ObjectName, 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
 				self:Remove(friend)
 				return true
 			end
@@ -153,9 +151,7 @@ function FriendCollection:CheckFriend(inKey)
 				self:Push(friend)
 				error(inErrorMessage)
 			end)
-			if(XFG.Verbosity) then
-				XFG:Info(ObjectName, 'Friend logged into supported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
-			end
+			XFG:Info(ObjectName, 'Friend logged into supported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
 			-- Ping them to see if they're running the addon
 			if(XFG.Initialized) then 
 				friend:Ping() 

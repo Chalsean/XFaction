@@ -23,9 +23,7 @@ function LinkCollection:Add(inLink)
 		self.parent.Add(self, inLink)
 		inLink:GetFromNode():IncrementLinkCount()
 		inLink:GetToNode():IncrementLinkCount()
-		if(XFG.Verbosity) then
-			XFG:Info(ObjectName, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
-		end
+		XFG:Info(ObjectName, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		XFG.DataText.Links:RefreshBroker()	
 	end
 end
@@ -36,9 +34,7 @@ function LinkCollection:Remove(inLink)
 		self.parent.Remove(self, inLink:GetKey())
 		inLink:GetFromNode():DecrementLinkCount()
 		inLink:GetToNode():DecrementLinkCount()
-		if(XFG.Verbosity) then
-			XFG:Info(ObjectName, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
-		end
+		XFG:Info(ObjectName, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())		
 		XFG.DataText.Links:RefreshBroker()
 		self:Push(inLink)
 	end

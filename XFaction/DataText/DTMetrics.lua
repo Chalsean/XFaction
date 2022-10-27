@@ -44,14 +44,12 @@ end
 
 --#region Print
 function DTMetrics:Print()
-	if(XFG.Verbosity) then
-		self:ParentPrint()
-		XFG:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
-		XFG:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
-		XFG:Debug(ObjectName, '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
-		XFG:Debug(ObjectName, '  ldbObject (' .. type(self.ldbObject) .. ')')
-		XFG:Debug(ObjectName, '  tooltip (' .. type(tooltip) .. ')')
-	end
+	self:ParentPrint()
+	XFG:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
+	XFG:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
+	XFG:Debug(ObjectName, '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
+	XFG:Debug(ObjectName, '  ldbObject (' .. type(self.ldbObject) .. ')')
+	XFG:Debug(ObjectName, '  tooltip (' .. type(tooltip) .. ')')
 end
 --#endregion
 

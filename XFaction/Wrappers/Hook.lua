@@ -17,13 +17,11 @@ end
 
 --#region Print
 function Hook:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  original (' .. type(self.original) .. '): ' .. tostring(self.original))
-        XFG:Debug(ObjectName, '  originalFunction (' .. type(self.originalFunction) .. '): ' .. tostring(self.originalFunction))
-        XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
-        XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  original (' .. type(self.original) .. '): ' .. tostring(self.original))
+    XFG:Debug(ObjectName, '  originalFunction (' .. type(self.originalFunction) .. '): ' .. tostring(self.originalFunction))
+    XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+    XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
 end
 --#endregion
 
@@ -78,9 +76,7 @@ function Hook:Start()
             original(...)
         end
         self:IsEnabled(true)
-        if(XFG.Verbosity) then
-            XFG:Debug(ObjectName, 'Started hook [%s]', self:GetKey())
-        end
+        XFG:Debug(ObjectName, 'Started hook [%s]', self:GetKey())
     end
 end
 
@@ -88,9 +84,7 @@ function Hook:Stop()
     if(self:HasOriginal() and self:IsEnabled()) then
         _G[self:GetOriginal()] = self:GetOriginalFunction()
         self:IsEnabled(false)
-        if(XFG.Verbosity) then
-            XFG:Debug(ObjectName, 'Stopped hook [%s]', self:GetKey())
-        end
+        XFG:Debug(ObjectName, 'Stopped hook [%s]', self:GetKey())
     end
 end
 --#endregion

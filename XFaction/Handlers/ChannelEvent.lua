@@ -15,8 +15,8 @@ end
 function ChannelEvent:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		XFG.Events:Add('ChannelChange', 'CHAT_MSG_CHANNEL_NOTICE', XFG.Handlers.ChannelEvent.CallbackChannelNotice)
-		XFG.Events:Add('ChannelColor', 'UPDATE_CHAT_COLOR', XFG.Handlers.ChannelEvent.CallbackUpdateColor)
+		XFG.Events:Add('ChannelChange', 'CHAT_MSG_CHANNEL_NOTICE', XFG.Handlers.ChannelEvent.CallbackChannelNotice, true, true)
+		XFG.Events:Add('ChannelColor', 'UPDATE_CHAT_COLOR', XFG.Handlers.ChannelEvent.CallbackUpdateColor, true, true)
 		self:IsInitialized(true)
 	end
 end
@@ -63,9 +63,7 @@ function ChannelEvent:CallbackUpdateColor(inChannel, inR, inG, inB)
 				XFG.Config.Channels[channel:GetName()].R = inR
 				XFG.Config.Channels[channel:GetName()].G = inG
 				XFG.Config.Channels[channel:GetName()].B = inB
-				if(XFG.Verbosity) then
-					XFG:Debug(ObjectName, 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, channel:GetName())
-				end
+				XFG:Debug(ObjectName, 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, channel:GetName())
 			end
 		end
 	end).

@@ -154,9 +154,7 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
 
     self:AddPacket(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
-        if(XFG.Verbosity) then
-            XFG:Debug(ObjectName, 'Received all packets for message [%s]', messageKey)
-        end
+        XFG:Debug(ObjectName, 'Received all packets for message [%s]', messageKey)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
         local fullMessage = self:DecodeMessage(encodedMessage)
         try(function ()
@@ -261,7 +259,7 @@ function Mailbox:Process(inMessage, inMessageTag)
     if(inMessage:HasUnitData()) then
         local unitData = inMessage:GetData()
         unitData:IsPlayer(false)
-        if(XFG.Confederate:Add(unitData) and XFG.Verbosity) then
+        if(XFG.Confederate:Add(unitData)) then
             XFG:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:GetUnitName())
         end
 

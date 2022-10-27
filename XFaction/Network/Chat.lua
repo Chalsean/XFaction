@@ -16,7 +16,7 @@ function Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XFG.Settings.Network.Message.Tag.LOCAL = XFG.Confederate:GetKey() .. 'XF'						
-        XFG.Events:Add('ChatMsg', 'CHAT_MSG_ADDON', XFG.Mailbox.Chat.ChatReceive)
+        XFG.Events:Add('ChatMsg', 'CHAT_MSG_ADDON', XFG.Mailbox.Chat.ChatReceive, true, true)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -56,14 +56,10 @@ function Chat:Send(inMessage)
     if(XFG.Channels:HasLocalChannel()) then
         self:Add(inMessage:GetKey())
         local channel = XFG.Channels:GetLocalChannel()
-        if(XFG.Verbosity) then
-            XFG:Debug(ObjectName, 'Broadcasting on channel [%s] with tag [%s]', channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
-        end
+        XFG:Debug(ObjectName, 'Broadcasting on channel [%s] with tag [%s]', channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
 
         for index, packet in ipairs (packets) do
-            if(XFG.Verbosity) then
-                XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d]', index, #packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(packet))
-            end
+            XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d]', index, #packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(packet))
             XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())
             XFG.Metrics:Get(XFG.Settings.Metric.ChannelSend):Increment()
         end        

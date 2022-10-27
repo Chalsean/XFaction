@@ -40,12 +40,10 @@ end
 
 --#region Print
 function Faction:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-        XFG:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
-        XFG:Debug(ObjectName, '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+    XFG:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+    XFG:Debug(ObjectName, '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
 end
 --#endregion
 

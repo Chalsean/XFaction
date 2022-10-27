@@ -24,17 +24,15 @@ end
 
 --#region Print
 function Timer:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-        XFG:Debug(ObjectName, '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
-        XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
-        XFG:Debug(ObjectName, '  lastRan (' .. type(self.lastRan) .. '): ' .. tostring(self.lastRan))
-        XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-        XFG:Debug(ObjectName, '  isRepeat (' .. type(self.isRepeat) .. '): ' .. tostring(self.isRepeat))
-        XFG:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-        XFG:Debug(ObjectName, '  inInstanceCombat (' .. type(self.inInstanceCombat) .. '): ' .. tostring(self.inInstanceCombat))
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+    XFG:Debug(ObjectName, '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
+    XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+    XFG:Debug(ObjectName, '  lastRan (' .. type(self.lastRan) .. '): ' .. tostring(self.lastRan))
+    XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+    XFG:Debug(ObjectName, '  isRepeat (' .. type(self.isRepeat) .. '): ' .. tostring(self.isRepeat))
+    XFG:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+    XFG:Debug(ObjectName, '  inInstanceCombat (' .. type(self.inInstanceCombat) .. '): ' .. tostring(self.inInstanceCombat))
 end
 --#endregion
 
@@ -117,9 +115,7 @@ function Timer:Start()
         self.handle = NewTimer(self:GetDelta(), self:GetCallback())
     end
     self:IsEnabled(true)
-    if(XFG.Verbosity) then
-        XFG:Debug(ObjectName, 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
-    end
+    XFG:Debug(ObjectName, 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
 end
 
 function Timer:Stop()
@@ -128,8 +124,6 @@ function Timer:Stop()
     end
     --XFG:CancelTimer(self._ID)
     self:IsEnabled(false)
-    if(XFG.Verbosity) then
-        XFG:Debug(ObjectName, 'Stopped timer [%s]', self:GetName())
-    end
+    XFG:Debug(ObjectName, 'Stopped timer [%s]', self:GetName())
 end
 --#endregion

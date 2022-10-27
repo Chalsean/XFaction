@@ -169,41 +169,39 @@ end
 
 --#region Print
 function Unit:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
-        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-        XFG:Debug(ObjectName, '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
-        XFG:Debug(ObjectName, '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
-        XFG:Debug(ObjectName, '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
-        XFG:Debug(ObjectName, '  note (' .. type(self.note) .. '): ' .. tostring(self.note))
-        XFG:Debug(ObjectName, '  isOnline (' .. type(self.isOnline) .. '): ' .. tostring(self.isOnline))
-        XFG:Debug(ObjectName, '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
-        XFG:Debug(ObjectName, '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
-        XFG:Debug(ObjectName, '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
-        XFG:Debug(ObjectName, '  isAlt (' .. type(self.isAlt) .. '): ' .. tostring(self.isAlt))
-        XFG:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
-        XFG:Debug(ObjectName, '  isPlayer (' .. type(self.isPlayer) .. '): ' .. tostring(self.isPlayer))
-        XFG:Debug(ObjectName, '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
-        XFG:Debug(ObjectName, '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
-        XFG:Debug(ObjectName, '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
-        XFG:Debug(ObjectName, '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
-        if(self:HasZone()) then 
-            self:GetZone():Print()
-        else
-            XFG:Debug(ObjectName, '  zoneName (' .. type(self.zoneName) .. '): ' .. tostring(self.zoneName))
-        end
-        if(self:HasVersion()) then self.version:Print() end
-        if(self:HasRealm()) then self.realm:Print() end
-        if(self:HasGuild()) then self.guild:Print() end
-        if(self:HasTeam()) then self.team:Print() end
-        if(self:HasRace()) then self.race:Print() end
-        if(self:HasClass()) then self.class:Print() end
-        if(self:HasSpec()) then self.spec:Print() end
-        if(self:HasProfession1()) then self.profession1:Print() end
-        if(self:HasProfession2()) then self.profession2:Print() end  
-        if(self:HasRaidIO()) then self:GetRaidIO():Print() end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
+    XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+    XFG:Debug(ObjectName, '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
+    XFG:Debug(ObjectName, '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
+    XFG:Debug(ObjectName, '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
+    XFG:Debug(ObjectName, '  note (' .. type(self.note) .. '): ' .. tostring(self.note))
+    XFG:Debug(ObjectName, '  isOnline (' .. type(self.isOnline) .. '): ' .. tostring(self.isOnline))
+    XFG:Debug(ObjectName, '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
+    XFG:Debug(ObjectName, '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
+    XFG:Debug(ObjectName, '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
+    XFG:Debug(ObjectName, '  isAlt (' .. type(self.isAlt) .. '): ' .. tostring(self.isAlt))
+    XFG:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
+    XFG:Debug(ObjectName, '  isPlayer (' .. type(self.isPlayer) .. '): ' .. tostring(self.isPlayer))
+    XFG:Debug(ObjectName, '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
+    XFG:Debug(ObjectName, '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
+    XFG:Debug(ObjectName, '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
+    XFG:Debug(ObjectName, '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
+    if(self:HasZone()) then 
+        self:GetZone():Print()
+    else
+        XFG:Debug(ObjectName, '  zoneName (' .. type(self.zoneName) .. '): ' .. tostring(self.zoneName))
     end
+    if(self:HasVersion()) then self.version:Print() end
+    if(self:HasRealm()) then self.realm:Print() end
+    if(self:HasGuild()) then self.guild:Print() end
+    if(self:HasTeam()) then self.team:Print() end
+    if(self:HasRace()) then self.race:Print() end
+    if(self:HasClass()) then self.class:Print() end
+    if(self:HasSpec()) then self.spec:Print() end
+    if(self:HasProfession1()) then self.profession1:Print() end
+    if(self:HasProfession2()) then self.profession2:Print() end  
+    if(self:HasRaidIO()) then self:GetRaidIO():Print() end
 end
 --#endregion
 

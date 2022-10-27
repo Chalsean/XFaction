@@ -26,13 +26,11 @@ end
 
 --#region Print
 function Zone:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
-        XFG:Debug(ObjectName, '  IDs: ')
-        XFG:DataDumper(ObjectName, self.IDs)
-        if(self:HasContinent()) then self:GetContinent():Print() end
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
+    XFG:Debug(ObjectName, '  IDs: ')
+    XFG:DataDumper(ObjectName, self.IDs)
+    if(self:HasContinent()) then self:GetContinent():Print() end
 end
 --#endregion
 

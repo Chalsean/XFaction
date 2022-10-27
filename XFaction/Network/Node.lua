@@ -27,11 +27,9 @@ end
 
 --#region Print
 function Node:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  linkCount (' .. type(self.linkCount) .. '): ' .. tostring(self.linkCount))
-        if(self:HasTarget()) then self:GetTarget():Print() end
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  linkCount (' .. type(self.linkCount) .. '): ' .. tostring(self.linkCount))
+    if(self:HasTarget()) then self:GetTarget():Print() end
 end
 --#endregion
 

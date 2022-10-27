@@ -43,13 +43,11 @@ end
 
 --#region Print
 function ChannelCollection:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  localChannel (' .. type(self.localChannel) .. ')')
-        if(self.localChannel ~= nil) then
-            self.localChannel:Print()
-        end
-    end
+	self:ParentPrint()
+	XFG:Debug(ObjectName, '  localChannel (' .. type(self.localChannel) .. ')')
+	if(self.localChannel ~= nil) then
+		self.localChannel:Print()
+	end
 end
 --#endregion
 
@@ -73,9 +71,7 @@ function ChannelCollection:SetLast(inKey)
 	for i = channel:GetID() + 1, 10 do
 		local nextChannel = self:GetByID(i)
 		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
-			if(XFG.Verbosity) then 
-				XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
-			end
+			XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
 			SwapChannels(channel:GetID(), i)
 			nextChannel:SetID(channel:GetID())
 			channel:SetID(i)
@@ -87,9 +83,7 @@ function ChannelCollection:SetLast(inKey)
 			if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
 				local _Color = XFG.Config.Channels[_Channel:GetName()]
 				SetChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
-				if(XFG.Verbosity) then
-					XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
-				end
+				XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
 			end		
 		end
 	end
@@ -126,9 +120,7 @@ function ChannelCollection:Scan()
 				if(channel:GetID() ~= channelID) then
 					local oldID = channel:GetID()
 					channel:SetID(channelID)
-					if(XFG.Verbosity) then
-						XFG:Debug(ObjectName, 'Channel ID changed [%d:%d:%s]', oldID, channel:GetID(), channel:GetName())
-					end
+					XFG:Debug(ObjectName, 'Channel ID changed [%d:%d:%s]', oldID, channel:GetID(), channel:GetName())
 				end
 			else
 				local channelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(channelName)

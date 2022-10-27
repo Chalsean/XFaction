@@ -17,15 +17,13 @@ end
 
 --#region Print
 function Realm:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
-        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-        XFG:Debug(ObjectName, '  IDCount (' .. type(self.IDCount) .. '): ' .. tostring(self.IDCount))
-        XFG:Debug(ObjectName, '  IDs (' .. type(self.IDs) .. '): ')
-        for _, value in pairs (self.IDs) do
-            XFG:Debug(ObjectName, '  ID (' .. type(value) .. ') ' .. tostring(value))
-        end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
+    XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+    XFG:Debug(ObjectName, '  IDCount (' .. type(self.IDCount) .. '): ' .. tostring(self.IDCount))
+    XFG:Debug(ObjectName, '  IDs (' .. type(self.IDs) .. '): ')
+    for _, value in pairs (self.IDs) do
+        XFG:Debug(ObjectName, '  ID (' .. type(value) .. ') ' .. tostring(value))
     end
 end
 --#endregion

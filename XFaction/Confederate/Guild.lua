@@ -18,14 +18,12 @@ end
 
 --#region Print
 function Guild:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-        XFG:Debug(ObjectName, '  streamID (' .. type(self.streamID) .. '): ' .. tostring(self.streamID))
-        XFG:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
-        if(self:HasFaction()) then self:GetFaction():Print() end
-        if(self:HasRealm()) then self:GetRealm():Print() end
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+    XFG:Debug(ObjectName, '  streamID (' .. type(self.streamID) .. '): ' .. tostring(self.streamID))
+    XFG:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
+    if(self:HasFaction()) then self:GetFaction():Print() end
+    if(self:HasRealm()) then self:GetRealm():Print() end
 end
 --#endregion
 

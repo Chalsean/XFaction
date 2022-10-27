@@ -16,11 +16,9 @@ end
 
 --#region Print
 function Channel:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-        XFG:Debug(ObjectName, '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+    XFG:Debug(ObjectName, '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
 end
 --#endregion
 

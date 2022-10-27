@@ -15,11 +15,9 @@ end
 
 --#region Print
 function Race:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-        if(self:HasFaction()) then self:GetFaction():Print() end
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+    if(self:HasFaction()) then self:GetFaction():Print() end
 end
 --#endregion
 

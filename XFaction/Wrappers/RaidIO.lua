@@ -15,11 +15,9 @@ end
 
 --#region Print
 function RaidIO:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  raid (' .. type(self.raid) .. '): ' .. tostring(self.raid))
-        XFG:Debug(ObjectName, '  dungeon (' .. type(self.dungeon) .. '): ' .. tostring(self.dungeon))
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  raid (' .. type(self.raid) .. '): ' .. tostring(self.raid))
+    XFG:Debug(ObjectName, '  dungeon (' .. type(self.dungeon) .. '): ' .. tostring(self.dungeon))
 end
 --#endregion
 

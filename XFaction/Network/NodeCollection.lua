@@ -18,11 +18,9 @@ end
 
 --#region Print
 function NodeCollection:Print()
-	if(XFG.Verbosity) then
-		self:ParentPrint()
-		XFG:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ')
-		XFG:DataDumper(ObjectName, self.targetCount)
-	end
+	self:ParentPrint()
+	XFG:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ')
+	XFG:DataDumper(ObjectName, self.targetCount)
 end
 --#endregion
 

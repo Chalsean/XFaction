@@ -23,17 +23,15 @@ end
 
 --#region Print
 function Friend:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-        XFG:Debug(ObjectName, '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
-        XFG:Debug(ObjectName, '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
-        XFG:Debug(ObjectName, '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
-        XFG:Debug(ObjectName, '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
-        XFG:Debug(ObjectName, '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
-        XFG:Debug(ObjectName, '  myLink (' .. type(self.myLink) .. '): ' .. tostring(self.myLink))
-        if(self:HasTarget()) then self:GetTarget():Print() end
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+    XFG:Debug(ObjectName, '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
+    XFG:Debug(ObjectName, '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
+    XFG:Debug(ObjectName, '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
+    XFG:Debug(ObjectName, '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
+    XFG:Debug(ObjectName, '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
+    XFG:Debug(ObjectName, '  myLink (' .. type(self.myLink) .. '): ' .. tostring(self.myLink))
+    if(self:HasTarget()) then self:GetTarget():Print() end
 end
 --#endregion
 
@@ -150,9 +148,7 @@ end
 
 --#region Network
 function Friend:Ping()
-    if(XFG.Verbosity) then
-        XFG:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
-    end
+    XFG:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
     XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, self:GetGameID())
     XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment() 
 end

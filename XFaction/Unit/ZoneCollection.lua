@@ -107,9 +107,7 @@ function ZoneCollection:AddZone(inZoneName)
 		zone:SetKey(inZoneName)
 		zone:SetName(inZoneName)
 		self:Add(zone)
-		if(XFG.Verbosity) then
-			XFG:Info(ObjectName, 'Initialized zone [%s]', zone:GetName())
-		end
+		XFG:Info(ObjectName, 'Initialized zone [%s]', zone:GetName())
 	end
 end
 --#endregion

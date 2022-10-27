@@ -45,20 +45,18 @@ end
 
 --#region Print
 function Message:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
-        XFG:Debug(ObjectName, '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
-        XFG:Debug(ObjectName, '  packetNumber (' .. type(self.packetNumber) .. '): ' .. tostring(self.packetNumber))
-        XFG:Debug(ObjectName, '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
-        XFG:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
-        XFG:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
-        XFG:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
-        XFG:Debug(ObjectName, '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
-        XFG:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
-        XFG:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
-        if(self:HasVersion()) then self:GetVersion():Print() end
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
+    XFG:Debug(ObjectName, '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
+    XFG:Debug(ObjectName, '  packetNumber (' .. type(self.packetNumber) .. '): ' .. tostring(self.packetNumber))
+    XFG:Debug(ObjectName, '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
+    XFG:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XFG:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
+    XFG:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
+    XFG:Debug(ObjectName, '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
+    XFG:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
+    XFG:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
+    if(self:HasVersion()) then self:GetVersion():Print() end
 end
 --#endregion
 

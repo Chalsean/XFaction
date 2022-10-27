@@ -14,10 +14,8 @@ end
 
 --#region Print
 function Team:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
 end
 --#endregion
 

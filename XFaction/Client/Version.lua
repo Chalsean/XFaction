@@ -17,12 +17,10 @@ end
 
 --#region Print
 function Version:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
-        XFG:Debug(ObjectName, '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
-        XFG:Debug(ObjectName, '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
+    XFG:Debug(ObjectName, '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
+    XFG:Debug(ObjectName, '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
 end
 --#endregion
 

@@ -25,7 +25,7 @@ function TimerCollection:Initialize()
         XFG.Timers:Add('Ping', XFG.Settings.Network.BNet.Ping.Timer, XFG.Handlers.TimerEvent.CallbackPingFriends, true, true, false)
         XFG.Timers:Add('StaleLinks', XFG.Settings.Network.BNet.Link.Scan, XFG.Handlers.TimerEvent.CallbackStaleLinks, true, true, false)
         XFG.Timers:Add('Offline', XFG.Settings.Confederate.UnitScan, XFG.Handlers.TimerEvent.CallbackOffline, true, true, false)
-        XFG.Timers:Add('DelayedLogin', 7, XFG.Handlers.TimerEvent.CallbackDelayedLogin)
+        XFG.Timers:Add('DelayedLogin', 7, XFG.Handlers.TimerEvent.CallbackDelayedLogin, true, true, true)
 
         self:IsInitialized(true)
     end

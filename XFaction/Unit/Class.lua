@@ -19,15 +19,13 @@ end
 
 --#region Print
 function Class:Print()
-    if(XFG.Verbosity) then
-        self:ParentPrint()
-        XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-        XFG:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
-        XFG:Debug(ObjectName, '  r (' .. type(self.r) .. '): ' .. tostring(self.r))
-        XFG:Debug(ObjectName, '  g (' .. type(self.g) .. '): ' .. tostring(self.g))
-        XFG:Debug(ObjectName, '  b (' .. type(self.b) .. '): ' .. tostring(self.b))
-        XFG:Debug(ObjectName, '  hex (' .. type(self.hex) .. '): ' .. tostring(self.hex))
-    end
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
+    XFG:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
+    XFG:Debug(ObjectName, '  r (' .. type(self.r) .. '): ' .. tostring(self.r))
+    XFG:Debug(ObjectName, '  g (' .. type(self.g) .. '): ' .. tostring(self.g))
+    XFG:Debug(ObjectName, '  b (' .. type(self.b) .. '): ' .. tostring(self.b))
+    XFG:Debug(ObjectName, '  hex (' .. type(self.hex) .. '): ' .. tostring(self.hex))
 end
 --#endregion
 
