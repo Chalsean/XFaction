@@ -109,7 +109,7 @@ function GuildCollection:SetFromGuildInfo()
 	if (compressed ~= nil) then
 		-- Decompress and deserialize XFaction data
 		local decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(compressed))
-		local _, deserialized = XFG:Deserialize(decompressed)
+		local _, deserialized = XFG.Lib.Serializer:Deserialize(decompressed)
 		XFG:Debug(ObjectName, 'Data from config %s', deserialized)
 		xfData = deserialized
 	else
@@ -121,6 +121,7 @@ function GuildCollection:SetFromGuildInfo()
 	end
 
 	for _, line in ipairs(string.Split(xfData, '\n')) do
+		XFG:Debug(ObjectName, line)
 		-- Confederate information
 		if(string.find(line, 'XFn')) then                    
 			local name, initials = line:match('XFn:(.-):(.+)')
@@ -135,8 +136,8 @@ function GuildCollection:SetFromGuildInfo()
 		-- If you keep your alts at a certain rank, this will flag them as alts in comms/DTs
 		elseif(string.find(line, 'XFa')) then
 			local altRank = line:match('XFa:(.+)')
-			XFG:Info(ObjectName, 'Initializing alt rank [%s]', altRank)
 			XFG.Settings.Confederate.AltRank = altRank
+			XFG:Info(ObjectName, 'Initialized alt rank [%s]', altRank)
 		elseif(string.find(line, 'XFt')) then
 			XFG.Teams:SetObjectFromString(line)
 		end

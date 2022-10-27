@@ -21,8 +21,8 @@ function TeamCollection:Initialize()
 				local team = Team:new()
 				team:Initialize()
 				team:SetName(data.name)
-				team:SetInitials(data.initial)
-				team:SetKey(data.initial)
+				team:SetInitials(data.initials)
+				team:SetKey(data.initials)
 				XFG:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
 			end
 		else
