@@ -100,6 +100,7 @@ end
 
 function TimerEvent:CallbackDelayedLogin()
 	try(function ()
+		XFG.Timers:Get('DelayedLogin'):Stop()
 		if(not XFG.Cache.UIReload) then
 			-- These are delayed to see if we get any ping responses before broadcasting
 			XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
