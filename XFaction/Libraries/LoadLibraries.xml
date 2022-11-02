@@ -14,7 +14,6 @@
     <Script file='LibDataBroker-1.1\LibDataBroker-1.1.lua'/>
     <Include file='LibDeflate\lib.xml'/>
     <Include file='LibQTip-1.0\lib.xml'/>
-    <Script file='LibRealm\LibRealm.lua'/>
     <!-- SharedMediaWidget dependent upon SharedMedia -->
     <Include file='LibSharedMedia-3.0\lib.xml'/>
     <Include file='AceGUI-3.0-SharedMediaWidgets\widget.xml'/>

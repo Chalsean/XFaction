@@ -1,0 +1,8 @@
+## Interface: 90205
+## Globe: check-classic
+## Title: Lib: Class
+## Notes: Library to provide information about classes.
+## Author: Chalsean (US-Proudmoore)
+## OptionalDeps: LibStub
+
+LibClass.lua

@@ -1,4 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Region.lua'/>
+    <Script file='RegionCollection.lua'/>
     <Script file='Realm.lua'/>
     <Script file='RealmCollection.lua'/>
     <Script file='Team.lua'/>

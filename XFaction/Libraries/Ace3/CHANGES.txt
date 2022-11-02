@@ -1,0 +1,39 @@
+------------------------------------------------------------------------
+r1258 | nevcairiel | 2022-02-23 09:52:47 +0000 (Wed, 23 Feb 2022) | 1 line
+Changed paths:
+   M /trunk/Ace3.toc
+   M /trunk/changelog.txt
+
+Update TOC and Changelog
+------------------------------------------------------------------------
+r1257 | nevcairiel | 2022-01-10 16:25:37 +0000 (Mon, 10 Jan 2022) | 1 line
+Changed paths:
+   M /trunk/AceGUI-3.0/widgets/AceGUIWidget-DropDown.lua
+
+AceGUI-3.0: Dropdown: Fix double click sound on toggling the dropdown (Issue #575)
+------------------------------------------------------------------------
+r1256 | nevcairiel | 2021-11-14 09:17:43 +0000 (Sun, 14 Nov 2021) | 1 line
+Changed paths:
+   M /trunk/changelog.txt
+
+Update Changelog
+------------------------------------------------------------------------
+r1255 | nevcairiel | 2021-11-14 09:14:15 +0000 (Sun, 14 Nov 2021) | 1 line
+Changed paths:
+   M /trunk/AceConfig-3.0/AceConfigDialog-3.0/AceConfigDialog-3.0.lua
+
+AceConfigDialog-3.0: Fix width number multiplier on multiselects (Issue #584)
+------------------------------------------------------------------------
+r1254 | funkehdude | 2021-11-12 22:56:59 +0000 (Fri, 12 Nov 2021) | 1 line
+Changed paths:
+   M /trunk/Ace3.toc
+
+bump toc
+------------------------------------------------------------------------
+r1253 | funkehdude | 2021-06-30 11:40:16 +0000 (Wed, 30 Jun 2021) | 1 line
+Changed paths:
+   M /trunk/Ace3.toc
+
+bump toc
+------------------------------------------------------------------------
+

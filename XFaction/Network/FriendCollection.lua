@@ -98,9 +98,9 @@ local function CanLink(inAccountInfo)
 	   inAccountInfo.gameAccountInfo.isOnline and 
 	   inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
 
-	   	-- There's no need to store if they are not logged into realm/faction we care about
+		-- There's no need to store if they are not logged into realm/faction we care about
 		local realm = XFG.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
-
+		
 		-- When a player is in Torghast, it will list realm as 0, no character name or faction
 		-- Bail out before it causes an exception
 		if(realm == nil or realm:GetName() == 'Torghast') then return false end
@@ -109,8 +109,7 @@ local function CanLink(inAccountInfo)
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
 		local faction = XFG.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
 
-		for _, ID in realm:IDIterator() do
-			local connectedRealm = XFG.Realms:GetByID(ID)
+		for _, connectedRealm in realm:ConnectedIterator() do
 			if(XFG.Targets:ContainsByRealmFaction(connectedRealm, faction) and (not XFG.Player.Faction:Equals(faction) or not XFG.Player.Realm:Equals(connectedRealm))) then
 				return true, XFG.Targets:GetByRealmFaction(connectedRealm, faction)
 			end

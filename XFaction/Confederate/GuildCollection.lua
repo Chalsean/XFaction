@@ -110,7 +110,6 @@ function GuildCollection:SetFromGuildInfo()
 		-- Decompress and deserialize XFaction data
 		local decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(compressed))
 		local _, deserialized = XFG.Lib.Serializer:Deserialize(decompressed)
-		XFG:Debug(ObjectName, 'Data from config %s', deserialized)
 		xfData = deserialized
 	else
 		xfData = self.info.description
@@ -121,7 +120,6 @@ function GuildCollection:SetFromGuildInfo()
 	end
 
 	for _, line in ipairs(string.Split(xfData, '\n')) do
-		XFG:Debug(ObjectName, line)
 		-- Confederate information
 		if(string.find(line, 'XFn')) then                    
 			local name, initials = line:match('XFn:(.-):(.+)')
