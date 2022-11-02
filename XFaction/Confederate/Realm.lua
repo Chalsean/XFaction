@@ -10,7 +10,7 @@ function Realm:new()
     object.ID = 0
     object.connectedRealms = nil
     object.connectedRealmCount = 0
-    object.APIName = nil
+    object.apiName = nil
     return object
 end
 --#endregion
@@ -29,7 +29,7 @@ end
 function Realm:Print()
     self:ParentPrint()
     XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-    XFG:Debug(ObjectName, '  APIName (' .. type(self.APIName) .. '): ' .. tostring(self.APIName))
+    XFG:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
     XFG:Debug(ObjectName, '  connectedRealmCount (' .. type(self.connectedRealmCount) .. '): ' .. tostring(self.connectedRealmCount))
     for _, realm in pairs (self.connectedRealms) do
         XFG:Debug(ObjectName, '* connectedRealm [%d]', realm:GetID())
@@ -72,11 +72,9 @@ function Realm:SetID(inID)
 end
 
 function Realm:GetAPIName()
-    return self.APIName
-end
-
-function Realm:SetAPIName(inAPIName)
-    assert(type(inAPIName) == 'string')
-    self.APIName = inAPIName
+    if(self.apiName == nil) then 
+        self.apiName = GetNormalizedRealmName() 
+    end
+    return self.apiName
 end
 --#endregion

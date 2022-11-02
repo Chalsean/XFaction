@@ -1142,7 +1142,6 @@ function RealmCollection:Initialize()
 				self:Add(realm)
 				
 				if(realm:GetName() == GetRealmName()) then
-					realm:SetAPIName(GetNormalizedRealmName())
 					XFG.Player.Realm = realm
 					XFG:Info(ObjectName, 'Initialized player realm [%d:%s]', realm:GetID(), realm:GetName())
 				end
@@ -1187,7 +1186,7 @@ function RealmCollection:Initialize()
 end
 --#endregion
 
---#region Accessors
+--#region Hash
 function RealmCollection:Add(inRealm)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
 	self.realmsByID[inRealm:GetID()] = inRealm

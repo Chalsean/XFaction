@@ -1,6 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Target'
 
+-- A target is a collection of connected realms + faction
+-- As long as someone on the target receives, they rebroadcast to local channel
 Target = Object:newChildConstructor()
 
 --#region Constructors

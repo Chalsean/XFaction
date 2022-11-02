@@ -1,9 +1,9 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'RegionCollection'
 local Regions = {
-	'US', -- includes brazil/oceania
+	'US', -- includes brazil, oceania
 	'KR', 
-	'EU', -- includes russia and non-eu states
+	'EU', -- includes russia
 	'TW', 
 	'CN'
 }
