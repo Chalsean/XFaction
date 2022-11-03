@@ -29,7 +29,7 @@ function RegionCollection:Initialize()
 			region:SetKey(id)
 			region:SetName(name)
 			self:Add(region)
-			
+
 			if(id == GetCurrentRegion()) then
 				region:IsCurrent(true)
 				self:SetCurrent(region)

@@ -1144,6 +1144,8 @@ function RealmCollection:Initialize()
 				if(realm:GetName() == GetRealmName()) then
 					XFG.Player.Realm = realm
 					XFG:Info(ObjectName, 'Initialized player realm [%d:%s]', realm:GetID(), realm:GetName())
+				else
+					XFG:Trace(ObjectName, 'Initialized realm [%d:%s]', realm:GetID(), realm:GetName())
 				end
 			end
 		end
@@ -1155,7 +1157,7 @@ function RealmCollection:Initialize()
 
 		-- Setup default realms (Torghast)
 		for realmID, realmName in pairs (XFG.Settings.Confederate.DefaultRealms) do
-			local realm = Realm:new()
+			local realm = Realm:new(); realm:Initialize()
 			realm:SetKey(realmName)
 			realm:SetName(realmName)
 			realm:SetID(realmID)

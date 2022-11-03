@@ -55,6 +55,16 @@ function Realm:AddConnected(inRealm)
         self.connectedRealmCount = self.connectedRealmCount + 1
     end
 end
+
+function Realm:IsConnected(inRealm)
+    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
+    for _, realm in pairs (self.connectedRealms) do
+        if(inRealm:Equals(realm)) then
+            return true
+        end
+    end
+    return false
+end
 --#endregion
 
 --#region Accessors

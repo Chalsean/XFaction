@@ -12,6 +12,13 @@ function Region:new()
 end
 --#endregion
 
+--#region Print
+function Region:Print()
+    self:ParentPrint()
+    XFG:Debug(ObjectName, '  current (' .. type(self.current) .. '): ' .. tostring(self.current))
+end
+--#endregion
+
 --#region Accessors
 function Region:IsCurrent(inBoolean)
     assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
