@@ -84,8 +84,6 @@ function TimerEvent:CallbackLogin()
 				XFG.DataText.Links:RefreshBroker()
 				XFG.DataText.Metrics:SetFont()
 				XFG.DataText.Metrics:RefreshBroker()
-
-				XFG.Friends:CheckFriend(1)
 			end
 		end
 		-- If havent gotten guild info after X seconds, give up. probably not in a guild
