@@ -1,8 +1,0 @@
-## Interface: 90205
-## LoadOnDemand: 1
-## Title: Lib: Tourist-3.0
-## Notes: A library to provide information about zones and instances.
-## Author: Odica
-## X-Category: Library
-
-lib.xml
