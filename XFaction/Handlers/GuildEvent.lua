@@ -21,7 +21,6 @@ function GuildEvent:Initialize()
         XFG.Events:Add('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
         self:CallbackRosterUpdate()
-        XFG.Player.Unit:Print()
         GuildRosterEvent()
         -- Hook player inviting someone, they will send broadcast if player joins
         -- hooksecurefunc('GuildInvite', function(inInvitee) XFG.Invites[inInvitee] = true end)

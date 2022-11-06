@@ -15,6 +15,7 @@ function XFG:Init()
 	XFG:Info(ObjectName, 'XFaction version [%s]', XFG.Version:GetKey())
 	
 	-- Confederate
+	XFG.Regions = RegionCollection:new(); XFG.Regions:Initialize()
 	XFG.Confederate = Confederate:new()
 	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
 	XFG.Guilds = GuildCollection:new()

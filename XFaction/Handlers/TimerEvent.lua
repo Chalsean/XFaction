@@ -33,7 +33,6 @@ function TimerEvent:CallbackLogin()
 				-- Confederate setup via guild info
 				XFG.Guilds:Initialize(guildID)
 				XFG.Confederate:Initialize()
-				XFG.Realms:SetPlayerRealm()
 				XFG.Guilds:SetPlayerGuild()
 				XFG.Teams:Initialize()	
 				XFG.Targets:Initialize()	
@@ -67,7 +66,7 @@ function TimerEvent:CallbackLogin()
 				XFG.Handlers.PlayerEvent:Initialize()
 
 				-- Restore links from backup
-				if(XFG.Cache.UIReload) then XFG.Links:Backup() end
+				if(XFG.Cache.UIReload) then XFG.Links:Restore() end
 
 				-- Player will start sending guild chat and achievement messages
 				-- We want this after player unit information is available because its included in the messages				

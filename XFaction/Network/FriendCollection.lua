@@ -98,23 +98,16 @@ local function CanLink(inAccountInfo)
 	   inAccountInfo.gameAccountInfo.isOnline and 
 	   inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
 
-	   	-- There's no need to store if they are not logged into realm/faction we care about
+		-- If player is in Torghast, don't link
 		local realm = XFG.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
-
-		-- When a player is in Torghast, it will list realm as 0, no character name or faction
-		-- Bail out before it causes an exception
-		if(realm == nil or realm:GetName() == 'Torghast') then return false end
+		if(realm == nil or realm:GetID() == 0) then return false end
 
 		-- We don't want to link to neutral faction toons
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
 		local faction = XFG.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
 
-		for _, ID in realm:IDIterator() do
-			local connectedRealm = XFG.Realms:GetByID(ID)
-			if(XFG.Targets:ContainsByRealmFaction(connectedRealm, faction) and (not XFG.Player.Faction:Equals(faction) or not XFG.Player.Realm:Equals(connectedRealm))) then
-				return true, XFG.Targets:GetByRealmFaction(connectedRealm, faction)
-			end
-		end
+		local target = XFG.Targets:GetByRealmFaction(realm, faction)
+		if(target ~= nil and not target:IsMyTarget()) then return true, target end
 	end
 	return false
 end
@@ -139,7 +132,7 @@ function FriendCollection:CheckFriend(inKey)
 			end
 
 		-- Did they come online on a supported realm/faction?
-		elseif(canLink) then
+		elseif(canLink and target ~= nil) then
 			local friend = nil
 			try(function ()
 				friend = self:Pop()
