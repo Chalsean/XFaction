@@ -25,14 +25,14 @@ end
 function AchievementEvent:CallbackAchievement(inID)
     try(function ()
         local _, name, _, _, _, _, _, _, _, _, _, isGuild, _, earnedBy = GetAchievementInfo(inID)
-        if(isGuild) then
-            local unitData = XFG.Confederate:GetUnitByName(earnedBy)    
-            if(unitData ~= nil) then
-                XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm(), unitData:GetGUID(), inID)
-            else
-                XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', earnedBy, earnedBy .. '-' .. XFG.Player.Realm:GetName(), nil, XFG.Player.Guild, XFG.Player.Realm, XFG.Player.Unit:GetGUID(), inID)
-            end
-        elseif(string.find(name, XFG.Lib.Locale['EXPLORE']) == nil) then
+        local unitData = XFG.Confederate:GetUnitByName(earnedBy)
+        if(unitData ~= nil) then
+            XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm(), unitData:GetGUID(), inID)
+        else
+            XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', earnedBy, earnedBy .. '-' .. XFG.Player.Realm:GetName(), nil, XFG.Player.Guild, XFG.Player.Realm, XFG.Player.Unit:GetGUID(), inID)
+        end
+
+        if(not isGuild and string.find(name, XFG.Lib.Locale['EXPLORE']) == nil) then
             local message = nil
             try(function ()
                 message = XFG.Mailbox.Chat:Pop()
