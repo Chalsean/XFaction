@@ -319,11 +319,13 @@ function Unit:SetNote(inNote)
     local startIndex, _, teamInitial = string.find(self.note, '%[(%a)%]')
     if(startIndex == 1) then
         self:SetMainTeam(nil, teamInitial)
+        return
     else
         -- No team format
         local startIndex, _, guildInitials = string.find(self.note, '%[(%a+)%]')
         if(_StartIndex == 1) then
-            self:SetMainTeam(guildInitials)            
+            self:SetMainTeam(guildInitials)
+            return
         end
     end
 
@@ -331,11 +333,13 @@ function Unit:SetNote(inNote)
     local startIndex, _, teamInitial, guildInitials = string.find(self.note, '%[(%a)-(%a+)')
     if(startIndex == 1) then
         self:SetMainTeam(guildInitials, teamInitial)
+        return
     else
         -- Some officer specific format
         local startIndex, _, guildInitials = string.find(self.note, '%[(%a%a-)-(%a-)%]')
         if(startIndex == 1) then
             self:SetMainTeam(guildInitials)
+            return
         end 
     end
 
@@ -343,6 +347,7 @@ function Unit:SetNote(inNote)
     local startIndex, _, guildInitials, teamInitial = string.find(self.note, '%[(%a+)%]%s?%[(%a)%]%s?')
     if(startIndex == 1) then
         self:SetMainTeam(guildInitials, teamInitial)
+        return
     end
 
     if(self:GetNote() == '?' and self:GetGuild():GetInitials() == 'ENK') then
