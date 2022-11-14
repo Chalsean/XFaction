@@ -18,36 +18,16 @@ function TeamCollection:Initialize()
 		if(#XFG.Cache.Teams > 0) then
 			self:IsCached(true)
 			for _, data in ipairs (XFG.Cache.Teams) do
-				local team = Team:new()
-				team:Initialize()
-				team:SetName(data.name)
-				team:SetInitials(data.initials)
-				team:SetKey(data.initials)
-				self:Add(team)
-				XFG:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
+				self:Add(data.initials, data.name)
 			end
 		else
 			for initials, name in pairs (XFG.Settings.Teams) do
-				local team = Team:new()
-				team:Initialize()
-				team:SetName(name)
-				team:SetInitials(initials)
-				team:SetKey(initials)
-				self:Add(team)
-				XFG:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
+				self:Add(initials, name)
 			end
 		end
 
 		for initials, name in pairs (XFG.Settings.Confederate.DefaultTeams) do
-			if(not self:Contains(initials)) then
-				local team = Team:new()
-				team:Initialize()
-				team:SetName(name)
-				team:SetInitials(initials)
-				team:SetKey(initials)
-				self:Add(team)
-				XFG:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
-			end
+			self:Add(initials, name)
 		end
 
 		self:IsInitialized(true)
@@ -63,5 +43,23 @@ function TeamCollection:SetObjectFromString(inString)
 		initials = teamInitial,
 		name = teamName,
 	}
+end
+--#endregion
+
+--#region Hash
+function TeamCollection:Add(inTeamInitials, inTeamName)
+	assert(type(inTeamInitials) == 'string')
+	assert(type(inTeamName) == 'string')
+
+	-- If team does not exist, create
+	if(not self:Contains(inTeamInitials)) then
+		local team = Team:new()
+		team:Initialize()
+		team:SetName(inTeamName)
+		team:SetInitials(inTeamInitials)
+		team:SetKey(inTeamInitials)
+		self.parent.Add(self, team)
+		XFG:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
+	end
 end
 --#endregion

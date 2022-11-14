@@ -18,29 +18,16 @@ end
 function ProfessionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		if(not XFG.Cache.UIReload or XFG.Cache.Professions == nil) then
-			XFG.Cache.Professions = {}
-			for _, ID in ipairs (GetAllProfessionIDs()) do
-				XFG.Cache.Professions[#XFG.Cache.Professions + 1] = {
-					ID = ID,
-					Name = GetProfessionName(ID),
-					Icon = GetProfessionIcon(ID),
-				}
-			end
-		else
-			XFG:Debug(ObjectName, 'Profession information found in cache')
-		end
-
-		for _, data in ipairs(XFG.Cache.Professions) do
+		for _, ID in ipairs (GetAllProfessionIDs()) do
+			local name = GetProfessionName(ID)
 			local profession = Profession:new()
-			profession:SetID(data.ID)
-			profession:SetIconID(data.Icon)
-			profession:SetName(data.Name)
-			profession:SetKey(data.ID)
+			profession:SetID(ID)
+			profession:SetIconID(GetProfessionIcon(ID))
+			profession:SetName(GetProfessionName(ID))
+			profession:SetKey(ID)
 			self:Add(profession)
 			XFG:Info(ObjectName, 'Initialized profession [%d:%s]', profession:GetID(), profession:GetName())
-		end	
-	
+		end
 		self:IsInitialized(true)
 	end
 end

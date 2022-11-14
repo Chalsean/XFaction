@@ -20,35 +20,8 @@ function GuildCollection:Initialize(inGuildID)
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.names = {}
-
 		self.info = C_Club.GetClubInfo(inGuildID)
-		
-		if(XFG.Cache.Guilds == nil) then
-			XFG.Cache.Guilds = {}
-			self:SetFromGuildInfo()
-		else
-			XFG:Debug(ObjectName, 'Guild information found in cache')
-			self:IsCached(true)
-			for _, data in ipairs (XFG.Cache.Guilds) do
-				local guild = Guild:new()
-				guild:Initialize()
-				guild:SetKey(data.Initials)
-				guild:SetName(data.Name)
-				guild:SetFaction(XFG.Factions:Get(data.Faction))
-				guild:SetRealm(XFG.Realms:Get(data.Realm))
-				guild:SetInitials(data.Initials)
-				if(data.ID ~= nil) then
-					guild:SetID(data.ID)					
-				end
-				if(data.StreamID ~= nil) then
-					guild:SetStreamID(data.StreamID)
-					XFG.Player.Guild = guild
-				end
-				self.parent.Add(self, guild)
-				self.names[guild:GetName()] = guild
-				XFG:Info(ObjectName, 'Initialized guild [%s:%s]', guild:GetInitials(), guild:GetName())
-			end
-		end
+		self:SetFromGuildInfo()
 		self:IsInitialized(true)
 	end
 end
@@ -143,42 +116,21 @@ function GuildCollection:SetFromGuildInfo()
 end
 
 function GuildCollection:SetPlayerGuild()
-	if(not self:IsCached() or XFG.Player.Guild == nil) then
-		for _, guild in self:Iterator() do
-			if(guild:GetName() == self.info.name and XFG.Player.Realm:Equals(guild:GetRealm())) then
-				guild:SetID(self.info.clubId)
-				for _, stream in pairs (C_Club.GetStreams(guild:GetID())) do
-					if(stream.streamType == 1) then
-						guild:SetStreamID(stream.streamId)
-						break
-					end
-				end
-				XFG.Player.Guild = guild
-				break
-			end
-		end
-		if(XFG.Player.Guild == nil) then
-			error('Player is not on a supported guild or realm')
-		end
-		self:CacheGuilds()
-	end
-end
---#endregion
-
---#region Janitorial
-function GuildCollection:CacheGuilds()
 	for _, guild in self:Iterator() do
-		XFG.Cache.Guilds[#XFG.Cache.Guilds + 1] = {
-			Initials = guild:GetInitials(),
-			Name = guild:GetName(),
-			Faction = guild:GetFaction():GetKey(),
-			Realm = guild:GetRealm():GetKey(),
-		}	
-		if(guild:HasID()) then
-			XFG.Cache.Guilds[#XFG.Cache.Guilds].ID = guild:GetID()
-			XFG.Cache.Guilds[#XFG.Cache.Guilds].StreamID = guild:GetStreamID()
+		if(guild:GetName() == self.info.name and XFG.Player.Realm:Equals(guild:GetRealm())) then
+			guild:SetID(self.info.clubId)
+			for _, stream in pairs (C_Club.GetStreams(guild:GetID())) do
+				if(stream.streamType == 1) then
+					guild:SetStreamID(stream.streamId)
+					break
+				end
+			end
 			XFG.Player.Guild = guild
+			break
 		end
+	end
+	if(XFG.Player.Guild == nil) then
+		error('Player is not on a supported guild or realm')
 	end
 end
 --#endregion

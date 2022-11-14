@@ -60,8 +60,6 @@ local function InitializeCache()
             Confederate = {},
             Errors = {},
             NewVersionNotify = false,
-            Player = {},
-            Teams = {},
             UIReload = false,                    
             Verbosity = 4,
         }
