@@ -17,33 +17,19 @@ end
 function RaceCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		if(not XFG.Cache.UIReload or XFG.Cache.Races == nil) then
-			XFG.Cache.Races = {}
-			for i = 1, XFG.Settings.Race.Total do
-				local raceInfo = GetRaceInfo(i)
-				local factionInfo = GetRaceFactionInfo(i)
-				if(raceInfo and factionInfo) then
-					XFG.Cache.Races[#XFG.Cache.Races + 1] = {
-						ID = raceInfo.raceID,
-						Name = raceInfo.raceName,
-						Faction = factionInfo.groupTag,
-					}
-				end
+		for i = 1, XFG.Settings.Race.Total do
+			local raceInfo = GetRaceInfo(i)
+			local factionInfo = GetRaceFactionInfo(i)
+			if(raceInfo and factionInfo) then
+				local race = Race:new()
+				race:SetKey(raceInfo.raceID)
+				race:SetID(raceInfo.raceID)
+				race:SetName(raceInfo.raceName)
+				race:SetFaction(XFG.Factions:GetByName(factionInfo.groupTag))
+				self:Add(race)
+				XFG:Info(ObjectName, 'Initialized race [%d:%s:%s]', race:GetID(), race:GetName(), race:GetFaction():GetName())
 			end
-		else
-			XFG:Debug(ObjectName, 'Race information found in cache')
 		end
-
-		for _, data in ipairs(XFG.Cache.Races) do
-			local race = Race:new()
-			race:SetKey(data.ID)
-			race:SetID(data.ID)
-			race:SetName(data.Name)
-			race:SetFaction(XFG.Factions:GetByName(data.Faction))
-			self:Add(race)
-			XFG:Info(ObjectName, 'Initialized race [%d:%s:%s]', race:GetID(), race:GetName(), race:GetFaction():GetName())
-		end
-
 		self:IsInitialized(true)
 	end
 end
