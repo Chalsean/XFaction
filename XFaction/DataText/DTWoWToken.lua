@@ -1,6 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'DTToken'
 local GetCurrentMarketPrice = C_WowTokenPublic.GetCurrentMarketPrice
+local UpdateMarketPrice = C_WowTokenPublic.UpdateMarketPrice
 local CombatLockdown = InCombatLockdown
 
 DTToken = Object:newChildConstructor()
@@ -25,6 +26,8 @@ function DTToken:Initialize()
 			XFG.Events:Add('DTToken' .. event, event, XFG.DataText.Token.OnEvent)
 			XFG:Info(ObjectName, 'Registered for %s events', event)
 		end
+		XFG.Timers:Add('TokenTimer', 60, XFG.DataText.Token.Timer, true, true, false)
+		XFG.Timers:Get('TokenTimer'):Start()
 		self:OnEvent()
 		self:IsInitialized(true)
 	end
@@ -52,7 +55,11 @@ end
 --#endregion
 
 --#region OnEvent
-function DTToken:OnEvent(inEvent)
+function DTToken:Timer()
+	UpdateMarketPrice()
+end
+
+function DTToken:OnEvent()
 	local broker = XFG.Lib.Broker:GetDataObjectByName(XFG.Lib.Locale['DTTOKEN_NAME'])
 	local price = GetCurrentMarketPrice()
 	if(price ~= nil) then
