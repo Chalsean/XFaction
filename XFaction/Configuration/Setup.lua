@@ -1,100 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Config'
 
-local function AddGuild()
-	
-	for _, _Faction in XFG.Factions:Iterator() do
-		XFG.Cache.Factions[_Faction:GetKey()] = _Faction:GetName()
-	end	
-	for _, _Realm in XFG.Realms:Iterator() do
-		XFG.Cache.Realms[_Realm:GetKey()] = _Realm:GetName()
-	end
 
-	sort(XFG.Cache.Factions)
-	sort(XFG.Cache.Realms)
-
-	local i = XFG.Guilds:GetCount() + 1
-	XFG.Cache.SetupGuild.Count = i
-
-	XFG.Options.args.Setup.args.Guilds.args.Options.args['Guild' .. i] = {
-		order = i,
-		type = 'group',
-		name = 'Guild ' .. tostring(i),
-		--inline = true,
-		args = {
-			Name = {
-				order = 1,
-				type = 'input',
-				name = 'Name',
-				get = function(info) return XFG.Cache.SetupGuild.Name end,
-				set = function(info, value) 
-					XFG.Cache.SetupGuild.Name = value 
-					XFG.Options.args.Setup.args.Confederate.args.Save.disabled = false
-				end,
-			},
-			Initials = {
-				order = 2,
-				type = 'input',
-				name = 'Initials',
-				get = function(info) return XFG.Cache.SetupGuild.Initials end,
-				set = function(info, value) 
-					XFG.Cache.SetupGuild.Initials = value
-					XFG.Options.args.Setup.args.Confederate.args.Save.disabled = false
-				end,
-			},
-			Space = {
-				order = 3,
-				type = 'description',
-				name = '',
-			},
-			Faction = {
-				order = 4,
-				type = 'select',
-				name = 'Faction',
-				values = XFG.Cache.Factions,
-				get = function(info) return XFG.Cache.SetupGuild.Faction end,
-				set = function(info, value)
-					XFG.Cache.SetupGuild.Faction = value
-					XFG.Options.args.Setup.args.Confederate.args.Save.disabled = false
-				end,
-			},
-			Realm = {
-				order = 5,
-				type = 'select',
-				name = 'Realm',
-				values = XFG.Cache.Realms,
-				get = function(info) return XFG.Cache.SetupGuild.Realm end,
-				set = function(info, value) 
-					XFG.Cache.SetupGuild.Realm = value
-					XFG.Options.args.Setup.args.Confederate.args.Save.disabled = false
-				end,
-			},
-		}
-	}
-	--LibStub("AceConfigRegistry-3.0"):NotifyChange("Config")
-end
-
-local function SaveGuild()
-	try(function ()
-		if(XFG.Cache.SetupGuild.Count ~= nil) then		
-			-- need to repoint					
-			local _NewGuild = Guild:new()
-			_NewGuild:Initialize()
-			_NewGuild:SetKey(XFG.Cache.SetupGuild.Initials)
-			_NewGuild:SetName(XFG.Cache.SetupGuild.Name)
-			_NewGuild:SetInitials(XFG.Cache.SetupGuild.Initials)
-			_NewGuild:SetFaction(XFG.Factions:GetFaction(XFG.Cache.SetupGuild.Faction))
-			_NewGuild:SetRealm(XFG.Realms:GetObject(XFG.Cache.SetupGuild.Realm))							
-			XFG.Guilds:AddObject(_NewGuild)
-			XFG:InitializeSetup()
-		end
-		XFG.Confederate:SaveGuildInfo() 
-		XFG.Options.args.Setup.args.Confederate.args.Save.disabled = true
-	end).
-	catch(function (inErrorMessage)
-		XFG:Error(LogCategory, 'Failed to save guild information: ' .. inErrorMessage)
-	end)	
-end
 
 local function LoadConfig(inValue)
     -- If data is not XFaction return
@@ -126,10 +33,10 @@ XFG.Options.args.Setup = {
 	type = 'group',
 	childGroups = 'tab',
 	args = {
-		Confederate = {
+		Instructions = {
 			order = 1,
 			type = 'group',
-			name = XFG.Lib.Locale['CONFEDERATE'],
+			name = 'Instructions',
 			args = {
                 Config = {
                     type = "input",
@@ -161,6 +68,32 @@ XFG.Options.args.Setup = {
                     end
                 }
 			}
+		},
+		Realms = {
+			order = 2,
+			type = 'group',
+			name = 'Realms',
+			args = {
+				Header = {
+					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = 'Realm instructions here',
+						},
+					}
+				},
+				Bar = {
+					order = 2,
+					name = '',
+					type = 'header',
+				},
+			},
 		},
 		-- Guilds = {
 		-- 	order = 2,
