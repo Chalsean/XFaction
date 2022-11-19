@@ -674,6 +674,7 @@ function RealmCollection:new()
 	local object = RealmCollection.parent.new(self)
 	object.__name = 'RealmCollection'
 	object.realmsByID = nil
+	object.cacheXref = nil
     return object
 end
 --#endregion
@@ -684,6 +685,7 @@ function RealmCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.realmsByID = {}
+		self.cacheXref = {}
 		-- Setup all realms in the region
 		for id, data in pairs(RealmData) do
 			local realmData = string.Split(data, ',')

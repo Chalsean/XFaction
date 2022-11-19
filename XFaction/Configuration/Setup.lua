@@ -1,7 +1,40 @@
 local XFG, G = unpack(select(2, ...))
-local LogCategory = 'Config'
+local ObjectName = 'ConfigSetup'
+local RealmXref = {}
 
+function XFG:SetupRealmOptions()
+	XFG.Cache.Setup = {
+		Realms = {},
+	}
 
+	for _, realm in XFG.Realms:SortedIterator() do
+		table.insert(XFG.Cache.Setup.Realms, {
+			id = realm:GetID(),
+			name = realm:GetName(),
+			connections = {},
+			enabled = realm:IsTargeted() or realm:IsCurrent(),
+		})
+		RealmXref[realm:GetName()] = #XFG.Cache.Setup.Realms
+		for _, connectedRealm in realm:ConnectedIterator() do
+			table.insert(XFG.Cache.Setup.Realms[#XFG.Cache.Setup.Realms].connections, connectedRealm:GetName())
+		end
+	end
+
+	for i, realm in ipairs(XFG.Cache.Setup.Realms) do
+		XFG.Options.args.Setup.args.Realms.args[tostring(i + 2)] = {
+			type = 'toggle',
+			order = i + 2,
+            name = realm.name,
+            get = function(info) return XFG.Cache.Setup.Realms[i].enabled end,
+            set = function(info, value)
+				XFG.Cache.Setup.Realms[i].enabled = value
+				for _, connectedRealm in ipairs(XFG.Cache.Setup.Realms[i].connections) do
+					XFG.Cache.Setup.Realms[RealmXref[connectedRealm]].enabled = value
+				end
+			end
+		}
+	end
+end
 
 local function LoadConfig(inValue)
     -- If data is not XFaction return

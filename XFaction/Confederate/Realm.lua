@@ -11,6 +11,7 @@ function Realm:new()
     object.connectedRealms = nil
     object.connectedRealmCount = 0
     object.apiName = nil
+    object.isTargeted = false
     return object
 end
 --#endregion
@@ -30,6 +31,7 @@ function Realm:Print()
     self:ParentPrint()
     XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
     XFG:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
+    XFG:Debug(ObjectName, '  isTargeted (' .. type(self.isTargeted) .. '): ' .. tostring(self.isTargeted))
     XFG:Debug(ObjectName, '  connectedRealmCount (' .. type(self.connectedRealmCount) .. '): ' .. tostring(self.connectedRealmCount))
     for _, realm in pairs (self.connectedRealms) do
         XFG:Debug(ObjectName, '* connectedRealm [%d]', realm:GetID())
@@ -86,5 +88,17 @@ function Realm:GetAPIName()
         self.apiName = GetNormalizedRealmName() 
     end
     return self.apiName
+end
+
+function Realm:IsTargeted(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
+    if(inBoolean ~= nil) then
+        self.isTargeted = inBoolean
+    end
+    return self.isTargeted
+end
+
+function Realm:IsCurrent()
+    return self:GetID() == GetRealmID()
 end
 --#endregion
