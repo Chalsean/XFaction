@@ -95,6 +95,7 @@ function XFG:LoadConfigs()
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'DataText', XFG.Name, 'DataText')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Support', XFG.Name, 'Support')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Debug', XFG.Name, 'Debug')
+    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Setup', XFG.Name, 'Setup')
     XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Profile', XFG.Name, 'Profile')
 
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileChanged', 'InitProfile')
