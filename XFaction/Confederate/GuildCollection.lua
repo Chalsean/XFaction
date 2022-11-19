@@ -54,6 +54,10 @@ end
 function GuildCollection:GetByName(inGuildName)
 	return self.names[inGuildName]
 end
+
+function GuildCollection:GetInfo()
+	return self.info.description
+end
 --#endregion
 
 --#region DataSet
@@ -80,10 +84,7 @@ function GuildCollection:SetFromGuildInfo()
 	local xfData = ''
 	local compressed = string.match(self.info.description, 'XF:(.-):XF')
 	if (compressed ~= nil) then
-		-- Decompress and deserialize XFaction data
-		local decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(compressed))
-		local _, deserialized = XFG.Lib.Serializer:Deserialize(decompressed)
-		xfData = deserialized
+		xfData = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(compressed))
 	else
 		xfData = self.info.description
 	end

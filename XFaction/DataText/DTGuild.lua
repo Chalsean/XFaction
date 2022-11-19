@@ -109,7 +109,11 @@ local function PreSort()
 		unitData.Rank = unit:GetRank()
 		unitData.ItemLevel = unit:GetItemLevel()	
 		unitData.Race = unit:GetRace():GetName()
-		unitData.Team = unit:GetTeam():GetName()
+		if(unit:HasTeam()) then 
+			unitData.Team = unit:GetTeam():GetName() 
+		else
+			unitData.Team = 'Unknown'
+		end
 		unitData.Class = unit:GetClass():GetHex()
 		unitData.Faction = unit:GetFaction():GetIconID()
 		unitData.PvP = unit:GetPvP()
@@ -183,6 +187,8 @@ end
 function DTGuild:OnEnter(this)
 	if(not XFG.Initialized) then return end
 	if(CombatLockdown()) then return end
+
+
 
 	--#region Configure Tooltip
 	local orderEnabled = {}
