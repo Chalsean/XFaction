@@ -529,6 +529,7 @@ local RealmData = {
 	[3209]="Azralon,PvE,ptBR,US,undefined",
 	[3210]="Tol Barad,PvE,ptBR,US,undefined",
 	[3234]="Gallywix,PvE,ptBR,US,undefined",
+	[3676]="Internal Record 3676,PvE,enUS,US,PST",
 	[3678]="Ambossar,PvE,enUS,US,EST",
 	[3721]="Caelestrasz,PvE,enUS,US,AEST",
 	[3722]="Aman'Thul,PvE,enUS,US,AEST",
@@ -600,6 +601,7 @@ local ConnectionData = {
 	"1367,1375,1184",                                -- Nazgrel, Nesingwary, Vek’nilash
 	"1293,1075,80,1344,71,1288,1294",                -- Alterac Mountains, Balnazzar, Gorgonnash, The Forgotten Coast, Warsong, Anvilmar, Undermine (Xavius?)
 	"1271,55",                                       -- Dentarg, Whisperwind
+	"1566,3676",                                     -- Area 52, Internal Record 3676
 	-- Europe
 	"1312,1081,1416,1310,1298",                      -- Aerie Peak, Bronzebeard, Blade’s Edge, Eonar, Vek’nilash
 	"518,522,525,1091,646,513",                      -- Agamaggan, Bloodscalp, Crushridge, Emeriss, Hakkar, Twilight’s Hammer
