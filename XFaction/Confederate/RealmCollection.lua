@@ -21,6 +21,8 @@ local RealmData = {
 	[14]="Icecrown,PvE,enUS,US,CST",
 	[15]="Deathwing,PvE,enUS,US,PST",
 	[16]="Kel'Thuzad,PvE,enUS,US,MST",
+	[32]="Jared's Regional,PvE,enUS,US,PST",
+	[39]="Faron Woods,PvE,enUS,US,PST",
 	[47]="Eitrigg,PvE,enUS,US,CST",
 	[51]="Garona,PvE,enUS,US,CST",
 	[52]="Alleria,PvE,enUS,US,CST",
@@ -264,11 +266,17 @@ local RealmData = {
 	[964]="尖石,PvE,zhTW,TW,Spirestone",
 	[965]="雷鱗,PvE,zhTW,TW,Stormscale",
 	[966]="巨龍之喉,PvE,zhTW,TW,Dragonmaw",
+	[968]="Naralex,PvE,enUS,EU",
+	[969]="Nobundo,PvE,enUS,KR",
+	[970]="Beta Leveling Realm 01,PvE,enUS,US,PST",
+	[971]="Beta Leveling Realm 02,PvE,enUS,US,PST",
+	[976]="Level 100 PvP,PvP,enUS,US,PST",
 	[977]="冰霜之刺,PvE,zhTW,TW,Frostmane",
 	[978]="日落沼澤,PvE,zhTW,TW,Sundown Marsh",
 	[979]="地獄吼,PvE,zhTW,TW,Hellscream",
 	[980]="天空之牆,PvE,zhTW,TW,Skywall",
 	[982]="世界之樹,PvE,zhTW,TW,World Tree",
+	[984]="Balnazzar,PvE,enUS,US,PST",
 	[985]="水晶之刺,PvE,zhTW,TW,Crystalpine Stinger",
 	[999]="狂熱之刃,PvE,zhTW,TW,Zealot Blade",
 	[1001]="冰風崗哨,PvE,zhTW,TW,Chillwind Point",
@@ -324,6 +332,7 @@ local RealmData = {
 	[1130]="Lightninghoof,RP,enUS,US,CST",
 	[1131]="Nazjatar,PvE,enUS,US,EST",
 	[1132]="Malfurion,PvE,enUS,US,EST",
+	[1135]="Level 100 PvE,PvE,enUS,US,PST",
 	[1136]="Aegwynn,PvE,enUS,US,CST",
 	[1137]="Akama,PvE,enUS,US,PST",
 	[1138]="Chromaggus,PvE,enUS,US,CST",
@@ -338,13 +347,27 @@ local RealmData = {
 	[1148]="Malorne,PvE,enUS,US,EST",
 	[1151]="Rexxar,PvE,enUS,US,CST",
 	[1154]="Thorium Brotherhood,RP,enUS,US,PST",
+	[1157]="Live Hotfix 11,enUS,US,PST",
 	[1165]="Arathor,PvE,enUS,US,PST",
+	[1168]="Blackmoore,PvE,enUS,US,PST",
+	[1169]="Naxxramas,PvE,enUS,US,PST",
+	[1171]="Theradras,PvE,enUS,US,PST",
 	[1173]="Madoran,PvE,enUS,US,CST",
+	[1174]="Xavius,PvE,enUS,US,PST",
 	[1175]="Trollbane,PvE,enUS,US,EST",
 	[1182]="Muradin,PvE,enUS,US,CST",
 	[1184]="Vek'nilash,PvE,enUS,US,CST",
 	[1185]="Sen'jin,PvE,enUS,US,CST",
 	[1190]="Baelgun,PvE,enUS,US,PST",
+	[1248]="Live Hotfix 12,enUS,US,PST",
+	[1249]="Hotfix Realm,enUS,US,PST",
+	[1250]="QA Internal 02,enUS,US,PST",
+	[1251]="QA Internal 03,enUS,US,PST",
+	[1252]="QA Internal 04,enUS,US,PST",
+	[1253]="QA Internal 05,enUS,US,PST",
+	[1254]="QA CSBG and CSI 80,enUS,US,PST",
+	[1255]="QA Regional 89,enUS,US,PST",
+	[1256]="QA Hotfix Account Realm,enUS,US,PST",
 	[1258]="Duskwood,PvE,enUS,US,EST",
 	[1259]="Zuluhed,PvE,enUS,US,PST",
 	[1260]="Steamwheedle Cartel,RP,enUS,US,CST",
@@ -381,6 +404,7 @@ local RealmData = {
 	[1299]="Boulderfist,PvE,enUS,EU",
 	[1300]="Frostmane,PvE,enUS,EU",
 	[1301]="Outland,PvE,enUS,EU",
+	[1302]="Stonemaul,PvE,enUS,EU",
 	[1303]="Grim Batol,PvE,enUS,EU",
 	[1304]="Jaedenar,PvE,enUS,EU",
 	[1305]="Kazzak,PvE,enUS,EU",
@@ -393,6 +417,7 @@ local RealmData = {
 	[1312]="Aerie Peak,PvE,enUS,EU",
 	[1313]="Wildhammer,PvE,enUS,EU",
 	[1314]="Saurfang,PvE,enUS,EU",
+	[1315]="Caduta dei Draghi,PvE,itIT,EU",
 	[1316]="Nemesis,PvE,itIT,EU",
 	[1317]="Darkmoon Faire,RP,enUS,EU",
 	[1318]="Vek'lor,PvE,deDE,EU",
@@ -402,9 +427,11 @@ local RealmData = {
 	[1322]="Rajaxx,PvE,deDE,EU",
 	[1323]="Ulduar,PvE,deDE,EU",
 	[1324]="Malorne,PvE,deDE,EU",
+	[1325]="Grizzlyhügel,PvE,deDE,EU",
 	[1326]="Der Abyssische Rat,RP,deDE,EU",
 	[1327]="Der Mithrilorden,RP,deDE,EU",
 	[1328]="Tirion,PvE,deDE,EU",
+	[1329]="Muradin,PvE,deDE,EU",
 	[1330]="Ambossar,PvE,deDE,EU",
 	[1331]="Suramar,PvE,frFR,EU",
 	[1332]="Krasus,PvE,frFR,EU",
@@ -458,13 +485,17 @@ local RealmData = {
 	[1387]="Los Errantes,PvE,esES,EU",
 	[1388]="Lightbringer,PvE,enUS,EU",
 	[1389]="Darkspear,PvE,enUS,EU",
+	[1390]="Internal Record 1390,PvE,enUS,EU",
 	[1391]="Alonsus,PvE,enUS,EU",
 	[1392]="Burning Steppes,PvE,enUS,EU",
 	[1393]="Bronze Dragonflight,PvE,enUS,EU",
 	[1394]="Anachronos,PvE,enUS,EU",
 	[1395]="Colinas Pardas,PvE,esES,EU",
+	[1396]="Molten Core,PvE,enUS,EU",
 	[1400]="Un'Goro,PvE,deDE,EU",
 	[1401]="Garrosh,PvE,deDE,EU",
+	[1402]="Menethil,PvE,enUS,EU",
+	[1403]="Gnomeragan,PvE,enUS,EU",
 	[1404]="Area 52,PvE,deDE,EU",
 	[1405]="Todeswache,RP,deDE,EU",
 	[1406]="Arygos,PvE,deDE,EU",
@@ -475,9 +506,17 @@ local RealmData = {
 	[1415]="Terokkar,PvE,enUS,EU",
 	[1416]="Blade's Edge,PvE,enUS,EU",
 	[1417]="Azuremyst,PvE,enUS,EU",
+	[1420]="QA Upgrade 13,PvE,enUS,EU",
+	[1421]="QA Upgrade 14,PvE,enUS,EU",
+	[1422]="Omar's Secret Fort,PvE,enUS,EU",
 	[1425]="Drakkari,PvE,esMX,US,CST",
+	[1426]="Ulduar,PvE,esMX,US,CST",
 	[1427]="Ragnaros,PvE,esMX,US,CST",
 	[1428]="Quel'Thalas,PvE,esMX,US,CST",
+	[1480]="QA Test 15,PvE,enUS,US,CST",
+	[1481]="QA Test 16,PvE,enUS,US,CST",
+	[1526]="QA Standby 97,PvE,enUS,US,CST",
+	[1527]="QA Standby 98,PvE,enUS,US,CST",
 	[1549]="Azuremyst,PvE,enUS,US,CST",
 	[1555]="Auchindoun,PvE,enUS,US,CST",
 	[1556]="Coilfang,PvE,enUS,US,PST",
@@ -516,6 +555,8 @@ local RealmData = {
 	[1622]="Temple noir,PvE,frFR,EU",
 	[1624]="Naxxramas,PvE,frFR,EU",
 	[1626]="Les Clairvoyants,RP,frFR,EU",
+	[1649]="Arena Pass 1,PvP,frFR,EU",
+	[1654]="Euskal Encounter,PvE,enUS,US",
 	[2075]="雲蛟衛,PvE,zhTW,TW,Order of the Cloud Serpent",
 	[2079]="와일드해머,PvE,koKR,KR,Wildhammer",
 	[2106]="렉사르,PvE,koKR,KR,Rexxar",
@@ -563,7 +604,7 @@ local ConnectionData = {
 	"117,1364",                                      -- Bronzebeard, Shandris
 	"91,95,1285,51,14,104",                          -- Burning Blade, Lightning’s Blade, Onyxia, Garona, Icecrown, Malygos
 	"3721,3734,3738",                                -- Caelestrasz, Nagrand, Saurfang
-	"1361,122,2,1146,128,8,1360",                    -- Cairne, Perenolde, Cenarius, Korgath, Frostmane, Ner’zhul, Tortheldrin (Blackmoore?)
+	"1361,122,2,1146,128,8,1360,1168",               -- Cairne, Perenolde, Cenarius, Korgath, Frostmane, Ner’zhul, Tortheldrin, Blackmoore
 	"1346,1138,107,1141,89,130,1165,1377",           -- Anub’arak, Chromaggus, Crushridge, Garithos, Nathrezim, Smolderthorn, Arathor, Drenden
 	"1556,1278,157,1286,72",                         -- Coilfang, Dalvengyr, Dark Iron, Demon Soul, Shattered Hand
 	"1296,81,154,1266,1295,94",                      -- Blackwing Lair, Dethecus, Detheroc, Haomarush, Lethon, Shadowmoon
@@ -596,17 +637,17 @@ local ConnectionData = {
 	"1347,88,1356,125",                              -- Blackwater Raiders, Cenarion Circle, Sisters of Elune, Shadow Council
 	"1370,12,1154",                                  -- Farstriders, Silver Hand, Thorium Brotherhood
 	"1549,160,1582,1173",                            -- Azuremyst, Staghelm, Dawnbringer, Madoran
-	"1369",                                          -- Wyrmrest Accord (Theradras?)
-	"1284",                                          -- Aerie Peak (Ulduar?)
+	"1369,1171",                                     -- Wyrmrest Accord, Theradras
+	"1284,1426",                                     -- Aerie Peak, Ulduar
 	"1367,1375,1184",                                -- Nazgrel, Nesingwary, Vek’nilash
-	"1293,1075,80,1344,71,1288,1294",                -- Alterac Mountains, Balnazzar, Gorgonnash, The Forgotten Coast, Warsong, Anvilmar, Undermine (Xavius?)
+	"1293,1075,80,1344,71,1288,1294,1174",           -- Alterac Mountains, Balnazzar, Gorgonnash, The Forgotten Coast, Warsong, Anvilmar, Undermine, Xavius
 	"1271,55",                                       -- Dentarg, Whisperwind
 	"1566,3676",                                     -- Area 52, Internal Record 3676
 	-- Europe
 	"1312,1081,1416,1310,1298",                      -- Aerie Peak, Bronzebeard, Blade’s Edge, Eonar, Vek’nilash
 	"518,522,525,1091,646,513",                      -- Agamaggan, Bloodscalp, Crushridge, Emeriss, Hakkar, Twilight’s Hammer
 	"1413,1303,1300",                                -- Aggra (Português), Grim Batol, Frostmane
-	"500,619",                                       -- Aggramar, Hellscream
+	"500,619,1325",                                  -- Aggramar, Hellscream, Grizzlyhügel
 	"1093,607,1299,1083,526,621,1598,511,1090,1088", -- Ahn’Qiraj, Balnazzar, Boulderfist, Chromaggus, Daggerspine, Laughing Skull, Shattered Halls, Sunstrider, Talnivarr, Trollbane
 	"519,524,557,639",                               -- Al’Akir, Burning Legion, Skullcrusher, Xavius
 	"562,1607,571,593",                              -- Alexstrasza, Nethersturm, Madmortem, Proudmoore
@@ -619,13 +660,13 @@ local ConnectionData = {
 	"512,543,642,643",                               -- Arak-arahm, Kael’thas, Rashgarroth, Throk’Feroth
 	"1334,541,1624,1622",                            -- Arathi, Illidan, Naxxramas, Temple noir
 	"501,1587,1311,1589,547",                        -- Arathor, Hellfire, Kilrogg, Nagrand, Runetotem
-	"539",                                           -- Archimonde (Stonemaul?)
+	"539,1302",                                      -- Archimonde, Stonemaul
 	"1404,602,1400",                                 -- Area 52, Sen’jin, Un’Goro
 	"578,1613,535,588,1328,1318,609",                -- Arthas, Blutkessel, Durotan, Kel’Thuzad, Tirion, Vek’lor, Wrathbringer
 	"1406,569",                                      -- Arygos, Khaz’goroth
 	"502,548",                                       -- Aszune, Shadowsong
 	"1597,529,1304,628",                             -- Auchindoun, Dunemaul, Jaedenar, Sylvanas
-	"503,623",                                       -- Azjol-Nerub, Quel’Thalas (Molten Core?)
+	"503,623,1396",                                  -- Azjol-Nerub, Quel’Thalas, Molten Core
 	"579,616,565,570",                               -- Azshara, Krag’jin, Baelgun, Lothar
 	"1417,550",                                      -- Azuremyst, Stormrage
 	"580,1409,1106",                                 -- Blackmoore, Lordaeron, Tichondrius
@@ -635,7 +676,7 @@ local ConnectionData = {
 	"1393,618",                                      -- Bronze Dragonflight, Nordrassil
 	"523,1092",                                      -- Burning Blade, Drak’thul
 	"1381,1378",                                     -- C’Thun, Dun Modr
-	"540,645",                                       -- Elune, Varimathras
+	"540,645,1315",                                  -- Elune, Varimathras, Caduta dei Draghi
 	"1620,510",                                      -- Chants éternels, Vol’jin
 	"545,1336,533,538,1621",                         -- Cho’gall, Eldre’Thalas, Sinstralis, Dalaran, Marécage de Zangar
 	"1395,1387,1384",                                -- Colinas Pardas, Los Errantes, Tyrande
@@ -647,7 +688,7 @@ local ConnectionData = {
 	"582,586,591,612,611",                           -- Destromath, Gorgonnash, Mannoroth, Nefarian, Nera’thor
 	"531,1319,610,615,605",                          -- Dethecus, Mug’thol, Onyxia, Terrordar, Theradras
 	"1333,516,1405,592,1327,617",                    -- Die Nachtwache, Forscherliga, Todeswache, Zirkel des Cenarius, Der Mithrilorden, Der Rat von Dalaran
-	"505,553",                                       -- Doomhammer, Turalyon (Menethil?)
+	"505,553,1402",                                  -- Doomhammer, Turalyon, Menethil
 	"528,638,558,559,629",                           -- Dragonmaw, Haomarush, Spinebreaker, Stormreaver, Vashj
 	"641,1122,1123,1332",                            -- Drek’Thar, Uldaman, Eitrigg, Krasus
 	"600,1408",                                      -- Dun Morogh, Norgannon
@@ -662,10 +703,12 @@ local ConnectionData = {
 	"1324,1097",                                     -- Malorne, Ysera
 	"517,1331",                                      -- Medivh, Suramar
 	"1085,1117,1595",                                -- Moonglade, Steamwheedle Cartel, The Sha’tar
-	"554",                                           -- Ravencrest (Muradin?)
+	"554,1329",                                      -- Ravencrest, Muradin
 	"1382,1383,1380,1379",                           -- Sanguino, Shen’dralar, Uldum, Zul’jin
 	"560",                                           -- Stormscale (Winterhuf?)
 	"552,1313",                                      -- Thunderhorn, Wildhammer
+	"542,1390",                                      -- Hyjal, Internal Record 1390
+	"506,1403",                                      -- Draenor, Gnomeragan
 }
 --#endregion
 
@@ -754,4 +797,173 @@ function RealmCollection:GetByID(inID)
 	assert(type(inID) == 'number')
 	return self.realmsByID[inID]
 end
+--#endregion
+
+
+--#region Audit Realms
+-- RealmID    RealmName
+-- 1833    Expansion Test 26
+-- 1848    Arena Tournament 2
+-- 1850    Coliseum 1
+-- 2073    Winterhuf
+-- 2074    Schwarznarbe
+-- 2086    Live Hotfix CSI
+-- 2087    QA Upgrade CSI 85
+-- 2088    QA GM Support 190
+-- 3012    QA Test CSI 86
+-- 3013    Expansion Test CSI 87
+-- 3064    Kyle's Realm
+-- 3068    Live Hotfix CSBG 93
+-- 3074    QA Live Hotfix Account Realm
+-- 3075    QA Upgrade Account Realm
+-- 3077    QA Expansion 1 Account Realm
+-- 3082    Expansion Test 28
+-- 3083    Expansion QA CSI 88
+-- 3084    QA Expansion 2 Account Realm
+-- 3091    Arena Pass
+-- 3101    Expansion Test 27
+-- 3181    GMSupportPTR QA
+-- 3182    GMSupportPTR QA
+-- 3202    World of Warden
+-- 3296    Benedictus
+-- 3299    Lycanthoth
+-- 3324    Lanayru Mine
+-- 3349    Battle.net WoW QA
+-- 3362    Lei Shen
+-- 3369    Expansion Test RDB
+-- 3371    Jared's Realm
+-- 3380    Eldin Volcano
+-- 3381    QA Upgrade GMSS
+-- 3391    Cerchio del Sangue
+-- 3393    Kyle's Server
+-- 3481    John's Realm of Assets
+-- 3482    Monte's Realm of Assets
+-- 3483    Dusan's Realm 1
+-- 3484    Jared's Linux Realm
+-- 3485    Frank's Realm of Assets
+-- 3486    QA Expansion 2 RDB
+-- 3489    Elliott's Realm of Assets
+-- 3491    Expansion Test 30
+-- 3493    Jared's Windows Realm
+-- 3523    John C's Realm of Assets
+-- 3553    Giray's Realm of Assets
+-- 3554    PeteSandrene
+-- 3555    PeteSandrene2
+-- 3559    Happy Fun Land
+-- 3560    QA4 Regional
+-- 3573    Joel's Realm
+-- 3603    Monte's Robot of Assets
+-- 3604    Virtual Test 23 (47)
+-- 3605    Virtual Test 24 (48)
+-- 3615    Jeff.Mears-0.0.0.0
+-- 3620    QA GMSS
+-- 3642    CN Test Account Realm
+-- 3643    Dusan's Realm 2
+-- 3655    QA Night Court
+-- 3656    Internal Record 3656
+-- 3657    Internal Record 3657
+-- 3658    Tindal's Testing Tavern
+-- 3659    Alterac Valley
+-- 3660    Internal Record 3660
+-- 3661    Internal Record 3661
+-- 3662    Benjamin Foxworthy
+-- 3663    Internal Record 3663
+-- 3664    John's Test Realm of Assets
+-- 3665    Kelly's Game Realm
+-- 3666    Internal Record 3666
+-- 3667    Windspeer
+-- 3673    rlin-0.0.0.0
+-- 3674    Internal Record 3674
+-- 3675    Internal Record 3675
+-- 3677    Internal Record 3677
+-- 3679    Internal Record 3679
+-- 3680    Internal Record 3680
+-- 3681    Internal Record 3681
+-- 3682    Internal Record 3682
+-- 3683    Internal Record 3683
+-- 3684    Internal Record 3684
+-- 3685    Internal Record 3685
+-- 3686    Internal Record 3686
+-- 3687    Internal Record 3687
+-- 3688    Test Realm Optimus Prime
+-- 3690    Internal Record 3690
+-- 3691    Internal Record 3691
+-- 3692    Internal Record 3692
+-- 3693    Internal Record 3693
+-- 3694    Internal Record 3694
+-- 3696    Internal Record 3696
+-- 3698    zzOLD Ale Shwayder
+-- 3699    CS Content Training Realm
+-- 3700    MarkupProfileRealm
+-- 3702    Internal Record 3702
+-- 3703    Internal Record 3703
+-- 3713    Internal Record 3713
+-- 3714    Internal Record 3714
+-- 3719    cmacdonald
+-- 3720    cmacdonald-Virtual
+-- 3728    Internal Record 3697
+-- 3729    Internal Record 3695
+-- 3746    Virtual Test 23 (46)
+-- 3765    Dusan's Realm 4
+-- 3786    rmoodey-0.0.0.0
+-- 3787    Wolkenschlange - Regional
+-- 3788    SerbanXR
+-- 3789    Commerce Test Realm
+-- 3794    Mikrosland
+-- 3795    Wellmanland
+-- 3796    QA WOW BN-12-03
+-- 3802    Lightbringer Next
+-- 3803    Skullcrusher Next
+-- 3810    Black Dragonflight Next
+-- 3811    Internal Record 3694 Next
+-- 3812    Gul'dan Next
+-- 3813    Cloudbank
+-- 3815    Collin's Realm of Assets
+-- 3816    Live QA Hotfix 01
+-- 3817    Live QA Hotfix 02
+-- 3818    Internal Record 3818
+-- 3819    Live QA Hotfix 03
+-- 3820    Live QA Hotfix Account 01
+-- 3821    Live QA Hotfix Account 02
+-- 3822    Live QA Hotfix World CSI
+-- 3823    Live QA Hotfix Regional
+-- 3824    Logserver XX52
+-- 3826    Dev Realmlist
+-- 3827    truss-0.0.0.0
+-- 3828    Caelondia
+-- 3830    Doug's Server
+-- 3832    nbonfiglio-0.0.0.0
+-- 3843    Rainers Realm
+-- 3845    Seebrise
+-- 3851    Regionales Wertungsrealm
+-- 3854    Rainer's QA Realm
+-- 3864    Dämoneninvasion
+-- 3877    Dämoneninvasion
+-- 3935    Realm 01 anzeigen
+-- 3938    Asset Manifest Server
+-- 3945    Tournament Realm
+-- 3947    Carl's Server
+-- 3948    Joel's Linux Realm
+-- 3949    Dev Realmlist Test
+-- 3952    QA Test 15
+-- 3953    QA Test 16
+-- 3954    Alterac Valley
+-- 3955    QA GMSS
+-- 3956    QA4 Regional
+-- 3957    QA Test CSI 86
+-- 3958    QA Hotfix Account Realm
+-- 3959    The Assurance
+-- 3960    Blue Waters Regional
+-- 3961    The Kraken
+-- 3975    QA Test 34
+-- 3976    QA Test 35
+-- 3977    QA Test 36
+-- 3979    QA Test 37
+-- 3980    QA5 GMSS
+-- 3981    QA5 Regional
+-- 3982    QA5 CSI
+-- 3983    QA5 Acount
+-- 3986    Lanayru Mine Too
+-- 3999    QA Test 17
+-- 4011    Temporus
 --#endregion
