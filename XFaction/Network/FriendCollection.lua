@@ -106,6 +106,8 @@ local function CanLink(inAccountInfo)
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
 		local faction = XFG.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
 
+		XFG:Trace(ObjectName, 'Checking friend for linkability [%s] GUID [%s] RealmID [%d] RealmName [%s]', inAccountInfo.battleTag, inAccountInfo.gameAccountInfo.playerGuid, inAccountInfo.gameAccountInfo.realmID, inAccountInfo.gameAccountInfo.realmName)
+
 		local target = XFG.Targets:GetByRealmFaction(realm, faction)
 		if(target ~= nil and not target:IsMyTarget()) then return true, target end
 	end
