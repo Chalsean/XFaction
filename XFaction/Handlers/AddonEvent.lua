@@ -59,7 +59,6 @@ local function InitializeCache()
             Channel = {},
             Confederate = {},
             Errors = {},
-            Teams = {},
             NewVersionNotify = false,
             UIReload = false,                    
             Verbosity = 4,
