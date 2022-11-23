@@ -34,7 +34,7 @@ function TimerEvent:CallbackLogin()
 				XFG.Guilds:Initialize(guildID)
 				XFG.Confederate:Initialize()
 				XFG.Guilds:SetPlayerGuild()
-				XFG.Teams:Initialize()	
+				XFG.Teams:Default()	
 				XFG.Targets:Initialize()	
 
 				-- Chat channel setup via guild info, player will start to receive messaging via chat channel
