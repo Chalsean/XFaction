@@ -12,25 +12,16 @@ end
 --#endregion
 
 --#region Initializers
-function TeamCollection:Initialize()
-	if(not self:IsInitialized()) then
-		self:ParentInitialize()
-		if(#XFG.Cache.Teams > 0) then
-			self:IsCached(true)
-			for _, data in ipairs (XFG.Cache.Teams) do
-				self:Add(data.initials, data.name)
-			end
-		else
-			for initials, name in pairs (XFG.Settings.Teams) do
-				self:Add(initials, name)
-			end
-		end
-
-		for initials, name in pairs (XFG.Settings.Confederate.DefaultTeams) do
+function TeamCollection:Default()
+	-- If there were no teams in guild info, use defaults
+	if(self:GetCount() == 0) then
+		for initials, name in pairs (XFG.Settings.Teams) do
 			self:Add(initials, name)
 		end
+	end
 
-		self:IsInitialized(true)
+	for initials, name in pairs (XFG.Settings.Confederate.DefaultTeams) do
+		self:Add(initials, name)
 	end
 end
 --#endregion
@@ -39,10 +30,7 @@ end
 function TeamCollection:SetObjectFromString(inString)
 	assert(type(inString) == 'string')
 	local teamInitial, teamName = inString:match('XFt:(%a):(%a+)')
-	XFG.Cache.Teams[#XFG.Cache.Teams + 1] = {
-		initials = teamInitial,
-		name = teamName,
-	}
+	self:Add(teamInitial, teamName)
 end
 --#endregion
 
@@ -50,8 +38,6 @@ end
 function TeamCollection:Add(inTeamInitials, inTeamName)
 	assert(type(inTeamInitials) == 'string')
 	assert(type(inTeamName) == 'string')
-
-	-- If team does not exist, create
 	if(not self:Contains(inTeamInitials)) then
 		local team = Team:new()
 		team:Initialize()

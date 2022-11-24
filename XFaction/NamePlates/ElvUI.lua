@@ -27,7 +27,7 @@ function XFG.Nameplates.ElvUI:OnLoad()
                 end
                 if(guildName) then
                     return format('<%s>', guildName)
-                end 
+                end
             end
         end)
 
@@ -58,6 +58,7 @@ function XFG.Nameplates.ElvUI:OnLoad()
                 end
                 return unitName
             end
+            return UnitName(inNameplate)
         end)
         
         XFG.ElvUI:AddTag('main:parenthesis', 'UNIT_NAME_UPDATE', function(inNameplate) 
@@ -70,6 +71,7 @@ function XFG.Nameplates.ElvUI:OnLoad()
                     end
                 end
             end
+            return '(' .. UnitName(inNameplate) .. ')'
         end)
         
         XFG.ElvUI:AddTag('team', 'UNIT_NAME_UPDATE', function(inNameplate) 
@@ -79,6 +81,7 @@ function XFG.Nameplates.ElvUI:OnLoad()
                     return XFG.Confederate:Get(guid):GetTeam():GetName()
                 end
             end
+            return ''
         end)
         
         XFG.ElvUI:AddTag('confederate:icon', 'UNIT_NAME_UPDATE', function(inNameplate) 
@@ -89,6 +92,7 @@ function XFG.Nameplates.ElvUI:OnLoad()
                     return XFG.Media:Get(XFG.Icons.Guild):GetTexture()
                 end
             end
+            return ''
         end)
     end
 end

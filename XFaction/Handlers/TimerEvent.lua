@@ -34,7 +34,7 @@ function TimerEvent:CallbackLogin()
 				XFG.Guilds:Initialize(guildID)
 				XFG.Confederate:Initialize()
 				XFG.Guilds:SetPlayerGuild()
-				XFG.Teams:Initialize()	
+				XFG.Teams:Default()	
 				XFG.Targets:Initialize()	
 
 				-- Chat channel setup via guild info, player will start to receive messaging via chat channel
@@ -106,7 +106,7 @@ function TimerEvent:CallbackDelayedLogin()
 		if(not XFG.Cache.UIReload) then
 			-- These are delayed to see if we get any ping responses before broadcasting
 			XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
-			XFG.Links:Broadcast()
+			--XFG.Links:Broadcast()
 		end
 		-- For support reasons, it helps to know what addons are being used
 		for i = 1, GetNumAddOns() do
