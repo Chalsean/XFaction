@@ -52,7 +52,7 @@ XFG.Options = {
 					type = 'description',
 					name = '',
 					fontSize = 'medium',
-					image = function() return 'Interface\\AddOns\\XFaction\\Media\\Images\\xfaction_logo.tga' end,
+					image = function() return 'Interface\\AddOns\\XFaction\\Media\\Images\\XFACTION-Logo.tga', 384, 96 end,
 				},	
 				DHeader = {
 					order = 2,

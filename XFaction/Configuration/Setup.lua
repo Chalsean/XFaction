@@ -33,17 +33,18 @@ function XFG:SetupMenus()
             get = function(info) return XFG.Cache.Setup.Realms[i].enabled end,
             set = function(info, value)
 				XFG.Cache.Setup.Realms[i].enabled = value
-				if(value) then
-					XFG.Cache.Setup.GuildsRealms[tostring(realm:GetID())] = realm:GetName()
+				if(XFG.Cache.Setup.Realms[i].enabled) then
+					XFG.Cache.Setup.GuildsRealms[tostring(realm.id)] = realm.name
 				else
-					XFG.Cache.Setup.GuildsRealms[tostring(realm:GetID())] = nil
+					XFG.Cache.Setup.GuildsRealms[tostring(realm.id)] = nil
 				end
 				for _, connectedRealm in ipairs(XFG.Cache.Setup.Realms[i].connections) do
-					XFG.Cache.Setup.Realms[RealmXref[connectedRealm]].enabled = value
-					if(value) then
-						XFG.Cache.Setup.GuildsRealms[tostring(connectedRealm:GetID())] = connectedRealm:GetName()
+					connectedRealm = XFG.Cache.Setup.Realms[RealmXref[connectedRealm]]
+					connectedRealm.enabled = value
+					if(connectedRealm.enabled) then
+						XFG.Cache.Setup.GuildsRealms[tostring(connectedRealm.id)] = connectedRealm.name
 					else
-						XFG.Cache.Setup.GuildsRealms[tostring(connectedRealm:GetID())] = nil
+						XFG.Cache.Setup.GuildsRealms[tostring(connectedRealm.id)] = nil
 					end
 				end
 			end
@@ -161,20 +162,6 @@ function XFG:SetupMenus()
 	--#endregion
 end
 
-local function LoadConfig(inValue)
-    -- If data is not XFaction return
-    local val = string.match(inValue, '^XF:(.-):XF$')
-    if val == nil  then
-        return inValue
-    end
-    
-    -- Decompress and deserialize XFaction data
-	local _Decompressed = XFG.Lib.Deflate:DecompressDeflate(XFG.Lib.Deflate:DecodeForPrint(val))
-    local _, _Deserialized = XFG:Deserialize(_Decompressed)
-    
-    return _Deserialized
-end
-
 local function GenerateConfig()
 	local output = ''
 	for i, guild in ipairs(XFG.Cache.Setup.Guilds) do
@@ -245,7 +232,7 @@ XFG.Options.args.Setup = {
 							order = 1,
 							type = 'description',
 							fontSize = 'medium',
-							name = 'Realm instructions here',
+							name = 'Select the realms where your guilds are located. If another realm enables based on your selection, that is expected for connected realms.',
 						},
 					}
 				},
