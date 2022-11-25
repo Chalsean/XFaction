@@ -2,10 +2,6 @@
 
 Enable roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.
 
-## Disclaimer
-
-This addon is recently coming out of alpha and beta testing. There are still some things rough around the edges. To setup, you will need to be able to edit your guild information tab. The setup can be somewhat tricky, please visit the wiki/faq on how to setup for your guild. If you run into issues, feel free to reach out.
- 
 ## What is included
 The addon should provide the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederate
