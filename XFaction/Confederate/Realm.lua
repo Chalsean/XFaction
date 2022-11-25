@@ -88,3 +88,17 @@ function Realm:GetAPIName()
     return self.apiName
 end
 --#endregion
+
+--#region Operators
+function Realm:Equals(inRealm)
+    if(inRealm == nil) then return false end
+    if(type(inRealm) ~= 'table' or inRealm.__name == nil) then return false end
+    if(self:GetObjectName() ~= inRealm:GetObjectName()) then return false end
+    if(self:GetKey() == inRealm:GetKey()) then return true end
+    -- Consider connected realms equal
+    for _, connectedRealm in self:ConnectedIterator() do
+        if(connectedRealm:GetKey() == inRealm:GetKey()) then return true end
+    end
+    return false
+end
+--#endregion
