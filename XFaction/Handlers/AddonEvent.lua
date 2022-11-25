@@ -73,16 +73,6 @@ local function InitializeCache()
         XFG.Cache.Errors = {}
     end
     XFG.Cache.FirstScan = {}
-    XFG.Cache.Setup = {
-        Realms = {},
-    }
-    -- Populate setup menus
-    try(function()
-        XFG:SetupRealmOptions()
-    end).
-    catch(function(inErrorMessage)
-        XFG:Debug(ObjectName, inErrorMessage)
-    end)
 end
 --#endregion
 

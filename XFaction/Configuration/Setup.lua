@@ -2,11 +2,16 @@ local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ConfigSetup'
 local RealmXref = {}
 
-function XFG:SetupRealmOptions()
+function XFG:SetupMenus()
 	XFG.Cache.Setup = {
 		Realms = {},
+		Teams = {},
+		Guilds = {},
+		GuildsRealms = {},
+		Compress = true,
 	}
 
+	--#region Realm Menu
 	for _, realm in XFG.Realms:SortedIterator() do
 		table.insert(XFG.Cache.Setup.Realms, {
 			id = realm:GetID(),
@@ -28,12 +33,132 @@ function XFG:SetupRealmOptions()
             get = function(info) return XFG.Cache.Setup.Realms[i].enabled end,
             set = function(info, value)
 				XFG.Cache.Setup.Realms[i].enabled = value
+				if(value) then
+					XFG.Cache.Setup.GuildsRealms[tostring(realm:GetID())] = realm:GetName()
+				else
+					XFG.Cache.Setup.GuildsRealms[tostring(realm:GetID())] = nil
+				end
 				for _, connectedRealm in ipairs(XFG.Cache.Setup.Realms[i].connections) do
 					XFG.Cache.Setup.Realms[RealmXref[connectedRealm]].enabled = value
+					if(value) then
+						XFG.Cache.Setup.GuildsRealms[tostring(connectedRealm:GetID())] = connectedRealm:GetName()
+					else
+						XFG.Cache.Setup.GuildsRealms[tostring(connectedRealm:GetID())] = nil
+					end
 				end
 			end
 		}
 	end
+	--#endregion
+
+	--#region Guild Menu
+	for _, guild in XFG.Guilds:SortedIterator() do
+		table.insert(XFG.Cache.Setup.Guilds, {
+			realm = tostring(guild:GetRealm():GetID()),
+			faction = guild:GetFaction():GetID(),
+			initials = guild:GetInitials(),
+			name = guild:GetName(),
+		})
+		XFG.Cache.Setup.GuildsRealms[tostring(guild:GetRealm():GetID())] = guild:GetRealm():GetName()
+	end
+
+	local i = #XFG.Cache.Setup.Guilds
+	while i < XFG.Settings.Setup.MaxGuilds do
+		table.insert(XFG.Cache.Setup.Guilds, {
+			realm = nil,
+			faction = nil,
+			initials = nil,
+			name = nil,
+		})
+		i = i + 1
+	end
+
+	for i, guild in ipairs(XFG.Cache.Setup.Guilds) do
+		XFG.Options.args.Setup.args.Guilds.args[tostring(4 * i)] = {
+			type = 'select',
+			order = 4 * i,
+			name = 'Faction',
+			width = "half",
+			values = {
+				A = 'Alliance',
+				H = 'Horde',
+			},
+			get = function(info) return XFG.Cache.Setup.Guilds[i].faction end,
+			set = function(info, value) XFG.Cache.Setup.Guilds[i].faction = value	end
+		}
+		XFG.Options.args.Setup.args.Guilds.args[tostring(4 * i + 1)] = {
+			type = 'select',
+			order = 4 * i + 1,
+			name = 'Realm',
+			values = XFG.Cache.Setup.GuildsRealms,
+			get = function(info) return XFG.Cache.Setup.Guilds[i].realm end,
+			set = function(info, value) XFG.Cache.Setup.Guilds[i].realm = value	end
+		}		
+		XFG.Options.args.Setup.args.Guilds.args[tostring(4 * i + 2)] = {
+			type = 'input',
+			order = 4 * i + 2,
+            name = 'Initials',
+			width = "half",
+            get = function(info) return XFG.Cache.Setup.Guilds[i].initials end,
+            set = function(info, value)
+				XFG.Cache.Setup.Guilds[i].initials = value
+			end
+		}
+		XFG.Options.args.Setup.args.Guilds.args[tostring(4 * i + 3)] = {
+			type = 'input',
+			order = 4 * i + 3,
+            name = 'Name',
+			width = "fill",
+            get = function(info) return XFG.Cache.Setup.Guilds[i].name end,
+            set = function(info, value)
+				XFG.Cache.Setup.Guilds[i].name = value
+			end
+		}
+	end
+	--#endregion
+
+	--#region Team Menu
+	for _, team in XFG.Teams:SortedIterator() do
+		if(team:GetInitials() ~= '?') then
+			table.insert(XFG.Cache.Setup.Teams, {
+				initials = team:GetInitials(),
+				name = team:GetName(),
+			})
+		end
+	end
+
+	local i = #XFG.Cache.Setup.Teams
+	while i < XFG.Settings.Setup.MaxTeams do
+		table.insert(XFG.Cache.Setup.Teams, {
+			initials = nil,
+			name = nil,
+		})
+		i = i + 1
+	end
+
+	for i, team in ipairs(XFG.Cache.Setup.Teams) do
+		XFG.Options.args.Setup.args.Teams.args[tostring(2 * i)] = {
+			type = 'input',
+			order = 2 * i,
+            name = 'Initials',
+			width = "half",
+            get = function(info) return XFG.Cache.Setup.Teams[i].initials end,
+            set = function(info, value)
+				XFG.Cache.Setup.Teams[i].initials = value
+			end
+		}
+		XFG.Options.args.Setup.args.Teams.args[tostring(2 * i + 1)] = {
+			type = 'input',
+			order = 2 * i + 1,
+            name = 'Name',
+			width = "fill",
+            get = function(info) return XFG.Cache.Setup.Teams[i].name end,
+            set = function(info, value)
+				XFG.Cache.Setup.Teams[i].name = value
+			end
+		}
+	end
+	--#endregion
 end
 
 local function LoadConfig(inValue)
@@ -50,14 +175,17 @@ local function LoadConfig(inValue)
     return _Deserialized
 end
 
-local function GenerateConfig(inValue)
-    -- If data is not XFaction return
-    for _, _Line in ipairs(string.Split(inValue, '\n')) do
-        if not string.find(_Line, 'XF.:') then
-            return inValue
-        end
-    end
-    return 'XF:' .. XFG.Lib.Deflate:EncodeForPrint(XFG.Lib.Deflate:CompressDeflate(inValue, {level = 9})) .. ':XF'
+local function GenerateConfig()
+	local output = ''
+	for i, guild in ipairs(XFG.Cache.Setup.Guilds) do
+		if(guild.name ~= nil and guild.initials ~= nil) then
+			output = output .. 'XFg:' .. guild.realm .. ':' .. guild.faction .. ':' .. guild.name .. ':' .. guild.initials .. '\n'
+		end
+	end
+	if(XFG.Cache.Setup.Compress) then
+		return 'XF:' .. XFG.Lib.Deflate:EncodeForPrint(XFG.Lib.Deflate:CompressDeflate(output, {level = 9})) .. ':XF'
+	end
+	return output
 end
 
 XFG.Options.args.Setup = {
@@ -121,209 +249,98 @@ XFG.Options.args.Setup = {
 						},
 					}
 				},
-				Bar = {
-					order = 2,
-					name = '',
-					type = 'header',
+			},
+		},
+		Guilds = {
+			order = 3,
+			type = 'group',
+			name = 'Guilds',
+			args = {
+				Header = {
+					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = 'Realm instructions here',
+						},
+					}
 				},
 			},
 		},
-		-- Guilds = {
-		-- 	order = 2,
-		-- 	type = 'group',
-		-- 	name = XFG.Lib.Locale['GUILD'],
-		-- 	disabled = true,
-		-- 	args = {
-		-- 	-- 	Header = {
-		-- 	-- 		order = 1,
-		-- 	-- 		type = 'group',
-		-- 	-- 		name = XFG.Lib.Locale['DESCRIPTION'],
-		-- 	-- 		inline = true,
-		-- 	-- 		args = {
-		-- 	-- 			Description = {
-		-- 	-- 				order = 1,
-		-- 	-- 				type = 'description',
-		-- 	-- 				fontSize = 'medium',
-		-- 	-- 				name = XFG.Lib.Locale['SETUP_GUILD_DESCRIPTION'],
-		-- 	-- 			},
-		-- 	-- 		}
-		-- 	-- 	},
-		-- 	-- 	Add = {
-		-- 	-- 		order = 2,
-		-- 	-- 		type = 'execute',
-		-- 	-- 		name = XFG.Lib.Locale['SETUP_ADD_GUILD'],
-		-- 	-- 		disabled = function () return XFG.Cache.SetupGuild.Count ~= nil or not XFG.Confederate:CanModifyGuildInfo() end,
-		-- 	-- 		func = function() AddGuild() end,
-		-- 	-- 	},
-		-- 	-- 	Save = {
-		-- 	-- 		order = 3,
-		-- 	-- 		type = 'execute',
-		-- 	-- 		name = XFG.Lib.Locale['SAVE'],
-		-- 	-- 		disabled = function () return XFG.Options.args.Setup.args.Confederate.args.Save.disabled end,
-		-- 	-- 		func = function() SaveGuild() end,
-		-- 	-- 	},				
-		-- 	-- 	Space = {
-		-- 	-- 		order = 4,
-		-- 	-- 		type = 'description',
-		-- 	-- 		name = '',
-		-- 	-- 	},
-		-- 	-- 	Options = {
-		-- 	-- 		order = 5,
-		-- 	-- 		type = 'group',
-		-- 	-- 		childGroups = 'tree',
-		-- 	-- 		name = XFG.Lib.Locale['SETUP_GUILD_MENU_TITLE'],
-		-- 	-- 		disabled = function () return not XFG.Confederate:CanModifyGuildInfo() end,
-		-- 	-- 		args = {},
-		-- 	-- 	},			
-		-- 	}
-		-- },
-		-- Teams = {
-		-- 	order = 3,
-		-- 	type = 'group',
-		-- 	name = XFG.Lib.Locale['TEAM'],
-		-- 	disabled = true,
-		-- 	args = {
-		-- 	-- 	DHeader = {
-		-- 	-- 		order = 1,
-		-- 	-- 		type = 'group',
-		-- 	-- 		name = XFG.Lib.Locale['DESCRIPTION'],
-		-- 	-- 		inline = true,
-		-- 	-- 		args = {
-		-- 	-- 			Description = {
-		-- 	-- 				order = 1,
-		-- 	-- 				type = 'description',
-		-- 	-- 				fontSize = 'medium',
-		-- 	-- 				name = XFG.Lib.Locale['NAMEPLATE_KUI_DESCRIPTION'],
-		-- 	-- 			},
-		-- 	-- 		}
-		-- 	-- 	},
-		-- 	-- 	Options = {
-		-- 	-- 		order = 2,
-		-- 	-- 		type = 'group',
-		-- 	-- 		name = '',
-		-- 	-- 		inline = true,
-		-- 	-- 		disabled = function () return not IsAddOnLoaded('Kui_Nameplates') end,
-		-- 	-- 		args = {
-		-- 	-- 			Enable = {
-		-- 	-- 				order = 1,
-		-- 	-- 				type = 'toggle',
-		-- 	-- 				name = XFG.Lib.Locale['ENABLE'],
-		-- 	-- 				get = function(info) return XFG.Config.Nameplates.Kui[ info[#info] ] end,
-		-- 	-- 				set = function(info, value) XFG.Config.Nameplates.Kui[ info[#info] ] = value; end
-		-- 	-- 			},
-		-- 	-- 			Icon = {
-		-- 	-- 				order = 2,
-		-- 	-- 				type = 'toggle',
-		-- 	-- 				name = XFG.Lib.Locale['NAMEPLATE_KUI_ICON'],
-		-- 	-- 				desc = XFG.Lib.Locale['NAMEPLATE_KUI_ICON_TOOLTIP'],
-		-- 	-- 				disabled = function () return not XFG.Config.Nameplates.Kui.Enable end,
-		-- 	-- 				get = function(info) return XFG.Config.Nameplates.Kui[ info[#info] ] end,
-		-- 	-- 				set = function(info, value) 
-		-- 	-- 					XFG.Config.Nameplates.Kui[ info[#info] ] = value
-		-- 	-- 					if(not value) then
-		-- 	-- 						XFG.Nameplates.Kui:StripIcons()
-		-- 	-- 					end
-		-- 	-- 				end
-		-- 	-- 			},
-		-- 	-- 			Bar = {
-		-- 	-- 				order = 3,
-		-- 	-- 				name = format("|cffffffff%s|r", XFG.Lib.Locale['NAMEPLATE_KUI_GUILD_TEXT']),
-		-- 	-- 				type = 'header'
-		-- 	-- 			},						
-		-- 	-- 			GuildName = {
-		-- 	-- 				order = 4,
-		-- 	-- 				type = 'select',
-		-- 	-- 				name = XFG.Lib.Locale['NAMEPLATE_KUI_GUILD_NAME'],
-		-- 	-- 				desc = XFG.Lib.Locale['NAMEPLATE_KUI_GUILD_INITIALS_TOOLTIP'],
-		-- 	-- 				values = {
-		-- 	-- 					Confederate = XFG.Lib.Locale['CONFEDERATE'],
-		-- 	-- 					ConfederateInitials = XFG.Lib.Locale['CONFEDERATE_INITIALS'],
-		-- 	-- 					Guild = XFG.Lib.Locale['GUILD'],
-		-- 	-- 					GuildInitials = XFG.Lib.Locale['GUILD_INITIALS'],
-		-- 	-- 					Team = XFG.Lib.Locale['TEAM'],
-		-- 	-- 				},
-		-- 	-- 				disabled = function () return not XFG.Config.Nameplates.Kui.Enable end,
-		-- 	-- 				get = function(info) return XFG.Config.Nameplates.Kui[ info[#info] ] end,
-		-- 	-- 				set = function(info, value) XFG.Config.Nameplates.Kui[ info[#info] ] = value; end
-		-- 	-- 			},
-		-- 	-- 		},
-		-- 	-- 	},			
-		-- 	}
-		-- },
+		Teams = {
+			order = 4,
+			type = 'group',
+			name = 'Teams',
+			args = {
+				Header = {
+					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = 'The Teams setup is not required for all guilds, only if you have multiple raid teams and wish to associate raid members to their teams in guild chat or Guild (X) datatext.\n\nNote the primary key is the team initials, so they need to be unique.\n\nWhen filling out player notes, use the tag [XFt:<Initials>] to associate that player to their raid team.',
+						},
+					}
+				},				
+			},
+		},
+		Generate = {
+			order = 5,
+			type = 'group',
+			name = 'Generate',
+			args = {
+				Header = {
+					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = 'Mulitple raid teams are typically used by larger confederates spanning multiple guilds. It is not required setup for all guilds, only if you want to use the feature.\n\nNote the primary key is the team initials, so they need to be unique.\n\nWhen filling out player notes, use the tag [XFt:<Initials>] to associate that player to their raid team.',
+						},
+					}
+				},
+				Compress = {
+					order = 3,
+					type = 'toggle',
+					name = 'Compress',
+					desc = 'Compress and encode the configuration string to take up less room in guild info.',
+					get = function(info) return XFG.Cache.Setup.Compress end,
+					set = function(info, value) XFG.Cache.Setup.Compress = value end,
+				},
+				Generate = {
+                    type = "execute",
+					order = 2,
+                    name = XFG.Lib.Locale['CONFEDERATE_GENERATE'],
+                    width = "2",
+                    func = function(info)
+                        XFG.Cache.Setup.Output = GenerateConfig(XFG.Cache.Setup.Output)
+                        LibStub("AceConfigRegistry-3.0"):NotifyChange("Output")
+						XFG.Options.args.Setup.args.Generate.args.Output.desc = string.len(XFG.Cache.Setup.Output) .. ' characters'
+                    end
+                },
+				Output = {
+                    type = "input",
+					order = 4,
+                    name = XFG.Lib.Locale['CONFEDERATE_CONFIG_BUILDER'],
+                    width = "full",
+                    multiline = 10,
+                    get = function(info) return XFG.Cache.Setup[ info[#info] ] end,
+                    set = function(info, value) XFG.Cache.Setup[ info[#info] ] = value; end
+                },
+			},
+		},
 	}
 }
-
-function XFG:InitializeSetup()
-	
-	for _, _Faction in XFG.Factions:Iterator() do
-		XFG.Cache.Factions[_Faction:GetKey()] = _Faction:GetName()
-	end	
-	for _, _Realm in XFG.Realms:Iterator() do
-		XFG.Cache.Realms[_Realm:GetKey()] = _Realm:GetName()
-	end
-
-	sort(XFG.Cache.Factions)
-	sort(XFG.Cache.Realms)
-	XFG.Cache.SetupGuild = {}
-
-	local i = 1	
-	for _, _Guild in XFG.Guilds:SortedIterator() do
-		XFG.Options.args.Setup.args.Guilds.args.Options.args['Guild' .. i] = {
-			order = i,
-			type = 'group',
-			name = 'Guild ' .. tostring(i),
-			--inline = true,
-			args = {
-				Name = {
-					order = 1,
-					type = 'input',
-					name = 'Name',
-					get = function(info) return _Guild:GetName() end,
-					set = function(info, value) 
-						_Guild:SetName(value) 
-						XFG.Options.args.Setup.args.Confederate.args.Save.disabled = false
-					end,
-				},
-				Initials = {
-					order = 2,
-					type = 'input',
-					name = 'Initials',
-					get = function(info) return _Guild:GetInitials() end,
-					set = function(info, value) 
-						_Guild:SetInitials(value) 
-						XFG.Options.args.Setup.args.Confederate.args.Save.disabled = false
-					end,
-				},
-				Space = {
-					order = 3,
-					type = 'description',
-					name = '',
-				},
-				Faction = {
-					order = 4,
-					type = 'select',
-					name = 'Faction',
-					values = XFG.Cache.Factions,
-					get = function(info) return _Guild:GetFaction():GetKey() end,
-					set = function(info, value) 
-						_Guild:SetFaction(XFG.Factions:GetFaction(value))
-						XFG.Options.args.Setup.args.Confederate.args.Save.disabled = false
-					end,
-				},
-				Realm = {
-					order = 5,
-					type = 'select',
-					name = 'Realm',
-					values = XFG.Cache.Realms,
-					get = function(info) return _Guild:GetRealm():GetKey() end,
-					set = function(info, value) 
-						_Guild:SetRealm(XFG.Realms:GetObject(value))
-						XFG.Options.args.Setup.args.Confederate.args.Save.disabled = false
-					end,
-				},
-			}
-		}
-		i = i + 1
-	end
-end
-

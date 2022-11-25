@@ -83,7 +83,7 @@ XFG.Settings = {
 		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
 		UnitScan = 60,       -- Seconds between offline checks
 		DefaultTeams = {
-			U = 'Unknown',
+			['?'] = 'Unknown',
 		},
 		DefaultRealms = {
 			[0] = 'Torghast',
@@ -187,6 +187,10 @@ XFG.Settings = {
 	},
 	Race = {
 		Total = 100,
+	},
+	Setup = {
+		MaxTeams = 30,
+		MaxGuilds = 10,
 	},
 }
 --#endregion

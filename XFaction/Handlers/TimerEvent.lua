@@ -82,11 +82,11 @@ function TimerEvent:CallbackLogin()
 				XFG.DataText.Guild:RefreshBroker()
 				XFG.DataText.Links:SetFont()
 				XFG.DataText.Links:RefreshBroker()
-				XFG.DataText.Metrics:SetFont()
+				XFG.DataText.Metrics:SetFont()				
 				XFG.DataText.Metrics:RefreshBroker()
 
-				-- Now that guild/realm/confederate/team data is loaded we can populate setup menus
-				XFG:ConfigSetup()
+				-- Low priority populate setup menus
+				XFG:SetupMenus()
 			end
 		end
 		-- If havent gotten guild info after X seconds, give up. probably not in a guild

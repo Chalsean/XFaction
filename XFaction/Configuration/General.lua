@@ -40,17 +40,19 @@ StaticPopupDialogs["LINKS"] = {
 }
 
 XFG.Options = {
-	name = XFG.Title,
+	name = XFG.Name,
 	type = 'group',
 	args = {
 		General = {
 			name = XFG.Lib.Locale['GENERAL'],
 			type = 'group',
 			args = {
-				Bar = {
+				Logo = {
 					order = 1,
-					name = format("|cffffffff%s|r", type(XFG.Version) == 'string' and XFG.Version or XFG.Version:GetKey()),
-					type = 'header'
+					type = 'description',
+					name = '',
+					fontSize = 'medium',
+					image = function() return 'Interface\\AddOns\\XFaction\\Media\\Images\\xfaction_logo.tga' end,
 				},	
 				DHeader = {
 					order = 2,
