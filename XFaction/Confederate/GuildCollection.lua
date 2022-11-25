@@ -118,7 +118,7 @@ end
 
 function GuildCollection:SetPlayerGuild()
 	for _, guild in self:Iterator() do
-		if(guild:GetName() == self.info.name and XFG.Player.Realm:Equals(guild:GetRealm())) then
+		if(guild:GetName() == self.info.name and XFG.Player.Realm:Equals(guild:GetRealm()) and XFG.Player.Faction:Equals(guild:GetFaction())) then
 			guild:SetID(self.info.clubId)
 			for _, stream in pairs (C_Club.GetStreams(guild:GetID())) do
 				if(stream.streamType == 1) then
