@@ -1,4 +1,5 @@
-# XFaction
+![xfaction_logo_light_1](https://user-images.githubusercontent.com/45693161/204025849-dbafe9e5-d533-4897-a3a3-d522085eef3b.png)
+
 Enable roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.
 
 ## Disclaimer
