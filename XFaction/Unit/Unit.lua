@@ -323,7 +323,7 @@ function Unit:SetNote(inNote)
     else
         -- No team format
         local startIndex, _, guildInitials = string.find(self.note, '%[(%a+)%]')
-        if(_StartIndex == 1) then
+        if(startIndex == 1) then
             self:SetMainTeam(guildInitials)
             return
         end
@@ -353,7 +353,7 @@ function Unit:SetNote(inNote)
     if(self:GetNote() == '?' and self:GetGuild():GetInitials() == 'ENK') then
         self:SetTeam(XFG.Teams:Get(self:GetGuild():GetInitials()))
     elseif(not self:HasTeam()) then
-        local team = XFG.Teams:Get('U')
+        local team = XFG.Teams:Get('?')
         self:SetTeam(team)
     end
 end

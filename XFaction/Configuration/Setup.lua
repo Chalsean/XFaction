@@ -213,37 +213,22 @@ XFG.Options.args.Setup = {
 		Instructions = {
 			order = 1,
 			type = 'group',
-			name = 'Instructions',
+			name = XFG.Lib.Locale['HOW_TO'],
 			args = {
-                Config = {
-                    type = "input",
+                Header = {
 					order = 1,
-                    name = XFG.Lib.Locale['CONFEDERATE_CONFIG_BUILDER'],
-                    width = "full",
-                    multiline = 24,
-                    get = function(info) return XFG.Cache.Confederate[ info[#info] ] end,
-                    set = function(info, value) XFG.Cache.Confederate[ info[#info] ] = value; end
-                },
-                Load = {
-                    type = "execute",
-					order = 2,
-                    name = XFG.Lib.Locale['CONFEDERATE_LOAD'],
-                    width = "2",
-                    func = function(info)
-                        XFG.Cache.Confederate.Config = LoadConfig(XFG.Guilds:GetInfo())
-                        LibStub("AceConfigRegistry-3.0"):NotifyChange("Config")
-                    end
-                },
-                Generate = {
-                    type = "execute",
-					order = 3,
-                    name = XFG.Lib.Locale['CONFEDERATE_GENERATE'],
-                    width = "2",
-                    func = function(info)
-                        XFG.Cache.Confederate.Config = GenerateConfig(XFG.Cache.Confederate.Config)
-                        LibStub("AceConfigRegistry-3.0"):NotifyChange("Config")
-                    end
-                }
+					type = 'group',
+					name = XFG.Lib.Locale['INSTRUCTIONS'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['SETUP_HOW_TO_INSTRUCTIONS'],
+						},
+					}
+				},
 			}
 		},
 		Confederate = {
@@ -261,21 +246,21 @@ XFG.Options.args.Setup = {
 							order = 1,
 							type = 'description',
 							fontSize = 'medium',
-							name = 'Select the realms where your guilds are located. If another realm enables based on your selection, that is expected behaviour for connected realms.',
+							name = XFG.Lib.Locale['SETUP_CONFEDERATE_INSTRUCTIONS'],
 						},
 					}
 				},
 				Initials = {
 					order = 2,
 					type = 'input',
-					name = 'Initials',
+					name = XFG.Lib.Locale['CONFEDERATE_INITIALS'],
 					get = function(info) return XFG.Cache.Setup.Confederate.Initials end,
 					set = function(info, value) XFG.Cache.Setup.Confederate.Initials = value end,
 				},
 				Name = {
 					order = 3,
 					type = 'input',
-					name = 'Name',
+					name = XFG.Lib.Locale['CONFEDERATE_NAME'],
 					get = function(info) return XFG.Cache.Setup.Confederate.Name end,
 					set = function(info, value) XFG.Cache.Setup.Confederate.Name = value end,
 				},
@@ -287,14 +272,14 @@ XFG.Options.args.Setup = {
 				Channel = {
 					order = 5,
 					type = 'input',
-					name = 'Channel',
+					name = XFG.Lib.Locale['CHANNEL_NAME'],
 					get = function(info) return XFG.Cache.Setup.Confederate.ChannelName end,
 					set = function(info, value) XFG.Cache.Setup.Confederate.ChannelName = value end,
 				},
 				Password = {
 					order = 6,
 					type = 'input',
-					name = 'Password',
+					name = XFG.Lib.Locale['CHANNEL_PASSWORD'],
 					get = function(info) return XFG.Cache.Setup.Confederate.Password end,
 					set = function(info, value) XFG.Cache.Setup.Confederate.Password = value end,
 				},
@@ -376,41 +361,41 @@ XFG.Options.args.Setup = {
 				Header = {
 					order = 1,
 					type = 'group',
-					name = XFG.Lib.Locale['DESCRIPTION'],
+					name = XFG.Lib.Locale['INSTRUCTIONS'],
 					inline = true,
 					args = {
 						Description = {
 							order = 1,
 							type = 'description',
 							fontSize = 'medium',
-							name = 'Mulitple raid teams are typically used by larger confederates spanning multiple guilds. It is not required setup for all guilds, only if you want to use the feature.\n\nNote the primary key is the team initials, so they need to be unique.\n\nWhen filling out player notes, use the tag [XFt:<Initials>] to associate that player to their raid team.',
+							name = XFG.Lib.Locale['SETUP_GENERATE_INSTRUCTIONS'],
 						},
 					}
 				},
 				Compress = {
 					order = 3,
 					type = 'toggle',
-					name = 'Compress',
-					desc = 'Compress and encode the configuration string to take up less room in guild info.',
+					name = XFG.Lib.Locale['COMPRESS'],
+					desc = XFG.Lib.Locale['SETUP_GENERATE_TOOLTIP'],
 					get = function(info) return XFG.Cache.Setup.Compress end,
 					set = function(info, value) XFG.Cache.Setup.Compress = value end,
 				},
 				Generate = {
-                    type = "execute",
+                    type = 'execute',
 					order = 2,
                     name = XFG.Lib.Locale['CONFEDERATE_GENERATE'],
-                    width = "2",
+                    width = '2',
                     func = function(info)
                         XFG.Cache.Setup.Output = GenerateConfig(XFG.Cache.Setup.Output)
-                        LibStub("AceConfigRegistry-3.0"):NotifyChange("Output")
-						XFG.Options.args.Setup.args.Generate.args.Output.desc = string.len(XFG.Cache.Setup.Output) .. ' characters'
+                        LibStub('AceConfigRegistry-3.0'):NotifyChange('Output')
+						XFG.Options.args.Setup.args.Generate.args.Output.desc = string.len(XFG.Cache.Setup.Output) .. XFG.Lib.Locale['SETUP_CHARACTERS']
                     end
                 },
 				Output = {
-                    type = "input",
+                    type = 'input',
 					order = 4,
-                    name = XFG.Lib.Locale['CONFEDERATE_CONFIG_BUILDER'],
-                    width = "full",
+                    name = XFG.Lib.Locale['GUILD_INFO'],
+                    width = 'full',
                     multiline = 10,
                     get = function(info) return XFG.Cache.Setup[ info[#info] ] end,
                     set = function(info, value) XFG.Cache.Setup[ info[#info] ] = value; end

@@ -73,92 +73,48 @@ XFG.Options = {
 						},
 					}
 				},
-				DisHeader = {
+				Configuration = {
 					order = 4,
 					type = 'group',
-					name = XFG.Lib.Locale['DISCLAIMER'],
+					name = XFG.Lib.Locale['GENERAL_CONFIGURATION'],
 					guiInline = true,
 					args = {
-						Disclaimer = {
+						Chat = {
 							order = 1,
 							type = 'description',
 							fontSize = 'medium',
-							name = XFG.Lib.Locale['GENERAL_DISCLAIMER'],
+							name = XFG.Lib.Locale['GENERAL_CHAT']
 						},
-					}
-				},
-				What = {
-					order = 4,
-					type = 'group',
-					name = XFG.Lib.Locale['GENERAL_WHAT'],
-					guiInline = true,
-					args = {
-						GChat ={
-							order = 1,
-							type = 'group',
-							name = 	XFG.Lib.Locale['CHAT_GUILD'],
-							guiInline = true,
-							args = {
-								GChat1 = {
-									order = 1,
-									type = 'description',
-									fontSize = 'medium',
-									name = XFG.Lib.Locale['GENERAL_GUILD_CHAT']
-								},
-								GChat2 = {
-									order = 2,
-									type = 'description',
-									fontSize = 'medium',
-									name = XFG.Lib.Locale['GENERAL_GUILD_CHAT_ACHIEVEMENT']
-								}
-							}
-						},
-						System = {
+						Datatext = {
 							order = 2,
-							type = 'group',
-							name = XFG.Lib.Locale['GENERAL_SYSTEM_MESSAGES'],
-							guiInline = true,
-							args = {
-								Login = {
-									order = 1,
-									type = 'description',
-									fontSize = 'medium',
-									name = XFG.Lib.Locale['GENERAL_SYSTEM_LOGIN']
-								},
-							}
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['GENERAL_DATATEXT']
 						},
-						DataText = {
+						Nameplates = {
 							order = 3,
-							type = 'group',
-							name = XFG.Lib.Locale['GENERAL_DATA_BROKERS'],
-							guiInline = true,
-							args = {
-								DTGuild = {
-									order = 1,
-									type = 'description',
-									fontSize = 'medium',
-									name = XFG.Lib.Locale['GENERAL_DTGUILD']
-								},
-								DTLinks = {
-									order = 2,
-									type = 'description',
-									fontSize = 'medium',
-									name = XFG.Lib.Locale['GENERAL_DTLINKS']
-								},
-								DTMetrics = {
-									order = 3,
-									type = 'description',
-									fontSize = 'medium',
-									name = XFG.Lib.Locale['GENERAL_DTMETRICS']
-								},
-								DTToken = {
-									order = 4,
-									type = 'description',
-									fontSize = 'medium',
-									name = XFG.Lib.Locale['GENERAL_DTTOKEN']
-								}
-							}
-						}
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['GENERAL_NAMEPLATES']
+						},	
+						Setup = {
+							order = 4,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['GENERAL_SETUP']
+						},		
+						Support = {
+							order = 5,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['GENERAL_SUPPORT']
+						},			
+						Debug = {
+							order = 6,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['GENERAL_DEBUG']
+						},		
 					}
 				}
 			}
