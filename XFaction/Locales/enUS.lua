@@ -3,11 +3,16 @@ local L = LibStub('AceLocale-3.0'):NewLocale('XFaction', 'enUS', true, false)
 --=========================================================================
 -- Generic One Word Translations
 --=========================================================================
+L['ALLIANCE'] = 'Alliance'
+L['HORDE'] = 'Horde'
 L['NAME'] = 'Name'
 L['RACE'] = 'Race'
 L['LEVEL'] = 'Level'
+L['REGION'] = 'Region'
 L['REALM'] = 'Realm'
+L['REALMS'] = 'Realms'
 L['GUILD'] = 'Guild'
+L['GUILDS'] = 'Guilds'
 L['GUILD_NAME'] = 'Guild Name'
 L['TEAM'] = 'Team'
 L['RANK'] = 'Rank'
@@ -56,6 +61,7 @@ L['PROFESSION'] = 'Profession'
 L['SPEC'] = 'Spec'
 L['TARGET'] = 'Target'
 L['TEAM'] = 'Team'
+L['TEAMS'] = 'Teams'
 L['TIMER'] = 'Timer'
 L['ITEMLEVEL'] = 'iLvl'
 L['CENTER'] = 'Center'
@@ -76,6 +82,9 @@ L['SAVE'] = 'Save'
 L['FACTORY'] = 'Factory'
 L['VERBOSITY'] = 'Verbosity'
 L['RAIDERIO'] = 'RaiderIO'
+L['GRAPHICS'] = 'Graphics'
+L['INSTRUCTIONS'] = 'Instructions'
+L['INITIALS'] = 'Initials'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -307,3 +316,11 @@ L['FACTORY_FRIEND'] = 'Factory (Friend)'
 L['DEBUG_VERBOSITY_TOOLTIP'] = 'Level of verbosity addon will log at'
 L['DEBUG_LOG_INSTANCE'] = 'Log Instance'
 L['DEBUG_LOG_INSTANCE_TOOLTIP'] = 'Unchecked means it will disable logging while player is in an instance'
+--=========================================================================
+-- Setup Specific
+--=========================================================================
+L['SETUP_CONFEDERATE_INSTRUCTIONS'] = 'Select the realms where your guilds are located. If another realm enables based on your selection, that is expected behaviour for connected realms.'
+L['SETUP_REALMS_INSTRUCTIONS'] = 'Select the realms where your guilds are located. If another realm enables based on your selection, that is expected behaviour for connected realms.'
+L['SETUP_REALMS_CONNECTED'] = 'Connected Realm: '
+L['SETUP_TEAMS_INSTRUCTIONS'] = 'Teams setup is not required for all guilds, only if you have multiple raid teams and wish to associate raid members to their teams in guild chat or Guild (X) datatext.\n\nNote the primary key is the team initials, so they need to be unique within your confederate.\n\nWhen filling out player notes, use the tag [XFt:<Initials>] to associate that player to their raid team.'
+L['SETUP_GUILDS_INSTRUCTIONS'] = 'Input all the guilds you wish to link together. Note the primary key is the guild initials, so they need to be unique within your confederate. For any guild on connected realms, you only need to input that specific guild once on one of the connected realms.'

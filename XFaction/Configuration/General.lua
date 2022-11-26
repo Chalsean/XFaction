@@ -53,9 +53,14 @@ XFG.Options = {
 					name = '',
 					fontSize = 'medium',
 					image = function() return 'Interface\\AddOns\\XFaction\\Media\\Images\\XFACTION-Logo.tga', 384, 96 end,
+				},
+				Bar = {
+					order = 2,
+					name = format("|cffffffff%s|r", type(XFG.Version) == 'string' and XFG.Version or XFG.Version:GetKey()),
+					type = 'header'
 				},	
 				DHeader = {
-					order = 2,
+					order = 3,
 					type = 'group',
 					name = XFG.Lib.Locale['DESCRIPTION'],
 					guiInline = true,
@@ -69,7 +74,7 @@ XFG.Options = {
 					}
 				},
 				DisHeader = {
-					order = 3,
+					order = 4,
 					type = 'group',
 					name = XFG.Lib.Locale['DISCLAIMER'],
 					guiInline = true,

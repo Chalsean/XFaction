@@ -4,6 +4,7 @@ local RealmXref = {}
 
 function XFG:SetupMenus()
 	XFG.Cache.Setup = {
+		Confederate = {},
 		Realms = {},
 		Teams = {},
 		Guilds = {},
@@ -11,7 +12,17 @@ function XFG:SetupMenus()
 		Compress = true,
 	}
 
+	--#region Confederate Menu
+	XFG.Cache.Setup.Confederate.Initials = XFG.Confederate:GetInitials()
+	XFG.Cache.Setup.Confederate.Name = XFG.Confederate:GetName()
+	if(XFG.Channels:HasLocalChannel()) then
+		XFG.Cache.Setup.Confederate.ChannelName = XFG.Channels:GetLocalChannel():GetName()
+		XFG.Cache.Setup.Confederate.Password = XFG.Channels:GetLocalChannel():GetPassword()
+	end
+	--#endregion
+
 	--#region Realm Menu
+	XFG.Options.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XFG.Lib.Locale['REGION'], XFG.Regions:GetCurrent():GetName())
 	for _, realm in XFG.Realms:SortedIterator() do
 		table.insert(XFG.Cache.Setup.Realms, {
 			id = realm:GetID(),
@@ -30,6 +41,7 @@ function XFG:SetupMenus()
 			type = 'toggle',
 			order = i + 2,
             name = realm.name,
+			desc = '',
             get = function(info) return XFG.Cache.Setup.Realms[i].enabled end,
             set = function(info, value)
 				XFG.Cache.Setup.Realms[i].enabled = value
@@ -49,6 +61,16 @@ function XFG:SetupMenus()
 				end
 			end
 		}
+		for j, connectedRealm in ipairs(XFG.Cache.Setup.Realms[i].connections) do
+			connectedRealm = XFG.Cache.Setup.Realms[RealmXref[connectedRealm]]
+			XFG.Options.args.Setup.args.Realms.args[tostring(i + 2)].desc = 
+			XFG.Options.args.Setup.args.Realms.args[tostring(i + 2)].desc .. 
+			XFG.Lib.Locale['SETUP_REALMS_CONNECTED'] .. connectedRealm.name
+			if(j ~= #XFG.Cache.Setup.Realms[i].connections) then 
+				XFG.Options.args.Setup.args.Realms.args[tostring(i + 2)].desc = 
+				XFG.Options.args.Setup.args.Realms.args[tostring(i + 2)].desc .. '\n'
+			end
+		end
 	end
 	--#endregion
 
@@ -78,11 +100,11 @@ function XFG:SetupMenus()
 		XFG.Options.args.Setup.args.Guilds.args[tostring(4 * i)] = {
 			type = 'select',
 			order = 4 * i,
-			name = 'Faction',
-			width = "half",
+			name = XFG.Lib.Locale['FACTION'],
+			width = 'half',
 			values = {
-				A = 'Alliance',
-				H = 'Horde',
+				A = XFG.Lib.Locale['ALLIANCE'],
+				H = XFG.Lib.Locale['HORDE'],
 			},
 			get = function(info) return XFG.Cache.Setup.Guilds[i].faction end,
 			set = function(info, value) XFG.Cache.Setup.Guilds[i].faction = value	end
@@ -90,7 +112,7 @@ function XFG:SetupMenus()
 		XFG.Options.args.Setup.args.Guilds.args[tostring(4 * i + 1)] = {
 			type = 'select',
 			order = 4 * i + 1,
-			name = 'Realm',
+			name = XFG.Lib.Locale['REALM'],
 			values = XFG.Cache.Setup.GuildsRealms,
 			get = function(info) return XFG.Cache.Setup.Guilds[i].realm end,
 			set = function(info, value) XFG.Cache.Setup.Guilds[i].realm = value	end
@@ -98,8 +120,8 @@ function XFG:SetupMenus()
 		XFG.Options.args.Setup.args.Guilds.args[tostring(4 * i + 2)] = {
 			type = 'input',
 			order = 4 * i + 2,
-            name = 'Initials',
-			width = "half",
+            name = XFG.Lib.Locale['INITIALS'],
+			width = 'half',
             get = function(info) return XFG.Cache.Setup.Guilds[i].initials end,
             set = function(info, value)
 				XFG.Cache.Setup.Guilds[i].initials = value
@@ -108,8 +130,8 @@ function XFG:SetupMenus()
 		XFG.Options.args.Setup.args.Guilds.args[tostring(4 * i + 3)] = {
 			type = 'input',
 			order = 4 * i + 3,
-            name = 'Name',
-			width = "fill",
+            name = XFG.Lib.Locale['NAME'],
+			width = 'fill',
             get = function(info) return XFG.Cache.Setup.Guilds[i].name end,
             set = function(info, value)
 				XFG.Cache.Setup.Guilds[i].name = value
@@ -163,16 +185,23 @@ function XFG:SetupMenus()
 end
 
 local function GenerateConfig()
-	local output = ''
+	local config = 'XFn:' .. XFG.Cache.Setup.Confederate.Name .. ':' .. XFG.Cache.Setup.Confederate.Initials .. '\n' ..
+				   'XFc:' .. XFG.Cache.Setup.Confederate.ChannelName .. ':' .. XFG.Cache.Setup.Confederate.Password .. '\n'
+
 	for i, guild in ipairs(XFG.Cache.Setup.Guilds) do
 		if(guild.name ~= nil and guild.initials ~= nil) then
-			output = output .. 'XFg:' .. guild.realm .. ':' .. guild.faction .. ':' .. guild.name .. ':' .. guild.initials .. '\n'
+			config = config .. 'XFg:' .. guild.realm .. ':' .. guild.faction .. ':' .. guild.name .. ':' .. guild.initials .. '\n'
+		end
+	end
+	for i, team in ipairs(XFG.Cache.Setup.Teams) do
+		if(team.name ~= nil and team.initials ~= nil) then
+			config = config .. 'XFt:' .. team.initials .. ':' .. team.name .. '\n'
 		end
 	end
 	if(XFG.Cache.Setup.Compress) then
-		return 'XF:' .. XFG.Lib.Deflate:EncodeForPrint(XFG.Lib.Deflate:CompressDeflate(output, {level = 9})) .. ':XF'
+		return 'XF:' .. XFG.Lib.Deflate:EncodeForPrint(XFG.Lib.Deflate:CompressDeflate(config, {level = 9})) .. ':XF'
 	end
-	return output
+	return config
 end
 
 XFG.Options.args.Setup = {
@@ -217,71 +246,130 @@ XFG.Options.args.Setup = {
                 }
 			}
 		},
-		Realms = {
+		Confederate = {
 			order = 2,
 			type = 'group',
-			name = 'Realms',
+			name = XFG.Lib.Locale['CONFEDERATE'],
 			args = {
-				Header = {
+                Header = {
 					order = 1,
 					type = 'group',
-					name = XFG.Lib.Locale['DESCRIPTION'],
+					name = XFG.Lib.Locale['INSTRUCTIONS'],
 					inline = true,
 					args = {
 						Description = {
 							order = 1,
 							type = 'description',
 							fontSize = 'medium',
-							name = 'Select the realms where your guilds are located. If another realm enables based on your selection, that is expected for connected realms.',
+							name = 'Select the realms where your guilds are located. If another realm enables based on your selection, that is expected behaviour for connected realms.',
 						},
 					}
+				},
+				Initials = {
+					order = 2,
+					type = 'input',
+					name = 'Initials',
+					get = function(info) return XFG.Cache.Setup.Confederate.Initials end,
+					set = function(info, value) XFG.Cache.Setup.Confederate.Initials = value end,
+				},
+				Name = {
+					order = 3,
+					type = 'input',
+					name = 'Name',
+					get = function(info) return XFG.Cache.Setup.Confederate.Name end,
+					set = function(info, value) XFG.Cache.Setup.Confederate.Name = value end,
+				},
+				Space = {
+					order = 4,
+					type = 'description',
+					name = '',
+				},
+				Channel = {
+					order = 5,
+					type = 'input',
+					name = 'Channel',
+					get = function(info) return XFG.Cache.Setup.Confederate.ChannelName end,
+					set = function(info, value) XFG.Cache.Setup.Confederate.ChannelName = value end,
+				},
+				Password = {
+					order = 6,
+					type = 'input',
+					name = 'Password',
+					get = function(info) return XFG.Cache.Setup.Confederate.Password end,
+					set = function(info, value) XFG.Cache.Setup.Confederate.Password = value end,
+				},
+			}
+		},
+		Realms = {
+			order = 3,
+			type = 'group',
+			name = XFG.Lib.Locale['REALMS'],
+			args = {
+				Header = {
+					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['INSTRUCTIONS'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['SETUP_REALMS_INSTRUCTIONS'],
+						},
+					}
+				},
+				Bar = {
+					order = 2,
+					name = '',
+					type = 'header'
 				},
 			},
 		},
 		Guilds = {
-			order = 3,
+			order = 4,
 			type = 'group',
-			name = 'Guilds',
+			name = XFG.Lib.Locale['GUILDS'],
 			args = {
 				Header = {
 					order = 1,
 					type = 'group',
-					name = XFG.Lib.Locale['DESCRIPTION'],
+					name = XFG.Lib.Locale['INSTRUCTIONS'],
 					inline = true,
 					args = {
 						Description = {
 							order = 1,
 							type = 'description',
 							fontSize = 'medium',
-							name = 'Realm instructions here',
+							name = XFG.Lib.Locale['SETUP_GUILDS_INSTRUCTIONS'],
 						},
 					}
 				},
 			},
 		},
 		Teams = {
-			order = 4,
+			order = 5,
 			type = 'group',
-			name = 'Teams',
+			name = XFG.Lib.Locale['TEAMS'],
 			args = {
 				Header = {
 					order = 1,
 					type = 'group',
-					name = XFG.Lib.Locale['DESCRIPTION'],
+					name = XFG.Lib.Locale['INSTRUCTIONS'],
 					inline = true,
 					args = {
 						Description = {
 							order = 1,
 							type = 'description',
 							fontSize = 'medium',
-							name = 'The Teams setup is not required for all guilds, only if you have multiple raid teams and wish to associate raid members to their teams in guild chat or Guild (X) datatext.\n\nNote the primary key is the team initials, so they need to be unique.\n\nWhen filling out player notes, use the tag [XFt:<Initials>] to associate that player to their raid team.',
+							name = XFG.Lib.Locale['SETUP_TEAMS_INSTRUCTIONS'],
 						},
 					}
 				},				
 			},
 		},
 		Generate = {
-			order = 5,
+			order = 6,
 			type = 'group',
 			name = 'Generate',
 			args = {

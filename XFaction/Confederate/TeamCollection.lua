@@ -29,7 +29,7 @@ end
 --#region DataSet
 function TeamCollection:SetObjectFromString(inString)
 	assert(type(inString) == 'string')
-	local teamInitial, teamName = inString:match('XFt:(%a):(%a+)')
+	local teamInitial, teamName = inString:match('XFt:(%a-):(%a+)')
 	self:Add(teamInitial, teamName)
 end
 --#endregion

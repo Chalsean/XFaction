@@ -116,6 +116,10 @@ function Confederate:CanModifyGuildInfo(inBoolean)
     end
     return self.modifyGuildInfo
 end
+
+function Confederate:GetInitials()
+    return self:GetKey()
+end
 --#endregion
 
 --#region Janitorial
