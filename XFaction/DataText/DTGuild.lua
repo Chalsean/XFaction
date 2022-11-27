@@ -31,19 +31,22 @@ function DTGuild:Initialize()
 			OnClick = function(this, button) XFG.DataText.Guild:OnClick(this, button) end,
 		})
 		LDB_ANCHOR = self.ldbObject
+		self.headerFont = CreateFont('headerFont')
+		self.headerFont:SetTextColor(0.4,0.78,1)
+		self.regularFont = CreateFont('regularFont')
+		self.regularFont:SetTextColor(255,255,255)
+		XFG.Events:Add('DTGuild Init', XFG.Settings.Network.Message.IPC.INITIALIZED, XFG.DataText.Guild.PostInitialize, true, true, true)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
-function DTGuild:SetFont()
-	self.headerFont = CreateFont('headerFont')
-	self.headerFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
-	self.headerFont:SetTextColor(0.4,0.78,1)
-	self.regularFont = CreateFont('regularFont')
-	self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
-	self.regularFont:SetTextColor(255,255,255)
+function DTGuild:PostInitialize()
+	XFG.Events:Remove('DTGuild Init')
+	XFG.DataText.Guild:GetHeaderFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
+	XFG.DataText.Guild:GetRegularFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Guild:RefreshBroker()
+	XFG.Events:Add('DTGuild', XFG.Settings.Network.Message.IPC.ROSTER_UPDATED, XFG.DataText.Guild.RefreshBroker, true, true, true)
 end
 --#endregion
 
@@ -58,20 +61,28 @@ function DTGuild:Print()
 end
 --#endregion
 
---#region Broker
+--#region Accessors
+function DTGuild:GetBroker()
+	return self.ldbObject
+end
+
+function DTGuild:GetHeaderFont()
+	return self.headerFont
+end
+
+function DTGuild:GetRegularFont()
+	return self.regularFont
+end
+
 function DTGuild:RefreshBroker()
-	if(XFG.Initialized and self:IsInitialized()) then
+	if(XFG.Initialized) then
 		local text = ''  
 		if(XFG.Config.DataText.Guild.Label) then
 			text = XFG.Lib.Locale['GUILD'] .. ': '
 		end
 		text = format('%s|cff3CE13F%d', text, XFG.Confederate:GetCount())
-		self.ldbObject.text = text
+		XFG.DataText.Guild:GetBroker().text = text
 	end
-end
-
-function DTGuild:GetBroker()
-	return self.ldbObject
 end
 --#endregion
 

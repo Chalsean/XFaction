@@ -78,8 +78,7 @@ function TimerEvent:CallbackLogin()
 			
 				-- DTs have been waiting on XFG.Initialized flag
 				XFG.Initialized = true
-				XFG.DataText.Guild:SetFont()
-				XFG.DataText.Guild:RefreshBroker()
+				XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.INITIALIZED)
 				XFG.DataText.Links:SetFont()
 				XFG.DataText.Links:RefreshBroker()
 				XFG.DataText.Metrics:SetFont()				

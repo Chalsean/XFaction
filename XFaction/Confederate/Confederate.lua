@@ -50,20 +50,18 @@ function Confederate:Add(inUnit)
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
-        XFG.DataText.Guild:RefreshBroker()    
-
         local target = XFG.Targets:GetByRealmFaction(inUnit:GetRealm(), inUnit:GetFaction())
         if(self.countByTarget[target:GetKey()] == nil) then
             self.countByTarget[target:GetKey()] = 0
         end
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] + 1
     end
-    XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED, inUnit:GetUnitName())
-
+    
     if(inUnit:IsPlayer()) then
         XFG.Player.Unit = inUnit
     end
 
+    XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED)
     return true
 end
 
@@ -72,13 +70,13 @@ function Confederate:Remove(inKey)
     if(self:Contains(inKey)) then
         local unit = self:Get(inKey)
         self.parent.Remove(self, inKey)
-        XFG.DataText.Guild:RefreshBroker()
         if(XFG.Nodes:Contains(unit:GetName())) then
             XFG.Nodes:Remove(XFG.Nodes:Get(unit:GetName()))
         end
         local target = XFG.Targets:GetByRealmFaction(unit:GetRealm(), unit:GetFaction())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
         self:Push(unit)
+        XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED)
     end
 end
 --#endregion
