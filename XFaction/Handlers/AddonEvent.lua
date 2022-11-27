@@ -72,48 +72,8 @@ local function InitializeCache()
     else
         XFG.Cache.Errors = {}
     end
-    XFG.Cache.FirstScan = {}
-    XFG.Cache.Setup = {
-		Confederate = {},
-		Realms = {},
-		Teams = {},
-		Guilds = {},
-		GuildsRealms = {},
-		Compress = true,
-	}
-end
---#endregion
-
---#region Configs
-function XFG:LoadConfigs()
-    -- Get AceDB up and running as early as possible, its not available until addon is loaded
-    XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFactionDB', XFG.Defaults)
-    XFG.Config = XFG.ConfigDB.profile
-
-    -- Cache it because on shutdown, XFG.Config gets unloaded while we're still logging
-    XFG.Verbosity = XFG.Config.Debug.Verbosity
-
-    XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.ConfigDB)
-    XFG.Lib.Config:RegisterOptionsTable(XFG.Name, XFG.Options, nil)
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, XFG.Name, nil, 'General')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Chat', XFG.Name, 'Chat')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'DataText', XFG.Name, 'DataText')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Addons', XFG.Name, 'Addons')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Setup', XFG.Name, 'Setup')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Support', XFG.Name, 'Support')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Debug', XFG.Name, 'Debug')
-    XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Profile', XFG.Name, 'Profile')
-
-    XFG.ConfigDB.RegisterCallback(self, 'OnProfileChanged', 'InitProfile')
-    XFG.ConfigDB.RegisterCallback(self, 'OnProfileCopied', 'InitProfile')
-    XFG.ConfigDB.RegisterCallback(self, 'OnProfileReset', 'InitProfile')
-
-    XFG:Info(ObjectName, 'Config loaded')
-end
-    
-function XFG:InitProfile()
-    -- When DB changes namespace (profile) the XFG.Config becomes invalid and needs to be reset
-    XFG.Config = XFG.ConfigDB.profile
+    XFG.Cache.FirstScan = {}    
+    XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.CACHE_LOADED)
 end
 --#endregion
 
@@ -125,13 +85,9 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
             if(inAddonName == XFG.Name and not XFG.Handlers.AddonEvent:IsLoaded()) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
-                XFG:LoadConfigs()
+                XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.CONFIG_LOADED)
                 XFG.Handlers.AddonEvent:IsLoaded(true)      
-            -- elseif(inAddonName == 'ElvUI') then XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ADDON_LOADED, inAddonName)
-            -- elseif(inAddonName == 'WIM') then XFG.Addons.WIM:OnLoad(WIM)
             --  or inAddonName == 'RaiderIO') then
-            --     XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
-            --     XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ADDON_LOADED, inAddonName)
 --                XFG.RaidIO:IsLoaded(true)
             end
         end

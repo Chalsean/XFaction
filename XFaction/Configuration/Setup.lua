@@ -2,18 +2,15 @@ local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ConfigSetup'
 local RealmXref = {}
 
-function XFG:SetupMenus()
-
-	--#region Confederate Menu
-	XFG.Cache.Setup.Confederate.Initials = XFG.Confederate:GetInitials()
-	XFG.Cache.Setup.Confederate.Name = XFG.Confederate:GetName()
-	if(XFG.Channels:HasLocalChannel()) then
-		XFG.Cache.Setup.Confederate.ChannelName = XFG.Channels:GetLocalChannel():GetName()
-		XFG.Cache.Setup.Confederate.Password = XFG.Channels:GetLocalChannel():GetPassword()
-	end
-	--#endregion
-
-	--#region Realm Menu
+function XFG:SetupRealms()
+	XFG.Cache.Setup = {
+		Confederate = {},
+		Realms = {},
+		Teams = {},
+		Guilds = {},
+		GuildsRealms = {},
+		Compress = true,
+	}
 	XFG.Options.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XFG.Lib.Locale['REGION'], XFG.Regions:GetCurrent():GetName())
 	for _, realm in XFG.Realms:SortedIterator() do
 		table.insert(XFG.Cache.Setup.Realms, {
@@ -63,6 +60,17 @@ function XFG:SetupMenus()
 				XFG.Options.args.Setup.args.Realms.args[tostring(i + 2)].desc .. '\n'
 			end
 		end
+	end
+end
+
+function XFG:SetupMenus()
+
+	--#region Confederate Menu
+	XFG.Cache.Setup.Confederate.Initials = XFG.Confederate:GetInitials()
+	XFG.Cache.Setup.Confederate.Name = XFG.Confederate:GetName()
+	if(XFG.Channels:HasLocalChannel()) then
+		XFG.Cache.Setup.Confederate.ChannelName = XFG.Channels:GetLocalChannel():GetName()
+		XFG.Cache.Setup.Confederate.Password = XFG.Channels:GetLocalChannel():GetPassword()
 	end
 	--#endregion
 

@@ -58,6 +58,7 @@ function Confederate:Add(inUnit)
         end
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] + 1
     end
+    XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED, inUnit:GetUnitName())
 
     if(inUnit:IsPlayer()) then
         XFG.Player.Unit = inUnit

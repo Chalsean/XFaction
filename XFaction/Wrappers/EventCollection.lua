@@ -26,7 +26,7 @@ function EventCollection:Initialize()
                 end
             end
         end)
-        self:IsInitialized(true)
+        self:IsInitialized(true)        
     end
 end
 --#endregion

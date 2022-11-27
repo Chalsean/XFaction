@@ -1,5 +1,5 @@
 local XFG, G = unpack(select(2, ...))
-local LogCategory = 'Config'
+local ObjectName = 'Config.General'
 
 StaticPopupDialogs["LINKS"] = {
 	text = XFG.Title,
@@ -121,3 +121,35 @@ XFG.Options = {
 		},
 	}
 }
+
+function XFG:ConfigInitialize()
+	-- Get AceDB up and running as early as possible, its not available until addon is loaded
+	XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFactionDB', XFG.Defaults)
+	XFG.Config = XFG.ConfigDB.profile
+
+	-- Cache it because on shutdown, XFG.Config gets unloaded while we're still logging
+	XFG.Verbosity = XFG.Config.Debug.Verbosity
+
+	XFG.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XFG.ConfigDB)
+	XFG.Lib.Config:RegisterOptionsTable(XFG.Name, XFG.Options, nil)
+	XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, XFG.Name, nil, 'General')
+	XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Chat', XFG.Name, 'Chat')
+	XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'DataText', XFG.Name, 'DataText')
+	XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Addons', XFG.Name, 'Addons')
+	XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Setup', XFG.Name, 'Setup')
+	XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Support', XFG.Name, 'Support')
+	XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Debug', XFG.Name, 'Debug')
+	XFG.Lib.ConfigDialog:AddToBlizOptions(XFG.Name, 'Profile', XFG.Name, 'Profile')
+
+	XFG.ConfigDB.RegisterCallback(XFG, 'OnProfileChanged', 'InitProfile')
+	XFG.ConfigDB.RegisterCallback(XFG, 'OnProfileCopied', 'InitProfile')
+	XFG.ConfigDB.RegisterCallback(XFG, 'OnProfileReset', 'InitProfile')
+
+	XFG:SetupRealms()
+	XFG:Info(ObjectName, 'Configs loaded')
+end
+
+function XFG:InitProfile()
+    -- When DB changes namespace (profile) the XFG.Config becomes invalid and needs to be reset
+    XFG.Config = XFG.ConfigDB.profile
+end

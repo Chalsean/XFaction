@@ -43,6 +43,7 @@ function DTGuild:SetFont()
 	self.regularFont = CreateFont('regularFont')
 	self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	self.regularFont:SetTextColor(255,255,255)
+	XFG.DataText.Guild:RefreshBroker()
 end
 --#endregion
 
