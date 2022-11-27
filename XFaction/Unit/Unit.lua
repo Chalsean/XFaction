@@ -360,7 +360,6 @@ function Unit:SetNote(inNote)
     end).
     finally(function()
         if(not self:HasTeam()) then
-            XFG:Debug(ObjectName, 'Setting team to default')
             self:SetTeam(XFG.Teams:Get('?'))
         end
     end)

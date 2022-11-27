@@ -121,13 +121,14 @@ end
 function AddonEvent:CallbackAddonLoaded(inAddonName)
     try(function ()
         if(GetAddOnEnableState(nil, inAddonName) > 0) then
+            XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ADDON_LOADED, inAddonName)
             if(inAddonName == XFG.Name and not XFG.Handlers.AddonEvent:IsLoaded()) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
                 XFG:LoadConfigs()
                 XFG.Handlers.AddonEvent:IsLoaded(true)      
-            elseif(inAddonName == 'ElvUI') then XFG.Addons.ElvUI:OnLoad(ElvUI[1])
-            elseif(inAddonName == 'WIM') then XFG.Addons.WIM:OnLoad(WIM)
+            -- elseif(inAddonName == 'ElvUI') then XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ADDON_LOADED, inAddonName)
+            -- elseif(inAddonName == 'WIM') then XFG.Addons.WIM:OnLoad(WIM)
             --  or inAddonName == 'RaiderIO') then
             --     XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
             --     XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ADDON_LOADED, inAddonName)

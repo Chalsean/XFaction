@@ -12,13 +12,21 @@ end
 --#endregion
 
 --#region Initializers
-function XFElvUI:OnLoad(inAPI)
-    assert(type(inAPI) == 'table')
-    if(not self:IsLoaded()) then
+function XFElvUI:Initialize()
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
+        XFG.Events:Add('ElvUI Load', XFG.Settings.Network.Message.IPC.ADDON_LOADED, XFG.Addons.ElvUI.CallbackAddonLoaded, true, true, true)
+		self:IsInitialized(true)
+	end
+end
+
+function XFElvUI:CallbackAddonLoaded(inAddonName)
+    if(inAddonName == ObjectName and not XFG.Addons.ElvUI:IsLoaded()) then
         XFG.Media:Add(XFG.Icons.Guild, 'Icon')
-        self:SetAPI(inAPI)        
-        self:AddTags()
-        self:IsLoaded(true)
+        XFG.Addons.ElvUI:SetAPI(ElvUI[1])        
+        XFG.Addons.ElvUI:AddTags()
+        XFG.Addons.ElvUI:IsLoaded(true)
+        XFG:Info(ObjectName, 'ElvUI loaded successfully')
     end
 end
 
