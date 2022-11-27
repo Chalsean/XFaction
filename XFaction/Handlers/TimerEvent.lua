@@ -76,11 +76,9 @@ function TimerEvent:CallbackLogin()
 				-- Start all timers
 				XFG.Timers:Start()
 			
-				-- DTs have been waiting on XFG.Initialized flag
+				-- Broadcast IPC message that were g2g
 				XFG.Initialized = true
 				XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.INITIALIZED)
-				XFG.DataText.Links:SetFont()
-				XFG.DataText.Links:RefreshBroker()
 				XFG.DataText.Metrics:SetFont()				
 				XFG.DataText.Metrics:RefreshBroker()
 

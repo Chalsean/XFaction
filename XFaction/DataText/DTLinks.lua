@@ -27,18 +27,23 @@ function DTLinks:Initialize()
 		    OnEnter = function(this) XFG.DataText.Links:OnEnter(this) end,
 			OnLeave = function(this) XFG.DataText.Links:OnLeave(this) end,
 		})
+		self.headerFont = CreateFont('headerFont')
+		self.headerFont:SetTextColor(0.4,0.78,1)
+		self.regularFont = CreateFont('regularFont')
+		self.regularFont:SetTextColor(255,255,255)
+		XFG.Events:Add('DTLinks Init', XFG.Settings.Network.Message.IPC.INITIALIZED, XFG.DataText.Links.PostInitialize, true, true, true)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
-function DTLinks:SetFont()
-	self.headerFont = CreateFont('headerFont')
-	self.headerFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
-	self.headerFont:SetTextColor(0.4,0.78,1)
-	self.regularFont = CreateFont('regularFont')
-	self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
-	self.regularFont:SetTextColor(255,255,255)
+function DTLinks:PostInitialize()
+	XFG.Events:Remove('DTLinks Init')
+	XFG.DataText.Links:GetHeaderFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
+	XFG.DataText.Links:GetRegularFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
+	XFG.DataText.Links:RefreshBroker()
+	XFG.Events:Add('DTLinks', XFG.Settings.Network.Message.IPC.LINKS_UPDATED, XFG.DataText.Links.RefreshBroker, true, true, true)
+	XFG.Events:Add('DTNodes', XFG.Settings.Network.Message.IPC.NODES_UPDATED, XFG.DataText.Links.RefreshBroker, true, true, true)
 end
 --#endregion
 
@@ -53,44 +58,54 @@ function DTLinks:Print()
 end
 --#endregion
 
---#region Broker
+--#region Accessors
+function DTLinks:GetBroker()
+	return self.ldbObject
+end
+
+function DTLinks:GetHeaderFont()
+	return self.headerFont
+end
+
+function DTLinks:GetRegularFont()
+	return self.regularFont
+end
+
 function DTLinks:RefreshBroker()
-	if(XFG.Initialized and self:IsInitialized()) then
-		local text = ''
-		if(XFG.Config.DataText.Link.Label) then
-			text = XFG.Lib.Locale['LINKS'] .. ': '
-		end
-
-		local names = {}
-		local allianceCount = 0
-		local hordeCount = 0
-
-		for _, link in XFG.Links:Iterator() do
-			if(names[link:GetFromNode():GetName()] == nil) then
-				if(link:GetFromNode():GetTarget():GetFaction():GetName() == 'Alliance') then
-					allianceCount = allianceCount + 1
-				else
-					hordeCount = hordeCount + 1
-				end
-				names[link:GetFromNode():GetName()] = true
-			end
-			if(names[link:GetToNode():GetName()] == nil) then
-				if(link:GetToNode():GetTarget():GetFaction():GetName() == 'Alliance') then
-					allianceCount = allianceCount + 1
-				else
-					hordeCount = hordeCount + 1
-				end
-				names[link:GetToNode():GetName()] = true
-			end
-		end
-
-		if(XFG.Config.DataText.Link.Faction) then
-			text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XFG.Links:GetCount(), allianceCount, hordeCount)
-		else
-			text = format('%s|cffffffff%d|r', text, XFG.Links:GetCount())
-		end
-		self.ldbObject.text = text
+	local text = ''
+	if(XFG.Config.DataText.Link.Label) then
+		text = XFG.Lib.Locale['LINKS'] .. ': '
 	end
+
+	local names = {}
+	local allianceCount = 0
+	local hordeCount = 0
+
+	for _, link in XFG.Links:Iterator() do
+		if(names[link:GetFromNode():GetName()] == nil) then
+			if(link:GetFromNode():GetTarget():GetFaction():GetName() == 'Alliance') then
+				allianceCount = allianceCount + 1
+			else
+				hordeCount = hordeCount + 1
+			end
+			names[link:GetFromNode():GetName()] = true
+		end
+		if(names[link:GetToNode():GetName()] == nil) then
+			if(link:GetToNode():GetTarget():GetFaction():GetName() == 'Alliance') then
+				allianceCount = allianceCount + 1
+			else
+				hordeCount = hordeCount + 1
+			end
+			names[link:GetToNode():GetName()] = true
+		end
+	end
+
+	if(XFG.Config.DataText.Link.Faction) then
+		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XFG.Links:GetCount(), allianceCount, hordeCount)
+	else
+		text = format('%s|cffffffff%d|r', text, XFG.Links:GetCount())
+	end
+	XFG.DataText.Links:GetBroker().text = text
 end
 --#endregion
 
