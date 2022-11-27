@@ -43,7 +43,6 @@ XFG.Lib = {
 	Config = LibStub('AceConfigRegistry-3.0'),
 	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0'),
-	Event = LibStub('AceEvent-3.0'),
 }
 XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 --#endregion
@@ -126,11 +125,6 @@ XFG.Settings = {
 				JOIN = '7',
 			},
 			Tag = {},
-			IPC = {
-				CACHE_LOADED = '1',
-				ADDON_LOADED = '2',
-				CONFIG_LOADED = '3',
-			},
 		},
 		Type = {
 			BROADCAST = '1', -- BNet + Local Channel

@@ -123,5 +123,26 @@ XFG.Options.args.Addons = {
 				},			
 			}
 		},
+		WIM = {
+			order = 3,
+			type = 'group',
+			name = XFG.Lib.Locale['WIM'],
+			args = {
+				Header = {
+					order = 1,
+					type = 'group',
+					name = XFG.Lib.Locale['DESCRIPTION'],
+					inline = true,
+					args = {
+						Description = {
+							order = 1,
+							type = 'description',
+							fontSize = 'medium',
+							name = XFG.Lib.Locale['ADDON_WIM_DESCRIPTION'],
+						},
+					}
+				},		
+			}
+		},
 	}
 }

@@ -73,7 +73,6 @@ local function InitializeCache()
         XFG.Cache.Errors = {}
     end
     XFG.Cache.FirstScan = {}
-    XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.CACHE_LOADED)
     XFG.Cache.Setup = {
 		Confederate = {},
 		Realms = {},
@@ -126,14 +125,12 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
                 XFG:LoadConfigs()
-                XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.CONFIG_LOADED)
                 XFG.Handlers.AddonEvent:IsLoaded(true)      
-            elseif(inAddonName == 'ElvUI' or inAddonName == 'WIM' or inAddonName == 'RaiderIO') then
-                XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
-                XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ADDON_LOADED, inAddonName)
---                if(WIM.modules.GuildChat.enabled) then
---                    XFG.WIM = WIM.modules.GuildChat
---                end
+            elseif(inAddonName == 'ElvUI') then XFG.Addons.ElvUI:OnLoad(ElvUI[1])
+            elseif(inAddonName == 'WIM') then XFG.Addons.WIM:OnLoad(WIM)
+            --  or inAddonName == 'RaiderIO') then
+            --     XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
+            --     XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ADDON_LOADED, inAddonName)
 --                XFG.RaidIO:IsLoaded(true)
             end
         end

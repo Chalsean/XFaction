@@ -175,6 +175,8 @@ L['NAMEPLATE_PLAYER_MAIN'] = 'Main Name'
 L['NAMEPLATE_PLAYER_MAIN_TOOLTIP'] = "Append player's main raiding name to unit name"
 L['NAMEPLATE_GUILD_HIDE'] = 'Hide Non-Confederate'
 L['NAMEPLATE_GUILD_HIDE_TOOLTIP'] = 'Hide non-confederate guild tags'
+L['WIM'] = 'WIM'
+L['ADDON_WIM_DESCRIPTION'] = 'If WIM addon is loaded with guild chat enabled, XFaction will redirect confederate messages to WIM.'
 --=========================================================================
 -- DataText Specific
 --=========================================================================

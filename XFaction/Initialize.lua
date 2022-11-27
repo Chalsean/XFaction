@@ -8,8 +8,9 @@ function XFG:Init()
 	XFG.Events = EventCollection:new(); XFG.Events:Initialize()
 	XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
 
-	-- IPC handling
+	-- External addon handling
 	XFG.Addons.ElvUI = XFElvUI:new(); XFG.Addons.ElvUI:Initialize()
+	XFG.Addons.WIM = XFWIM:new(); XFG.Addons.WIM:Initialize()
 	XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
 
 	-- Log XFaction version

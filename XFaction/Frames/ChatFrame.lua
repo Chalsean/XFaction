@@ -99,8 +99,8 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRe
                         text = format('|cff%s%s|r', hex, text)
                     end
 
-                    if(inType == 'GUILD' and XFG.WIM) then
-                        XFG.WIM:CHAT_MSG_GUILD(text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
+                    if(inType == 'GUILD' and XFG.Addons.WIM:IsLoaded() and XFG.Addons.WIM:GetAPI().modules.GuildChat.enabled) then
+                        XFG.Addons.WIM:GetAPI():CHAT_MSG_GUILD(text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     else
                         text = XFG.Settings.Frames.Chat.Prepend .. text
                         ChatFrame_MessageEventHandler(_G[frame], 'CHAT_MSG_' .. inType, text, inUnitName, XFG.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
