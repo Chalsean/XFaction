@@ -16,14 +16,14 @@ XFG.Version = GetAddOnMetadata(addon, 'Version')
 XFG.Start = GetServerTime()
 XFG.Verbosity = 4
 
+XFG.Addons = {
+	ElvUI = {},
+}
 XFG.DataText = {}
 XFG.Factories = {}
 XFG.Frames = {}
 XFG.Handlers = {}
 XFG.Mailbox = {}
-XFG.Nameplates = {
-	ElvUI = {},
-}
 XFG.Options = {}
 
 XFG.Initialized = false
@@ -43,7 +43,7 @@ XFG.Lib = {
 	Config = LibStub('AceConfigRegistry-3.0'),
 	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0'),
-	Serializer = LibStub('AceSerializer-3.0'),
+	Event = LibStub('AceEvent-3.0'),
 }
 XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 --#endregion
@@ -61,7 +61,7 @@ XFG.Icons = {
 	Horde = 463451,
 	Neutral = 132311,
 	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
-	Guild = 'ElvUI-Windtools-Healer',
+	Guild = 'ElvUI-Windtools-Healer', -- Kept the name to give credit to Windtools
 }
 
 XFG.Settings = {
@@ -93,30 +93,7 @@ XFG.Settings = {
 		ScanTimer = 30,          -- Seconds between forced local guild scans
 		LoginGiveUp = 60 * 5,    -- Seconds before giving up on querying for guild on login
 		MaxGuildInfo = 500,      -- Maximum # of characters guild info can take
-	},
-	-- EK specific teams
-	Teams = {
-		A = 'Acheron',
-		C = 'Chivalry',
-		D = 'Draconic',
-		E = 'Empire',
-		F = 'Fireforged',
-		G = 'Gallant',
-		H = 'Harbinger',
-		K = 'Kismet',
-		L = 'Legacy',
-		M = 'Mercenary',
-		O = 'Olympus',
-		R = 'Reckoning',
-		S = 'Sellswords',
-		T = 'Tsunami',
-		W = 'Warlords',
-		Y = 'Gravity',
-		ENK = 'Social',
-		ENKA = 'Social',
-		ENKH = 'Social',
-		CC = 'CC'
-	},
+	},	
 	Factions = {'Alliance', 'Horde', 'Neutral'},
 	Network = {
 		CompressionLevel = 9,
@@ -149,6 +126,11 @@ XFG.Settings = {
 				JOIN = '7',
 			},
 			Tag = {},
+			IPC = {
+				CACHE_LOADED = '1',
+				ADDON_LOADED = '2',
+				CONFIG_LOADED = '3',
+			},
 		},
 		Type = {
 			BROADCAST = '1', -- BNet + Local Channel

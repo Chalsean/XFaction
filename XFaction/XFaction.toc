@@ -24,7 +24,7 @@ Frames\LoadFrames.xml
 Handlers\LoadHandlers.xml
 Media\LoadMedia.xml
 Metrics\LoadMetrics.xml
-Nameplates\LoadNameplates.xml
+Addons\LoadAddons.xml
 Network\LoadNetwork.xml
 Unit\LoadUnit.xml
 Wrappers\LoadWrappers.xml

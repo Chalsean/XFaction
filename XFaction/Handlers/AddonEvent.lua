@@ -73,12 +73,20 @@ local function InitializeCache()
         XFG.Cache.Errors = {}
     end
     XFG.Cache.FirstScan = {}
+    XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.CACHE_LOADED)
+    XFG.Cache.Setup = {
+		Confederate = {},
+		Realms = {},
+		Teams = {},
+		Guilds = {},
+		GuildsRealms = {},
+		Compress = true,
+	}
 end
 --#endregion
 
 --#region Configs
 function XFG:LoadConfigs()
-    XFG:Info(ObjectName, 'Loading configs')
     -- Get AceDB up and running as early as possible, its not available until addon is loaded
     XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFactionDB', XFG.Defaults)
     XFG.Config = XFG.ConfigDB.profile
@@ -100,6 +108,8 @@ function XFG:LoadConfigs()
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileChanged', 'InitProfile')
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileCopied', 'InitProfile')
     XFG.ConfigDB.RegisterCallback(self, 'OnProfileReset', 'InitProfile')
+
+    XFG:Info(ObjectName, 'Config loaded')
 end
     
 function XFG:InitProfile()
@@ -109,12 +119,6 @@ end
 --#endregion
 
 --#region Callbacks
-local function ElvUIOnLoad()
-    if(XFG.Config ~= nil and XFG.ElvUI ~= nil) then
-        XFG.Nameplates.ElvUI:OnLoad()
-    end
-end
-
 function AddonEvent:CallbackAddonLoaded(inAddonName)
     try(function ()
         if(GetAddOnEnableState(nil, inAddonName) > 0) then
@@ -122,20 +126,15 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
                 XFG:LoadConfigs()
-                ElvUIOnLoad()
-                XFG.Handlers.AddonEvent:IsLoaded(true)
-            elseif(inAddonName == 'ElvUI' and not XFG.ElvUI) then
+                XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.CONFIG_LOADED)
+                XFG.Handlers.AddonEvent:IsLoaded(true)      
+            elseif(inAddonName == 'ElvUI' or inAddonName == 'WIM' or inAddonName == 'RaiderIO') then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
-                XFG.ElvUI = ElvUI[1]
-                ElvUIOnLoad()
-            elseif(inAddonName == 'WIM' and not XFG.WIM) then
-                XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
-                if(WIM.modules.GuildChat.enabled) then
-                    XFG.WIM = WIM.modules.GuildChat
-                end
-            elseif(inAddonName == 'RaiderIO' and not XFG.RaidIO) then
-                XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
-                XFG.RaidIO:IsLoaded(true)
+                XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ADDON_LOADED, inAddonName)
+--                if(WIM.modules.GuildChat.enabled) then
+--                    XFG.WIM = WIM.modules.GuildChat
+--                end
+--                XFG.RaidIO:IsLoaded(true)
             end
         end
     end).

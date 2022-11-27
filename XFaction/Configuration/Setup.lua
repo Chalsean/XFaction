@@ -3,14 +3,6 @@ local ObjectName = 'ConfigSetup'
 local RealmXref = {}
 
 function XFG:SetupMenus()
-	XFG.Cache.Setup = {
-		Confederate = {},
-		Realms = {},
-		Teams = {},
-		Guilds = {},
-		GuildsRealms = {},
-		Compress = true,
-	}
 
 	--#region Confederate Menu
 	XFG.Cache.Setup.Confederate.Initials = XFG.Confederate:GetInitials()
