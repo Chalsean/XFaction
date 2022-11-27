@@ -63,7 +63,7 @@ XFG.Defaults = {
                 Color = true,
             },
         },
-        Nameplates = {
+        Addons = {
             ElvUI = {
                 Enable = true,
                 ConfederateTag = '[confederate]',

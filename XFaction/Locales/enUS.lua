@@ -92,6 +92,7 @@ L['INITIALS'] = 'Initials'
 L['COMPRESS'] = 'Compress'
 L['GUILD_INFO'] = 'Guild Info'
 L['HOW_TO'] = 'How To'
+L['ADDONS'] = 'Addons'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -151,22 +152,21 @@ L['CHAT_ACHIEVEMENT'] = 'has earned the achievement'
 L['CHAT_NO_PLAYER_FOUND'] = 'No player named '
 L['CHAT_CHANNEL_DESCRIPTION'] = 'These options control the addon custom channel behaviours.'
 --=========================================================================
--- Nameplates Specific
+-- Addons Specific
 --=========================================================================
-L['NAMEPLATES'] = 'Nameplates'
 L['CONFEDERATE_INITIALS'] = 'Confederate Initials'
 L['CONFEDERATE_NAME'] = 'Confederate Name'
 L['GUILD_INITIALS'] = 'Guild Initials'
 L['NAMEPLATE_GUILD_NAME_TOOLTIP'] = 'Replace guild name with the selected option if the guild is in the confederate'
 L['ELVUI'] = 'ElvUI'
-L['NAMEPLATE_ELVUI_DESCRIPTION'] = 'Add oUF tags that can be used in ElvUI UnitFrames. Note the other player needs to be running XFaction in order for this to work properly.'
-L['NAMEPLATE_ELVUI_CONFEDERATE'] = 'Name of the confederate'
-L['NAMEPLATE_ELVUI_CONFEDERATE_INITIALS'] = 'Initials of the confederate'
-L['NAMEPLATE_ELVUI_GUILD_INITIALS'] = 'Initials of the guild within the confederate'
-L['NAMEPLATE_ELVUI_MAIN'] = "Name of the player's main raiding character"
-L['NAMEPLATE_ELVUI_MAIN_PARENTHESIS'] = "Name of the player's main raiding character in (parenthesis)"
-L['NAMEPLATE_ELVUI_TEAM'] = "Name of the player's raid team"
-L['NAMEPLATE_ELVUI_MEMBER_ICON'] = 'Icon to represent whether the player is a member of the confederate'
+L['ADDON_ELVUI_DESCRIPTION'] = 'oUF tags are available that can be used in ElvUI Unitframes and Nameplates. Please see the Available Tags section in ElvUI options.'
+L['ADDON_ELVUI_CONFEDERATE'] = 'Display the confederate name if part of the confederate, otherwise displays guild name'
+L['ADDON_ELVUI_CONFEDERATE_INITIALS'] = 'Display the confederate initials if part of the confederate'
+L['ADDON_ELVUI_GUILD_INITIALS'] = 'Displays the guild initials instead of guild name if part of the confederate'
+L['ADDON_ELVUI_MAIN'] = "Displays the player's main name if known, otherwise displays current name"
+L['ADDON_ELVUI_MAIN_PARENTHESIS'] = "Displays the player's main name if known in (parenthesis)"
+L['ADDON_ELVUI_TEAM'] = "Displays the player's raid team"
+L['ADDON_ELVUI_MEMBER_ICON'] = 'Displays an icon to represent whether the player is a member of the confederate'
 L['KUI'] = 'Kui'
 L['NAMEPLATE_KUI_DESCRIPTION'] = 'Options to change Kui nameplates information. Upon selection, you will need to reload your UI to see the changes.'
 L['NAMEPLATE_ICON'] = 'Member Icon'
