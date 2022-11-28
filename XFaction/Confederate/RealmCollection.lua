@@ -736,6 +736,7 @@ local ConnectionData = {
 	"1265,3685",                                     -- Turalyon, Internal Record 3685
 	"16,3693",                                       -- Kel'Thuzad, Internal Record 3693
 	"1,3694",                                        -- Lightbringer, Internal Record 3694
+	"1263,3678",                                     -- Thrall, Ambossar
 	-- Europe
 	"1312,1081,1416,1310,1298",                      -- Aerie Peak, Bronzebeard, Blade’s Edge, Eonar, Vek’nilash
 	"518,522,525,1091,646,513",                      -- Agamaggan, Bloodscalp, Crushridge, Emeriss, Hakkar, Twilight’s Hammer
