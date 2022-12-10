@@ -15,7 +15,7 @@ end
 function TeamCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        --XFG.Events:Add('Setup Teams', XFG.Settings.Network.Message.IPC.TEAMS_LOADED, XFG.SetupTeams, true, true, true)		
+        --XFG.Events:Add('Setup Teams', XFG.Settings.Network.Message.IPC.TEAMS_LOADED, XFG.SetupTeams, true, true)		
 		self:IsInitialized(true)
 	end
 end

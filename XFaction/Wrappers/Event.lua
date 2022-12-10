@@ -11,7 +11,6 @@ function Event:new()
     object.callback = nil
     object.isEnabled = false
     object.inInstance = false
-    object.inInstanceCombat = false
     object.isIPC = false
     return object
 end
@@ -24,7 +23,6 @@ function Event:Print()
     XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
     XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
     XFG:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-    XFG:Debug(ObjectName, '  inInstanceCombat (' .. type(self.inInstanceCombat) .. '): ' .. tostring(self.inInstanceCombat))
     XFG:Debug(ObjectName, '  isIPC (' .. type(self.isIPC) .. '): ' .. tostring(self.isIPC))
 end
 --#endregion
@@ -62,14 +60,6 @@ end
 function Event:SetDelta(inDelta)
     assert(type(inDelta) == 'number')
     self.delta = inDelta
-end
-
-function Event:IsInstanceCombat(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.inInstanceCombat = inBoolean
-    end
-	return self.inInstanceCombat
 end
 
 function Event:IsIPC(inBoolean)

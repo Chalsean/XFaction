@@ -7,7 +7,7 @@ function XFG:Init()
 	XFG.RaidIO = RaidIOCollection:new(); XFG.RaidIO:Initialize()
 	XFG.Events = EventCollection:new(); XFG.Events:Initialize()
 	XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
-	XFG.Events:Add('Config Loaded', XFG.Settings.Network.Message.IPC.CONFIG_LOADED, XFG.ConfigInitialize, true, true, true)
+	XFG.Events:Add('Config Loaded', XFG.Settings.Network.Message.IPC.CONFIG_LOADED, XFG.ConfigInitialize, true, true)
 
 	-- External addon handling
 	XFG.Addons.ElvUI = XFElvUI:new(); XFG.Addons.ElvUI:Initialize()

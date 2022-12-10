@@ -32,13 +32,12 @@ end
 --#endregion
 
 --#region Hash
-function EventCollection:Add(inKey, inName, inCallback, inInstance, inInstanceCombat, inIPC)
+function EventCollection:Add(inKey, inName, inCallback, inInstance, inIPC)
     local event = Event:new()
     event:SetKey(inKey)
     event:SetName(inName)
     event:SetCallback(inCallback)
     event:IsInstance(inInstance)
-    event:IsInstanceCombat(inInstanceCombat)
     event:IsIPC(inIPC)
     if(event:IsInstance() or not XFG.Player.InInstance) then
         event:Start()

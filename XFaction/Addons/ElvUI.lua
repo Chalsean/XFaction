@@ -15,7 +15,7 @@ end
 function XFElvUI:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Events:Add('ElvUI Load', XFG.Settings.Network.Message.IPC.ADDON_LOADED, XFG.Addons.ElvUI.CallbackAddonLoaded, true, true, true)
+        XFG.Events:Add('ElvUI Load', XFG.Settings.Network.Message.IPC.ADDON_LOADED, XFG.Addons.ElvUI.CallbackAddonLoaded, true, true)
 		self:IsInitialized(true)
 	end
 end

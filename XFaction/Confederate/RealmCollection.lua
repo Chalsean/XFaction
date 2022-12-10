@@ -886,7 +886,7 @@ function RealmCollection:Initialize()
 			end
 		end		
 
-		XFG.Events:Add('Setup Realms', XFG.Settings.Network.Message.IPC.CACHE_LOADED, XFG.SetupRealms, true, true, true)
+		XFG.Events:Add('Setup Realms', XFG.Settings.Network.Message.IPC.CACHE_LOADED, XFG.SetupRealms, true, true)
 		XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.REALMS_LOADED)
 		XFG.Player.Realm:Print()
 		self:IsInitialized(true)

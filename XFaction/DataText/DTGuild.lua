@@ -35,7 +35,7 @@ function DTGuild:Initialize()
 		self.headerFont:SetTextColor(0.4,0.78,1)
 		self.regularFont = CreateFont('regularFont')
 		self.regularFont:SetTextColor(255,255,255)
-		XFG.Events:Add('DTGuild Init', XFG.Settings.Network.Message.IPC.INITIALIZED, XFG.DataText.Guild.PostInitialize, true, true, true)
+		XFG.Events:Add('DTGuild Init', XFG.Settings.Network.Message.IPC.INITIALIZED, XFG.DataText.Guild.PostInitialize, true, true)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -46,7 +46,7 @@ function DTGuild:PostInitialize()
 	XFG.DataText.Guild:GetHeaderFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Guild:GetRegularFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Guild:RefreshBroker()
-	XFG.Events:Add('DTGuild', XFG.Settings.Network.Message.IPC.ROSTER_UPDATED, XFG.DataText.Guild.RefreshBroker, true, true, true)
+	XFG.Events:Add('DTGuild', XFG.Settings.Network.Message.IPC.ROSTER_UPDATED, XFG.DataText.Guild.RefreshBroker, true, true)
 end
 --#endregion
 

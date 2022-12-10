@@ -15,7 +15,7 @@ end
 function XFWIM:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Events:Add('WIM Load', XFG.Settings.Network.Message.IPC.ADDON_LOADED, XFG.Addons.WIM.CallbackAddonLoaded, true, true, true)
+        XFG.Events:Add('WIM Load', XFG.Settings.Network.Message.IPC.ADDON_LOADED, XFG.Addons.WIM.CallbackAddonLoaded, true, true)
 		self:IsInitialized(true)
 	end
 end
