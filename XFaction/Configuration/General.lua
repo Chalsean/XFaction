@@ -124,7 +124,7 @@ XFG.Options = {
 
 function XFG:ConfigInitialize()
 	-- Get AceDB up and running as early as possible, its not available until addon is loaded
-	XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFactionDB', XFG.Defaults)
+	XFG.ConfigDB = LibStub('AceDB-3.0'):New('XFactionDB', XFG.Defaults, true)
 	XFG.Config = XFG.ConfigDB.profile
 
 	-- Cache it because on shutdown, XFG.Config gets unloaded while we're still logging
