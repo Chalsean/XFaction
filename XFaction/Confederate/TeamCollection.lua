@@ -39,7 +39,9 @@ end
 function TeamCollection:SetObjectFromString(inString)
 	assert(type(inString) == 'string')
 	local teamInitial, teamName = inString:match('XFt:(%a-):(%a+)')
-	self:Add(teamInitial, teamName)
+	if(teamInitial ~= nil and teamName ~= nil) then
+		self:Add(teamInitial, teamName)
+	end
 end
 --#endregion
 

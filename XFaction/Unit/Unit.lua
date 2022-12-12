@@ -249,14 +249,6 @@ end
 function Unit:SetRank(inRank)
     assert(type(inRank) == 'string')
     self.rank = inRank
-
-    if(inRank == XFG.Settings.Confederate.AltRank) then
-        self:IsAlt(true)
-    end
-    -- Temporary hardcoding until I can figure out how to accomodate all the EK rules
-    if(inRank == 'Noble Citizen') then
-        self:SetTeam(XFG.Teams:Get('?'))
-    end
 end
 
 function Unit:GetLevel()
@@ -288,23 +280,12 @@ end
 function Unit:SetMainTeam(inGuildInitials, inTeamInitial)
     if(inTeamInitial ~= nil and XFG.Teams:Contains(inTeamInitial)) then
         self:SetTeam(XFG.Teams:Get(inTeamInitial))
-    end
-    if(inGuildInitials == 'EK') then inGuildInitials = 'EKA' end
-    if(inGuildInitials == 'ENKA') then inGuildInitials = 'ENK' end
-    if(inGuildInitials == 'ENKH') then inGuildInitials = 'ENK' end
-    if(inGuildInitials ~= nil and XFG.Guilds:Contains(inGuildInitials)) then
-        local guild = XFG.Guilds:Get(inGuildInitials)
-        if(not guild:Equals(self:GetGuild())) then
-            self:IsAlt(true)
-            local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
-            if(mainName ~= nil) then
-                self:SetMainName(mainName)
-            end                
-        end
-        if(XFG.Teams:Contains(guild:GetInitials())) then
-            self:SetTeam(XFG.Teams:Get(guild:GetInitials()))
-        end
     end    
+    local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
+    if(mainName ~= nil) then
+        self:IsAlt(true)
+        self:SetMainName(mainName)
+    end                
 end
 
 function Unit:SetNote(inNote)
@@ -317,6 +298,16 @@ function Unit:SetNote(inNote)
         local _, _, teamInitial = string.find(self.note, '%[XFt:(%a-)%]')
         if(teamInitial ~= nil and XFG.Teams:Contains(teamInitial)) then
             self:SetTeam(XFG.Teams:Get(teamInitial))
+        else
+            local _, _, teamInitial = string.find(self.note, '%[(%a-)%]')
+            if(teamInitial ~= nil and XFG.Teams:Contains(teamInitial)) then
+                self:SetTeam(XFG.Teams:Get(teamInitial))
+            else
+                local _, _, teamInitial = string.find(self.note, '%[(%a-)-%a+')
+                if(teamInitial ~= nil and XFG.Teams:Contains(teamInitial)) then
+                    self:SetTeam(XFG.Teams:Get(teamInitial))
+                end
+            end
         end
 
         -- Alt tag
@@ -324,34 +315,15 @@ function Unit:SetNote(inNote)
         if(altName ~= nil) then
             self:IsAlt(true)
             self:SetMainName(altName)
+        else
+            local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
+            if(mainName ~= nil) then
+                self:IsAlt(true)
+                self:SetMainName(mainName)
+            end 
         end
 
         if(self:HasTeam() or self:HasMainName()) then return end
-
-        --================================
-        -- EK grandfathered logic
-        --================================
-
-        -- New team initial format on main
-        local _, _, teamInitial = string.find(self.note, '%[(%a-)%]')
-        if(teamInitial ~= nil) then
-            self:SetMainTeam(nil, teamInitial)
-            return
-        else
-            -- No team format
-            local _, _, guildInitials = string.find(self.note, '%[(%a-)%]')
-            if(guildInitials ~= nil) then
-                self:SetMainTeam(guildInitials)
-                return
-            end
-        end
-
-        -- Team initial format on alt
-        local _, _, teamInitial, guildInitials = string.find(self.note, '%[(%a-)-(%a+)')
-        if(teamInitial ~= nil) then
-            self:SetMainTeam(guildInitials, teamInitial)
-            return
-        end
 
         if(self:GetNote() == '?' and XFG.Teams:Contains(self:GetGuild():GetInitials())) then
             self:SetTeam(XFG.Teams:Get(self:GetGuild():GetInitials()))
