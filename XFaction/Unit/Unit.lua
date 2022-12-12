@@ -311,42 +311,44 @@ function Unit:SetNote(inNote)
     assert(type(inNote) == 'string')
     self.note = inNote
 
-    --================================
-    -- EK standard notes logic
-    --================================
-
     try(function()
+
+        -- Team tag
+        local _, _, teamInitial = string.find(self.note, '%[XFt:(%a-)%]')
+        if(teamInitial ~= nil and XFG.Teams:Contains(teamInitial)) then
+            self:SetTeam(XFG.Teams:Get(teamInitial))
+        end
+
+        -- Alt tag
+        local _, _, altName = string.find(self.note, '%[XFa:([^%s%[%]]-)%]')
+        if(altName ~= nil) then
+            self:IsAlt(true)
+            self:SetMainName(altName)
+        end
+
+        if(self:HasTeam() or self:HasMainName()) then return end
+
+        --================================
+        -- EK grandfathered logic
+        --================================
+
         -- New team initial format on main
-        local startIndex, _, teamInitial = string.find(self.note, '%[(%a)%]')
-        if(startIndex == 1) then
+        local _, _, teamInitial = string.find(self.note, '%[(%a-)%]')
+        if(teamInitial ~= nil) then
             self:SetMainTeam(nil, teamInitial)
             return
         else
             -- No team format
-            local startIndex, _, guildInitials = string.find(self.note, '%[(%a+)%]')
-            if(startIndex == 1) then
+            local _, _, guildInitials = string.find(self.note, '%[(%a-)%]')
+            if(guildInitials ~= nil) then
                 self:SetMainTeam(guildInitials)
                 return
             end
         end
 
-        -- New team initial format on alt
-        local startIndex, _, teamInitial, guildInitials = string.find(self.note, '%[(%a)-(%a+)')
-        if(startIndex == 1) then
-            self:SetMainTeam(guildInitials, teamInitial)
-            return
-        else
-            -- Some officer specific format
-            local startIndex, _, guildInitials = string.find(self.note, '%[(%a%a-)-(%a-)%]')
-            if(startIndex == 1) then
-                self:SetMainTeam(guildInitials)
-                return
-            end 
-        end
-
-        -- Old team initial format on alt
-        local startIndex, _, guildInitials, teamInitial = string.find(self.note, '%[(%a+)%]%s?%[(%a)%]%s?')
-        if(startIndex == 1) then
+        -- Team initial format on alt
+        local _, _, teamInitial, guildInitials = string.find(self.note, '%[(%a-)-(%a+)')
+        if(teamInitial ~= nil) then
             self:SetMainTeam(guildInitials, teamInitial)
             return
         end
