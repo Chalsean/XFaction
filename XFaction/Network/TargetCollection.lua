@@ -33,7 +33,8 @@ function TargetCollection:Initialize()
 			if(not self:Contains(target:GetKey())) then	
 				XFG:Info(ObjectName, 'Initializing target [%s]', key)
 				self:Add(target)
-				target:Print()
+				realm:IsTargeted(true)
+				target:Print()				
 			end
 			if(XFG.Player.Target == nil and realm:Equals(XFG.Player.Realm) and faction:Equals(XFG.Player.Faction)) then
 				XFG:Info(ObjectName, 'Initializing player target [%s]', key)

@@ -26,25 +26,40 @@ function EventCollection:Initialize()
                 end
             end
         end)
-        self:IsInitialized(true)
+        self:IsInitialized(true)        
     end
 end
 --#endregion
 
 --#region Hash
-function EventCollection:Add(inKey, inName, inCallback, inInstance, inInstanceCombat)
+function EventCollection:Add(inKey, inName, inCallback, inInstance, inIPC)
     local event = Event:new()
     event:SetKey(inKey)
     event:SetName(inName)
     event:SetCallback(inCallback)
     event:IsInstance(inInstance)
-    event:IsInstanceCombat(inInstanceCombat)
+    event:IsIPC(inIPC)
     if(event:IsInstance() or not XFG.Player.InInstance) then
         event:Start()
     end
-    self.frame:RegisterEvent(inName)
+    if(event:IsIPC()) then
+        XFG.Lib.Event:RegisterMessage(inName, XFG.Events.CallbackIPC, inName)
+    else
+        self.frame:RegisterEvent(inName)
+    end
     self.parent.Add(self, event)
-    XFG:Info('Event', 'Registered to receive %s events', inName)
+    XFG:Info('Event', 'Registered to receive [%s:%s] events', inKey, inName)
+end
+--#endregion
+
+--#region IPC (pseudo event)
+function EventCollection:CallbackIPC(inEvent, ...)
+    for _, event in XFG.Events:Iterator() do
+        if(event:IsEnabled() and event:GetName() == inEvent) then
+            local _Function = event:GetCallback()
+            _Function(self, ...)
+        end
+    end
 end
 --#endregion
 

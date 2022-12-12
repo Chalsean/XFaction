@@ -76,14 +76,14 @@ function TimerEvent:CallbackLogin()
 				-- Start all timers
 				XFG.Timers:Start()
 			
-				-- DTs have been waiting on XFG.Initialized flag
+				-- Broadcast IPC message that were g2g
 				XFG.Initialized = true
-				XFG.DataText.Guild:SetFont()
-				XFG.DataText.Guild:RefreshBroker()
-				XFG.DataText.Links:SetFont()
-				XFG.DataText.Links:RefreshBroker()
-				XFG.DataText.Metrics:SetFont()
+				XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.INITIALIZED)
+				XFG.DataText.Metrics:SetFont()				
 				XFG.DataText.Metrics:RefreshBroker()
+
+				-- Low priority populate setup menus
+				XFG:SetupMenus()
 			end
 		end
 		-- If havent gotten guild info after X seconds, give up. probably not in a guild

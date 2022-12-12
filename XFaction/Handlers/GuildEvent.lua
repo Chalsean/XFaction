@@ -18,7 +18,7 @@ function GuildEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         -- This is the local guild roster scan for those not running the addon
-        XFG.Events:Add('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true, false)
+        XFG.Events:Add('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true)
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
         self:CallbackRosterUpdate()
         GuildRosterEvent()

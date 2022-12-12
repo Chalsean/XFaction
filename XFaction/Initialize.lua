@@ -7,6 +7,11 @@ function XFG:Init()
 	XFG.RaidIO = RaidIOCollection:new(); XFG.RaidIO:Initialize()
 	XFG.Events = EventCollection:new(); XFG.Events:Initialize()
 	XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
+	XFG.Events:Add('Config Loaded', XFG.Settings.Network.Message.IPC.CONFIG_LOADED, XFG.ConfigInitialize, true, true)
+
+	-- External addon handling
+	XFG.Addons.ElvUI = XFElvUI:new(); XFG.Addons.ElvUI:Initialize()
+	XFG.Addons.WIM = XFWIM:new(); XFG.Addons.WIM:Initialize()
 	XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
 
 	-- Log XFaction version
@@ -64,7 +69,7 @@ function XFG:Init()
 	XFG.Hooks = HookCollection:new(); XFG.Hooks:Initialize()
 	XFG.Metrics = MetricCollection:new(); XFG.Metrics:Initialize()	
 	XFG.Timers = TimerCollection:new(); XFG.Timers:Initialize()
-	XFG.Handlers.SystemEvent:Initialize()
+	XFG.Handlers.SystemEvent:Initialize()	
 
 	-- Start poller for guild information
 	XFG.Timers:Get('Login'):Start()
@@ -80,7 +85,7 @@ function XFG:Init()
 
 		XFG.Expansions = ExpansionCollection:new(); XFG.Expansions:Initialize()
 		XFG.WoW = XFG.Expansions:GetCurrent()
-		XFG:Info(ObjectName, 'WoW client version [%s:%s]', XFG.WoW:GetName(), XFG.WoW:GetVersion():GetKey())		
+		XFG:Info(ObjectName, 'WoW client version [%s:%s]', XFG.WoW:GetName(), XFG.WoW:GetVersion():GetKey())
 	end).
 	catch(function (inErrorMessage)
 		XFG:Warn(ObjectName, inErrorMessage)

@@ -1,6 +1,6 @@
 ## Interface: 100002
 ## Author: Chalsean (US-Proudmoore)
-## Version: 4.1.25
+## Version: 4.2.2
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
@@ -24,7 +24,7 @@ Frames\LoadFrames.xml
 Handlers\LoadHandlers.xml
 Media\LoadMedia.xml
 Metrics\LoadMetrics.xml
-Nameplates\LoadNameplates.xml
+Addons\LoadAddons.xml
 Network\LoadNetwork.xml
 Unit\LoadUnit.xml
 Wrappers\LoadWrappers.xml

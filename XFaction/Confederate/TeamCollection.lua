@@ -12,6 +12,14 @@ end
 --#endregion
 
 --#region Initializers
+function TeamCollection:Initialize()
+	if(not self:IsInitialized()) then
+        self:ParentInitialize()
+        --XFG.Events:Add('Setup Teams', XFG.Settings.Network.Message.IPC.TEAMS_LOADED, XFG.SetupTeams, true, true)		
+		self:IsInitialized(true)
+	end
+end
+
 function TeamCollection:Default()
 	-- If there were no teams in guild info, use defaults
 	if(self:GetCount() == 0) then
@@ -23,14 +31,17 @@ function TeamCollection:Default()
 	for initials, name in pairs (XFG.Settings.Confederate.DefaultTeams) do
 		self:Add(initials, name)
 	end
+	XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.TEAMS_LOADED)
 end
 --#endregion
 
 --#region DataSet
 function TeamCollection:SetObjectFromString(inString)
 	assert(type(inString) == 'string')
-	local teamInitial, teamName = inString:match('XFt:(%a):(%a+)')
-	self:Add(teamInitial, teamName)
+	local teamInitial, teamName = inString:match('XFt:(%a-):(%a+)')
+	if(teamInitial ~= nil and teamName ~= nil) then
+		self:Add(teamInitial, teamName)
+	end
 end
 --#endregion
 

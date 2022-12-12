@@ -823,6 +823,7 @@ function RealmCollection:new()
 	local object = RealmCollection.parent.new(self)
 	object.__name = 'RealmCollection'
 	object.realmsByID = nil
+	object.cacheXref = nil
     return object
 end
 --#endregion
@@ -833,6 +834,7 @@ function RealmCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.realmsByID = {}
+		self.cacheXref = {}
 		-- Setup all realms in the region
 		for id, data in pairs(RealmData) do
 			local realmData = string.Split(data, ',')
@@ -884,6 +886,8 @@ function RealmCollection:Initialize()
 			end
 		end		
 
+		XFG.Events:Add('Setup Realms', XFG.Settings.Network.Message.IPC.CACHE_LOADED, XFG.SetupRealms, true, true)
+		XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.REALMS_LOADED)
 		XFG.Player.Realm:Print()
 		self:IsInitialized(true)
 	end

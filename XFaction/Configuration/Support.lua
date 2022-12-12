@@ -87,9 +87,23 @@ XFG.Options.args.Support = {
 					name = 'Chalsean (US-Proudmoore)',
 				},
 			}
+		},		
+		Graphics = {
+			order = 4,
+			type = 'group',
+			name = XFG.Lib.Locale['GRAPHICS'],
+			guiInline = true,
+			args = {
+				PM = {
+					order = 1,
+					type = 'description',
+					fontSize = 'medium',
+					name = 'Purpformance (US-Proudmoore)',
+				},
+			}
 		},
 		PM = {
-			order = 4,
+			order = 5,
 			type = 'group',
 			name = XFG.Lib.Locale['PM'],
 			guiInline = true,
@@ -103,7 +117,7 @@ XFG.Options.args.Support = {
 			}
 		},		
 		Translation = {
-			order = 5,
+			order = 6,
 			type = 'group',
 			name = XFG.Lib.Locale['TRANSLATIONS'],
 			guiInline = true,
@@ -112,12 +126,12 @@ XFG.Options.args.Support = {
 					order = 1,
 					type = 'description',
 					fontSize = 'medium',
-					name = 'Elskerdeg (Spanish)',
+					name = 'Spanish: Elskerdeg (US-Proudmoore)',
 				}
 			}
 		},
 		Testing = {
-			order = 6,
+			order = 7,
 			type = 'group',
 			name = XFG.Lib.Locale['SUPPORT_UAT'],
 			guiInline = true,

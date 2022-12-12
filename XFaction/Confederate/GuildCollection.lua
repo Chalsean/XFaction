@@ -105,11 +105,6 @@ function GuildCollection:SetFromGuildInfo()
 		-- Local channel for same realm/faction communication
 		elseif(string.find(line, 'XFc')) then
 			XFG.Cache.Channel.Name, XFG.Cache.Channel.Password = line:match('XFc:(.-):(.*)')
-		-- If you keep your alts at a certain rank, this will flag them as alts in comms/DTs
-		elseif(string.find(line, 'XFa')) then
-			local altRank = line:match('XFa:(.+)')
-			XFG.Settings.Confederate.AltRank = altRank
-			XFG:Info(ObjectName, 'Initialized alt rank [%s]', altRank)
 		elseif(string.find(line, 'XFt')) then
 			XFG.Teams:SetObjectFromString(line)
 		end

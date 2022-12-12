@@ -15,7 +15,7 @@ end
 function ChatEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Events:Add('GuildChat', 'CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.CallbackGuildMessage, true, true)
+        XFG.Events:Add('GuildChat', 'CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.CallbackGuildMessage, true)
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFG.Handlers.ChatEvent.ChatFilter)
         XFG:Info(ObjectName, 'Created CHAT_MSG_GUILD event filter')
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFG.Handlers.ChatEvent.ChatFilter)

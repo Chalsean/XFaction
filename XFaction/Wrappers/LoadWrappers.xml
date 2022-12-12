@@ -3,8 +3,6 @@
     <Script file='EventCollection.lua'/>
     <Script file='Hook.lua'/>
     <Script file='HookCollection.lua'/>
-    <Script file='RaidIO.lua'/>
-    <Script file='RaidIOCollection.lua'/>
     <Script file='Timer.lua'/>
     <Script file='TimerCollection.lua'/>
 </Ui>
