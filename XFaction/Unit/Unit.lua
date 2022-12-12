@@ -303,10 +303,17 @@ function Unit:SetNote(inNote)
             if(teamInitial ~= nil and XFG.Teams:Contains(teamInitial)) then
                 self:SetTeam(XFG.Teams:Get(teamInitial))
             else
-                local _, _, teamInitial = string.find(self.note, '%[(%a-)-%a+')
+                local _, _, teamInitial, guildInitials = string.find(self.note, '%[(%a-)-(%a+)')
                 if(teamInitial ~= nil and XFG.Teams:Contains(teamInitial)) then
                     self:SetTeam(XFG.Teams:Get(teamInitial))
                 end
+                if(XFG.Guilds:Contains(guildInitials) and not self:GetGuild():Equals(XFG.Guilds:Get(guildInitials))) then
+                    self:IsAlt(true)
+                    local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
+                    if(mainName ~= nil) then           
+                        self:SetMainName(mainName)
+                    end
+                end 
             end
         end
 
@@ -315,12 +322,6 @@ function Unit:SetNote(inNote)
         if(altName ~= nil) then
             self:IsAlt(true)
             self:SetMainName(altName)
-        else
-            local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
-            if(mainName ~= nil) then
-                self:IsAlt(true)
-                self:SetMainName(mainName)
-            end 
         end
     end).
     catch(function(inErrorMessage)
