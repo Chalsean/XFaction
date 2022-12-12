@@ -322,12 +322,6 @@ function Unit:SetNote(inNote)
                 self:SetMainName(mainName)
             end 
         end
-
-        if(self:HasTeam() or self:HasMainName()) then return end
-
-        if(self:GetNote() == '?' and XFG.Teams:Contains(self:GetGuild():GetInitials())) then
-            self:SetTeam(XFG.Teams:Get(self:GetGuild():GetInitials()))
-        end
     end).
     catch(function(inErrorMessage)
         XFG:Warn(ObjectName, 'Failed to parse player note: [' .. self:GetNote() .. ']')        
