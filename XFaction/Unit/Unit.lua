@@ -325,7 +325,7 @@ function Unit:SetNote(inNote)
         end
     end).
     catch(function(inErrorMessage)
-        XFG:Warn(ObjectName, 'Failed to parse player note: [' .. self:GetNote() .. ']')        
+        XFG:Trace(ObjectName, 'Failed to parse player note: [' .. self:GetNote() .. ']')        
     end).
     finally(function()
         if(not self:HasTeam()) then
