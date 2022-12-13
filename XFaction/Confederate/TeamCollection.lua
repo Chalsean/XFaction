@@ -21,13 +21,6 @@ function TeamCollection:Initialize()
 end
 
 function TeamCollection:Default()
-	-- If there were no teams in guild info, use defaults
-	if(self:GetCount() == 0) then
-		for initials, name in pairs (XFG.Settings.Teams) do
-			self:Add(initials, name)
-		end
-	end
-
 	for initials, name in pairs (XFG.Settings.Confederate.DefaultTeams) do
 		self:Add(initials, name)
 	end
