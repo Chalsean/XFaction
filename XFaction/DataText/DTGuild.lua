@@ -46,7 +46,7 @@ function DTGuild:PostInitialize()
 	XFG.DataText.Guild:GetHeaderFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Guild:GetRegularFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Guild:RefreshBroker()
-	XFG.Events:Add('DTGuild', XFG.Settings.Network.Message.IPC.ROSTER_UPDATED, XFG.DataText.Guild.RefreshBroker, true, true)
+	--XFG.Events:Add('DTGuild', XFG.Settings.Network.Message.IPC.ROSTER_UPDATED, XFG.DataText.Guild.RefreshBroker, true, true)
 end
 --#endregion
 

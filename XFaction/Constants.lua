@@ -147,7 +147,7 @@ XFG.Settings = {
 		},		
 		Mailbox = {
 			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
-			Stale = 60 * 5   -- Seconds until a message is considered stale
+			Stale = 60 * 15   -- Seconds until a message is considered stale
 		},
 	},
 	Frames = {

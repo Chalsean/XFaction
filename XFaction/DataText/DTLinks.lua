@@ -42,8 +42,8 @@ function DTLinks:PostInitialize()
 	XFG.DataText.Links:GetHeaderFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Links:GetRegularFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Links:RefreshBroker()
-	XFG.Events:Add('DTLinks', XFG.Settings.Network.Message.IPC.LINKS_UPDATED, XFG.DataText.Links.RefreshBroker, true, true)
-	XFG.Events:Add('DTNodes', XFG.Settings.Network.Message.IPC.NODES_UPDATED, XFG.DataText.Links.RefreshBroker, true, true)
+	--XFG.Events:Add('DTLinks', XFG.Settings.Network.Message.IPC.LINKS_UPDATED, XFG.DataText.Links.RefreshBroker, true, true)
+	--XFG.Events:Add('DTNodes', XFG.Settings.Network.Message.IPC.NODES_UPDATED, XFG.DataText.Links.RefreshBroker, true, true)
 end
 --#endregion
 

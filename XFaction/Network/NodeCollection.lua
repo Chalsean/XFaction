@@ -32,7 +32,7 @@ function NodeCollection:Add(inNode)
 		self.targetCount[inNode:GetTarget():GetKey()] = 0
 	end
 	self.targetCount[inNode:GetTarget():GetKey()] = self.targetCount[inNode:GetTarget():GetKey()] + 1
-	XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.NODES_UPDATED)
+	XFG.DataText.Links:RefreshBroker()
 end
 
 function NodeCollection:Remove(inNode)
@@ -47,7 +47,7 @@ function NodeCollection:Remove(inNode)
 				XFG.Links:Remove(link)
 			end
 		end
-		XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.NODES_UPDATED)
+		XFG.DataText.Links:RefreshBroker()
 	end).
 	finally(function ()
 		self:Push(inNode)

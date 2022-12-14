@@ -55,13 +55,14 @@ function Confederate:Add(inUnit)
             self.countByTarget[target:GetKey()] = 0
         end
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] + 1
+        XFG.DataText.Guild:RefreshBroker()
     end
     
     if(inUnit:IsPlayer()) then
         XFG.Player.Unit = inUnit
     end
 
-    XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED)
+    --XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED)
     return true
 end
 
@@ -76,7 +77,8 @@ function Confederate:Remove(inKey)
         local target = XFG.Targets:GetByRealmFaction(unit:GetRealm(), unit:GetFaction())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
         self:Push(unit)
-        XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED)
+        XFG.DataText.Guild:RefreshBroker()
+        --XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED)
     end
 end
 --#endregion
