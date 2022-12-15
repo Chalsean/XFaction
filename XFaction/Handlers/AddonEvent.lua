@@ -52,10 +52,6 @@ local function InitializeCache()
     if(XFG.Cache.UIReload == nil or not XFG.Cache.UIReload) then
         XFG:Info(ObjectName, 'Initializing cache')
         XFG.Cache = {
-            Backup = {
-                Confederate = {},
-                Friends = {},
-            },
             Channel = {},
             Confederate = {},
             Errors = {},
@@ -72,8 +68,7 @@ local function InitializeCache()
     else
         XFG.Cache.Errors = {}
     end
-    XFG.Cache.FirstScan = {}    
-    XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.CACHE_LOADED)
+    XFG.Cache.FirstScan = {}
 end
 --#endregion
 
@@ -81,14 +76,18 @@ end
 function AddonEvent:CallbackAddonLoaded(inAddonName)
     try(function ()
         if(GetAddOnEnableState(nil, inAddonName) > 0) then
-            XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ADDON_LOADED, inAddonName)
             if(inAddonName == XFG.Name and not XFG.Handlers.AddonEvent:IsLoaded()) then
                 XFG:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
-                XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.CONFIG_LOADED)
-                XFG.Handlers.AddonEvent:IsLoaded(true)      
-            --  or inAddonName == 'RaiderIO') then
---                XFG.RaidIO:IsLoaded(true)
+                XFG:ConfigInitialize()
+                XFG.Addons.ElvUI:Initialize()
+                XFG.Handlers.AddonEvent:IsLoaded(true)
+            elseif(inAddonName == 'ElvUI') then
+                XFG.Addons.ElvUI:Initialize()
+            elseif(inAddonName == 'WIM') then
+                XFG.Addons.WIM:Initialize()
+            elseif(inAddonName == 'RaiderIO') then
+                XFG.Addons.RaiderIO:Initialize()
             end
         end
     end).

@@ -34,7 +34,6 @@ function TimerEvent:CallbackLogin()
 				XFG.Guilds:Initialize(guildID)
 				XFG.Confederate:Initialize()
 				XFG.Guilds:SetPlayerGuild()
-				XFG.Teams:Default()	
 				XFG.Targets:Initialize()	
 
 				-- Chat channel setup via guild info, player will start to receive messaging via chat channel
@@ -75,15 +74,26 @@ function TimerEvent:CallbackLogin()
 				
 				-- Start all timers
 				XFG.Timers:Start()
-			
-				-- Broadcast IPC message that were g2g
 				XFG.Initialized = true
-				XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.INITIALIZED)
-				XFG.DataText.Metrics:SetFont()				
-				XFG.DataText.Metrics:RefreshBroker()
+
+				-- Broadcast login locally
+				if(not XFG.Cache.UIReload) then
+					XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
+				end
+
+				-- Finish DT init
+				XFG.DataText.Guild:PostInitialize()
+				XFG.DataText.Links:PostInitialize()
+				XFG.DataText.Metrics:PostInitialize()
 
 				-- Low priority populate setup menus
 				XFG:SetupMenus()
+
+				-- For support reasons, it helps to know what addons are being used
+				for i = 1, GetNumAddOns() do
+					local name, _, _, enabled = GetAddOnInfo(i)
+					XFG:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
+				end
 			end
 		end
 		-- If havent gotten guild info after X seconds, give up. probably not in a guild
@@ -94,25 +104,6 @@ function TimerEvent:CallbackLogin()
 	catch(function (inErrorMessage)
 		XFG:Error(ObjectName, inErrorMessage)
 		XFG:Stop()
-	end)
-end
-
-function TimerEvent:CallbackDelayedLogin()
-	try(function ()
-		XFG.Timers:Remove('DelayedLogin')
-		if(not XFG.Cache.UIReload) then
-			-- These are delayed to see if we get any ping responses before broadcasting
-			XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
-			--XFG.Links:Broadcast()
-		end
-		-- For support reasons, it helps to know what addons are being used
-		for i = 1, GetNumAddOns() do
-			local name, _, _, enabled = GetAddOnInfo(i)
-			XFG:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
-		end
-	end).
-	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
 		XFG.Cache.Backup = {

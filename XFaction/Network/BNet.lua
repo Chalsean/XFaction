@@ -85,9 +85,6 @@ end
 
 function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     try(function ()
-        -- Even though these may be part of a message, it still counts as a network transaction
-        XFG.Metrics:Get(XFG.Settings.Metric.BNetReceive):Increment()
-        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
         -- People can only whisper you if friend, so if you got a whisper you need to check friends cache
         if(not XFG.Friends:ContainsByGameID(tonumber(inSender))) then
             XFG.Friends:CheckFriends()
@@ -115,14 +112,16 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
         if(inEncodedMessage == 'PING') then
             XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
             XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
-            return
-        elseif(inEncodedMessage == 'RE:PING') then
-            return
-        end
-        XFG.Mailbox.BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+        elseif(inEncodedMessage ~= 'RE:PING') then
+            XFG.Mailbox.BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    
+        end        
     end).
     catch(function (inErrorMessage)
         XFG:Warn(ObjectName, inErrorMessage)
+    end).
+    finally(function ()
+        XFG.Metrics:Get(XFG.Settings.Metric.BNetReceive):Increment()
+        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
     end)
 end
 --#endregion

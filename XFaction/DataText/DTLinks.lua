@@ -31,19 +31,15 @@ function DTLinks:Initialize()
 		self.headerFont:SetTextColor(0.4,0.78,1)
 		self.regularFont = CreateFont('regularFont')
 		self.regularFont:SetTextColor(255,255,255)
-		XFG.Events:Add('DTLinks Init', XFG.Settings.Network.Message.IPC.INITIALIZED, XFG.DataText.Links.PostInitialize, true, true)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
 function DTLinks:PostInitialize()
-	XFG.Events:Remove('DTLinks Init')
 	XFG.DataText.Links:GetHeaderFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Links:GetRegularFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Links:RefreshBroker()
-	--XFG.Events:Add('DTLinks', XFG.Settings.Network.Message.IPC.LINKS_UPDATED, XFG.DataText.Links.RefreshBroker, true, true)
-	--XFG.Events:Add('DTNodes', XFG.Settings.Network.Message.IPC.NODES_UPDATED, XFG.DataText.Links.RefreshBroker, true, true)
 end
 --#endregion
 

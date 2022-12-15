@@ -3,6 +3,7 @@ local ObjectName = 'ConfigSetup'
 local RealmXref = {}
 
 function XFG:SetupRealms()
+
 	XFG.Cache.Setup = {
 		Confederate = {},
 		Realms = {},
@@ -11,6 +12,7 @@ function XFG:SetupRealms()
 		GuildsRealms = {},
 		Compress = true,
 	}
+	
 	XFG.Options.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XFG.Lib.Locale['REGION'], XFG.Regions:GetCurrent():GetName())
 	for _, realm in XFG.Realms:SortedIterator() do
 		table.insert(XFG.Cache.Setup.Realms, {

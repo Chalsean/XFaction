@@ -11,7 +11,6 @@ function Event:new()
     object.callback = nil
     object.isEnabled = false
     object.inInstance = false
-    object.isIPC = false
     return object
 end
 --#endregion
@@ -23,7 +22,6 @@ function Event:Print()
     XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
     XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
     XFG:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-    XFG:Debug(ObjectName, '  isIPC (' .. type(self.isIPC) .. '): ' .. tostring(self.isIPC))
 end
 --#endregion
 
@@ -60,14 +58,6 @@ end
 function Event:SetDelta(inDelta)
     assert(type(inDelta) == 'number')
     self.delta = inDelta
-end
-
-function Event:IsIPC(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.isIPC = inBoolean
-    end
-	return self.isIPC
 end
 --#endregion
 

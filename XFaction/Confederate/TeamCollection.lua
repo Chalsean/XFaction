@@ -15,16 +15,11 @@ end
 function TeamCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        --XFG.Events:Add('Setup Teams', XFG.Settings.Network.Message.IPC.TEAMS_LOADED, XFG.SetupTeams, true, true)		
+		for initials, name in pairs (XFG.Settings.Confederate.DefaultTeams) do
+			self:Add(initials, name)
+		end
 		self:IsInitialized(true)
 	end
-end
-
-function TeamCollection:Default()
-	for initials, name in pairs (XFG.Settings.Confederate.DefaultTeams) do
-		self:Add(initials, name)
-	end
-	XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.TEAMS_LOADED)
 end
 --#endregion
 

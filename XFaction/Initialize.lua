@@ -3,15 +3,14 @@ local ObjectName = 'Initialize'
 
 -- Initialize anything not dependent upon guild information
 function XFG:Init()
-	-- Get cache/configs asap
-	XFG.RaidIO = RaidIOCollection:new(); XFG.RaidIO:Initialize()
+	-- Get cache/configs asap	
 	XFG.Events = EventCollection:new(); XFG.Events:Initialize()
 	XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
-	XFG.Events:Add('Config Loaded', XFG.Settings.Network.Message.IPC.CONFIG_LOADED, XFG.ConfigInitialize, true, true)
 
 	-- External addon handling
-	XFG.Addons.ElvUI = XFElvUI:new(); XFG.Addons.ElvUI:Initialize()
-	XFG.Addons.WIM = XFWIM:new(); XFG.Addons.WIM:Initialize()
+	XFG.Addons.ElvUI = XFElvUI:new()
+	XFG.Addons.RaiderIO = RaiderIOCollection:new()
+	XFG.Addons.WIM = XFWIM:new()
 	XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
 
 	-- Log XFaction version

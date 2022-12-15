@@ -42,8 +42,7 @@ XFG.Lib = {
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Name, true),
 	Config = LibStub('AceConfigRegistry-3.0'),
 	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
-	LSM = LibStub('LibSharedMedia-3.0'),
-	Event = LibStub('AceEvent-3.0'),
+	LSM = LibStub('LibSharedMedia-3.0')
 }
 XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 --#endregion
@@ -53,10 +52,6 @@ XFG.Icons = {
 	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
 	Texture = '|T%s:17:17|t',
 	WoWToken = 1121394,
-	Kyrian = 3257748,
-	Venthyr = 3257751,
-	['Night Fae'] = 3257750,
-	Necrolord = 3257749,
 	Alliance = 2565243,
 	Horde = 463451,
 	Neutral = 132311,
@@ -126,18 +121,6 @@ XFG.Settings = {
 				JOIN = '7',
 			},
 			Tag = {},
-			IPC = {
-				ADDON_LOADED = 'XFADDON_LOADED',
-				CACHE_LOADED = 'XFCACHE_LOADED',
-				CONFIG_LOADED = 'XFCONFIG_LOADED',
-				REALMS_LOADED = 'XFREALM_LOADED',
-				ROSTER_INIT = 'XFROSTER_INIT',
-				ROSTER_UPDATED = 'XFROSTER_UPDATED',
-				TEAMS_LOADED = 'XFTEAMS_LOADED',
-				INITIALIZED = 'XFINIT',
-				LINKS_UPDATED = 'XFLINKS_UPDATED',
-				NODES_UPDATED = 'XFNODES_UPDATED',
-			},
 		},
 		Type = {
 			BROADCAST = '1', -- BNet + Local Channel
@@ -170,9 +153,6 @@ XFG.Settings = {
 	Factories = {
 		Scan = 60 * 7,
 		Purge = 60 * 30,
-	},
-	Profession = {
-		Total = 100,
 	},
 	Race = {
 		Total = 100,

@@ -46,7 +46,7 @@ function Unit:new()
     object.pvp = ''
     object.guildSpeak = true
     object.guildListen = true
-    object.raidIO = nil
+    object.raiderIO = nil
 
     return object
 end
@@ -115,9 +115,9 @@ function Unit:Initialize(inMemberID)
         self:SetProfession2(XFG.Professions:Get(unitData.profession2ID))
     end
 
-    local raidIO = XFG.RaidIO:Get(self)
-    if(raidIO ~= nil) then
-        self:SetRaidIO(raidIO)
+    local raiderIO = XFG.Addons.RaiderIO:Get(self)
+    if(raiderIO ~= nil) then
+        self:SetRaiderIO(raiderIO)
     end
 
     if(self:IsPlayer()) then
@@ -201,7 +201,7 @@ function Unit:Print()
     if(self:HasSpec()) then self.spec:Print() end
     if(self:HasProfession1()) then self.profession1:Print() end
     if(self:HasProfession2()) then self.profession2:Print() end  
-    if(self:HasRaidIO()) then self:GetRaidIO():Print() end
+    if(self:HasRaiderIO()) then self:GetRaiderIO():Print() end
 end
 --#endregion
 
@@ -402,17 +402,17 @@ function Unit:SetAchievementPoints(inPoints)
     self.achievements = inPoints
 end
 
-function Unit:HasRaidIO()
-    return self.raidIO ~= nil
+function Unit:HasRaiderIO()
+    return self.raiderIO ~= nil
 end
 
-function Unit:GetRaidIO()
-    return self.raidIO
+function Unit:GetRaiderIO()
+    return self.raiderIO
 end
 
-function Unit:SetRaidIO(inRaidIO)
-    assert(type(inRaidIO) == 'table' and inRaidIO.__name == 'RaidIO', 'argument must be RaidIO object')
-    self.raidIO = inRaidIO
+function Unit:SetRaiderIO(inRaiderIO)
+    assert(type(inRaiderIO) == 'table' and inRaiderIO.__name == 'RaiderIO', 'argument must be RaiderIO object')
+    self.raiderIO = inRaiderIO
 end
 
 function Unit:HasRace()
@@ -657,9 +657,9 @@ function Unit:Equals(inUnit)
     if(not self:HasSpec() and inUnit:HasSpec()) then return false end
     if(self:HasSpec() and not self:GetSpec():Equals(inUnit:GetSpec())) then return false end
 
-    if(not self:HasRaidIO() and inUnit:HasRaidIO()) then return false end
-    if(self:HasRaidIO() and not inUnit:HasRaidIO()) then return false end
-	if(self:HasRaidIO() and not self:GetRaidIO():Equals(inUnit:GetRaidIO())) then return false end
+    if(not self:HasRaiderIO() and inUnit:HasRaiderIO()) then return false end
+    if(self:HasRaiderIO() and not inUnit:HasRaiderIO()) then return false end
+	if(self:HasRaiderIO() and not self:GetRaiderIO():Equals(inUnit:GetRaiderIO())) then return false end
     
     -- Do not consider TimeStamp
     -- A unit cannot change Class, do not consider
@@ -703,6 +703,6 @@ function Unit:FactoryReset()
     self.pvp = ''
     self.guildSpeak = true
     self.guildListen = true
-    self.raidIO = nil
+    self.raiderIO = nil
 end
 --#endregion

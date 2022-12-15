@@ -101,9 +101,9 @@ function XFG:DeserializeUnitData(inData)
 		unit:SetVersion(version) 
 	end
 
-	local raidIO = XFG.RaidIO:Get(unit)
-    if(raidIO ~= nil) then
-        unit:SetRaidIO(raidIO)
+	local raiderIO = XFG.Addons.RaiderIO:Get(unit)
+    if(raiderIO ~= nil) then
+        unit:SetRaiderIO(raiderIO)
     end
 
 	return unit

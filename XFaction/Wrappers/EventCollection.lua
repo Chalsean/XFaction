@@ -32,34 +32,18 @@ end
 --#endregion
 
 --#region Hash
-function EventCollection:Add(inKey, inName, inCallback, inInstance, inIPC)
+function EventCollection:Add(inKey, inName, inCallback, inInstance)
     local event = Event:new()
     event:SetKey(inKey)
     event:SetName(inName)
     event:SetCallback(inCallback)
     event:IsInstance(inInstance)
-    event:IsIPC(inIPC)
     if(event:IsInstance() or not XFG.Player.InInstance) then
         event:Start()
     end
-    if(event:IsIPC()) then
-        XFG.Lib.Event:RegisterMessage(inName, XFG.Events.CallbackIPC, inName)
-    else
-        self.frame:RegisterEvent(inName)
-    end
+    self.frame:RegisterEvent(inName)
     self.parent.Add(self, event)
     XFG:Info('Event', 'Registered to receive [%s:%s] events', inKey, inName)
-end
---#endregion
-
---#region IPC (pseudo event)
-function EventCollection:CallbackIPC(inEvent, ...)
-    for _, event in XFG.Events:Iterator() do
-        if(event:IsEnabled() and event:GetName() == inEvent) then
-            local _Function = event:GetCallback()
-            _Function(self, ...)
-        end
-    end
 end
 --#endregion
 
@@ -75,22 +59,6 @@ end
 function EventCollection:LeaveInstance()
     for _, event in self:Iterator() do
         if(not event:IsEnabled()) then
-            event:Start()
-        end
-    end
-end
-
-function EventCollection:EnterCombat()
-    for _, event in self:Iterator() do
-        if(event:IsEnabled() and not event:IsInstanceCombat()) then
-            event:Stop()
-        end
-    end
-end
-
-function EventCollection:LeaveCombat()
-    for _, event in self:Iterator() do
-        if(not event:IsEnabled() and event:IsInstance()) then
             event:Start()
         end
     end
