@@ -75,19 +75,12 @@ function Confederate:Remove(inKey)
         end
         local target = XFG.Targets:GetByRealmFaction(unit:GetRealm(), unit:GetFaction())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
+        if(unit:HasRaiderIO()) then
+            XFG.Addons.RaiderIO:Remove(unit:GetRaiderIO())
+        end
         self:Push(unit)
         XFG.DataText.Guild:RefreshBroker()
     end
-end
---#endregion
-
---#region Stack
-function Confederate:Push(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
-    if(inUnit:HasRaiderIO()) then
-        XFG.Addons.RaiderIO:Push(inUnit:GetRaiderIO())
-    end
-    self.parent.Push(self, inUnit)
 end
 --#endregion
 

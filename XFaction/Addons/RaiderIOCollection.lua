@@ -44,12 +44,17 @@ function RaiderIOCollection:Cache(inUnit)
             local raiderIO = self:Pop()
             raiderIO:Initialize()
             raiderIO:SetKey(inUnit:GetKey())
+            raiderIO:SetName(inUnit:GetUnitName())
 
-            local profile = RaiderIO.GetProfile(inUnit:GetKey(), inUnit:GetRealm():GetName())
+            local profile = RaiderIO.GetProfile(inUnit:GetMainName(), inUnit:GetRealm():GetName())
+            if(profile == nil) then
+                profile = RaiderIO.GetProfile(inUnit:GetName(), inUnit:GetRealm():GetName())
+            end
+            
             -- Raid
             if(profile and profile.raidProfile) then
                 local topProgress = profile.raidProfile.sortedProgress[1]
-                if(topProgress.isProgressPrev == nil or not topProgress.IsProgressPrev) then
+                if(topProgress.isProgress) then
                     raiderIO:SetRaid(topProgress.progress.progressCount, topProgress.progress.raid.bossCount, topProgress.progress.difficulty)
                 end
             end
@@ -69,14 +74,12 @@ function RaiderIOCollection:Cache(inUnit)
         XFG:Warn(ObjectName, inErrorMessage)
     end)
 end
---#endregion
 
---#region Stack
-function RaiderIOCollection:Push(inRaiderIO)
-    assert(type(inRaiderIO) == 'table' and inRaiderIO.__name == 'RaiderIO', 'argument must be RaiderIO object')
+function RaiderIOCollection:Remove(inRaiderIO)
+    assert(type(inRaiderIO) == 'table' and inRaiderIO.__name ~= nil and inRaiderIO.__name == 'RaiderIO', 'argument must be RaiderIO object')
     if(self:Contains(inRaiderIO:GetKey())) then
-        self:Remove(inRaiderIO:GetKey())
-        self.parent.Push(self, inRaiderIO)
+        self.parent.Remove(self, inRaiderIO:GetKey())
+        self:Push(inRaiderIO)
     end
 end
 --#endregion

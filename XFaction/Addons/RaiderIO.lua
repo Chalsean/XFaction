@@ -68,6 +68,5 @@ function XFRaiderIO:FactoryReset()
     self:ParentFactoryReset()
     self.raid = ''
     self.dungeon = 0
-    self:Initialize()
 end
 --#endregion

@@ -22,11 +22,6 @@ function GuildEvent:Initialize()
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
         self:CallbackRosterUpdate()
         GuildRosterEvent()
-        -- Hook player inviting someone, they will send broadcast if player joins
-        -- hooksecurefunc('GuildInvite', function(inInvitee) XFG.Invites[inInvitee] = true end)
-        -- XFG:Info(ObjectName, 'Post-hooked GuildInvite API')
-        -- XFG:RegisterEvent('CLUB_MEMBER_ADDED', XFG.Handlers.GuildEvent.CallbackMemberJoined)
-        -- XFG:Info(ObjectName, 'Registered for CLUB_MEMBER_ADDED events')
 		self:IsInitialized(true)
 	end
 end
@@ -68,6 +63,9 @@ function GuildEvent:CallbackRosterUpdate()
                         XFG.Confederate:Remove(oldData:GetKey())
                     end                    
                 else
+                    if(unitData:HasRaiderIO()) then
+                        XFG.Addons.RaiderIO:Remove(unitData:GetRaiderIO())
+                    end
                     XFG.Confederate:Push(unitData)
                 end
 
@@ -75,6 +73,9 @@ function GuildEvent:CallbackRosterUpdate()
                     XFG.Cache.FirstScan[memberID] = true
                 end
             else
+                if(unitData:HasRaiderIO()) then
+                    XFG.Addons.RaiderIO:Remove(unitData:GetRaiderIO())
+                end
                 XFG.Confederate:Push(unitData)
             end
         end).
@@ -82,27 +83,5 @@ function GuildEvent:CallbackRosterUpdate()
             XFG:Warn(ObjectName, inErrorMessage)
         end)
     end
-end
-
-function GuildEvent:CallbackMemberJoined(inGuildID, inMemberID)
-    local unitData = nil
-    try(function ()
-        -- Technically probably dont need to check the guild id
-        if(inGuildID == XFG.Player.Guild:GetID()) then
-            unitData = XFG.Confederate:Pop()
-            unitData:Initialize(inMemberID)
-            -- Member that player invited joined, broadcast the join
-            if(XFG.Cache.Invites[unitData:GetName()]) then
-                XFG.Outbox:BroadcastUnitData(unitData, XFG.Settings.Network.Message.Subject.JOIN)
-                XFG.Cache.Invites[unitData:GetName()] = nil
-            end
-        end
-    end).
-    catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, inErrorMessage)
-    end).
-    finally(function ()
-        XFG.Confederate:Push(unitData)
-    end)
 end
 --#endregion
