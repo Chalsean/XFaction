@@ -86,9 +86,6 @@ function TimerEvent:CallbackLogin()
 				XFG.DataText.Links:PostInitialize()
 				XFG.DataText.Metrics:PostInitialize()
 
-				-- Low priority populate setup menus
-				XFG:SetupMenus()
-
 				-- For support reasons, it helps to know what addons are being used
 				for i = 1, GetNumAddOns() do
 					local name, _, _, enabled = GetAddOnInfo(i)
@@ -111,6 +108,7 @@ function TimerEvent:CallbackLogin()
 			Friends = {},
 		}
 		XFG.Cache.UIReload = false
+		XFG:SetupMenus()
 	end)
 end
 --#endregion
