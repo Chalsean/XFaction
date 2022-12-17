@@ -79,6 +79,10 @@ function Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
     end).
     catch(function (inErrorMessage)
         XFG:Warn(ObjectName, inErrorMessage)
+    end).
+    finally(function ()
+        XFG.Metrics:Get(XFG.Settings.Metric.ChannelReceive):Increment()
+        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
     end)
 end
 --#endregion

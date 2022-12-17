@@ -35,18 +35,15 @@ function DTGuild:Initialize()
 		self.headerFont:SetTextColor(0.4,0.78,1)
 		self.regularFont = CreateFont('regularFont')
 		self.regularFont:SetTextColor(255,255,255)
-		XFG.Events:Add('DTGuild Init', XFG.Settings.Network.Message.IPC.INITIALIZED, XFG.DataText.Guild.PostInitialize, true, true)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
 function DTGuild:PostInitialize()
-	XFG.Events:Remove('DTGuild Init')
 	XFG.DataText.Guild:GetHeaderFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Guild:GetRegularFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
 	XFG.DataText.Guild:RefreshBroker()
-	--XFG.Events:Add('DTGuild', XFG.Settings.Network.Message.IPC.ROSTER_UPDATED, XFG.DataText.Guild.RefreshBroker, true, true)
 end
 --#endregion
 
@@ -130,9 +127,9 @@ local function PreSort()
 		unitData.Faction = unit:GetFaction():GetIconID()
 		unitData.PvP = unit:GetPvP()
 
-		if(unit:HasRaidIO()) then
-			unitData.Raid = unit:GetRaidIO():GetRaid()
-			unitData.Dungeon = unit:GetRaidIO():GetDungeon()			
+		if(unit:HasRaiderIO()) then
+			unitData.Raid = unit:GetRaiderIO():GetRaid()
+			unitData.Dungeon = unit:GetRaiderIO():GetDungeon()			
 		end
 
 		if(unit:HasVersion()) then
@@ -191,7 +188,7 @@ local function LineClick(_, inUnitGUID, inMouseButton)
  		C_PartyInfo.InviteUnit(unit:GetUnitName())
 	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
 		C_PartyInfo.RequestInviteFromUnit(unit:GetUnitName())
- 	else
+ 	elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
 		SetItemRef(link, unit:GetName(), inMouseButton)
 	end
 end

@@ -62,7 +62,6 @@ function Confederate:Add(inUnit)
         XFG.Player.Unit = inUnit
     end
 
-    --XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED)
     return true
 end
 
@@ -76,20 +75,12 @@ function Confederate:Remove(inKey)
         end
         local target = XFG.Targets:GetByRealmFaction(unit:GetRealm(), unit:GetFaction())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
+        if(unit:HasRaiderIO()) then
+            XFG.Addons.RaiderIO:Remove(unit:GetRaiderIO())
+        end
         self:Push(unit)
         XFG.DataText.Guild:RefreshBroker()
-        --XFG.Lib.Event:SendMessage(XFG.Settings.Network.Message.IPC.ROSTER_UPDATED)
     end
-end
---#endregion
-
---#region Stack
-function Confederate:Push(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
-    if(inUnit:HasRaidIO()) then
-        XFG.RaidIO:Push(inUnit:GetRaidIO())
-    end
-    self.parent.Push(self, inUnit)
 end
 --#endregion
 

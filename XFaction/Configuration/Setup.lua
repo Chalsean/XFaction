@@ -3,6 +3,7 @@ local ObjectName = 'ConfigSetup'
 local RealmXref = {}
 
 function XFG:SetupRealms()
+
 	XFG.Cache.Setup = {
 		Confederate = {},
 		Realms = {},
@@ -11,6 +12,7 @@ function XFG:SetupRealms()
 		GuildsRealms = {},
 		Compress = true,
 	}
+	
 	XFG.Options.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XFG.Lib.Locale['REGION'], XFG.Regions:GetCurrent():GetName())
 	for _, realm in XFG.Realms:SortedIterator() do
 		table.insert(XFG.Cache.Setup.Realms, {
@@ -75,14 +77,16 @@ function XFG:SetupMenus()
 	--#endregion
 
 	--#region Guild Menu
-	for _, guild in XFG.Guilds:SortedIterator() do
-		table.insert(XFG.Cache.Setup.Guilds, {
-			realm = tostring(guild:GetRealm():GetID()),
-			faction = guild:GetFaction():GetID(),
-			initials = guild:GetInitials(),
-			name = guild:GetName(),
-		})
-		XFG.Cache.Setup.GuildsRealms[tostring(guild:GetRealm():GetID())] = guild:GetRealm():GetName()
+	if(XFG.Guilds:GetCount() > 0) then
+		for _, guild in XFG.Guilds:SortedIterator() do
+			table.insert(XFG.Cache.Setup.Guilds, {
+				realm = tostring(guild:GetRealm():GetID()),
+				faction = guild:GetFaction():GetID(),
+				initials = guild:GetInitials(),
+				name = guild:GetName(),
+			})
+			XFG.Cache.Setup.GuildsRealms[tostring(guild:GetRealm():GetID())] = guild:GetRealm():GetName()
+		end
 	end
 
 	local i = #XFG.Cache.Setup.Guilds
@@ -141,12 +145,14 @@ function XFG:SetupMenus()
 	--#endregion
 
 	--#region Team Menu
-	for _, team in XFG.Teams:SortedIterator() do
-		if(team:GetInitials() ~= '?') then
-			table.insert(XFG.Cache.Setup.Teams, {
-				initials = team:GetInitials(),
-				name = team:GetName(),
-			})
+	if(XFG.Teams:GetCount() > 0) then
+		for _, team in XFG.Teams:SortedIterator() do
+			if(team:GetInitials() ~= '?') then
+				table.insert(XFG.Cache.Setup.Teams, {
+					initials = team:GetInitials(),
+					name = team:GetName(),
+				})
+			end
 		end
 	end
 

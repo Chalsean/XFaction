@@ -128,7 +128,7 @@ XFG.Options.args.Debug = {
 					type = 'execute',
 					name = XFG.Lib.Locale['RAIDERIO'],
 					disabled = function () return XFG.Config.Debug.Verbosity == 0 end,
-					func = function(info) XFG.RaidIO:Print() end,					
+					func = function(info) XFG.Addons.RaiderIO:Print() end,					
 				},
 				Realm = {
 					order = 22,

@@ -27,18 +27,20 @@ function DTMetrics:Initialize()
 		    OnEnter = function(this) XFG.DataText.Metrics:OnEnter(this) end,
 			OnLeave = function(this) XFG.DataText.Metrics:OnLeave(this) end,
 		})
+		LDB_ANCHOR = self.ldbObject
+		self.headerFont = CreateFont('headerFont')
+		self.headerFont:SetTextColor(0.4,0.78,1)
+		self.regularFont = CreateFont('regularFont')
+		self.regularFont:SetTextColor(255,255,255)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
-function DTMetrics:SetFont()
-	self.headerFont = CreateFont('headerFont')
-	self.headerFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
-	self.headerFont:SetTextColor(0.4,0.78,1)
-	self.regularFont = CreateFont('regularFont')
-	self.regularFont:SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
-	self.regularFont:SetTextColor(255,255,255)
+function DTMetrics:PostInitialize()
+	XFG.DataText.Guild:GetHeaderFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
+	XFG.DataText.Guild:GetRegularFont():SetFont(XFG.Lib.LSM:Fetch('font', XFG.Config.DataText.Font), XFG.Config.DataText.FontSize, 'OUTLINE')
+	XFG.DataText.Guild:RefreshBroker()
 end
 --#endregion
 
@@ -54,6 +56,18 @@ end
 --#endregion
 
 --#region Broker
+function DTMetrics:GetBroker()
+	return self.ldbObject
+end
+
+function DTMetrics:GetHeaderFont()
+	return self.headerFont
+end
+
+function DTMetrics:GetRegularFont()
+	return self.regularFont
+end
+
 function DTMetrics:RefreshBroker()
 	if(XFG.Initialized and self:IsInitialized()) then
 		local text = ''

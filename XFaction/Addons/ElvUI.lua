@@ -13,21 +13,15 @@ end
 
 --#region Initializers
 function XFElvUI:Initialize()
-    if(not self:IsInitialized()) then
+    if(not self:IsInitialized() and XFG.Config ~= nil and ElvUI ~= nil) then
         self:ParentInitialize()
-        XFG.Events:Add('ElvUI Load', XFG.Settings.Network.Message.IPC.ADDON_LOADED, XFG.Addons.ElvUI.CallbackAddonLoaded, true, true)
-		self:IsInitialized(true)
-	end
-end
-
-function XFElvUI:CallbackAddonLoaded(inAddonName)
-    if(inAddonName == ObjectName and not XFG.Addons.ElvUI:IsLoaded()) then
         XFG.Media:Add(XFG.Icons.Guild, 'Icon')
         XFG.Addons.ElvUI:SetAPI(ElvUI[1])        
         XFG.Addons.ElvUI:AddTags()
         XFG.Addons.ElvUI:IsLoaded(true)
         XFG:Info(ObjectName, 'ElvUI loaded successfully')
-    end
+		self:IsInitialized(true)
+	end
 end
 
 function XFElvUI:AddTags()
