@@ -113,33 +113,4 @@ function PlayerEvent:CallbackInstance()
         XFG:Warn(ObjectName, inErrorMessage)
     end)
 end
-
--- Entering combat in an instance, disable as much messaging as we can to not interfere
--- An instance is raid, dungeon, bg, arena
-function PlayerEvent:CallbackEnterCombat()
-    if(XFG.Player.InInstance) then
-        try(function ()
-            XFG:Debug(ObjectName, 'Entering instance combat, disabling some event listeners and timers')
-            XFG.Events:EnterCombat()
-            XFG.Timers:EnterCombat()
-        end).
-        catch(function (inErrorMessage)
-            XFG:Warn(ObjectName, inErrorMessage)
-        end)
-    end
-end
-
--- Reenable things and fire if its been too long
-function PlayerEvent:CallbackLeaveCombat()
-    try(function ()
-        if(XFG.Player.InInstance) then
-            XFG:Debug(ObjectName, 'Leaving instance combat, enabling some event listeners and timers')
-            XFG.Events:LeaveCombat()
-            XFG.Timers:LeaveCombat()
-        end
-    end).
-    catch(function (inErrorMessage)
-        XFG:Warn(ObjectName, inErrorMessage)
-    end)
-end
 --#endregion
