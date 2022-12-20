@@ -164,11 +164,11 @@ function Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
     -- Sanity check that sender is in confederate
-    if(not inMessage:HasGuild()) then
-        XFG:Warn(ObjectName, 'Message did not originate from own confederate')
-        inMessage:Print()
-        return
-    end
+    -- if(not inMessage:HasGuild()) then
+    --     XFG:Warn(ObjectName, 'Message did not originate from own confederate')
+    --     inMessage:Print()
+    --     return
+    -- end
 
     -- Is a newer version available?
     if(not XFG.Cache.NewVersionNotify and XFG.Version:IsNewer(inMessage:GetVersion())) then
