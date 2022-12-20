@@ -173,9 +173,11 @@ end
 --#region Janitorial
 function FriendCollection:Backup()
 	try(function ()
-	    for _, friend in self:Iterator() do
-			if(friend:IsRunningAddon()) then
-				XFG.Cache.Backup.Friends[#XFG.Cache.Backup.Friends + 1] = friend:GetKey()
+		if(self:IsInitialized()) then
+			for _, friend in self:Iterator() do
+				if(friend:IsRunningAddon()) then
+					XFG.Cache.Backup.Friends[#XFG.Cache.Backup.Friends + 1] = friend:GetKey()
+				end
 			end
 		end
 	end).
