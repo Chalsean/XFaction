@@ -37,9 +37,6 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
                 message:SetFrom(XFG.Player.Unit:GetGUID())
                 message:SetType(XFG.Settings.Network.Type.BROADCAST)
                 message:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
-                message:SetUnitName(XFG.Player.Unit:GetUnitName())
-                message:SetGuild(XFG.Player.Guild)
-                message:SetRealm(XFG.Player.Realm)
                 if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
                     message:SetMainName(XFG.Player.Unit:GetMainName())
                 end
