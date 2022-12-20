@@ -2,6 +2,8 @@ local XFG, G = unpack(select(2, ...))
 local ObjectName = 'GuildEvent'
 local GetClubMembers = C_Club.GetClubMembers
 local GuildRosterEvent = C_GuildInfo.GuildRoster
+local GetGuildClubId = C_Club.GetGuildClubId
+local GetPermissions = C_GuildInfo.GuildControlGetRankFlags
 
 GuildEvent = Object:newChildConstructor()
 
@@ -22,6 +24,8 @@ function GuildEvent:Initialize()
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
         self:CallbackRosterUpdate()
         GuildRosterEvent()
+        XFG.Events:Add('GuildRole', 'CLUB_SELF_MEMBER_ROLE_UPDATED', XFG.Handlers.GuildEvent.CallbackGuildRole, true)
+        XFG.Events:Add('GuildLeave', 'CLUB_MEMBER_REMOVED', XFG.Handlers.GuildEvent.CallbackGuildLeave, true)
 		self:IsInitialized(true)
 	end
 end
@@ -83,5 +87,46 @@ function GuildEvent:CallbackRosterUpdate()
             XFG:Warn(ObjectName, inErrorMessage)
         end)
     end
+end
+
+function GuildEvent:CallbackGuildRole(inClubID, inRoleID)
+    try(function ()
+        -- Possible that guild chat ability has been revoked
+        if(GetGuildClubId() == inClubID) then
+            local permissions = GetPermissions(inRoleID)
+            if(permissions ~= nil) then
+                XFG.Player.Unit:CanGuildListen(permissions[1])
+                XFG.Player.Unit:CanGuildSpeak(permissions[2])
+            end
+        end
+    end).
+    catch(function (inErrorMessage)
+        XFG:Error(ObjectName, inErrorMessage)
+        XFG:Stop()
+        XFG.Timers:Get('Login'):Start()
+    end)
+end
+
+function GuildEvent:CallbackGuildLeave()
+    try(function ()
+        if(GetGuildClubId() == nil) then
+            print(format(XFG.Lib.Locale['LEAVE_GUILD'], XFG.Title))
+            XFG:Stop()
+            XFG.Timers:Get('Login'):Start()    
+        end
+    end).
+    catch(function (inErrorMessage)
+        XFG:Error(ObjectName, inErrorMessage)
+    end)
+end
+
+function GuildEvent:CallbackGuildJoin()
+    try(function ()
+        XFG.Timers:Remove('GuildJoin')
+        XFG.Timers:Get('Login'):Start()
+    end).
+    catch(function (inErrorMessage)
+        XFG:Error(ObjectName, inErrorMessage)
+    end)
 end
 --#endregion
