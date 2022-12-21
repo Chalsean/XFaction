@@ -1,6 +1,6 @@
 --[[
 Name: LibTourist-3.0
-Revision: $Rev: 271 $
+Revision: $Rev: 282 $
 Author(s): Odica (owner), originally created by ckknight and Arrowmaster
 Documentation: https://www.wowace.com/projects/libtourist-3-0/pages/api-reference
 SVN: svn://svn.wowace.com/wow/libtourist-3-0/mainline/trunk
@@ -9,7 +9,7 @@ License: MIT
 ]]
 
 local MAJOR_VERSION = "LibTourist-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Revision: 271 $"):match("(%d+)"))
+local MINOR_VERSION = 90000 + tonumber(("$Revision: 282 $"):match("(%d+)"))
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub") end
 local C_Map = C_Map
@@ -67,6 +67,7 @@ local Argus = "Argus"
 local Zandalar = "Zandalar"
 local Kul_Tiras = "Kul Tiras"
 local The_Shadowlands = "The Shadowlands"
+local Dragon_Isles = "Dragon Isles"
 
 
 
@@ -80,6 +81,7 @@ local Warlords_of_Draenor = EXPANSION_NAME5
 local Legion = EXPANSION_NAME6
 local Battle_for_Azeroth = EXPANSION_NAME7
 local Shadowlands = EXPANSION_NAME8
+local DragonFlight = EXPANSION_NAME9
 
 local expansionToIndex = {
 	[Classic] = 1,
@@ -91,6 +93,7 @@ local expansionToIndex = {
 	[Legion] = 7,
 	[Battle_for_Azeroth] = 8,
 	[Shadowlands] = 9,
+	[DragonFlight] = 10,
 }
 
 local chromieTimeToExpansion = {
@@ -1495,9 +1498,9 @@ local MapIdLookupTable = {
 	[1645] = "Torghast",
 	[1647] = "The Shadowlands",
 	[1648] = "The Maw",
-	[1649] = "Etheric Vault",  -- "MAL_Micro_A",
+	[1649] = "Etheric Vault",   -- "MAL_Micro_A",
 	[1650] = "Sightless Hold",  -- "MAL_Micro_B",
-	[1651] = "Molten Forge",  -- "MAL_Micro_C",
+	[1651] = "Molten Forge",    -- "MAL_Micro_C",
 	[1652] = "Vault of Souls",  -- "MAL_Micro_D",
 	[1656] = "Torghast - Map Floor 10 [Deprecated]",
 	[1658] = "Alpha_TG_R02",
@@ -1641,13 +1644,13 @@ local MapIdLookupTable = {
 	[1812] = "Torghast",
 	[1813] = "Bastion",
 	[1814] = "Maldraxxus",
-	[1816] = "Claw's Edge",  -- "Ardenweald_Micro_A",
-	[1818] = "Tirna Vaal",  -- "Ardenweald_Micro_C",
+	[1816] = "Claw's Edge",      -- "Ardenweald_Micro_A",
+	[1818] = "Tirna Vaal",       -- "Ardenweald_Micro_C",
 	[1819] = "Fungal Terminus",  -- "Ardenweald_Mushroom_A",
-	[1820] = "Pit of Anguish",  -- "Maw_Micro_PitOfAnguish_A",
-	[1821] = "Pit of Anguish",  -- "Maw_Micro_PitOfAnguish_B",
+	[1820] = "Pit of Anguish",   -- "Maw_Micro_PitOfAnguish_A",
+	[1821] = "Pit of Anguish",   -- "Maw_Micro_PitOfAnguish_B",
 	[1822] = "Extractor's Sanatorium",  -- "Maw_Micro_Tremaculum",
-	[1823] = "Altar of Domination",  -- "Maw_Micro_Domination",
+	[1823] = "Altar of Domination",     -- "Maw_Micro_Domination",
 	[1824] = "Matriarch's Den",  -- "Ardenweald_Micro_D",
 	[1825] = "The Root Cellar",  -- "Ardenweald_Mushroom_B",
 	[1826] = "The Root Cellar",  -- "Ardenweald_Mushroom_C",
@@ -1758,6 +1761,7 @@ local MapIdLookupTable = {
     [1975] = "Torghast",
     [1976] = "Torghast",
     [1977] = "Torghast",
+	[1978] = "Dragon Isles",
     [1979] = "Torghast",
     [1980] = "Torghast",
     [1981] = "Torghast",
@@ -1795,6 +1799,11 @@ local MapIdLookupTable = {
     [2017] = "Spires of Ascension",
     [2018] = "Spires of Ascension",
     [2019] = "Torghast",
+	[2022] = "The Waking Shores",
+	[2023] = "Ohn'ahran Plains",
+	[2024] = "The Azure Span",
+	[2025] = "Thaldraszus",
+	[2026] = "The Forbidden Reach",	
 	[2027] = "Blooming Foundry",
 	[2028] = "Locrian Esper",
 	[2029] = "Gravid Repose",
@@ -1809,17 +1818,71 @@ local MapIdLookupTable = {
 	[2051] = "Sepulcher of the First Ones",
 	[2052] = "Sepulcher of the First Ones",
 	[2055] = "Sepulcher of the First Ones",
+	[2057] = "Dragon Isles",
 	[2059] = "Resonant Peaks",
 	[2061] = "Sepulcher of the First Ones",
+	[2063] = "Dragon Isles",
 	[2066] = "Catalyst Wards",
 	[2070] = "Tirisfal Glades",
+	[2071] = "Uldaman: Legacy of Tyr",
+	[2072] = "Uldaman: Legacy of Tyr",
+	[2073] = "The Azure Vault",   -- "ArcaneNaxus_A"  yes, with typo
+	[2074] = "The Azure Vault",   -- "ArcaneNexus_B"
+	[2075] = "The Azure Vault",   -- "ArcaneNexus_C"
+	[2076] = "The Azure Vault",   -- "ArcaneNexus_D"
+	[2077] = "The Azure Vault",   -- "ArcaneNexus_E"
+	[2080] = "Neltharus",          -- "Neltharus_A"
+	[2081] = "Neltharus",          -- "Neltharus_B"
+	[2082] = "Halls Of Infusion",  -- "HallsOfInfusion_A"
+	[2083] = "Halls Of Infusion",  -- "HallsOfInfusion_B"
+	[2085] = "Primalist Tomorrow",
+	[2088] = "Pandaren Revolution",
+	[2089] = "The Black Empire",
+	[2090] = "The Gnoll War",
+	[2091] = "War of the Shifting Sands",
+	[2092] = "Azmerloth",
+	[2093] = "The Nokhud Offensive",
+	[2094] = "Ruby Life Pools",
+	[2095] = "Ruby Life Pools",
+	[2096] = "Brackenhide Hollow",
+	[2097] = "Algeth'ar Academy",
+	[2098] = "Algeth'ar Academy",
+	[2099] = "Algeth'ar Academy",
+	[2100] = "The Siege Creche",
+	[2101] = "The Support Creche",
+	[2102] = "The War Creche",
+	[2106] = "Brackenhide Hollow",
+	[2107] = "The Forbidden Reach",
+	[2109] = "The War Creche",
+	[2110] = "The Support Creche",
+	[2111] = "The Siege Creche",
+	[2112] = "Valdrakken",
+	[2118] = "The Forbidden Reach",
+	[2119] = "Vault of the Incarnates",    -- "PrimalistRaid_A"
+	[2120] = "Vault of the Incarnates",    -- "PrimalistRaid_B"
+	[2121] = "Vault of the Incarnates",    -- "PrimalistRaid_C"
+	[2122] = "Vault of the Incarnates",    -- "PrimalistRaid_D"
+	[2123] = "Vault of the Incarnates",    -- "PrimalistRaid_E"
+	[2124] = "Vault of the Incarnates",    -- "PrimalistRaid_G"
+	[2125] = "Vault of the Incarnates",    -- "PrimalistRaid_H"
+	[2126] = "Vault of the Incarnates",    -- "PrimalistRaid_F"
+	[2127] = "The Waking Shores",
+	[2128] = "The Azure Span",
+	[2129] = "Ohn'ahran Plains",
+	[2130] = "Thaldraszus",
+	[2131] = "The Forbidden Reach",
+	[2132] = "The Azure Span",
+	[2134] = "Valdrakken",
+	[2135] = "Valdrakken",	
+	[2149] = "Ohn'ahran Plains",
 }
 
 
 
 
 -- These zones are known in LibTourist's zones collection but are not returned by C_Map.GetMapInfo.
--- The IDs are the areaIDs as used by C_Map.GetAreaInfo.
+-- The IDs are the areaIDs as used by C_Map.GetAreaInfo. Technically, these IDs are only used to
+-- map different non-English translations to the English ones, within this table.
 local zoneTranslation = {
 	enUS = {		
 		-- Complexes
@@ -2133,6 +2196,203 @@ local zoneTranslation = {
 	},
 }
 
+-- WoW 10.0.0:
+-- For some instance maps, C_Map.GetMapInfo does not return a localized name but some kind of tag which is the
+-- for all languages. So, we need to supply our own localizations, taken from the 'AreaTable' table.
+local mapInfoLocalizedNameErrata = {
+	enUS = {		
+		["ArcaneNaxus_A"] = "The Azure Vault",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "The Azure Vault",
+		["ArcaneNexus_C"] = "The Azure Vault",
+		["ArcaneNexus_D"] = "The Azure Vault",
+		["ArcaneNexus_E"] = "The Azure Vault",
+		["Neltharus_A"] = "Neltharus",
+		["Neltharus_B"] = "Neltharus",
+		["HallsOfInfusion_A"] = "Halls Of Infusion",
+		["HallsOfInfusion_B"] = "Halls Of Infusion",
+		["PrimalistRaid_A"] = "Vault of the Incarnates",
+		["PrimalistRaid_B"] = "Vault of the Incarnates",
+		["PrimalistRaid_C"] = "Vault of the Incarnates",
+		["PrimalistRaid_D"] = "Vault of the Incarnates",
+		["PrimalistRaid_E"] = "Vault of the Incarnates",
+		["PrimalistRaid_F"] = "Vault of the Incarnates",
+		["PrimalistRaid_G"] = "Vault of the Incarnates",
+		["PrimalistRaid_H"] = "Vault of the Incarnates",
+	},
+	deDE = {
+		["ArcaneNaxus_A"] = "Das Azurblaue Gewölbe",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "Das Azurblaue Gewölbe",
+		["ArcaneNexus_C"] = "Das Azurblaue Gewölbe",
+		["ArcaneNexus_D"] = "Das Azurblaue Gewölbe",
+		["ArcaneNexus_E"] = "Das Azurblaue Gewölbe",
+		["Neltharus_A"] = "Neltharus",
+		["Neltharus_B"] = "Neltharus",
+		["HallsOfInfusion_A"] = "Hallen der Infusion",
+		["HallsOfInfusion_B"] = "Hallen der Infusion",
+		["PrimalistRaid_A"] = "Gewölbe der Inkarnationen",
+		["PrimalistRaid_B"] = "Gewölbe der Inkarnationen",
+		["PrimalistRaid_C"] = "Gewölbe der Inkarnationen",
+		["PrimalistRaid_D"] = "Gewölbe der Inkarnationen",
+		["PrimalistRaid_E"] = "Gewölbe der Inkarnationen",
+		["PrimalistRaid_F"] = "Gewölbe der Inkarnationen",
+		["PrimalistRaid_G"] = "Gewölbe der Inkarnationen",
+		["PrimalistRaid_H"] = "Gewölbe der Inkarnationen",	
+	},
+	esES = {
+		["ArcaneNaxus_A"] = "Cámara Azur",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "Cámara Azur",
+		["ArcaneNexus_C"] = "Cámara Azur",
+		["ArcaneNexus_D"] = "Cámara Azur",
+		["ArcaneNexus_E"] = "Cámara Azur",
+		["Neltharus_A"] = "Neltharus",
+		["Neltharus_B"] = "Neltharus",
+		["HallsOfInfusion_A"] = "Salas de Infusión",
+		["HallsOfInfusion_B"] = "Salas de Infusión",
+		["PrimalistRaid_A"] = "Cámara de las Encarnaciones",
+		["PrimalistRaid_B"] = "Cámara de las Encarnaciones",
+		["PrimalistRaid_C"] = "Cámara de las Encarnaciones",
+		["PrimalistRaid_D"] = "Cámara de las Encarnaciones",
+		["PrimalistRaid_E"] = "Cámara de las Encarnaciones",
+		["PrimalistRaid_F"] = "Cámara de las Encarnaciones",
+		["PrimalistRaid_G"] = "Cámara de las Encarnaciones",
+		["PrimalistRaid_H"] = "Cámara de las Encarnaciones",
+	},
+	esMX = {
+		["ArcaneNaxus_A"] = "La Bóveda Azur",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "La Bóveda Azur",
+		["ArcaneNexus_C"] = "La Bóveda Azur",
+		["ArcaneNexus_D"] = "La Bóveda Azur",
+		["ArcaneNexus_E"] = "La Bóveda Azur",
+		["Neltharus_A"] = "Neltharus",
+		["Neltharus_B"] = "Neltharus",
+		["HallsOfInfusion_A"] = "Salas de Infusión",
+		["HallsOfInfusion_B"] = "Salas de Infusión",
+		["PrimalistRaid_A"] = "Bóveda de las Encarnaciones",
+		["PrimalistRaid_B"] = "Bóveda de las Encarnaciones",
+		["PrimalistRaid_C"] = "Bóveda de las Encarnaciones",
+		["PrimalistRaid_D"] = "Bóveda de las Encarnaciones",
+		["PrimalistRaid_E"] = "Bóveda de las Encarnaciones",
+		["PrimalistRaid_F"] = "Bóveda de las Encarnaciones",
+		["PrimalistRaid_G"] = "Bóveda de las Encarnaciones",
+		["PrimalistRaid_H"] = "Bóveda de las Encarnaciones",
+	},
+	frFR = {
+		["ArcaneNaxus_A"] = "Caveau d’Azur",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "Caveau d’Azur",
+		["ArcaneNexus_C"] = "Caveau d’Azur",
+		["ArcaneNexus_D"] = "Caveau d’Azur",
+		["ArcaneNexus_E"] = "Caveau d’Azur",
+		["Neltharus_A"] = "Neltharus",
+		["Neltharus_B"] = "Neltharus",
+		["HallsOfInfusion_A"] = "Salles de l’Imprégnation",
+		["HallsOfInfusion_B"] = "Salles de l’Imprégnation",
+		["PrimalistRaid_A"] = "Caveau des Incarnations",
+		["PrimalistRaid_B"] = "Caveau des Incarnations",
+		["PrimalistRaid_C"] = "Caveau des Incarnations",
+		["PrimalistRaid_D"] = "Caveau des Incarnations",
+		["PrimalistRaid_E"] = "Caveau des Incarnations",
+		["PrimalistRaid_F"] = "Caveau des Incarnations",
+		["PrimalistRaid_G"] = "Caveau des Incarnations",
+		["PrimalistRaid_H"] = "Caveau des Incarnations",
+	},
+	itIT = {
+		["ArcaneNaxus_A"] = "Cripta Azzurra",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "Cripta Azzurra",
+		["ArcaneNexus_C"] = "Cripta Azzurra",
+		["ArcaneNexus_D"] = "Cripta Azzurra",
+		["ArcaneNexus_E"] = "Cripta Azzurra",
+		["Neltharus_A"] = "Neltharus",
+		["Neltharus_B"] = "Neltharus",
+		["HallsOfInfusion_A"] = "Sale dell'Infusione",
+		["HallsOfInfusion_B"] = "Sale dell'Infusione",
+		["PrimalistRaid_A"] = "Segrete delle Incarnazioni",
+		["PrimalistRaid_B"] = "Segrete delle Incarnazioni",
+		["PrimalistRaid_C"] = "Segrete delle Incarnazioni",
+		["PrimalistRaid_D"] = "Segrete delle Incarnazioni",
+		["PrimalistRaid_E"] = "Segrete delle Incarnazioni",
+		["PrimalistRaid_F"] = "Segrete delle Incarnazioni",
+		["PrimalistRaid_G"] = "Segrete delle Incarnazioni",
+		["PrimalistRaid_H"] = "Segrete delle Incarnazioni",
+	},
+	koKR = {
+		["ArcaneNaxus_A"] = "하늘빛 보관소",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "하늘빛 보관소",
+		["ArcaneNexus_C"] = "하늘빛 보관소",
+		["ArcaneNexus_D"] = "하늘빛 보관소",
+		["ArcaneNexus_E"] = "하늘빛 보관소",
+		["Neltharus_A"] = "넬타루스",
+		["Neltharus_B"] = "넬타루스",
+		["HallsOfInfusion_A"] = "주입의 전당",
+		["HallsOfInfusion_B"] = "주입의 전당",
+		["PrimalistRaid_A"] = "현신의 금고",
+		["PrimalistRaid_B"] = "현신의 금고",
+		["PrimalistRaid_C"] = "현신의 금고",
+		["PrimalistRaid_D"] = "현신의 금고",
+		["PrimalistRaid_E"] = "현신의 금고",
+		["PrimalistRaid_F"] = "현신의 금고",
+		["PrimalistRaid_G"] = "현신의 금고",
+		["PrimalistRaid_H"] = "현신의 금고",
+	},
+	ptBR = {
+		["ArcaneNaxus_A"] = "Câmara Lazúli",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "Câmara Lazúli",
+		["ArcaneNexus_C"] = "Câmara Lazúli",
+		["ArcaneNexus_D"] = "Câmara Lazúli",
+		["ArcaneNexus_E"] = "Câmara Lazúli",
+		["Neltharus_A"] = "Neltharus",
+		["Neltharus_B"] = "Neltharus",
+		["HallsOfInfusion_A"] = "Salões da Infusão",
+		["HallsOfInfusion_B"] = "Salões da Infusão",
+		["PrimalistRaid_A"] = "Câmara dos Encarnados",
+		["PrimalistRaid_B"] = "Câmara dos Encarnados",
+		["PrimalistRaid_C"] = "Câmara dos Encarnados",
+		["PrimalistRaid_D"] = "Câmara dos Encarnados",
+		["PrimalistRaid_E"] = "Câmara dos Encarnados",
+		["PrimalistRaid_F"] = "Câmara dos Encarnados",
+		["PrimalistRaid_G"] = "Câmara dos Encarnados",
+		["PrimalistRaid_H"] = "Câmara dos Encarnados",
+	},
+	zhCN = {
+		["ArcaneNaxus_A"] = "碧蓝魔馆",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "碧蓝魔馆",
+		["ArcaneNexus_C"] = "碧蓝魔馆",
+		["ArcaneNexus_D"] = "碧蓝魔馆",
+		["ArcaneNexus_E"] = "碧蓝魔馆",
+		["Neltharus_A"] = "奈萨鲁斯",
+		["Neltharus_B"] = "奈萨鲁斯",
+		["HallsOfInfusion_A"] = "注能大厅",
+		["HallsOfInfusion_B"] = "注能大厅",
+		["PrimalistRaid_A"] = "化身巨龙牢窟",
+		["PrimalistRaid_B"] = "化身巨龙牢窟",
+		["PrimalistRaid_C"] = "化身巨龙牢窟",
+		["PrimalistRaid_D"] = "化身巨龙牢窟",
+		["PrimalistRaid_E"] = "化身巨龙牢窟",
+		["PrimalistRaid_F"] = "化身巨龙牢窟",
+		["PrimalistRaid_G"] = "化身巨龙牢窟",
+		["PrimalistRaid_H"] = "化身巨龙牢窟",
+	},
+	zhTW = {
+		["ArcaneNaxus_A"] = "蒼藍密庫",  -- mind the typo in the tag name
+		["ArcaneNexus_B"] = "蒼藍密庫",
+		["ArcaneNexus_C"] = "蒼藍密庫",
+		["ArcaneNexus_D"] = "蒼藍密庫",
+		["ArcaneNexus_E"] = "蒼藍密庫",
+		["Neltharus_A"] = "奈薩魯斯堡",
+		["Neltharus_B"] = "奈薩魯斯堡",
+		["HallsOfInfusion_A"] = "灌注迴廊",
+		["HallsOfInfusion_B"] = "灌注迴廊",
+		["PrimalistRaid_A"] = "洪荒化身牢獄",
+		["PrimalistRaid_B"] = "洪荒化身牢獄",
+		["PrimalistRaid_C"] = "洪荒化身牢獄",
+		["PrimalistRaid_D"] = "洪荒化身牢獄",
+		["PrimalistRaid_E"] = "洪荒化身牢獄",
+		["PrimalistRaid_F"] = "洪荒化身牢獄",
+		["PrimalistRaid_G"] = "洪荒化身牢獄",
+		["PrimalistRaid_H"] = "洪荒化身牢獄",
+	},
+}
+
+
 
 
 -- =========================================================================
@@ -2199,20 +2459,13 @@ local expansionSkillLineIDs = {
 			[HERBALISM_SKILL] = 2760,
 			[MINING_SKILL] = 2761,
 			[SKINNING_SKILL] = 2762,
-		},		
-}
-	
--- Because Blizz was so kind to let GetTradeSkillLineInfoByID return data for ALL skills *except* Fishing.
-local fishingExpansionSkillCategoryIDs = {
-    [1] = 1100,		-- Classic -> Fishing
-    [2] = 1102,		-- Outland Fishing
-    [3] = 1104,		-- Northrend Fishing
-    [4] = 1106,		-- Cataclysm Fishing
-    [5] = 1108,		-- Pandaria Fishing
-    [6] = 1110,		-- Draenor Fishing
-    [7] = 1112,		-- Legion Fishing
-    [8] = 1114,		-- Kul Tiras Fishing
-	[9] = 1391,		-- Shadowlands Fishing
+		},
+	[10] = { -- DragonFlight (Dragon Isles)
+			[FISHING_SKILL] = 2826,
+			[HERBALISM_SKILL] = 2832,
+			[MINING_SKILL] = 2833,
+			[SKINNING_SKILL] = 2834,
+		},
 }
 
 -- 9.0.1: New function using new expansion lookup
@@ -2230,78 +2483,32 @@ local function GetExpansionIndex(zone)
 	return expansionIndex
 end
 
-
--- Because the data required for GetFishingSkillInfo is not available until the Fishing Skills dialog has been opened,
--- this function briefly opens the dialog so C_TradeSkillUI gets populated with skill data.
--- It is invoked by the Ticker started by calling Tourist:LoadFishingSkills().
-local tsiTicker
-local tsiInterval = .2
-local tsiPhase = 0
-local tsiElapsed = 0
-local tsiMaxCycles = 20
-local tsiCycle = 0
-local opened = false
-local ready = false
-local function TradeSkillInit()
-	tsiElapsed = tsiElapsed + tsiInterval
-	tsiCycle = tsiCycle + 1
-	if tsiCycle == tsiMaxCycles - 1 then tsiPhase = 3 end -- Timeout on phase 1 or 2 -> go to 3 and 4
-	trace(tostring(tsiElapsed).." sec: TradeSkillInit Phase "..tostring(tsiPhase))
-	if tsiPhase == 0 then
-		MuteSoundFile(567507) -- sound/interface/ucharactersheetopen.ogg
-		MuteSoundFile(567433) -- sound/interface/ucharactersheetclose.ogg
-		tsiPhase = 1
-	elseif tsiPhase == 1 then
-		opened = C_TradeSkillUI.OpenTradeSkill(356) -- 356 = base Fishing Skill ID
-		if opened == true then tsiPhase = 2 end
-	elseif tsiPhase == 2 then
-		ready = C_TradeSkillUI.IsTradeSkillReady()
-		if ready == true then tsiPhase = 3 end
-	elseif tsiPhase == 3 then	
-		C_TradeSkillUI.CloseTradeSkill()
-		tsiPhase = 4
-	elseif tsiPhase == 4 then
-		UnmuteSoundFile(567507)
-		UnmuteSoundFile(567433)
-		tsiTicker:Cancel()
-		tsiPhase = -1
-	end
-end
-
--- Triggers the procedure to forcibly load the fishing skill data, required for Tourist:GetFishingInfo
-function Tourist:LoadFishingSkills()
-	tsiTicker = C_Timer.NewTicker(tsiInterval, TradeSkillInit, tsiMaxCycles)
-end
-
-
 local function GetSkillInfo(skillID, zone)
-	local skillLineDisplayName, skillLineRank, skillLineMaxRank, skillLineModifier, parentSkillLineID
+	local professionName, skillLevel, maxSkillLevel, skillModifier, parentProfessionID
 	local mapId = Tourist:GetZoneMapID(zone) or zone
-	local expansionIndex = GetExpansionIndex(mapId) -- zoneMapIDtoExpansionIndex[mapId]
+	local expansionIndex = GetExpansionIndex(mapId)
 	if expansionIndex then
-		if skillID == FISHING_SKILL then
-			-- GetTradeSkillLineInfoByID returns no data for Fishing Skills :'-(
-			-- Try Categories
-			local categoryID = fishingExpansionSkillCategoryIDs[expansionIndex]
-			-- Note 1: GetCategoryInfo only returns data for learned skill categories
-			-- Note 2: GetCategoryInfo doesn't return anything until TradeSkill data is loaded (see LoadFishingSkills)
-			local category, _ = C_TradeSkillUI.GetCategoryInfo(categoryID)
-			if category then
-				skillLineDisplayName = category.name
-				skillLineMaxRank = category.skillLineMaxLevel
-				skillLineRank = category.skillLineCurrentLevel
+		local continentSkills = expansionSkillLineIDs[expansionIndex]
+		if continentSkills then
+			local skillLineID = continentSkills[skillID]
+			local professionInfo = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineID)
+			if professionInfo then
+				professionName = professionInfo.professionName
+				skillLevel = professionInfo.skillLevel
+				maxSkillLevel = professionInfo.maxSkillLevel
+				skillModifier = professionInfo.skillModifier
+				parentProfessionID = professionInfo.parentProfessionID
+--				trace("professionName = "..tostring(professionName))
+--				trace("skillLevel = "..tostring(skillLevel))
+--				trace("maxSkillLevel = "..tostring(maxSkillLevel))
+--				trace("skillModifier = "..tostring(skillModifier))
+--				trace("parentProfessionID = "..tostring(parentProfessionID))
 			else
-				--trace("GetFishingInfo: No Skill Category Info for zone "..tostring(zone).." and Cat ID "..tostring(categoryID))
-			end
-		else
-			local continentSkills = expansionSkillLineIDs[expansionIndex]
-			if continentSkills then
-				local skillLineID = continentSkills[skillID]
-				skillLineDisplayName, skillLineRank, skillLineMaxRank, skillLineModifier, parentSkillLineID = C_TradeSkillUI.GetTradeSkillLineInfoByID(skillLineID)
+--				trace("No info for skillLineID "..tostring(skillLineID).." (skill "..tostring(skillID)..")")
 			end
 		end
 	end
-	return skillLineDisplayName or "", skillLineRank or 0, skillLineMaxRank or 0, skillLineModifier or 0, parentSkillLineID
+	return professionName or "", skillLevel or 0, maxSkillLevel or 0, skillModifier or 0, parentProfessionID
 end
 
 function Tourist:GetFishingSkillInfo(zone)
@@ -2322,22 +2529,18 @@ end
 
 
 
--- OBSOLETE FUNCTION, REMOVED @ WoW 9.0.1
--- Minimum fishing skill to fish these zones junk-free (Draenor: to catch Enormous Fish only)
--- 8.0.1: SUSPENDED until it is clear how the fishing skills currently work, if a minimum skill is still required 
--- and how it should be calculated. There is no WoW API for this.
---function Tourist:GetFishingLevel(zone)
---	return 0
---end
-
 -- =========================================================================
-
 
 local function CreateLocalizedZoneNameLookups()
 	local uiMapID
 	local mapInfo
 	local localizedZoneName
 	local englishZoneName
+
+	local localizedErrata = mapInfoLocalizedNameErrata[GAME_LOCALE]
+	if not localizedErrata then 
+		localizedErrata = mapInfoLocalizedNameErrata["enUS"]
+	end
 
 	-- 8.0: Use the C_Map API
 	-- Note: the loop below is not very sexy but makes sure missing entries in MapIdLookupTable are reported.
@@ -2346,8 +2549,11 @@ local function CreateLocalizedZoneNameLookups()
 		mapInfo = C_Map.GetMapInfo(uiMapID)	
 		if mapInfo then
 			localizedZoneName = mapInfo.name
+			if localizedErrata[localizedZoneName] then
+				localizedZoneName = localizedErrata[localizedZoneName]
+			end
+
 			englishZoneName = MapIdLookupTable[uiMapID]
-			
 			if englishZoneName then 		
 				-- Add combination of English and localized name to lookup tables
 				if not BZ[englishZoneName] then
@@ -2365,7 +2571,11 @@ local function CreateLocalizedZoneNameLookups()
 
 	-- Load from zoneTranslation
 	local GAME_LOCALE = GetLocale()
-	for key, localizedZoneName in pairs(zoneTranslation[GAME_LOCALE]) do
+	local translations = zoneTranslation[GAME_LOCALE]
+	if not translations then
+		translations = zoneTranslation["enUS"]
+	end	
+	for key, localizedZoneName in pairs(translations) do
 		local englishName = zoneTranslation["enUS"][key]
 		if not BZ[englishName] then
 			BZ[englishName] = localizedZoneName
@@ -2431,6 +2641,16 @@ end
 		string factionName					-- added by LibTourist
 ]]--
 
+local flightNodeIgnoreList = {
+	[2712] = "Immortal Hearth",
+	[2714] = "Genesis Cradle Beta",
+	[2713] = "Genesis Cradle Alpha",
+	[2757] = "Genesis Cradle Omega",
+	[2731] = "Domination's Grasp",
+	[2715] = "Ephemeral Plains Alpha",
+	[2716] = "Ephemeral Plains Omega",
+}
+
 local function GatherFlightnodeData()
 	local zMapID, zName, nodes, numNodes
 	local count = 0
@@ -2444,10 +2664,6 @@ local function GatherFlightnodeData()
 	
 	-- Add node objects from the C_TaxiMap interface to the lookup
 	for zMapID = 1, 10000, 1 do
---	for zMapID, zName in pairs(MapIdLookupTable) do	
-		-- Use MapIdLookupTable instead of iterating through continents and zones to be sure all known zones are checked for flight nodes
---		cMapID = Tourist:GetContinentMapID(zMapID)
---		cName = MapIdLookupTable[cMapID]
 		nodes = C_TaxiMap.GetTaxiNodesForMap(zMapID)
 
 		if nodes ~= nil then
@@ -2455,8 +2671,8 @@ local function GatherFlightnodeData()
 			if numNodes > 0 then
 				for i, node in ipairs(nodes) do
 					if not FlightnodeLookupTable[node.nodeID] then
-						if not missingNodes[node.nodeID] then
-							trace("|r|cffff4422! -- Tourist: Missing flightnode in lookup: "..tostring(node.nodeID).." = "..tostring(node.name))
+						if not missingNodes[node.nodeID] and not flightNodeIgnoreList[node.nodeID] then
+							trace("|r|cffff4422! -- Tourist: Missing flightnode: ["..tostring(node.nodeID).."] = true,   -- "..tostring(node.name).." ("..tostring(GetFlightnodeFaction(node.faction))..")")
 							errCount = errCount + 1
 							missingNodes[node.nodeID] = node.name
 						end
@@ -2726,9 +2942,6 @@ function Tourist:GetUniqueZoneNameForLookup(zoneName, continentMapID)
 		if zoneName == BZ["Dalaran"] or zoneName == "Dalaran"  then
 			zoneName = BZ["Dalaran"].." ("..BZ["Broken Isles"]..")"
 		end
---		if zoneName == BZ["The Violet Hold"] or zoneName == "The Violet Hold"  then
---			zoneName = BZ["The Violet Hold"].." ("..BZ["Broken Isles"]..")"
---		end
 	end
 	return zoneName
 end
@@ -2756,9 +2969,6 @@ function Tourist:GetUniqueEnglishZoneNameForLookup(zoneName, continentMapID)
 		if zoneName == BZ["Dalaran"] or zoneName == "Dalaran" then
 			zoneName = "Dalaran (Broken Isles)"
 		end	
---		if zoneName == BZ["The Violet Hold"] or zoneName == "The Violet Hold"  then
---			zoneName = "The Violet Hold (Broken Isles)"
---		end
 	end
 	return zoneName
 end
@@ -2877,6 +3087,10 @@ function Tourist:GetLevel(zone)
 		-- Find the most suitable bracket. Shadowlands assumption: still 5-level brackets
 		if playerLvl >= MAX_PLAYER_LEVEL then
 			return MAX_PLAYER_LEVEL, MAX_PLAYER_LEVEL, nil
+		elseif playerLvl >= 65 then
+			return 65, 69, nil
+		elseif playerLvl >= 60 then
+			return 60, 65, nil
 		elseif playerLvl >= 55 then
 			return 55, 59, nil
 		elseif playerLvl >= 50 then
@@ -3695,6 +3909,19 @@ function Tourist:IterateTheShadowlands()
 	return theShadowlandsIter, nil, nil
 end
 
+local function dragonIslesIter(_, position)
+	local k = next(zonesInstances, position)
+	while k ~= nil and continents[k] ~= Dragon_Isles do
+		k = next(zonesInstances, k)
+	end
+	return k
+end
+function Tourist:IterateDragonIsles()
+	if initZonesInstances then
+		initZonesInstances()
+	end
+	return dragonIslesIter, nil, nil
+end
 
 
 function Tourist:IterateRecommendedZones()
@@ -3877,6 +4104,11 @@ function Tourist:IsInTheShadowlands(zone)
 	return continents[zone] == The_Shadowlands
 end
 
+function Tourist:IsInDragonIsles(zone)
+	zone = Tourist:GetMapNameByIDAlt(zone) or zone
+	return continents[zone] == Dragon_Isles
+end
+
 function Tourist:GetInstanceGroupSize(instance)
 	instance = Tourist:GetMapNameByIDAlt(instance) or instance
 	return groupSizes[instance] or groupMaxSizes[instance] or 0
@@ -4014,6 +4246,9 @@ setmetatable(cost, {
 		if continents[vertex] == The_Shadowlands and playerLevel < 50 then
 			if allowInaccesible then price = price * 1000 else price = inf end
 		end		
+		if continents[vertex] == Dragon_Isles and playerLevel < 60 then
+			if allowInaccesible then price = price * 1000 else price = inf end
+		end	
 		
 		self[vertex] = price
 		return price
@@ -4277,6 +4512,10 @@ do
 	transports["ECHOISLES_ZULDAZAR_BOAT"] = string.format(X_Y_BOAT, BZ["Echo Isles"], BZ["Zuldazar"])
 	transports["ZULDAZAR_ECHOISLES_BOAT"] = string.format(X_Y_BOAT, BZ["Zuldazar"], BZ["Echo Isles"])
 	
+	transports["STORMWIND_WAKINGSHORES_BOAT"] = string.format(X_Y_BOAT, BZ["Stormwind City"], BZ["The Waking Shores"])
+	transports["WAKINGSHORES_STORMWIND_BOAT"] = string.format(X_Y_BOAT, BZ["The Waking Shores"], BZ["Stormwind City"])
+
+	
 	-- Zeppelins
 	
 	transports["ORGRIMMAR_STRANGLETHORN_ZEPPELIN"] = string.format(X_Y_ZEPPELIN, BZ["Orgrimmar"], BZ["Northern Stranglethorn"])
@@ -4291,6 +4530,10 @@ do
 
 	transports["ORGRIMMAR_BOREANTUNDRA_ZEPPELIN"] = string.format(X_Y_ZEPPELIN, BZ["Orgrimmar"], BZ["Borean Tundra"])
 	transports["BOREANTUNDRA_ORGRIMMAR_ZEPPELIN"] = string.format(X_Y_ZEPPELIN, BZ["Borean Tundra"], BZ["Orgrimmar"])
+	
+	transports["ORGRIMMAR_WAKINGSHORES_ZEPPELIN"] = string.format(X_Y_ZEPPELIN, BZ["Orgrimmar"], BZ["The Waking Shores"])
+	transports["WAKINGSHORES_ORGRIMMAR_ZEPPELIN"] = string.format(X_Y_ZEPPELIN, BZ["The Waking Shores"], BZ["Orgrimmar"])
+
 	
 	-- Teleports
 	transports["SILVERMOON_UNDERCITY_TELEPORT"] = string.format(X_Y_TELEPORT, BZ["Silvermoon City"], BZ["Undercity"])
@@ -4454,9 +4697,10 @@ do
 	transports["TAZAVESH_ORIBOS_FLIGHTPATH"] = string.format(X_Y_FLIGHTPATH, BZ["Tazavesh, the Veiled Market"], BZ["Oribos"])
 	transports["ORIBOS_ZERETHMORTIS_WAYSTONE"] = string.format(X_Y_WAYSTONE, BZ["Oribos"], BZ["Zereth Mortis"])
 	transports["ZERETHMORTIS_ORIBOS_WAYSTONE"] = string.format(X_Y_WAYSTONE, BZ["Zereth Mortis"], BZ["Oribos"])
-
-
-
+	-- Oribos 'Exotic Portals'
+	transports["ORIBOS_MECHANGON_PORTAL"] = string.format(X_Y_PORTAL, BZ["Oribos"], BZ["Mechagon Island"])
+	transports["ORIBOS_KARAZHAN_PORTAL"] = string.format(X_Y_PORTAL, BZ["Oribos"], BZ["Karazhan"])  -- Deadwind Pass
+	transports["ORIBOS_GORGROND_PORTAL"] = string.format(X_Y_PORTAL, BZ["Oribos"], BZ["Gorgrond"])	-- Dreanor
 	
 	-- Argus teleport connections
 	transports["VINDICAAR_KROKUUN_TELEPORT"] = string.format(X_Y_TELEPORT, BZ["The Vindicaar"], BZ["Krokuun"])
@@ -4561,6 +4805,13 @@ do
 		expansion = Shadowlands,
 	}	
 	
+	zones[BZ["Dragon Isles"]] = {
+		type = "Continent",
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+	}	
+	
+	
 	-- TRANSPORTS ---------------------------------------------------------------
 
 	zones[transports["STORMWIND_BOREANTUNDRA_BOAT"]] = {
@@ -4595,6 +4846,40 @@ do
 		faction = "Horde",
 		type = "Transport",
 	}
+
+	zones[transports["STORMWIND_WAKINGSHORES_BOAT"]] = {
+		paths = {
+			[BZ["The Waking Shores"]] = true,
+		},
+		faction = "Alliance",
+		type = "Transport",
+	}
+
+	zones[transports["WAKINGSHORES_STORMWIND_BOAT"]] = {
+		paths = {
+			[BZ["Stormwind City"]] = true,
+		},
+		faction = "Alliance",
+		type = "Transport",
+	}
+
+	zones[transports["ORGRIMMAR_WAKINGSHORES_ZEPPELIN"]] = {
+		paths = {
+			[BZ["The Waking Shores"]] = true,
+		},
+		faction = "Horde",
+		type = "Transport",
+	}
+
+	zones[transports["WAKINGSHORES_ORGRIMMAR_ZEPPELIN"]] = {
+		paths = {
+			[BZ["Orgrimmar"]] = true,
+		},
+		faction = "Horde",
+		type = "Transport",
+	}
+
+
 
 	zones[transports["TIRISFAL_HOWLINGFJORD_PORTAL"]] = {
 		paths = {
@@ -5840,6 +6125,27 @@ do
 		type = "Portal",
 	}
 
+	zones[transports["ORIBOS_MECHANGON_PORTAL"]] = {
+		paths = {
+			[BZ["Mechagon Island"]] = true,
+		},
+		type = "Portal",
+	}
+	
+	zones[transports["ORIBOS_KARAZHAN_PORTAL"]] = {
+		paths = {
+			[BZ["Karazhan"]] = true,
+		},
+		type = "Portal",
+	}
+	
+	zones[transports["ORIBOS_GORGROND_PORTAL"]] = {
+		paths = {
+			[BZ["Gorgrond"]] = true,
+		},
+		type = "Portal",
+	}
+
 	zones[transports["ORIBOS_MAW_PORTAL"]] = {
 		paths = {
 			[BZ["The Maw"]] = true,
@@ -6051,6 +6357,7 @@ do
 			[transports["STORMWIND_COT_PORTAL"]] = true,
 			[transports["STORMWIND_AZSUNA_PORTAL"]] = true,
 			[transports["STORMWIND_ORIBOS_PORTAL"]] = true,
+			--[transports["STORMWIND_WAKINGSHORES_BOAT"]] = true,
 		},
 		flightnodes = {
 			[2] = true,      -- Stormwind, Elwynn (A)
@@ -6632,9 +6939,13 @@ do
 		ct_low = 15,
 		continent = Eastern_Kingdoms,
 		expansion = Classic,
-		instances = BZ["Uldaman"],
+		instances = {
+			[BZ["Uldaman"]] = true,
+			[BZ["Uldaman: Legacy of Tyr"]] = true,
+		},
 		paths = {
 			[BZ["Uldaman"]] = true,
+			[BZ["Uldaman: Legacy of Tyr"]] = true,
 			[BZ["Searing Gorge"]] = true,
 			[BZ["Loch Modan"]] = true,
 		},
@@ -6985,7 +7296,8 @@ do
 			[transports["ORGRIMMAR_DALARAN_PORTAL"]] = true,
 			[transports["ORGRIMMAR_AZSUNA_PORTAL"]] = true,
 			[transports["ORGRIMMAR_ORIBOS_PORTAL"]] = true,
-			[transports["ORGRIMMAR_COT_PORTAL"]] = true,	
+			[transports["ORGRIMMAR_COT_PORTAL"]] = true,
+			--[transports["ORGRIMMAR_WAKINGSHORES_ZEPPELIN"]] = true,
 		},
 		flightnodes = {
 			[23] = true,     -- Orgrimmar, Durotar (H)
@@ -9566,12 +9878,16 @@ do
 			[transports["ORIBOS_ARDENWEALD_FLIGHTPATH"]] = true,
 			[transports["ORIBOS_REVENDRETH_FLIGHTPATH"]] = true,
 			[transports["ORIBOS_TAZAVESH_FLIGHTPATH"]] = true,
-			[transports["ORIBOS_ZERETHMORTIS_WAYSTONE"]] = true,			
-		},
+			[transports["ORIBOS_ZERETHMORTIS_WAYSTONE"]] = true,
+			[transports["ORIBOS_MECHANGON_PORTAL"]] = true,
+			[transports["ORIBOS_KARAZHAN_PORTAL"]] = true,
+			[transports["ORIBOS_GORGROND_PORTAL"]] = true,
+					},
 		flightnodes = {
 			[2395] = true,     	-- Oribos
 		},
 		type = "City",
+		faction = "Sanctuary",
 		continent = The_Shadowlands,
 		expansion = Shadowlands,
 	}
@@ -9811,6 +10127,156 @@ do
 		continent = The_Shadowlands,
 		expansion = Shadowlands,
 	}
+
+
+
+	-- DragonFlight zones
+	
+	
+	-- 13862
+	zones[BZ["Valdrakken"]] = {
+		paths = {
+			[BZ["Thaldraszus"]] = true,
+		},
+		flightnodes = {
+			[2810] = true,   -- Valdrakken, Thaldraszus (N)
+		},
+		type = "City",
+		faction = "Sanctuary",
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+	}
+
+	-- 13644
+	zones[BZ["The Waking Shores"]] = {
+		low = 60,
+		high = 62,
+		instances = {
+			[BZ["Neltharus"]] = true,
+			[BZ["Ruby Life Pools"]] = true,
+		},
+		paths = {
+			[BZ["Ohn'ahran Plains"]] = true,
+			[BZ["Neltharus"]] = true,
+			[BZ["Ruby Life Pools"]] = true,
+			[transports["WAKINGSHORES_ORGRIMMAR_ZEPPELIN"]] = true,
+			[transports["WAKINGSHORES_STORMWIND_BOAT"]] = true,
+		},		
+		flightnodes = {
+			[2800] = true,   -- Apex Canopy, The Waking Shores (N)
+			[2801] = true,   -- Apex Observatory, The Waking Shores (N)
+			[2802] = true,   -- Obsidian Throne, The Waking Shores (N)
+			[2803] = true,   -- Uktulut Pier, The Waking Shores (N)
+			[2804] = true,   -- Uktulut Backwater, The Waking Shores (N)
+			[2805] = true,   -- Wingrest Embassy, The Waking Shores (N)
+			[2806] = true,   -- Life Vault Ruins, The Waking Shores (N)
+			[2807] = true,   -- Ruby Life Pools, The Waking Shores (N)
+			[2808] = true,   -- Obsidian Bulwark, The Waking Shores (N)
+			[2809] = true,   -- Dragonscale Basecamp, The Waking Shores (N)
+			[2817] = true,   -- Skytop Observatory, The Waking Shores (N)
+		},
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+	}
+
+
+	-- 13645
+	zones[BZ["Ohn'ahran Plains"]] = {
+		low = 62,
+		high = 65,
+		instances = {
+			[BZ["The Nokhud Offensive"]] = true,
+		},
+		paths = {
+			[BZ["The Waking Shores"]] = true,
+			[BZ["The Azure Span"]] = true,
+			[BZ["The Nokhud Offensive"]] = true,
+		},
+		flightnodes = {
+			[2790] = true,   -- Timberstep Outpost, Ohn'ahran Plains (N)
+			[2792] = true,   -- Maruukai, Ohn'ahran Plains (N)
+			[2793] = true,   -- Forkriver Crossing, Ohn'ahran Plains (N)
+			[2794] = true,   -- Teerakai, Ohn'ahran Plains (N)
+			[2795] = true,   -- Broadhoof Outpost, Ohn'ahran Plains (N)
+			[2796] = true,   -- Shady Sanctuary, Ohn'ahran Plains (N)
+			[2797] = true,   -- Emberwatch, Ohn'ahran Plains (N)
+			[2798] = true,   -- Pinewood Post, Ohn'ahran Plains (N)
+			[2799] = true,   -- Rusza'thar Reach, Ohn'ahran Plains (N)
+			[2825] = true,   -- Ohn'iri Springs, Ohn'ahran Plains (N)
+		},
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+	}
+
+
+	-- 13646
+	zones[BZ["The Azure Span"]] = {
+		low = 65,
+		high = 68,
+		instances = {
+			[BZ["The Azure Vault"]] = true,
+			[BZ["Brackenhide Hollow"]] = true,
+		},
+		paths = {
+			[BZ["Ohn'ahran Plains"]] = true,
+			[BZ["Thaldraszus"]] = true,
+			[BZ["The Azure Vault"]] = true,
+			[BZ["Brackenhide Hollow"]] = true,
+		},
+		flightnodes = {
+			[2773] = true,   -- Azure Archives, Azure Span (N)
+			[2774] = true,   -- Camp Antonidas, Azure Span (N)
+			[2775] = true,   -- Iskaara, Azure Span (N)
+			[2784] = true,   -- Camp Nowhere, Azure Span (N)
+			[2786] = true,   -- Rhonin's Shield, Azure Span (N)
+			[2787] = true,   -- Cobalt Assembly, Azure Span (N)
+			[2788] = true,   -- Theron's Watch, Azure Span (N)
+			[2789] = true,   -- Three-Falls Lookout, Azure Span (N)
+		},
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+	}
+
+	-- 13647
+	zones[BZ["Thaldraszus"]] = {
+		low = 68,
+		high = 70,
+		instances = {
+			[BZ["Algeth'ar Academy"]] = true,
+			[BZ["Halls Of Infusion"]] = true,
+			[BZ["Vault of the Incarnates"]] = true,
+		},
+		paths = {
+			[BZ["Valdrakken"]] = true,
+			[BZ["The Azure Span"]] = true,
+			[BZ["Algeth'ar Academy"]] = true,
+			[BZ["Halls Of Infusion"]] = true,
+			[BZ["Vault of the Incarnates"]] = true,
+		},
+		flightnodes = {
+			[2810] = true,   -- Valdrakken, Thaldraszus (N)
+			[2811] = true,   -- Gelikyr Post, Thaldraszus (N)
+			[2812] = true,   -- Temporal Conflux, Thaldraszus (N)
+			[2814] = true,   -- Veiled Ossuary, Thaldraszus (N)
+			[2813] = true,   -- Algeth'era, Thaldraszus (N)
+			[2815] = true,   -- Garden Shrine, Thaldraszus (N)
+			[2816] = true,   -- Shifting Sands, Thaldraszus (N)
+			[2818] = true,   -- Vault of the Incarnates, Thaldraszus (N)
+		},
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+	}
+
+
+	-- Dracthyr Evokers starting zone
+	zones[BZ["The Forbidden Reach"]] = {
+		low = 58,
+		high = 59,
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+	}
+
+
 
 
 
@@ -11119,7 +11585,7 @@ do
 		groupSize = 10,
 		altGroupSize = 30,
 		type = "Instance",
-		--entrancePortal = { BZ["Nazjatar"], 84.0, 46.4 },  TODO
+		entrancePortal = { BZ["Nazjatar"], 50.21, 10.97 },
 	}		
 	
 	
@@ -11237,7 +11703,7 @@ do
 		paths = BZ["Bastion"],
 		groupSize = 5,
 		type = "Instance",
-		--entrancePortal = { BZ["Bastion"], 0, 0 }, -- TODO
+		entrancePortal = { BZ["Bastion"], 40.33, 55.23 },
 	}
 	
 	-- 12837
@@ -11249,7 +11715,7 @@ do
 		paths = BZ["Bastion"],
 		groupSize = 5,
 		type = "Instance",
---		--entrancePortal = { BZ["Bastion"], 0, 0 }, -- TODO
+		entrancePortal = { BZ["Bastion"], 58.47, 28.70 },
 	}
 	
 	-- 13228
@@ -11261,7 +11727,7 @@ do
 		paths = BZ["Maldraxxus"],
 		groupSize = 5,
 		type = "Instance",
-		--entrancePortal = { BZ["Maldraxxus"], 0, 0 }, -- TODO
+		entrancePortal = { BZ["Maldraxxus"], 59.30, 64.84 },
 	}
 	
 	-- 12841
@@ -11273,7 +11739,7 @@ do
 		paths = BZ["Maldraxxus"],
 		groupSize = 5,
 		type = "Instance",
-		--entrancePortal = { BZ["Maldraxxus"], 0, 0 }, -- TODO
+		entrancePortal = { BZ["Maldraxxus"], 53.21, 53.14 },
 	}
 
 	-- 13334
@@ -11285,19 +11751,7 @@ do
 		paths = BZ["Ardenweald"],
 		groupSize = 5,
 		type = "Instance",
-		--entrancePortal = { BZ["Ardenweald"], 0, 0 }, -- TODO
-	}
-
-	-- 13334
-	zones[BZ["Mists of Tirna Scithe"]] = {
-		low = 55,
-		high = 55,
-		continent = The_Shadowlands,
-		expansion = Shadowlands,
-		paths = BZ["Ardenweald"],
-		groupSize = 5,
-		type = "Instance",
-		--entrancePortal = { BZ["Ardenweald"], 0, 0 }, -- TODO
+		entrancePortal = { BZ["Ardenweald"], 35.71, 54.21 },
 	}
 
 	-- 13309
@@ -11309,7 +11763,7 @@ do
 		paths = BZ["Ardenweald"],
 		groupSize = 5,
 		type = "Instance",
-		--entrancePortal = { BZ["Ardenweald"], 0, 0 }, -- TODO
+		entrancePortal = { BZ["Ardenweald"], 68.60, 65.98 },
 	}
 
 	-- 12831
@@ -11321,7 +11775,7 @@ do
 		paths = BZ["Revendreth"],
 		groupSize = 5,
 		type = "Instance",
-		--entrancePortal = { BZ["Revendreth"], 0, 0 }, -- TODO
+		entrancePortal = { BZ["Revendreth"], 77.96, 48.52 },
 	}
 
 	-- 12842
@@ -11333,7 +11787,7 @@ do
 		paths = BZ["Revendreth"],
 		groupSize = 5,
 		type = "Instance",
-		--entrancePortal = { BZ["Revendreth"], 0, 0 }, -- TODO
+		entrancePortal = { BZ["Revendreth"], 51.09, 30.07 },
 	}
 
 	-- 13577
@@ -11352,6 +11806,115 @@ do
 		type = "Instance",
 		--entrancePortal = { BZ["Revendreth"], 0, 0 }, -- TODO
 	}
+
+
+	-- DragonFlight dungeons
+	
+	
+	-- 14011
+	zones[BZ["Neltharus"]] = {
+		low = 70,
+		high = 70,
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+		paths = BZ["The Waking Shores"],
+		groupSize = 5,
+		type = "Instance",
+		entrancePortal = { BZ["The Waking Shores"], 25.57, 56.95 },
+	}
+
+	-- 14063
+	zones[BZ["Ruby Life Pools"]] = {
+		low = 61,
+		high = 70,
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+		paths = BZ["The Waking Shores"],
+		groupSize = 5,
+		type = "Instance",
+		entrancePortal = { BZ["The Waking Shores"], 60.00, 75.77 },
+	}
+
+	-- whole Ohn'ahran Plains zone?
+	zones[BZ["The Nokhud Offensive"]] = {
+		low = 60,
+		high = 70,
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+		paths = BZ["Ohn'ahran Plains"],
+		groupSize = 5,
+		type = "Instance",
+		entrancePortal = { BZ["Ohn'ahran Plains"], 62.01, 42.44 },
+		flightnodes = {
+			[2847] = true,   -- Maruukai, The Nokhud Offensive (Neutral)
+			[2848] = true,   -- The Nokhud Approach, The Nokhud Offensive (Neutral)
+			[2849] = true,   -- The Battle of Spears, The Nokhud Offensive (Neutral)
+			[2850] = true,   -- Teerakai, The Nokhud Offensive (Neutral)
+			[2851] = true,   -- Ohn'iri Springs, The Nokhud Offensive (Neutral)
+		},
+	}
+	
+	-- 13954
+	zones[BZ["The Azure Vault"]] = {
+		low = 70,
+		high = 70,
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+		paths = BZ["The Azure Span"],
+		groupSize = 5,
+		type = "Instance",
+		entrancePortal = { BZ["The Azure Span"], 38.89, 64.76 },
+	}
+	
+	-- 13991
+	zones[BZ["Brackenhide Hollow"]] = {
+		low = 66,
+		high = 70,
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+		paths = BZ["The Azure Span"],
+		groupSize = 5,
+		type = "Instance",
+		entrancePortal = { BZ["The Azure Span"], 11.57, 48.78 },
+	}
+	
+	-- 14032
+	zones[BZ["Algeth'ar Academy"]] = {
+		low = 70,
+		high = 70,
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+		paths = BZ["Thaldraszus"],
+		groupSize = 5,
+		type = "Instance",
+		entrancePortal = { BZ["Thaldraszus"], 58.28, 42.35 },
+	}
+	
+	-- 14082
+	zones[BZ["Halls Of Infusion"]] = {
+		low = 69,
+		high = 70,
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+		paths = BZ["Thaldraszus"],
+		groupSize = 5,
+		type = "Instance",
+		entrancePortal = { BZ["Thaldraszus"], 59.24, 60.64 },
+	}	
+	
+	-- 13968
+	zones[BZ["Uldaman: Legacy of Tyr"]] = {
+		low = 70,
+		high = 70,
+		continent = Eastern_Kingdoms,
+		expansion = DragonFlight,
+		paths = BZ["Badlands"],
+		groupSize = 5,
+		type = "Instance",
+		entrancePortal = { BZ["Badlands"], 42.4, 18.6 }, 
+	}	
+
+
 
 
 	-- ==================RAIDS=====================
@@ -11821,7 +12384,7 @@ do
 		groupMinSize = 10,
 		groupMaxSize = 30,
 		type = "Instance",
-		--entrancePortal = { BZ["Antoran Wastes"], 0, 0 }, TODO
+		entrancePortal = { BZ["Antoran Wastes"], 54.91, 62.41 },
 	}
 
 	
@@ -11862,6 +12425,24 @@ do
 		type = "Instance",
 		entrancePortal = { BZ["Zereth Mortis"], 68.4, 32.5 }, 
 	}	
+	
+	
+	-- DragonFlight raids
+	
+	-- 14030
+	zones[BZ["Vault of the Incarnates"]] = {
+		low = 70,
+		high = 70,
+		continent = Dragon_Isles,
+		expansion = DragonFlight,
+		paths = BZ["Thaldraszus"],
+		groupMinSize = 10,
+		groupMaxSize = 30,
+		type = "Instance",
+		entrancePortal = { BZ["Thaldraszus"], 73.14, 55.60 },
+	}	
+	
+	
 	
 	-- ==============BATTLEGROUNDS================
 
@@ -12325,10 +12906,10 @@ do
 			-- Get map size in yards
 			local cWidth = HBD:GetZoneSize(continentMapID)
 			if not cWidth then
-				trace("|r|cffff4422! -- Tourist:|r No size data for "..tostring(continentName))
+				trace("|r|cffff4422! -- Tourist:|r No HBD size data for "..tostring(continentName))
 			end
 			if cWidth == 0 then
-				trace("|r|cffff4422! -- Tourist:|r Size is zero for "..tostring(continentName))
+				trace("|r|cffff4422! -- Tourist:|r HBD size is zero for "..tostring(continentName))
 			end
 			zones[continentName].yards = cWidth or 0
 			--trace("Tourist: Continent size in yards for "..tostring(continentName).." ("..tostring(continentMapID).."): "..tostring(round(zones[continentName].yards, 2)))
@@ -12444,10 +13025,7 @@ do
 	end
 
 	trace("Tourist: Built Flightnode lookup table: "..tostring(tablelength(FlightnodeLookupTable)).." nodes.")
-
---	trace("Tourist: Filling Expansion Index lookup...")
---	FillExpansionIndexLookup()
-
+	
 	zones = nil
 
 	trace("Tourist: Initialized.")
