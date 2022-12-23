@@ -82,6 +82,19 @@ function Confederate:Remove(inKey)
         XFG.DataText.Guild:RefreshBroker()
     end
 end
+
+function Confederate:RemoveAll()
+    try(function ()
+        if(self:IsInitialized()) then
+            for _, unit in self:Iterator() do
+                self:Remove(unit:GetKey())
+            end
+        end
+    end).
+    catch(function (inErrorMessage)
+        XFG:Error(ObjectName, inErrorMessage)
+    end)
+end
 --#endregion
 
 --#region Accessors

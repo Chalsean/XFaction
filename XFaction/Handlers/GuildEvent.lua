@@ -24,8 +24,8 @@ function GuildEvent:Initialize()
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
         self:CallbackRosterUpdate()
         GuildRosterEvent()
-        XFG.Events:Add('GuildRole', 'CLUB_SELF_MEMBER_ROLE_UPDATED', XFG.Handlers.GuildEvent.CallbackGuildRole, true)
-        XFG.Events:Add('GuildLeave', 'CLUB_MEMBER_REMOVED', XFG.Handlers.GuildEvent.CallbackGuildLeave, true)
+        --XFG.Events:Add('GuildRole', 'CLUB_SELF_MEMBER_ROLE_UPDATED', XFG.Handlers.GuildEvent.CallbackGuildRole, true)
+        --XFG.Events:Add('GuildLeave', 'CLUB_MEMBER_REMOVED', XFG.Handlers.GuildEvent.CallbackGuildLeave, true)
 		self:IsInitialized(true)
 	end
 end
@@ -107,26 +107,28 @@ function GuildEvent:CallbackGuildRole(inClubID, inRoleID)
     end)
 end
 
-function GuildEvent:CallbackGuildLeave()
-    try(function ()
-        if(GetGuildClubId() == nil) then
-            print(format(XFG.Lib.Locale['LEAVE_GUILD'], XFG.Title))
-            XFG:Stop()
-            XFG.Timers:Get('Login'):Start()    
-        end
-    end).
-    catch(function (inErrorMessage)
-        XFG:Error(ObjectName, inErrorMessage)
-    end)
-end
+-- function GuildEvent:CallbackGuildLeave()
+--     try(function ()
+--         if(GetGuildClubId() == nil) then
+--             print(format(XFG.Lib.Locale['LEAVE_GUILD'], XFG.Title))
+--             XFG:Stop()
+--             XFG.Confederate:RemoveAll()
+--             XFG.Nodes:RemoveAll()
+--             XFG.Timers:Get('Login'):Start()    
+--         end
+--     end).
+--     catch(function (inErrorMessage)
+--         XFG:Error(ObjectName, inErrorMessage)
+--     end)
+-- end
 
-function GuildEvent:CallbackGuildJoin()
-    try(function ()
-        XFG.Timers:Remove('GuildJoin')
-        XFG.Timers:Get('Login'):Start()
-    end).
-    catch(function (inErrorMessage)
-        XFG:Error(ObjectName, inErrorMessage)
-    end)
-end
+-- function GuildEvent:CallbackGuildJoin()
+--     try(function ()
+--         XFG.Timers:Remove('GuildJoin')
+--         XFG.Timers:Get('Login'):Start()
+--     end).
+--     catch(function (inErrorMessage)
+--         XFG:Error(ObjectName, inErrorMessage)
+--     end)
+-- end
 --#endregion
