@@ -7,9 +7,9 @@ local RaiderIO = _G.RaiderIO
 local function DeserializeMessage(inObject, inCompressedData)
 	local decompressed = Deflate:DecompressDeflate(inCompressedData)
 	local messageData = unpickle(decompressed)
-	inObject:Initialize()
+	inObject:Initialize(false)
 
-	if(messageData.K ~= nil) then inObject:SetKey(messageData.K)	end
+	if(messageData.K ~= nil) then inObject:SetKey(messageData.K) end
 	if(messageData.T ~= nil) then inObject:SetTo(messageData.T)	end
 	if(messageData.F ~= nil) then inObject:SetFrom(messageData.F)	end
 	if(messageData.S ~= nil) then inObject:SetSubject(messageData.S) end

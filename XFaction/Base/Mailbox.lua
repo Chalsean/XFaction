@@ -139,12 +139,6 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     local messageKey = string.sub(inEncodedMessage, 3, 3 + XFG.Settings.System.UIDLength - 1)
     local messageData = string.sub(inEncodedMessage, 3 + XFG.Settings.System.UIDLength, -1)
 
-    -- Temporary, remove after all upgraded to 4.0
-    if(not packetNumber or packetNumber == 0 or not totalPackets or totalPackets == 0) then
-        XFG:Debug(ObjectName, 'Message is in pre-4.0 format')
-        return
-    end
-
     -- Ignore if it's your own message or you've seen it before
     if(XFG.Mailbox.BNet:Contains(messageKey) or XFG.Mailbox.Chat:Contains(messageKey)) then
         XFG:Trace(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
@@ -168,6 +162,13 @@ end
 
 function Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+
+    -- Sanity check that sender is in confederate
+    -- if(not inMessage:HasGuild()) then
+    --     XFG:Warn(ObjectName, 'Message did not originate from own confederate')
+    --     inMessage:Print()
+    --     return
+    -- end
 
     -- Is a newer version available?
     if(not XFG.Cache.NewVersionNotify and XFG.Version:IsNewer(inMessage:GetVersion())) then

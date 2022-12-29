@@ -96,9 +96,9 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
             if(friend ~= nil) then
                 friend:IsRunningAddon(true)
                 friend:CreateLink()
-                if(inEncodedMessage == 'PING') then
+                if(inEncodedMessage:sub(1, 4) == 'PING') then
                     XFG:Debug(ObjectName, 'Received ping from [%s]', friend:GetTag())
-                elseif(inEncodedMessage == 'RE:PING') then
+                elseif(inEncodedMessage:sub(1,7) == 'RE:PING') then
                     XFG:Debug(ObjectName, '[%s] Responded to ping', friend:GetTag())
                 end
             end

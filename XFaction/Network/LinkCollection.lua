@@ -132,11 +132,13 @@ end
 --#region Janitorial
 function LinkCollection:Backup()
 	try(function ()
-		local linksString = ''
-		for _, link in self:Iterator() do
-			linksString = linksString .. '|' .. link:GetString()
+		if(self:IsInitialized()) then
+			local linksString = ''
+			for _, link in self:Iterator() do
+				linksString = linksString .. '|' .. link:GetString()
+			end
+			XFG.Cache.Backup.Links = linksString
 		end
-		XFG.Cache.Backup.Links = linksString
 	end).
 	catch(function (inErrorMessage)
 		XFG.Cache.Errors[#XFG.Cache.Errors + 1] = 'Failed to create links backup before reload: ' .. inErrorMessage

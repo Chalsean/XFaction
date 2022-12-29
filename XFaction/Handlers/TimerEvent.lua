@@ -101,6 +101,7 @@ function TimerEvent:CallbackLogin()
 	catch(function (inErrorMessage)
 		XFG:Error(ObjectName, inErrorMessage)
 		XFG:Stop()
+		--XFG.Events:Add('GuildJoin', 'CLUB_MEMBER_ADDED', XFG.Handlers.GuildEvent.CallbackGuildJoin, true)
 	end).
 	finally(function ()
 		XFG.Cache.Backup = {

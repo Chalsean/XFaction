@@ -53,6 +53,19 @@ function NodeCollection:Remove(inNode)
 		self:Push(inNode)
 	end)
 end
+
+function NodeCollection:RemoveAll()
+	try(function ()
+		if(self:IsInitialized()) then
+			for _, node in self:Iterator() do
+				self:Remove(node)
+			end
+		end
+	end).
+	catch(function (inErrorMessage)
+		XFG:Error(ObjectName, inErrorMessage)
+	end)
+end
 --#endregion
 
 --#region Accessors
