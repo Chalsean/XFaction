@@ -307,7 +307,7 @@ function Unit:SetNote(inNote)
                 if(teamInitial ~= nil and XFG.Teams:Contains(teamInitial)) then
                     self:SetTeam(XFG.Teams:Get(teamInitial))
                 end
-                if(XFG.Guilds:Contains(guildInitials) and not self:GetGuild():Equals(XFG.Guilds:Get(guildInitials))) then
+                if(guildInitials ~= nil and XFG.Guilds:Contains(guildInitials) and not self:GetGuild():Equals(XFG.Guilds:Get(guildInitials))) then
                     self:IsAlt(true)
                     local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
                     if(mainName ~= nil) then           
@@ -325,7 +325,8 @@ function Unit:SetNote(inNote)
         end
     end).
     catch(function(inErrorMessage)
-        XFG:Trace(ObjectName, 'Failed to parse player note: [' .. self:GetNote() .. ']')        
+        XFG:Trace(ObjectName, 'Failed to parse player note: [' .. self:GetNote() .. ']')
+        XFG:Trace(ObjectName, inErrorMessage)
     end).
     finally(function()
         if(not self:HasTeam()) then
