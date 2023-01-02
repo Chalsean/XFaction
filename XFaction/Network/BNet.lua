@@ -109,10 +109,10 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
     end)
 
     try(function ()
-        if(inEncodedMessage == 'PING') then
+        if(inEncodedMessage:sub(1, 4) == 'PING') then
             XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
             XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
-        elseif(inEncodedMessage ~= 'RE:PING') then
+        elseif(inEncodedMessage:sub(1,7) ~= 'RE:PING') then
             XFG.Mailbox.BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    
         end        
     end).

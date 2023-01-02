@@ -45,6 +45,9 @@ function SystemEvent:CallbackLogout()
             if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
                 message:SetMainName(XFG.Player.Unit:GetMainName())
             end
+            message:SetGuild(XFG.Player.Guild)
+            message:SetRealm(XFG.Player.Realm)
+            message:SetUnitName(XFG.Player.Unit:GetName())
             message:SetData(' ')
             XFG.Mailbox.Chat:Send(message)
         end).

@@ -29,16 +29,11 @@ end
 --#endregion
 
 --#region Initializers
-function Message:Initialize(inOwnMessage)
+function Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.targets = {}
-        if(inOwnMessage == nil or inOwnMessage == true) then
-            self:SetFrom(XFG.Player.Unit:GetGUID())
-            self:SetGuild(XFG.Player.Guild)
-            self:SetRealm(XFG.Player.Realm)
-            self:SetUnitName(XFG.Player.Unit:GetName())
-        end
+        self:SetFrom(XFG.Player.Unit:GetGUID())
         self:SetTimeStamp(ServerTime())
         self:SetAllTargets()
         self:SetVersion(XFG.Version)
@@ -62,7 +57,6 @@ function Message:Print()
     XFG:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
     XFG:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
     if(self:HasVersion()) then self:GetVersion():Print() end
-    if(self:HasGuild()) then self:GetGuild():Print() end
 end
 --#endregion
 
@@ -294,5 +288,6 @@ function Message:FactoryReset()
     self.mainName = nil
     self.guild = nil
     self.realm = nil
+    self:Initialize()
 end
 --#endregion
