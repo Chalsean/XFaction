@@ -118,10 +118,6 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
     end).
     catch(function (inErrorMessage)
         XFG:Warn(ObjectName, inErrorMessage)
-    end).
-    finally(function ()
-        XFG.Metrics:Get(XFG.Settings.Metric.BNetReceive):Increment()
-        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
     end)
 end
 --#endregion

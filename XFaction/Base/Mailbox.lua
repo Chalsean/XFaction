@@ -125,13 +125,21 @@ end
 
 function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
+    XFG:Trace(ObjectName, 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
+
     --#region Ignore message
     -- If not a message from this addon, ignore
     if(not self:IsAddonTag(inMessageTag)) then
         return
     end
 
-    XFG:Trace(ObjectName, 'Received %s packet from %s', inDistribution, inSender)
+    if(inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
+        XFG.Metrics:Get(XFG.Settings.Metric.ChannelReceive):Increment()
+        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
+    else
+        XFG.Metrics:Get(XFG.Settings.Metric.BNetReceive):Increment()
+        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
+    end
 
     -- Ensure this message has not already been processed
     local packetNumber = tonumber(string.sub(inEncodedMessage, 1, 1))
