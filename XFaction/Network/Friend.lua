@@ -33,6 +33,19 @@ function Friend:Print()
     XFG:Debug(ObjectName, '  myLink (' .. type(self.myLink) .. '): ' .. tostring(self.myLink))
     if(self:HasTarget()) then self:GetTarget():Print() end
 end
+
+function Friend:Deconstructor()
+    self:ParentDeconstructor()
+    self.ID = nil         
+    self.accountID = nil  
+    self.gameID = nil     
+    self.accountName = nil
+    self.tag = nil
+    self.target = nil
+    self.isRunningAddon = false
+    self.myLink = false
+    self:Initialize()
+end
 --#endregion
 
 --#region Accessors
@@ -168,20 +181,5 @@ function Friend:SetFromAccountInfo(inAccountInfo)
     local faction = XFG.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
     local target = XFG.Targets:GetByRealmFaction(realm, faction)
     self:SetTarget(target)
-end
---#endregion
-
---#region Janitorial
-function Friend:FactoryReset()
-    self:ParentFactoryReset()
-    self.ID = nil         
-    self.accountID = nil  
-    self.gameID = nil     
-    self.accountName = nil
-    self.tag = nil
-    self.target = nil
-    self.isRunningAddon = false
-    self.myLink = false
-    self:Initialize()
 end
 --#endregion

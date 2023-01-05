@@ -41,6 +41,26 @@ function Message:Initialize()
     end
     return self:IsInitialized()
 end
+
+function Message:Deconstructor()
+    self:ParentDeconstructor()
+    self.to = nil
+    self.from = nil
+    self.type = nil
+    self.subject = nil
+    self.epochTime = nil
+    self.targets = nil
+    self.targetCount = 0
+    self.data = nil
+    self.packetNumber = 1
+    self.totalPackets = 1
+    self.version = nil
+    self.unitName = nil
+    self.mainName = nil
+    self.guild = nil
+    self.realm = nil
+    self:Initialize()
+end
 --#endregion
 
 --#region Print
@@ -267,27 +287,5 @@ function Message:SetRemainingTargets(inTargetString)
             end
         end
     end
-end
---#endregion
-
---#region Janitorial
-function Message:FactoryReset()
-    self:ParentFactoryReset()
-    self.to = nil
-    self.from = nil
-    self.type = nil
-    self.subject = nil
-    self.epochTime = nil
-    self.targets = nil
-    self.targetCount = 0
-    self.data = nil
-    self.packetNumber = 1
-    self.totalPackets = 1
-    self.version = nil
-    self.unitName = nil
-    self.mainName = nil
-    self.guild = nil
-    self.realm = nil
-    self:Initialize()
 end
 --#endregion

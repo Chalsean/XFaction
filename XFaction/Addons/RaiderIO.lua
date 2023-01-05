@@ -11,6 +11,12 @@ function XFRaiderIO:new()
     object.dungeon = 0
     return object
 end
+
+function XFRaiderIO:Deconstructor()
+    self:ParentDeconstructor()
+    self.raid = ''
+    self.dungeon = 0
+end
 --#endregion
 
 --#region Print
@@ -60,13 +66,5 @@ function XFRaiderIO:Equals(inObject)
     if(self:GetRaid() ~= inObject:GetRaid()) then return false end
     if(self:GetDungeon() ~= inObject:GetDungeon()) then return false end
     return true
-end
---#endregion
-
---#region Janitorial
-function XFRaiderIO:FactoryReset()
-    self:ParentFactoryReset()
-    self.raid = ''
-    self.dungeon = 0
 end
 --#endregion

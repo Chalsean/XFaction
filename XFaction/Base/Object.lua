@@ -134,7 +134,7 @@ end
 --#endregion
 
 --#region DataSet
-function Object:ParentFactoryReset()
+function Object:ParentDeconstructor()
     self.key = nil
     self.name = nil
     self.initialized = false

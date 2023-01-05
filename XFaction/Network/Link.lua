@@ -14,6 +14,13 @@ function Link:new()
     object.epochTime = 0
     return object
 end
+
+function Link:Deconstructor()
+    self:ParentDeconstructor()
+    self.fromNode = nil
+    self.toNode = nil
+    self.epochTime = 0
+end
 --#endregion
 
 --#region Initializers
@@ -112,14 +119,5 @@ function Link:SetObjectFromString(inLinkString)
     self:SetToNode(toNode)
 
     self:Initialize()
-end
---#endregion
-
---#region Janitorial
-function Link:FactoryReset()
-    self:ParentFactoryReset()
-    self.fromNode = nil
-    self.toNode = nil
-    self.epochTime = 0
 end
 --#endregion
