@@ -82,10 +82,7 @@ function Unit:Deconstructor()
     self.pvp = ''
     self.guildSpeak = true
     self.guildListen = true
-    if(self.raiderIO ~= nil) then
-        self.raiderIO:Deconstructor()
-        self.raiderIO = nil
-    end
+    self.raiderIO = nil
 end
 --#endregion
 

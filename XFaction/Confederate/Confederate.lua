@@ -75,6 +75,9 @@ function Confederate:Remove(inKey)
         end
         local target = XFG.Targets:GetByRealmFaction(unit:GetRealm(), unit:GetFaction())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
+        if(unit:HasRaiderIO()) then
+            XFG.Addons.RaiderIO:Remove(unit:GetRaiderIO())
+        end
         self:Push(unit)
         XFG.DataText.Guild:RefreshBroker()
     end
