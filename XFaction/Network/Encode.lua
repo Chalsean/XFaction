@@ -43,6 +43,7 @@ function XFG:SerializeUnitData(inUnitData)
 
 	messageData.A = inUnitData:GetRace():GetKey()
 	messageData.B = inUnitData:GetAchievementPoints()
+	messageData.C = inUnitData:GetID()
 	messageData.F = inUnitData:GetFaction():GetKey()
 	messageData.G = inUnitData:GetGuild():GetName()
 	messageData.R = inUnitData:GetRealm():GetID()

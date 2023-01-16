@@ -93,9 +93,9 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText[ info[#info] ] end,
 					set = function(info, value) 
 						XFG.Config.DataText[ info[#info] ] = value; 
-						XFG.DataText.Guild:SetFont()
-						XFG.DataText.Links:SetFont()
-						XFG.DataText.Metrics:SetFont()
+						XFG.DataText.Guild:PostInitialize()
+						XFG.DataText.Links:PostInitialize()
+						XFG.DataText.Metrics:PostInitialize()
 					end
 				},
 				FontSize = {
@@ -107,9 +107,9 @@ XFG.Options.args.DataText = {
 					get = function(info) return XFG.Config.DataText[ info[#info] ] end,
 					set = function(info, value) 
 						XFG.Config.DataText[ info[#info] ] = value; 
-						XFG.DataText.Guild:SetFont()
-						XFG.DataText.Links:SetFont()
-						XFG.DataText.Metrics:SetFont()
+						XFG.DataText.Guild:PostInitialize()
+						XFG.DataText.Links:PostInitialize()
+						XFG.DataText.Metrics:PostInitialize()
 					end
 				},
 			},

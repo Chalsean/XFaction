@@ -111,7 +111,7 @@ function Factory:Push(inObject)
     if(self:IsLoaned(inObject:GetFactoryKey())) then
         self.checkedOut[inObject:GetFactoryKey()] = nil
         self.checkedOutCount = self.checkedOutCount - 1
-        inObject:FactoryReset()
+        inObject:Deconstructor()
         inObject:SetFactoryTime(ServerTime())
         self.checkedIn[inObject:GetFactoryKey()] = inObject
         self.checkedInCount = self.checkedInCount + 1         

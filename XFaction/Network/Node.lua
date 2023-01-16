@@ -11,6 +11,12 @@ function Node:new()
     object.linkCount = 0
     return object
 end
+
+function Node:Deconstructor()
+    self:ParentDeconstructor()
+    self.target = nil
+    self.linkCount = 0
+end
 --#endregion
 
 --#region Initializers
@@ -73,13 +79,5 @@ function Node:DecrementLinkCount()
     if(self:GetLinkCount() == 0) then
         XFG.Nodes:Remove(self)
     end
-end
---#endregion
-
---#region Janitorial
-function Node:FactoryReset()
-    self:ParentFactoryReset()
-    self.target = nil
-    self.linkCount = 0
 end
 --#endregion

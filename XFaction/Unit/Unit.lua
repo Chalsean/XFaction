@@ -50,6 +50,40 @@ function Unit:new()
 
     return object
 end
+
+function Unit:Deconstructor()
+    self:ParentDeconstructor()
+    self.guid = nil
+    self.unitName = nil
+    self.ID = 0
+    self.rank = nil
+    self.level = 60
+    self.class = nil
+    self.spec = nil
+    self.zone = nil
+    self.zoneName = nil
+    self.note = nil
+    self.isOnline = false
+    self.race = nil
+    self.timeStamp = nil
+    self.profession1 = nil
+    self.profession2 = nil
+    self.achievements = 0
+    self.isRunningAddon = false
+    self.isAlt = false
+    self.mainName = nil
+    self.isPlayer = false
+    self.faction = nil
+    self.team = nil
+    self.guild = nil
+    self.realm = nil
+    self.version = nil
+    self.itemLevel = 0
+    self.pvp = ''
+    self.guildSpeak = true
+    self.guildListen = true
+    self.raiderIO = nil
+end
 --#endregion
 
 --#region Initializers
@@ -672,41 +706,5 @@ function Unit:Equals(inUnit)
 	-- A unit cannot change GUID while logged in, but it is the key so consider
     
     return true
-end
---#endregion
-
---#region Janitorial
-function Unit:FactoryReset()
-    self:ParentFactoryReset()
-    self.guid = nil
-    self.unitName = nil
-    self.ID = 0
-    self.rank = nil
-    self.level = 60
-    self.class = nil
-    self.spec = nil
-    self.zone = nil
-    self.zoneName = nil
-    self.note = nil
-    self.isOnline = false
-    self.race = nil
-    self.timeStamp = nil
-    self.profession1 = nil
-    self.profession2 = nil
-    self.achievements = 0
-    self.isRunningAddon = false
-    self.isAlt = false
-    self.mainName = nil
-    self.isPlayer = false
-    self.faction = nil
-    self.team = nil
-    self.guild = nil
-    self.realm = nil
-    self.version = nil
-    self.itemLevel = 0
-    self.pvp = ''
-    self.guildSpeak = true
-    self.guildListen = true
-    self.raiderIO = nil
 end
 --#endregion
