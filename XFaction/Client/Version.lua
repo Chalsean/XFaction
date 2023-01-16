@@ -11,6 +11,7 @@ function Version:new()
     object.major = nil
     object.minor = nil
     object.patch = nil
+    object.changeLog = false
     return object
 end
 --#endregion
@@ -21,6 +22,7 @@ function Version:Print()
     XFG:Debug(ObjectName, '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
     XFG:Debug(ObjectName, '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
     XFG:Debug(ObjectName, '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
+    XFG:Debug(ObjectName, '  changeLog (' .. type(self.changeLog) .. '): ' .. tostring(self.changeLog))
 end
 --#endregion
 
@@ -32,7 +34,11 @@ function Version:SetKey(inKey)
     local parts = Split(inKey, '.')
     self:SetMajor(tonumber(parts[1]))
     self:SetMinor(tonumber(parts[2]))
-    self:SetPatch(tonumber(parts[3]))
+    if(#parts == 3) then
+        self:SetPatch(tonumber(parts[3]))
+    else
+        self:SetPatch(0)
+    end
 end
 
 function Version:GetMajor()
@@ -62,10 +68,21 @@ function Version:SetPatch(inPatch)
     self.patch = inPatch
 end
 
-function Version:IsNewer(inVersion)
+function Version:IsAlpha()
+    return self:GetPatch() == 0
+end
+
+function Version:IsBeta()
+    return self:GetPatch() % 2 == 1
+end
+
+function Version:IsProduction()
+    return not self:IsAlpha() and not self:IsBeta()
+end
+
+function Version:IsNewer(inVersion, inIncludeAllBuilds)
     assert(type(inVersion) == 'table' and inVersion.__name == ObjectName, 'argument must be Version object')
-    -- Do not consider alpha/beta builds as newer
-    if(inVersion:GetPatch() == 0 or inVersion:GetPatch() % 2 == 1) then
+    if(not inIncludeAllBuilds and (inVersion:IsAlpha() or inVersion:IsBeta())) then
         return false
     end
     if(self:GetMajor() < inVersion:GetMajor() or 
@@ -74,5 +91,22 @@ function Version:IsNewer(inVersion)
         return true
     end
     return false
+end
+
+function Version:IsInChangeLog(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+    if(inBoolean ~= nil) then
+        self.changeLog = inBoolean
+    end
+    return self.changeLog
+end
+--#endregion
+
+--#region Operators
+function Version:Copy(inVersion)
+    assert(type(inVersion) == 'table' and inVersion.__name == ObjectName, 'argument must be Version object')
+    self:SetMajor(inVersion:GetMajor())
+    self:SetMinor(inVersion:GetMinor())
+    self:SetPatch(inVersion:GetPatch())
 end
 --#endregion

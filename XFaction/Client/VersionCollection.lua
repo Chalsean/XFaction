@@ -33,6 +33,28 @@ function VersionCollection:Initialize()
 end
 --#endregion
 
+--#region Iterators
+function VersionCollection:SortedIterator()
+	return PairsByKeys(self.objects, function(a, b) return self:Get(a):IsNewer(self:Get(b), true) end)
+end
+
+function VersionCollection:ReverseSortedIterator()
+	return PairsByKeys(self.objects, function(a, b) return not self:Get(a):IsNewer(self:Get(b), true) end)
+end
+--#endregion
+
+--#region Hash
+function VersionCollection:AddVersion(inKey)
+	assert(type(inKey) == 'string')
+	if(not self:Contains(inKey)) then
+		local version = Version:new()
+		version:Initialize()
+		version:SetKey(inKey)
+		self.parent.Add(self, version)
+	end
+end
+--#endregion
+
 --#region Accessors
 function VersionCollection:SetCurrent(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')

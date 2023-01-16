@@ -71,6 +71,10 @@ end
 function ObjectCollection:SortedIterator()
 	return PairsByKeys(self.objects)
 end
+
+function ObjectCollection:ReverseSortedIterator()
+	return PairsByKeys(self.objects, function(a, b) return a > b end)
+end
 --#endregion
 
 --#region Hash

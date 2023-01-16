@@ -93,6 +93,11 @@ L['COMPRESS'] = 'Compress'
 L['GUILD_INFO'] = 'Guild Info'
 L['HOW_TO'] = 'How To'
 L['ADDONS'] = 'Addons'
+L['ABOUT'] = 'About'
+L['CHANGE_LOG'] = 'Change Log'
+L['SUMMARY'] = 'Summary'
+L['NEW'] = 'New'
+L['IMPROVEMENTS'] = 'Improvements'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
