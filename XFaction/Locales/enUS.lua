@@ -99,6 +99,7 @@ L['SUMMARY'] = 'Summary'
 L['NEW'] = 'New'
 L['IMPROVEMENTS'] = 'Improvements'
 L['COMMUNICATION'] = 'Communication'
+L['METRICS'] = 'Metrics'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -110,7 +111,7 @@ L['GENERAL_GUILD_CHAT_ACHIEVEMENT'] = 'Personal achievements forwarded to confed
 L['GENERAL_SYSTEM_MESSAGES'] = 'System Messages'
 L['GENERAL_SYSTEM_LOGIN'] = 'Receive notification when player using the addon comes online/offline in the confederate.'
 L['GENERAL_DATA_BROKERS'] = 'Data Brokers'
-L['GENERAL_DTGUILD'] = 'Full roster visibility in the confederate via data broker Guild (X).'
+L['GENERAL_DTGUILD'] = 'Full roster visibility in the confederate via data broker Guild (X), including: name, faction, level, spec, class, race, realm, guild, team, rank, zone, professions, pvp rating and max item level.'
 L['GENERAL_DTLINKS'] = 'Visibility of the active BNet links in the confederate used by the addon via data broker Links (X).'
 L['GENERAL_DTMETRICS'] = 'Displays statistical information about addon performance via data broker Metrics (X).'
 L['GENERAL_DTTOKEN'] = 'WoW Token (X): View current market price of WoW tokens'
