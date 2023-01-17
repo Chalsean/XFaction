@@ -12,13 +12,21 @@ XFG.ChangeLog['4.3.1'] = {
                 order = 1,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Moved About, Setup, Support, Debug configuration menu items as tabs under General.',
-            },
-            Two = {
-                order = 2,
-                type = 'description',
                 name = 'Implemented Change Log tab under General.',
+            },
+        }
+    },	
+    Improvements = {
+        order = 2,
+        type = 'group',
+        name = XFG.Lib.Locale['IMPROVEMENTS'],
+        guiInline = true,
+        args = {
+            One = {
+                order = 1,
+                type = 'description',
                 fontSize = 'medium',
+                name = 'Reorganized configuration menu items to (hopefully) be more intuitive.',
             },
         }
     },			
