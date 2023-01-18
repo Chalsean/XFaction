@@ -250,7 +250,7 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     -- Process LOGOUT message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
-        if(XFG.Player.Guild:Equals(unitData:GetGuild())) then
+        if(XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             -- In case we get a message before scan
             if(not XFG.Confederate:Contains(inMessage:GetFrom())) then
                 XFG.Frames.System:DisplayLogoutMessage(inMessage)

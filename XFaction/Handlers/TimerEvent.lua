@@ -168,7 +168,7 @@ end
 function TimerEvent:CallbackGuildRoster()
 	try(function ()
 		if(XFG.Initialized and XFG.Player.Guild and XFG.Handlers.GuildEvent:ShouldScan()) then
-			XFG.Handlers.GuildEvent:CallbackGuildRoster()
+			XFG.Handlers.GuildEvent:CallbackRosterUpdate()
 		end
 	end).
 	catch(function (inErrorMessage)
