@@ -38,11 +38,6 @@ The addon should provide the following functionalities:
 - This will show various metrics about XFaction performance
 <img src="https://user-images.githubusercontent.com/45693161/181374308-c82a3fb4-7e9f-4cb3-85a2-e7252296d36d.png" width=200>
 
-
-> WoW Token (X)
-- Simply displays the current WoW token market price
-<img src="https://user-images.githubusercontent.com/45693161/175836370-d6a40a6f-0356-4e47-9461-2f554ea3d7d4.png" width=200>
-
 ## Misc
 
 ### Dependencies
@@ -62,8 +57,6 @@ The addon should provide the following functionalities:
 > LibDeflate
 
 > LibQTip
-
-> LibRealmInfo (*modified)
 
 > LibSharedMedia
 
