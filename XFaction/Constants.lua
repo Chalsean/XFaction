@@ -19,6 +19,7 @@ XFG.Verbosity = 4
 XFG.Addons = {
 	ElvUI = {},
 }
+XFG.ChangeLog = {}
 XFG.DataText = {}
 XFG.Factories = {}
 XFG.Frames = {}

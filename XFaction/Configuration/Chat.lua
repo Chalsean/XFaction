@@ -1,5 +1,5 @@
 local XFG, G = unpack(select(2, ...))
-local LogCategory = 'Config'
+local ObjectName = 'Config.Chat'
 
 XFG.Options.args.Chat = {
 	name = XFG.Lib.Locale['CHAT'],
