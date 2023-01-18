@@ -54,6 +54,11 @@ function XFG:DeserializeUnitData(inData)
 	unit:SetRace(XFG.Races:Get(deserializedData.A))
 	if(deserializedData.B ~= nil) then unit:SetAchievementPoints(deserializedData.B) end
 	if(deserializedData.C ~= nil) then unit:SetID(tonumber(deserializedData.C)) end
+	if(deserializedData.E ~= nil) then 
+		unit:SetPresence(tonumber(deserializedData.E)) 
+	else
+		unit:SetPresence(Enum.ClubMemberPresence.Online)
+	end
 	unit:SetFaction(XFG.Factions:Get(deserializedData.F))
 	unit:SetGUID(deserializedData.K)
 	unit:SetKey(deserializedData.K)

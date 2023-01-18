@@ -27,7 +27,7 @@ function Unit:new()
     object.zone = nil
     object.zoneName = nil
     object.note = nil
-    object.isOnline = false
+    object.presence = Enum.ClubMemberPresence.Unknown
     object.race = nil
     object.timeStamp = nil
     object.profession1 = nil
@@ -63,7 +63,7 @@ function Unit:Deconstructor()
     self.zone = nil
     self.zoneName = nil
     self.note = nil
-    self.isOnline = false
+    self.presence = Enum.ClubMemberPresence.Unknown
     self.race = nil
     self.timeStamp = nil
     self.profession1 = nil
@@ -96,27 +96,18 @@ function Unit:Initialize(inMemberID)
         unitData = GetMemberInfoForSelf(XFG.Player.Guild:GetID())
     end
 
-    -- Sometimes fails on initial login and odd, but guildRank is nil during a zone transition
-    if(unitData == nil or unitData.guildRank == nil) then
+    -- Failure conditions:
+    --   Sometimes fails on initial login
+    --   guildRank is nil during a zone transition
+    --   Unknown presence means dont know if online or offline
+    if(unitData == nil or unitData.guildRank == nil or unitData.presence == Enum.ClubMemberPresence.Unknown) then
+        self:IsInitialized(false)
         return
     end
  
     self:SetGUID(unitData.guid)
     self:SetKey(self:GetGUID())
-
-    if(not self:IsPlayer() and 
-       XFG.Confederate:Contains(self:GetKey()) and 
-       XFG.Confederate:Get(self:GetKey()):IsRunningAddon()) then
-        self:IsInitialized(false)
-        return
-    end
-
-    self:IsOnline(unitData.presence == 1 or unitData.presence == 4 or unitData.presence == 5)
-    if(self:IsOffline()) then
-        self:IsInitialized(true)
-        return
-    end
-    
+    self:SetPresence(unitData.presence)    
     self:SetID(unitData.memberId)
     self:SetName(unitData.name)
     self:SetUnitName(unitData.name .. '-' .. XFG.Player.Realm:GetAPIName())
@@ -378,16 +369,23 @@ function Unit:SetFaction(inFaction)
     self.faction = inFaction
 end
 
-function Unit:IsOnline(inBoolean)
-    assert(inBoolean == nil or type(inBoolean == 'boolean'), 'argument must be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.isOnline = inBoolean
-    end
-    return self.isOnline
+function Unit:GetPresence()
+    return self.presence
+end
+
+function Unit:SetPresence(inPresence)
+    assert(type(inPresence) == 'number')
+    self.presence = inPresence
+end
+
+function Unit:IsOnline()
+    return self:GetPresence() == Enum.ClubMemberPresence.Online or 
+           self:GetPresence() == Enum.ClubMemberPresence.Away or 
+           self:GetPresence() == Enum.ClubMemberPresence.Busy
 end
 
 function Unit:IsOffline()
-    return not self.isOnline
+    return not self:IsOnline()
 end
 
 function Unit:CanGuildSpeak(inBoolean)
@@ -673,6 +671,7 @@ function Unit:Equals(inUnit)
 
     if(self:GetKey() ~= inUnit:GetKey()) then return false end
     if(self:GetGUID() ~= inUnit:GetGUID()) then return false end
+    if(self:GetPresence() ~= inUnit:GetPresence()) then return false end
     if(self:GetID() ~= inUnit:GetID()) then return false end
     if(self:GetLevel() ~= inUnit:GetLevel()) then return false end
     if(self:GetZone() ~= inUnit:GetZone()) then return false end

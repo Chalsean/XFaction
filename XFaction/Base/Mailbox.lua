@@ -250,11 +250,21 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     -- Process LOGOUT message
     if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
-        -- If own guild, GuildEvent will take care of logout
-        if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
-            XFG.Confederate:Remove(inMessage:GetFrom())
+        if(XFG.Player.Guild:Equals(unitData:GetGuild())) then
+            -- In case we get a message before scan
+            if(not XFG.Confederate:Contains(inMessage:GetFrom())) then
+                XFG.Frames.System:DisplayLogoutMessage(inMessage)
+            else
+                if(XFG.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
+                    XFG.Frames.System:DisplayLogoutMessage(inMessage)
+                end
+                XFG.Confederate:OfflineUnit(inMessage:GetFrom())
+            end
+        else
             XFG.Frames.System:DisplayLogoutMessage(inMessage)
+            XFG.Confederate:Remove(inMessage:GetFrom())
         end
+        XFG.DataText.Guild:RefreshBroker()
         return
     end
 
@@ -267,18 +277,18 @@ function Mailbox:Process(inMessage, inMessageTag)
     -- Process DATA/LOGIN message
     if(inMessage:HasUnitData()) then
         local unitData = inMessage:GetData()
-        unitData:IsPlayer(false)
-        if(XFG.Confederate:Add(unitData)) then
-            XFG:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:GetUnitName())
-        end
-
-        -- If unit has just logged in, reply with latest information
-        if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
-            -- Display system message that unit has logged on
-            if(not XFG.Player.Guild:Equals(unitData:GetGuild())) then
+        if(XFG.Player.Guild:Equals(unitData:GetGuild()) and XFG.Confederate:Contains(unitData:GetKey())) then
+            local oldData = XFG.Confederate:Get(unitData:GetKey())
+            -- In case we get a message before scan
+            if(oldData:IsOffline() and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
                 XFG.Frames.System:DisplayLoginMessage(inMessage)
             end
+        elseif(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
+            XFG.Frames.System:DisplayLoginMessage(inMessage)
         end
+        XFG.Confederate:Add(unitData)
+        XFG:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:GetUnitName())
+        XFG.DataText.Guild:RefreshBroker()
     end
     --#endregion
 end

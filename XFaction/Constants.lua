@@ -86,7 +86,7 @@ XFG.Settings = {
 		}
 	},
 	LocalGuild = {
-		ScanTimer = 30,          -- Seconds between forced local guild scans
+		ScanTimer = 5,           -- Seconds between local guild scans
 		LoginGiveUp = 60 * 5,    -- Seconds before giving up on querying for guild on login
 		MaxGuildInfo = 500,      -- Maximum # of characters guild info can take
 	},	

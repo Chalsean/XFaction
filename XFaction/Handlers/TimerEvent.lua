@@ -36,6 +36,19 @@ function TimerEvent:CallbackLogin()
 				XFG.Guilds:SetPlayerGuild()
 				XFG.Targets:Initialize()	
 
+				-- Some of this data (spec) is like guild where its not available for a time after initial login
+				-- Seems to align with guild data becoming available
+				XFG.Races:Initialize()
+				XFG.Classes:Initialize()
+				XFG.Specs:Initialize()		    
+				XFG.Professions:Initialize()
+
+				-- Need the player data to continue setup
+				local unitData = XFG.Confederate:Pop()
+				unitData:Initialize()
+				unitData:Print()
+				XFG.Confederate:Add(unitData)
+
 				-- Chat channel setup via guild info, player will start to receive messaging via chat channel
 				XFG.Channels:Initialize()
 				XFG.Handlers.ChannelEvent:Initialize()
@@ -48,13 +61,6 @@ function TimerEvent:CallbackLogin()
 				XFG.Friends:Initialize()
 				XFG.Handlers.BNetEvent:Initialize()
 				XFG.Mailbox.BNet:Initialize()
-				
-				-- Some of this data (spec) is like guild where its not available for a time after initial login
-				-- Seems to align with guild data becoming available
-				XFG.Races:Initialize()
-				XFG.Classes:Initialize()
-				XFG.Specs:Initialize()		    
-				XFG.Professions:Initialize()
 
 				-- Restore guild members from backup
 				if(XFG.Cache.UIReload) then	XFG.Confederate:Restore() end
@@ -161,8 +167,8 @@ end
 -- Periodically force a refresh
 function TimerEvent:CallbackGuildRoster()
 	try(function ()
-		if(XFG.Initialized and XFG.Player.Guild) then
-			GuildRosterEvent()
+		if(XFG.Initialized and XFG.Player.Guild and XFG.Handlers.GuildEvent:ShouldScan()) then
+			XFG.Handlers.GuildEvent:CallbackGuildRoster()
 		end
 	end).
 	catch(function (inErrorMessage)

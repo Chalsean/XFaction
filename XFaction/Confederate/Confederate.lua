@@ -8,6 +8,7 @@ Confederate = Factory:newChildConstructor()
 function Confederate:new()
     local object = Confederate.parent.new(self)
 	object.__name = ObjectName
+    object.onlineCount = 0
 	object.countByTarget = {}
 	object.guildInfo = nil
     object.modifyGuildInfo = nil
@@ -47,6 +48,11 @@ function Confederate:Add(inUnit)
     if(self:Contains(inUnit:GetKey())) then
         local oldData = self:Get(inUnit:GetKey())
         self.objects[inUnit:GetKey()] = inUnit
+        if(oldData:IsOffline() and inUnit:IsOnline()) then
+            self.onlineCount = self.onlineCount + 1
+        elseif(oldData:IsOnline() and inUnit:IsOffline()) then
+            self.onlineCount = self.onlineCount - 1
+        end
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
@@ -55,14 +61,14 @@ function Confederate:Add(inUnit)
             self.countByTarget[target:GetKey()] = 0
         end
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] + 1
-        XFG.DataText.Guild:RefreshBroker()
+        if(inUnit:IsOnline()) then
+            self.onlineCount = self.onlineCount + 1
+        end
     end
     
     if(inUnit:IsPlayer()) then
         XFG.Player.Unit = inUnit
     end
-
-    return true
 end
 
 function Confederate:Remove(inKey)
@@ -75,11 +81,11 @@ function Confederate:Remove(inKey)
         end
         local target = XFG.Targets:GetByRealmFaction(unit:GetRealm(), unit:GetFaction())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
+        self.onlineCount = self.onlineCount - 1
         if(unit:HasRaiderIO()) then
             XFG.Addons.RaiderIO:Remove(unit:GetRaiderIO())
         end
         self:Push(unit)
-        XFG.DataText.Guild:RefreshBroker()
     end
 end
 
@@ -125,6 +131,10 @@ end
 function Confederate:GetInitials()
     return self:GetKey()
 end
+
+function Confederate:GetOnlineCount()
+    return self.onlineCount
+end
 --#endregion
 
 --#region Janitorial
@@ -161,11 +171,22 @@ function Confederate:Restore()
     end
 end
 
+function Confederate:OfflineUnit(inKey)
+    assert(type(inKey) == 'string')
+    if(self:Contains(inKey)) then
+        local unit = self:Get(inKey)
+        if(unit:IsOnline()) then
+            self.onlineCount = self.onlineCount - 1
+        end
+        unit:SetPresence(Enum.ClubMemberPresence.Offline)
+    end
+end
+
 function Confederate:OfflineUnits(inEpochTime)
     assert(type(inEpochTime) == 'number')
     for _, unit in self:Iterator() do
         if(not unit:IsPlayer() and unit:GetTimeStamp() < inEpochTime) then
-            self:Remove(unit:GetKey())
+            self:OfflineUnit(unit:GetKey())
         end
     end
 end
