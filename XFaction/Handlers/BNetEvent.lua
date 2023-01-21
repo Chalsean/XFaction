@@ -18,6 +18,7 @@ function BNetEvent:Initialize()
                         event = 'BN_FRIEND_INFO_CHANGED', 
                         callback = XFG.Handlers.BNetEvent.CallbackFriendInfo, 
                         instance = true,
+                        groupDelta = 3,
                         start = true})
 		self:IsInitialized(true)
 	end
