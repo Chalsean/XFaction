@@ -18,8 +18,7 @@ function AchievementEvent:Initialize()
         XFG.Events:Add({name = 'Achievement', 
                         event = 'ACHIEVEMENT_EARNED', 
                         callback = XFG.Handlers.AchievementEvent.CallbackAchievement, 
-                        instance = true,
-                        start = true})
+                        instance = true})
 		self:IsInitialized(true)
 	end
 end

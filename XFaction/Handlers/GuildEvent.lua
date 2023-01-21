@@ -27,8 +27,7 @@ function GuildEvent:Initialize()
                         event = 'GUILD_ROSTER_UPDATE', 
                         callback = XFG.Handlers.GuildEvent.CallbackRosterUpdate, 
                         instance = true,
-                        groupDelta = 5,
-                        start = true})
+                        groupDelta = XFG.Settings.LocalGuild.ScanTimer})
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
         self:EventFired(true)
         GuildRosterEvent()

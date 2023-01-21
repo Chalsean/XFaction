@@ -99,7 +99,8 @@ XFG.Settings = {
 		Chat = {
 			PacketSize = 217,
 		},
-		BNet = {	
+		BNet = {
+			FriendTimer = 2,
 			PacketSize = 425,	
 			Ping = {
 				Timer = 60,         -- Seconds between pinging friends

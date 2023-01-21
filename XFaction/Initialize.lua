@@ -33,18 +33,18 @@ function XFG:Init()
 	XFG.DataText.Metrics = DTMetrics:new()
 
 	-- Frames
-	XFG.Frames.Chat = ChatFrame:new(); XFG.Frames.Chat:Initialize()
-	XFG.Frames.System = SystemFrame:new(); XFG.Frames.System:Initialize()
+	XFG.Frames.Chat = ChatFrame:new()
+	XFG.Frames.System = SystemFrame:new()
 
-	-- Handlers
-	XFG.Handlers.AchievementEvent = AchievementEvent:new()
-	XFG.Handlers.BNetEvent = BNetEvent:new()
-	XFG.Handlers.ChannelEvent = ChannelEvent:new()
-	XFG.Handlers.ChatEvent = ChatEvent:new()
-	XFG.Handlers.GuildEvent = GuildEvent:new()
-	XFG.Handlers.PlayerEvent = PlayerEvent:new()
-	XFG.Handlers.SystemEvent = SystemEvent:new(); 
-	XFG.Handlers.TimerEvent = TimerEvent:new(); XFG.Handlers.TimerEvent:Initialize()
+	-- Declare handlers but not listening yet
+	XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
+	XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()
+	XFG.Handlers.ChannelEvent = ChannelEvent:new(); XFG.Handlers.ChannelEvent:Initialize()
+	XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
+	XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
+	XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
+	XFG.Handlers.SystemEvent = SystemEvent:new()
+	XFG.Handlers.TimerEvent = TimerEvent:new()
 
 	-- Network
 	XFG.Channels = ChannelCollection:new()
@@ -68,7 +68,7 @@ function XFG:Init()
 	XFG.Hooks = HookCollection:new(); XFG.Hooks:Initialize()
 	XFG.Metrics = MetricCollection:new(); XFG.Metrics:Initialize()	
 	XFG.Timers = TimerCollection:new(); XFG.Timers:Initialize()
-	XFG.Handlers.SystemEvent:Initialize()	
+	XFG.Handlers.TimerEvent:Initialize()			
 
 	-- Start poller for guild information
 	XFG.Timers:Get('Login'):Start()

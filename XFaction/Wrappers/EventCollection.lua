@@ -90,10 +90,20 @@ function EventCollection:LeaveInstance()
     end
 end
 
--- Stop everything
+-- Start/Stop everything
+function EventCollection:Start()
+	for _, event in self:Iterator() do
+        if(not event:IsEnabled()) then
+            event:Start()
+        end
+	end
+end
+
 function EventCollection:Stop()
-	for _, event in XFG.Events:Iterator() do
-        event:Stop()
+	for _, event in self:Iterator() do
+        if(event:IsEnabled()) then
+            event:Stop()
+        end
 	end
     self.frame:UnregisterAllEvents()
 end

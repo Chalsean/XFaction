@@ -20,8 +20,7 @@ function BNet:Initialize()
         XFG.Events:Add({name = 'BNetMessage', 
                         event = 'BN_CHAT_MSG_ADDON', 
                         callback = XFG.Mailbox.BNet.BNetReceive, 
-                        instance = true,
-                        start = true})
+                        instance = true})
         self:IsInitialized(true)
     end
     return self:IsInitialized()

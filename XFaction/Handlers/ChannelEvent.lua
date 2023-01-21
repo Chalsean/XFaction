@@ -18,13 +18,11 @@ function ChannelEvent:Initialize()
 		XFG.Events:Add({name = 'ChannelChange', 
 		                event = 'CHAT_MSG_CHANNEL_NOTICE', 
 						callback = XFG.Handlers.ChannelEvent.CallbackChannelNotice, 
-						instance = true,
-					    start = true})
+						instance = true})
 		XFG.Events:Add({name = 'ChannelColor', 
 		                event = 'UPDATE_CHAT_COLOR', 
 						callback = XFG.Handlers.ChannelEvent.CallbackUpdateColor, 
-						instance = true,
-					    start = true})
+						instance = true})
 		self:IsInitialized(true)
 	end
 end

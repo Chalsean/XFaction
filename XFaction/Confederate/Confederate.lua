@@ -160,10 +160,8 @@ function Confederate:Restore()
     for _, data in pairs (XFG.Cache.Backup.Confederate) do
         try(function ()
             local unitData = XFG:DeserializeUnitData(data)
-            if(self:Add(unitData)) then
-                -- Although this is dynamically building a string, it only does this function on startup
-                XFG:Info(ObjectName, '  Restored %s unit information from backup', unitData:GetUnitName())
-            end
+            self:Add(unitData)
+            XFG:Info(ObjectName, '  Restored %s unit information from backup', unitData:GetUnitName())
         end).
         catch(function (inErrorMessage)
             XFG:Warn(ObjectName, inErrorMessage)
