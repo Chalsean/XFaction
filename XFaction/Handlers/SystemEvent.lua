@@ -16,9 +16,17 @@ function SystemEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         XFG.Hooks:Add('ReloadUI', 'ReloadUI', XFG.Handlers.SystemEvent.CallbackReloadUI)
-        XFG.Events:Add('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true)
+        XFG.Events:Add({name = 'Logout', 
+                        event = 'PLAYER_LOGOUT', 
+                        callback = XFG.Handlers.SystemEvent.CallbackLogout, 
+                        instance = true,
+                        start = true})
         -- Not sure this is necessary but don't feel like taking the risk of removing it
-        XFG.Events:Add('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true)
+        XFG.Events:Add({name = 'LoadScreen', 
+                        event = 'PLAYER_ENTERING_WORLD', 
+                        callback = XFG.Handlers.SystemEvent.CallbackLogin, 
+                        instance = true,
+                        start = true})
         ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Handlers.SystemEvent.ChatFilter)
         XFG:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
 		self:IsInitialized(true)

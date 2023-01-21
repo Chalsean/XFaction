@@ -23,11 +23,18 @@ function DTToken:Initialize()
 		self:ParentInitialize()
 		self.ldbObject = XFG.Lib.Broker:NewDataObject(XFG.Lib.Locale['DTTOKEN_NAME'])
 		for _, event in ipairs (Events) do
-			XFG.Events:Add('DTToken' .. event, event, XFG.DataText.Token.OnEvent)
+			XFG.Events:Add({name = 'DTToken' .. event, 
+			                event = event, 
+							callback = XFG.DataText.Token.OnEvent,
+						    start = true})
 			XFG:Info(ObjectName, 'Registered for %s events', event)
 		end
-		XFG.Timers:Add('TokenTimer', 60, XFG.DataText.Token.Timer, true, true, false)
-		XFG.Timers:Get('TokenTimer'):Start()
+		XFG.Timers:Add({name = 'TokenTimer', 
+		                delta = 60, 
+						callback = XFG.DataText.Token.Timer, 
+						repeater = true, 
+						instance = true, 
+						start = true})
 		self:OnEvent()
 		self:IsInitialized(true)
 	end
