@@ -18,6 +18,12 @@ XFG.ChangeLog['4.3.3'] = {
                 order = 2,
                 type = 'description',
                 fontSize = 'medium',
+                name = 'Similarly better performance on BNet friend scans from Blizz spamming BN_FRIEND_INFO_CHANGED.',
+            },
+            Three = {
+                order = 3,
+                type = 'description',
+                fontSize = 'medium',
                 name = 'Attempt at hiding the login spam when someone realm transfers.',
             },
         }
