@@ -24,6 +24,7 @@ function Message:new()
     object.mainName = nil
     object.guild = nil
     object.realm = nil
+    object.priority = nil
     return object
 end
 --#endregion
@@ -37,6 +38,7 @@ function Message:Initialize()
         self:SetTimeStamp(ServerTime())
         self:SetAllTargets()
         self:SetVersion(XFG.Version)
+        self:SetPriority(XFG.Enum.Priority.Medium)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -59,6 +61,7 @@ function Message:Deconstructor()
     self.mainName = nil
     self.guild = nil
     self.realm = nil
+    self.priority = nil
     self:Initialize()
 end
 --#endregion
@@ -72,6 +75,7 @@ function Message:Print()
     XFG:Debug(ObjectName, '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
     XFG:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XFG:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
+    XFG:Debug(ObjectName, '  priority (' .. type(self.priority) .. '): ' .. tostring(self.priority))
     XFG:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XFG:Debug(ObjectName, '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
     XFG:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
@@ -132,6 +136,15 @@ end
 
 function Message:SetData(inData)
     self.data = inData
+end
+
+function Message:GetPriority()
+    return self.priority
+end
+
+function Message:SetPriority(inPriority)
+    assert(type(inPriority) == 'number')
+    self.priority = inPriority
 end
 
 function Message:GetPacketNumber()

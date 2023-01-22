@@ -150,7 +150,6 @@ function LinkCollection:Restore()
 		try(function ()
 			local links = string.Split(XFG.Cache.Backup.Links, '|')
 			for _, link in pairs (links) do
-				XFG:Trace(ObjectName, 'Restoring link from backup [%s]', link)
 				self:SetLinkFromString(link)
 			end
 		end).

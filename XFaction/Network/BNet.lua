@@ -1,6 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'BNet'
 local ServerTime = GetServerTime
+local SendMessage = BNSendGameData
 
 BNet = Mailbox:newChildConstructor()
 
@@ -68,8 +69,12 @@ function BNet:Send(inMessage)
         try(function ()
             for index, packet in ipairs (packets) do
                 XFG:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:GetName(), friend:GetGameID(), index, #packets, XFG.Settings.Network.Message.Tag.BNET, strlen(packet))
-                -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-                XFG.Lib.BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, packet, _, friend:GetGameID())
+                -- If high priority, avoid the message buffering
+                if(inMessage:GetPriority() == XFG.Enum.Priority.High) then
+                    SendMessage(friend:GetGameID(), XFG.Settings.Network.Message.Tag.BNET, packet)
+                else
+                    XFG.Lib.BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, packet, _, friend:GetGameID())
+                end
                 XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(friend:GetTarget())

@@ -60,6 +60,14 @@ XFG.Icons = {
 	Guild = 'ElvUI-Windtools-Healer', -- Kept the name to give credit to Windtools
 }
 
+XFG.Enum = {
+	Priority = {
+		High = 1,
+		Medium = 2,
+		Low = 3,
+	},
+}
+
 XFG.Settings = {
 	System = {
 		Roster = true,

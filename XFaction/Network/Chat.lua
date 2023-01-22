@@ -1,5 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Chat'
+local SendMessage = C_ChatInfo.SendAddonMessage
 
 Chat = Mailbox:newChildConstructor()
 
@@ -63,7 +64,12 @@ function Chat:Send(inMessage)
 
         for index, packet in ipairs (packets) do
             XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d]', index, #packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(packet))
-            XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())
+            -- If high priority, avoid the message buffering
+            if(inMessage:GetPriority() == XFG.Enum.Priority.High) then
+                SendMessage(XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())
+            else
+                XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())
+            end
             XFG.Metrics:Get(XFG.Settings.Metric.ChannelSend):Increment()
         end        
     end
