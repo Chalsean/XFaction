@@ -26,6 +26,12 @@ XFG.ChangeLog['4.3.3'] = {
                 fontSize = 'medium',
                 name = 'Attempt at hiding the login spam when someone realm transfers.',
             },
+            Four = {
+                order = 4,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'More consistency in receiving logout messages.',
+            },
         }
     },			
 }
