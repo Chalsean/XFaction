@@ -445,6 +445,7 @@ XFG.Options.args.Chat = {
 				Options = {
 					order = 3,
 					type = 'group',
+					disabled = function () return not XFG.Channels:HasLocalChannel() or XFG.Channels:GetLocalChannel():IsGuild() end,
 					name = '',
 					inline = true,
 					args = {
