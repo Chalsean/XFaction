@@ -18,39 +18,24 @@ function ChannelEvent:Initialize()
 		XFG.Events:Add({name = 'ChannelChange', 
 		                event = 'CHAT_MSG_CHANNEL_NOTICE', 
 						callback = XFG.Handlers.ChannelEvent.CallbackChannelNotice, 
-						instance = true})
+						instance = true,
+						groupDelta = XFG.Settings.Network.Channel.NoticeTimer,
+						start = true})
 		XFG.Events:Add({name = 'ChannelColor', 
 		                event = 'UPDATE_CHAT_COLOR', 
 						callback = XFG.Handlers.ChannelEvent.CallbackUpdateColor, 
-						instance = true})
+						instance = true,
+					    start = true})
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
 --#region Callbacks
-function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelType, inChannelNumber, inChannelName)
+function ChannelEvent:CallbackChannelNotice()
 	try(function ()
-		local channel = XFG.Channels:GetLocalChannel()
-		
-		if(inAction == 'YOU_LEFT') then
-			if(inChannelName == channel:GetName()) then
-				XFG:Error(ObjectName, 'Removed channel was the addon channel')			
-				XFG.Channels:VoidLocalChannel()
-			end
-			XFG.Channels:Remove(channel:GetKey())
-
-		elseif(inAction == 'YOU_CHANGED') then
-			XFG.Channels:SetLast(channel:GetKey())
-
-		elseif(inAction == 'YOU_JOINED') then
-			local newChannel = Channel:new()
-		    newChannel:SetKey(inChannelName)
-		    newChannel:SetID(inChannelNumber)
-			newChannel:SetName(inChannelName)
-		    XFG.Channels:Add(newChannel)
-			XFG.Channels:SetLast(channel:GetKey())
-		end
+		XFG.Channels:Scan()
+		XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
 	end).
 	catch(function (inErrorMessage)
 		XFG:Warn(ObjectName, inErrorMessage)

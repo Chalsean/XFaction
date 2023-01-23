@@ -73,11 +73,9 @@ end
 
 function ChannelCollection:SetLast(inKey)
 	if(not XFG.Config.Chat.Channel.Last) then return end
-	if(not self:Contains(inKey)) then return end
+	if(not self:Contains(inKey)) then return end	
 	
-	self:Scan()
 	local channel = self:Get(inKey)
-
 	for i = channel:GetID() + 1, 10 do
 		local nextChannel = self:GetByID(i)
 		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
@@ -138,7 +136,7 @@ function ChannelCollection:Scan()
 				channel:SetKey(channelName)
 				channel:SetName(channelName)
 				channel:SetID(channelID)
-				channel:IsCommunity(channelInfo.channelType == 2)
+				channel:SetType(channelInfo.channelType)
 				self:Add(channel)
 			end
 		end

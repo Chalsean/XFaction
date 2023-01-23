@@ -108,6 +108,7 @@ XFG.Settings = {
 		CompressionLevel = 9,
 		Channel = {
 			Total = 10,
+			NoticeTimer = 2,
 		},
 		Chat = {
 			PacketSize = 217,

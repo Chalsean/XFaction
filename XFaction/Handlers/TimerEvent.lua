@@ -102,20 +102,22 @@ function TimerEvent:CallbackLogin()
 				XFG.Nodes:Initialize()
 				XFG.Links:Initialize()
 				XFG.Friends:Initialize()				
-				XFG.Mailbox.BNet:Initialize()
+				XFG.Mailbox.BNet:Initialize()				
+				XFG.Handlers.SystemEvent:Initialize()
+				if(XFG.Handlers.ChannelEvent:IsInitialized()) then					
+					XFG.Handlers.ChannelEvent:CallbackChannelNotice()
+				end
 
 				-- If reload, restore backup information
 				if(XFG.Cache.UIReload) then	
 					XFG.Confederate:Restore() 
 					XFG.Friends:Restore()
 					XFG.Links:Restore()
-				-- If login, broadcast
 				else
 					XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
 				end
-				
+
 				-- Start all hooks, timers and events
-				XFG.Handlers.SystemEvent:Initialize()
 				XFG.Hooks:Start()
 				XFG.Timers:Start()
 				XFG.Events:Start()				
