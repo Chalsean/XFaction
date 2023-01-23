@@ -97,7 +97,7 @@ function TimerEvent:CallbackLogin()
 				XFG.Confederate:Add(unitData)
 
 				-- Start network
-				XFG.Channels:Initialize()				
+				XFG.Channels:Initialize()		
 				XFG.Mailbox.Chat:Initialize()
 				XFG.Nodes:Initialize()
 				XFG.Links:Initialize()

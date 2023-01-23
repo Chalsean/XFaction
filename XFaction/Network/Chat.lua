@@ -63,12 +63,12 @@ function Chat:Send(inMessage)
         XFG:Debug(ObjectName, 'Broadcasting on channel [%s] with tag [%s]', channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
 
         for index, packet in ipairs (packets) do
-            XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d]', index, #packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(packet))
+            XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d] to channel [%s]', index, #packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(packet), channel:GetName())
             -- If high priority, avoid the message buffering
             if(inMessage:GetPriority() == XFG.Enum.Priority.High) then
-                SendMessage(XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())
+                SendMessage(XFG.Settings.Network.Message.Tag.LOCAL, packet, channel:IsGuild() and 'GUILD' or 'CHANNEL', channel:GetID())
             else
-                XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())
+                XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, packet, channel:IsGuild() and 'GUILD' or 'CHANNEL', channel:GetID())
             end
             XFG.Metrics:Get(XFG.Settings.Metric.ChannelSend):Increment()
         end        
