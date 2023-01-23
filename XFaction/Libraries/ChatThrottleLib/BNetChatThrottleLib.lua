@@ -471,12 +471,6 @@ end
 
 
 function BNetChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype, target, queueName, callbackFn, callbackArg)
-	if not self or not prio or not prefix or not text or not chattype or not self.Prio[prio] then
-		error('Usage: BNetChatThrottleLib:SendAddonMessage("{BULK||NORMAL||ALERT}", "prefix", "text", "chattype"[, "target"])', 2)
-	end
-	if callbackFn and type(callbackFn)~="function" then
-		error('BNetChatThrottleLib:SendAddonMessage(): callbackFn: expected function, got '..type(callbackFn), 2)
-	end
 
 	local nSize = text:len();
 
@@ -494,7 +488,7 @@ function BNetChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype, targ
 	nSize = nSize + self.MSG_OVERHEAD;
 
 	-- Check if there's room in the global available bandwidth gauge to send directly
-	if not self.bQueueing and nSize < self:UpdateAvail() then
+	if(prio == 'ALERT' or (not self.bQueueing and nSize < self:UpdateAvail())) then
 		self.avail = self.avail - nSize
 		bMyTraffic = true
 		if _G.C_ChatInfo then
@@ -527,12 +521,6 @@ function BNetChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype, targ
 end
 
 function BNetChatThrottleLib:BNSendGameData(prio, prefix, text, chattype, target, queueName, callbackFn, callbackArg)
-	if not self or not prio or not prefix or not text or not self.Prio[prio] then
-		error('Usage: BNetChatThrottleLib:BNSendGameData("{BULK||NORMAL||ALERT}", "prefix", "text", "chattype"[, "target"])', 2)
-	end
-	if callbackFn and type(callbackFn)~="function" then
-		error('BNetChatThrottleLib:BNSendGameData(): callbackFn: expected function, got '..type(callbackFn), 2)
-	end
 
 	local nSize = text:len();
 	--nSize = nSize + prefix:len() + 1
@@ -542,7 +530,7 @@ function BNetChatThrottleLib:BNSendGameData(prio, prefix, text, chattype, target
 	nSize = nSize + self.MSG_OVERHEAD;
 
 	-- Check if there's room in the global available bandwidth gauge to send directly
-	if not self.bQueueing and nSize < self:UpdateAvail() then
+	if(prio == 'ALERT' or (not self.bQueueing and nSize < self:UpdateAvail())) then
 		self.avail = self.avail - nSize
 		bMyTraffic = true
 		BNSendGameData(target, prefix, text)
