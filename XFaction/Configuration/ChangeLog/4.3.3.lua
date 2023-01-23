@@ -44,6 +44,12 @@ XFG.ChangeLog['4.3.3'] = {
                 fontSize = 'medium',
                 name = 'Fixed exception being thrown by ElvUI oUF tags.',
             },
+            Seven = {
+                order = 7,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Attempt at fixing channel reorder bug.',
+            },
         }
     },			
 }
