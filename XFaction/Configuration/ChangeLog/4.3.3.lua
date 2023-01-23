@@ -32,6 +32,18 @@ XFG.ChangeLog['4.3.3'] = {
                 fontSize = 'medium',
                 name = 'More consistency in receiving logout messages.',
             },
+            Five = {
+                order = 5,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'No longer requires custom channel if only 1 guild on realm/faction combination.',
+            },
+            Six = {
+                order = 6,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Fixed exception being thrown by ElvUI oUF tags.',
+            },
         }
     },			
 }
