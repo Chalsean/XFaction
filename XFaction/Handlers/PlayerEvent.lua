@@ -63,12 +63,10 @@ function PlayerEvent:CallbackZoneChanged()
         try(function ()
             local zoneName = GetRealZoneText()
             if(zoneName ~= nil and zoneName ~= XFG.Player.Unit:GetZone():GetName()) then
-                local zone = XFG.Zones:Get(zoneName)
-                if(zone == nil) then
-                    zone = XFG.Zones:AddZone(zoneName)
+                if(not XFG.Zones:Contains(zoneName)) then
+                    XFG.Zones:AddZone(zoneName)
                 end
-                XFG.Player.Unit:SetZone(zone)
-                --XFG:Info(ObjectName, 'Updated player data based on ZONE_CHANGED_NEW_AREA event')
+                XFG.Player.Unit:SetZone(XFG.Zones:Get(zoneName))
             end
         end).
         catch(function (inErrorMessage)

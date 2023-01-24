@@ -1,7 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'BNet'
 local ServerTime = GetServerTime
-local SendMessage = BNSendGameData
 
 BNet = Mailbox:newChildConstructor()
 
@@ -69,8 +68,8 @@ function BNet:Send(inMessage)
         try(function ()
             for index, packet in ipairs (packets) do
                 XFG:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:GetName(), friend:GetGameID(), index, #packets, XFG.Settings.Network.Message.Tag.BNET, strlen(packet))
-                -- If high priority, avoid the message buffering
-                XFG.Lib.BCTL:BNSendGameData(inMessage:GetPriority() == XFG.Enum.Priority.High and 'ALERT' or 'BULK', XFG.Settings.Network.Message.Tag.BNET, packet, _, friend:GetGameID())
+                -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
+                XFG.Lib.BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, packet, _, friend:GetGameID())
                 XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(friend:GetTarget())
@@ -114,7 +113,7 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
 
     try(function ()
         if(inEncodedMessage:sub(1, 4) == 'PING') then
-            XFG.Lib.BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
+            XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
             XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
         elseif(inEncodedMessage:sub(1,7) ~= 'RE:PING') then
             XFG.Mailbox.BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    

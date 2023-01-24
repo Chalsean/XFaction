@@ -12,43 +12,40 @@ XFG.ChangeLog['4.3.3'] = {
                 order = 1,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Better performance on local guild scans. Should see lower overall memory usage and CPU hit from Blizz spamming GUILD_ROSTER_UPDATE events.',
+                name = 'Bumped toc to 100005.',
+            },
+            Bar1 = {
+                order = 2,
+                name = '',
+                type = 'header'
             },
             Two = {
-                order = 2,
-                type = 'description',
-                fontSize = 'medium',
-                name = 'Similarly better performance on BNet friend scans from Blizz spamming BN_FRIEND_INFO_CHANGED.',
-            },
-            Three = {
                 order = 3,
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Attempt at hiding the login spam when someone realm transfers.',
             },
-            Four = {
+            Bar2 = {
                 order = 4,
-                type = 'description',
-                fontSize = 'medium',
-                name = 'More consistency in receiving logout messages.',
+                name = '',
+                type = 'header'
             },
-            Five = {
+            Three = {
                 order = 5,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'No longer requires custom channel if only 1 guild on realm/faction combination.',
+                name = 'Better performance on local guild scans. Should see lower overall memory usage and CPU hit from Blizz spamming GUILD_ROSTER_UPDATE events.',
             },
-            Six = {
+            Bar3 = {
                 order = 6,
-                type = 'description',
-                fontSize = 'medium',
-                name = 'Fixed exception being thrown by ElvUI oUF tags.',
+                name = '',
+                type = 'header'
             },
-            Seven = {
+            Four = {
                 order = 7,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Attempt at fixing channel reorder bug.',
+                name = 'Similarly better performance on BNet friend scans from Blizz spamming BN_FRIEND_INFO_CHANGED.',
             },
         }
     },			

@@ -97,16 +97,14 @@ function TimerEvent:CallbackLogin()
 				XFG.Confederate:Add(unitData)
 
 				-- Start network
-				XFG.Channels:Initialize()		
+				XFG.Channels:Initialize()
+				XFG.Handlers.ChannelEvent:Initialize()
 				XFG.Mailbox.Chat:Initialize()
 				XFG.Nodes:Initialize()
 				XFG.Links:Initialize()
 				XFG.Friends:Initialize()				
 				XFG.Mailbox.BNet:Initialize()				
-				XFG.Handlers.SystemEvent:Initialize()
-				if(XFG.Handlers.ChannelEvent:IsInitialized()) then					
-					XFG.Handlers.ChannelEvent:CallbackChannelNotice()
-				end
+				XFG.Handlers.SystemEvent:Initialize()				
 
 				-- If reload, restore backup information
 				if(XFG.Cache.UIReload) then	
