@@ -277,13 +277,8 @@ function Mailbox:Process(inMessage, inMessageTag)
     -- Process DATA/LOGIN message
     if(inMessage:HasUnitData()) then
         local unitData = inMessage:GetData()
-        if(XFG.Player.Guild:Equals(unitData:GetGuild()) and XFG.Confederate:Contains(unitData:GetKey())) then
-            local oldData = XFG.Confederate:Get(unitData:GetKey())
-            -- In case we get a message before scan
-            if(oldData:IsOffline() and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
-                XFG.Frames.System:DisplayLoginMessage(inMessage)
-            end
-        elseif(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN) then
+        if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN and 
+          (not XFG.Confederate:Contains(unitData:GetKey()) or XFG.Confederate:Get(unitData:GetKey()):IsOffline())) then
             XFG.Frames.System:DisplayLoginMessage(inMessage)
         end
         XFG.Confederate:Add(unitData)
