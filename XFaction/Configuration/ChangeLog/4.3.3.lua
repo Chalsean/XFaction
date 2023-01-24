@@ -34,7 +34,7 @@ XFG.ChangeLog['4.3.3'] = {
                 order = 5,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Better performance on local guild scans. Should see lower overall memory usage and CPU hit from Blizz spamming GUILD_ROSTER_UPDATE events.',
+                name = 'Better performance on local guild scans. Should see lower memory and CPU fluctuations from XF caused by Blizz spamming GUILD_ROSTER_UPDATE events.',
             },
             Bar3 = {
                 order = 6,
