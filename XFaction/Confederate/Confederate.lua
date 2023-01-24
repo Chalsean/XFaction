@@ -81,7 +81,9 @@ function Confederate:Remove(inKey)
         end
         local target = XFG.Targets:GetByRealmFaction(unit:GetRealm(), unit:GetFaction())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
-        self.onlineCount = self.onlineCount - 1
+        if(unit:IsOnline()) then
+            self.onlineCount = self.onlineCount - 1
+        end
         if(unit:HasRaiderIO()) then
             XFG.Addons.RaiderIO:Remove(unit:GetRaiderIO())
         end
@@ -173,10 +175,12 @@ function Confederate:OfflineUnit(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
         local unit = self:Get(inKey)
-        if(unit:IsOnline()) then
+        if(not XFG.Player.Guild:Equals(unit:GetGuild())) then
+            self:Remove(inKey)
+        elseif(unit:IsOnline()) then            
             self.onlineCount = self.onlineCount - 1
-        end
-        unit:SetPresence(Enum.ClubMemberPresence.Offline)
+            unit:SetPresence(Enum.ClubMemberPresence.Offline)
+        end        
     end
 end
 

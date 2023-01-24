@@ -33,7 +33,6 @@ function DTToken:Initialize()
 		                delta = 60, 
 						callback = XFG.DataText.Token.Timer, 
 						repeater = true, 
-						instance = true, 
 						start = true})
 		self:OnEvent()
 		self:IsInitialized(true)

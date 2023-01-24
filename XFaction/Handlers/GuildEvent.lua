@@ -1,7 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'GuildEvent'
 local GetClubMembers = C_Club.GetClubMembers
-local GuildRosterEvent = C_GuildInfo.GuildRoster
+local GetGuildRoster = C_GuildInfo.GuildRoster
 local GetGuildClubId = C_Club.GetGuildClubId
 local GetPermissions = C_GuildInfo.GuildControlGetRankFlags
 local ServerTime = GetServerTime
@@ -12,8 +12,6 @@ GuildEvent = Object:newChildConstructor()
 function GuildEvent:new()
     local object = GuildEvent.parent.new(self)
     object.__name = ObjectName
-    object.lastScan = 0
-    object.eventFired = false
     return object
 end
 --#endregion
@@ -29,33 +27,9 @@ function GuildEvent:Initialize()
                         instance = true,
                         groupDelta = XFG.Settings.LocalGuild.ScanTimer})
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
-        self:EventFired(true)
-        GuildRosterEvent()
+        GetGuildRoster()
 		self:IsInitialized(true)
 	end
-end
---#endregion
-
---#region Accessors
-function GuildEvent:GetLastScan()
-    return self.lastScan
-end
-
-function GuildEvent:SetLastScan(inEpochTime)
-    assert(type(inEpochTime) == 'number')
-    self.lastScan = inEpochTime
-end
-
-function GuildEvent:EventFired(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.eventFired = inBoolean
-    end
-    return self.eventFired
-end
-
-function GuildEvent:ShouldScan()
-    return self:EventFired() and self:GetLastScan() + XFG.Settings.LocalGuild.ScanTimer <= ServerTime()
 end
 --#endregion
 
@@ -63,9 +37,6 @@ end
 -- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
 function GuildEvent:CallbackRosterUpdate()
     local self = XFG.Handlers.GuildEvent
-    self:EventFired(true)
-    if(not self:ShouldScan()) then return end
-
     XFG:Trace(ObjectName, 'Scanning local guild roster')
     for _, memberID in pairs (GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         local unitData = XFG.Confederate:Pop()
@@ -74,16 +45,18 @@ function GuildEvent:CallbackRosterUpdate()
             if(unitData:IsInitialized()) then
                 if(XFG.Confederate:Contains(unitData:GetKey())) then
                     local oldData = XFG.Confederate:Get(unitData:GetKey())
-                    if(oldData:IsOffline() and unitData:IsOnline()) then
-                        XFG:Info(ObjectName, 'Guild member login via scan: %s', unitData:GetUnitName())
-                        XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGIN, unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm())
-                        XFG.Confederate:Add(unitData)
-                    elseif(oldData:IsOnline() and unitData:IsOffline()) then
+                    if(oldData:IsOnline() and unitData:IsOffline()) then
                         XFG:Info(ObjectName, 'Guild member logout via scan: %s', unitData:GetUnitName())
                         XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, oldData:GetName(), oldData:GetUnitName(), oldData:GetMainName(), oldData:GetGuild(), oldData:GetRealm())
                         XFG.Confederate:Add(unitData)
-                    elseif(not oldData:IsRunningAddon()) then
-                        XFG.Confederate:Add(unitData)
+                    elseif(unitData:IsOnline()) then
+                        if(oldData:IsOffline()) then
+                            XFG:Info(ObjectName, 'Guild member login via scan: %s', unitData:GetUnitName())
+                            XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGIN, unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm())
+                            XFG.Confederate:Add(unitData)
+                        elseif(not oldData:IsRunningAddon()) then
+                            XFG.Confederate:Add(unitData)
+                        end
                     end
                 -- First time scan (i.e. login) do not notify
                 else
@@ -99,8 +72,6 @@ function GuildEvent:CallbackRosterUpdate()
         end)
     end
     XFG.DataText.Guild:RefreshBroker()
-    self:SetLastScan(ServerTime())
-    self:EventFired(false)
 end
 
 function GuildEvent:CallbackGuildRole(inClubID, inRoleID)

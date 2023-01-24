@@ -197,21 +197,6 @@ function TimerEvent:CallbackHeartbeat()
 	end)
 end
 
--- Periodically force a refresh
-function TimerEvent:CallbackGuildRoster()
-	try(function ()
-		if(XFG.Initialized and XFG.Player.Guild and XFG.Handlers.GuildEvent:ShouldScan()) then
-			XFG.Handlers.GuildEvent:CallbackRosterUpdate()
-		end
-	end).
-	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, inErrorMessage)
-	end).
-	finally(function ()
-		XFG.Timers:Get('Roster'):SetLastRan(ServerTime())
-	end)
-end
-
 -- Periodically ping friends to see who is running addon
 function TimerEvent:CallbackPingFriends()
     try(function()
