@@ -12,23 +12,42 @@ end
 --#endregion
 
 --#region Hash
-function HookCollection:Add(inKey, inOriginal, inCallback)
+function HookCollection:Add(inArgs)
+    assert(type(inArgs) == 'table')
+    assert(type(inArgs.name) == 'string')
+    assert(type(inArgs.original) == 'string')
+    assert(type(inArgs.callback) == 'function')
+    assert(inArgs.pre == nil or type(inArgs.pre) == 'boolean')
+    assert(inArgs.start == nil or type(inArgs.start) == 'boolean')
+
     local hook = Hook:new()
     hook:Initialize()
-    hook:SetKey(inKey)
-    hook:SetOriginal(inOriginal)
-    hook:SetCallback(inCallback)
-    hook:Start()
+    hook:SetKey(inArgs.name)
+    hook:SetOriginal(inArgs.original)
+    hook:SetCallback(inArgs.callback)
+    hook:IsPreHook(inArgs.pre)
+    if(inArgs.start) then
+        hook:Start()
+    end
     self.parent.Add(self, hook)
-    XFG:Info('Hook', 'Hooked function %s', inKey)
+    XFG:Info('Hook', 'Hooked function %s', hook:GetOriginal())
 end
 --#endregion
 
---#region Start/Stop
--- Stop everything
+--#region Start/Stop everything
+function HookCollection:Start()
+	for _, hook in self:Iterator() do
+        if(not hook:IsEnabled()) then
+            hook:Start()
+        end
+	end
+end
+
 function HookCollection:Stop()
 	for _, hook in self:Iterator() do
-        hook:Stop()
+        if(hook:IsEnabled()) then
+            hook:Stop()
+        end
 	end
 end
 --#endregion

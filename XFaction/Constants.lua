@@ -60,6 +60,19 @@ XFG.Icons = {
 	Guild = 'ElvUI-Windtools-Healer', -- Kept the name to give credit to Windtools
 }
 
+XFG.Enum = {
+	Priority = {
+		High = 1,
+		Medium = 2,
+		Low = 3,
+	},
+	Channel = {
+		GUILD = 1,
+		COMMUNITY = 2,
+		CUSTOM = 3,
+	},
+}
+
 XFG.Settings = {
 	System = {
 		Roster = true,
@@ -86,7 +99,7 @@ XFG.Settings = {
 		}
 	},
 	LocalGuild = {
-		ScanTimer = 30,          -- Seconds between forced local guild scans
+		ScanTimer = 5,           -- Seconds between local guild scans
 		LoginGiveUp = 60 * 5,    -- Seconds before giving up on querying for guild on login
 		MaxGuildInfo = 500,      -- Maximum # of characters guild info can take
 	},	
@@ -95,11 +108,13 @@ XFG.Settings = {
 		CompressionLevel = 9,
 		Channel = {
 			Total = 10,
+			NoticeTimer = 2,
 		},
 		Chat = {
 			PacketSize = 217,
 		},
-		BNet = {	
+		BNet = {
+			FriendTimer = 2,
 			PacketSize = 425,	
 			Ping = {
 				Timer = 60,         -- Seconds between pinging friends
