@@ -30,15 +30,12 @@ function TargetCollection:Initialize()
 			target:SetRealm(realm)
 			target:SetFaction(faction)
 			
-			if(self:Contains(target:GetKey())) then
-				self:Get(target:GetKey()):IncrementCount()
-			else
+			if(not self:Contains(target:GetKey())) then	
 				XFG:Info(ObjectName, 'Initializing target [%s]', key)
 				self:Add(target)
 				realm:IsTargeted(true)
 				target:Print()				
 			end
-
 			if(XFG.Player.Target == nil and realm:Equals(XFG.Player.Realm) and faction:Equals(XFG.Player.Faction)) then
 				XFG:Info(ObjectName, 'Initializing player target [%s]', key)
 				XFG.Player.Target = target
