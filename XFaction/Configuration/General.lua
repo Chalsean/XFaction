@@ -238,11 +238,8 @@ function XFG:SetupMenus()
 end
 
 local function GenerateConfig()
-	local config = 'XFn:' .. XFG.Cache.Setup.Confederate.Name .. ':' .. XFG.Cache.Setup.Confederate.Initials .. '\n'
-	if(XFG.Cache.Setup.Confederate.ChannelName ~= nil and strlen(XFG.Cache.Setup.Confederate.ChannelName) > 0 and 
-	   XFG.Cache.Setup.Confederate.Password ~= nil and strlen(XFG.Cache.Setup.Confederate.Password) > 0) then
-		config = config .. 'XFc:' .. XFG.Cache.Setup.Confederate.ChannelName .. ':' .. XFG.Cache.Setup.Confederate.Password .. '\n'
-	end
+	local config = 'XFn:' .. XFG.Cache.Setup.Confederate.Name .. ':' .. XFG.Cache.Setup.Confederate.Initials .. '\n' ..
+				   'XFc:' .. XFG.Cache.Setup.Confederate.ChannelName .. ':' .. XFG.Cache.Setup.Confederate.Password .. '\n'
 
 	for i, guild in ipairs(XFG.Cache.Setup.Guilds) do
 		if(guild.name ~= nil and guild.initials ~= nil) then
