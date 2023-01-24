@@ -55,8 +55,6 @@ function SystemEvent:CallbackLogout()
             message:SetGuild(XFG.Player.Guild)
             message:SetRealm(XFG.Player.Realm)
             message:SetUnitName(XFG.Player.Unit:GetName())
-            -- Set priority to high to immediately send without buffering
-            message:SetPriority(XFG.Enum.Priority.High)
             message:SetData(' ')
             XFG.Config.Logout[#XFG.Config.Logout + 1] = 'Logout sending message'
             XFG.Mailbox.Chat:Send(message)
