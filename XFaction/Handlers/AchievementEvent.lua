@@ -15,10 +15,7 @@ end
 function AchievementEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Events:Add({name = 'Achievement', 
-                        event = 'ACHIEVEMENT_EARNED', 
-                        callback = XFG.Handlers.AchievementEvent.CallbackAchievement, 
-                        instance = true})
+        XFG.Events:Add('Achievement', 'ACHIEVEMENT_EARNED', XFG.Handlers.AchievementEvent.CallbackAchievement, true)
 		self:IsInitialized(true)
 	end
 end

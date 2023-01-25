@@ -17,10 +17,7 @@ function BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XFG.Settings.Network.Message.Tag.BNET = XFG.Confederate:GetKey() .. 'BNET'
-        XFG.Events:Add({name = 'BNetMessage', 
-                        event = 'BN_CHAT_MSG_ADDON', 
-                        callback = XFG.Mailbox.BNet.BNetReceive, 
-                        instance = true})
+        XFG.Events:Add('BNetMessage', 'BN_CHAT_MSG_ADDON', XFG.Mailbox.BNet.BNetReceive, true)
         self:IsInitialized(true)
     end
     return self:IsInitialized()

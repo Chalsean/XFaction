@@ -19,25 +19,10 @@ function EventCollection:Initialize()
         self.frame = CreateFrame('Frame')
         -- Handle the events as they happen
         self.frame:SetScript('OnEvent', function(self, inEvent, ...)
-            -- Still actively listen for all events but only do something if enabled
             for _, event in XFG.Events:Iterator() do
-                if(event:GetName() == inEvent and event:IsEnabled()) then
-                    XFG:Trace(ObjectName, 'Event fired: %s', event:GetName())
-                    if(event:IsGroup()) then
-                        if(XFG.Timers:Contains(event:GetKey())) then
-                            XFG.Timers:Get(event:GetKey()):Start()
-                        else
-                            XFG.Timers:Add({name = event:GetKey(),
-                                            delta = event:GetGroupDelta(),
-                                            callback = event:GetCallback(),
-                                            repeater = false,
-                                            instance = event:IsInstance(),
-                                            start = true})
-                        end
-                    else
-                        local _Function = event:GetCallback()
-                        _Function(self, ...)
-                    end
+                if(event:IsEnabled() and event:GetName() == inEvent) then
+                    local _Function = event:GetCallback()
+                    _Function(self, ...)
                 end
             end
         end)
@@ -47,29 +32,18 @@ end
 --#endregion
 
 --#region Hash
-function EventCollection:Add(inArgs)
-    assert(type(inArgs) == 'table')
-    assert(type(inArgs.name) == 'string')
-    assert(type(inArgs.event) == 'string')
-    assert(type(inArgs.callback) == 'function')
-    assert(inArgs.instance == nil or type(inArgs.instance) == 'boolean')
-    assert(inArgs.start == nil or type(inArgs.start) == 'boolean')
-    assert(inArgs.groupDelta == nil or type(inArgs.groupDelta) == 'number')
-
+function EventCollection:Add(inKey, inName, inCallback, inInstance)
     local event = Event:new()
-    event:SetKey(inArgs.name)
-    event:SetName(inArgs.event)
-    event:SetCallback(inArgs.callback)
-    event:IsInstance(inArgs.instance)
-    if(inArgs.groupDelta ~= nil) then
-        event:SetGroupDelta(inArgs.groupDelta)
-    end
-    if(inArgs.start and (event:IsInstance() or not XFG.Player.InInstance)) then
+    event:SetKey(inKey)
+    event:SetName(inName)
+    event:SetCallback(inCallback)
+    event:IsInstance(inInstance)
+    if(event:IsInstance() or not XFG.Player.InInstance) then
         event:Start()
     end
-    self.frame:RegisterEvent(event:GetName())
+    self.frame:RegisterEvent(inName)
     self.parent.Add(self, event)
-    XFG:Info('Event', 'Registered to receive [%s:%s] events', event:GetKey(), event:GetName())
+    XFG:Info('Event', 'Registered to receive [%s:%s] events', inKey, inName)
 end
 --#endregion
 
@@ -90,20 +64,10 @@ function EventCollection:LeaveInstance()
     end
 end
 
--- Start/Stop everything
-function EventCollection:Start()
-	for _, event in self:Iterator() do
-        if(not event:IsEnabled()) then
-            event:Start()
-        end
-	end
-end
-
+-- Stop everything
 function EventCollection:Stop()
-	for _, event in self:Iterator() do
-        if(event:IsEnabled()) then
-            event:Stop()
-        end
+	for _, event in XFG.Events:Iterator() do
+        event:Stop()
 	end
     self.frame:UnregisterAllEvents()
 end

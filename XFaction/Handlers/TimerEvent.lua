@@ -16,49 +16,6 @@ function TimerEvent:new()
 end
 --#endregion
 
---#region Initializers
-function TimerEvent:Initialize()
-	if(not self:IsInitialized()) then
-		self:ParentInitialize()
-		XFG.Timers:Add({name = 'Login', 
-						delta = 1, 
-						callback = XFG.Handlers.TimerEvent.CallbackLogin, 
-						repeater = true, 
-						instance = true})
-		XFG.Timers:Add({name = 'Heartbeat', 
-						delta = XFG.Settings.Player.Heartbeat, 
-						callback = XFG.Handlers.TimerEvent.CallbackHeartbeat, 
-						repeater = true, 
-						instance = true})
-		XFG.Timers:Add({name = 'Links', 
-						delta = XFG.Settings.Network.BNet.Link.Broadcast, 
-						callback = XFG.Handlers.TimerEvent.CallbackLinks, 
-						repeater = true, 
-						instance = true})		    		    
-		XFG.Timers:Add({name = 'Mailbox', 
-						delta = XFG.Settings.Network.Mailbox.Scan, 
-						callback = XFG.Handlers.TimerEvent.CallbackMailboxTimer, 
-						repeater = true})
-		XFG.Timers:Add({name = 'Ping', 
-						delta = XFG.Settings.Network.BNet.Ping.Timer, 
-						callback = XFG.Handlers.TimerEvent.CallbackPingFriends, 
-						repeater = true, 
-						instance = true})
-		XFG.Timers:Add({name = 'StaleLinks', 
-						delta = XFG.Settings.Network.BNet.Link.Scan, 
-						callback = XFG.Handlers.TimerEvent.CallbackStaleLinks, 
-						repeater = true, 
-						instance = true})
-		XFG.Timers:Add({name = 'Offline', 
-						delta = XFG.Settings.Confederate.UnitScan, 
-						callback = XFG.Handlers.TimerEvent.CallbackOffline, 
-						repeater = true, 
-						instance = true})
-		self:IsInitialized(true)
-	end
-end
---#endregion
-
 --#region Callbacks
 --#region Login Callbacks
 function TimerEvent:CallbackLogin()
@@ -71,7 +28,7 @@ function TimerEvent:CallbackLogin()
 			if(guildID ~= nil) then
 				-- Now that guild info is available we can finish setup
 				XFG:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
-				XFG.Timers:Remove('Login')			
+				XFG.Timers:Remove('Login')
 
 				-- Confederate setup via guild info
 				XFG.Guilds:Initialize(guildID)
@@ -79,10 +36,19 @@ function TimerEvent:CallbackLogin()
 				XFG.Guilds:SetPlayerGuild()
 				XFG.Targets:Initialize()	
 
-				-- Frame inits were waiting on Confederate init
-				XFG.Frames.Chat:Initialize()
-				XFG.Frames.System:Initialize()
-
+				-- Chat channel setup via guild info, player will start to receive messaging via chat channel
+				XFG.Channels:Initialize()
+				XFG.Handlers.ChannelEvent:Initialize()
+				XFG.Mailbox.Chat:Initialize()
+				
+				-- BNet setup, player will start to receive messaging via bnet
+				-- We want this to be after chat channel setup so we can forward messages
+				XFG.Nodes:Initialize()
+				XFG.Links:Initialize()
+				XFG.Friends:Initialize()
+				XFG.Handlers.BNetEvent:Initialize()
+				XFG.Mailbox.BNet:Initialize()
+				
 				-- Some of this data (spec) is like guild where its not available for a time after initial login
 				-- Seems to align with guild data becoming available
 				XFG.Races:Initialize()
@@ -90,36 +56,30 @@ function TimerEvent:CallbackLogin()
 				XFG.Specs:Initialize()		    
 				XFG.Professions:Initialize()
 
-				-- Need the player data to continue setup
-				local unitData = XFG.Confederate:Pop()
-				unitData:Initialize()
-				unitData:Print()
-				XFG.Confederate:Add(unitData)
+				-- Restore guild members from backup
+				if(XFG.Cache.UIReload) then	XFG.Confederate:Restore() end
 
-				-- Start network
-				XFG.Channels:Initialize()
-				XFG.Handlers.ChannelEvent:Initialize()
-				XFG.Mailbox.Chat:Initialize()
-				XFG.Nodes:Initialize()
-				XFG.Links:Initialize()
-				XFG.Friends:Initialize()				
-				XFG.Mailbox.BNet:Initialize()				
-				XFG.Handlers.SystemEvent:Initialize()				
+				-- Scan local guild, player unit information is now available
+				XFG.Handlers.GuildEvent:Initialize()
+				XFG.Handlers.SystemEvent:Initialize()
+				XFG.Handlers.PlayerEvent:Initialize()
 
-				-- If reload, restore backup information
-				if(XFG.Cache.UIReload) then	
-					XFG.Confederate:Restore() 
-					XFG.Friends:Restore()
-					XFG.Links:Restore()
-				else
+				-- Restore links from backup
+				if(XFG.Cache.UIReload) then XFG.Links:Restore() end
+
+				-- Player will start sending guild chat and achievement messages
+				-- We want this after player unit information is available because its included in the messages				
+				XFG.Handlers.ChatEvent:Initialize()
+				XFG.Handlers.AchievementEvent:Initialize()
+				
+				-- Start all timers
+				XFG.Timers:Start()
+				XFG.Initialized = true
+
+				-- Broadcast login locally
+				if(not XFG.Cache.UIReload) then
 					XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
 				end
-
-				-- Start all hooks, timers and events
-				XFG.Hooks:Start()
-				XFG.Timers:Start()
-				XFG.Events:Start()				
-				XFG.Initialized = true
 
 				-- Finish DT init
 				XFG.DataText.Guild:PostInitialize()
@@ -141,6 +101,7 @@ function TimerEvent:CallbackLogin()
 	catch(function (inErrorMessage)
 		XFG:Error(ObjectName, inErrorMessage)
 		XFG:Stop()
+		--XFG.Events:Add('GuildJoin', 'CLUB_MEMBER_ADDED', XFG.Handlers.GuildEvent.CallbackGuildJoin, true)
 	end).
 	finally(function ()
 		XFG.Cache.Backup = {
@@ -194,6 +155,21 @@ function TimerEvent:CallbackHeartbeat()
 	end).
 	finally(function ()
 		XFG.Timers:Get('Heartbeat'):SetLastRan(ServerTime())
+	end)
+end
+
+-- Periodically force a refresh
+function TimerEvent:CallbackGuildRoster()
+	try(function ()
+		if(XFG.Initialized and XFG.Player.Guild) then
+			GuildRosterEvent()
+		end
+	end).
+	catch(function (inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
+	end).
+	finally(function ()
+		XFG.Timers:Get('Roster'):SetLastRan(ServerTime())
 	end)
 end
 

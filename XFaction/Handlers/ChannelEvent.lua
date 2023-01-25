@@ -15,16 +15,8 @@ end
 function ChannelEvent:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		XFG.Events:Add({name = 'ChannelChange', 
-		                event = 'CHAT_MSG_CHANNEL_NOTICE', 
-						callback = XFG.Handlers.ChannelEvent.CallbackChannelNotice, 
-						instance = true,
-						start = true})
-		XFG.Events:Add({name = 'ChannelColor', 
-		                event = 'UPDATE_CHAT_COLOR', 
-						callback = XFG.Handlers.ChannelEvent.CallbackUpdateColor, 
-						instance = true,
-					    start = true})
+		XFG.Events:Add('ChannelChange', 'CHAT_MSG_CHANNEL_NOTICE', XFG.Handlers.ChannelEvent.CallbackChannelNotice, true)
+		XFG.Events:Add('ChannelColor', 'UPDATE_CHAT_COLOR', XFG.Handlers.ChannelEvent.CallbackUpdateColor, true)
 		self:IsInitialized(true)
 	end
 end

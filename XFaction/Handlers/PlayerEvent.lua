@@ -17,27 +17,12 @@ function PlayerEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        XFG.Events:Add({name = 'Mythic', 
-                        event = 'CHALLENGE_MODE_COMPLETED', 
-                        callback = XFG.Handlers.PlayerEvent.CallbackPlayerChanged, 
-                        instance = true})
-        XFG.Events:Add({name = 'Spec', 
-                        event = 'ACTIVE_TALENT_GROUP_CHANGED', 
-                        callback = XFG.Handlers.PlayerEvent.CallbackPlayerChanged, 
-                        instance = true})        
-        XFG.Events:Add({name = 'Instance', 
-                        event = 'PLAYER_ENTERING_WORLD', 
-                        callback = XFG.Handlers.PlayerEvent.CallbackInstance, 
-                        instance = true})
-        XFG.Events:Add({name = 'Level', 
-                        event = 'PLAYER_LEVEL_CHANGED', 
-                        callback = XFG.Handlers.PlayerEvent.CallbackPlayerChanged})
-        XFG.Events:Add({name = 'Profession', 
-                        event = 'SKILL_LINES_CHANGED', 
-                        callback = XFG.Handlers.PlayerEvent.CallbackSkillChanged})
-        XFG.Events:Add({name = 'Zone', 
-                        event = 'ZONE_CHANGED_NEW_AREA', 
-                        callback = XFG.Handlers.PlayerEvent.CallbackZoneChanged})
+        XFG.Events:Add('Mythic', 'CHALLENGE_MODE_COMPLETED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true)
+        XFG.Events:Add('Spec', 'ACTIVE_TALENT_GROUP_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, true)        
+        XFG.Events:Add('Instance', 'PLAYER_ENTERING_WORLD', XFG.Handlers.PlayerEvent.CallbackInstance, true)
+        XFG.Events:Add('Level', 'PLAYER_LEVEL_CHANGED', XFG.Handlers.PlayerEvent.CallbackPlayerChanged, false)
+        XFG.Events:Add('Profession', 'SKILL_LINES_CHANGED', XFG.Handlers.PlayerEvent.CallbackSkillChanged, false)
+        XFG.Events:Add('Zone', 'ZONE_CHANGED_NEW_AREA', XFG.Handlers.PlayerEvent.CallbackZoneChanged, false)
 
 		self:IsInitialized(true)
 	end
@@ -63,10 +48,12 @@ function PlayerEvent:CallbackZoneChanged()
         try(function ()
             local zoneName = GetRealZoneText()
             if(zoneName ~= nil and zoneName ~= XFG.Player.Unit:GetZone():GetName()) then
-                if(not XFG.Zones:Contains(zoneName)) then
-                    XFG.Zones:AddZone(zoneName)
+                local zone = XFG.Zones:Get(zoneName)
+                if(zone == nil) then
+                    zone = XFG.Zones:AddZone(zoneName)
                 end
-                XFG.Player.Unit:SetZone(XFG.Zones:Get(zoneName))
+                XFG.Player.Unit:SetZone(zone)
+                --XFG:Info(ObjectName, 'Updated player data based on ZONE_CHANGED_NEW_AREA event')
             end
         end).
         catch(function (inErrorMessage)

@@ -11,7 +11,6 @@ function Hook:new()
     object.originalFunction = nil
     object.callback = nil
     object.isEnabled = false
-    object.isPreHook = false
     return object
 end
 --#endregion
@@ -23,7 +22,6 @@ function Hook:Print()
     XFG:Debug(ObjectName, '  originalFunction (' .. type(self.originalFunction) .. '): ' .. tostring(self.originalFunction))
     XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
     XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-    XFG:Debug(ObjectName, '  isPreHook (' .. type(self.isPreHook) .. '): ' .. tostring(self.isPreHook))
 end
 --#endregion
 
@@ -66,22 +64,6 @@ function Hook:IsEnabled(inBoolean)
     end
 	return self.isEnabled
 end
-
-function Hook:IsEnabled(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.isEnabled = inBoolean
-    end
-	return self.isEnabled
-end
-
-function Hook:IsPreHook(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.isPreHook = inBoolean
-    end
-	return self.isPreHook
-end
 --#endregion
 
 --#region Start/Stop
@@ -89,13 +71,9 @@ function Hook:Start()
     if(self:HasOriginal() and self:HasCallback()) then
         local callback = self:GetCallback()
         local original = self:GetOriginalFunction()
-        if(self:IsPreHook()) then    
-            _G[self:GetOriginal()] = function(...)
-                callback(...)
-                original(...)
-            end            
-        else
-            hooksecurefunc(_G, self:GetOriginal(), callback)
+        _G[self:GetOriginal()] = function(...)
+            callback(...)
+            original(...)
         end
         self:IsEnabled(true)
         XFG:Debug(ObjectName, 'Started hook [%s]', self:GetKey())

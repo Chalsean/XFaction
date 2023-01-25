@@ -11,34 +11,6 @@ function SystemFrame:new()
 end
 --#endregion
 
---#region Initializers
-function SystemFrame:Initialize()
-    if(not self:IsInitialized()) then
-        self:ParentInitialize()
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Frames.System.ChatFilter)
-        XFG:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
-        self:IsInitialized(true)
-    end
-end
---#endregion
-
---#region Callbacks
-function SystemFrame:ChatFilter(inEvent, inMessage, ...)
-    if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
-        inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
-        return false, inMessage, ...
-    -- Hide Blizz login/logout messages, we display our own, this is a double notification
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
-        return true
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGOUT'])) then
-        return true
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_JOIN_GUILD'])) then
-        return true 
-    end
-    return false, inMessage, ...
-end
---#endregion
-
 --#region Display
 function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRealm)
     if(not XFG.Config.Chat.Login.Enable) then return end

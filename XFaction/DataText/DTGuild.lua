@@ -77,7 +77,7 @@ function DTGuild:RefreshBroker()
 		if(XFG.Config.DataText.Guild.Label) then
 			text = XFG.Lib.Locale['GUILD'] .. ': '
 		end
-		text = format('%s|cff3CE13F%d', text, XFG.Confederate:GetOnlineCount())
+		text = format('%s|cff3CE13F%d', text, XFG.Confederate:GetCount())
 		XFG.DataText.Guild:GetBroker().text = text
 	end
 end
@@ -105,64 +105,62 @@ end
 local function PreSort()
 	local list = {}
 	for _, unit in XFG.Confederate:Iterator() do
-		if(unit:IsOnline()) then
-			local unitData = {}
+		local unitData = {}
 
-			unitData.Level = unit:GetLevel()
-			unitData.Realm = unit:GetRealm():GetName()
-			unitData.Guild = unit:GetGuild():GetName()		
-			unitData.Name = unit:GetName()
-			unitData.UnitName = unit:GetUnitName()
-			unitData.Note = unit:GetNote()
-			unitData.GUID = unit:GetGUID()
-			unitData.Achievement = unit:GetAchievementPoints()
-			unitData.Rank = unit:GetRank()
-			unitData.ItemLevel = unit:GetItemLevel()	
-			unitData.Race = unit:GetRace():GetName()
-			if(unit:HasTeam()) then 
-				unitData.Team = unit:GetTeam():GetName() 
-			else
-				unitData.Team = 'Unknown'
-			end
-			unitData.Class = unit:GetClass():GetHex()
-			unitData.Faction = unit:GetFaction():GetIconID()
-			unitData.PvP = unit:GetPvP()
-
-			if(unit:HasRaiderIO()) then
-				unitData.Raid = unit:GetRaiderIO():GetRaid()
-				unitData.Dungeon = unit:GetRaiderIO():GetDungeon()			
-			end
-
-			if(unit:HasVersion()) then
-				unitData.Version = unit:GetVersion():GetKey()
-			else
-				unitData.Version = '0.0.0'
-			end
-
-			if(unit:IsAlt() and unit:HasMainName() and XFG.Config.DataText.Guild.Main) then
-				unitData.Name = unit:GetName() .. ' (' .. unit:GetMainName() .. ')'
-			end
-
-			if(unit:HasSpec()) then
-				unitData.Spec = unit:GetSpec():GetIconID()
-			end
-
-			if(unit:HasProfession1()) then
-				unitData.Profession1 = unit:GetProfession1():GetIconID()
-			end
-
-			if(unit:HasProfession2()) then
-				unitData.Profession2 = unit:GetProfession2():GetIconID()
-			end
-
-			if(unit:HasZone()) then
-				unitData.Zone = unit:GetZone():GetLocaleName()
-			else
-				unitData.Zone = unit:GetZoneName()
-			end
-
-			list[#list + 1] = unitData
+		unitData.Level = unit:GetLevel()
+		unitData.Realm = unit:GetRealm():GetName()
+		unitData.Guild = unit:GetGuild():GetName()		
+		unitData.Name = unit:GetName()
+		unitData.UnitName = unit:GetUnitName()
+		unitData.Note = unit:GetNote()
+		unitData.GUID = unit:GetGUID()
+		unitData.Achievement = unit:GetAchievementPoints()
+		unitData.Rank = unit:GetRank()
+		unitData.ItemLevel = unit:GetItemLevel()	
+		unitData.Race = unit:GetRace():GetName()
+		if(unit:HasTeam()) then 
+			unitData.Team = unit:GetTeam():GetName() 
+		else
+			unitData.Team = 'Unknown'
 		end
+		unitData.Class = unit:GetClass():GetHex()
+		unitData.Faction = unit:GetFaction():GetIconID()
+		unitData.PvP = unit:GetPvP()
+
+		if(unit:HasRaiderIO()) then
+			unitData.Raid = unit:GetRaiderIO():GetRaid()
+			unitData.Dungeon = unit:GetRaiderIO():GetDungeon()			
+		end
+
+		if(unit:HasVersion()) then
+			unitData.Version = unit:GetVersion():GetKey()
+		else
+			unitData.Version = '0.0.0'
+		end
+
+		if(unit:IsAlt() and unit:HasMainName() and XFG.Config.DataText.Guild.Main) then
+			unitData.Name = unit:GetName() .. ' (' .. unit:GetMainName() .. ')'
+		end
+
+		if(unit:HasSpec()) then
+			unitData.Spec = unit:GetSpec():GetIconID()
+		end
+
+		if(unit:HasProfession1()) then
+			unitData.Profession1 = unit:GetProfession1():GetIconID()
+		end
+
+		if(unit:HasProfession2()) then
+			unitData.Profession2 = unit:GetProfession2():GetIconID()
+		end
+
+		if(unit:HasZone()) then
+			unitData.Zone = unit:GetZone():GetLocaleName()
+		else
+			unitData.Zone = unit:GetZoneName()
+		end
+
+		list[#list + 1] = unitData
 	end
 	return list
 end

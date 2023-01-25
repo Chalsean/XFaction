@@ -2,8 +2,7 @@ local XFG, G = unpack(select(2, ...))
 local LogCategory = 'Config'
 
 XFG.Defaults = {
-    profile = {
-        Logout = {},
+    profile = {  
         Channels = {},      
         Chat = {
             GChat = {
