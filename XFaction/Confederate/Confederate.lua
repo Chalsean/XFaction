@@ -182,7 +182,7 @@ end
 function Confederate:OfflineUnits(inEpochTime)
     assert(type(inEpochTime) == 'number')
     for _, unit in self:Iterator() do
-        if(not unit:IsPlayer() and unit:GetTimeStamp() < inEpochTime) then
+        if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < inEpochTime) then
             if(XFG.Player.Guild:Equals(unit:GetGuild())) then
                 self:OfflineUnit(unit:GetKey())
             else
