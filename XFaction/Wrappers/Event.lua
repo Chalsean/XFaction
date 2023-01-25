@@ -7,10 +7,10 @@ Event = Object:newChildConstructor()
 function Event:new()
     local object = Event.parent.new(self)
     object.__name = ObjectName
-    object.delta = 0
     object.callback = nil
     object.isEnabled = false
     object.inInstance = false
+    object.groupDelta = 0
     return object
 end
 --#endregion
@@ -18,10 +18,10 @@ end
 --#region Print
 function Event:Print()
     self:ParentPrint()
-    XFG:Debug(ObjectName, '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
     XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
     XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
     XFG:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+    XFG:Debug(ObjectName, '  groupDelta (' .. type(self.groupDelta) .. '): ' .. tostring(self.groupDelta))
 end
 --#endregion
 
@@ -51,13 +51,17 @@ function Event:IsInstance(inBoolean)
 	return self.inInstance
 end
 
-function Event:GetDelta()
-    return self.delta
+function Event:IsGroup()
+    return self.groupDelta > 0
 end
 
-function Event:SetDelta(inDelta)
-    assert(type(inDelta) == 'number')
-    self.delta = inDelta
+function Event:GetGroupDelta()
+    return self.groupDelta
+end
+
+function Event:SetGroupDelta(inGroupDelta)
+    assert(type(inGroupDelta) == 'number')
+    self.groupDelta = inGroupDelta
 end
 --#endregion
 

@@ -1,9 +1,10 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'GuildEvent'
 local GetClubMembers = C_Club.GetClubMembers
-local GuildRosterEvent = C_GuildInfo.GuildRoster
+local GetGuildRoster = C_GuildInfo.GuildRoster
 local GetGuildClubId = C_Club.GetGuildClubId
 local GetPermissions = C_GuildInfo.GuildControlGetRankFlags
+local ServerTime = GetServerTime
 
 GuildEvent = Object:newChildConstructor()
 
@@ -20,66 +21,54 @@ function GuildEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         -- This is the local guild roster scan for those not running the addon
-        XFG.Events:Add('Roster', 'GUILD_ROSTER_UPDATE', XFG.Handlers.GuildEvent.CallbackRosterUpdate, true)
+        XFG.Events:Add({name = 'Roster', 
+                        event = 'GUILD_ROSTER_UPDATE', 
+                        callback = XFG.Handlers.GuildEvent.CallbackRosterUpdate, 
+                        instance = true,
+                        groupDelta = XFG.Settings.LocalGuild.ScanTimer})
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
-        self:CallbackRosterUpdate()
-        GuildRosterEvent()
-        --XFG.Events:Add('GuildRole', 'CLUB_SELF_MEMBER_ROLE_UPDATED', XFG.Handlers.GuildEvent.CallbackGuildRole, true)
-        --XFG.Events:Add('GuildLeave', 'CLUB_MEMBER_REMOVED', XFG.Handlers.GuildEvent.CallbackGuildLeave, true)
+        GetGuildRoster()
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
 --#region Callbacks
--- The event doesn't tell you what has changed, only that something has changed
+-- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
 function GuildEvent:CallbackRosterUpdate()
+    local self = XFG.Handlers.GuildEvent
     XFG:Trace(ObjectName, 'Scanning local guild roster')
     for _, memberID in pairs (GetClubMembers(XFG.Player.Guild:GetID(), XFG.Player.Guild:GetStreamID())) do
         local unitData = XFG.Confederate:Pop()
         try(function ()
             unitData:Initialize(memberID)
             if(unitData:IsInitialized()) then
-                if(unitData:IsOnline()) then
-                    -- If cache doesn't have unit, process
-                    if(not XFG.Confederate:Contains(unitData:GetKey())) then
+                if(XFG.Confederate:Contains(unitData:GetKey())) then
+                    local oldData = XFG.Confederate:Get(unitData:GetKey())
+                    if(oldData:IsOnline() and unitData:IsOffline()) then
+                        XFG:Info(ObjectName, 'Guild member logout via scan: %s', unitData:GetUnitName())
+                        XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, oldData:GetName(), oldData:GetUnitName(), oldData:GetMainName(), oldData:GetGuild(), oldData:GetRealm())
                         XFG.Confederate:Add(unitData)
-                        XFG:Info(ObjectName, 'Added guild member via scan: %s', unitData:GetUnitName())
-                        -- Don't notify if first scan seeing unit
-                        if(XFG.Cache.FirstScan[memberID]) then
+                    elseif(unitData:IsOnline()) then
+                        if(oldData:IsOffline()) then
+                            XFG:Info(ObjectName, 'Guild member login via scan: %s', unitData:GetUnitName())
                             XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGIN, unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm())
-                        end
-                    else
-                        local oldData = XFG.Confederate:Get(unitData:GetKey())
-                        -- If the player is running addon, do not process
-                        if(not oldData:IsRunningAddon() and not oldData:Equals(unitData)) then         
+                            XFG.Confederate:Add(unitData)
+                        elseif(not oldData:IsRunningAddon()) then
                             XFG.Confederate:Add(unitData)
                         else
+                            -- Every logic branch should either add, remove or push, otherwise there will be a memory leak
                             XFG.Confederate:Push(unitData)
                         end
+                    else
+                        XFG.Confederate:Push(unitData)
                     end
-                -- They went offline and we scanned them before doing so
-                elseif(XFG.Confederate:Contains(unitData:GetKey())) then
-                    local oldData = XFG.Confederate:Get(unitData:GetKey())
-                    XFG.Confederate:Push(unitData)
-                    if(not oldData:IsPlayer()) then
-                        XFG.Frames.System:Display(XFG.Settings.Network.Message.Subject.LOGOUT, oldData:GetName(), oldData:GetUnitName(), oldData:GetMainName(), oldData:GetGuild(), oldData:GetRealm())
-                        XFG.Confederate:Remove(oldData:GetKey())
-                    end                    
+                -- First time scan (i.e. login) do not notify
                 else
-                    if(unitData:HasRaiderIO()) then
-                        XFG.Addons.RaiderIO:Remove(unitData:GetRaiderIO())
-                    end
-                    XFG.Confederate:Push(unitData)
+                    XFG.Confederate:Add(unitData)
                 end
-
-                if(XFG.Cache.FirstScan[memberID] == nil) then
-                    XFG.Cache.FirstScan[memberID] = true
-                end
+            -- If it didnt initialize properly then we dont really know their status, so do nothing
             else
-                if(unitData:HasRaiderIO()) then
-                    XFG.Addons.RaiderIO:Remove(unitData:GetRaiderIO())
-                end
                 XFG.Confederate:Push(unitData)
             end
         end).
@@ -87,48 +76,5 @@ function GuildEvent:CallbackRosterUpdate()
             XFG:Warn(ObjectName, inErrorMessage)
         end)
     end
+    XFG.DataText.Guild:RefreshBroker()
 end
-
-function GuildEvent:CallbackGuildRole(inClubID, inRoleID)
-    try(function ()
-        -- Possible that guild chat ability has been revoked
-        if(GetGuildClubId() == inClubID) then
-            local permissions = GetPermissions(inRoleID)
-            if(permissions ~= nil) then
-                XFG.Player.Unit:CanGuildListen(permissions[1])
-                XFG.Player.Unit:CanGuildSpeak(permissions[2])
-            end
-        end
-    end).
-    catch(function (inErrorMessage)
-        XFG:Error(ObjectName, inErrorMessage)
-        XFG:Stop()
-        XFG.Timers:Get('Login'):Start()
-    end)
-end
-
--- function GuildEvent:CallbackGuildLeave()
---     try(function ()
---         if(GetGuildClubId() == nil) then
---             print(format(XFG.Lib.Locale['LEAVE_GUILD'], XFG.Title))
---             XFG:Stop()
---             XFG.Confederate:RemoveAll()
---             XFG.Nodes:RemoveAll()
---             XFG.Timers:Get('Login'):Start()    
---         end
---     end).
---     catch(function (inErrorMessage)
---         XFG:Error(ObjectName, inErrorMessage)
---     end)
--- end
-
--- function GuildEvent:CallbackGuildJoin()
---     try(function ()
---         XFG.Timers:Remove('GuildJoin')
---         XFG.Timers:Get('Login'):Start()
---     end).
---     catch(function (inErrorMessage)
---         XFG:Error(ObjectName, inErrorMessage)
---     end)
--- end
---#endregion
