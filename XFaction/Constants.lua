@@ -86,11 +86,12 @@ XFG.Settings = {
 	},
 	Player = {
 		Heartbeat = 60 * 2,      -- Seconds between player status broadcast
-		MinimumHeartbeat = 15
+		MinimumHeartbeat = 15,
+		Retry = 60,              -- Number of times to try and get player information before giving up
 	},
 	Confederate = {
 		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
-		UnitScan = 60,       -- Seconds between offline checks
+		UnitScan = 60,         -- Seconds between offline checks
 		DefaultTeams = {
 			['?'] = 'Unknown',
 		},
@@ -100,7 +101,7 @@ XFG.Settings = {
 	},
 	LocalGuild = {
 		ScanTimer = 5,           -- Seconds between local guild scans
-		LoginGiveUp = 60 * 5,    -- Seconds before giving up on querying for guild on login
+		LoginTTL = 60 * 5,       -- Seconds before giving up on querying for guild on login
 		MaxGuildInfo = 500,      -- Maximum # of characters guild info can take
 	},	
 	Factions = {'Alliance', 'Horde', 'Neutral'},

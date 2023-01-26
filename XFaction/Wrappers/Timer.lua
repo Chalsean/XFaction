@@ -2,6 +2,7 @@ local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Timer'
 local NewTicker = C_Timer.NewTicker
 local NewTimer = C_Timer.NewTimer
+local Now = GetServerTime
 
 Timer = Object:newChildConstructor()
 
@@ -9,6 +10,7 @@ Timer = Object:newChildConstructor()
 function Timer:new()
     local object = Timer.parent.new(self)
     object.__name = ObjectName
+    object.startTime = nil
     object.handle = nil
     object.delta = 0
     object.callback = nil
@@ -16,6 +18,9 @@ function Timer:new()
     object.isEnabled = false
     object.isRepeat = false
     object.inInstance = false
+    object.ttl = nil
+    object.maxAttempts = nil
+    object.attempt = 1
     return object
 end
 --#endregion
@@ -23,16 +28,29 @@ end
 --#region Print
 function Timer:Print()
     self:ParentPrint()
+    XFG:Debug(ObjectName, '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
     XFG:Debug(ObjectName, '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
     XFG:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
     XFG:Debug(ObjectName, '  lastRan (' .. type(self.lastRan) .. '): ' .. tostring(self.lastRan))
     XFG:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
     XFG:Debug(ObjectName, '  isRepeat (' .. type(self.isRepeat) .. '): ' .. tostring(self.isRepeat))
     XFG:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+    XFG:Debug(ObjectName, '  ttl (' .. type(self.ttl) .. '): ' .. tostring(self.ttl))
+    XFG:Debug(ObjectName, '  maxAttempts (' .. type(self.maxAttempts) .. '): ' .. tostring(self.maxAttempts))
+    XFG:Debug(ObjectName, '  attempt (' .. type(self.attempt) .. '): ' .. tostring(self.attempt))
 end
 --#endregion
 
 --#region Accessors
+function Timer:GetStartTime()
+    return self.startTime
+end
+
+function Timer:SetStartTime(inEpochTime)
+    assert(type(inEpochTime) == 'number')
+    self.startTime = inEpochTime
+end
+
 function Timer:GetDelta()
     return self.delta
 end
@@ -84,17 +102,70 @@ function Timer:IsInstance(inBoolean)
     end
 	return self.inInstance
 end
+
+function Timer:HasTimeToLive()
+    return self.ttl ~= nil
+end
+
+function Timer:GetTimeToLive()
+    return self.ttl
+end
+
+function Timer:SetTimeToLive(inTime)
+    assert(type(inTime) == 'number')
+    self.ttl = inTime
+end
+
+function Timer:HasMaxAttempts()
+    return self.maxAttempts ~= nil
+end
+
+function Timer:GetMaxAttempts()
+    return self.maxAttempts
+end
+
+function Timer:SetMaxAttempts(inCount)
+    assert(type(inCount) == 'number')
+    self.maxAttempts = inCount
+end
+
+function Timer:GetAttempt()
+    return self.attempt
+end
+
+function Timer:SetAttempt(inCount)
+    assert(type(inCount) == 'number')
+    self.attempt = inCount
+end
 --#endregion
 
 --#region Start/Stop
 function Timer:Start()
     if(not self:IsEnabled()) then
+        local callback = self:GetCallback()
         if(self:IsRepeat()) then
-            self.handle = NewTicker(self:GetDelta(), self:GetCallback())
+            self.handle = NewTicker(self:GetDelta(), 
+                function (...)
+                    if(self:HasTimeToLive() and self:GetStartTime() + self:GetTimeToLive() < Now()) then
+                        XFG:Debug(ObjectName, 'Timer will stop due to time limit [' .. tostring(self:GetTimeToLive()) .. '] being reached: ' .. self:GetKey())
+                        self:Stop()
+                    elseif(self:HasMaxAttempts() and self:GetMaxAttempts() < self:GetAttempt()) then
+                        XFG:Debug(ObjectName, 'Timer will stop due to attempt limit [' .. tostring(self:GetMaxAttempts()) .. '] being reached: ' .. self:GetKey())
+                        self:Stop()
+                    elseif(callback(...)) then
+                        self:Stop()
+                    else
+                        self:SetAttempt(self:GetAttempt() + 1)
+                    end                    
+                end)
         else
-            local callback = self:GetCallback()
-            self.handle = NewTimer(self:GetDelta(), function (...) callback(...); self:IsEnabled(false) end)
+            self.handle = NewTimer(self:GetDelta(), 
+                function (...) 
+                    callback(...)
+                    self:IsEnabled(false) 
+                end)
         end
+        self:SetStartTime(Now())        
         self:IsEnabled(true)
         XFG:Debug(ObjectName, 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
     end

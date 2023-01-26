@@ -158,7 +158,6 @@ function Confederate:Backup()
 end
 
 function Confederate:Restore()
-    XFG:Debug(ObjectName, 'Restoring confederate members')
     for _, data in pairs (XFG.Cache.Backup.Confederate) do
         try(function ()
             local unitData = XFG:DeserializeUnitData(data)
@@ -169,6 +168,7 @@ function Confederate:Restore()
             XFG:Warn(ObjectName, inErrorMessage)
         end)
     end
+    XFG.Cache.Backup.Confederate = {}
 end
 
 function Confederate:OfflineUnit(inKey)

@@ -72,7 +72,12 @@ local function InitializeCache()
     else
         XFG.Cache.Errors = {}
     end
-    XFG.Cache.FirstScan = {}
+    if(XFG.Cache.Backup == nil) then
+        XFG.Cache.Backup = {
+            Confederate = {},
+            Friends = {},
+        }
+    end
 end
 --#endregion
 

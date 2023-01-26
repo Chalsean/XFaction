@@ -68,10 +68,7 @@ function XFG:Init()
 	XFG.Hooks = HookCollection:new(); XFG.Hooks:Initialize()
 	XFG.Metrics = MetricCollection:new(); XFG.Metrics:Initialize()	
 	XFG.Timers = TimerCollection:new(); XFG.Timers:Initialize()
-	XFG.Handlers.TimerEvent:Initialize()			
-
-	-- Start poller for guild information
-	XFG.Timers:Get('Login'):Start()
+	XFG.Handlers.TimerEvent:Initialize()
 
 	-- These will execute "in-parallel" with remainder of setup as they are not time critical nor is anything dependent upon them
 	try(function ()		

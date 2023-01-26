@@ -21,6 +21,8 @@ function TimerCollection:Add(inArgs)
     assert(inArgs.repeater == nil or type(inArgs.repeater) == 'boolean')
     assert(inArgs.instance == nil or type(inArgs.instance) == 'boolean')
     assert(inArgs.start == nil or type(inArgs.start) == 'boolean')
+    assert(inArgs.ttl == nil or type(inArgs.ttl) == 'number')
+    assert(inArgs.maxAttempts == nil or type(inArgs.maxAttempts) == 'number')
 
     local timer = Timer:new()
     timer:Initialize()
@@ -30,6 +32,12 @@ function TimerCollection:Add(inArgs)
     timer:SetCallback(inArgs.callback)
     timer:IsRepeat(inArgs.repeater)
     timer:IsInstance(inArgs.instance)
+    if(inArgs.ttl ~= nil) then
+        timer:SetTimeToLive(inArgs.ttl)
+    end
+    if(inArgs.maxAttempts ~= nil) then
+        timer:SetMaxAttempts(inArgs.maxAttempts)
+    end
     if(inArgs.start and (timer:IsInstance() or not XFG.Player.InInstance)) then
         timer:Start()
     end
