@@ -21,6 +21,7 @@ end
 function TimerEvent:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
+		-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
 		XFG.Timers:Add({name = 'LoginGuild', 
 						delta = 1, 
 						callback = XFG.Handlers.TimerEvent.CallbackLoginGuild, 
