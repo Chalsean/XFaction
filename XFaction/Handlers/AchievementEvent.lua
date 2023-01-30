@@ -43,10 +43,11 @@ function AchievementEvent:CallbackAchievement(inID)
                 message:SetType(XFG.Settings.Network.Type.BROADCAST)
                 message:SetSubject(XFG.Settings.Network.Message.Subject.ACHIEVEMENT)
                 message:SetData(inID) -- Leave as ID to localize on receiving end
+                message:SetName(XFG.Player.Unit:GetName())
                 if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
                     message:SetMainName(XFG.Player.Unit:GetMainName())
                 end
-                message:SetUnitName(XFG.Player.Unit:GetName())
+                message:SetUnitName(XFG.Player.Unit:GetUnitName())
                 message:SetRealm(XFG.Player.Realm)
                 message:SetGuild(XFG.Player.Guild)
                 XFG.Mailbox.Chat:Send(message)
