@@ -18,7 +18,11 @@ end
 function AddonEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Events:Add('AddonEvent', 'ADDON_LOADED', XFG.Handlers.AddonEvent.CallbackAddonLoaded, true)
+        XFG.Events:Add({name = 'AddonEvent', 
+                        event = 'ADDON_LOADED', 
+                        callback = XFG.Handlers.AddonEvent.CallbackAddonLoaded, 
+                        instance = true,
+                        start = true})
         -- In case they already loaded
         if(IsAddOnLoaded('ElvUI')) then
             self:CallbackAddonLoaded('ElvUI')
@@ -68,7 +72,12 @@ local function InitializeCache()
     else
         XFG.Cache.Errors = {}
     end
-    XFG.Cache.FirstScan = {}
+    if(XFG.Cache.Backup == nil) then
+        XFG.Cache.Backup = {
+            Confederate = {},
+            Friends = {},
+        }
+    end
 end
 --#endregion
 

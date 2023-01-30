@@ -60,6 +60,19 @@ XFG.Icons = {
 	Guild = 'ElvUI-Windtools-Healer', -- Kept the name to give credit to Windtools
 }
 
+XFG.Enum = {
+	Priority = {
+		High = 1,
+		Medium = 2,
+		Low = 3,
+	},
+	Channel = {
+		GUILD = 1,
+		COMMUNITY = 2,
+		CUSTOM = 3,
+	},
+}
+
 XFG.Settings = {
 	System = {
 		Roster = true,
@@ -73,11 +86,12 @@ XFG.Settings = {
 	},
 	Player = {
 		Heartbeat = 60 * 2,      -- Seconds between player status broadcast
-		MinimumHeartbeat = 15
+		MinimumHeartbeat = 15,
+		Retry = 60,              -- Number of times to try and get player information before giving up
 	},
 	Confederate = {
 		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
-		UnitScan = 60,       -- Seconds between offline checks
+		UnitScan = 60,         -- Seconds between offline checks
 		DefaultTeams = {
 			['?'] = 'Unknown',
 		},
@@ -86,8 +100,8 @@ XFG.Settings = {
 		}
 	},
 	LocalGuild = {
-		ScanTimer = 30,          -- Seconds between forced local guild scans
-		LoginGiveUp = 60 * 5,    -- Seconds before giving up on querying for guild on login
+		ScanTimer = 5,           -- Seconds between local guild scans
+		LoginTTL = 60 * 5,       -- Seconds before giving up on querying for guild on login
 		MaxGuildInfo = 500,      -- Maximum # of characters guild info can take
 	},	
 	Factions = {'Alliance', 'Horde', 'Neutral'},
@@ -95,11 +109,13 @@ XFG.Settings = {
 		CompressionLevel = 9,
 		Channel = {
 			Total = 10,
+			NoticeTimer = 2,
 		},
 		Chat = {
 			PacketSize = 217,
 		},
-		BNet = {	
+		BNet = {
+			FriendTimer = 2,
 			PacketSize = 425,	
 			Ping = {
 				Timer = 60,         -- Seconds between pinging friends

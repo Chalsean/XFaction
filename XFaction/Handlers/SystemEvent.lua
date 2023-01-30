@@ -14,30 +14,37 @@ end
 --#region Initializers
 function SystemEvent:Initialize()
 	if(not self:IsInitialized()) then
-        self:ParentInitialize()
-        XFG.Hooks:Add('ReloadUI', 'ReloadUI', XFG.Handlers.SystemEvent.CallbackReloadUI)
-        XFG.Events:Add('Logout', 'PLAYER_LOGOUT', XFG.Handlers.SystemEvent.CallbackLogout, true)
+        self:ParentInitialize()     
+        -- Log any messages encountered during last logout
+        for _, message in ipairs(XFG.Config.Logout) do
+            XFG:Debug(ObjectName, '* Previous Logout: %s', message)
+        end
+        XFG.Config.Logout = {}
+        XFG.Hooks:Add({name = 'ReloadUI', 
+                       original = 'ReloadUI', 
+                       callback = XFG.Handlers.SystemEvent.CallbackReloadUI,
+                       pre = true})
+        XFG.Events:Add({name = 'Logout',
+                        event = 'PLAYER_LOGOUT',
+                        callback = XFG.Handlers.SystemEvent.CallbackLogout,
+                        instance = true})
         -- Not sure this is necessary but don't feel like taking the risk of removing it
-        XFG.Events:Add('LoadScreen', 'PLAYER_ENTERING_WORLD', XFG.Handlers.SystemEvent.CallbackLogin, true)
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFG.Handlers.SystemEvent.ChatFilter)
-        XFG:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
+        XFG.Events:Add({name = 'LoadScreen', 
+                        event = 'PLAYER_ENTERING_WORLD', 
+                        callback = XFG.Handlers.SystemEvent.CallbackLogin, 
+                        instance = true})
 		self:IsInitialized(true)
+        XFG.Config.Logout[#XFG.Config.Logout + 1] = XFG.Player.Unit:GetUnitName()
 	end
 end
 --#endregion
 
 --#region Callbacks
 function SystemEvent:CallbackLogout()
-    if(XFG.Cache.UIReload) then 
-        -- Backup cache on reload to be restored
-        XFG.Confederate:Backup()
-        XFG.Friends:Backup()
-        XFG.Links:Backup()
-        _G.XFCacheDB = XFG.Cache
-    else
-        -- On a real logout, send a logout message to the confederate before shutting down
+    if(not XFG.Cache.UIReload) then
         local message = nil
-        try(function ()        
+        try(function ()
+            XFG.Config.Logout[#XFG.Config.Logout + 1] = 'Logout started'
             message = XFG.Mailbox.Chat:Pop()
             message:Initialize()
             message:SetType(XFG.Settings.Network.Type.BROADCAST)
@@ -49,40 +56,36 @@ function SystemEvent:CallbackLogout()
             message:SetRealm(XFG.Player.Realm)
             message:SetUnitName(XFG.Player.Unit:GetName())
             message:SetData(' ')
+            XFG.Config.Logout[#XFG.Config.Logout + 1] = 'Logout sending message'
             XFG.Mailbox.Chat:Send(message)
+            XFG.Config.Logout[#XFG.Config.Logout + 1] = 'Logout message sent'
         end).
         catch(function (inErrorMessage)
-            XFG.Cache.Errors[#XFG.Cache.Errors + 1] = 'Failed to send logoff message: ' .. inErrorMessage
-        end).
-        finally(function ()
-            XFG.Mailbox.Chat:Push(message)
-            wipe(_G.XFCacheDB)         
+            XFG:Error(ObjectName, inErrorMessage)
+            XFG.Config.Logout[#XFG.Config.Logout + 1] = 'Failed to send logout message: ' .. inErrorMessage
         end)
-    end    
+    end
 end
 
 function SystemEvent:CallbackReloadUI()
-    XFG.Cache.UIReload = true
+    try(function ()        
+        XFG.Confederate:Backup()
+        XFG.Friends:Backup()
+        XFG.Links:Backup()
+    end).
+    catch(function (inErrorMessage)
+        XFG:Error(ObjectName, inErrorMessage)
+        XFG.Config.Errors[#XFG.Config.Errors + 1] = 'Failed to perform backups: ' .. inErrorMessage
+    end).
+    finally(function ()
+        XFG.Cache.UIReload = true
+        _G.XFCacheDB = XFG.Cache
+    end)
 end
 
 function SystemEvent:CallbackLogin()
     if(XFG.Channels:HasLocalChannel()) then
         XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
     end
-end
-
-function SystemEvent:ChatFilter(inEvent, inMessage, ...)
-    if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
-        inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
-        return false, inMessage, ...
-    -- Hide Blizz login/logout messages, we display our own, this is a double notification
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGIN'])) then
-        return true
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_LOGOUT'])) then
-        return true
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_JOIN_GUILD'])) then
-        return true 
-    end
-    return false, inMessage, ...
 end
 --#endregion

@@ -16,7 +16,10 @@ function Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XFG.Settings.Network.Message.Tag.LOCAL = XFG.Confederate:GetKey() .. 'XF'						
-        XFG.Events:Add('ChatMsg', 'CHAT_MSG_ADDON', XFG.Mailbox.Chat.ChatReceive, true)
+        XFG.Events:Add({name = 'ChatMsg', 
+                        event = 'CHAT_MSG_ADDON', 
+                        callback = XFG.Mailbox.Chat.ChatReceive, 
+                        instance = true})
         self:IsInitialized(true)
     end
     return self:IsInitialized()

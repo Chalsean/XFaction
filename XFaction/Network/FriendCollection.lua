@@ -199,5 +199,6 @@ function FriendCollection:Restore()
 			XFG:Warn(ObjectName, 'Failed to restore friend list: ' .. inErrorMessage)
 		end)
 	end
+	XFG.Cache.Backup.Friends = {}
 end
 --#endregion

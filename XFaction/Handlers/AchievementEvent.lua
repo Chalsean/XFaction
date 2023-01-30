@@ -15,7 +15,10 @@ end
 function AchievementEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Events:Add('Achievement', 'ACHIEVEMENT_EARNED', XFG.Handlers.AchievementEvent.CallbackAchievement, true)
+        XFG.Events:Add({name = 'Achievement', 
+                        event = 'ACHIEVEMENT_EARNED', 
+                        callback = XFG.Handlers.AchievementEvent.CallbackAchievement, 
+                        instance = true})
 		self:IsInitialized(true)
 	end
 end
@@ -40,10 +43,11 @@ function AchievementEvent:CallbackAchievement(inID)
                 message:SetType(XFG.Settings.Network.Type.BROADCAST)
                 message:SetSubject(XFG.Settings.Network.Message.Subject.ACHIEVEMENT)
                 message:SetData(inID) -- Leave as ID to localize on receiving end
+                message:SetName(XFG.Player.Unit:GetName())
                 if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
                     message:SetMainName(XFG.Player.Unit:GetMainName())
                 end
-                message:SetUnitName(XFG.Player.Unit:GetName())
+                message:SetUnitName(XFG.Player.Unit:GetUnitName())
                 message:SetRealm(XFG.Player.Realm)
                 message:SetGuild(XFG.Player.Guild)
                 XFG.Mailbox.Chat:Send(message)

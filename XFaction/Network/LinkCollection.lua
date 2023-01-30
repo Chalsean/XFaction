@@ -156,7 +156,8 @@ function LinkCollection:Restore()
 		catch(function (inErrorMessage)
 			XFG:Warn(ObjectName, inErrorMessage)
 		end)
-	end	
+	end
+	XFG.Cache.Backup.Links = ''
 end
 
 function LinkCollection:Purge(inEpochTime)
