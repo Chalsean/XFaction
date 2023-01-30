@@ -19,23 +19,28 @@ end
 function ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		if(XFG.Cache.Channel.Password == nil) then
-			JoinChannelByName(XFG.Cache.Channel.Name)
-		else
-			JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
+		if(XFG.Cache.Channel.Name ~= nil) then
+			if(XFG.Cache.Channel.Password == nil) then
+				JoinChannelByName(XFG.Cache.Channel.Name)
+			else
+				JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
+			end
+			XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)
+			local channelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Cache.Channel.Name)
+			local channel = Channel:new()
+			channel:SetKey(channelInfo.shortcut)
+			channel:SetID(channelInfo.localID)
+			channel:SetName(channelInfo.shortcut)
+			channel:SetType(channelInfo.channelType)
+			if(XFG.Cache.Channel.Password ~= nil) then
+				channel:SetPassword(XFG.Cache.Channel.Password)
+			end
+			self:Add(channel)
+			self:SetLocalChannel(channel)
+			self:Scan()
+			self:SetLast(channel:GetKey())
+			XFG.Handlers.ChannelEvent:Initialize()
 		end
-		XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)
-		local channelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Cache.Channel.Name)
-		local channel = Channel:new()
-		channel:SetKey(channelInfo.shortcut)
-		channel:SetID(channelInfo.localID)
-		channel:SetName(channelInfo.shortcut)
-		if(XFG.Cache.Channel.Password ~= nil) then
-			channel:SetPassword(XFG.Cache.Channel.Password)
-		end
-		self:Add(channel)
-		self:SetLocalChannel(channel)
-		self:SetLast(channel:GetKey())
 		self:IsInitialized(true)
 	end
 end
@@ -64,11 +69,9 @@ end
 function ChannelCollection:SetLast(inKey)
 	if(not XFG.Config.Chat.Channel.Last) then return end
 	if(not self:Contains(inKey)) then return end
-	
-	self:Scan()
 	local channel = self:Get(inKey)
 
-	for i = channel:GetID() + 1, 10 do
+	for i = channel:GetID() + 1, XFG.Settings.Network.Channel.Total do
 		local nextChannel = self:GetByID(i)
 		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
 			XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
@@ -128,7 +131,7 @@ function ChannelCollection:Scan()
 				channel:SetKey(channelName)
 				channel:SetName(channelName)
 				channel:SetID(channelID)
-				channel:IsCommunity(channelInfo.channelType == 2)
+				channel:SetType(channelInfo.channelType)
 				self:Add(channel)
 			end
 		end

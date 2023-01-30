@@ -27,12 +27,14 @@ function SystemEvent:Initialize()
         XFG.Events:Add({name = 'Logout',
                         event = 'PLAYER_LOGOUT',
                         callback = XFG.Handlers.SystemEvent.CallbackLogout,
-                        instance = true})
+                        instance = true,
+                        start = false})
         -- Not sure this is necessary but don't feel like taking the risk of removing it
         XFG.Events:Add({name = 'LoadScreen', 
                         event = 'PLAYER_ENTERING_WORLD', 
                         callback = XFG.Handlers.SystemEvent.CallbackLogin, 
-                        instance = true})
+                        instance = true,
+                        start = false})
 		self:IsInitialized(true)
         XFG.Config.Logout[#XFG.Config.Logout + 1] = XFG.Player.Unit:GetUnitName()
 	end

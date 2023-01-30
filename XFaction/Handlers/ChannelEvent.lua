@@ -31,27 +31,11 @@ end
 --#endregion
 
 --#region Callbacks
-function ChannelEvent:CallbackChannelNotice(inAction, _, _, _, _, _, inChannelType, inChannelNumber, inChannelName)
+function ChannelEvent:CallbackChannelNotice()
 	try(function ()
-		local channel = XFG.Channels:GetLocalChannel()
-		
-		if(inAction == 'YOU_LEFT') then
-			if(inChannelName == channel:GetName()) then
-				XFG:Error(ObjectName, 'Removed channel was the addon channel')			
-				XFG.Channels:VoidLocalChannel()
-			end
-			XFG.Channels:Remove(channel:GetKey())
-
-		elseif(inAction == 'YOU_CHANGED') then
-			XFG.Channels:SetLast(channel:GetKey())
-
-		elseif(inAction == 'YOU_JOINED') then
-			local newChannel = Channel:new()
-		    newChannel:SetKey(inChannelName)
-		    newChannel:SetID(inChannelNumber)
-			newChannel:SetName(inChannelName)
-		    XFG.Channels:Add(newChannel)
-			XFG.Channels:SetLast(channel:GetKey())
+		XFG.Channels:Scan()
+		if(XFG.Channels:HasLocalChannel()) then
+			XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
 		end
 	end).
 	catch(function (inErrorMessage)

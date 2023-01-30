@@ -18,7 +18,8 @@ function ChatEvent:Initialize()
         XFG.Events:Add({name = 'GuildChat', 
                         event = 'CHAT_MSG_GUILD', 
                         callback = XFG.Handlers.ChatEvent.CallbackGuildMessage, 
-                        instance = true})
+                        instance = true,
+                        start = false})
 		self:IsInitialized(true)
 	end
 end

@@ -19,7 +19,8 @@ function Chat:Initialize()
         XFG.Events:Add({name = 'ChatMsg', 
                         event = 'CHAT_MSG_ADDON', 
                         callback = XFG.Mailbox.Chat.ChatReceive, 
-                        instance = true})
+                        instance = true,
+                        start = false})
         self:IsInitialized(true)
     end
     return self:IsInitialized()

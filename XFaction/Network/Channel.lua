@@ -9,7 +9,7 @@ function Channel:new()
     object.__name = 'Channel'
     object.ID = nil
     object.password = nil
-    object.community = false
+    object.type = Enum.PermanentChatChannelType.None
     return object
 end
 --#endregion
@@ -18,7 +18,7 @@ end
 function Channel:Print()
     self:ParentPrint()
     XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-    XFG:Debug(ObjectName, '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
+    XFG:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
 end
 --#endregion
 
@@ -41,11 +41,24 @@ function Channel:SetPassword(inPassword)
     self.password = inPassword
 end
 
-function Channel:IsCommunity(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
-    if(inBoolean ~= nil) then
-        self.community = inBoolean
-    end
-    return self.community
+function Channel:GetType()
+    return self.type
+end
+
+function Channel:SetType(inType)
+    assert(type(inType) == 'number')
+    self.type = inType
+end
+
+function Channel:IsUnknown()
+    return self.type == Enum.PermanentChatChannelType.None
+end
+
+function Channel:IsCommunity()
+    return self.type == Enum.PermanentChatChannelType.Communities
+end
+
+function Channel:IsCustom()
+    return self.type == Enum.PermanentChatChannelType.Custom
 end
 --#endregion

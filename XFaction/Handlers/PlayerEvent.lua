@@ -20,24 +20,33 @@ function PlayerEvent:Initialize()
         XFG.Events:Add({name = 'Mythic', 
                         event = 'CHALLENGE_MODE_COMPLETED', 
                         callback = XFG.Handlers.PlayerEvent.CallbackPlayerChanged, 
-                        instance = true})
+                        instance = true,
+                        start = false})
         XFG.Events:Add({name = 'Spec', 
                         event = 'ACTIVE_TALENT_GROUP_CHANGED', 
                         callback = XFG.Handlers.PlayerEvent.CallbackPlayerChanged, 
-                        instance = true})        
+                        instance = true,
+                        start = false})        
         XFG.Events:Add({name = 'Instance', 
                         event = 'PLAYER_ENTERING_WORLD', 
                         callback = XFG.Handlers.PlayerEvent.CallbackInstance, 
-                        instance = true})
+                        instance = true,
+                        start = false})
         XFG.Events:Add({name = 'Level', 
                         event = 'PLAYER_LEVEL_CHANGED', 
-                        callback = XFG.Handlers.PlayerEvent.CallbackPlayerChanged})
+                        callback = XFG.Handlers.PlayerEvent.CallbackPlayerChanged,
+                        instance = true,
+                        start = false})
         XFG.Events:Add({name = 'Profession', 
                         event = 'SKILL_LINES_CHANGED', 
-                        callback = XFG.Handlers.PlayerEvent.CallbackSkillChanged})
+                        callback = XFG.Handlers.PlayerEvent.CallbackSkillChanged,
+                        instance = false,
+                        start = false})
         XFG.Events:Add({name = 'Zone', 
                         event = 'ZONE_CHANGED_NEW_AREA', 
-                        callback = XFG.Handlers.PlayerEvent.CallbackZoneChanged})
+                        callback = XFG.Handlers.PlayerEvent.CallbackZoneChanged,
+                        instance = false,
+                        start = false})
 
 		self:IsInitialized(true)
 	end

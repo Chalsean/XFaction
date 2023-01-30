@@ -66,11 +66,6 @@ XFG.Enum = {
 		Medium = 2,
 		Low = 3,
 	},
-	Channel = {
-		GUILD = 1,
-		COMMUNITY = 2,
-		CUSTOM = 3,
-	},
 }
 
 XFG.Settings = {
@@ -110,6 +105,7 @@ XFG.Settings = {
 		Channel = {
 			Total = 10,
 			NoticeTimer = 2,
+			DelayInit = 30,
 		},
 		Chat = {
 			PacketSize = 217,

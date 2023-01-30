@@ -22,48 +22,64 @@ function TimerEvent:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
-		XFG.Timers:Add({name = 'LoginGuild', 
-						delta = 1, 
-						callback = XFG.Handlers.TimerEvent.CallbackLoginGuild, 
-						repeater = true, 
-						instance = true,
-						ttl = XFG.Settings.LocalGuild.LoginTTL,
-						start = true})
-		XFG.Timers:Add({name = 'LoginPlayer', 
-						delta = 1, 
-						callback = XFG.Handlers.TimerEvent.CallbackLoginPlayer, 
-						repeater = true, 
-						instance = true,
-						maxAttempts = XFG.Settings.Player.Retry})
-		XFG.Timers:Add({name = 'Heartbeat', 
-						delta = XFG.Settings.Player.Heartbeat, 
-						callback = XFG.Handlers.TimerEvent.CallbackHeartbeat, 
-						repeater = true, 
-						instance = true})
-		XFG.Timers:Add({name = 'Links', 
-						delta = XFG.Settings.Network.BNet.Link.Broadcast, 
-						callback = XFG.Handlers.TimerEvent.CallbackLinks, 
-						repeater = true, 
-						instance = true})		    		    
-		XFG.Timers:Add({name = 'Mailbox', 
-						delta = XFG.Settings.Network.Mailbox.Scan, 
-						callback = XFG.Handlers.TimerEvent.CallbackMailboxTimer, 
-						repeater = true})
-		XFG.Timers:Add({name = 'Ping', 
-						delta = XFG.Settings.Network.BNet.Ping.Timer, 
-						callback = XFG.Handlers.TimerEvent.CallbackPingFriends, 
-						repeater = true, 
-						instance = true})
-		XFG.Timers:Add({name = 'StaleLinks', 
-						delta = XFG.Settings.Network.BNet.Link.Scan, 
-						callback = XFG.Handlers.TimerEvent.CallbackStaleLinks, 
-						repeater = true, 
-						instance = true})
-		XFG.Timers:Add({name = 'Offline', 
-						delta = XFG.Settings.Confederate.UnitScan, 
-						callback = XFG.Handlers.TimerEvent.CallbackOffline, 
-						repeater = true, 
-						instance = true})
+		XFG.Timers:Add({
+			name = 'LoginGuild', 
+			delta = 1, 
+			callback = XFG.Handlers.TimerEvent.CallbackLoginGuild, 
+			repeater = true, 
+			instance = true,
+			ttl = XFG.Settings.LocalGuild.LoginTTL,
+			start = true
+		})
+		XFG.Timers:Add({
+			name = 'LoginPlayer', 
+			delta = 1, 
+			callback = XFG.Handlers.TimerEvent.CallbackLoginPlayer, 
+			repeater = true, 
+			instance = true,
+			maxAttempts = XFG.Settings.Player.Retry
+		})
+		XFG.Timers:Add({
+			name = 'Heartbeat', 
+			delta = XFG.Settings.Player.Heartbeat, 
+			callback = XFG.Handlers.TimerEvent.CallbackHeartbeat, 
+			repeater = true, 
+			instance = true
+		})
+		XFG.Timers:Add({
+			name = 'Links', 
+			delta = XFG.Settings.Network.BNet.Link.Broadcast, 
+			callback = XFG.Handlers.TimerEvent.CallbackLinks, 
+			repeater = true, 
+			instance = true
+		})
+		XFG.Timers:Add({
+			name = 'Mailbox', 
+			delta = XFG.Settings.Network.Mailbox.Scan, 
+			callback = XFG.Handlers.TimerEvent.CallbackMailboxTimer, 
+			repeater = true
+		})
+		XFG.Timers:Add({
+			name = 'Ping', 
+			delta = XFG.Settings.Network.BNet.Ping.Timer, 
+			callback = XFG.Handlers.TimerEvent.CallbackPingFriends, 
+			repeater = true, 
+			instance = true
+		})
+		XFG.Timers:Add({
+			name = 'StaleLinks', 
+			delta = XFG.Settings.Network.BNet.Link.Scan, 
+			callback = XFG.Handlers.TimerEvent.CallbackStaleLinks, 
+			repeater = true, 
+			instance = true
+		})
+		XFG.Timers:Add({
+			name = 'Offline', 
+			delta = XFG.Settings.Confederate.UnitScan, 
+			callback = XFG.Handlers.TimerEvent.CallbackOffline, 
+			repeater = true, 
+			instance = true
+		})
 		self:IsInitialized(true)
 	end
 end
@@ -102,7 +118,6 @@ function TimerEvent:CallbackLoginGuild()
 
 				-- Start network
 				XFG.Channels:Initialize()
-				XFG.Handlers.ChannelEvent:Initialize()
 				XFG.Mailbox.Chat:Initialize()
 				XFG.Nodes:Initialize()
 				XFG.Links:Initialize()
@@ -164,6 +179,17 @@ function TimerEvent:CallbackLoginPlayer()
 				local name, _, _, enabled = GetAddOnInfo(i)
 				XFG:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
+
+			-- Theres been some weird behaviour regarding channels, their notifications and users with mediocre connection/hardware
+			-- So as fail safe, fire a channel event X seconds after up and running
+			XFG.Timers:Add({
+				name = 'ChannelInit', 
+				delta = XFG.Settings.Network.Channel.DelayInit, 
+				callback = XFG.Handlers.ChannelEvent.CallbackChannelNotice, 
+				repeater = false,
+				instance = true,
+				start = true,
+			})
 		else
 			XFG.Confederate:Push(unitData)
 		end
