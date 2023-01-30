@@ -1,7 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Config.ChangeLog'
 
-XFG.ChangeLog['4.3.9'] = {
+XFG.ChangeLog['4.3.10'] = {
     Improvements = {
         order = 1,
         type = 'group',
@@ -46,6 +46,17 @@ XFG.ChangeLog['4.3.9'] = {
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Similarly better performance on BNet friend scans from Blizz spamming BN_FRIEND_INFO_CHANGED.',
+            },
+            Bar4 = {
+                order = 8,
+                name = '',
+                type = 'header'
+            },
+            Five = {
+                order = 9,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Fixed bug where achievements sometimes had a blank name.',
             },
         }
     },			
