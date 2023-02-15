@@ -27,14 +27,12 @@ function SystemEvent:Initialize()
         XFG.Events:Add({name = 'Logout',
                         event = 'PLAYER_LOGOUT',
                         callback = XFG.Handlers.SystemEvent.CallbackLogout,
-                        instance = true,
-                        start = false})
+                        instance = true})
         -- Not sure this is necessary but don't feel like taking the risk of removing it
         XFG.Events:Add({name = 'LoadScreen', 
                         event = 'PLAYER_ENTERING_WORLD', 
                         callback = XFG.Handlers.SystemEvent.CallbackLogin, 
-                        instance = true,
-                        start = false})
+                        instance = true})
 		self:IsInitialized(true)
         XFG.Config.Logout[#XFG.Config.Logout + 1] = XFG.Player.Unit:GetUnitName()
 	end
@@ -49,8 +47,8 @@ function SystemEvent:CallbackLogout()
             XFG.Config.Logout[#XFG.Config.Logout + 1] = 'Logout started'
             message = XFG.Mailbox.Chat:Pop()
             message:Initialize()
-            message:SetType(XFG.Settings.Network.Type.BROADCAST)
-            message:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
+            message:SetType(XFG.Enum.Network.BROADCAST)
+            message:SetSubject(XFG.Enum.Message.LOGOUT)
             if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
                 message:SetMainName(XFG.Player.Unit:GetMainName())
             end

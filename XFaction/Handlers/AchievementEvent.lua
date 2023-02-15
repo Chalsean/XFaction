@@ -18,8 +18,7 @@ function AchievementEvent:Initialize()
         XFG.Events:Add({name = 'Achievement', 
                         event = 'ACHIEVEMENT_EARNED', 
                         callback = XFG.Handlers.AchievementEvent.CallbackAchievement, 
-                        instance = true,
-                        start = false,})
+                        instance = true})
 		self:IsInitialized(true)
 	end
 end
@@ -41,8 +40,8 @@ function AchievementEvent:CallbackAchievement(inID)
             try(function ()
                 message = XFG.Mailbox.Chat:Pop()
                 message:Initialize()
-                message:SetType(XFG.Settings.Network.Type.BROADCAST)
-                message:SetSubject(XFG.Settings.Network.Message.Subject.ACHIEVEMENT)
+                message:SetType(XFG.Enum.Network.BROADCAST)
+                message:SetSubject(XFG.Enum.Message.ACHIEVEMENT)
                 message:SetData(inID) -- Leave as ID to localize on receiving end
                 message:SetName(XFG.Player.Unit:GetName())
                 if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then

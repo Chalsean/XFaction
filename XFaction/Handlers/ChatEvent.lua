@@ -18,8 +18,7 @@ function ChatEvent:Initialize()
         XFG.Events:Add({name = 'GuildChat', 
                         event = 'CHAT_MSG_GUILD', 
                         callback = XFG.Handlers.ChatEvent.CallbackGuildMessage, 
-                        instance = true,
-                        start = false})
+                        instance = true})
 		self:IsInitialized(true)
 	end
 end
@@ -35,8 +34,8 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
                 message = XFG.Mailbox.Chat:Pop()
                 message:Initialize()
                 message:SetFrom(XFG.Player.Unit:GetGUID())
-                message:SetType(XFG.Settings.Network.Type.BROADCAST)
-                message:SetSubject(XFG.Settings.Network.Message.Subject.GCHAT)
+                message:SetType(XFG.Enum.Network.BROADCAST)
+                message:SetSubject(XFG.Enum.Message.GCHAT)
                 message:SetName(XFG.Player.Unit:GetName())
                 message:SetUnitName(XFG.Player.Unit:GetUnitName())
                 message:SetGuild(XFG.Player.Guild)

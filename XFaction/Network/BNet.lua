@@ -20,8 +20,7 @@ function BNet:Initialize()
         XFG.Events:Add({name = 'BNetMessage', 
                         event = 'BN_CHAT_MSG_ADDON', 
                         callback = XFG.Mailbox.BNet.BNetReceive, 
-                        instance = true,
-                        start = false})
+                        instance = true})
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -39,7 +38,7 @@ function BNet:Send(inMessage)
         for _, friend in XFG.Friends:Iterator() do
             if(target:Equals(friend:GetTarget()) and
               -- At the time of login you may not have heard back on pings yet, so just broadcast
-              (friend:IsRunningAddon() or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN)) then
+              (friend:IsRunningAddon() or inMessage:GetSubject() == XFG.Enum.Message.LOGIN)) then
                 friends[#friends + 1] = friend
             end
         end

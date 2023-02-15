@@ -17,7 +17,8 @@ function ChannelEvent:Initialize()
 		self:ParentInitialize()
 		XFG.Events:Add({name = 'ChannelChange', 
 		                event = 'CHAT_MSG_CHANNEL_NOTICE', 
-						callback = XFG.Handlers.ChannelEvent.CallbackChannelNotice, 
+						callback = XFG.Handlers.ChannelEvent.CallbackChannelNotice,
+						groupDelta = 3,
 						instance = true,
 						start = true})
 		XFG.Events:Add({name = 'ChannelColor', 
@@ -33,10 +34,7 @@ end
 --#region Callbacks
 function ChannelEvent:CallbackChannelNotice()
 	try(function ()
-		XFG.Channels:Scan()
-		if(XFG.Channels:HasLocalChannel()) then
-			XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
-		end
+		XFG.Channels:Sync()
 	end).
 	catch(function (inErrorMessage)
 		XFG:Warn(ObjectName, inErrorMessage)
@@ -55,7 +53,7 @@ function ChannelEvent:CallbackUpdateColor(inChannel, inR, inG, inB)
 				XFG.Config.Channels[channel:GetName()].R = inR
 				XFG.Config.Channels[channel:GetName()].G = inG
 				XFG.Config.Channels[channel:GetName()].B = inB
-				XFG:Debug(ObjectName, 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, channel:GetName())
+				XFG:Trace(ObjectName, 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, channel:GetName())
 			end
 		end
 	end).

@@ -1,5 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Channel'
+local SetChatColor = ChangeChatColor
 
 Channel = Object:newChildConstructor()
 
@@ -9,7 +10,7 @@ function Channel:new()
     object.__name = 'Channel'
     object.ID = nil
     object.password = nil
-    object.type = Enum.PermanentChatChannelType.None
+    object.community = false
     return object
 end
 --#endregion
@@ -18,7 +19,7 @@ end
 function Channel:Print()
     self:ParentPrint()
     XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
-    XFG:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XFG:Debug(ObjectName, '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
 end
 --#endregion
 
@@ -41,24 +42,19 @@ function Channel:SetPassword(inPassword)
     self.password = inPassword
 end
 
-function Channel:GetType()
-    return self.type
+function Channel:IsCommunity(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
+    if(inBoolean ~= nil) then
+        self.community = inBoolean
+    end
+    return self.community
 end
 
-function Channel:SetType(inType)
-    assert(type(inType) == 'number')
-    self.type = inType
-end
-
-function Channel:IsUnknown()
-    return self.type == Enum.PermanentChatChannelType.None
-end
-
-function Channel:IsCommunity()
-    return self.type == Enum.PermanentChatChannelType.Communities
-end
-
-function Channel:IsCustom()
-    return self.type == Enum.PermanentChatChannelType.Custom
+function Channel:SetColor()
+    if(XFG.Config.Channels[self:GetName()] ~= nil) then
+        local color = XFG.Config.Channels[self:GetName()]
+        SetChatColor('CHANNEL' .. self:GetID(), color.R, color.G, color.B)
+        XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', self:GetName(), color.R, color.G, color.B)
+    end
 end
 --#endregion

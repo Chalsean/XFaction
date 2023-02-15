@@ -17,11 +17,10 @@ function ExpansionCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        for expansionID, iconID in pairs(XFG.Settings.Expansions) do
+        for _, expansionID in ipairs(XFG.Settings.Expansions) do
             local expansion = Expansion:new()
             expansion:SetKey(expansionID)
             expansion:SetID(expansionID)
-            expansion:SetIconID(iconID)
             if(expansionID == WOW_PROJECT_MAINLINE) then
                 expansion:SetName('Retail')
             elseif(expansionID == WOW_PROJECT_CLASSIC) then

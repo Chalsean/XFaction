@@ -19,8 +19,7 @@ function Chat:Initialize()
         XFG.Events:Add({name = 'ChatMsg', 
                         event = 'CHAT_MSG_ADDON', 
                         callback = XFG.Mailbox.Chat.ChatReceive, 
-                        instance = true,
-                        start = false})
+                        instance = true})
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -30,24 +29,24 @@ end
 --#region Send
 function Chat:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
-    if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.DATA) then return end
+    if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Enum.Message.DATA) then return end
 
     XFG:Debug(ObjectName, 'Attempting to send message')
     inMessage:Print()
 
     --#region BNet messaging for BNET/BROADCAST types
-    if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
+    if(inMessage:GetType() == XFG.Enum.Network.BROADCAST or inMessage:GetType() == XFG.Enum.Network.BNET) then
         XFG.Mailbox.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
-        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
-            inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XFG.Enum.Network.BNET) then
+            inMessage:SetType(XFG.Enum.Network.BROADCAST)
         -- Successfully bnet to all targets and only were supposed to bnet, were done
-        elseif(inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
+        elseif(inMessage:GetType() == XFG.Enum.Network.BNET) then
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
-        elseif(not inMessage:HasTargets() and inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST) then
+        elseif(not inMessage:HasTargets() and inMessage:GetType() == XFG.Enum.Network.BROADCAST) then
             XFG:Debug(ObjectName, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
-            inMessage:SetType(XFG.Settings.Network.Type.LOCAL)        
+            inMessage:SetType(XFG.Enum.Network.LOCAL)        
         end
     end
     --#endregion

@@ -153,9 +153,9 @@ function Message:SetTotalPackets(inTotalPackets)
 end
 
 function Message:HasUnitData()
-    return self:GetSubject() == XFG.Settings.Network.Message.Subject.DATA or 
-           self:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN or
-           self:GetSubject() == XFG.Settings.Network.Message.Subject.JOIN
+    return self:GetSubject() == XFG.Enum.Message.DATA or 
+           self:GetSubject() == XFG.Enum.Message.LOGIN or
+           self:GetSubject() == XFG.Enum.Message.JOIN
 end
 
 function Message:HasVersion()

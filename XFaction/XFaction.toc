@@ -11,7 +11,7 @@
 Libraries\LoadLibraries.xml
 Locales\LoadLocales.xml
 
-Constants.lua
+Settings.lua
 Functions\LoadFunctions.xml
 
 Base\LoadBase.xml

@@ -85,8 +85,8 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRe
     local faction = inGuild:GetFaction()
     local message = XFG.Settings.Frames.Chat.Prepend
 
-    if(inType == XFG.Settings.Network.Message.Subject.GCHAT) then inType = 'GUILD' end
-    if(inType == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then inType = 'GUILD_ACHIEVEMENT' end
+    if(inType == XFG.Enum.Message.GCHAT) then inType = 'GUILD' end
+    if(inType == XFG.Enum.Message.ACHIEVEMENT) then inType = 'GUILD_ACHIEVEMENT' end
     local configNode = inType == 'GUILD' and 'GChat' or 'Achievement'
     if(not XFG.Config.Chat[configNode].Enable) then return end
 

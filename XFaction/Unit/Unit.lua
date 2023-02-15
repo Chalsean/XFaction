@@ -633,7 +633,7 @@ end
 --#region Network
 function Unit:Broadcast(inSubject)
     assert(type(inSubject) == 'string' or inSubject == nil)
-	if(inSubject == nil) then inSubject = XFG.Settings.Network.Message.Subject.DATA end
+	if(inSubject == nil) then inSubject = XFG.Enum.Message.DATA end
     -- Update the last sent time, dont need to heartbeat for awhile
     if(self:IsPlayer()) then
         local epoch = ServerTime()
@@ -652,7 +652,7 @@ function Unit:Broadcast(inSubject)
         message:SetGuild(self:GetGuild())
         message:SetRealm(self:GetRealm())
         message:SetUnitName(self:GetName())
-        message:SetType(XFG.Settings.Network.Type.BROADCAST)
+        message:SetType(XFG.Enum.Network.BROADCAST)
         message:SetSubject(inSubject)
         message:SetData(self)
         XFG.Mailbox.Chat:Send(message)

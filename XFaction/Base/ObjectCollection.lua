@@ -103,6 +103,12 @@ function ObjectCollection:Remove(inKey)
 		self.objectCount = self.objectCount - 1
 	end
 end
+
+function ObjectCollection:RemoveAll()
+    for _, object in self:Iterator() do
+        self:Remove(object:GetKey())
+    end
+end
 --#endregion
 
 --#region Accessors

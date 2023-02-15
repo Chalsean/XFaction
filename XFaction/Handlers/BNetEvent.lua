@@ -18,7 +18,6 @@ function BNetEvent:Initialize()
                         event = 'BN_FRIEND_INFO_CHANGED', 
                         callback = XFG.Handlers.BNetEvent.CallbackFriendInfo, 
                         instance = true,
-                        start = false,
                         groupDelta = XFG.Settings.Network.BNet.FriendTimer})
 		self:IsInitialized(true)
 	end

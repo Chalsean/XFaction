@@ -54,7 +54,7 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
         text = text .. format('%s ', format(XFG.Icons.String, faction:GetIconID()))
     end
   
-    if(inType == XFG.Settings.Network.Message.Subject.LOGOUT) then
+    if(inType == XFG.Enum.Message.LOGOUT) then
         text = text .. inName .. ' '
     elseif(faction:Equals(XFG.Player.Faction)) then
         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
@@ -76,11 +76,11 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
         text = text .. '<' .. inGuild:GetInitials() .. '> '
     end
     
-    if(inType == XFG.Settings.Network.Message.Subject.LOGOUT) then
+    if(inType == XFG.Enum.Message.LOGOUT) then
         text = text .. XFG.Lib.Locale['CHAT_LOGOUT']
-    elseif(inType == XFG.Settings.Network.Message.Subject.JOIN) then
+    elseif(inType == XFG.Enum.Message.JOIN) then
         text = text .. XFG.Lib.Locale['CHAT_JOIN_CONFEDERATE']
-    elseif(inType == XFG.Settings.Network.Message.Subject.LOGIN) then
+    elseif(inType == XFG.Enum.Message.LOGIN) then
         text = text .. XFG.Lib.Locale['CHAT_LOGIN']
         if(XFG.Config.Chat.Login.Sound and not XFG.Player.Guild:Equals(inGuild)) then
             PlaySound(3332, 'Master')

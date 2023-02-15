@@ -1,8 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'ChannelCollection'
 local SwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
-local SetChatColor = ChangeChatColor
 local GetChannels = GetChannelList
+local GetChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
 
 ChannelCollection = ObjectCollection:newChildConstructor()
 
@@ -19,28 +19,15 @@ end
 function ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		if(XFG.Cache.Channel.Name ~= nil) then
-			if(XFG.Cache.Channel.Password == nil) then
-				JoinChannelByName(XFG.Cache.Channel.Name)
-			else
-				JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
-			end
-			XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)
-			local channelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(XFG.Cache.Channel.Name)
-			local channel = Channel:new()
-			channel:SetKey(channelInfo.shortcut)
-			channel:SetID(channelInfo.localID)
-			channel:SetName(channelInfo.shortcut)
-			channel:SetType(channelInfo.channelType)
-			if(XFG.Cache.Channel.Password ~= nil) then
-				channel:SetPassword(XFG.Cache.Channel.Password)
-			end
-			self:Add(channel)
-			self:SetLocalChannel(channel)
-			self:Scan()
-			self:SetLast(channel:GetKey())
-			XFG.Handlers.ChannelEvent:Initialize()
+		if(XFG.Cache.Channel.Password == nil) then
+			JoinChannelByName(XFG.Cache.Channel.Name)
+		else
+			JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
 		end
+		XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)
+		self:Sync()
+		self:SetLast(XFG.Cache.Channel.Name)
+		self:SetLocalChannel(self:Get(XFG.Cache.Channel.Name))
 		self:IsInitialized(true)
 	end
 end
@@ -69,9 +56,10 @@ end
 function ChannelCollection:SetLast(inKey)
 	if(not XFG.Config.Chat.Channel.Last) then return end
 	if(not self:Contains(inKey)) then return end
+	
 	local channel = self:Get(inKey)
 
-	for i = channel:GetID() + 1, XFG.Settings.Network.Channel.Total do
+	for i = channel:GetID() + 1, 10 do
 		local nextChannel = self:GetByID(i)
 		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
 			XFG:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
@@ -81,15 +69,7 @@ function ChannelCollection:SetLast(inKey)
 		end
 	end
 
-	if(XFG.Config.Chat.Channel.Color) then
-		for _, _Channel in self:Iterator() do
-			if(XFG.Config.Channels[_Channel:GetName()] ~= nil) then
-				local _Color = XFG.Config.Channels[_Channel:GetName()]
-				SetChatColor('CHANNEL' .. _Channel:GetID(), _Color.R, _Color.G, _Color.B)
-				XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', _Channel:GetName(), _Color.R, _Color.G, _Color.B)
-			end		
-		end
-	end
+	self:Sync()
 end
 
 function ChannelCollection:HasLocalChannel()
@@ -111,35 +91,22 @@ end
 --#endregion
 
 --#region DataSet
-function ChannelCollection:Scan()
+function ChannelCollection:Sync()
 	try(function ()
+		XFG.Channels:RemoveAll()
 		local channels = {GetChannels()}
 		local IDs = {}
 		for i = 1, #channels, 3 do
 			local channelID, channelName, disabled = channels[i], channels[i+1], channels[i+2]
 			IDs[channelID] = true
-			if(self:Contains(channelName)) then
-				local channel = self:Get(channelName)
-				if(channel:GetID() ~= channelID) then
-					local oldID = channel:GetID()
-					channel:SetID(channelID)
-					XFG:Debug(ObjectName, 'Channel ID changed [%d:%d:%s]', oldID, channel:GetID(), channel:GetName())
-				end
-			else
-				local channelInfo = C_ChatInfo.GetChannelInfoFromIdentifier(channelName)
-				local channel = Channel:new()
-				channel:SetKey(channelName)
-				channel:SetName(channelName)
-				channel:SetID(channelID)
-				channel:SetType(channelInfo.channelType)
-				self:Add(channel)
-			end
-		end
-
-		for _, channel in self:Iterator() do
-			if(IDs[channel:GetID()] == nil) then
-				self:Remove(channel:GetKey())
-			end
+			local channelInfo = GetChannelInfo(channelName)
+			local channel = Channel:new()
+			channel:SetKey(channelName)
+			channel:SetName(channelName)
+			channel:SetID(channelID)
+			channel:IsCommunity(channelInfo.channelType == 2)
+			channel:SetColor()
+			self:Add(channel)			
 		end
 	end).
 	catch(function (inErrorMessage)

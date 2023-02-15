@@ -26,7 +26,6 @@ function DTToken:Initialize()
 			XFG.Events:Add({name = 'DTToken' .. event, 
 			                event = event, 
 							callback = XFG.DataText.Token.OnEvent,
-							instance = false,
 						    start = true})
 			XFG:Info(ObjectName, 'Registered for %s events', event)
 		end
