@@ -114,7 +114,7 @@ end
 --#region Receive
 function Mailbox:IsAddonTag(inTag)
 	local addonTag = false
-    for _, tag in pairs (XFG.Settings.Network.Message.Tag) do
+    for _, tag in pairs (XFG.Enum.Tag) do
         if(inTag == tag) then
             addonTag = true
             break
@@ -133,12 +133,12 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
         return
     end
 
-    if(inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
-        XFG.Metrics:Get(XFG.Settings.Metric.ChannelReceive):Increment()
-        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
+    if(inMessageTag == XFG.Enum.Tag.LOCAL) then
+        XFG.Metrics:Get(XFG.Enum.Metric.ChannelReceive):Increment()
+        XFG.Metrics:Get(XFG.Enum.Metric.Messages):Increment()
     else
-        XFG.Metrics:Get(XFG.Settings.Metric.BNetReceive):Increment()
-        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
+        XFG.Metrics:Get(XFG.Enum.Metric.BNetReceive):Increment()
+        XFG.Metrics:Get(XFG.Enum.Metric.Messages):Increment()
     end
 
     -- Ensure this message has not already been processed
@@ -198,7 +198,7 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     --#region Forwarding
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-    if(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
+    if(inMessage:HasTargets() and inMessageTag == XFG.Enum.Tag.LOCAL) then
         -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
         local nodeCount = XFG.Nodes:GetTargetCount(XFG.Player.Target)
         if(nodeCount > XFG.Settings.Network.BNet.Link.PercentStart) then
@@ -217,7 +217,7 @@ function Mailbox:Process(inMessage, inMessageTag)
         end
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
-    elseif(inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
+    elseif(inMessageTag == XFG.Enum.Tag.BNET) then
         if(inMessage:HasTargets()) then
             inMessage:SetType(XFG.Enum.Network.BROADCAST)
         else

@@ -28,7 +28,7 @@ function XFG:Error(inSubCategory, ...)
 	Log(1, inSubCategory, ...)
 	Log(1, inSubCategory, debugstack())
 	if(XFG.Metrics ~= nil) then
-		XFG.Metrics:Get(XFG.Settings.Metric.Error):Increment()
+		XFG.Metrics:Get(XFG.Enum.Metric.Error):Increment()
 	end
 end
 
@@ -36,7 +36,7 @@ function XFG:Warn(inSubCategory, ...)
 	Log(2, inSubCategory, ...)
 	Log(2, inSubCategory, debugstack())
 	if(XFG.Metrics ~= nil) then
-		XFG.Metrics:Get(XFG.Settings.Metric.Warning):Increment()
+		XFG.Metrics:Get(XFG.Enum.Metric.Warning):Increment()
 	end
 end
 

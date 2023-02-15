@@ -136,6 +136,14 @@ function TimerEvent:CallbackLoginPlayer()
 
 			XFG.Confederate:Add(unitData)
 			XFG.Player.Unit:Print()
+
+			-- By this point all the channels should have been joined
+			if(not XFG.Channels:UseGuild()) then
+				XFG.Channels:Sync()
+				if(XFG.Channels:HasLocalChannel()) then
+					XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
+				end
+			end
 			
 			-- If reload, restore backup information
 			if(XFG.Cache.UIReload) then
@@ -164,17 +172,6 @@ function TimerEvent:CallbackLoginPlayer()
 				local name, _, _, enabled = GetAddOnInfo(i)
 				XFG:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
-
-			-- Channel events are odd during startup, especially for low hardware/latency players
-			-- Force a channel event X seconds after startup to ensure kosher setup
-			XFG.Timers:Add({
-				name = 'LoginChannel', 
-				delta = XFG.Settings.Network.Channel.LoginTimer, 
-				callback = XFG.Handlers.ChannelEvent.CallbackChannelNotice, 
-				repeater = false,
-				instance = true,
-				start = true,
-			})
 		else
 			XFG.Confederate:Push(unitData)
 		end

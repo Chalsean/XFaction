@@ -25,20 +25,23 @@ function TargetCollection:Initialize()
 			local realm = guild:GetRealm()
 			local faction = guild:GetFaction()
 			local key = GetTargetKey(realm, faction)
-			local target = Target:new()
-			target:SetKey(key)
-			target:SetRealm(realm)
-			target:SetFaction(faction)
 			
-			if(not self:Contains(target:GetKey())) then	
+			if(self:Contains(key)) then	
+				self:Get(key):IncrementTargetCount()
+			else
 				XFG:Info(ObjectName, 'Initializing target [%s]', key)
+				local target = Target:new()
+				target:SetKey(key)
+				target:SetRealm(realm)
+				target:SetFaction(faction)
 				self:Add(target)
 				realm:IsTargeted(true)
-				target:Print()				
-			end
-			if(XFG.Player.Target == nil and realm:Equals(XFG.Player.Realm) and faction:Equals(XFG.Player.Faction)) then
-				XFG:Info(ObjectName, 'Initializing player target [%s]', key)
-				XFG.Player.Target = target
+				target:Print()
+
+				if(XFG.Player.Target == nil and realm:Equals(XFG.Player.Realm) and faction:Equals(XFG.Player.Faction)) then
+					XFG:Info(ObjectName, 'Initializing player target [%s]', key)
+					XFG.Player.Target = target
+				end
 			end
 		end
 		self:IsInitialized(true)

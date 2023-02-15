@@ -162,8 +162,8 @@ end
 --#region Network
 function Friend:Ping()
     XFG:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
-    XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'PING', _, self:GetGameID())
-    XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment() 
+    XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Enum.Tag.BNET, 'PING', _, self:GetGameID())
+    XFG.Metrics:Get(XFG.Enum.Metric.BNetSend):Increment() 
 end
 --#endregion
 

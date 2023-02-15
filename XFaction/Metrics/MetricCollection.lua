@@ -19,7 +19,7 @@ end
 function MetricCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, metricName in pairs (XFG.Settings.Metric) do
+		for _, metricName in pairs (XFG.Enum.Metric) do
 			local metric = Metric:new()
 			metric:SetKey(metricName)
 			metric:SetName(metricName)

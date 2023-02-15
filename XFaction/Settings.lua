@@ -86,6 +86,19 @@ XFG.Enum = {
 		LOCAL = '3',     -- Local Channel only
 		BNET = '4',      -- BNet only
 	},
+	Tag = {
+		LOCAL = '',
+		BNET = '',
+	},
+	Metric = {
+		Messages = XFG.Lib.Locale['DTMETRICS_MESSAGES'],
+		BNetSend = XFG.Lib.Locale['DTMETRICS_BNET_SEND'],
+		BNetReceive = XFG.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
+		ChannelSend = XFG.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
+		ChannelReceive = XFG.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
+		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
+		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
+	},
 }
 
 XFG.Settings = {
@@ -141,9 +154,6 @@ XFG.Settings = {
 				PercentStart = 10,  -- Number of links across confederate before random selection kicks in
 			},
 		},
-		Message = {
-			Tag = {},
-		},
 		Mailbox = {
 			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
 			Stale = 60 * 60  -- Seconds until a message is considered stale
@@ -156,16 +166,7 @@ XFG.Settings = {
 	},
 	DataText = {
 		AutoHide = .25,
-	},
-	Metric = {
-		Messages = XFG.Lib.Locale['DTMETRICS_MESSAGES'],
-		BNetSend = XFG.Lib.Locale['DTMETRICS_BNET_SEND'],
-		BNetReceive = XFG.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
-		ChannelSend = XFG.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
-		ChannelReceive = XFG.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
-		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
-		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
-	},
+	},	
 	Factories = {
 		Scan = 60 * 7,
 		Purge = 60 * 30,
