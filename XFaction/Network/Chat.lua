@@ -68,7 +68,7 @@ function Chat:Send(inMessage)
         channelID = XFG.Channels:GetLocalChannel():GetID()
     end
     for index, packet in ipairs (packets) do
-        XFG:Debug(ObjectName, 'Sending packet [%d:%d] on channel [%s] with tag [%s] of length [%d]', index, #packets, channelName, XFG.Enum.Tag.LOCAL, strlen(packet))
+        XFG:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:GetKey(), channelName, XFG.Enum.Tag.LOCAL, strlen(packet))
         XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Enum.Tag.LOCAL, packet, channelName, channelID)
         XFG.Metrics:Get(XFG.Enum.Metric.ChannelSend):Increment()
     end

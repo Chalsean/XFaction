@@ -21,13 +21,10 @@ function ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		-- If there is more than 1 guild on a target, then need to manage a custom channel
-		for _, target in XFG.Targets:Iterator() do
-			if(target:GetTargetCount() > 1) then
-				self:UseGuild(false)
-				JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
-				XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)		
-				break
-			end
+		if(XFG.Player.Target:GetTargetCount() > 1) then
+			self:UseGuild(false)
+			JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
+			XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)		
 		end
 		self:IsInitialized(true)
 	end
