@@ -38,7 +38,7 @@ function TargetCollection:Initialize()
 				realm:IsTargeted(true)
 				target:Print()
 
-				if(XFG.Player.Target == nil and realm:Equals(XFG.Player.Realm) and faction:Equals(XFG.Player.Faction)) then
+				if(XFG.Player.Target == nil and realm:Equals(XFG.Player.Guild:GetRealm()) and faction:Equals(XFG.Player.Faction)) then
 					XFG:Info(ObjectName, 'Initializing player target [%s]', key)
 					XFG.Player.Target = target
 				end
@@ -60,5 +60,10 @@ function TargetCollection:GetByRealmFaction(inRealm, inFaction)
 		local key = GetTargetKey(connectedRealm, inFaction)
     	if(self:Contains(key)) then return self:Get(key) end
 	end
+end
+
+function TargetCollection:GetByGuild(inGuild)
+    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
+	return self:GetByRealmFaction(inGuild:GetRealm(), inGuild:GetFaction())
 end
 --#endregion

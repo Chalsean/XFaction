@@ -40,12 +40,11 @@ end
 --#endregion
 
 --#region Display
-function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRealm)
+function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild)
     if(not XFG.Config.Chat.Login.Enable) then return end
     assert(type(inName) == 'string')
     assert(type(inUnitName) == 'string')
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
 
     local faction = inGuild:GetFaction()
     local text = XFG.Settings.Frames.Chat.Prepend
@@ -59,7 +58,7 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     elseif(faction:Equals(XFG.Player.Faction)) then
         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
     else
-        local friend = XFG.Friends:GetByRealmUnitName(inRealm, inName)
+        local friend = XFG.Friends:GetByRealmUnitName(inGuild:GetRealm(), inName)
         if(friend ~= nil) then
             text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
         else
@@ -92,17 +91,17 @@ end
 function SystemFrame:DisplayJoinMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     local unitData = inMessage:GetData()
-    self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm())
+    self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild())
 end
 
 function SystemFrame:DisplayLoginMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     local unitData = inMessage:GetData()
-    self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm())
+    self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild())
 end
 
 function SystemFrame:DisplayLogoutMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm())
+    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild())
 end
 --#endregion

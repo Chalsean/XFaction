@@ -40,7 +40,6 @@ function Unit:new()
     object.faction = nil
     object.team = nil
     object.guild = nil
-    object.realm = nil
     object.version = nil
     object.itemLevel = 0
     object.pvp = ''
@@ -76,7 +75,6 @@ function Unit:Deconstructor()
     self.faction = nil
     self.team = nil
     self.guild = nil
-    self.realm = nil
     self.version = nil
     self.itemLevel = 0
     self.pvp = ''
@@ -110,11 +108,10 @@ function Unit:Initialize(inMemberID)
     self:SetPresence(unitData.presence)    
     self:SetID(unitData.memberId)
     self:SetName(unitData.name)
-    self:SetUnitName(unitData.name .. '-' .. XFG.Player.Realm:GetAPIName())
+    self:SetUnitName(unitData.name .. '-' .. XFG.Player.Guild:GetRealm():GetAPIName())
 	self:SetLevel(unitData.level)	
 	self:SetFaction(XFG.Player.Faction)
     self:SetGuild(XFG.Player.Guild)
-    self:SetRealm(XFG.Player.Realm)
     self:SetTimeStamp(ServerTime())
     self:SetClass(XFG.Classes:Get(unitData.classID))
     self:SetRace(XFG.Races:Get(unitData.race))
@@ -218,7 +215,6 @@ function Unit:Print()
         XFG:Debug(ObjectName, '  zoneName (' .. type(self.zoneName) .. '): ' .. tostring(self.zoneName))
     end
     if(self:HasVersion()) then self.version:Print() end
-    if(self:HasRealm()) then self.realm:Print() end
     if(self:HasGuild()) then self.guild:Print() end
     if(self:HasTeam()) then self.team:Print() end
     if(self:HasRace()) then self.race:Print() end
@@ -577,19 +573,6 @@ function Unit:SetTeam(inTeam)
     self.team = inTeam
 end
 
-function Unit:HasRealm()
-    return self.realm ~= nil
-end
-
-function Unit:GetRealm()
-    return self.realm
-end
-
-function Unit:SetRealm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
-    self.realm = inRealm
-end
-
 function Unit:HasGuild()
     return self.guild ~= nil
 end
@@ -621,7 +604,7 @@ function Unit:GetLink()
         return format('player:%s', self:GetUnitName())
     end
 
-    local friend = XFG.Friends:GetByRealmUnitName(self:GetRealm(), self:GetName())
+    local friend = XFG.Friends:GetByRealmUnitName(self:GetGuild():GetRealm(), self:GetName())
     if(friend ~= nil) then
         return format('BNplayer:%s:%d:0:WHISPER:%s', friend:GetAccountName(), friend:GetAccountID(), friend:GetName())
     end
@@ -650,7 +633,6 @@ function Unit:Broadcast(inSubject)
         message:Initialize()
         message:SetFrom(self:GetGUID())
         message:SetGuild(self:GetGuild())
-        message:SetRealm(self:GetRealm())
         message:SetUnitName(self:GetName())
         message:SetType(XFG.Enum.Network.BROADCAST)
         message:SetSubject(inSubject)

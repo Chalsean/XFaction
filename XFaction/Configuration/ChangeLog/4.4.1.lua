@@ -1,7 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Config.ChangeLog'
 
-XFG.ChangeLog['4.4.0'] = {
+XFG.ChangeLog['4.4.1'] = {
     New = {
         order = 1,
         type = 'group',
@@ -28,6 +28,17 @@ XFG.ChangeLog['4.4.0'] = {
                 fontSize = 'medium',
                 name = 'More robust custom channel maintenance.',
             },
-        }
+            Bar1 = {
+                order = 2,
+                name = '',
+                type = 'header'
+            },
+            Two = {
+                order = 3,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Bug fix for confederates with Alliance/Horde guilds that have the same name on the same realm.',
+            },
+        },
     },			
 }

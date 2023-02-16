@@ -109,7 +109,7 @@ local function PreSort()
 			local unitData = {}
 
 			unitData.Level = unit:GetLevel()
-			unitData.Realm = unit:GetRealm():GetName()
+			unitData.Realm = unit:GetGuild():GetRealm():GetName()
 			unitData.Guild = unit:GetGuild():GetName()		
 			unitData.Name = unit:GetName()
 			unitData.UnitName = unit:GetUnitName()
@@ -251,8 +251,7 @@ function DTGuild:OnEnter(this)
 	
 	if(XFG.Config.DataText.Guild.GuildName and XFG.Cache.DTGuildTotalEnabled > 4) then
 		local guildName = XFG.Player.Guild:GetName()
-		local guild = XFG.Guilds:GetByRealmGuildName(XFG.Player.Realm, guildName)
-		guildName = guildName .. ' <' .. guild:GetInitials() .. '>'
+		guildName = guildName .. ' <' .. XFG.Player.Guild:GetInitials() .. '>'
 		self.tooltip:SetCell(line, 1, format(XFG.Lib.Locale['DT_HEADER_GUILD'], guildName), self.headerFont, 'LEFT', 4)
 	end
 

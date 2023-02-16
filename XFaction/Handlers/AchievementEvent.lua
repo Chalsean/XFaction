@@ -30,9 +30,9 @@ function AchievementEvent:CallbackAchievement(inID)
         local _, name, _, _, _, _, _, _, _, _, _, isGuild, _, earnedBy = GetAchievementInfo(inID)
         local unitData = XFG.Confederate:GetUnitByName(earnedBy)
         if(unitData ~= nil) then
-            XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetRealm(), unitData:GetGUID(), inID)
+            XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetGUID(), inID)
         else
-            XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', earnedBy, earnedBy .. '-' .. XFG.Player.Realm:GetName(), nil, XFG.Player.Guild, XFG.Player.Realm, XFG.Player.Unit:GetGUID(), inID)
+            XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', earnedBy, earnedBy .. '-' .. XFG.Player.Guild:GetRealm():GetName(), nil, XFG.Player.Guild, XFG.Player.Unit:GetGUID(), inID)
         end
 
         if(not isGuild and string.find(name, XFG.Lib.Locale['EXPLORE']) == nil) then
@@ -48,7 +48,6 @@ function AchievementEvent:CallbackAchievement(inID)
                     message:SetMainName(XFG.Player.Unit:GetMainName())
                 end
                 message:SetUnitName(XFG.Player.Unit:GetUnitName())
-                message:SetRealm(XFG.Player.Realm)
                 message:SetGuild(XFG.Player.Guild)
                 XFG.Mailbox.Chat:Send(message)
             end).

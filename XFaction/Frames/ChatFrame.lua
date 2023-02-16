@@ -76,11 +76,10 @@ end
 --#endregion
 
 --#region Display
-function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRealm, inFrom, inData)
+function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFrom, inData)
     assert(type(inName) == 'string')
     assert(type(inUnitName) == 'string')
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
 
     local faction = inGuild:GetFaction()
     local message = XFG.Settings.Frames.Chat.Prepend
@@ -111,7 +110,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inRe
                         if(faction:Equals(XFG.Player.Faction)) then
                             text = text .. '%s '
                         else
-                            local friend = XFG.Friends:GetByRealmUnitName(inRealm, inName)
+                            local friend = XFG.Friends:GetByRealmUnitName(inGuild:GetRealm(), inName)
                             if(friend ~= nil) then
                                 text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inName, friend:GetAccountID(), inName, inName) .. ' '
                             else
@@ -168,11 +167,11 @@ end
 
 function ChatFrame:DisplayGuildChat(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm(), inMessage:GetFrom(), inMessage:GetData())
+    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData())
 end
 
 function ChatFrame:DisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetRealm(), inMessage:GetFrom(), inMessage:GetData())
+    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData())
 end
 --#endregion

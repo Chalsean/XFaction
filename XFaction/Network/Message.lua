@@ -23,7 +23,6 @@ function Message:new()
     object.unitName = nil
     object.mainName = nil
     object.guild = nil
-    object.realm = nil
     return object
 end
 --#endregion
@@ -58,7 +57,6 @@ function Message:Deconstructor()
     self.unitName = nil
     self.mainName = nil
     self.guild = nil
-    self.realm = nil
     self:Initialize()
 end
 --#endregion
@@ -208,19 +206,6 @@ end
 function Message:SetGuild(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
     self.guild = inGuild
-end
-
-function Message:HasRealm()
-    return self.realm ~= nil
-end
-
-function Message:GetRealm()
-    return self.realm
-end
-
-function Message:SetRealm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
-    self.realm = inRealm
 end
 --#endregion
 

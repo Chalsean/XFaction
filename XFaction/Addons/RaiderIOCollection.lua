@@ -47,9 +47,9 @@ function RaiderIOCollection:AddUnit(inUnit)
         raiderIO:SetKey(inUnit:GetKey())
         raiderIO:SetName(inUnit:GetUnitName())
 
-        local profile = RaiderIO.GetProfile(inUnit:GetMainName(), inUnit:GetRealm():GetName())
+        local profile = RaiderIO.GetProfile(inUnit:GetMainName(), inUnit:GetGuild():GetRealm():GetName())
         if(profile == nil) then
-            profile = RaiderIO.GetProfile(inUnit:GetName(), inUnit:GetRealm():GetName())
+            profile = RaiderIO.GetProfile(inUnit:GetName(), inUnit:GetGuild():GetRealm():GetName())
         end
         
         -- Raid
