@@ -4,7 +4,6 @@ local ServerTime = GetServerTime
 local GuildRosterEvent = C_GuildInfo.GuildRoster
 local InGuild = IsInGuild
 local GetGuildClubId = C_Club.GetGuildClubId
-local LoginTime = ServerTime()
 
 TimerEvent = Object:newChildConstructor()
 
@@ -172,6 +171,13 @@ function TimerEvent:CallbackLoginPlayer()
 				local name, _, _, enabled = GetAddOnInfo(i)
 				XFG:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
+
+			XFG.Timers:Add({name = 'LoginChannelSync',
+						    delta = XFG.Settings.Network.Channel.LoginChannelSyncTimer, 
+						    callback = XFG.Handlers.TimerEvent.CallbackOffline,
+						    repeater = false, 
+						    instance = true,
+						    start = true})
 		else
 			XFG.Confederate:Push(unitData)
 		end

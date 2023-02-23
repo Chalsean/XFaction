@@ -27,6 +27,10 @@ end
 --#endregion
 
 --#region Send
+local function SendMessage(inChannelName, inChannelID, inTag, inPacketNumber, inTotalPackets, inPacket)
+    
+end
+
 function Chat:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Enum.Message.DATA) then return end

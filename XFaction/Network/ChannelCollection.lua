@@ -20,11 +20,21 @@ end
 function ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		-- If there is more than 1 guild on a target, then need to manage a custom channel
+		-- Remove this block after everyone on 4.4, its for backwards compat while guild members are a mix of 4.4 and pre-4.4
+		if(XFG.Cache.Channel.Name ~= nil and XFG.Cache.Channel.Password ~= nil) then
+			try(function ()
+				JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
+				XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)
+			end).
+			catch(function (inErrorMessage)
+				XFG:Error(ObjectName, inErrorMessage)
+			end)
+		end
+
 		if(XFG.Player.Target:GetTargetCount() > 1) then
 			self:UseGuild(false)
-			JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
-			XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)		
+			--JoinChannelByName(XFG.Cache.Channel.Name, XFG.Cache.Channel.Password)
+			--XFG:Info(ObjectName, 'Joined confederate channel [%s]', XFG.Cache.Channel.Name)
 		end
 		self:IsInitialized(true)
 	end
@@ -34,7 +44,7 @@ end
 --#region Print
 function ChannelCollection:Print()
 	self:ParentPrint()
-	XFG:Debug(ObjectName, '  useGuild (' .. type(self.useGuild) .. ')')
+	XFG:Debug(ObjectName, '  useGuild (' .. type(self.useGuild) .. '): ' .. tostring(self.useGuild))
 	XFG:Debug(ObjectName, '  localChannel (' .. type(self.localChannel) .. ')')
 	if(self:HasLocalChannel()) then self:GetLocalChannel():Print() end
 end
@@ -109,7 +119,7 @@ function ChannelCollection:Sync()
 			channel:IsCommunity(channelInfo.channelType == Enum.PermanentChatChannelType.Communities)
 			channel:SetColor()
 			self:Add(channel)
-			if(not self:UseGuild() and channel:GetName() == XFG.Cache.Channel.Name) then
+			if(channel:GetName() == XFG.Cache.Channel.Name) then
 				self:SetLocalChannel(channel)
 			end
 		end

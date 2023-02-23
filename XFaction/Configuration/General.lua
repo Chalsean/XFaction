@@ -117,10 +117,8 @@ function XFG:SetupMenus()
 	--#region Confederate Menu
 	XFG.Cache.Setup.Confederate.Initials = XFG.Confederate:GetInitials()
 	XFG.Cache.Setup.Confederate.Name = XFG.Confederate:GetName()
-	if(XFG.Channels:HasLocalChannel()) then
-		XFG.Cache.Setup.Confederate.ChannelName = XFG.Channels:GetLocalChannel():GetName()
-		XFG.Cache.Setup.Confederate.Password = XFG.Channels:GetLocalChannel():GetPassword()
-	end
+	XFG.Cache.Setup.Confederate.ChannelName = XFG.Cache.Channel.Name
+	XFG.Cache.Setup.Confederate.Password = XFG.Cache.Channel.Password
 	--#endregion
 
 	--#region Guild Menu
@@ -422,9 +420,77 @@ XFG.Options = {
 									}
 								},
 							}
+						},						
+						Realms = {
+							order = 2,
+							type = 'group',
+							name = XFG.Lib.Locale['REALMS'],
+							args = {
+								Header = {
+									order = 1,
+									type = 'group',
+									name = XFG.Lib.Locale['INSTRUCTIONS'],
+									inline = true,
+									args = {
+										Description = {
+											order = 1,
+											type = 'description',
+											fontSize = 'medium',
+											name = XFG.Lib.Locale['SETUP_REALMS_INSTRUCTIONS'],
+										},
+									}
+								},
+								Bar = {
+									order = 2,
+									name = '',
+									type = 'header'
+								},
+							},
+						},
+						Guilds = {
+							order = 3,
+							type = 'group',
+							name = XFG.Lib.Locale['GUILDS'],
+							args = {
+								Header = {
+									order = 1,
+									type = 'group',
+									name = XFG.Lib.Locale['INSTRUCTIONS'],
+									inline = true,
+									args = {
+										Description = {
+											order = 1,
+											type = 'description',
+											fontSize = 'medium',
+											name = XFG.Lib.Locale['SETUP_GUILDS_INSTRUCTIONS'],
+										},
+									}
+								},
+							},
+						},
+						Teams = {
+							order = 4,
+							type = 'group',
+							name = XFG.Lib.Locale['TEAMS'],
+							args = {
+								Header = {
+									order = 1,
+									type = 'group',
+									name = XFG.Lib.Locale['INSTRUCTIONS'],
+									inline = true,
+									args = {
+										Description = {
+											order = 1,
+											type = 'description',
+											fontSize = 'medium',
+											name = XFG.Lib.Locale['SETUP_TEAMS_INSTRUCTIONS'],
+										},
+									}
+								},				
+							},
 						},
 						Confederate = {
-							order = 2,
+							order = 5,
 							type = 'group',
 							name = XFG.Lib.Locale['CONFEDERATE'],
 							args = {
@@ -476,74 +542,6 @@ XFG.Options = {
 									set = function(info, value) XFG.Cache.Setup.Confederate.Password = value end,
 								},
 							}
-						},
-						Realms = {
-							order = 3,
-							type = 'group',
-							name = XFG.Lib.Locale['REALMS'],
-							args = {
-								Header = {
-									order = 1,
-									type = 'group',
-									name = XFG.Lib.Locale['INSTRUCTIONS'],
-									inline = true,
-									args = {
-										Description = {
-											order = 1,
-											type = 'description',
-											fontSize = 'medium',
-											name = XFG.Lib.Locale['SETUP_REALMS_INSTRUCTIONS'],
-										},
-									}
-								},
-								Bar = {
-									order = 2,
-									name = '',
-									type = 'header'
-								},
-							},
-						},
-						Guilds = {
-							order = 4,
-							type = 'group',
-							name = XFG.Lib.Locale['GUILDS'],
-							args = {
-								Header = {
-									order = 1,
-									type = 'group',
-									name = XFG.Lib.Locale['INSTRUCTIONS'],
-									inline = true,
-									args = {
-										Description = {
-											order = 1,
-											type = 'description',
-											fontSize = 'medium',
-											name = XFG.Lib.Locale['SETUP_GUILDS_INSTRUCTIONS'],
-										},
-									}
-								},
-							},
-						},
-						Teams = {
-							order = 5,
-							type = 'group',
-							name = XFG.Lib.Locale['TEAMS'],
-							args = {
-								Header = {
-									order = 1,
-									type = 'group',
-									name = XFG.Lib.Locale['INSTRUCTIONS'],
-									inline = true,
-									args = {
-										Description = {
-											order = 1,
-											type = 'description',
-											fontSize = 'medium',
-											name = XFG.Lib.Locale['SETUP_TEAMS_INSTRUCTIONS'],
-										},
-									}
-								},				
-							},
 						},
 						Generate = {
 							order = 6,

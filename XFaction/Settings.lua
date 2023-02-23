@@ -61,6 +61,11 @@ XFG.Icons = {
 }
 
 XFG.Enum = {
+	Version = {
+		Prod = 1,
+		Beta = 2,
+		Alpha = 3,
+	},
 	Priority = {
 		High = 1,
 		Medium = 2,
@@ -136,7 +141,7 @@ XFG.Settings = {
 		Channel = {
 			Total = 10,
 			NoticeTimer = 2,
-			LoginTimer = 10,
+			LoginChannelSyncTimer = 30,
 		},
 		Chat = {
 			PacketSize = 217,
