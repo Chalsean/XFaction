@@ -64,6 +64,7 @@ function XFG:SetupRealms()
 			enabled = realm:IsTargeted() or realm:IsCurrent(),
 		})
 		RealmXref[realm:GetName()] = #XFG.Cache.Setup.Realms
+		RealmXref[realm:GetID()] = #XFG.Cache.Setup.Realms
 		for _, connectedRealm in realm:ConnectedIterator() do
 			table.insert(XFG.Cache.Setup.Realms[#XFG.Cache.Setup.Realms].connections, connectedRealm:GetName())
 		end
@@ -264,6 +265,9 @@ local function MultipleGuildsOnTarget()
 	for i, guild in ipairs(XFG.Cache.Setup.Guilds) do
 		if(guild.realm ~= nil and guild.faction ~= nil) then
 			local target = guild.realm .. guild.faction
+			if(RealmXref[guild.realm] and #RealmXref[guild.realm].connections) then
+				target = RealmXref[guild.realm].connections[1] .. guild.faction
+			end
 			if(targets[target]) then
 				return true
 			else
