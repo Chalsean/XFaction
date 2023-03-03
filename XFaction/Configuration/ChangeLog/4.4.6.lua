@@ -1,7 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Config.ChangeLog'
 
-XFG.ChangeLog['4.4.1'] = {
+XFG.ChangeLog['4.4.6'] = {
     New = {
         order = 1,
         type = 'group',
