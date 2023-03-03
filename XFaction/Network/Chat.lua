@@ -15,7 +15,7 @@ end
 function Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Settings.Network.Message.Tag.LOCAL = XFG.Confederate:GetKey() .. 'XF'						
+        XFG.Enum.Tag.LOCAL = XFG.Confederate:GetKey() .. 'XF'						
         XFG.Events:Add({name = 'ChatMsg', 
                         event = 'CHAT_MSG_ADDON', 
                         callback = XFG.Mailbox.Chat.ChatReceive, 
@@ -29,24 +29,24 @@ end
 --#region Send
 function Chat:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
-    if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.DATA) then return end
+    if(not XFG.Settings.System.Roster and inMessage:GetSubject() == XFG.Enum.Message.DATA) then return end
 
     XFG:Debug(ObjectName, 'Attempting to send message')
     inMessage:Print()
 
     --#region BNet messaging for BNET/BROADCAST types
-    if(inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST or inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
+    if(inMessage:GetType() == XFG.Enum.Network.BROADCAST or inMessage:GetType() == XFG.Enum.Network.BNET) then
         XFG.Mailbox.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
-        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
-            inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XFG.Enum.Network.BNET) then
+            inMessage:SetType(XFG.Enum.Network.BROADCAST)
         -- Successfully bnet to all targets and only were supposed to bnet, were done
-        elseif(inMessage:GetType() == XFG.Settings.Network.Type.BNET) then
+        elseif(inMessage:GetType() == XFG.Enum.Network.BNET) then
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
-        elseif(not inMessage:HasTargets() and inMessage:GetType() == XFG.Settings.Network.Type.BROADCAST) then
+        elseif(not inMessage:HasTargets() and inMessage:GetType() == XFG.Enum.Network.BROADCAST) then
             XFG:Debug(ObjectName, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
-            inMessage:SetType(XFG.Settings.Network.Type.LOCAL)        
+            inMessage:SetType(XFG.Enum.Network.LOCAL)        
         end
     end
     --#endregion
@@ -54,18 +54,19 @@ function Chat:Send(inMessage)
     --#region Chat channel messaging for BROADCAST/LOCAL types
     local messageData = XFG:EncodeChatMessage(inMessage, true)
     local packets = self:SegmentMessage(messageData, inMessage:GetKey(), XFG.Settings.Network.Chat.PacketSize)
+    self:Add(inMessage:GetKey())
 
-    -- Broadcast on same realm/faction channel for multiple players
-    if(XFG.Channels:HasLocalChannel()) then
-        self:Add(inMessage:GetKey())
-        local channel = XFG.Channels:GetLocalChannel()
-        XFG:Debug(ObjectName, 'Broadcasting on channel [%s] with tag [%s]', channel:GetName(), XFG.Settings.Network.Message.Tag.LOCAL)
-
-        for index, packet in ipairs (packets) do
-            XFG:Debug(ObjectName, 'Sending packet [%d:%d] with tag [%s] of length [%d]', index, #packets, XFG.Settings.Network.Message.Tag.LOCAL, strlen(packet))
-            XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Settings.Network.Message.Tag.LOCAL, packet, 'CHANNEL', channel:GetID())
-            XFG.Metrics:Get(XFG.Settings.Metric.ChannelSend):Increment()
-        end        
+    -- If only guild on target, broadcast to GUILD
+    local channelName, channelID = 'GUILD', nil
+    -- Otherwise broadcast to custom channel
+    if(not XFG.Channels:UseGuild() and XFG.Channels:HasLocalChannel()) then
+        channelName = 'CHANNEL'
+        channelID = XFG.Channels:GetLocalChannel():GetID()
+    end
+    for index, packet in ipairs (packets) do
+        XFG:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:GetKey(), channelName, XFG.Enum.Tag.LOCAL, strlen(packet))
+        XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Enum.Tag.LOCAL, packet, channelName, channelID)
+        XFG.Metrics:Get(XFG.Enum.Metric.ChannelSend):Increment()
     end
     --#endregion
 end

@@ -1,5 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'Channel'
+local SetChatColor = ChangeChatColor
 
 Channel = Object:newChildConstructor()
 
@@ -47,5 +48,13 @@ function Channel:IsCommunity(inBoolean)
         self.community = inBoolean
     end
     return self.community
+end
+
+function Channel:SetColor()
+    if(XFG.Config.Channels[self:GetName()] ~= nil) then
+        local color = XFG.Config.Channels[self:GetName()]
+        SetChatColor('CHANNEL' .. self:GetID(), color.R, color.G, color.B)
+        XFG:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', self:GetName(), color.R, color.G, color.B)
+    end
 end
 --#endregion

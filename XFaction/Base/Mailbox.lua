@@ -114,7 +114,7 @@ end
 --#region Receive
 function Mailbox:IsAddonTag(inTag)
 	local addonTag = false
-    for _, tag in pairs (XFG.Settings.Network.Message.Tag) do
+    for _, tag in pairs (XFG.Enum.Tag) do
         if(inTag == tag) then
             addonTag = true
             break
@@ -133,12 +133,12 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
         return
     end
 
-    if(inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
-        XFG.Metrics:Get(XFG.Settings.Metric.ChannelReceive):Increment()
-        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
+    if(inMessageTag == XFG.Enum.Tag.LOCAL) then
+        XFG.Metrics:Get(XFG.Enum.Metric.ChannelReceive):Increment()
+        XFG.Metrics:Get(XFG.Enum.Metric.Messages):Increment()
     else
-        XFG.Metrics:Get(XFG.Settings.Metric.BNetReceive):Increment()
-        XFG.Metrics:Get(XFG.Settings.Metric.Messages):Increment()
+        XFG.Metrics:Get(XFG.Enum.Metric.BNetReceive):Increment()
+        XFG.Metrics:Get(XFG.Enum.Metric.Messages):Increment()
     end
 
     -- Ensure this message has not already been processed
@@ -198,30 +198,30 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     --#region Forwarding
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-    if(inMessage:HasTargets() and inMessageTag == XFG.Settings.Network.Message.Tag.LOCAL) then
+    if(inMessage:HasTargets() and inMessageTag == XFG.Enum.Tag.LOCAL) then
         -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
         local nodeCount = XFG.Nodes:GetTargetCount(XFG.Player.Target)
         if(nodeCount > XFG.Settings.Network.BNet.Link.PercentStart) then
             local percentage = (XFG.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
             if(math.random(1, 100) <= percentage) then
                 XFG:Debug(ObjectName, 'Randomly selected, forwarding message')
-                inMessage:SetType(XFG.Settings.Network.Type.BNET)
+                inMessage:SetType(XFG.Enum.Network.BNET)
                 XFG.Mailbox.BNet:Send(inMessage)
             else
                 XFG:Debug(ObjectName, 'Not randomly selected, will not forward mesesage')
             end
         else
             XFG:Debug(ObjectName, 'Node count under threshold, forwarding message')
-            inMessage:SetType(XFG.Settings.Network.Type.BNET)
+            inMessage:SetType(XFG.Enum.Network.BNET)
             XFG.Mailbox.BNet:Send(inMessage)
         end
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
-    elseif(inMessageTag == XFG.Settings.Network.Message.Tag.BNET) then
+    elseif(inMessageTag == XFG.Enum.Tag.BNET) then
         if(inMessage:HasTargets()) then
-            inMessage:SetType(XFG.Settings.Network.Type.BROADCAST)
+            inMessage:SetType(XFG.Enum.Network.BROADCAST)
         else
-            inMessage:SetType(XFG.Settings.Network.Type.LOCAL)
+            inMessage:SetType(XFG.Enum.Network.LOCAL)
         end
         XFG.Mailbox.Chat:Send(inMessage)
     end
@@ -229,7 +229,7 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     --#region Process message
     -- Process GCHAT message
-    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.GCHAT) then
+    if(inMessage:GetSubject() == XFG.Enum.Message.GCHAT) then
         if(XFG.Player.Unit:CanGuildListen() and not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             XFG.Frames.Chat:DisplayGuildChat(inMessage)
         end
@@ -237,19 +237,19 @@ function Mailbox:Process(inMessage, inMessageTag)
     end
 
     -- Process ACHIEVEMENT message
-    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.ACHIEVEMENT) then
+    if(inMessage:GetSubject() == XFG.Enum.Message.ACHIEVEMENT) then
         XFG.Frames.Chat:DisplayAchievement(inMessage)
         return
     end
 
     -- Process LINK message
-    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LINK) then
+    if(inMessage:GetSubject() == XFG.Enum.Message.LINK) then
         XFG.Links:ProcessMessage(inMessage)
         return
     end
 
     -- Process LOGOUT message
-    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGOUT) then
+    if(inMessage:GetSubject() == XFG.Enum.Message.LOGOUT) then
         if(XFG.Player.Guild:Equals(inMessage:GetGuild())) then
             -- In case we get a message before scan
             if(not XFG.Confederate:Contains(inMessage:GetFrom())) then
@@ -269,7 +269,7 @@ function Mailbox:Process(inMessage, inMessageTag)
     end
 
     -- Process JOIN message
-    if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.JOIN) then
+    if(inMessage:GetSubject() == XFG.Enum.Message.JOIN) then
         --XFG.Frames.System:DisplayJoinMessage(inMessage)
         return
     end
@@ -277,7 +277,7 @@ function Mailbox:Process(inMessage, inMessageTag)
     -- Process DATA/LOGIN message
     if(inMessage:HasUnitData()) then
         local unitData = inMessage:GetData()
-        if(inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN and 
+        if(inMessage:GetSubject() == XFG.Enum.Message.LOGIN and 
           (not XFG.Confederate:Contains(unitData:GetKey()) or XFG.Confederate:Get(unitData:GetKey()):IsOffline())) then
             XFG.Frames.System:DisplayLoginMessage(inMessage)
         end

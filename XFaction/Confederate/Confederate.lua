@@ -56,7 +56,7 @@ function Confederate:Add(inUnit)
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
-        local target = XFG.Targets:GetByRealmFaction(inUnit:GetRealm(), inUnit:GetFaction())
+        local target = XFG.Targets:GetByGuild(inUnit:GetGuild())
         if(self.countByTarget[target:GetKey()] == nil) then
             self.countByTarget[target:GetKey()] = 0
         end
@@ -79,7 +79,7 @@ function Confederate:Remove(inKey)
         if(XFG.Nodes:Contains(unit:GetName())) then
             XFG.Nodes:Remove(XFG.Nodes:Get(unit:GetName()))
         end
-        local target = XFG.Targets:GetByRealmFaction(unit:GetRealm(), unit:GetFaction())
+        local target = XFG.Targets:GetByGuild(unit:GetGuild())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
         if(unit:IsOnline()) then
             self.onlineCount = self.onlineCount - 1

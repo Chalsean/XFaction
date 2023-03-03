@@ -4,7 +4,6 @@ local ServerTime = GetServerTime
 local GuildRosterEvent = C_GuildInfo.GuildRoster
 local InGuild = IsInGuild
 local GetGuildClubId = C_Club.GetGuildClubId
-local LoginTime = ServerTime()
 
 TimerEvent = Object:newChildConstructor()
 
@@ -136,6 +135,14 @@ function TimerEvent:CallbackLoginPlayer()
 
 			XFG.Confederate:Add(unitData)
 			XFG.Player.Unit:Print()
+
+			-- By this point all the channels should have been joined
+			if(not XFG.Channels:UseGuild()) then
+				XFG.Channels:Sync()
+				if(XFG.Channels:HasLocalChannel()) then
+					XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
+				end
+			end
 			
 			-- If reload, restore backup information
 			if(XFG.Cache.UIReload) then
@@ -144,7 +151,7 @@ function TimerEvent:CallbackLoginPlayer()
 				XFG.Cache.UIReload = false
 			-- Otherwise send login message
 			else
-				XFG.Player.Unit:Broadcast(XFG.Settings.Network.Message.Subject.LOGIN)
+				XFG.Player.Unit:Broadcast(XFG.Enum.Message.LOGIN)
 			end			
 
 			-- Start all hooks, timers and events
@@ -164,6 +171,13 @@ function TimerEvent:CallbackLoginPlayer()
 				local name, _, _, enabled = GetAddOnInfo(i)
 				XFG:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
+
+			XFG.Timers:Add({name = 'LoginChannelSync',
+						    delta = XFG.Settings.Network.Channel.LoginChannelSyncTimer, 
+						    callback = XFG.Handlers.TimerEvent.CallbackOffline,
+						    repeater = false, 
+						    instance = true,
+						    start = true})
 		else
 			XFG.Confederate:Push(unitData)
 		end

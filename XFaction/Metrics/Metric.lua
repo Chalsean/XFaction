@@ -22,9 +22,9 @@ end
 --#region Accessors
 function Metric:Increment()
     self.count = self.count + 1
-    if(self:GetName() == XFG.Settings.Metric.Messages or
-       self:GetName() == XFG.Settings.Metric.Error or
-       self:GetName() == XFG.Settings.Metric.Warning) then
+    if(self:GetName() == XFG.Enum.Metric.Messages or
+       self:GetName() == XFG.Enum.Metric.Error or
+       self:GetName() == XFG.Enum.Metric.Warning) then
         XFG.DataText.Metrics:RefreshBroker()
     end
 end

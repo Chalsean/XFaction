@@ -1,6 +1,6 @@
 ## Interface: 100005
 ## Author: Chalsean (US-Proudmoore)
-## Version: 4.3.10
+## Version: 4.4.6
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
@@ -11,7 +11,7 @@
 Libraries\LoadLibraries.xml
 Locales\LoadLocales.xml
 
-Constants.lua
+Settings.lua
 Functions\LoadFunctions.xml
 
 Base\LoadBase.xml

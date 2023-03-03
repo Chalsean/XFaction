@@ -11,6 +11,7 @@ function Target:new()
     object.__name = ObjectName
     object.realm = nil
     object.faction = nil
+    object.targetCount = 1
     return object
 end
 --#endregion
@@ -18,6 +19,7 @@ end
 --#region Print
 function Target:Print()
     self:ParentPrint()
+    XFG:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
     if(self:HasRealm()) then self:GetRealm():Print() end
     if(self:HasFaction()) then self:GetFaction():Print() end
 end
@@ -53,5 +55,13 @@ end
 
 function Target:IsMyTarget()
     return XFG.Player.Target:Equals(self)
+end
+
+function Target:GetTargetCount()
+    return self.targetCount
+end
+
+function Target:IncrementTargetCount()
+    self.targetCount = self.targetCount + 1
 end
 --#endregion

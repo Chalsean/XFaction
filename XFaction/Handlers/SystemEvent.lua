@@ -47,13 +47,12 @@ function SystemEvent:CallbackLogout()
             XFG.Config.Logout[#XFG.Config.Logout + 1] = 'Logout started'
             message = XFG.Mailbox.Chat:Pop()
             message:Initialize()
-            message:SetType(XFG.Settings.Network.Type.BROADCAST)
-            message:SetSubject(XFG.Settings.Network.Message.Subject.LOGOUT)
+            message:SetType(XFG.Enum.Network.BROADCAST)
+            message:SetSubject(XFG.Enum.Message.LOGOUT)
             if(XFG.Player.Unit:IsAlt() and XFG.Player.Unit:HasMainName()) then
                 message:SetMainName(XFG.Player.Unit:GetMainName())
             end
             message:SetGuild(XFG.Player.Guild)
-            message:SetRealm(XFG.Player.Realm)
             message:SetUnitName(XFG.Player.Unit:GetName())
             message:SetData(' ')
             XFG.Config.Logout[#XFG.Config.Logout + 1] = 'Logout sending message'

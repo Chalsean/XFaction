@@ -61,6 +61,11 @@ XFG.Icons = {
 }
 
 XFG.Enum = {
+	Version = {
+		Prod = 1,
+		Beta = 2,
+		Alpha = 3,
+	},
 	Priority = {
 		High = 1,
 		Medium = 2,
@@ -71,6 +76,34 @@ XFG.Enum = {
 		COMMUNITY = 2,
 		CUSTOM = 3,
 	},
+	Message = {
+		DATA = '1',
+		GCHAT = '2',
+		LOGOUT = '3',
+		LOGIN = '4',
+		ACHIEVEMENT = '5',
+		LINK = '6',
+		JOIN = '7',
+	},
+	Network = {
+		BROADCAST = '1', -- BNet + Local Channel
+		WHISPER = '2',   -- Whisper only
+		LOCAL = '3',     -- Local Channel only
+		BNET = '4',      -- BNet only
+	},
+	Tag = {
+		LOCAL = '',
+		BNET = '',
+	},
+	Metric = {
+		Messages = XFG.Lib.Locale['DTMETRICS_MESSAGES'],
+		BNetSend = XFG.Lib.Locale['DTMETRICS_BNET_SEND'],
+		BNetReceive = XFG.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
+		ChannelSend = XFG.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
+		ChannelReceive = XFG.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
+		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
+		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
+	},
 }
 
 XFG.Settings = {
@@ -79,10 +112,8 @@ XFG.Settings = {
 		UIDLength = 11,
 	},
 	Expansions = {
-		[WOW_PROJECT_MAINLINE] = 3601566,
-		[WOW_PROJECT_CLASSIC] = 630785,
-	--    [WOW_PROJECT_BURNING_CRUSADE_CLASSIC] = 630783,
-	--    [WOW_PROJECT_WRATH_OF_THE_LICH_KING_CLASSIC] = 630787,
+		WOW_PROJECT_MAINLINE,
+		WOW_PROJECT_CLASSIC,
 	},
 	Player = {
 		Heartbeat = 60 * 2,      -- Seconds between player status broadcast
@@ -110,6 +141,7 @@ XFG.Settings = {
 		Channel = {
 			Total = 10,
 			NoticeTimer = 2,
+			LoginChannelSyncTimer = 30,
 		},
 		Chat = {
 			PacketSize = 217,
@@ -127,24 +159,6 @@ XFG.Settings = {
 				PercentStart = 10,  -- Number of links across confederate before random selection kicks in
 			},
 		},
-		Message = {
-			Subject = {
-				DATA = '1',
-				GCHAT = '2',
-				LOGOUT = '3',
-				LOGIN = '4',
-				ACHIEVEMENT = '5',
-				LINK = '6',
-				JOIN = '7',
-			},
-			Tag = {},
-		},
-		Type = {
-			BROADCAST = '1', -- BNet + Local Channel
-			WHISPER = '2',   -- Whisper only
-			LOCAL = '3',     -- Local Channel only
-			BNET = '4',      -- BNet only
-		},		
 		Mailbox = {
 			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
 			Stale = 60 * 60  -- Seconds until a message is considered stale
@@ -157,16 +171,7 @@ XFG.Settings = {
 	},
 	DataText = {
 		AutoHide = .25,
-	},
-	Metric = {
-		Messages = XFG.Lib.Locale['DTMETRICS_MESSAGES'],
-		BNetSend = XFG.Lib.Locale['DTMETRICS_BNET_SEND'],
-		BNetReceive = XFG.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
-		ChannelSend = XFG.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
-		ChannelReceive = XFG.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
-		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
-		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
-	},
+	},	
 	Factories = {
 		Scan = 60 * 7,
 		Purge = 60 * 30,

@@ -16,7 +16,7 @@ end
 function BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFG.Settings.Network.Message.Tag.BNET = XFG.Confederate:GetKey() .. 'BNET'
+        XFG.Enum.Tag.BNET = XFG.Confederate:GetKey() .. 'BNET'
         XFG.Events:Add({name = 'BNetMessage', 
                         event = 'BN_CHAT_MSG_ADDON', 
                         callback = XFG.Mailbox.BNet.BNetReceive, 
@@ -38,7 +38,7 @@ function BNet:Send(inMessage)
         for _, friend in XFG.Friends:Iterator() do
             if(target:Equals(friend:GetTarget()) and
               -- At the time of login you may not have heard back on pings yet, so just broadcast
-              (friend:IsRunningAddon() or inMessage:GetSubject() == XFG.Settings.Network.Message.Subject.LOGIN)) then
+              (friend:IsRunningAddon() or inMessage:GetSubject() == XFG.Enum.Message.LOGIN)) then
                 friends[#friends + 1] = friend
             end
         end
@@ -67,10 +67,10 @@ function BNet:Send(inMessage)
     for _, friend in pairs (links) do
         try(function ()
             for index, packet in ipairs (packets) do
-                XFG:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:GetName(), friend:GetGameID(), index, #packets, XFG.Settings.Network.Message.Tag.BNET, strlen(packet))
+                XFG:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:GetName(), friend:GetGameID(), index, #packets, XFG.Enum.Tag.BNET, strlen(packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-                XFG.Lib.BCTL:BNSendGameData('NORMAL', XFG.Settings.Network.Message.Tag.BNET, packet, _, friend:GetGameID())
-                XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
+                XFG.Lib.BCTL:BNSendGameData('NORMAL', XFG.Enum.Tag.BNET, packet, _, friend:GetGameID())
+                XFG.Metrics:Get(XFG.Enum.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(friend:GetTarget())
         end).
@@ -113,8 +113,8 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
 
     try(function ()
         if(inEncodedMessage:sub(1, 4) == 'PING') then
-            XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Settings.Network.Message.Tag.BNET, 'RE:PING', _, inSender)
-            XFG.Metrics:Get(XFG.Settings.Metric.BNetSend):Increment()
+            XFG.Lib.BCTL:BNSendGameData('ALERT', XFG.Enum.Tag.BNET, 'RE:PING', _, inSender)
+            XFG.Metrics:Get(XFG.Enum.Metric.BNetSend):Increment()
         elseif(inEncodedMessage:sub(1,7) ~= 'RE:PING') then
             XFG.Mailbox.BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    
         end        
