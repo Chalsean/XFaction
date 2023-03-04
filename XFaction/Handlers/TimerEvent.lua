@@ -174,8 +174,9 @@ function TimerEvent:CallbackLoginPlayer()
 
 			XFG.Timers:Add({name = 'LoginChannelSync',
 						    delta = XFG.Settings.Network.Channel.LoginChannelSyncTimer, 
-						    callback = XFG.Handlers.TimerEvent.CallbackOffline,
-						    repeater = false, 
+						    callback = XFG.Handlers.TimerEvent.CallbackChannelSync,
+						    repeater = true,
+							maxAttempts = XFG.Settings.Network.Channel.LoginChannelSyncAttempts,
 						    instance = true,
 						    start = true})
 		else
@@ -272,6 +273,18 @@ function TimerEvent:CallbackStaleLinks()
 	end).
 	finally(function ()
 		XFG.Timers:Get('StaleLinks'):SetLastRan(ServerTime())
+	end)
+end
+
+function TimerEvent:CallbackChannelSync()
+	try(function ()
+		XFG.Channels:Sync()
+		if(XFG.Channels:HasLocalChannel()) then
+			XFG.Channels:SetLast(XFG.Channels:GetLocalChannel():GetKey())
+		end
+	end).
+	catch(function (inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
 	end)
 end
 --#endregion

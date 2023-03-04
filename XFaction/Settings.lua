@@ -141,7 +141,8 @@ XFG.Settings = {
 		Channel = {
 			Total = 10,
 			NoticeTimer = 2,
-			LoginChannelSyncTimer = 30,
+			LoginChannelSyncTimer = 5,
+			LoginChannelSyncAttempts = 6,
 		},
 		Chat = {
 			PacketSize = 217,
