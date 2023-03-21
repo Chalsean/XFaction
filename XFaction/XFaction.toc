@@ -1,6 +1,6 @@
-## Interface: 100005
+## Interface: 100007
 ## Author: Chalsean (US-Proudmoore)
-## Version: 4.4.8
+## Version: 4.4.10
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
