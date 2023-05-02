@@ -12,7 +12,7 @@ XFG.ChangeLog['4.5.2'] = {
                 order = 1,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Bumped toc to 100007.',
+                name = 'Bumped toc to 100100.',
             },
             Two = {
                 order = 2,
