@@ -12,7 +12,7 @@ _G[addon] = Engine
 XFG.AddonName = addon
 XFG.Name = 'XFaction'
 XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
-XFG.Version = GetAddOnMetadata(addon, 'Version')
+XFG.Version = C_AddOns.GetAddOnMetadata(addon, 'Version')
 XFG.Start = GetServerTime()
 XFG.Verbosity = 4
 
