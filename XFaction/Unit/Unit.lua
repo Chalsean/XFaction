@@ -110,8 +110,7 @@ function Unit:Initialize(inMemberID)
     self:SetName(unitData.name)
     self:SetUnitName(unitData.name .. '-' .. XFG.Player.Guild:GetRealm():GetAPIName())
 	self:SetLevel(unitData.level)	
-	self:SetFaction(XFG.Player.Faction)
-    self:SetGuild(XFG.Player.Guild)
+	self:SetGuild(XFG.Player.Guild)
     self:SetTimeStamp(ServerTime())
     self:SetClass(XFG.Classes:Get(unitData.classID))
     self:SetRace(XFG.Races:Get(unitData.race))
@@ -119,6 +118,16 @@ function Unit:Initialize(inMemberID)
     self:SetNote(unitData.memberNote or '?')
     self:IsPlayer(unitData.isSelf)
     self:SetAchievementPoints(unitData.achievementPoints or 0)
+
+    if(self:IsPlayer()) then
+        self:SetFaction(XFG.Player.Faction)
+    elseif(unitData.faction == Enum.PvPFaction.Alliance) then
+        self:SetFaction(XFG.Factions:GetByName('Alliance'))
+    elseif(unitData.faction == Enum.PvPFaction.Horde) then
+        self:SetFaction(XFG.Factions:GetByName('Horde'))
+    else
+        self:SetFaction(XFG.Factions:GetByName('Neutral'))
+    end
 
     if(unitData.zone and XFG.Zones:Contains(unitData.zone)) then
         self:SetZone(XFG.Zones:Get(unitData.zone))
