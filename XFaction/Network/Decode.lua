@@ -37,6 +37,9 @@ local function DeserializeMessage(inObject, inCompressedData)
 	end
 	if(messageData.H ~= nil and XFG.Guilds:Contains(messageData.H)) then
 		inObject:SetGuild(XFG.Guilds:Get(messageData.H))
+	elseif(messageData.R ~= nil and messageData.G ~= nil) then
+		-- Remove this deprecated logic after everyone on 4.4
+		inObject:SetGuild(XFG.Guilds:GetByRealmGuildName(XFG.Realms:GetByID(messageData.R), messageData.G))
 	end		
 
 	-- Leave any UnitData serialized for now
@@ -65,6 +68,9 @@ function XFG:DeserializeUnitData(inData)
 	unit:SetUnitName(deserializedData.U)
 	if(deserializedData.H ~= nil and XFG.Guilds:Contains(deserializedData.H)) then
 		unit:SetGuild(XFG.Guilds:Get(deserializedData.H))
+	else
+		-- Remove this deprecated logic after everyone on 4.4
+		unit:SetGuild(XFG.Guilds:GetByRealmGuildName(XFG.Realms:GetByID(deserializedData.R), deserializedData.G))
 	end
 	if(deserializedData.I ~= nil) then unit:SetItemLevel(deserializedData.I) end
 	unit:SetRank(deserializedData.J)

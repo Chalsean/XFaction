@@ -13,6 +13,9 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	messageData.U = inMessage:GetUnitName()
 	if(inMessage:HasGuild()) then
 		messageData.H = inMessage:GetGuild():GetKey()
+		-- Remove G/R once everyone is on 4.4 build
+		messageData.G = inMessage:GetGuild():GetName()
+		messageData.R = inMessage:GetGuild():GetRealm():GetID()
 	end
 
 	if(inMessage:HasUnitData() and inEncodeUnitData) then
@@ -44,6 +47,9 @@ function XFG:SerializeUnitData(inUnitData)
 	messageData.E = inUnitData:GetPresence()
 	messageData.F = inUnitData:GetFaction():GetKey()	
 	messageData.H = inUnitData:GetGuild():GetKey()
+	-- Remove G/R after everyone on 4.4
+	messageData.G = inUnitData:GetGuild():GetName()
+	messageData.R = inUnitData:GetGuild():GetRealm():GetID()
 	messageData.K = inUnitData:GetGUID()
 	messageData.I = inUnitData:GetItemLevel()
 	messageData.J = inUnitData:GetRank()
