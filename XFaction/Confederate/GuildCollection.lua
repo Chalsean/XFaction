@@ -113,7 +113,7 @@ end
 
 function GuildCollection:SetPlayerGuild()
 	for _, guild in self:Iterator() do
-		if(guild:GetName() == self.info.name and XFG.Player.Realm:Equals(guild:GetRealm()) and XFG.Player.Faction:Equals(guild:GetFaction())) then
+		if(guild:GetName() == self.info.name and XFG.Player.Realm:Equals(guild:GetRealm())) then
 			guild:SetID(self.info.clubId)
 			for _, stream in pairs (C_Club.GetStreams(guild:GetID())) do
 				if(stream.streamType == 1) then
@@ -125,7 +125,7 @@ function GuildCollection:SetPlayerGuild()
 			break
 		end
 	end
-	if(XFG.Player.Guild == nil) then
+	if(XFG.Player.Guild == nil) then		
 		error('Player is not on a supported guild or realm')
 	end
 end
