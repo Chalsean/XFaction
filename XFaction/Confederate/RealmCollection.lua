@@ -708,7 +708,7 @@ local ConnectionData = {
 	"158,1292",                                      -- Greymane, Tanaris
 	"3737,3736,3725,3733,3724",                      -- Gundrak, Jubei’Thos, Frostmourne, Dreadmaul, Thaurissan
 	"15,1277,155,1557",                              -- Deathwing, Executus, Kalecgos, Shattered Halls
-	"3735,3726",                                     -- Dath’Remar, Khaz’goroth
+	"3735,3726,3722",                                -- Dath’Remar, Khaz’goroth, Aman'Thul
 	"4,1355",                                        -- Kilrogg, Winterhoof
 	"1071,1290,1260",                                -- Kirin Tor, Sentinels, Steamwheedle Cartel
 	"1147,1353",                                     -- Kul Tiras, Bladefist
