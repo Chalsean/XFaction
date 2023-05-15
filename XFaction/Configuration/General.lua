@@ -331,7 +331,6 @@ XFG.Options = {
 					order = 3,
 					type = 'group',
 					name = XFG.Lib.Locale['ABOUT'],
-					childGroups = 'tab',
 					args = {							
 						Header = {
 							order = 1,
@@ -356,6 +355,7 @@ XFG.Options = {
 							order = 3,
 							type = 'group',
 							name = XFG.Lib.Locale['COMMUNICATION'],
+							guiInline = true,
 							args = {
 								Chat = {
 									order = 1,
@@ -381,6 +381,7 @@ XFG.Options = {
 							order = 4,
 							type = 'group',
 							name = XFG.Lib.Locale['ROSTER'],
+							guiInline = true,
 							args = {
 								GuildX = {
 									order = 1,
@@ -394,6 +395,7 @@ XFG.Options = {
 							order = 5,
 							type = 'group',
 							name = XFG.Lib.Locale['ADDONS'],
+							guiInline = true,
 							args = {
 								ElvUI = {
 									order = 1,
@@ -425,6 +427,7 @@ XFG.Options = {
 							order = 6,
 							type = 'group',
 							name = XFG.Lib.Locale['METRICS'],
+							guiInline = true,
 							args = {
 								LinksX = {
 									order = 1,
@@ -980,4 +983,13 @@ end
 function XFG:InitProfile()
     -- When DB changes namespace (profile) the XFG.Config becomes invalid and needs to be reset
     XFG.Config = XFG.ConfigDB.profile
+end
+
+function XFG_ToggleOptions()
+	if XFG.Lib.ConfigDialog.OpenFrames[XFG.Name] ~= nil then
+		XFG.Lib.ConfigDialog:Close(XFG.Name)
+	else
+		XFG.Lib.ConfigDialog:Open(XFG.Name)
+		XFG.Lib.ConfigDialog:SelectGroup(XFG.Name, 'General', 'About')
+	end
 end

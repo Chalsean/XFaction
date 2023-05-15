@@ -1,12 +1,14 @@
 ## Interface: 100100
 ## Author: Chalsean (US-Proudmoore)
-## Version: 4.5.8
+## Version: 4.6.0
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: XFCacheDB, XFactionDB
 ## OptionalDeps: _DebugLog, BugSack, BugGrabber
+## AddonCompartmentFunc: XFG_ToggleOptions
+## IconTexture: Interface\Addons\XFaction\Media\Icon\xfaction.png
 
 Libraries\LoadLibraries.xml
 Locales\LoadLocales.xml
