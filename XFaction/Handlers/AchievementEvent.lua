@@ -28,12 +28,7 @@ end
 function AchievementEvent:CallbackAchievement(inID)
     try(function ()
         local _, name, _, _, _, _, _, _, _, _, _, isGuild, _, earnedBy = GetAchievementInfo(inID)
-        local unitData = XFG.Confederate:GetUnitByName(earnedBy)
-        if(unitData ~= nil) then
-            XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), unitData:GetGUID(), inID)
-        else
-            XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', earnedBy, earnedBy .. '-' .. XFG.Player.Guild:GetRealm():GetName(), nil, XFG.Player.Guild, XFG.Player.Unit:GetGUID(), inID)
-        end
+        XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', earnedBy, earnedBy .. '-' .. XFG.Player.Guild:GetRealm():GetName(), nil, XFG.Player.Guild, XFG.Player.Unit:GetGUID(), inID)
 
         if(not isGuild and string.find(name, XFG.Lib.Locale['EXPLORE']) == nil) then
             local message = nil
