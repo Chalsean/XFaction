@@ -238,7 +238,10 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     -- Process ACHIEVEMENT message
     if(inMessage:GetSubject() == XFG.Enum.Message.ACHIEVEMENT) then
-        XFG.Frames.Chat:DisplayAchievement(inMessage)
+        -- Local guild achievements should already be displayed by WoW client
+        if(not XFG.Player.Guild:Equals(inMessage:GetGuild())) then
+            XFG.Frames.Chat:DisplayAchievement(inMessage)
+        end
         return
     end
 

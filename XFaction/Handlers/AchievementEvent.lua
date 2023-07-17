@@ -1,5 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'AchievementEvent'
+local GetAchievementInfo = GetAchievementInfo
 
 AchievementEvent = Object:newChildConstructor()
 
@@ -27,9 +28,7 @@ end
 --#region Callbacks
 function AchievementEvent:CallbackAchievement(inID)
     try(function ()
-        local _, name, _, _, _, _, _, _, _, _, _, isGuild, _, earnedBy = GetAchievementInfo(inID)
-        XFG.Frames.Chat:Display('GUILD_ACHIEVEMENT', earnedBy, earnedBy .. '-' .. XFG.Player.Guild:GetRealm():GetName(), nil, XFG.Player.Guild, XFG.Player.Unit:GetGUID(), inID)
-
+        local _, name, _, _, _, _, _, _, _, _, _, isGuild = GetAchievementInfo(inID)
         if(not isGuild and string.find(name, XFG.Lib.Locale['EXPLORE']) == nil) then
             local message = nil
             try(function ()

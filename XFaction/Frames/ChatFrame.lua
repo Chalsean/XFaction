@@ -66,7 +66,8 @@ function ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, 
     if(string.find(inMessage, XFG.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XFG.Settings.Frames.Chat.Prepend, '')
     -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
-    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND']) or string.find(inMessage, XFG.Lib.Locale['CHAT_ACHIEVEMENT'])) then
+    --elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND']) or string.find(inMessage, XFG.Lib.Locale['CHAT_ACHIEVEMENT'])) then
+    elseif(string.find(inMessage, XFG.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
         return true
     elseif(XFG.Confederate:Contains(inGUID)) then
         inMessage = ModifyPlayerChat(inEvent, inMessage, XFG.Confederate:Get(inGUID))
