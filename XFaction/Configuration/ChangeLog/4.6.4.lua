@@ -14,6 +14,18 @@ XFG.ChangeLog['4.6.4'] = {
                 fontSize = 'medium',
                 name = 'Removed DTWoWToken as there are alternatives available and is not related to this addon.',
             },
+            Two = {
+                order = 2,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Bumped toc to 100105.',
+            },
+            Three = {
+                order = 3,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Fixed guild achievements showing up as nameless personal achievements.',
+            },
         },
     },			
 }
