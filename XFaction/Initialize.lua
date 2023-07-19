@@ -77,7 +77,6 @@ function XFG:Init()
 		XFG.DataText.Guild:Initialize()
 		XFG.DataText.Links:Initialize()
 		XFG.DataText.Metrics:Initialize()
-		XFG.DataText.Token = DTToken:new(); XFG.DataText.Token:Initialize()
 
 		XFG.Expansions = ExpansionCollection:new(); XFG.Expansions:Initialize()
 		XFG.WoW = XFG.Expansions:GetCurrent()
