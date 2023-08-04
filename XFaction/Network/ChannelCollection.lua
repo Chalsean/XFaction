@@ -11,7 +11,7 @@ function ChannelCollection:new()
     local object = ChannelCollection.parent.new(self)
 	object.__name = ObjectName
 	object.localChannel = nil
-	object.useGuild = true
+	object.useGuild = false
     return object
 end
 --#endregion

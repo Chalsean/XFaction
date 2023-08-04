@@ -57,12 +57,15 @@ function Chat:Send(inMessage)
     self:Add(inMessage:GetKey())
 
     -- If only guild on target, broadcast to GUILD
-    local channelName, channelID = 'CHANNEL', XFG.Channels:GetLocalChannel():GetID()
+    local channelName, channelID
     -- Otherwise broadcast to custom channel
-    -- if(not XFG.Channels:UseGuild() and XFG.Channels:HasLocalChannel()) then
-    --     channelName = 'CHANNEL'
-    --     channelID = XFG.Channels:GetLocalChannel():GetID()
-    -- end
+    if(XFG.Channels:HasLocalChannel()) then
+        channelName = 'CHANNEL'
+        channelID = XFG.Channels:GetLocalChannel():GetID()
+    else
+        channelName = 'GUILD'
+        channelID = nil
+    end
     for index, packet in ipairs (packets) do
         XFG:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:GetKey(), channelName, XFG.Enum.Tag.LOCAL, strlen(packet))
         XFG.Lib.BCTL:SendAddonMessage('NORMAL', XFG.Enum.Tag.LOCAL, packet, channelName, channelID)
