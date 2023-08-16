@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
     <Script file='Profession.lua'/>
-    <Script file='ProfessionCollection.lua'/>   
+    <Script file='ProfessionCollection.lua'/>
     <Script file='Spec.lua'/>    
     <Script file='SpecCollection.lua'/>    
     <Script file='Class.lua'/>    

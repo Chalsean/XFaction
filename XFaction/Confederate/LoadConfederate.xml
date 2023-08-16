@@ -10,4 +10,6 @@
     <Script file='Guild.lua'/>
     <Script file='GuildCollection.lua'/>
     <Script file='Confederate.lua'/>
+    <Script file='Order.lua'/>
+    <Script file='OrderCollection.lua'/>
 </Ui>
