@@ -1,5 +1,8 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'OrderCollection'
+local GetAllProfessionIDs = C_TradeSkillUI.GetAllProfessionTradeSkillLines
+local GetProfessionName = C_TradeSkillUI.GetTradeSkillDisplayName
+local GetProfessionIcon = C_TradeSkillUI.GetTradeSkillTexture
 
 OrderCollection = Factory:newChildConstructor()
 

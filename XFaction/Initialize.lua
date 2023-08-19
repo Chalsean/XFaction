@@ -26,6 +26,7 @@ function XFG:Init()
 	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
 	XFG.Targets = TargetCollection:new()
 	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
+	XFG.Orders = OrderCollection:new(); XFG.Orders:Initialize()
 
 	-- DataText
 	XFG.DataText.Guild = DTGuild:new()

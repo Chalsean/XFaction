@@ -32,3 +32,14 @@ function ProfessionCollection:Initialize()
 	end
 end
 --#endregion
+
+--#region Accessors
+function ProfessionCollection:GetByName(inName)
+	assert(type(inName) == 'string')
+	for _, profession in self:Iterator() do
+		if(profession:GetName() == inName) then
+			return profession
+		end
+	end
+end
+--#endregion
