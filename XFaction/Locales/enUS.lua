@@ -76,6 +76,7 @@ L['ORDER'] = 'Order'
 L['RAID'] = 'Raid'
 L['PVP'] = 'PvP'
 L['NODE'] = 'Node'
+L['ORDER'] = 'Order'
 L['ROSTER'] = 'Roster'
 L['DEBUG'] = 'Debug'
 L['CONTINENT'] = 'Continent'
@@ -284,10 +285,10 @@ L['DTLINKS_DESCRIPTION'] = 'Links data broker displays all active BNet links the
 -- Header
 L['DTLINKS_HEADER_LINKS'] = 'Active BNet Links: |cffffffff%d|r'
 -------------------------
--- DTToken (X)
+-- DTOrders (X)
 -------------------------
 -- Broker name
-L['DTTOKEN_NAME'] = 'WoW Token (X)'
+L['DTORDERS_NAME'] = 'Orders (X)'
 -------------------------
 -- DTMetrics
 -------------------------

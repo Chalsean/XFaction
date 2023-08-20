@@ -104,13 +104,16 @@ function GetOrders()
                     end
                 end
 
+                order:Print()
+
                 -- There is no submit datetime for orders, so have to get creative in determining which one is the new one
                 if(self:IsFirstQuery()) then
                     XFG.Orders:Add(order)
                 else
                     order:IsLatestOrder(true)
                     XFG.Orders:Add(order)
-                    -- Broadcast message here
+                    order:Broadcast()
+                    XFG.DataText.Orders:RefreshBroker()
                 end
             else
                 XFG.Orders:Push(order)
@@ -121,8 +124,14 @@ function GetOrders()
             XFG.Orders:Push(order)
         end)
     end
-    -- if FirstQuery broadcast all orders here
-    self:IsFirstQuery(false)
+
+    if(self:IsFirstQuery()) then
+        if(XFG.Orders:GetCount() > 0) then
+            XFG.Orders:Broadcast()
+            XFG.DataText.Orders:RefreshBroker()
+        end
+        self:IsFirstQuery(false)
+    end
 end
 
 function OrderEvent:CallbackCraftOrder(inEvent) 

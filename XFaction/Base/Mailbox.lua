@@ -148,10 +148,10 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     local messageData = string.sub(inEncodedMessage, 3 + XFG.Settings.System.UIDLength, -1)
 
     -- Ignore if it's your own message or you've seen it before
-    if(XFG.Mailbox.BNet:Contains(messageKey) or XFG.Mailbox.Chat:Contains(messageKey)) then
-        XFG:Trace(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
-        return
-    end
+    -- if(XFG.Mailbox.BNet:Contains(messageKey) or XFG.Mailbox.Chat:Contains(messageKey)) then
+    --     XFG:Trace(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
+    --     return
+    -- end
     --#endregion
 
     self:AddPacket(messageKey, packetNumber, messageData)
@@ -170,13 +170,6 @@ end
 
 function Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-
-    -- Sanity check that sender is in confederate
-    -- if(not inMessage:HasGuild()) then
-    --     XFG:Warn(ObjectName, 'Message did not originate from own confederate')
-    --     inMessage:Print()
-    --     return
-    -- end
 
     -- Is a newer version available?
     if(not XFG.Cache.NewVersionNotify and XFG.Version:IsNewer(inMessage:GetVersion())) then
@@ -271,9 +264,9 @@ function Mailbox:Process(inMessage, inMessageTag)
         return
     end
 
-    -- Process JOIN message
-    if(inMessage:GetSubject() == XFG.Enum.Message.JOIN) then
-        --XFG.Frames.System:DisplayJoinMessage(inMessage)
+    -- Process ORDER message
+    if(inMessage:GetSubject() == XFG.Enum.Message.ORDER) then
+        XFG.Orders:Decode(inMessage:GetData())
         return
     end
 

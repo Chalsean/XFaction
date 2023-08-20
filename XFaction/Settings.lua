@@ -83,7 +83,7 @@ XFG.Enum = {
 		LOGIN = '4',
 		ACHIEVEMENT = '5',
 		LINK = '6',
-		JOIN = '7',
+		ORDER = '7',
 	},
 	Network = {
 		BROADCAST = '1', -- BNet + Local Channel

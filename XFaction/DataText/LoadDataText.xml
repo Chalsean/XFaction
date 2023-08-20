@@ -2,4 +2,5 @@
     <Script file='DTGuild.lua'/>
     <Script file='DTLinks.lua'/>
     <Script file='DTMetrics.lua'/>
+    <Script file='DTOrders.lua'/>
 </Ui>

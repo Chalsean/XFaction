@@ -165,6 +165,7 @@ function TimerEvent:CallbackLoginPlayer()
 			XFG.DataText.Guild:PostInitialize()
 			XFG.DataText.Links:PostInitialize()
 			XFG.DataText.Metrics:PostInitialize()
+			XFG.DataText.Orders:PostInitialize()
 
 			-- For support reasons, it helps to know what addons are being used
 			for i = 1, GetNumAddOns() do

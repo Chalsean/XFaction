@@ -166,6 +166,23 @@ XFG.Defaults = {
                 Error = true,
                 Warning = true,
             },
+            Orders = {
+                Column = '',
+                Label = false,
+                GuildName = true,
+                Confederate = true,
+                Enable = {
+                    Profession = true,
+                },
+                Order = {
+                    ProfessionOrder = 1,
+                },
+                Alignment = {
+                    ProfessionAlignment = 'Center',
+                },                
+                Sort = 'Profession',
+                Size = 350,
+            },
         },
         Debug = {
             Verbosity = 0,

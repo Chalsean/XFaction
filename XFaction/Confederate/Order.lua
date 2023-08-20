@@ -9,7 +9,8 @@ function Order:new()
     object.__name = ObjectName
     object.ID = 0
     object.itemID = nil
-    object.isFulfillable = nil
+    object.skillLineAbilityID = nil
+    object.isFulfillable = false
     object.customerGUID = nil
     object.customerName = nil
     object.customerGuild = nil
@@ -23,7 +24,8 @@ function Order:Deconstructor()
     self:ParentDeconstructor()
     self.ID = 0
     self.itemID = nil
-    self.isFulfillable = nil
+    self.skillLineAbilityID = nil
+    self.isFulfillable = false
     self.customerGUID = nil
     self.customerName = nil
     self.customerGuild = nil
@@ -38,6 +40,7 @@ function Order:Print()
     self:ParentPrint()
     XFG:Debug(ObjectName, '  ID (' .. type(self.ID) .. '): ' .. tostring(self.ID))
     XFG:Debug(ObjectName, '  itemID (' .. type(self.itemID) .. '): ' .. tostring(self.itemID))
+    XFG:Debug(ObjectName, '  skillLineAbilityID (' .. type(self.skillLineAbilityID) .. '): ' .. tostring(self.skillLineAbilityID))
     XFG:Debug(ObjectName, '  isFulfillable (' .. type(self.isFulfillable) .. '): ' .. tostring(self.isFulfillable))
     XFG:Debug(ObjectName, '  customerGUID (' .. type(self.customerGUID) .. '): ' .. tostring(self.customerGUID))
     XFG:Debug(ObjectName, '  customerName (' .. type(self.customerName) .. '): ' .. tostring(self.customerName))
@@ -69,6 +72,15 @@ end
 function Order:SetItemID(inItemID)
     assert(type(inItemID) == 'number')
     self.itemID = inItemID
+end
+
+function Order:GetSkillLineAbilityID()
+    return self.skillLineAbilityID
+end
+
+function Order:SetSkillLineAbilityID(inSkillLineAbilityID)
+    assert(type(inSkillLineAbilityID) == 'number')
+    self.skillLineAbilityID = inSkillLineAbilityID
 end
 
 function Order:GetCustomerGUID()
@@ -142,5 +154,63 @@ function Order:IsLatestOrder(inBoolean)
         self.isLatestOrder = inBoolean
     end    
     return self.isLatestOrder
+end
+--#endregion
+
+--#region Networking
+function Order:Encode()
+    local data = {}
+    data.K = self:GetKey()
+    data.I = self:GetItemID()
+    data.C = self:GetCustomerGUID()
+    data.N = self:GetCustomerName()
+    data.Q = self:GetMinimumQuality()
+    data.G = self:GetCustomerGuild():GetKey()
+    data.P = self:GetProfession():GetKey()
+    data.S = self:GetSkillLineAbilityID()
+    return data
+end
+
+function Order:Decode(inData)
+    assert(type(inData) == 'table')
+    if(self:IsInitialized()) then
+        self:Deconstructor()
+    end
+    self:SetKey(inData.K)
+    self:SetID(inData.K)
+    self:SetItemID(inData.I)
+    self:SetCustomerGUID(inData.C)
+    self:SetCustomerName(inData.N)
+    self:SetMinimumQuality(inData.Q)
+    self:SetCustomerGuild(XFG.Guilds:Get(inData.G))
+    self:SetProfession(XFG.Professions:Get(inData.P))
+    self:SetSkillLineAbilityID(inData.S)
+    self:IsInitialized(true)
+end
+
+function Order:Serialize()
+    return pickle(self:Encode())
+end
+
+function Order:Deserialize(inData)
+    self:Decode(unpickle(inData))
+end
+
+function Order:Broadcast()
+    local message = nil
+    try(function ()
+        message = XFG.Mailbox.Chat:Pop()
+        message:Initialize()
+        message:SetFrom(XFG.Player.Unit:GetGUID())
+        message:SetGuild(XFG.Player.Guild)
+        message:SetUnitName(XFG.Player.Unit:GetUnitName())
+        message:SetType(XFG.Enum.Network.BROADCAST)
+        message:SetSubject(XFG.Enum.Message.ORDER)
+        message:SetData(self:Serialize())
+        XFG.Mailbox.Chat:Send(message)
+    end).
+    finally(function ()
+        XFG.Mailbox.Chat:Push(message)
+    end)
 end
 --#endregion
