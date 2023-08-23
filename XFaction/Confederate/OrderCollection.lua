@@ -1,5 +1,6 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'OrderCollection'
+local GetItemInformation = GetItemInfo
 
 OrderCollection = Factory:newChildConstructor()
 
@@ -36,18 +37,35 @@ function OrderCollection:Encode()
 end
 
 function OrderCollection:Decode(inData)
-	local orders = string.Split(inData, ';')
-    for _, serializedOrder in pairs (orders) do
-		local order = nil
-    	try(function ()
-			order = XFG.Orders:Pop()
-			order:Deserialize(serializedOrder)
-			self:Add(order)
-		end).
-		catch(function ()
-			XFG.Orders:Push(order)
-		end)
-    end
+	local order = nil
+	try(function ()
+		order = self:Pop()
+		order:Decode(inData)
+		self:Add(order)
+		order:Print()
+		-- Notify player of new crafting order
+		if(XFG.Config.Chat.Crafting.Enable) then
+			local name = ''
+			if(XFG.Config.Chat.Crafting.Faction) then  
+				name = format('%s ', format(XFG.Icons.String, order:GetCustomerUnit():GetFaction():GetIconID()))
+			end
+			name = name .. order:GetCustomerName()
+			if(XFG.Config.Chat.Crafting.Main and order:HasCustomerUnit() and order:GetCustomerUnit():IsAlt()) then
+				name = name .. ' (' .. order:GetCustomerUnit():GetMainName() .. ')'
+			end
+			name = format('|c%s%s|r', order:GetCustomerClass():GetHex(), name)
+			local _, itemLink, itemQuality = GetItemInformation(order:GetItemID())
+			local guild = order:GetCustomerUnit():GetGuild():GetName()
+			if(XFG.Config.Chat.Crafting.Realm) then
+				guild = guild .. ' (' .. order:GetCustomerUnit():GetGuild():GetRealm():GetName() .. ')'
+			end
+			print(format(XFG.Lib.Locale['NEW_CRAFTING_ORDER'], XFG.Title, name, itemLink, guild))
+		end
+	end).
+	catch(function (inErrorMessage)
+		XFG:Warn(ObjectName, inErrorMessage)
+		self:Push(order)
+	end)
 end
 
 function OrderCollection:Broadcast()

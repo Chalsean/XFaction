@@ -15,6 +15,7 @@ function Message:new()
     object.epochTime = nil
     object.targets = nil
     object.targetCount = 0
+    object.unitData = nil
     object.data = nil
     object.initialized = false
     object.packetNumber = 1
@@ -50,6 +51,7 @@ function Message:Deconstructor()
     self.epochTime = nil
     self.targets = nil
     self.targetCount = 0
+    self.unitData = nil
     self.data = nil
     self.packetNumber = 1
     self.totalPackets = 1
@@ -124,6 +126,14 @@ function Message:SetTimeStamp(inEpochTime)
     self.epochTime = inEpochTime
 end
 
+function Message:GetUnitData()
+    return self.unitData
+end
+
+function Message:SetUnitData(inData)
+    self.unitData = inData
+end
+
 function Message:GetData()
     return self.data
 end
@@ -153,7 +163,7 @@ end
 function Message:HasUnitData()
     return self:GetSubject() == XFG.Enum.Message.DATA or 
            self:GetSubject() == XFG.Enum.Message.LOGIN or
-           self:GetSubject() == XFG.Enum.Message.JOIN
+           self:GetSubject() == XFG.Enum.Message.ORDER
 end
 
 function Message:HasVersion()

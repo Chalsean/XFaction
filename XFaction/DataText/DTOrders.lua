@@ -93,7 +93,7 @@ function DTOrders:IsReverseSort(inBoolean)
 end
 
 function DTOrders:GetSort()
-	return self.sortColumn == nil and self:SetSort(XFG.Config.DataText.Guild.Sort) or self.sortColumn
+	return self.sortColumn == nil and self:SetSort(XFG.Config.DataText.Orders.Sort) or self.sortColumn
 end
 
 function DTOrders:SetSort(inColumnName)
@@ -109,22 +109,30 @@ local function PreSort()
 		if(order:HasProfession()) then
 			orderData.Profession = order:GetProfession():GetIconID()
 		end
+		orderData.Guild = order:GetCustomerGuild():GetName()
+		orderData.Customer = order:GetCustomerName()
+		if(order:HasCustomer()) then
+			orderData.Class = order:GetCustomer():GetClass():GetHex()
+			if(order:GetCustomer():IsAlt() and order:GetCustomer():HasMainName() and XFG.Config.DataText.Orders.Main) then
+				orderData.Customer = order:GetCustomer():GetName() .. ' (' .. order:GetCustomer():GetMainName() .. ')'
+			end
+		end
 
-		list[#list + 1] = unitData
+		list[#list + 1] = orderData
 	end
 	return list
 end
 
 local function SetSortColumn(_, inColumnName)
-	-- if(XFG.DataText.Guild:GetSort() == inColumnName and XFG.DataText.Guild:IsReverseSort()) then
-	-- 	XFG.DataText.Guild:IsReverseSort(false)
-	-- elseif(XFG.DataText.Guild:GetSort() == inColumnName) then
-	-- 	XFG.DataText.Guild:IsReverseSort(true)
-	-- else
-	-- 	XFG.DataText.Guild:SetSort(inColumnName)
-	-- 	XFG.DataText.Guild:IsReverseSort(false)
-	-- end
-	-- XFG.DataText.Guild:OnEnter(LDB_ANCHOR)
+	if(XFG.DataText.Orders:GetSort() == inColumnName and XFG.DataText.Orders:IsReverseSort()) then
+		XFG.DataText.Orders:IsReverseSort(false)
+	elseif(XFG.DataText.Orders:GetSort() == inColumnName) then
+		XFG.DataText.Orders:IsReverseSort(true)
+	else
+		XFG.DataText.Orders:SetSort(inColumnName)
+		XFG.DataText.Orders:IsReverseSort(false)
+	end
+	XFG.DataText.Orders:OnEnter(LDB_ANCHOR)
 end
 --#endregion
 
@@ -247,8 +255,8 @@ function DTOrders:OnEnter(this)
 					elseif(orderData[columnName] ~= nil) then
 						cellValue = format('%s', format(XFG.Icons.String, orderData[columnName]))
 					end
-				elseif(columnName == 'Name') then
-					cellValue = format('|c%s%s|r', orderData.Class, orderData.Name)
+				elseif(columnName == 'Customer') then
+					cellValue = format('|c%s%s|r', orderData.Class, orderData.Customer)
 				elseif(orderData[columnName] ~= nil) then
 					cellValue = format('|cffffffff%s|r', orderData[columnName])
 				end

@@ -63,6 +63,13 @@ XFG.Defaults = {
                 Last = true,
                 Color = true,
             },
+            Crafting = {
+                Enable = true,
+                Faction = true,
+                Main = true,
+                Realm = false,
+                New = true,
+            },
         },
         Addons = {
             ElvUI = {
@@ -171,16 +178,23 @@ XFG.Defaults = {
                 Label = false,
                 GuildName = true,
                 Confederate = true,
+                Main = true,
                 Enable = {
+                    Guild = true,
                     Profession = true,
+                    Customer = true,
                 },
                 Order = {
                     ProfessionOrder = 1,
+                    GuildOrder = 2,
+                    CustomerOrder = 3,
                 },
                 Alignment = {
                     ProfessionAlignment = 'Center',
+                    GuildAlignment = 'Left',
+                    CustomerAlignement = 'Left',
                 },                
-                Sort = 'Profession',
+                Sort = 'Guild',
                 Size = 350,
             },
         },

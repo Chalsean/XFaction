@@ -3,7 +3,6 @@ local ObjectName = 'OrderEvent'
 local ListMyOrders = C_CraftingOrders.ListMyOrders
 local GetMyOrders = C_CraftingOrders.GetMyOrders
 local CreateCallback = C_FunctionContainers.CreateCallback
-local GetProfessionForSkill = C_TradeSkillUI.GetProfessionNameForSkillLineAbility
 
 OrderEvent = Object:newChildConstructor()
 
@@ -32,8 +31,6 @@ function OrderEvent:Initialize()
                         callback = XFG.Handlers.OrderEvent.CallbackCanRequestOrders, 
                         instance = false,
                         start = true})
-
-        -- Add event handler for completed/rejected/timed out orders
 
 		self:IsInitialized(true)
 	end
@@ -91,29 +88,21 @@ function GetOrders()
                 order:SetID(myOrder.orderID)
                 order:SetItemID(myOrder.itemID)
                 order:SetCustomerGUID(XFG.Player.Unit:GetGUID())
-                order:SetCustomerName(XFG.Player.Unit:GetUnitName())
+                order:SetCustomerName(XFG.Player.Unit:GetName())
                 order:SetCustomerGuild(XFG.Player.Guild)
+                order:SetCustomerClass(XFG.Player.Unit:GetClass())
                 order:SetMinimumQuality(myOrder.minQuality)
-                order:IsFulfillable(myOrder.isFulfillable)
-
-                local professionName = GetProfessionForSkill(myOrder.skillLineAbilityID)
-                if(professionName ~= nil and type(professionName) == 'string') then
-                    local profession = XFG.Professions:GetByName(professionName)
-                    if(profession ~= nil) then
-                        order:SetProfession(profession)
-                    end
-                end
-
-                order:Print()
+                order:SetSkillLineAbilityID(myOrder.skillLineAbilityID)
 
                 -- There is no submit datetime for orders, so have to get creative in determining which one is the new one
                 if(self:IsFirstQuery()) then
-                    XFG.Orders:Add(order)
+                    XFG.Orders:Add(order)                   
                 else
                     order:IsLatestOrder(true)
                     XFG.Orders:Add(order)
-                    order:Broadcast()
-                    XFG.DataText.Orders:RefreshBroker()
+                    --if(order:IsGuild()) then
+                        order:Broadcast()
+                    --end
                 end
             else
                 XFG.Orders:Push(order)
@@ -126,10 +115,10 @@ function GetOrders()
     end
 
     if(self:IsFirstQuery()) then
-        if(XFG.Orders:GetCount() > 0) then
-            XFG.Orders:Broadcast()
-            XFG.DataText.Orders:RefreshBroker()
-        end
+        -- if(XFG.Orders:GetCount() > 0) then
+        --     XFG.Orders:Broadcast()
+        --     XFG.DataText.Orders:RefreshBroker()
+        -- end
         self:IsFirstQuery(false)
     end
 end

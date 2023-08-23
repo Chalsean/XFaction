@@ -54,6 +54,7 @@ L['EXPLORE'] = 'Explore'
 L['VERSION'] = 'Version'
 L['MAIN'] = 'Main'
 L['LABEL'] = 'Label'
+L['CUSTOMER'] = 'Customer'
 L['LINKS'] = 'Links'
 L['PM'] = 'Project Manager'
 L['USAGE'] = 'Usage'
@@ -101,6 +102,7 @@ L['NEW'] = 'New'
 L['IMPROVEMENTS'] = 'Improvements'
 L['COMMUNICATION'] = 'Communication'
 L['METRICS'] = 'Metrics'
+L['CRAFTING'] = 'Crafting'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -154,6 +156,12 @@ L['CHAT_LOGOUT'] = 'has gone offline.'
 L['CHAT_ACHIEVEMENT'] = 'has earned the achievement'
 L['CHAT_NO_PLAYER_FOUND'] = 'No player named '
 L['CHAT_CHANNEL_DESCRIPTION'] = 'These options control the addon custom channel behaviours.'
+L['CHAT_CRAFTING_DESCRIPTION'] = 'These options control the crafting order notifications.'
+L['CHAT_CRAFTING_NEW'] = 'New Orders'
+L['CHAT_CRAFTING_NEW_TOOLTIP'] = 'Display chat messages for new orders placed.'
+L['NEW_CRAFTING_ORDER'] = '%s: %s created a new guild crafting order for %s on %s.'
+L['CHAT_CRAFTING_TOOLTIP'] = 'See cross realm/faction guild crafting orders.'
+L['CHAT_CRAFTING_REALM_TOOLTIP'] = 'Show the guild realm location.'
 --=========================================================================
 -- Addons Specific
 --=========================================================================
@@ -289,6 +297,30 @@ L['DTLINKS_HEADER_LINKS'] = 'Active BNet Links: |cffffffff%d|r'
 -------------------------
 -- Broker name
 L['DTORDERS_NAME'] = 'Orders (X)'
+L['DTORDERS_DESCRIPTION'] = 'Guild data broker displays complete confederate roster.'
+-- Config
+L['DTORDERS_BROKER_HEADER'] = 'Broker Settings'
+L['DTORDERS_SELECT_COLUMN'] = 'Select Column'
+L['DTORDERS_SELECT_COLUMN_TOOLTIP'] = 'Select column from list to make adjustments to'
+L['DTORDERS_CONFIG_SORT'] = 'Default Sort Column'
+L['DTORDERS_CONFIG_HEADER'] = 'Header Settings'
+L['DTORDERS_CONFIG_SIZE'] = 'Window Size'
+L['DTORDERS_CONFIG_CONFEDERATE_TOOLTIP'] = 'Show name of the confederate'
+L['DTORDERS_CONFIG_CONFEDERATE_DISABLED'] = 'Must have at least five columns enabled'
+L['DTORDERS_CONFIG_GUILD_TOOLTIP'] = 'Show name of the current guild'
+L['DTORDERS_CONFIG_MOTD_TOOLTIP'] = 'Show guild message-of-the-day'
+L['DTORDERS_CONFIG_COLUMN_HEADER'] = 'Column Settings'
+L['DTORDERS_CONFIG_COLUMN_GUILD_TOOLTIP'] = 'Show customer guild name'
+L['DTORDERS_CONFIG_COLUMN_GUILD_ORDER_TOOLTIP'] = 'Column number the guild name will be displayed in'
+L['DTORDERS_CONFIG_COLUMN_GUILD_ALIGNMENT_TOOLTIP'] = 'Guild name text justification'
+L['DTORDERS_CONFIG_COLUMN_CUSTOMER_TOOLTIP'] = 'Show customer name'
+L['DTORDERS_CONFIG_COLUMN_CUSTOMER_ORDER_TOOLTIP'] = 'Column number the customer name will be displayed in'
+L['DTORDERS_CONFIG_COLUMN_CUSTOMER_ALIGNMENT_TOOLTIP'] = 'Customer name text justification'
+L['DTORDERS_CONFIG_COLUMN_PROFESSION_TOOLTIP'] = 'Show player profession icons'
+L['DTORDERS_CONFIG_COLUMN_PROFESSION_ORDER_TOOLTIP'] = 'Column number the profession icons will be displayed in'
+L['DTORDERS_CONFIG_COLUMN_PROFESSION_ALIGNMENT_TOOLTIP'] = 'Profession icons alignment within the column'
+L['DTORDERS_CONFIG_SORT_TOOLTIP'] = 'Select the default sort column'
+L['DTORDERS_CONFIG_SIZE_TOOLTIP'] = 'Select the maximum height of the window before it starts scrolling'
 -------------------------
 -- DTMetrics
 -------------------------

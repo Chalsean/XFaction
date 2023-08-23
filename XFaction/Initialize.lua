@@ -32,7 +32,7 @@ function XFG:Init()
 	XFG.DataText.Guild = DTGuild:new()
 	XFG.DataText.Links = DTLinks:new()
 	XFG.DataText.Metrics = DTMetrics:new()
-	XFG.DataText.Orders = DTOrders:new()
+	--XFG.DataText.Orders = DTOrders:new()
 
 	-- Frames
 	XFG.Frames.Chat = ChatFrame:new()
@@ -80,7 +80,7 @@ function XFG:Init()
 		XFG.DataText.Guild:Initialize()
 		XFG.DataText.Links:Initialize()
 		XFG.DataText.Metrics:Initialize()
-		XFG.DataText.Orders:Initialize()
+		--XFG.DataText.Orders:Initialize()
 
 		XFG.Expansions = ExpansionCollection:new(); XFG.Expansions:Initialize()
 		XFG.WoW = XFG.Expansions:GetCurrent()
