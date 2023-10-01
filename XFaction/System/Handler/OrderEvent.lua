@@ -1,8 +1,8 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'OrderEvent'
-local ListMyOrders = C_CraftingOrders.ListMyOrders
-local GetMyOrders = C_CraftingOrders.GetMyOrders
+local QueryMyOrdersFromServer = C_CraftingOrders.ListMyOrders
+local GetMyOrdersFromServer = C_CraftingOrders.GetMyOrders
 local GetRecipe = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility
 local GetProfessionForSkill = C_TradeSkillUI.GetProfessionNameForSkillLineAbility
 local CreateCallback = C_FunctionContainers.CreateCallback
@@ -49,7 +49,7 @@ end
 --#endregion
 
 --#region Callbacks
-function QueryOrders()
+function QueryMyOrders()
     local self = XF.Handlers.OrderEvent
     try(function ()        
         local request = {
@@ -65,22 +65,22 @@ function QueryOrders()
             offset = 0,
             callback = CreateCallback(function(inResultStatus, ...)
                 if(inResultStatus == Enum.CraftingOrderResult.Ok) then
-                    GetOrders()
+                    GetMyOrders()
                 end
             end),
         }
         -- CraftOrder API is unusual, you can't just call a function to get a listing
         -- You have to make a server request and provide a callback for when the server feels like handling your query
-        ListMyOrders(request)
+        QueryMyOrdersFromServer(request)
     end).
     catch(function (inErrorMessage)
         XF:Warn(ObjectName, inErrorMessage)
     end)
 end
 
-function GetOrders()
+function GetMyOrders()
     local self = XF.Handlers.OrderEvent
-    local myOrders = GetMyOrders()
+    local myOrders = GetMyOrdersFromServer()
     for _, myOrder in ipairs(myOrders) do
         local order = XFO.Orders:Pop()
         try(function ()
@@ -105,7 +105,7 @@ function GetOrders()
                 if(professionName ~= nil and type(professionName) == 'string') then
                     local profession = XF.Professions:GetByName(professionName)
                     if(profession ~= nil) then
-                        self:SetProfession(profession)
+                        order:SetProfession(profession)
                     end
                 end
 
@@ -135,7 +135,7 @@ end
 function XFC.OrderEvent:CallbackCraftOrder(inEvent) 
     local self = XF.Handlers.OrderEvent
     try(function ()
-        QueryOrders()
+        QueryMyOrders()
     end).
     catch(function (inErrorMessage)
         XF:Warn(ObjectName, inErrorMessage)
@@ -145,7 +145,7 @@ end
 function XFC.OrderEvent:CallbackCanRequestOrders(inEvent) 
     local self = XF.Handlers.OrderEvent
     try(function ()        
-        QueryOrders()
+        QueryMyOrders()
         XF.Events:Remove('CanRequestOrders')
     end).
     catch(function (inErrorMessage)
