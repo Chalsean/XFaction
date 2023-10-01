@@ -54,9 +54,9 @@ function XFC.ItemCollection:Cache(inID)
 		if(IsItemCachedByClient(item:GetID())) then
 			item:Cache()
 		else
-			XF:Debug(self:GetObjectName(), 'Requesting item from server: %d', inID)
+			XF:Debug(self:GetObjectName(), 'Requesting item from server: %d', item:GetID())
 			XF.Events:Get('ItemLoaded'):Start()
-			RequestItemCachedFromServer(inID)
+			RequestItemCachedFromServer(item:GetID())
 		end
 	end).
 	catch(function(inErrorMessage)
@@ -96,7 +96,9 @@ function XFC.ItemCollection:Restore()
             item = self:Pop()
 			item:Decode(data)
 			self:Add(item)
-			self:Cache(item:GetID())
+			if(not item:IsCached()) then
+				self:Cache(item:GetID())
+			end
 			XF:Info(self:GetObjectName(), '  Restored %d item information from backup', item:GetID())
         end).
         catch(function (inErrorMessage)

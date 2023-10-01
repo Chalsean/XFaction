@@ -110,9 +110,7 @@ function TimerEvent:CallbackLoginGuild()
 				XF.Mailbox.BNet:Initialize()
 
 				if(XF.Cache.UIReload) then
-					XF.Confederate:Restore()
-					XFO.Items:Restore()
-					XFO.Orders:Restore()
+					XF.Confederate:Restore()					
 				end
 
 				XF.Timers:Get('LoginPlayer'):Start()
@@ -151,6 +149,8 @@ function TimerEvent:CallbackLoginPlayer()
 			if(XF.Cache.UIReload) then
 				XF.Friends:Restore()
 				XF.Links:Restore()
+				XFO.Items:Restore()
+				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
 			-- Otherwise send login message
 			else
@@ -168,7 +168,7 @@ function TimerEvent:CallbackLoginPlayer()
 			XF.DataText.Guild:PostInitialize()
 			XF.DataText.Links:PostInitialize()
 			XF.DataText.Metrics:PostInitialize()
-			--XF.DataText.Orders:PostInitialize()
+			XF.DataText.Orders:PostInitialize()
 
 			-- For support reasons, it helps to know what addons are being used
 			for i = 1, GetNumAddOns() do

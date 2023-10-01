@@ -1,6 +1,5 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
-local GetProfessionForSkill = C_TradeSkillUI.GetProfessionNameForSkillLineAbility
 
 XFC.Order = Object:newChildConstructor()
 
@@ -9,34 +8,34 @@ function XFC.Order:new()
     local object = XFC.Order.parent.new(self)
     object.__name = 'Order'
     object.item = nil
-    object.skillLineAbilityID = nil
     object.customerUnit = nil
     object.profession = nil
     object.type = 0
     object.hasDisplayed = false
     object.hasCommunicated = false
+    object.state = 0
     return object
 end
 
 function XFC.Order:Deconstructor()
     self:ParentDeconstructor()
     self.item = nil
-    self.skillLineAbilityID = nil
     self.customerUnit = nil
     self.profession = nil
     self.type = 0
     self.hasDisplayed = false
     self.hasCommunicated = false
+    self.state = 0
 end
 --#endregion
 
 --#region Print
 function XFC.Order:Print()
     self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  skillLineAbilityID (' .. type(self.skillLineAbilityID) .. '): ' .. tostring(self.skillLineAbilityID))
     XF:Debug(self:GetObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(self:GetObjectName(), '  hasDisplayed (' .. type(self.hasDisplayed) .. '): ' .. tostring(self.hasDisplayed))
     XF:Debug(self:GetObjectName(), '  hasCommunicated (' .. type(self.hasCommunicated) .. '): ' .. tostring(self.hasCommunicated))
+    XF:Debug(self:GetObjectName(), '  state (' .. type(self.state) .. '): ' .. tostring(self.state))
     if(self:HasCustomerUnit()) then self:GetCustomerUnit():Print() end
     if(self:HasProfession()) then self:GetProfession():Print() end
     if(self:HasItem()) then self:GetItem():Print() end
@@ -55,22 +54,6 @@ end
 function XFC.Order:SetItem(inItem)
     assert(type(inItem) == 'table' and inItem.__name ~= nil and inItem.__name == 'Item', 'argument must be Item object')
     self.item = inItem
-end
-
-function XFC.Order:GetSkillLineAbilityID()
-    return self.skillLineAbilityID
-end
-
-function XFC.Order:SetSkillLineAbilityID(inSkillLineAbilityID)
-    assert(type(inSkillLineAbilityID) == 'number')
-    self.skillLineAbilityID = inSkillLineAbilityID
-    local professionName = GetProfessionForSkill(inSkillLineAbilityID)
-    if(professionName ~= nil and type(professionName) == 'string') then
-        local profession = XF.Professions:GetByName(professionName)
-        if(profession ~= nil) then
-            self:SetProfession(profession)
-        end
-    end
 end
 
 function XFC.Order:HasCustomerUnit()
@@ -139,6 +122,15 @@ function XFC.Order:HasCommunicated(inBoolean)
     end    
     return self.hasCommunicated
 end
+
+function XFC.Order:GetState()
+    return self.state
+end
+
+function XFC.Order:SetState(inState)
+    assert(type(inState) == 'number')
+    self.state = inState
+end
 --#endregion
 
 --#region Networking
@@ -149,7 +141,6 @@ function XFC.Order:Encode()
     data.K = self:GetKey()
     data.O = self:GetID()
     data.P = self:GetProfession():GetKey()
-    data.S = self:GetSkillLineAbilityID()
     data.T = self:GetType()     
     return data
 end
@@ -159,11 +150,12 @@ function XFC.Order:Decode(inData)
     self:SetKey(inData.K)
     self:SetID(inData.O)
     self:SetType(inData.T)
-    self:SetSkillLineAbilityID(inData.S)
     self:SetCustomerUnit(XF:DeserializeUnitData(inData.C))    
     self:SetProfession(XF.Professions:Get(inData.P))
 
-    XFO.Items:Cache(inData.I)
+    if(not XFO.Items:Contains(inData.I) or not XFO.Items:Get(inData.I):IsCached()) then
+        XFO.Items:Cache(inData.I)
+    end
     self:SetItem(XFO.Items:Get(inData.I))
 
     self:IsInitialized(true)

@@ -4,6 +4,7 @@ local ObjectName = 'OrderEvent'
 local ListMyOrders = C_CraftingOrders.ListMyOrders
 local GetMyOrders = C_CraftingOrders.GetMyOrders
 local GetRecipe = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility
+local GetProfessionForSkill = C_TradeSkillUI.GetProfessionNameForSkillLineAbility
 local CreateCallback = C_FunctionContainers.CreateCallback
 
 XFC.OrderEvent = Object:newChildConstructor()
@@ -88,11 +89,10 @@ function GetOrders()
                 order:SetType(myOrder.orderType)
                 order:SetID(myOrder.orderID)
                 order:SetCustomerUnit(XF.Player.Unit)
-                order:SetSkillLineAbilityID(myOrder.skillLineAbilityID) 
 
                 -- Different crafting quality levels have different itemIDs
                 local itemID = myOrder.itemID
-                local recipe = GetRecipe(order:GetSkillLineAbilityID())                
+                local recipe = GetRecipe(myOrder.skillLineAbilityID)                
                 if(recipe.supportsQualities) then
                     local quality = myOrder.minQuality > 0 and myOrder.minQuality or 1
                     itemID = recipe.qualityItemIDs[quality]
@@ -100,6 +100,14 @@ function GetOrders()
 
                 XFO.Items:Cache(itemID)
                 order:SetItem(XFO.Items:Get(itemID))
+
+                local professionName = GetProfessionForSkill(myOrder.skillLineAbilityID)
+                if(professionName ~= nil and type(professionName) == 'string') then
+                    local profession = XF.Professions:GetByName(professionName)
+                    if(profession ~= nil) then
+                        self:SetProfession(profession)
+                    end
+                end
 
                 if(self:IsFirstQuery()) then
                     order:HasCommunicated(true)
