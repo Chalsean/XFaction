@@ -168,9 +168,9 @@ function OrderEvent:CallbackItemLoaded(inEvent, inItemID, inLoadSuccessful)
                     local item = Item:CreateFromItemID(order:GetItemID())
                     order:SetItemLink(item:GetItemLink())
                     order:SetItemIcon(item:GetItemIcon())
-                    --if(not order:IsMyOrder()) then
+                    if(not order:IsMyOrder()) then
                         order:Display()
-                    --end
+                    end
                 end
             end
         end
