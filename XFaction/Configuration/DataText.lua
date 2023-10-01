@@ -1156,240 +1156,240 @@ XFG.Options.args.DataText = {
 				},
 			},
 		},
-		Order = {
-			order = 4,
-			type = 'group',
-			name = XFG.Lib.Locale['DTORDERS_NAME'],
-			args = {
-				Description = {
-					order = 1,
-					type = 'description',
-					fontSize = 'medium',
-					name = XFG.Lib.Locale['DTORDERS_BROKER_HEADER']
-				},
-				Space = {
-					order = 2,
-					type = 'description',
-					name = '',
-				},
-				Label = {
-					order = 3,
-					type = 'toggle',
-					name = XFG.Lib.Locale['LABEL'],
-					desc = XFG.Lib.Locale['DT_CONFIG_LABEL_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
-					set = function(info, value) 
-						XFG.Config.DataText.Orders[ info[#info] ] = value;
-						XFG.DataText.Orders:RefreshBroker()
-					end
-				},
-				Size = {
-					order = 4,
-					type = 'range',
-					name = XFG.Lib.Locale['DTORDERS_CONFIG_SIZE'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_SIZE_TOOLTIP'],
-					min = 200, max = 1000, step = 5,
-					get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value; end
-				},
-				Line = {
-					order = 8,
-					type = 'header',
-					name = ''
-				},
-				Description1 = {
-					order = 9,
-					type = 'description',
-					fontSize = 'medium',
-					name = XFG.Lib.Locale['DTORDERS_CONFIG_HEADER']
-				},
-				Space2 = {
-					order = 10,
-					type = 'description',
-					name = '',
-				},
-				Confederate = {
-					order = 11,
-					type = 'toggle',
-					name = XFG.Lib.Locale['CONFEDERATE'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_CONFEDERATE_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value; end
-				},
-				GuildName = {
-					order = 12,
-					type = 'toggle',
-					name = XFG.Lib.Locale['GUILD'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_GUILD_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value; end
-				},
-				Line1 = {
-					order = 14,
-					type = 'header',
-					name = ''
-				},
-				Description2 = {
-					order = 15,
-					type = 'description',
-					fontSize = 'medium',
-					name = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_HEADER']
-				},
-				Space3 = {
-					order = 16,
-					type = 'description',
-					name = '',
-				},
-				Sort = {
-					order = 17,
-					type = 'select',
-					name = XFG.Lib.Locale['DTORDERS_CONFIG_SORT'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_SORT_TOOLTIP'],
-					values = {
-						Guild = XFG.Lib.Locale['GUILD'],
-                    },
-					get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value; end
-				},
-				Line2 = {
-					order = 18,
-					type = 'header',
-					name = ''
-				},
-				Column = {
-					order = 19,
-					type = 'select',
-					name = XFG.Lib.Locale['DTORDERS_SELECT_COLUMN'],
-					desc = XFG.Lib.Locale['DTORDERS_SELECT_COLUMN_TOOLTIP'],
-					values = {
-						Customer = XFG.Lib.Locale['CUSTOMER'],
-						Guild = XFG.Lib.Locale['GUILD'],
-						Profession = XFG.Lib.Locale['PROFESSION'],
-					},
-					get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value end
-				},
-				Space4 = {
-					order = 20,
-					type = 'description',
-					name = '',
-					--hidden = function()	return XFG.Config.DataText.Orders.Enable.Achievement	end,
-				},
-				Customer = {
-					order = 21,
-					type = 'toggle',
-					hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Customer' end,
-					name = ENABLE,
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_CUSTOMER_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Orders.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XFG.Config.DataText.Orders.Enable[ info[#info] ] = value
-						if(value) then OrdersAddedMenuItem(info[#info]) else OrdersRemovedMenuItem(info[#info]) end
-					end
-				},
-				CustomerOrder = {
-					order = 22,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Customer' end,
-					disabled = function () return (not XFG.Config.DataText.Orders.Enable.Customer) end,
-					name = XFG.Lib.Locale['ORDER'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_CUSTOMER_ORDER_TOOLTIP'],
-					values = function () return OrdersOrderMenu() end,
-					get = function(info) if(XFG.Config.DataText.Orders.Enable.Customer) then return tostring(XFG.Config.DataText.Orders.Order[ info[#info] ]) end end,
-					set = function(info, value) OrdersSelectedMenuItem(info[#info], value) end
-				},
-				CustomerAlignment = {
-					order = 23,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Customer' end,
-					disabled = function () return (not XFG.Config.DataText.Orders.Enable.Customer) end,
-					name = XFG.Lib.Locale['ALIGNMENT'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_CUSTOMER_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XFG.Lib.Locale['CENTER'],
-						Left = XFG.Lib.Locale['LEFT'],
-						Right = XFG.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XFG.Config.DataText.Orders.Alignment[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Orders.Alignment[ info[#info] ] = value; end
-				},
-				Guild = {
-					order = 31,
-					type = 'toggle',
-					hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Guild' end,
-					name = ENABLE,
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_GUILD_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Orders.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XFG.Config.DataText.Orders.Enable[ info[#info] ] = value
-						if(value) then OrdersAddedMenuItem(info[#info]) else OrdersRemovedMenuItem(info[#info]) end
-					end
-				},
-				GuildOrder = {
-					order = 32,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Guild' end,
-					disabled = function () return (not XFG.Config.DataText.Orders.Enable.Guild) end,
-					name = XFG.Lib.Locale['ORDER'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_GUILD_ORDER_TOOLTIP'],
-					values = function () return OrdersOrderMenu() end,
-					get = function(info) if(XFG.Config.DataText.Orders.Enable.Guild) then return tostring(XFG.Config.DataText.Orders.Order[ info[#info] ]) end end,
-					set = function(info, value) OrdersSelectedMenuItem(info[#info], value) end
-				},
-				GuildAlignment = {
-					order = 33,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Guild' end,
-					disabled = function () return (not XFG.Config.DataText.Orders.Enable.Guild) end,
-					name = XFG.Lib.Locale['ALIGNMENT'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_GUILD_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XFG.Lib.Locale['CENTER'],
-						Left = XFG.Lib.Locale['LEFT'],
-						Right = XFG.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XFG.Config.DataText.Orders.Alignment[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Orders.Alignment[ info[#info] ] = value; end
-				},
-				Profession = {
-					order = 50,
-					type = 'toggle',
-					hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Profession' end,
-					name = ENABLE,
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_PROFESSION_TOOLTIP'],
-					get = function(info) return XFG.Config.DataText.Orders.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XFG.Config.DataText.Orders.Enable[ info[#info] ] = value
-						if(value) then OrdersAddedMenuItem(info[#info]) else OrdersRemovedMenuItem(info[#info]) end
-					end
-				},
-				ProfessionOrder = {
-					order = 51,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Profession' end,
-					disabled = function () return (not XFG.Config.DataText.Orders.Enable.Profession) end,
-					name = XFG.Lib.Locale['ORDER'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_PROFESSION_ORDER_TOOLTIP'],
-					values = function () return OrdersOrderMenu() end,
-					get = function(info) if(XFG.Config.DataText.Orders.Enable.Profession) then return tostring(XFG.Config.DataText.Orders.Order[ info[#info] ]) end end,
-					set = function(info, value) OrdersSelectedMenuItem(info[#info], value) end
-				},
-				ProfessionAlignment = {
-					order = 52,
-					type = 'select',
-					hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Profession' end,
-					disabled = function () return (not XFG.Config.DataText.Orders.Enable.Profession) end,
-					name = XFG.Lib.Locale['ALIGNMENT'],
-					desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_PROFESSION_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XFG.Lib.Locale['CENTER'],
-						Left = XFG.Lib.Locale['LEFT'],
-						Right = XFG.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XFG.Config.DataText.Orders.Alignment[ info[#info] ] end,
-					set = function(info, value) XFG.Config.DataText.Orders.Alignment[ info[#info] ] = value; end
-				},			
-            },
-		},
+		-- Order = {
+		-- 	order = 4,
+		-- 	type = 'group',
+		-- 	name = XFG.Lib.Locale['DTORDERS_NAME'],
+		-- 	args = {
+		-- 		Description = {
+		-- 			order = 1,
+		-- 			type = 'description',
+		-- 			fontSize = 'medium',
+		-- 			name = XFG.Lib.Locale['DTORDERS_BROKER_HEADER']
+		-- 		},
+		-- 		Space = {
+		-- 			order = 2,
+		-- 			type = 'description',
+		-- 			name = '',
+		-- 		},
+		-- 		Label = {
+		-- 			order = 3,
+		-- 			type = 'toggle',
+		-- 			name = XFG.Lib.Locale['LABEL'],
+		-- 			desc = XFG.Lib.Locale['DT_CONFIG_LABEL_TOOLTIP'],
+		-- 			get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
+		-- 			set = function(info, value) 
+		-- 				XFG.Config.DataText.Orders[ info[#info] ] = value;
+		-- 				XFG.DataText.Orders:RefreshBroker()
+		-- 			end
+		-- 		},
+		-- 		Size = {
+		-- 			order = 4,
+		-- 			type = 'range',
+		-- 			name = XFG.Lib.Locale['DTORDERS_CONFIG_SIZE'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_SIZE_TOOLTIP'],
+		-- 			min = 200, max = 1000, step = 5,
+		-- 			get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
+		-- 			set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value; end
+		-- 		},
+		-- 		Line = {
+		-- 			order = 8,
+		-- 			type = 'header',
+		-- 			name = ''
+		-- 		},
+		-- 		Description1 = {
+		-- 			order = 9,
+		-- 			type = 'description',
+		-- 			fontSize = 'medium',
+		-- 			name = XFG.Lib.Locale['DTORDERS_CONFIG_HEADER']
+		-- 		},
+		-- 		Space2 = {
+		-- 			order = 10,
+		-- 			type = 'description',
+		-- 			name = '',
+		-- 		},
+		-- 		Confederate = {
+		-- 			order = 11,
+		-- 			type = 'toggle',
+		-- 			name = XFG.Lib.Locale['CONFEDERATE'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_CONFEDERATE_TOOLTIP'],
+		-- 			get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
+		-- 			set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value; end
+		-- 		},
+		-- 		GuildName = {
+		-- 			order = 12,
+		-- 			type = 'toggle',
+		-- 			name = XFG.Lib.Locale['GUILD'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_GUILD_TOOLTIP'],
+		-- 			get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
+		-- 			set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value; end
+		-- 		},
+		-- 		Line1 = {
+		-- 			order = 14,
+		-- 			type = 'header',
+		-- 			name = ''
+		-- 		},
+		-- 		Description2 = {
+		-- 			order = 15,
+		-- 			type = 'description',
+		-- 			fontSize = 'medium',
+		-- 			name = XFG.Lib.Locale['DTGUILD_CONFIG_COLUMN_HEADER']
+		-- 		},
+		-- 		Space3 = {
+		-- 			order = 16,
+		-- 			type = 'description',
+		-- 			name = '',
+		-- 		},
+		-- 		Sort = {
+		-- 			order = 17,
+		-- 			type = 'select',
+		-- 			name = XFG.Lib.Locale['DTORDERS_CONFIG_SORT'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_SORT_TOOLTIP'],
+		-- 			values = {
+		-- 				Guild = XFG.Lib.Locale['GUILD'],
+        --             },
+		-- 			get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
+		-- 			set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value; end
+		-- 		},
+		-- 		Line2 = {
+		-- 			order = 18,
+		-- 			type = 'header',
+		-- 			name = ''
+		-- 		},
+		-- 		Column = {
+		-- 			order = 19,
+		-- 			type = 'select',
+		-- 			name = XFG.Lib.Locale['DTORDERS_SELECT_COLUMN'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_SELECT_COLUMN_TOOLTIP'],
+		-- 			values = {
+		-- 				Customer = XFG.Lib.Locale['CUSTOMER'],
+		-- 				Guild = XFG.Lib.Locale['GUILD'],
+		-- 				Profession = XFG.Lib.Locale['PROFESSION'],
+		-- 			},
+		-- 			get = function(info) return XFG.Config.DataText.Orders[ info[#info] ] end,
+		-- 			set = function(info, value) XFG.Config.DataText.Orders[ info[#info] ] = value end
+		-- 		},
+		-- 		Space4 = {
+		-- 			order = 20,
+		-- 			type = 'description',
+		-- 			name = '',
+		-- 			--hidden = function()	return XFG.Config.DataText.Orders.Enable.Achievement	end,
+		-- 		},
+		-- 		Customer = {
+		-- 			order = 21,
+		-- 			type = 'toggle',
+		-- 			hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Customer' end,
+		-- 			name = ENABLE,
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_CUSTOMER_TOOLTIP'],
+		-- 			get = function(info) return XFG.Config.DataText.Orders.Enable[ info[#info] ] end,
+		-- 			set = function(info, value) 
+		-- 				XFG.Config.DataText.Orders.Enable[ info[#info] ] = value
+		-- 				if(value) then OrdersAddedMenuItem(info[#info]) else OrdersRemovedMenuItem(info[#info]) end
+		-- 			end
+		-- 		},
+		-- 		CustomerOrder = {
+		-- 			order = 22,
+		-- 			type = 'select',
+		-- 			hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Customer' end,
+		-- 			disabled = function () return (not XFG.Config.DataText.Orders.Enable.Customer) end,
+		-- 			name = XFG.Lib.Locale['ORDER'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_CUSTOMER_ORDER_TOOLTIP'],
+		-- 			values = function () return OrdersOrderMenu() end,
+		-- 			get = function(info) if(XFG.Config.DataText.Orders.Enable.Customer) then return tostring(XFG.Config.DataText.Orders.Order[ info[#info] ]) end end,
+		-- 			set = function(info, value) OrdersSelectedMenuItem(info[#info], value) end
+		-- 		},
+		-- 		CustomerAlignment = {
+		-- 			order = 23,
+		-- 			type = 'select',
+		-- 			hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Customer' end,
+		-- 			disabled = function () return (not XFG.Config.DataText.Orders.Enable.Customer) end,
+		-- 			name = XFG.Lib.Locale['ALIGNMENT'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_CUSTOMER_ALIGNMENT_TOOLTIP'],
+		-- 			values = {
+		-- 				Center = XFG.Lib.Locale['CENTER'],
+		-- 				Left = XFG.Lib.Locale['LEFT'],
+		-- 				Right = XFG.Lib.Locale['RIGHT'],
+        --             },
+		-- 			get = function(info) return XFG.Config.DataText.Orders.Alignment[ info[#info] ] end,
+		-- 			set = function(info, value) XFG.Config.DataText.Orders.Alignment[ info[#info] ] = value; end
+		-- 		},
+		-- 		Guild = {
+		-- 			order = 31,
+		-- 			type = 'toggle',
+		-- 			hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Guild' end,
+		-- 			name = ENABLE,
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_GUILD_TOOLTIP'],
+		-- 			get = function(info) return XFG.Config.DataText.Orders.Enable[ info[#info] ] end,
+		-- 			set = function(info, value) 
+		-- 				XFG.Config.DataText.Orders.Enable[ info[#info] ] = value
+		-- 				if(value) then OrdersAddedMenuItem(info[#info]) else OrdersRemovedMenuItem(info[#info]) end
+		-- 			end
+		-- 		},
+		-- 		GuildOrder = {
+		-- 			order = 32,
+		-- 			type = 'select',
+		-- 			hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Guild' end,
+		-- 			disabled = function () return (not XFG.Config.DataText.Orders.Enable.Guild) end,
+		-- 			name = XFG.Lib.Locale['ORDER'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_GUILD_ORDER_TOOLTIP'],
+		-- 			values = function () return OrdersOrderMenu() end,
+		-- 			get = function(info) if(XFG.Config.DataText.Orders.Enable.Guild) then return tostring(XFG.Config.DataText.Orders.Order[ info[#info] ]) end end,
+		-- 			set = function(info, value) OrdersSelectedMenuItem(info[#info], value) end
+		-- 		},
+		-- 		GuildAlignment = {
+		-- 			order = 33,
+		-- 			type = 'select',
+		-- 			hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Guild' end,
+		-- 			disabled = function () return (not XFG.Config.DataText.Orders.Enable.Guild) end,
+		-- 			name = XFG.Lib.Locale['ALIGNMENT'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_GUILD_ALIGNMENT_TOOLTIP'],
+		-- 			values = {
+		-- 				Center = XFG.Lib.Locale['CENTER'],
+		-- 				Left = XFG.Lib.Locale['LEFT'],
+		-- 				Right = XFG.Lib.Locale['RIGHT'],
+        --             },
+		-- 			get = function(info) return XFG.Config.DataText.Orders.Alignment[ info[#info] ] end,
+		-- 			set = function(info, value) XFG.Config.DataText.Orders.Alignment[ info[#info] ] = value; end
+		-- 		},
+		-- 		Profession = {
+		-- 			order = 50,
+		-- 			type = 'toggle',
+		-- 			hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Profession' end,
+		-- 			name = ENABLE,
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_PROFESSION_TOOLTIP'],
+		-- 			get = function(info) return XFG.Config.DataText.Orders.Enable[ info[#info] ] end,
+		-- 			set = function(info, value) 
+		-- 				XFG.Config.DataText.Orders.Enable[ info[#info] ] = value
+		-- 				if(value) then OrdersAddedMenuItem(info[#info]) else OrdersRemovedMenuItem(info[#info]) end
+		-- 			end
+		-- 		},
+		-- 		ProfessionOrder = {
+		-- 			order = 51,
+		-- 			type = 'select',
+		-- 			hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Profession' end,
+		-- 			disabled = function () return (not XFG.Config.DataText.Orders.Enable.Profession) end,
+		-- 			name = XFG.Lib.Locale['ORDER'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_PROFESSION_ORDER_TOOLTIP'],
+		-- 			values = function () return OrdersOrderMenu() end,
+		-- 			get = function(info) if(XFG.Config.DataText.Orders.Enable.Profession) then return tostring(XFG.Config.DataText.Orders.Order[ info[#info] ]) end end,
+		-- 			set = function(info, value) OrdersSelectedMenuItem(info[#info], value) end
+		-- 		},
+		-- 		ProfessionAlignment = {
+		-- 			order = 52,
+		-- 			type = 'select',
+		-- 			hidden = function () return XFG.Config.DataText.Orders.Column ~= 'Profession' end,
+		-- 			disabled = function () return (not XFG.Config.DataText.Orders.Enable.Profession) end,
+		-- 			name = XFG.Lib.Locale['ALIGNMENT'],
+		-- 			desc = XFG.Lib.Locale['DTORDERS_CONFIG_COLUMN_PROFESSION_ALIGNMENT_TOOLTIP'],
+		-- 			values = {
+		-- 				Center = XFG.Lib.Locale['CENTER'],
+		-- 				Left = XFG.Lib.Locale['LEFT'],
+		-- 				Right = XFG.Lib.Locale['RIGHT'],
+        --             },
+		-- 			get = function(info) return XFG.Config.DataText.Orders.Alignment[ info[#info] ] end,
+		-- 			set = function(info, value) XFG.Config.DataText.Orders.Alignment[ info[#info] ] = value; end
+		-- 		},			
+        --     },
+		-- },
 	},	
 }
