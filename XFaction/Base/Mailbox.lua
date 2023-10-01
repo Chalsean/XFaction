@@ -148,10 +148,10 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     local messageData = string.sub(inEncodedMessage, 3 + XFG.Settings.System.UIDLength, -1)
 
     -- Ignore if it's your own message or you've seen it before
-    -- if(XFG.Mailbox.BNet:Contains(messageKey) or XFG.Mailbox.Chat:Contains(messageKey)) then
-    --     XFG:Trace(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
-    --     return
-    -- end
+    if(XFG.Mailbox.BNet:Contains(messageKey) or XFG.Mailbox.Chat:Contains(messageKey)) then
+        XFG:Trace(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
+        return
+    end
     --#endregion
 
     self:AddPacket(messageKey, packetNumber, messageData)
