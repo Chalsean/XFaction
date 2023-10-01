@@ -117,7 +117,7 @@ function GetOrders()
                     XFG.Events:Get('ItemLoaded'):Start()
                     RequestItemCached(order:GetItemID())
                 end
-                                
+
                 if(not self:IsFirstQuery() and (order:IsGuild() or order:IsPersonal())) then
                     order:Broadcast()
                 end

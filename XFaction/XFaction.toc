@@ -1,4 +1,4 @@
-## Interface: 100105
+## Interface: 100107
 ## Author: Chalsean (US-Proudmoore)
 ## Version: 4.7.0
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
