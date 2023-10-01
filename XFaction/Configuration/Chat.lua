@@ -413,7 +413,7 @@ XFG.Options.args.Chat = {
 							end,
 							get = function(info) return XFG.Config.Chat.Login[ info[#info] ] end,
 							set = function(info, value) XFG.Config.Chat.Login[ info[#info] ] = value; end
-						},
+						},						
 					},
 				},
 			}
@@ -506,13 +506,35 @@ XFG.Options.args.Chat = {
 							get = function(info) return XFG.Config.Chat.Crafting[ info[#info] ] end,
 							set = function(info, value) XFG.Config.Chat.Crafting[ info[#info] ] = value; end
 						},
-						Space = {
+						GuildOrder = {
 							order = 2,
-							type = 'description',
-							name = '',
+							type = 'toggle',
+							name = XFG.Lib.Locale['CHAT_CRAFTING_GUILD'],
+							desc = XFG.Lib.Locale['CHAT_CRAFTING_GUILD_TOOLTIP'],
+							disabled = function()
+								return (not XFG.Config.Chat.Crafting.Enable)
+							end,
+							get = function(info) return XFG.Config.Chat.Crafting[ info[#info] ] end,
+							set = function(info, value) XFG.Config.Chat.Crafting[ info[#info] ] = value; end
+						},
+						PersonalOrder = {
+							order = 3,
+							type = 'toggle',
+							name = XFG.Lib.Locale['CHAT_CRAFTING_PERSONAL'],
+							desc = XFG.Lib.Locale['CHAT_CRAFTING_PERSONAL_TOOLTIP'],
+							disabled = function()
+								return (not XFG.Config.Chat.Crafting.Enable)
+							end,
+							get = function(info) return XFG.Config.Chat.Crafting[ info[#info] ] end,
+							set = function(info, value) XFG.Config.Chat.Crafting[ info[#info] ] = value; end
+						},
+						Line = {
+							order = 4,
+							type = 'header',
+							name = ''
 						},
 						Faction = {
-							order = 3,
+							order = 5,
 							type = 'toggle',
 							name = XFG.Lib.Locale['CHAT_FACTION'],
 							desc = XFG.Lib.Locale['CHAT_FACTION_TOOLTIP'],
@@ -523,7 +545,7 @@ XFG.Options.args.Chat = {
 							set = function(info, value) XFG.Config.Chat.Crafting[ info[#info] ] = value; end
 						},
 						Main = {
-							order = 4,
+							order = 6,
 							type = 'toggle',
 							name = XFG.Lib.Locale['CHAT_MAIN'],
 							desc = XFG.Lib.Locale['CHAT_MAIN_TOOLTIP'],
@@ -533,24 +555,24 @@ XFG.Options.args.Chat = {
 							get = function(info) return XFG.Config.Chat.Crafting[ info[#info] ] end,
 							set = function(info, value) XFG.Config.Chat.Crafting[ info[#info] ] = value; end
 						},
-						Realm = {
-							order = 5,
+						Guild = {
+							order = 7,
 							type = 'toggle',
-							name = XFG.Lib.Locale['REALM'],
-							desc = XFG.Lib.Locale['CHAT_CRAFTING_REALM_TOOLTIP'],
+							name = XFG.Lib.Locale['CHAT_GUILD_NAME'],
+							desc = XFG.Lib.Locale['CHAT_GUILD_NAME_TOOLTIP'],
 							disabled = function()
 								return (not XFG.Config.Chat.Crafting.Enable)
 							end,
 							get = function(info) return XFG.Config.Chat.Crafting[ info[#info] ] end,
 							set = function(info, value) XFG.Config.Chat.Crafting[ info[#info] ] = value; end
 						},
-						New = {
-							order = 6,
+						Profession = {
+							order = 8,
 							type = 'toggle',
-							name = XFG.Lib.Locale['CHAT_CRAFTING_NEW'],
-							desc = XFG.Lib.Locale['CHAT_CRAFTING_NEW_TOOLTIP'],
+							name = XFG.Lib.Locale['CHAT_CRAFTING_PROFESSION'],
+							desc = XFG.Lib.Locale['CHAT_CRAFTING_PROFESSION_TOOLTIP'],
 							disabled = function()
-								return (not XFG.Config.Chat.Crafting.Enable)
+								return not XFG.Config.Chat.Crafting.Enable
 							end,
 							get = function(info) return XFG.Config.Chat.Crafting[ info[#info] ] end,
 							set = function(info, value) XFG.Config.Chat.Crafting[ info[#info] ] = value; end

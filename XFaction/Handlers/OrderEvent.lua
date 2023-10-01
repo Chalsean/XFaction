@@ -2,6 +2,9 @@ local XFG, G = unpack(select(2, ...))
 local ObjectName = 'OrderEvent'
 local ListMyOrders = C_CraftingOrders.ListMyOrders
 local GetMyOrders = C_CraftingOrders.GetMyOrders
+local GetRecipe = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility
+local IsItemCached = C_Item.IsItemDataCachedByID
+local RequestItemCached = C_Item.RequestLoadItemDataByID
 local CreateCallback = C_FunctionContainers.CreateCallback
 
 OrderEvent = Object:newChildConstructor()
@@ -31,6 +34,12 @@ function OrderEvent:Initialize()
                         callback = XFG.Handlers.OrderEvent.CallbackCanRequestOrders, 
                         instance = false,
                         start = true})
+
+        XFG.Events:Add({name = 'ItemLoaded', 
+                        event = 'ITEM_DATA_LOAD_RESULT', 
+                        callback = XFG.Handlers.OrderEvent.CallbackItemLoaded, 
+                        instance = true,
+                        start = false})
 
 		self:IsInitialized(true)
 	end
@@ -83,27 +92,36 @@ function GetOrders()
     for _, myOrder in ipairs(myOrders) do
         local order = XFG.Orders:Pop()
         try(function ()
-            order:SetKey(myOrder.orderID)
+            order:SetKey(XFG.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)            
             if(self:IsFirstQuery() or not XFG.Orders:Contains(order:GetKey())) then
+                order:SetType(myOrder.orderType)
                 order:SetID(myOrder.orderID)
-                order:SetItemID(myOrder.itemID)
-                order:SetCustomerGUID(XFG.Player.Unit:GetGUID())
-                order:SetCustomerName(XFG.Player.Unit:GetName())
-                order:SetCustomerGuild(XFG.Player.Guild)
-                order:SetCustomerClass(XFG.Player.Unit:GetClass())
-                order:SetMinimumQuality(myOrder.minQuality)
-                order:SetSkillLineAbilityID(myOrder.skillLineAbilityID)
+                order:SetCustomerUnit(XFG.Player.Unit)
+                order:SetQuality(myOrder.minQuality or 1)
+                order:SetSkillLineAbilityID(myOrder.skillLineAbilityID) 
 
-                -- There is no submit datetime for orders, so have to get creative in determining which one is the new one
-                if(self:IsFirstQuery()) then
-                    XFG.Orders:Add(order)                   
+                -- Different crafting quality levels have different itemIDs
+                local recipe = GetRecipe(order:GetSkillLineAbilityID())
+                if(recipe.supportsQualities) then
+                    order:SetItemID(recipe.qualityItemIDs[order:GetQuality()])
                 else
-                    order:IsLatestOrder(true)
-                    XFG.Orders:Add(order)
-                    --if(order:IsGuild()) then
-                        order:Broadcast()
-                    --end
+                    order:SetItemID(myOrder.itemID)
                 end
+
+                if(IsItemCached(order:GetItemID())) then
+                    local item = Item:CreateFromItemID(order:GetItemID())
+                    order:SetItemLink(item:GetItemLink())
+                    order:SetItemIcon(item:GetItemIcon())
+                else
+                    XFG:Debug(ObjectName, 'Requesting item from server: %d', order:GetItemID())
+                    XFG.Events:Get('ItemLoaded'):Start()
+                    RequestItemCached(order:GetItemID())
+                end
+                                
+                if(not self:IsFirstQuery() and (order:IsGuild() or order:IsPersonal())) then
+                    order:Broadcast()
+                end
+                XFG.Orders:Add(order)
             else
                 XFG.Orders:Push(order)
             end
@@ -114,11 +132,8 @@ function GetOrders()
         end)
     end
 
+    -- There is no submit datetime for orders, so have to get creative in determining which one is the new one
     if(self:IsFirstQuery()) then
-        -- if(XFG.Orders:GetCount() > 0) then
-        --     XFG.Orders:Broadcast()
-        --     XFG.DataText.Orders:RefreshBroker()
-        -- end
         self:IsFirstQuery(false)
     end
 end
@@ -126,11 +141,6 @@ end
 function OrderEvent:CallbackCraftOrder(inEvent) 
     local self = XFG.Handlers.OrderEvent
     try(function ()
-        for _, order in XFG.Orders:Iterator() do
-            if(order:IsMyOrder()) then
-                order:IsLatestOrder(false)
-            end
-        end
         QueryOrders()
     end).
     catch(function (inErrorMessage)
@@ -143,6 +153,31 @@ function OrderEvent:CallbackCanRequestOrders(inEvent)
     try(function ()        
         QueryOrders()
         XFG.Events:Remove('CanRequestOrders')
+    end).
+    catch(function (inErrorMessage)
+        XFG:Warn(ObjectName, inErrorMessage)
+    end)
+end
+
+function OrderEvent:CallbackItemLoaded(inEvent, inItemID, inLoadSuccessful) 
+    local self = XFG.Handlers.OrderEvent
+    try(function ()
+        if(inLoadSuccessful) then
+            for _, order in XFG.Orders:Iterator() do
+                if(not order:HasItemLink() and order:GetItemID() == inItemID) then
+                    local item = Item:CreateFromItemID(order:GetItemID())
+                    order:SetItemLink(item:GetItemLink())
+                    order:SetItemIcon(item:GetItemIcon())
+                    --if(not order:IsMyOrder()) then
+                        order:Display()
+                    --end
+                end
+            end
+        end
+
+        if(not XFG.Orders:HasPending()) then
+            XFG.Events:Get('ItemLoaded'):Stop()
+        end
     end).
     catch(function (inErrorMessage)
         XFG:Warn(ObjectName, inErrorMessage)

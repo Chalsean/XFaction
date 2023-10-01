@@ -65,10 +65,12 @@ XFG.Defaults = {
             },
             Crafting = {
                 Enable = true,
+                GuildOrder = true,
+                PersonalOrder = true,
                 Faction = true,
                 Main = true,
-                Realm = false,
-                New = true,
+                Guild = true,
+                Profession = true,
             },
         },
         Addons = {

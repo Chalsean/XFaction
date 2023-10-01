@@ -40,16 +40,14 @@ end
 --#endregion
 
 --#region Display
-function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild)
-    if(not XFG.Config.Chat.Login.Enable) then return end
-    assert(type(inName) == 'string')
-    assert(type(inUnitName) == 'string')
-    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
+function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inOrder)
 
     local faction = inGuild:GetFaction()
     local text = XFG.Settings.Frames.Chat.Prepend
     
-    if(XFG.Config.Chat.Login.Faction) then  
+    if(inType == XFG.Enum.Message.LOGIN and XFG.Config.Chat.Login.Faction) then  
+        text = text .. format('%s ', format(XFG.Icons.String, faction:GetIconID()))
+    elseif(inType == XFG.Enum.Message.ORDER and XFG.Config.Chat.Crafting.Faction) then
         text = text .. format('%s ', format(XFG.Icons.String, faction:GetIconID()))
     end
   
@@ -67,41 +65,52 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild)
         end
     end
     
-    if(XFG.Config.Chat.Login.Main and inMainName ~= nil) then
+    if(inType == XFG.Enum.Message.LOGIN and XFG.Config.Chat.Login.Main and inMainName ~= nil) then
+        text = text .. '(' .. inMainName .. ') '
+    elseif(inType == XFG.Enum.Message.ORDER and XFG.Config.Chat.Crafting.Main and inMainName ~= nil) then
         text = text .. '(' .. inMainName .. ') '
     end
 
-    if(XFG.Config.Chat.Login.Guild) then
+    if(inType == XFG.Enum.Message.LOGIN and XFG.Config.Chat.Login.Guild) then  
+        text = text .. '<' .. inGuild:GetInitials() .. '> '
+    elseif(inType == XFG.Enum.Message.ORDER and XFG.Config.Chat.Crafting.Guild) then
         text = text .. '<' .. inGuild:GetInitials() .. '> '
     end
     
     if(inType == XFG.Enum.Message.LOGOUT) then
         text = text .. XFG.Lib.Locale['CHAT_LOGOUT']
-    elseif(inType == XFG.Enum.Message.JOIN) then
-        text = text .. XFG.Lib.Locale['CHAT_JOIN_CONFEDERATE']
     elseif(inType == XFG.Enum.Message.LOGIN) then
         text = text .. XFG.Lib.Locale['CHAT_LOGIN']
         if(XFG.Config.Chat.Login.Sound and not XFG.Player.Guild:Equals(inGuild)) then
             PlaySound(3332, 'Master')
         end
+    elseif(inType == XFG.Enum.Message.ORDER) then
+        if(inOrder:IsGuild()) then
+            text = text .. format(XFG.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:GetItemLink())
+        else
+            text = text .. format(XFG.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:GetItemLink())
+        end
     end
     SendSystemMessage(text) 
 end
 
-function SystemFrame:DisplayJoinMessage(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    local unitData = inMessage:GetData()
-    self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild())
-end
-
 function SystemFrame:DisplayLoginMessage(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    if(not XFG.Config.Chat.Login.Enable) then return end
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')    
     local unitData = inMessage:GetData()
     self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild())
 end
 
 function SystemFrame:DisplayLogoutMessage(inMessage)
+    if(not XFG.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild())
+end
+
+function SystemFrame:DisplayOrder(inOrder)
+    if(not XFG.Config.Chat.Crafting.Enable) then return end    
+    assert(type(inOrder) == 'table' and inOrder.__name ~= nil and inOrder.__name == 'Order', 'argument must be Order type object')
+    local customer = inOrder:GetCustomerUnit()
+    self:Display(XFG.Enum.Message.ORDER, customer:GetName(), customer:GetUnitName(), customer:GetMainName(), customer:GetGuild(), inOrder)
 end
 --#endregion

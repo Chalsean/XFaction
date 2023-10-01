@@ -1,6 +1,7 @@
 local XFG, G = unpack(select(2, ...))
 local ObjectName = 'OrderCollection'
-local GetItemInformation = GetItemInfo
+local IsItemCached = C_Item.IsItemDataCachedByID
+local RequestItemCached = C_Item.RequestLoadItemDataByID
 
 OrderCollection = Factory:newChildConstructor()
 
@@ -25,6 +26,17 @@ function OrderCollection:Initialize()
 end
 --#endregion
 
+--#region Accessors
+function OrderCollection:HasPending()
+	for _, order in self:Iterator() do
+		if(not order:HasItemLink()) then
+			return true
+		end
+	end
+	return false
+end
+--#endregion
+
 --#region Networking
 function OrderCollection:Encode()
 	local encoded = ""
@@ -41,25 +53,20 @@ function OrderCollection:Decode(inData)
 	try(function ()
 		order = self:Pop()
 		order:Decode(inData)
-		self:Add(order)
-		order:Print()
-		-- Notify player of new crafting order
-		if(XFG.Config.Chat.Crafting.Enable) then
-			local name = ''
-			if(XFG.Config.Chat.Crafting.Faction) then  
-				name = format('%s ', format(XFG.Icons.String, order:GetCustomerUnit():GetFaction():GetIconID()))
+		if(order:IsGuild() or (order:IsPersonal() and XFG.Player.Unit:Equals(order:GetCustomerUnit()))) then
+			self:Add(order)
+			if(IsItemCached(order:GetItemID())) then
+				local item = Item:CreateFromItemID(order:GetItemID())
+				order:SetItemLink(item:GetItemLink())
+				order:SetItemIcon(item:GetItemIcon())
+				order:Display()
+			else
+				XFG:Debug(ObjectName, 'Requesting item from server: %d', order:GetItemID())
+				XFG.Events:Get('ItemLoaded'):Start()
+				RequestItemCached(order:GetItemID())
 			end
-			name = name .. order:GetCustomerName()
-			if(XFG.Config.Chat.Crafting.Main and order:HasCustomerUnit() and order:GetCustomerUnit():IsAlt()) then
-				name = name .. ' (' .. order:GetCustomerUnit():GetMainName() .. ')'
-			end
-			name = format('|c%s%s|r', order:GetCustomerClass():GetHex(), name)
-			local _, itemLink, itemQuality = GetItemInformation(order:GetItemID())
-			local guild = order:GetCustomerUnit():GetGuild():GetName()
-			if(XFG.Config.Chat.Crafting.Realm) then
-				guild = guild .. ' (' .. order:GetCustomerUnit():GetGuild():GetRealm():GetName() .. ')'
-			end
-			print(format(XFG.Lib.Locale['NEW_CRAFTING_ORDER'], XFG.Title, name, itemLink, guild))
+		else
+			self:Push(order)
 		end
 	end).
 	catch(function (inErrorMessage)

@@ -1,4 +1,7 @@
 <Ui xmlns='http://www.blizzard.com/wow/ui/'>
+    <Script file='4.7.0.lua'/>
+    <Script file='4.6.10.lua'/>
+    <Script file='4.6.8.lua'/>
     <Script file='4.6.6.lua'/>
     <Script file='4.6.4.lua'/>
     <Script file='4.6.2.lua'/>

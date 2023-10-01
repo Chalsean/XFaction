@@ -162,8 +162,7 @@ end
 
 function Message:HasUnitData()
     return self:GetSubject() == XFG.Enum.Message.DATA or 
-           self:GetSubject() == XFG.Enum.Message.LOGIN or
-           self:GetSubject() == XFG.Enum.Message.ORDER
+           self:GetSubject() == XFG.Enum.Message.LOGIN
 end
 
 function Message:HasVersion()

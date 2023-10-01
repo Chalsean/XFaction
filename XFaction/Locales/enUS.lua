@@ -159,9 +159,15 @@ L['CHAT_CHANNEL_DESCRIPTION'] = 'These options control the addon custom channel 
 L['CHAT_CRAFTING_DESCRIPTION'] = 'These options control the crafting order notifications.'
 L['CHAT_CRAFTING_NEW'] = 'New Orders'
 L['CHAT_CRAFTING_NEW_TOOLTIP'] = 'Display chat messages for new orders placed.'
-L['NEW_CRAFTING_ORDER'] = '%s: %s created a new guild crafting order for %s on %s.'
-L['CHAT_CRAFTING_TOOLTIP'] = 'See cross realm/faction guild crafting orders.'
-L['CHAT_CRAFTING_REALM_TOOLTIP'] = 'Show the guild realm location.'
+L['NEW_GUILD_CRAFTING_ORDER'] = 'created a new guild crafting order for %s.'
+L['NEW_PERSONAL_CRAFTING_ORDER'] = 'has sent you a personal crafting order for %s.'
+L['CHAT_CRAFTING_TOOLTIP'] = 'Be notified on cross realm/faction crafting orders.'
+L['CHAT_CRAFTING_GUILD'] = 'Guild Orders'
+L['CHAT_CRAFTING_GUILD_TOOLTIP'] = 'Be notified on cross realm/faction guild crafting orders.'
+L['CHAT_CRAFTING_PERSONAL'] = 'Personal Orders'
+L['CHAT_CRAFTING_PERSONAL_TOOLTIP'] = 'Be notified when you receive a personal crafting order.'
+L['CHAT_CRAFTING_PROFESSION'] = 'Profession'
+L['CHAT_CRAFTING_PROFESSION_TOOLTIP'] = "Only show orders for this character's professions."
 --=========================================================================
 -- Addons Specific
 --=========================================================================

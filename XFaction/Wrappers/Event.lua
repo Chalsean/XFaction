@@ -67,12 +67,16 @@ end
 
 --#region Start/Stop
 function Event:Start()
-    self:IsEnabled(true)
-    XFG:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    if(not self:IsEnabled()) then
+        self:IsEnabled(true)
+        XFG:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    end
 end
 
 function Event:Stop()
-    self:IsEnabled(false)
-    XFG:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    if(self:IsEnabled()) then
+        self:IsEnabled(false)
+        XFG:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
+    end
 end
 --#endregion
