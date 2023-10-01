@@ -1,0 +1,6 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Continent.lua'/>
+    <Script file='ContinentCollection.lua'/>
+    <Script file='Zone.lua'/>
+    <Script file='ZoneCollection.lua'/>
+</Ui>

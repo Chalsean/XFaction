@@ -1,55 +1,59 @@
 local addon, Engine = ...
 local LogCategory = 'Constants'
 
---#region XFG Instantiation
-local XFG = {}
-setmetatable(XFG, self)
+--#region XF Instantiation
+local XF = {}
+setmetatable(XF, self)
 
-Engine[1] = XFG
+Engine[1] = XF
 Engine[2] = G
 _G[addon] = Engine
 
-XFG.AddonName = addon
-XFG.Name = 'XFaction'
-XFG.Title = '|cffFF4700X|r|cff33ccffFaction|r'
-XFG.Version = C_AddOns.GetAddOnMetadata(addon, 'Version')
-XFG.Start = GetServerTime()
-XFG.Verbosity = 4
+XF.AddonName = addon
+XF.Name = 'XFaction'
+XF.Title = '|cffFF4700X|r|cff33ccffFaction|r'
+XF.Version = C_AddOns.GetAddOnMetadata(addon, 'Version')
+XF.Start = GetServerTime()
+XF.Verbosity = 4
 
-XFG.Addons = {
+XF.Class = {}
+XF.Function = {}
+XF.Object = {}
+
+XF.Addons = {
 	ElvUI = {},
 }
-XFG.ChangeLog = {}
-XFG.DataText = {}
-XFG.Factories = {}
-XFG.Frames = {}
-XFG.Handlers = {}
-XFG.Mailbox = {}
-XFG.Options = {}
+XF.ChangeLog = {}
+XF.DataText = {}
+XF.Factories = {}
+XF.Frames = {}
+XF.Handlers = {}
+XF.Mailbox = {}
+XF.Options = {}
 
-XFG.Initialized = false
+XF.Initialized = false
 
-XFG.Player = {
+XF.Player = {
 	LastBroadcast = 0,
 	InInstance = false
 }
 --#endregion
 
 --#region Libraries
-XFG.Lib = {
+XF.Lib = {
 	Deflate = LibStub:GetLibrary('LibDeflate'),
 	QT = LibStub('LibQTip-1.0'),
 	Broker = LibStub('LibDataBroker-1.1'),
-	Locale = LibStub('AceLocale-3.0'):GetLocale(XFG.Name, true),
+	Locale = LibStub('AceLocale-3.0'):GetLocale(XF.Name, true),
 	Config = LibStub('AceConfigRegistry-3.0'),
 	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0')
 }
-XFG.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
+XF.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
 --#endregion
 
 --#region Program Settings
-XFG.Icons = {
+XF.Icons = {
 	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
 	Texture = '|T%s:17:17|t',
 	WoWToken = 1121394,
@@ -60,7 +64,7 @@ XFG.Icons = {
 	Guild = 'ElvUI-Windtools-Healer', -- Kept the name to give credit to Windtools
 }
 
-XFG.Enum = {
+XF.Enum = {
 	Version = {
 		Prod = 1,
 		Beta = 2,
@@ -96,17 +100,17 @@ XFG.Enum = {
 		BNET = '',
 	},
 	Metric = {
-		Messages = XFG.Lib.Locale['DTMETRICS_MESSAGES'],
-		BNetSend = XFG.Lib.Locale['DTMETRICS_BNET_SEND'],
-		BNetReceive = XFG.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
-		ChannelSend = XFG.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
-		ChannelReceive = XFG.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
-		Error = XFG.Lib.Locale['DTMETRICS_ERROR'],
-		Warning = XFG.Lib.Locale['DTMETRICS_WARNING'],
+		Messages = XF.Lib.Locale['DTMETRICS_MESSAGES'],
+		BNetSend = XF.Lib.Locale['DTMETRICS_BNET_SEND'],
+		BNetReceive = XF.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
+		ChannelSend = XF.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
+		ChannelReceive = XF.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
+		Error = XF.Lib.Locale['DTMETRICS_ERROR'],
+		Warning = XF.Lib.Locale['DTMETRICS_WARNING'],
 	},
 }
 
-XFG.Settings = {
+XF.Settings = {
 	System = {
 		Roster = true,
 		UIDLength = 11,
