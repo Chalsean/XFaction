@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'DTOrders'
 local CombatLockdown = InCombatLockdown
 
@@ -77,7 +78,13 @@ function DTOrders:RefreshBroker()
 		-- if(XF.Config.DataText.Guild.Label) then
 		-- 	text = XF.Lib.Locale['GUILD'] .. ': '
 		-- end
-		text = format('%s|cff3CE13F%d', text, XF.Orders:GetCount())
+		local count = 0
+		for _, order in XFO.Orders:Iterator() do
+			if(order:IsGuild()) then
+				count = count + 1
+			end
+		end
+		text = format('%s|cff3CE13F%d', text, count)
 		XF.DataText.Orders:GetBroker().text = text
 	end
 end
@@ -104,21 +111,25 @@ end
 
 local function PreSort()
 	local list = {}
-	for _, order in XF.Orders:Iterator() do
-		local orderData = {}
-		if(order:HasProfession()) then
-			orderData.Profession = order:GetProfession():GetIconID()
-		end
-		orderData.Guild = order:GetCustomerGuild():GetName()
-		orderData.Customer = order:GetCustomerName()
-		if(order:HasCustomer()) then
-			orderData.Class = order:GetCustomer():GetClass():GetHex()
-			if(order:GetCustomer():IsAlt() and order:GetCustomer():HasMainName() and XF.Config.DataText.Orders.Main) then
-				orderData.Customer = order:GetCustomer():GetName() .. ' (' .. order:GetCustomer():GetMainName() .. ')'
+	for _, order in XFO.Orders:Iterator() do
+		if(order:HasCustomerUnit()) then
+			local customer = order:GetCustomerUnit()
+			local orderData = {}
+			if(order:HasProfession()) then
+				orderData.Profession = order:GetProfession():GetIconID()
 			end
-		end
+			orderData.Guild = customer:GetGuild():GetName()
+			orderData.Customer = customer:GetName()
+			orderData.Class = customer:GetClass():GetHex()
+			if(customer:IsAlt() and customer:HasMainName() and XF.Config.DataText.Orders.Main) then
+				orderData.Customer = customer:GetName() .. ' (' .. customer:GetMainName() .. ')'
+			end
+			if(order:HasItem() and order:GetItem():IsCached()) then
+				orderData.Item = order:GetItem():GetFormattedLink()
+			end
 
-		list[#list + 1] = orderData
+			list[#list + 1] = orderData
+		end
 	end
 	return list
 end
@@ -138,17 +149,17 @@ end
 
 --#region OnEnter
 local function LineClick(_, inUnitGUID, inMouseButton)
-	local unit = XF.Confederate:Get(inUnitGUID)
-	local link = unit:GetLink()
-	if(link == nil) then return end
+	-- local unit = XF.Confederate:Get(inUnitGUID)
+	-- local link = unit:GetLink()
+	-- if(link == nil) then return end
 
-	if(inMouseButton == 'RightButton' and IsShiftKeyDown()) then
- 		C_PartyInfo.InviteUnit(unit:GetUnitName())
-	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
-		C_PartyInfo.RequestInviteFromUnit(unit:GetUnitName())
- 	elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
-		SetItemRef(link, unit:GetName(), inMouseButton)
-	end
+	-- if(inMouseButton == 'RightButton' and IsShiftKeyDown()) then
+ 	-- 	C_PartyInfo.InviteUnit(unit:GetUnitName())
+	-- elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
+	-- 	C_PartyInfo.RequestInviteFromUnit(unit:GetUnitName())
+ 	-- elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
+	-- 	SetItemRef(link, unit:GetName(), inMouseButton)
+	-- end
 end
 
 function DTOrders:OnEnter(this)
@@ -268,7 +279,7 @@ function DTOrders:OnEnter(this)
 	end
 	--#endregion
 
-	--self.tooltip:UpdateScrolling(XF.Config.DataText.Guild.Size)
+	self.tooltip:UpdateScrolling(XF.Config.DataText.Orders.Size)
 	self.tooltip:Show()
 end
 --#endregion
