@@ -321,7 +321,7 @@ XF.Options = {
 					type = 'description',
 					name = '',
 					fontSize = 'medium',
-					image = function() return 'Interface\\AddOns\\XFaction\\Media\\Images\\XFACTION-Logo.tga', 384, 96 end,
+					image = function() return 'Interface\\AddOns\\XFaction\\System\\Media\\Images\\XFACTION-Logo.tga', 384, 96 end,
 				},
 				Bar = {
 					order = 2,
@@ -754,29 +754,36 @@ XF.Options = {
 							name = XF.Lib.Locale['DEBUG_PRINT'],
 							guiInline = true,
 							args = {
-								Channel = {
+								Audit = {
 									order = 1,
+									name = XF.Lib.Locale['AUDIT'],
+									type = 'execute',
+									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
+									func = function() XF.Player.Unit:GetGuild():PrintAudit() end,
+								},
+								Channel = {
+									order = 2,
 									name = XF.Lib.Locale['CHANNEL'],
 									type = 'execute',
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
 									func = function() XF.Channels:Print() end,
 								},
 								Class = {
-									order = 2,
+									order = 3,
 									type = 'execute',
 									name = XF.Lib.Locale['CLASS'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
 									func = function() XF.Classes:Print() end,
 								},
 								Confederate = {
-									order = 3,
+									order = 4,
 									type = 'execute',
 									name = XF.Lib.Locale['CONFEDERATE'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
 									func = function(info) XF.Confederate:Print() end,
 								},
 								Continent = {
-									order = 4,
+									order = 5,
 									type = 'execute',
 									name = XF.Lib.Locale['CONTINENT'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,

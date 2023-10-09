@@ -104,6 +104,7 @@ L['COMMUNICATION'] = 'Communication'
 L['METRICS'] = 'Metrics'
 L['CRAFTING'] = 'Crafting'
 L['ITEM'] = 'Item'
+L['AUDIT'] = 'Audit'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================

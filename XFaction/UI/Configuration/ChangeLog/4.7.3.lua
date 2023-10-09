@@ -1,7 +1,7 @@
 local XF, G = unpack(select(2, ...))
 local ObjectName = 'Config.ChangeLog'
 
-XF.ChangeLog['4.7.0'] = {
+XF.ChangeLog['4.7.3'] = {
     New = {
         order = 1,
         type = 'group',
@@ -19,6 +19,12 @@ XF.ChangeLog['4.7.0'] = {
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Crafting notifications can be enabled/disabled under Options, XFaction, Chat, Crafting.',
+            },
+            Three = {
+                order = 3,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Added audit capability for current guild under Options, XFaction, Debug. Output goes to DebugLog under Audit category.',
             },
         },
     },	

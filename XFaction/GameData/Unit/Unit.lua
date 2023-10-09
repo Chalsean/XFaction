@@ -46,6 +46,7 @@ function Unit:new()
     object.guildSpeak = true
     object.guildListen = true
     object.raiderIO = nil
+    object.lastLogin = 0
 
     return object
 end
@@ -80,6 +81,7 @@ function Unit:Deconstructor()
     self.guildSpeak = true
     self.guildListen = true
     self.raiderIO = nil
+    self.lastLogin = 0
 end
 --#endregion
 
@@ -101,7 +103,7 @@ function Unit:Initialize(inMemberID)
         self:IsInitialized(false)
         return
     end
- 
+
     self:SetGUID(unitData.guid)
     self:SetKey(self:GetGUID())
     self:SetPresence(unitData.presence)    
@@ -117,6 +119,18 @@ function Unit:Initialize(inMemberID)
     self:SetNote(unitData.memberNote or '?')
     self:IsPlayer(unitData.isSelf)
     self:SetAchievementPoints(unitData.achievementPoints or 0)
+
+    local lastLogin = 0
+    if(unitData.lastOnlineYear ~= nil) then
+        lastLogin = lastLogin + (unitData.lastOnlineYear * 365)
+    end
+    if(unitData.lastOnlineMonth ~= nil) then
+        lastLogin = lastLogin + (unitData.lastOnlineMonth * 30)
+    end
+    if(unitData.lastOnlineDay ~= nil) then
+        lastLogin = lastLogin + unitData.lastOnlineDay
+    end
+    self:SetLastLogin(lastLogin)
 
     if(self:IsPlayer()) then
         self:SetFaction(XF.Player.Faction)
@@ -205,7 +219,7 @@ function Unit:Print()
     XF:Debug(ObjectName, '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
     XF:Debug(ObjectName, '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
     XF:Debug(ObjectName, '  note (' .. type(self.note) .. '): ' .. tostring(self.note))
-    XF:Debug(ObjectName, '  isOnline (' .. type(self.isOnline) .. '): ' .. tostring(self.isOnline))
+    XF:Debug(ObjectName, '  presence (' .. type(self.presence) .. '): ' .. tostring(self.presence))
     XF:Debug(ObjectName, '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
     XF:Debug(ObjectName, '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
     XF:Debug(ObjectName, '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
@@ -608,6 +622,15 @@ function Unit:GetLink()
     end
 
     return format('player:%s', self:GetUnitName())
+end
+
+function Unit:GetLastLogin()
+    return self.lastLogin
+end
+
+function Unit:SetLastLogin(inDays)
+    assert(type(inDays) == 'number')
+    self.lastLogin = inDays
 end
 --#endregion
 

@@ -1,5 +1,6 @@
 local XF, G = unpack(select(2, ...))
 local ObjectName = 'Guild'
+local GetClubMembers = C_Club.GetClubMembers
 
 Guild = Object:newChildConstructor()
 
@@ -22,6 +23,17 @@ function Guild:Print()
     XF:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
     if(self:HasFaction()) then self:GetFaction():Print() end
     if(self:HasRealm()) then self:GetRealm():Print() end
+end
+
+function Guild:PrintAudit()
+    XF:Info('Audit', 'Name,Note,Rank,LastLoginDaysAgo')
+    for _, memberID in pairs (GetClubMembers(XF.Player.Guild:GetID(), XF.Player.Guild:GetStreamID())) do
+        local unit = Unit:new()
+        unit:Initialize(memberID)
+        if(unit:IsInitialized()) then
+            XF:Info('Audit', '%s,%s,%s,%d', unit:GetName(), unit:GetNote(), unit:GetRank(), unit:GetLastLogin())
+        end
+    end
 end
 --#endregion
 
