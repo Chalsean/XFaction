@@ -1,104 +1,111 @@
-local XFG, G = unpack(select(2, ...))
+local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Initialize'
 
 -- Initialize anything not dependent upon guild information
-function XFG:Init()
+function XF:Init()
 	-- Get cache/configs asap	
-	XFG.Events = EventCollection:new(); XFG.Events:Initialize()
-	XFG.Media = MediaCollection:new(); XFG.Media:Initialize()
+	XF.Events = EventCollection:new(); XF.Events:Initialize()
+	XF.Media = MediaCollection:new(); XF.Media:Initialize()
 
 	-- External addon handling
-	XFG.Addons.ElvUI = XFElvUI:new()
-	XFG.Addons.RaiderIO = RaiderIOCollection:new()
-	XFG.Addons.WIM = XFWIM:new()
-	XFG.Handlers.AddonEvent = AddonEvent:new(); XFG.Handlers.AddonEvent:Initialize()
+	XF.Addons.ElvUI = XFElvUI:new()
+	XF.Addons.RaiderIO = RaiderIOCollection:new()
+	XF.Addons.WIM = XFWIM:new()
+	XF.Handlers.AddonEvent = AddonEvent:new(); XF.Handlers.AddonEvent:Initialize()
 
 	-- Log XFaction version
-	XFG.Versions = VersionCollection:new(); XFG.Versions:Initialize()
-	XFG.Version = XFG.Versions:GetCurrent()
-	XFG:Info(ObjectName, 'XFaction version [%s]', XFG.Version:GetKey())
+	XF.Versions = VersionCollection:new(); XF.Versions:Initialize()
+	XF.Version = XF.Versions:GetCurrent()
+	XF:Info(ObjectName, 'XFaction version [%s]', XF.Version:GetKey())
 	
 	-- Confederate
-	XFG.Regions = RegionCollection:new(); XFG.Regions:Initialize()
-	XFG.Confederate = Confederate:new()
-	XFG.Factions = FactionCollection:new(); XFG.Factions:Initialize()
-	XFG.Guilds = GuildCollection:new()
-	XFG.Realms = RealmCollection:new(); XFG.Realms:Initialize()
-	XFG.Targets = TargetCollection:new()
-	XFG.Teams = TeamCollection:new(); XFG.Teams:Initialize()
+	XF.Regions = RegionCollection:new(); XF.Regions:Initialize()
+	XF.Confederate = Confederate:new()
+	XF.Factions = FactionCollection:new(); XF.Factions:Initialize()
+	XF.Guilds = GuildCollection:new()
+	XF.Realms = RealmCollection:new(); XF.Realms:Initialize()
+	XF.Targets = TargetCollection:new()
+	XF.Teams = TeamCollection:new(); XF.Teams:Initialize()
+	XFO.Orders = XFC.OrderCollection:new(); XFO.Orders:Initialize()
+	XFO.Items = XFC.ItemCollection:new(); XFO.Items:Initialize()
 
 	-- DataText
-	XFG.DataText.Guild = DTGuild:new()
-	XFG.DataText.Links = DTLinks:new()
-	XFG.DataText.Metrics = DTMetrics:new()
+	XF.DataText.Guild = DTGuild:new()
+	XF.DataText.Links = DTLinks:new()
+	XF.DataText.Metrics = DTMetrics:new()
+	--XF.DataText.Orders = DTOrders:new()
 
 	-- Frames
-	XFG.Frames.Chat = ChatFrame:new()
-	XFG.Frames.System = SystemFrame:new()
+	XF.Frames.Chat = ChatFrame:new()
+	XF.Frames.System = SystemFrame:new()
 
 	-- Declare handlers but not listening yet
-	XFG.Handlers.AchievementEvent = AchievementEvent:new(); XFG.Handlers.AchievementEvent:Initialize()
-	XFG.Handlers.BNetEvent = BNetEvent:new(); XFG.Handlers.BNetEvent:Initialize()
-	XFG.Handlers.ChannelEvent = ChannelEvent:new()
-	XFG.Handlers.ChatEvent = ChatEvent:new(); XFG.Handlers.ChatEvent:Initialize()
-	XFG.Handlers.GuildEvent = GuildEvent:new(); XFG.Handlers.GuildEvent:Initialize()
-	XFG.Handlers.PlayerEvent = PlayerEvent:new(); XFG.Handlers.PlayerEvent:Initialize()
-	XFG.Handlers.SystemEvent = SystemEvent:new()
-	XFG.Handlers.TimerEvent = TimerEvent:new()
+	XF.Handlers.AchievementEvent = AchievementEvent:new(); XF.Handlers.AchievementEvent:Initialize()
+	XF.Handlers.BNetEvent = BNetEvent:new(); XF.Handlers.BNetEvent:Initialize()
+	XF.Handlers.ChannelEvent = ChannelEvent:new()
+	XF.Handlers.ChatEvent = ChatEvent:new(); XF.Handlers.ChatEvent:Initialize()
+	XF.Handlers.GuildEvent = GuildEvent:new(); XF.Handlers.GuildEvent:Initialize()
+	XF.Handlers.ItemEvent = XFC.ItemEvent:new(); XF.Handlers.ItemEvent:Initialize()
+	XF.Handlers.OrderEvent = XFC.OrderEvent:new(); XF.Handlers.OrderEvent:Initialize()
+	XF.Handlers.PlayerEvent = PlayerEvent:new(); XF.Handlers.PlayerEvent:Initialize()
+	XF.Handlers.SystemEvent = SystemEvent:new()
+	XF.Handlers.TimerEvent = TimerEvent:new()
 
 	-- Network
-	XFG.Channels = ChannelCollection:new()
-	XFG.Friends = FriendCollection:new()
-	XFG.Links = LinkCollection:new()
-	XFG.Nodes = NodeCollection:new()
-	XFG.Mailbox.BNet = BNet:new()
-	XFG.Mailbox.Chat = Chat:new()
+	XF.Channels = ChannelCollection:new()
+	XF.Friends = FriendCollection:new()
+	XF.Links = LinkCollection:new()
+	XF.Nodes = NodeCollection:new()
+	XF.Mailbox.BNet = BNet:new()
+	XF.Mailbox.Chat = Chat:new()
 	
 	-- Unit
-	XFG.Classes = ClassCollection:new()
-	XFG.Continents = ContinentCollection:new(); XFG.Continents:Initialize()
-	XFG.Professions = ProfessionCollection:new()
-	XFG.Races = RaceCollection:new()
-	XFG.Specs = SpecCollection:new()
-	XFG.Zones = ZoneCollection:new(); XFG.Zones:Initialize()	
-	XFG.Player.GUID = UnitGUID('player')
-	XFG.Player.Faction = XFG.Factions:GetByName(UnitFactionGroup('player'))
+	XF.Classes = ClassCollection:new()
+	XF.Continents = ContinentCollection:new(); XF.Continents:Initialize()
+	XF.Professions = ProfessionCollection:new()
+	XF.Races = RaceCollection:new()
+	XF.Specs = SpecCollection:new()
+	XF.Zones = ZoneCollection:new(); XF.Zones:Initialize()	
+	XF.Player.GUID = UnitGUID('player')
+	XF.Player.Faction = XF.Factions:GetByName(UnitFactionGroup('player'))
 	
 	-- Wrappers	
-	XFG.Hooks = HookCollection:new(); XFG.Hooks:Initialize()
-	XFG.Metrics = MetricCollection:new(); XFG.Metrics:Initialize()	
-	XFG.Timers = TimerCollection:new(); XFG.Timers:Initialize()
-	XFG.Handlers.TimerEvent:Initialize()
+	XF.Hooks = HookCollection:new(); XF.Hooks:Initialize()
+	XF.Metrics = MetricCollection:new(); XF.Metrics:Initialize()	
+	XF.Timers = TimerCollection:new(); XF.Timers:Initialize()
+	XF.Handlers.TimerEvent:Initialize()
 
 	-- These will execute "in-parallel" with remainder of setup as they are not time critical nor is anything dependent upon them
 	try(function ()		
-		XFG.Player.InInstance = IsInInstance()
+		XF.Player.InInstance = IsInInstance()
 		
-		XFG.DataText.Guild:Initialize()
-		XFG.DataText.Links:Initialize()
-		XFG.DataText.Metrics:Initialize()
+		XF.DataText.Guild:Initialize()
+		XF.DataText.Links:Initialize()
+		XF.DataText.Metrics:Initialize()
+		--XF.DataText.Orders:Initialize()
 
-		XFG.Expansions = ExpansionCollection:new(); XFG.Expansions:Initialize()
-		XFG.WoW = XFG.Expansions:GetCurrent()
-		XFG:Info(ObjectName, 'WoW client version [%s:%s]', XFG.WoW:GetName(), XFG.WoW:GetVersion():GetKey())
+		XF.Expansions = ExpansionCollection:new(); XF.Expansions:Initialize()
+		XF.WoW = XF.Expansions:GetCurrent()
+		XF:Info(ObjectName, 'WoW client version [%s:%s]', XF.WoW:GetName(), XF.WoW:GetVersion():GetKey())
 	end).
 	catch(function (inErrorMessage)
-		XFG:Warn(ObjectName, inErrorMessage)
+		XF:Warn(ObjectName, inErrorMessage)
 	end)
 end
 
-function XFG:Stop()
-	if(XFG.Events) then XFG.Events:Stop() end
-	if(XFG.Hooks) then XFG.Hooks:Stop() end
-	if(XFG.Timers) then XFG.Timers:Stop() end
+function XF:Stop()
+	if(XF.Events) then XF.Events:Stop() end
+	if(XF.Hooks) then XF.Hooks:Stop() end
+	if(XF.Timers) then XF.Timers:Stop() end
 end
 
 do
 	try(function ()
-		XFG.Init()
+		XF.Init()
 	end).
 	catch(function (inErrorMessage)
-		XFG:Error(ObjectName, inErrorMessage)
-		XFG:Stop()
+		XF:Error(ObjectName, inErrorMessage)
+		XF:Stop()
 	end)
 end

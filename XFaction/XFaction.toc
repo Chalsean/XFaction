@@ -1,34 +1,23 @@
 ## Interface: 100107
 ## Author: Chalsean (US-Proudmoore)
-## Version: 4.6.10
+## Version: 4.7.4
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: XFCacheDB, XFactionDB
 ## OptionalDeps: _DebugLog, BugSack, BugGrabber
-## AddonCompartmentFunc: XFG_ToggleOptions
+## AddonCompartmentFunc: XF_ToggleOptions
 ## IconTexture: Interface\Addons\XFaction\Media\Icon\xfaction.png
 
-Libraries\LoadLibraries.xml
-Locales\LoadLocales.xml
+Library\Load.xml
+Localization\Load.xml
 
 Settings.lua
-Functions\LoadFunctions.xml
 
-Base\LoadBase.xml
-Client\LoadClient.xml
-Confederate\LoadConfederate.xml
-Configuration\LoadConfigurations.xml
-DataText\LoadDataText.xml
-Developer\LoadDeveloper.xml
-Frames\LoadFrames.xml
-Handlers\LoadHandlers.xml
-Media\LoadMedia.xml
-Metrics\LoadMetrics.xml
-Addons\LoadAddons.xml
-Network\LoadNetwork.xml
-Unit\LoadUnit.xml
-Wrappers\LoadWrappers.xml
+Function\Load.xml
+System\Load.xml
+GameData\Load.xml
+UI\Load.xml
 
 Initialize.lua

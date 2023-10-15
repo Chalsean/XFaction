@@ -1,0 +1,6 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Spec.lua'/>    
+    <Script file='SpecCollection.lua'/>    
+    <Script file='Class.lua'/>    
+    <Script file='ClassCollection.lua'/>    
+</Ui>
