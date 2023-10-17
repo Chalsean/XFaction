@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Mailbox'
 local ServerTime = GetServerTime
 
@@ -266,8 +267,8 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     -- Process ORDER message
     if(inMessage:GetSubject() == XF.Enum.Message.ORDER) then
-        XF.Orders:Decode(inMessage:GetData())
-        XF.Orders:Display()
+        XFO.Orders:Decode(inMessage:GetData())
+        XFO.Orders:Display()
         return
     end
 
