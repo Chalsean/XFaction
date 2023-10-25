@@ -90,6 +90,7 @@ function XFC.ItemCollection:Backup()
 end
 
 function XFC.ItemCollection:Restore()
+	if(XF.Cache.Backup.Items == nil) then XF.Cache.Backup.Items = {} end
 	for key, data in pairs (XF.Cache.Backup.Items) do
 		local item = nil
         try(function ()
