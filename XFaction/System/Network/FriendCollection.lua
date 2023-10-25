@@ -187,6 +187,7 @@ function FriendCollection:Backup()
 end
 
 function FriendCollection:Restore()
+	if(XF.Cache.Backup.Friends == nil) then XF.Cache.Backup.Friends = {} end
 	for _, key in pairs (XF.Cache.Backup.Friends) do
 		try(function ()	
 			if(XF.Friends:Contains(key)) then

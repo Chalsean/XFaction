@@ -77,6 +77,7 @@ function XFC.OrderCollection:Backup()
 end
 
 function XFC.OrderCollection:Restore()
+	if(XF.Cache.Backup.Orders == nil) then XF.Cache.Backup.Orders = {} end
 	for key, data in pairs (XF.Cache.Backup.Orders) do
 		local order = nil
         try(function ()

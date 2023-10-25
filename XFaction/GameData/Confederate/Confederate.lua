@@ -158,6 +158,7 @@ function Confederate:Backup()
 end
 
 function Confederate:Restore()
+    if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
     for _, data in pairs (XF.Cache.Backup.Confederate) do
         try(function ()
             local unitData = XF:DeserializeUnitData(data)
