@@ -28,7 +28,7 @@ end
 --#region Accessors
 function XFC.OrderCollection:Display()
 	for _, order in self:Iterator() do
-		if(not order:IsMyOrder() and not order:HasDisplayed() and order:HasItem() and order:GetItem():IsCached()) then
+		if(not order:HasDisplayed() and order:HasItem() and order:GetItem():IsCached()) then
 			order:Display()
 		end
 	end
@@ -67,7 +67,7 @@ function XFC.OrderCollection:Backup()
 	try(function ()
         if(self:IsInitialized()) then
             for _, order in self:Iterator() do
-				XF.Cache.Backup.Orders[order:GetKey()] = order:Encode()
+				XF.Cache.Backup.Orders[order:GetKey()] = order:Encode(true)
             end
         end
     end).

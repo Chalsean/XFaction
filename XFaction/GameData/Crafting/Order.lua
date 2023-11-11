@@ -134,14 +134,22 @@ end
 --#endregion
 
 --#region Networking
-function XFC.Order:Encode()
+function XFC.Order:Encode(inBackup)
+    assert(inBackup == nil or type(inBackup) == 'boolean', 'argument must be nil or boolean')
     local data = {}
     data.C = XF:SerializeUnitData(self:GetCustomerUnit())
     data.I = self:GetItem():GetKey()
     data.K = self:GetKey()
     data.O = self:GetID()
     data.P = self:GetProfession():GetKey()
-    data.T = self:GetType()     
+    data.T = self:GetType()
+    if(inBackup ~= nil and inBackup == true) then
+        data.B = self:HasCommunicated() and 1 or 0
+        data.D = self:HasDisplayed() and 1 or 0
+        if(self:IsMyOrder()) then
+            data.D = 1
+        end
+    end
     return data
 end
 
@@ -152,6 +160,13 @@ function XFC.Order:Decode(inData)
     self:SetType(inData.T)
     self:SetCustomerUnit(XF:DeserializeUnitData(inData.C))    
     self:SetProfession(XF.Professions:Get(inData.P))
+
+    if(inData.B ~= nil) then
+        self:HasCommunicated(inData.B == 1)
+    end
+    if(inData.D ~= nil) then
+        self:HasDisplayed(inData.D == 1)
+    end
 
     if(not XFO.Items:Contains(inData.I) or not XFO.Items:Get(inData.I):IsCached()) then
         XFO.Items:Cache(inData.I)
@@ -173,24 +188,41 @@ function XFC.Order:Broadcast()
         message:SetSubject(XF.Enum.Message.ORDER)
         message:SetData(self:Encode())
         XF.Mailbox.Chat:Send(message)
+        self:HasCommunicated(true)
+    end).
+    catch(function(err)
+        XF:Warn(self:GetObjectName(), err)
     end).
     finally(function ()
         XF.Mailbox.Chat:Push(message)
-        self:HasCommunicated(true)
     end)
 end
 
 function XFC.Order:Display()
     try(function()
+        if(self:HasDisplayed()) then return end
         if(not XF.Config.Chat.Crafting.Enable) then return end
         if(self:IsGuild() and not XF.Config.Chat.Crafting.GuildOrder) then return end
         if(self:IsPersonal() and not XF.Config.Chat.Crafting.PersonalOrder) then return end
         if(self:IsPersonal() and not XF.Player.Unit:Equals(self:GetCustomerUnit())) then return end
-        if(XF.Config.Chat.Crafting.Profession and self:HasProfession() and not self:GetProfession():Equals(XF.Player.Unit:GetProfession1() and not self:GetProfession():Equals(XF.Player.Unit:GetProfession2()))) then return end
-        XF.Frames.System:DisplayOrder(self)
+        if(self:HasItem() and not self:GetItem():IsCached()) then return end
+
+        local display = false
+        if(not XF.Config.Chat.Crafting.Profession) then
+            display = true
+        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:GetProfession1())) then
+            display = true
+        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:GetProfession2())) then
+            display = true
+        end
+
+        if(display) then
+            XF.Frames.System:DisplayOrder(self)
+            self:HasDisplayed(true)
+        end
     end).
-    finally(function()
-        self:HasDisplayed(true)
+    catch(function(err)
+        XF:Warn(self:GetObjectName(), err)
     end)
 end
 --#endregion

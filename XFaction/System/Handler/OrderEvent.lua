@@ -84,8 +84,9 @@ function GetMyOrders()
     for _, myOrder in ipairs(myOrders) do
         local order = XFO.Orders:Pop()
         try(function ()
-            order:SetKey(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)            
-            if(self:IsFirstQuery() or not XFO.Orders:Contains(order:GetKey())) then
+            order:SetKey(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
+            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and 
+               (self:IsFirstQuery() or not XFO.Orders:Contains(order:GetKey()))) then
                 order:SetType(myOrder.orderType)
                 order:SetID(myOrder.orderID)
                 order:SetCustomerUnit(XF.Player.Unit)
@@ -112,8 +113,12 @@ function GetMyOrders()
                 if(self:IsFirstQuery()) then
                     order:HasCommunicated(true)
                     order:HasDisplayed(true)
-                elseif(order:IsGuild() or order:IsPersonal()) then
-                    order:Broadcast()
+                elseif(order:IsGuild()) then
+                    order:Display()
+                    --order:Broadcast()
+                elseif(order:IsPersonal()) then
+                    order:HasDisplayed(true)
+                    order:Broadcast()                    
                 end
                 XFO.Orders:Add(order)
             else
@@ -138,7 +143,7 @@ function XFC.OrderEvent:CallbackCraftOrder(inEvent)
         QueryMyOrders()
     end).
     catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+        XF:Warn(self:GetObjectName(), inErrorMessage)
     end)
 end
 

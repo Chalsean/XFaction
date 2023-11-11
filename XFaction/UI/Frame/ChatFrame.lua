@@ -17,7 +17,7 @@ function ChatFrame:Initialize()
         self:ParentInitialize()
         ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XF.Frames.Chat.ChatFilter)
         XF:Info(ObjectName, 'Created CHAT_MSG_GUILD event filter')
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XF.Frames.Chat.ChatFilter)
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XF.Frames.Chat.AchievementFilter)
         XF:Info(ObjectName, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
@@ -63,12 +63,24 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
 end
 
 function ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
-    if(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
+    if(not XF.Config.Chat.GChat.Enable) then
+        return true
+    elseif(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XF.Settings.Frames.Chat.Prepend, '')
     -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
-    --elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND']) or string.find(inMessage, XF.Lib.Locale['CHAT_ACHIEVEMENT'])) then
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
         return true
+    elseif(XF.Confederate:Contains(inGUID)) then
+        inMessage = ModifyPlayerChat(inEvent, inMessage, XF.Confederate:Get(inGUID))
+    end
+    return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
+end
+
+function ChatFrame:AchievementFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+    if(not XF.Config.Chat.Achievement.Enable) then
+        return true
+    elseif(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
+        inMessage = string.gsub(inMessage, XF.Settings.Frames.Chat.Prepend, '')
     elseif(XF.Confederate:Contains(inGUID)) then
         inMessage = ModifyPlayerChat(inEvent, inMessage, XF.Confederate:Get(inGUID))
     end
@@ -168,11 +180,13 @@ end
 
 function ChatFrame:DisplayGuildChat(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    if(not XF.Config.Chat.GChat.Enable) then return end
     self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData())
 end
 
 function ChatFrame:DisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    if(not XF.Config.Chat.Achievement.Enable) then return end
     self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData())
 end
 --#endregion
