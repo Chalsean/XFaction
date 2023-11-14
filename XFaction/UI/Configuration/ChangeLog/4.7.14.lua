@@ -32,6 +32,12 @@ XF.ChangeLog['4.7.14'] = {
                 fontSize = 'medium',
                 name = 'Fixed filtering crafting order notifications by profession.',
             },
+            Five = {
+                order = 5,
+                type = 'description',
+                fontSize = 'medium',
+                name = "Fixed random 'Collection key must be string or number' error.",
+            },
         },
     },		
 }
