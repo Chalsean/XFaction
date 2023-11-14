@@ -79,7 +79,9 @@ end
 
 --#region Hash
 function ObjectCollection:Contains(inKey)
-    assert(type(inKey) == 'string' or type(inKey) == 'number', 'Collection key must be string or number')
+    if(inKey == nil or (type(inKey) ~= 'string' and type(inKey) ~= 'number')) then
+        return false
+    end
 	return self.objects[inKey] ~= nil
 end
 
