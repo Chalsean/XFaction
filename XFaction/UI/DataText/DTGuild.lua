@@ -161,6 +161,10 @@ local function PreSort()
 				unitData.Zone = unit:GetZoneName()
 			end
 
+			if(unit:HasMythicKey()) then
+				unitData.MythicKey = unit:GetMythicKey():GetDungeon():GetShortName() .. ' +' .. unit:GetMythicKey():GetID()
+			end
+
 			list[#list + 1] = unitData
 		end
 	end
@@ -198,8 +202,6 @@ end
 function DTGuild:OnEnter(this)
 	if(not XF.Initialized) then return end
 	if(CombatLockdown()) then return end
-
-
 
 	--#region Configure Tooltip
 	local orderEnabled = {}

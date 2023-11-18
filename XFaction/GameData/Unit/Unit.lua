@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Unit'
 local GetMemberInfo = C_Club.GetMemberInfo
 local GetMemberInfoForSelf = C_Club.GetMemberInfoForSelf
@@ -47,6 +48,7 @@ function Unit:new()
     object.guildListen = true
     object.raiderIO = nil
     object.lastLogin = 0
+    object.mythicKey = nil
 
     return object
 end
@@ -82,6 +84,7 @@ function Unit:Deconstructor()
     self.guildListen = true
     self.raiderIO = nil
     self.lastLogin = 0
+    self.mythicKey = nil
 end
 --#endregion
 
@@ -167,6 +170,10 @@ function Unit:Initialize(inMemberID)
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
         self:SetVersion(XF.Version)
+        
+        local mythicKey = XFC.MythicKey:new()
+        mythicKey:Initialize()
+        self:SetMythicKey(mythicKey)
 
         local permissions = GetPermissions(unitData.guildRankOrder)
         if(permissions ~= nil) then
@@ -244,6 +251,7 @@ function Unit:Print()
     if(self:HasProfession1()) then self.profession1:Print() end
     if(self:HasProfession2()) then self.profession2:Print() end  
     if(self:HasRaiderIO()) then self:GetRaiderIO():Print() end
+    if(self:HasMythicKey()) then self:GetMythicKey():Print() end
 end
 --#endregion
 
@@ -631,6 +639,19 @@ end
 function Unit:SetLastLogin(inDays)
     assert(type(inDays) == 'number')
     self.lastLogin = inDays
+end
+
+function Unit:HasMythicKey()
+    return self.mythicKey ~= nil
+end
+
+function Unit:GetMythicKey()
+    return self.mythicKey
+end
+
+function Unit:SetMythicKey(inKey)
+    assert(type(inKey) == 'table' and inKey.__name ~= nil and inKey.__name == 'MythicKey', 'argument must be MythicKey object')
+    self.mythicKey = inKey
 end
 --#endregion
 

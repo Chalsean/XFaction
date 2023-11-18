@@ -1,8 +1,13 @@
 ------------------------------------------------------------------------
-r282 | Odica_Jaedenar | 2022-11-18 20:38:21 +0000 (Fri, 18 Nov 2022) | 1 line
+r301 | Odica_Jaedenar | 2023-11-11 21:03:48 +0000 (Sat, 11 Nov 2023) | 5 lines
 Changed paths:
    M /trunk/LibTourist-3.0.lua
+   M /trunk/LibTourist-3.0.toc
 
-Fixed a lua error related to localization
+- Added Emerald Dream
+- Added Amirdrassil
+- Added Emerald Dream portal
+- Added 18 new mapIDs and 5 Flight Nodes
+- updated version in TOC to 100200
 ------------------------------------------------------------------------
 

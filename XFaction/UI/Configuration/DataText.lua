@@ -5,12 +5,9 @@ local LogCategory = 'Config'
 local function GuildOrderMenu()
 	if(XF.Cache.DTGuildTotalEnabled == nil) then XF.Cache.DTGuildTotalEnabled = 0 end
 	if(XF.Cache.DTGuildTotalEnabled == 0) then
-		for label, value in pairs (XF.Config.DataText.Guild.Enable) do
-			if(value) then
-				orderLabel = label .. 'Order'
-				if(XF.Config.DataText.Guild.Order[orderLabel] ~= 0) then
-					XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled + 1
-				end
+		for column, isEnabled in pairs (XF.Config.DataText.Guild.Enable) do
+			if(isEnabled and XF.Config.DataText.Guild.Order[column] ~= 0) then
+				XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled + 1
 			end
 		end
 	end
@@ -24,20 +21,19 @@ local function GuildOrderMenu()
 end
 
 local function GuildRemovedMenuItem(inColumnName)
-	local index = XF.Config.DataText.Guild.Order[inColumnName .. 'Order']
-	XF.Config.DataText.Guild.Order[inColumnName .. 'Order'] = 0
+	local index = XF.Config.DataText.Guild.Order[inColumnName]
+	XF.Config.DataText.Guild.Order[inColumnName] = 0
 	XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled - 1
-	for columnName, orderNumber in pairs (XF.Config.DataText.Guild.Order) do
-		if(orderNumber > index) then
-			XF.Config.DataText.Guild.Order[columnName] = orderNumber - 1
+	for column, order in pairs (XF.Config.DataText.Guild.Order) do
+		if(order > index) then
+			XF.Config.DataText.Guild.Order[column] = order - 1
 		end
 	end
 end
 
 local function GuildAddedMenuItem(inColumnName)
-	local orderLabel = inColumnName .. 'Order'
 	XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled + 1
-	XF.Config.DataText.Guild.Order[orderLabel] = XF.Cache.DTGuildTotalEnabled
+	XF.Config.DataText.Guild.Order[inColumnName] = XF.Cache.DTGuildTotalEnabled
 end
 
 local function GuildSelectedMenuItem(inColumnName, inSelection)
@@ -50,61 +46,6 @@ local function GuildSelectedMenuItem(inColumnName, inSelection)
 				XF.Config.DataText.Guild.Order[columnName] = orderNumber - 1
 			elseif(oldNumber > newNumber and orderNumber < oldNumber and orderNumber >= newNumber) then
 				XF.Config.DataText.Guild.Order[columnName] = orderNumber + 1
-			end
-		end
-	end
-end
---#endregion
-
---#region DTOrder
-local function OrdersOrderMenu()
-	if(XF.Cache.DTOrdersTotalEnabled == nil) then XF.Cache.DTOrdersTotalEnabled = 0 end
-	if(XF.Cache.DTOrdersTotalEnabled == 0) then
-		for label, value in pairs (XF.Config.DataText.Orders.Enable) do
-			if(value) then
-				orderLabel = label .. 'Order'
-				if(XF.Config.DataText.Orders.Order[orderLabel] ~= 0) then
-					XF.Cache.DTOrdersTotalEnabled = XF.Cache.DTOrdersTotalEnabled + 1
-				end
-			end
-		end
-	end
-
-	local menu = {}
-	for i = 1, XF.Cache.DTOrdersTotalEnabled do
-		menu[tostring(i)] = i
-	end
-
-	return menu
-end
-
-local function OrdersRemovedMenuItem(inColumnName)
-	local index = XF.Config.DataText.Orders.Order[inColumnName .. 'Order']
-	XF.Config.DataText.Orders.Order[inColumnName .. 'Order'] = 0
-	XF.Cache.DTOrdersTotalEnabled = XF.Cache.DTOrdersTotalEnabled - 1
-	for columnName, orderNumber in pairs (XF.Config.DataText.Orders.Order) do
-		if(orderNumber > index) then
-			XF.Config.DataText.Orders.Order[columnName] = orderNumber - 1
-		end
-	end
-end
-
-local function OrdersAddedMenuItem(inColumnName)
-	local orderLabel = inColumnName .. 'Order'
-	XF.Cache.DTOrdersTotalEnabled = XF.Cache.DTOrdersTotalEnabled + 1
-	XF.Config.DataText.Guild.Order[orderLabel] = XF.Cache.DTOrdersTotalEnabled
-end
-
-local function OrdersSelectedMenuItem(inColumnName, inSelection)
-	local oldNumber = XF.Config.DataText.Orders.Order[inColumnName]
-	local newNumber = tonumber(inSelection)
-	XF.Config.DataText.Orders.Order[inColumnName] = newNumber
-	for columnName, orderNumber in pairs (XF.Config.DataText.Orders.Order) do
-		if(columnName ~= inColumnName) then
-			if(oldNumber < newNumber and orderNumber > oldNumber and orderNumber <= newNumber) then
-				XF.Config.DataText.Orders.Order[columnName] = orderNumber - 1
-			elseif(oldNumber > newNumber and orderNumber < oldNumber and orderNumber >= newNumber) then
-				XF.Config.DataText.Orders.Order[columnName] = orderNumber + 1
 			end
 		end
 	end
@@ -274,6 +215,7 @@ XF.Options.args.DataText = {
 						ItemLevel = XF.Lib.Locale['ITEMLEVEL'],
 						Level = XF.Lib.Locale['LEVEL'],            
 						Dungeon = XF.Lib.Locale['DUNGEON'],
+						MythicKey = XF.Lib.Locale['MYTHICKEY'],
                         Name = XF.Lib.Locale['NAME'],
 						Note = 	XF.Lib.Locale['NOTE'],
 						Race = XF.Lib.Locale['RACE'],
@@ -304,6 +246,7 @@ XF.Options.args.DataText = {
 						ItemLevel = XF.Lib.Locale['ITEMLEVEL'],
 						Level = XF.Lib.Locale['LEVEL'],            
 						Dungeon = XF.Lib.Locale['DUNGEON'],
+						MythicKey = XF.Lib.Locale['MYTHICKEY'],
                         Name = XF.Lib.Locale['NAME'],
 						Note = 	XF.Lib.Locale['NOTE'],
 						Profession = XF.Lib.Locale['PROFESSION'],
@@ -346,8 +289,8 @@ XF.Options.args.DataText = {
 					name = XF.Lib.Locale['ORDER'],
 					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_ORDER_TOOLTIP'],
 					values = function () return GuildOrderMenu() end,
-					get = function(info) if(XF.Config.DataText.Guild.Enable.Achievement) then return tostring(XF.Config.DataText.Guild.Order[ info[#info] ]) end end,
-					set = function(info, value) GuildSelectedMenuItem(info[#info], value) end
+					get = function(info) if(XF.Config.DataText.Guild.Enable.Achievement) then return tostring(XF.Config.DataText.Guild.Order.Achievement) end end,
+					set = function(info, value) GuildSelectedMenuItem('Achievement', value) end
 				},				
 				AchievementAlignment = {
 					order = 23,
@@ -361,8 +304,8 @@ XF.Options.args.DataText = {
 						Left = XF.Lib.Locale['LEFT'],
 						Right = XF.Lib.Locale['RIGHT'],
                     },
-					get = function(info) return XF.Config.DataText.Guild.Alignment[ info[#info] ] end,
-					set = function(info, value) XF.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
+					get = function(info) return XF.Config.DataText.Guild.Alignment.Achievement end,
+					set = function(info, value) XF.Config.DataText.Guild.Alignment.Achievement = value; end
 				},
 				Faction = {
 					order = 28,
@@ -384,8 +327,8 @@ XF.Options.args.DataText = {
 					name = XF.Lib.Locale['ORDER'],
 					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_FACTION_ORDER_TOOLTIP'],
 					values = function () return GuildOrderMenu() end,
-					get = function(info) if(XF.Config.DataText.Guild.Enable.Faction) then return tostring(XF.Config.DataText.Guild.Order[ info[#info] ]) end end,
-					set = function(info, value) GuildSelectedMenuItem(info[#info], value) end
+					get = function(info) if(XF.Config.DataText.Guild.Enable.Faction) then return tostring(XF.Config.DataText.Guild.Order.Faction) end end,
+					set = function(info, value) GuildSelectedMenuItem('Faction', value) end
 				},
 				FactionAlignment = {
 					order = 30,
@@ -399,8 +342,8 @@ XF.Options.args.DataText = {
 						Left = XF.Lib.Locale['LEFT'],
 						Right = XF.Lib.Locale['RIGHT'],
                     },
-					get = function(info) return XF.Config.DataText.Guild.Alignment[ info[#info] ] end,
-					set = function(info, value) XF.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
+					get = function(info) return XF.Config.DataText.Guild.Alignment.Faction end,
+					set = function(info, value) XF.Config.DataText.Guild.Alignment.Faction = value; end
 				},
 				Guild = {
 					order = 31,
@@ -477,7 +420,7 @@ XF.Options.args.DataText = {
                     },
 					get = function(info) return XF.Config.DataText.Guild.Alignment[ info[#info] ] end,
 					set = function(info, value) XF.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
-				},
+				},				
 				Level = {
 					order = 37,
 					type = 'toggle',
@@ -1018,7 +961,45 @@ XF.Options.args.DataText = {
                     },
 					get = function(info) return XF.Config.DataText.Guild.Alignment[ info[#info] ] end,
 					set = function(info, value) XF.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
-				},				
+				},		
+				MythicKey = {
+					order = 80,
+					type = 'toggle',
+					hidden = function () return XF.Config.DataText.Guild.Column ~= 'MythicKey' end,
+					name = ENABLE,
+					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_MYTHICKEY_TOOLTIP'],
+					get = function(info) return XF.Config.DataText.Guild.Enable[ info[#info] ] end,
+					set = function(info, value) 
+						XF.Config.DataText.Guild.Enable[ info[#info] ] = value
+						if(value) then GuildAddedMenuItem(info[#info]) else GuildRemovedMenuItem(info[#info]) end
+					end
+				},
+				MythicKeyOrder = {
+					order = 81,
+					type = 'select',
+					hidden = function () return XF.Config.DataText.Guild.Column ~= 'MythicKey' end,
+					disabled = function () return (not XF.Config.DataText.Guild.Enable.MythicKey) end,
+					name = XF.Lib.Locale['ORDER'],
+					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_MYTHICKEY_ORDER_TOOLTIP'],
+					values = function () return GuildOrderMenu() end,
+					get = function(info) return XF.Config.DataText.Guild.Order[ info[#info] ] end,
+					set = function(info, value) XF.Config.DataText.Guild.Order[ info[#info] ] = value; end
+				},
+				MythicKeyAlignment = {
+					order = 82,
+					type = 'select',
+					hidden = function () return XF.Config.DataText.Guild.Column ~= 'MythicKey' end,
+					disabled = function () return (not XF.Config.DataText.Guild.Enable.MythicKey) end,
+					name = XF.Lib.Locale['ALIGNMENT'],
+					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_MYTHICKEY_ALIGNMENT_TOOLTIP'],
+					values = {
+						Center = XF.Lib.Locale['CENTER'],
+						Left = XF.Lib.Locale['LEFT'],
+						Right = XF.Lib.Locale['RIGHT'],
+                    },
+					get = function(info) return XF.Config.DataText.Guild.Alignment[ info[#info] ] end,
+					set = function(info, value) XF.Config.DataText.Guild.Alignment[ info[#info] ] = value; end
+				},
             },
 		},
 		Link = {

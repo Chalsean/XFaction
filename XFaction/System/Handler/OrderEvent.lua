@@ -115,7 +115,7 @@ function GetMyOrders()
                     order:HasDisplayed(true)
                 elseif(order:IsGuild()) then
                     order:Display()
-                    --order:Broadcast()
+                    order:Broadcast()
                 elseif(order:IsPersonal()) then
                     order:HasDisplayed(true)
                     order:Broadcast()                    

@@ -5,6 +5,7 @@ local ServerTime = GetServerTime
 local GuildRosterEvent = C_GuildInfo.GuildRoster
 local InGuild = IsInGuild
 local GetGuildClubId = C_Club.GetGuildClubId
+local RequestMapsFromServer = C_MythicPlus.RequestMapInfo
 
 TimerEvent = Object:newChildConstructor()
 
@@ -127,6 +128,9 @@ end
 
 function TimerEvent:CallbackLoginPlayer()
 	try(function ()
+		-- Far as can tell does not fire event, so call and pray it loads before we query for the data
+		RequestMapsFromServer()
+
 		-- Need the player data to continue setup
 		local unitData = XF.Confederate:Pop()
 		unitData:Initialize()
