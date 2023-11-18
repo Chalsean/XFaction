@@ -207,22 +207,17 @@ function DTGuild:OnEnter(this)
 	local orderEnabled = {}
 	XF.Cache.DTGuildTotalEnabled = 0
 	XF.Cache.DTGuildTextEnabled = 0
-	for columnName, isEnabled in pairs (XF.Config.DataText.Guild.Enable) do
-		if(isEnabled) then
-			local orderKey = columnName .. 'Order'
-			local alignmentKey = columnName .. 'Alignment'
-
-			if(XF.Config.DataText.Guild.Order[orderKey] ~= 0) then
-				XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled + 1
-				local index = tostring(XF.Config.DataText.Guild.Order[orderKey])
-				orderEnabled[index] = {
-					ColumnName = columnName,
-					Alignment = string.upper(XF.Config.DataText.Guild.Alignment[alignmentKey]),
-					Icon = (columnName == 'Spec' or columnName == 'Profession' or columnName == 'Faction'),
-				}
-				if(not orderEnabled[index].Icon) then
-					XF.Cache.DTGuildTextEnabled = XF.Cache.DTGuildTextEnabled + 1
-				end
+	for column, isEnabled in pairs (XF.Config.DataText.Guild.Enable) do
+		if(isEnabled and XF.Config.DataText.Guild.Order[column] ~= 0) then
+			XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled + 1
+			local index = tostring(XF.Config.DataText.Guild.Order[column])
+			orderEnabled[index] = {
+				ColumnName = column,
+				Alignment = string.upper(XF.Config.DataText.Guild.Alignment[column]),
+				Icon = (column == 'Spec' or column == 'Profession' or column == 'Faction'),
+			}
+			if(not orderEnabled[index].Icon) then
+				XF.Cache.DTGuildTextEnabled = XF.Cache.DTGuildTextEnabled + 1
 			end
 		end		
 	end
