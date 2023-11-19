@@ -161,7 +161,7 @@ local function PreSort()
 				unitData.Zone = unit:GetZoneName()
 			end
 
-			if(unit:HasMythicKey()) then
+			if(unit:HasMythicKey() and unit:GetMythicKey():HasDungeon()) then
 				unitData.MythicKey = unit:GetMythicKey():GetDungeon():GetShortName() .. ' +' .. unit:GetMythicKey():GetID()
 			end
 
