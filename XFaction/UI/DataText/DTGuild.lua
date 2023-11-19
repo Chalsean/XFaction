@@ -303,8 +303,24 @@ function DTGuild:OnEnter(this)
 	if(XF.Initialized) then
 
 		local list = PreSort()
-		sort(list, function(a, b) if(XF.DataText.Guild:IsReverseSort()) then return a[XF.DataText.Guild:GetSort()] > b[XF.DataText.Guild:GetSort()] 
-																	     else return a[XF.DataText.Guild:GetSort()] < b[XF.DataText.Guild:GetSort()] end end)
+		sort(list, function(a, b) 
+			if(XF.DataText.Guild:IsReverseSort()) then
+				if(a[XF.DataText.Guild:GetSort()] == nil) then 
+					return false
+				elseif(b[XF.DataText.Guild:GetSort()] == nil) then
+					return true
+				else
+					return a[XF.DataText.Guild:GetSort()] > b[XF.DataText.Guild:GetSort()]
+				end
+			else
+				if(b[XF.DataText.Guild:GetSort()] == nil) then
+					return false
+				elseif(a[XF.DataText.Guild:GetSort()] == nil) then
+					return true
+				else
+					return a[XF.DataText.Guild:GetSort()] < b[XF.DataText.Guild:GetSort()]
+				end
+			end end)
 
 		for _, unitData in ipairs (list) do
 			line = self.tooltip:AddLine()
