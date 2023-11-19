@@ -21,10 +21,11 @@ local function GuildOrderMenu()
 end
 
 local function GuildRemovedMenuItem(inColumnName)
-	local index = XF.Config.DataText.Guild.Order[inColumnName]
+	local index = tonumber(XF.Config.DataText.Guild.Order[inColumnName])
 	XF.Config.DataText.Guild.Order[inColumnName] = 0
 	XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled - 1
 	for column, order in pairs (XF.Config.DataText.Guild.Order) do
+		order = tonumber(order)
 		if(order > index) then
 			XF.Config.DataText.Guild.Order[column] = order - 1
 		end
@@ -37,10 +38,11 @@ local function GuildAddedMenuItem(inColumnName)
 end
 
 local function GuildSelectedMenuItem(inColumnName, inSelection)
-	local oldNumber = XF.Config.DataText.Guild.Order[inColumnName]
+	local oldNumber = tonumber(XF.Config.DataText.Guild.Order[inColumnName])
 	local newNumber = tonumber(inSelection)
 	XF.Config.DataText.Guild.Order[inColumnName] = newNumber
 	for columnName, orderNumber in pairs (XF.Config.DataText.Guild.Order) do
+		orderNumber = tonumber(orderNumber)
 		if(columnName ~= inColumnName) then
 			if(oldNumber < newNumber and orderNumber > oldNumber and orderNumber <= newNumber) then
 				XF.Config.DataText.Guild.Order[columnName] = orderNumber - 1

@@ -1034,13 +1034,13 @@ end
 function XF:Install()
 	for key, value in pairs (XF.Config.DataText.Guild.Order) do
 		local newKey = key:gsub("Order", "")
-		XF.Config.DataText.Guild.Order[newKey] = value
 		XF.Config.DataText.Guild.Order[key] = nil
+		XF.Config.DataText.Guild.Order[newKey] = value			
 	end
 
 	for key, value in pairs (XF.Config.DataText.Guild.Alignment) do
 		local newKey = key:gsub("Alignment", "")
-		XF.Config.DataText.Guild.Alignment[newKey] = value
 		XF.Config.DataText.Guild.Alignment[key] = nil
+		XF.Config.DataText.Guild.Alignment[newKey] = value
 	end
 end

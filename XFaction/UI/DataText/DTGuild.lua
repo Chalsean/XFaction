@@ -203,12 +203,14 @@ function DTGuild:OnEnter(this)
 	if(not XF.Initialized) then return end
 	if(CombatLockdown()) then return end
 
+	XF:DataDumper('DTGuild', XF.Config.DataText.Guild)
+
 	--#region Configure Tooltip
 	local orderEnabled = {}
 	XF.Cache.DTGuildTotalEnabled = 0
 	XF.Cache.DTGuildTextEnabled = 0
 	for column, isEnabled in pairs (XF.Config.DataText.Guild.Enable) do
-		if(isEnabled and XF.Config.DataText.Guild.Order[column] ~= 0) then
+		if(isEnabled and XF.Config.DataText.Guild.Order[column] ~= 0 and XF.Config.DataText.Guild.Alignment[column] ~= nil) then
 			XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled + 1
 			local index = tostring(XF.Config.DataText.Guild.Order[column])
 			orderEnabled[index] = {
