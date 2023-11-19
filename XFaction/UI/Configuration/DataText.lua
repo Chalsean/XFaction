@@ -982,7 +982,7 @@ XF.Options.args.DataText = {
 					name = XF.Lib.Locale['ORDER'],
 					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_MYTHICKEY_ORDER_TOOLTIP'],
 					values = function () return GuildOrderMenu() end,
-					get = function(info) if(XF.Config.DataText.Guild.Enable.MythicKey) then return XF.Config.DataText.Guild.Order.MythicKey end end,
+					get = function(info) if(XF.Config.DataText.Guild.Enable.MythicKey) then return tostring(XF.Config.DataText.Guild.Order.MythicKey) end end,
 					set = function(info, value) GuildSelectedMenuItem('MythicKey', value) end
 				},
 				MythicKeyAlignment = {
