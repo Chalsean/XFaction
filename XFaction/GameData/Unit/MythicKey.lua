@@ -59,4 +59,16 @@ function XFC.MythicKey:SetDungeon(inDungeon)
     assert(type(inDungeon) == 'table' and inDungeon.__name ~= nil and inDungeon.__name == 'Dungeon', 'argument must be Dungeon object')
     self.dungeon = inDungeon
 end
+
+function XFC.MythicKey:Serialize()
+    return self:HasDungeon() and self:GetDungeon():GetKey() .. ';' .. self:GetKey() or nil
+end
+
+function XFC.MythicKey:Deserialize(data)
+    local key = string.Split(data, ';')    
+    if(XFO.Dungeons:Contains(data[1])) then
+        self:SetDungeon(XFO.Dungeons:Get(data[1]))
+    end
+    self:SetKey(data[2])
+end
 --#endregion

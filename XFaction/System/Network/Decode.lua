@@ -75,6 +75,11 @@ function XF:DeserializeUnitData(inData)
 	if(deserializedData.I ~= nil) then unit:SetItemLevel(deserializedData.I) end
 	unit:SetRank(deserializedData.J)
 	unit:SetLevel(deserializedData.L)
+	if(deserializedData.M ~= nil) then
+		local key = MythicKey:new()
+		key:Deserialize(deserializedData.M)
+		unit:SetMythicKey(key)
+	end
 	unit:SetNote(deserializedData.N)	
 	unit:IsOnline(true)
 	if(deserializedData.P1 ~= nil) then

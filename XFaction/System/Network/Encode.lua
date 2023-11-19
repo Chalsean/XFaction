@@ -54,18 +54,13 @@ function XF:SerializeUnitData(inUnitData)
 	messageData.I = inUnitData:GetItemLevel()
 	messageData.J = inUnitData:GetRank()
 	messageData.L = inUnitData:GetLevel()
+	messageData.M = inUnitData:HasMythicKey() and inUnitData:GetMythicKey():Serialize() or nil
 	messageData.N = inUnitData:GetNote()
 	messageData.O = inUnitData:GetClass():GetKey()
-	if(inUnitData:HasProfession1()) then
-		messageData.P1 = inUnitData:GetProfession1():GetKey()
-	end
-	if(inUnitData:HasProfession2()) then
-		messageData.P2 = inUnitData:GetProfession2():GetKey()
-	end
-	messageData.U = inUnitData:GetUnitName()	
-	if(inUnitData:HasSpec()) then
-		messageData.V = inUnitData:GetSpec():GetKey()
-	end
+	messageData.P1 = inUnitData:HasProfession1() and inUnitData:GetProfession1():GetKey() or nil
+	messageData.P2 = inUnitData:HasProfession2() and inUnitData:GetProfession2():GetKey() or nil
+	messageData.U = inUnitData:GetUnitName()
+	messageData.V = inUnitData:HasSpec() and inUnitData:GetSpec():GetKey() or nil
 	messageData.X = inUnitData:GetVersion():GetKey()
 	messageData.Y = inUnitData:GetPvP()
 
