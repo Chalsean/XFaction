@@ -203,8 +203,6 @@ function DTGuild:OnEnter(this)
 	if(not XF.Initialized) then return end
 	if(CombatLockdown()) then return end
 
-	XF:DataDumper('DTGuild', XF.Config.DataText.Guild)
-
 	--#region Configure Tooltip
 	local orderEnabled = {}
 	XF.Cache.DTGuildTotalEnabled = 0

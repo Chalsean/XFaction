@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Decode'
 local Deflate = XF.Lib.Deflate
 local ServerTime = GetServerTime
@@ -76,7 +77,7 @@ function XF:DeserializeUnitData(inData)
 	unit:SetRank(deserializedData.J)
 	unit:SetLevel(deserializedData.L)
 	if(deserializedData.M ~= nil) then
-		local key = MythicKey:new()
+		local key = XFC.MythicKey:new(); key:Initialize()
 		key:Deserialize(deserializedData.M)
 		unit:SetMythicKey(key)
 	end

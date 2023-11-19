@@ -173,6 +173,7 @@ function Unit:Initialize(inMemberID)
         
         local mythicKey = XFC.MythicKey:new()
         mythicKey:Initialize()
+        mythicKey:Refresh()
         self:SetMythicKey(mythicKey)
 
         local permissions = GetPermissions(unitData.guildRankOrder)

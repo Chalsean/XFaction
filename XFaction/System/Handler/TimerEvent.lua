@@ -156,6 +156,7 @@ function TimerEvent:CallbackLoginPlayer()
 				XFO.Items:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
+				XF.Player.Unit:Broadcast(XF.Enum.Message.DATA)
 			-- Otherwise send login message
 			else
 				XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
@@ -230,6 +231,7 @@ function TimerEvent:CallbackHeartbeat()
 	try(function ()
 		if(XF.Initialized and XF.Player.LastBroadcast < ServerTime() - XF.Settings.Player.Heartbeat) then
 			XF:Debug(ObjectName, 'Sending heartbeat')
+			XF.Player.Unit:Initialize(XF.Player.Unit:GetID())
 			XF.Player.Unit:Broadcast()
 		end
 	end).

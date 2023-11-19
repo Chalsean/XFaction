@@ -15,16 +15,6 @@ function XFC.MythicKey:new()
 end
 --#endregion
 
---#region Initializers
-function XFC.MythicKey:Initialize()
-	if(not self:IsInitialized()) then
-		self:ParentInitialize()
-        self:Refresh()
-        self:IsInitialized(true)
-    end
-end
---#endregion
-
 --#region Print
 function XFC.MythicKey:Print()
     self:ParentPrint()
@@ -61,14 +51,14 @@ function XFC.MythicKey:SetDungeon(inDungeon)
 end
 
 function XFC.MythicKey:Serialize()
-    return self:HasDungeon() and self:GetDungeon():GetKey() .. ';' .. self:GetKey() or nil
+    return self:HasDungeon() and self:GetDungeon():GetKey() .. ';' .. self:GetID() or nil
 end
 
 function XFC.MythicKey:Deserialize(data)
-    local key = string.Split(data, ';')    
-    if(XFO.Dungeons:Contains(data[1])) then
-        self:SetDungeon(XFO.Dungeons:Get(data[1]))
+    local key = string.Split(data, ';') 
+    if(XFO.Dungeons:Contains(tonumber(key[1]))) then
+        self:SetDungeon(XFO.Dungeons:Get(tonumber(key[1])))
     end
-    self:SetKey(data[2])
+    self:SetID(key[2])
 end
 --#endregion
