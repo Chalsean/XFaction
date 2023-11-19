@@ -933,6 +933,21 @@ XF.Options = {
 	}
 }
 
+local function getKeysSortedByValue(tbl, sortFunction)
+	local keys = {}
+	for key in pairs(tbl) do
+		if(XF.Config.DataText.Guild.Enable[key]) then
+	  		table.insert(keys, key)
+		end
+	end
+  
+	table.sort(keys, function(a, b)
+	  return sortFunction(tonumber(tbl[a]), tonumber(tbl[b]))
+	end)
+  
+	return keys
+end
+
 function XF:ConfigInitialize()
 	-- Get AceDB up and running as early as possible, its not available until addon is loaded
 	XF.ConfigDB = LibStub('AceDB-3.0'):New('XFactionDB', XF.Defaults, true)
@@ -994,8 +1009,6 @@ function XF:ConfigInitialize()
 			end
 		end
 
-		XF:DataDumper('Install', XF.Config)
-
 		-- One time install logic
 		local version = Version:new()
 		if(XF.Config.InstallVersion ~= nil) then
@@ -1003,10 +1016,16 @@ function XF:ConfigInitialize()
 		else
 			version:SetKey('0.0.0')
 		end
-		if(version:IsNewer(XF.Version, true)) then	
+		if(version:IsNewer(XF.Version, true)) then
 			XF:Info(ObjectName, 'Performing new install')	
 			XF:Install()
 			XF.Config.InstallVersion = XF.Version:GetKey()
+		end
+
+		local order = getKeysSortedByValue(XF.Config.DataText.Guild.Order, function(a, b) return a < b end)
+		for i = 1, #order do
+			local key = order[i]
+			XF.Config.DataText.Guild.Order[key] = i
 		end
 	end).
 	catch(function (inErrorMessage)
