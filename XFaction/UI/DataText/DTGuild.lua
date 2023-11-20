@@ -162,7 +162,7 @@ local function PreSort()
 			end
 
 			if(unit:HasMythicKey() and unit:GetMythicKey():HasDungeon()) then
-				unitData.MythicKey = unit:GetMythicKey():GetDungeon():GetShortName() .. ' +' .. unit:GetMythicKey():GetID()
+				unitData.MythicKey = unit:GetMythicKey():GetDungeon():GetName() .. ' +' .. unit:GetMythicKey():GetID()
 			end
 
 			list[#list + 1] = unitData
@@ -207,6 +207,7 @@ function DTGuild:OnEnter(this)
 	local orderEnabled = {}
 	XF.Cache.DTGuildTotalEnabled = 0
 	XF.Cache.DTGuildTextEnabled = 0
+	XF:SortGuildColumns()
 	for column, isEnabled in pairs (XF.Config.DataText.Guild.Enable) do
 		if(isEnabled and XF.Config.DataText.Guild.Order[column] ~= 0 and XF.Config.DataText.Guild.Alignment[column] ~= nil) then
 			XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled + 1

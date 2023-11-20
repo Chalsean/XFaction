@@ -2,6 +2,29 @@ local XF, G = unpack(select(2, ...))
 local LogCategory = 'Config'
 
 --#region DTGuild
+local function GetKeysSortedByValue(tbl, sortFunction)
+	local keys = {}
+	for key in pairs(tbl) do
+		if(XF.Config.DataText.Guild.Enable[key]) then
+	  		table.insert(keys, key)
+		end
+	end
+  
+	table.sort(keys, function(a, b)
+	  return sortFunction(tonumber(tbl[a]), tonumber(tbl[b]))
+	end)
+  
+	return keys
+end
+
+function XF:SortGuildColumns()
+	local order = GetKeysSortedByValue(XF.Config.DataText.Guild.Order, function(a, b) return a < b end)
+	for i = 1, #order do
+		local key = order[i]
+		XF.Config.DataText.Guild.Order[key] = i
+	end
+end
+
 local function GuildOrderMenu()
 	if(XF.Cache.DTGuildTotalEnabled == nil) then XF.Cache.DTGuildTotalEnabled = 0 end
 	if(XF.Cache.DTGuildTotalEnabled == 0) then

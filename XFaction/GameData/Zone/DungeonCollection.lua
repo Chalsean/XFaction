@@ -1,7 +1,5 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
-local GetMapIDs = C_ChallengeMode.GetMapTable
-local GetMapInfo = C_ChallengeMode.GetMapUIInfo
 
 --#region Abbreviated Names
 local NameData = {
@@ -31,22 +29,14 @@ function XFC.DungeonCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-        local mapIDs = GetMapIDs()
-        for _, mapID in ipairs (mapIDs) do
-            local name = GetMapInfo(mapID)
-            
-            if(name ~= nil) then
-                local dungeon = XFC.Dungeon:new()
-                dungeon:Initialize()
-                dungeon:SetKey(mapID)
-                dungeon:SetID(mapID)
-                dungeon:SetName(name)
-                if(NameData[dungeon:GetID()] ~= nil) then
-                    dungeon:SetShortName(NameData[dungeon:GetID()])
-                end
-                self:Add(dungeon)
-                XF:Info(self:GetObjectName(), "Initialized dungeon [%d:%s:%s]", dungeon:GetID(), dungeon:GetShortName(), dungeon:GetName())
-            end
+        for id, name in pairs (NameData) do
+            local dungeon = XFC.Dungeon:new()
+            dungeon:Initialize()
+            dungeon:SetKey(id)
+            dungeon:SetID(id)
+            dungeon:SetName(name)
+            self:Add(dungeon)
+            XF:Info(self:GetObjectName(), "Initialized dungeon [%d:%s]", dungeon:GetID(), dungeon:GetName())
         end
 
 		self:IsInitialized(true)

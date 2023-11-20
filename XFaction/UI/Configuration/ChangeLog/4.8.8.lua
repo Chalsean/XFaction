@@ -1,7 +1,7 @@
 local XF, G = unpack(select(2, ...))
 local ObjectName = 'Config.ChangeLog'
 
-XF.ChangeLog['4.8.2'] = {
+XF.ChangeLog['4.8.8'] = {
     New = {
         order = 1,
         type = 'group',
@@ -27,6 +27,12 @@ XF.ChangeLog['4.8.2'] = {
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Updated to latest LibTourist libraries.',
+            },
+            Two = {
+                order = 2,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Fixed DTGuild getting indexing failures.',
             },
         },
     },		
