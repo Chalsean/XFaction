@@ -67,6 +67,7 @@ function XF:Init()
 	XF.Races = RaceCollection:new()
 	XF.Specs = SpecCollection:new()
 	XF.Zones = ZoneCollection:new(); XF.Zones:Initialize()	
+	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
 	XF.Player.GUID = UnitGUID('player')
 	XF.Player.Faction = XF.Factions:GetByName(UnitFactionGroup('player'))
 	

@@ -48,7 +48,6 @@ end
 function PlayerEvent:CallbackPlayerChanged(inEvent) 
     try(function ()
         XF.Player.Unit:Initialize(XF.Player.Unit:GetID())
-        --XF:Info(ObjectName, 'Updated player data based on %s event', inEvent)
         XF.Player.Unit:Broadcast()
     end).
     catch(function (inErrorMessage)

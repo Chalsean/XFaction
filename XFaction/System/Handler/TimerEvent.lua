@@ -5,6 +5,7 @@ local ServerTime = GetServerTime
 local GuildRosterEvent = C_GuildInfo.GuildRoster
 local InGuild = IsInGuild
 local GetGuildClubId = C_Club.GetGuildClubId
+local RequestMapsFromServer = C_MythicPlus.RequestMapInfo
 
 TimerEvent = Object:newChildConstructor()
 
@@ -127,6 +128,9 @@ end
 
 function TimerEvent:CallbackLoginPlayer()
 	try(function ()
+		-- Far as can tell does not fire event, so call and pray it loads before we query for the data
+		RequestMapsFromServer()
+
 		-- Need the player data to continue setup
 		local unitData = XF.Confederate:Pop()
 		unitData:Initialize()
@@ -152,6 +156,7 @@ function TimerEvent:CallbackLoginPlayer()
 				XFO.Items:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
+				XF.Player.Unit:Broadcast(XF.Enum.Message.DATA)
 			-- Otherwise send login message
 			else
 				XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
@@ -226,6 +231,7 @@ function TimerEvent:CallbackHeartbeat()
 	try(function ()
 		if(XF.Initialized and XF.Player.LastBroadcast < ServerTime() - XF.Settings.Player.Heartbeat) then
 			XF:Debug(ObjectName, 'Sending heartbeat')
+			XF.Player.Unit:Initialize(XF.Player.Unit:GetID())
 			XF.Player.Unit:Broadcast()
 		end
 	end).

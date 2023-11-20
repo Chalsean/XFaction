@@ -161,6 +161,10 @@ local function PreSort()
 				unitData.Zone = unit:GetZoneName()
 			end
 
+			if(unit:HasMythicKey() and unit:GetMythicKey():HasDungeon()) then
+				unitData.MythicKey = unit:GetMythicKey():GetDungeon():GetName() .. ' +' .. unit:GetMythicKey():GetID()
+			end
+
 			list[#list + 1] = unitData
 		end
 	end
@@ -199,28 +203,22 @@ function DTGuild:OnEnter(this)
 	if(not XF.Initialized) then return end
 	if(CombatLockdown()) then return end
 
-
-
 	--#region Configure Tooltip
 	local orderEnabled = {}
 	XF.Cache.DTGuildTotalEnabled = 0
 	XF.Cache.DTGuildTextEnabled = 0
-	for columnName, isEnabled in pairs (XF.Config.DataText.Guild.Enable) do
-		if(isEnabled) then
-			local orderKey = columnName .. 'Order'
-			local alignmentKey = columnName .. 'Alignment'
-
-			if(XF.Config.DataText.Guild.Order[orderKey] ~= 0) then
-				XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled + 1
-				local index = tostring(XF.Config.DataText.Guild.Order[orderKey])
-				orderEnabled[index] = {
-					ColumnName = columnName,
-					Alignment = string.upper(XF.Config.DataText.Guild.Alignment[alignmentKey]),
-					Icon = (columnName == 'Spec' or columnName == 'Profession' or columnName == 'Faction'),
-				}
-				if(not orderEnabled[index].Icon) then
-					XF.Cache.DTGuildTextEnabled = XF.Cache.DTGuildTextEnabled + 1
-				end
+	XF:SortGuildColumns()
+	for column, isEnabled in pairs (XF.Config.DataText.Guild.Enable) do
+		if(isEnabled and XF.Config.DataText.Guild.Order[column] ~= 0 and XF.Config.DataText.Guild.Alignment[column] ~= nil) then
+			XF.Cache.DTGuildTotalEnabled = XF.Cache.DTGuildTotalEnabled + 1
+			local index = tostring(XF.Config.DataText.Guild.Order[column])
+			orderEnabled[index] = {
+				ColumnName = column,
+				Alignment = string.upper(XF.Config.DataText.Guild.Alignment[column]),
+				Icon = (column == 'Spec' or column == 'Profession' or column == 'Faction'),
+			}
+			if(not orderEnabled[index].Icon) then
+				XF.Cache.DTGuildTextEnabled = XF.Cache.DTGuildTextEnabled + 1
 			end
 		end		
 	end
@@ -306,8 +304,24 @@ function DTGuild:OnEnter(this)
 	if(XF.Initialized) then
 
 		local list = PreSort()
-		sort(list, function(a, b) if(XF.DataText.Guild:IsReverseSort()) then return a[XF.DataText.Guild:GetSort()] > b[XF.DataText.Guild:GetSort()] 
-																	     else return a[XF.DataText.Guild:GetSort()] < b[XF.DataText.Guild:GetSort()] end end)
+		sort(list, function(a, b) 
+			if(XF.DataText.Guild:IsReverseSort()) then
+				if(a[XF.DataText.Guild:GetSort()] == nil) then 
+					return false
+				elseif(b[XF.DataText.Guild:GetSort()] == nil) then
+					return true
+				else
+					return a[XF.DataText.Guild:GetSort()] > b[XF.DataText.Guild:GetSort()]
+				end
+			else
+				if(b[XF.DataText.Guild:GetSort()] == nil) then
+					return false
+				elseif(a[XF.DataText.Guild:GetSort()] == nil) then
+					return true
+				else
+					return a[XF.DataText.Guild:GetSort()] < b[XF.DataText.Guild:GetSort()]
+				end
+			end end)
 
 		for _, unitData in ipairs (list) do
 			line = self.tooltip:AddLine()

@@ -993,6 +993,19 @@ function XF:ConfigInitialize()
 				end
 			end
 		end
+
+		-- One time install logic
+		local version = Version:new()
+		if(XF.Config.InstallVersion ~= nil) then
+			version:SetKey(XF.Config.InstallVersion)
+		else
+			version:SetKey('0.0.0')
+		end
+		if(version:IsNewer(XF.Version, true)) then
+			XF:Info(ObjectName, 'Performing new install')	
+			XF:Install()
+			XF.Config.InstallVersion = XF.Version:GetKey()
+		end
 	end).
 	catch(function (inErrorMessage)
 		XF:Debug(ObjectName, inErrorMessage)
@@ -1013,5 +1026,19 @@ function XF_ToggleOptions()
 	else
 		XF.Lib.ConfigDialog:Open(XF.Name)
 		XF.Lib.ConfigDialog:SelectGroup(XF.Name, 'General', 'About')
+	end
+end
+
+function XF:Install()
+	for key, value in pairs (XF.Config.DataText.Guild.Order) do
+		local newKey = key:gsub("Order", "")
+		XF.Config.DataText.Guild.Order[key] = nil
+		XF.Config.DataText.Guild.Order[newKey] = value			
+	end
+
+	for key, value in pairs (XF.Config.DataText.Guild.Alignment) do
+		local newKey = key:gsub("Alignment", "")
+		XF.Config.DataText.Guild.Alignment[key] = nil
+		XF.Config.DataText.Guild.Alignment[newKey] = value
 	end
 end
