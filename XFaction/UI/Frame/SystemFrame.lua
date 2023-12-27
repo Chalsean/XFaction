@@ -34,6 +34,8 @@ function SystemFrame:ChatFilter(inEvent, inMessage, ...)
         return true
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_JOIN_GUILD'])) then
         return true 
+    elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
+        return true
     end
     return false, inMessage, ...
 end
