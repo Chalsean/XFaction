@@ -1,10 +1,11 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'OrderEvent'
-local QueryMyOrdersFromServer = C_CraftingOrders.ListMyOrders
-local GetMyOrdersFromServer = C_CraftingOrders.GetMyOrders
+local ListMyOrders = C_CraftingOrders.ListMyOrders
+local GetMyOrders = C_CraftingOrders.GetMyOrders
 local GetRecipe = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility
-local GetProfessionForSkill = C_TradeSkillUI.GetProfessionNameForSkillLineAbility
+local IsItemCached = C_Item.IsItemDataCachedByID
+local RequestItemCached = C_Item.RequestLoadItemDataByID
 local CreateCallback = C_FunctionContainers.CreateCallback
 
 XFC.OrderEvent = Object:newChildConstructor()
@@ -34,6 +35,14 @@ function XFC.OrderEvent:Initialize()
                         callback = XF.Handlers.OrderEvent.CallbackCanRequestOrders, 
                         instance = false,
                         start = true})
+
+        XF.Events:Add({name = 'ItemLoaded', 
+                        event = 'ITEM_DATA_LOAD_RESULT', 
+                        callback = XF.Handlers.OrderEvent.CallbackItemLoaded, 
+                        instance = true,
+                        start = false})
+
+		self:IsInitialized(true)
 	end
 end
 --#endregion
@@ -49,7 +58,7 @@ end
 --#endregion
 
 --#region Callbacks
-function QueryMyOrders()
+function QueryOrders()
     local self = XF.Handlers.OrderEvent
     try(function ()        
         local request = {
@@ -65,58 +74,55 @@ function QueryMyOrders()
             offset = 0,
             callback = CreateCallback(function(inResultStatus, ...)
                 if(inResultStatus == Enum.CraftingOrderResult.Ok) then
-                    GetMyOrders()
+                    GetOrders()
                 end
             end),
         }
         -- CraftOrder API is unusual, you can't just call a function to get a listing
         -- You have to make a server request and provide a callback for when the server feels like handling your query
-        QueryMyOrdersFromServer(request)
+        ListMyOrders(request)
     end).
     catch(function (inErrorMessage)
         XF:Warn(ObjectName, inErrorMessage)
     end)
 end
 
-function GetMyOrders()
+function GetOrders()
     local self = XF.Handlers.OrderEvent
-    local myOrders = GetMyOrdersFromServer()
+    local myOrders = GetMyOrders()
     for _, myOrder in ipairs(myOrders) do
         local order = XFO.Orders:Pop()
         try(function ()
-            order:SetKey(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
-            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:GetKey())) then
+            order:SetKey(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)            
+            if(self:IsFirstQuery() or not XFO.Orders:Contains(order:GetKey())) then
                 order:SetType(myOrder.orderType)
                 order:SetID(myOrder.orderID)
                 order:SetCustomerUnit(XF.Player.Unit)
-                if(myOrder.crafterGuid ~= nil) then
-                    order:SetCrafterGUID(myOrder.crafterGuid)
-                    order:SetCrafterName(myOrder.crafterName)
+                order:SetQuality(myOrder.minQuality or 1)
+                order:SetSkillLineAbilityID(myOrder.skillLineAbilityID) 
+
+                -- Different crafting quality levels have different itemIDs
+                local recipe = GetRecipe(order:GetSkillLineAbilityID())
+                if(recipe.supportsQualities) then
+                    order:SetItemID(recipe.qualityItemIDs[order:GetQuality()])
+                else
+                    order:SetItemID(myOrder.itemID)
                 end
 
-                local professionName = GetProfessionForSkill(myOrder.skillLineAbilityID)
-                if(professionName ~= nil and type(professionName) == 'string') then
-                    local profession = XF.Professions:GetByName(professionName)
-                    if(profession ~= nil) then
-                        order:SetProfession(profession)
-                    end
+                if(IsItemCached(order:GetItemID())) then
+                    local item = Item:CreateFromItemID(order:GetItemID())
+                    order:SetItemLink(item:GetItemLink())
+                    order:SetItemIcon(item:GetItemIcon())
+                else
+                    XF:Debug(ObjectName, 'Requesting item from server: %d', order:GetItemID())
+                    XF.Events:Get('ItemLoaded'):Start()
+                    RequestItemCached(order:GetItemID())
                 end
 
-                local recipe = GetRecipe(myOrder.skillLineAbilityID)
-                order:SetRecipeID(recipe.recipeID)
-
-                if(recipe.supportsQualities and myOrder.minQuality > 0) then
-                    order:SetQuality(recipe.qualityIDs[myOrder.minQuality])
+                if(not self:IsFirstQuery() and (order:IsGuild() or order:IsPersonal())) then
+                    order:Broadcast()
                 end
-
-                -- This function is executed upon query of the player's orders, therefore we know the player is always the customer for IsPersonal
-                if(order:IsGuild() or order:IsPersonal()) then
-                    XFO.Orders:Add(order)
-                    if(not self:IsFirstQuery()) then
-                        order:Display()
-                        order:Broadcast()
-                    end
-                end                
+                XFO.Orders:Add(order)
             else
                 XFO.Orders:Push(order)
             end
@@ -136,18 +142,43 @@ end
 function XFC.OrderEvent:CallbackCraftOrder(inEvent) 
     local self = XF.Handlers.OrderEvent
     try(function ()
-        QueryMyOrders()
+        QueryOrders()
     end).
     catch(function (inErrorMessage)
-        XF:Warn(self:GetObjectName(), inErrorMessage)
+        XF:Warn(ObjectName, inErrorMessage)
     end)
 end
 
 function XFC.OrderEvent:CallbackCanRequestOrders(inEvent) 
     local self = XF.Handlers.OrderEvent
     try(function ()        
-        QueryMyOrders()
+        QueryOrders()
         XF.Events:Remove('CanRequestOrders')
+    end).
+    catch(function (inErrorMessage)
+        XF:Warn(ObjectName, inErrorMessage)
+    end)
+end
+
+function XFC.OrderEvent:CallbackItemLoaded(inEvent, inItemID, inLoadSuccessful) 
+    local self = XF.Handlers.OrderEvent
+    try(function ()
+        if(inLoadSuccessful) then
+            for _, order in XFO.Orders:Iterator() do
+                if(not order:HasItemLink() and order:GetItemID() == inItemID) then
+                    local item = Item:CreateFromItemID(order:GetItemID())
+                    order:SetItemLink(item:GetItemLink())
+                    order:SetItemIcon(item:GetItemIcon())
+                    if(not order:IsMyOrder()) then
+                        order:Display()
+                    end
+                end
+            end
+        end
+
+        if(not XFO.Orders:HasPending()) then
+            XF.Events:Get('ItemLoaded'):Stop()
+        end
     end).
     catch(function (inErrorMessage)
         XF:Warn(ObjectName, inErrorMessage)

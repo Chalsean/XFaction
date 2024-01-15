@@ -72,7 +72,6 @@ function SystemEvent:CallbackReloadUI()
         XF.Confederate:Backup()
         XF.Friends:Backup()
         XF.Links:Backup()
-        XFO.Items:Backup()
         XFO.Orders:Backup()
     end).
     catch(function (inErrorMessage)

@@ -267,8 +267,21 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     -- Process ORDER message
     if(inMessage:GetSubject() == XF.Enum.Message.ORDER) then
-        XFO.Orders:Decode(inMessage:GetData())
-        XFO.Orders:Display()
+        local order = nil
+        try(function ()
+            order = XFO.Orders:Pop()
+            order:Decode(inMessage:GetData())
+            if(not XFO.Orders:Contains(order:GetKey())) then
+                XFO.Orders:Add(order)
+                order:Display()
+            else
+                XFO.Orders:Push(order)
+            end
+        end).
+        catch(function (inErrorMessage)
+            XF:Warn(ObjectName, inErrorMessage)
+            XFO.Orders:Push(order)
+        end)
         return
     end
 

@@ -1,5 +1,6 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
+local GetRecipeResultItem = C_TooltipInfo.GetRecipeResultItem
 
 XFC.Order = Object:newChildConstructor()
 
@@ -7,25 +8,31 @@ XFC.Order = Object:newChildConstructor()
 function XFC.Order:new()
     local object = XFC.Order.parent.new(self)
     object.__name = 'Order'
-    object.item = nil
     object.customerUnit = nil
     object.profession = nil
     object.type = 0
     object.hasDisplayed = false
     object.hasCommunicated = false
     object.state = 0
+    object.recipeID = 0
+    object.quality = nil
+    object.crafterGUID = nil
+    object.crafterName = nil
     return object
 end
 
 function XFC.Order:Deconstructor()
     self:ParentDeconstructor()
-    self.item = nil
     self.customerUnit = nil
     self.profession = nil
     self.type = 0
     self.hasDisplayed = false
     self.hasCommunicated = false
     self.state = 0
+    self.recipeID = 0
+    self.quality = nil
+    self.crafterGUID = nil
+    self.crafterName = nil
 end
 --#endregion
 
@@ -33,29 +40,19 @@ end
 function XFC.Order:Print()
     self:ParentPrint()
     XF:Debug(self:GetObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XF:Debug(self:GetObjectName(), '  recipeID (' .. type(self.recipeID) .. '): ' .. tostring(self.recipeID))
+    XF:Debug(self:GetObjectName(), '  quality (' .. type(self.quality) .. '): ' .. tostring(self.quality))
+    XF:Debug(self:GetObjectName(), '  crafterGUID (' .. type(self.crafterGUID) .. '): ' .. tostring(self.crafterGUID))
+    XF:Debug(self:GetObjectName(), '  crafterName (' .. type(self.crafterName) .. '): ' .. tostring(self.crafterName))
     XF:Debug(self:GetObjectName(), '  hasDisplayed (' .. type(self.hasDisplayed) .. '): ' .. tostring(self.hasDisplayed))
     XF:Debug(self:GetObjectName(), '  hasCommunicated (' .. type(self.hasCommunicated) .. '): ' .. tostring(self.hasCommunicated))
     XF:Debug(self:GetObjectName(), '  state (' .. type(self.state) .. '): ' .. tostring(self.state))
     if(self:HasCustomerUnit()) then self:GetCustomerUnit():Print() end
     if(self:HasProfession()) then self:GetProfession():Print() end
-    if(self:HasItem()) then self:GetItem():Print() end
 end
 --#endregion
 
 --#region Accessors
-function XFC.Order:HasItem()
-    return self.item ~= nil
-end
-
-function XFC.Order:GetItem()
-    return self.item
-end
-
-function XFC.Order:SetItem(inItem)
-    assert(type(inItem) == 'table' and inItem.__name ~= nil and inItem.__name == 'Item', 'argument must be Item object')
-    self.item = inItem
-end
-
 function XFC.Order:HasCustomerUnit()
     return self.customerUnit ~= nil
 end
@@ -95,6 +92,46 @@ function XFC.Order:SetType(inType)
     self.type = inType
 end
 
+function XFC.Order:GetRecipeID()
+    return self.recipeID
+end
+
+function XFC.Order:SetRecipeID(inID)
+    assert(type(inID) == 'number')
+    self.recipeID = inID
+end
+
+function XFC.Order:GetQuality()
+    return self.quality
+end
+
+function XFC.Order:SetQuality(inQuality)
+    assert(type(inQuality) == 'number')
+    self.quality = inQuality
+end
+
+function XFC.Order:GetCrafterGUID()
+    return self.crafterGUID
+end
+
+function XFC.Order:SetCrafterGUID(inGUID)
+    assert(type(inGUID) == 'string')
+    self.crafterGUID = inGUID
+end
+
+function XFC.Order:IsPlayerCrafter()
+    return XF.Player.Unit:GetGUID() == self.crafterGUID
+end
+
+function XFC.Order:GetCrafterName()
+    return self.crafterName
+end
+
+function XFC.Order:SetCrafterName(inName)
+    assert(type(inName) == 'string')
+    self.crafterName = inName
+end
+
 function XFC.Order:IsPublic()
     return self.type == Enum.CraftingOrderType.Public
 end
@@ -105,22 +142,6 @@ end
 
 function XFC.Order:IsPersonal()
     return self.type == Enum.CraftingOrderType.Personal
-end
-
-function XFC.Order:HasDisplayed(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
-    if(inBoolean ~= nil) then
-        self.hasDisplayed = inBoolean
-    end    
-    return self.hasDisplayed
-end
-
-function XFC.Order:HasCommunicated(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
-    if(inBoolean ~= nil) then
-        self.hasCommunicated = inBoolean
-    end    
-    return self.hasCommunicated
 end
 
 function XFC.Order:GetState()
@@ -138,18 +159,13 @@ function XFC.Order:Encode(inBackup)
     assert(inBackup == nil or type(inBackup) == 'boolean', 'argument must be nil or boolean')
     local data = {}
     data.C = XF:SerializeUnitData(self:GetCustomerUnit())
-    data.I = self:GetItem():GetKey()
     data.K = self:GetKey()
     data.O = self:GetID()
     data.P = self:GetProfession():GetKey()
+    data.Q = self:GetQuality()
+    data.R = self:GetRecipeID()
     data.T = self:GetType()
-    if(inBackup ~= nil and inBackup == true) then
-        data.B = self:HasCommunicated() and 1 or 0
-        data.D = self:HasDisplayed() and 1 or 0
-        if(self:IsMyOrder()) then
-            data.D = 1
-        end
-    end
+    data.U = self:GetCrafterGUID()
     return data
 end
 
@@ -160,19 +176,13 @@ function XFC.Order:Decode(inData)
     self:SetType(inData.T)
     self:SetCustomerUnit(XF:DeserializeUnitData(inData.C))    
     self:SetProfession(XF.Professions:Get(inData.P))
-
-    if(inData.B ~= nil) then
-        self:HasCommunicated(inData.B == 1)
+    if(inData.Q ~= nil) then
+        self:SetQuality(inData.Q)
     end
-    if(inData.D ~= nil) then
-        self:HasDisplayed(inData.D == 1)
+    self:SetRecipeID(inData.R)
+    if(inData.U ~= nil) then
+        self:SetCrafterGUID(inData.U)
     end
-
-    if(not XFO.Items:Contains(inData.I) or not XFO.Items:Get(inData.I):IsCached()) then
-        XFO.Items:Cache(inData.I)
-    end
-    self:SetItem(XFO.Items:Get(inData.I))
-
     self:IsInitialized(true)
 end
 
@@ -188,7 +198,6 @@ function XFC.Order:Broadcast()
         message:SetSubject(XF.Enum.Message.ORDER)
         message:SetData(self:Encode())
         XF.Mailbox.Chat:Send(message)
-        self:HasCommunicated(true)
     end).
     catch(function(err)
         XF:Warn(self:GetObjectName(), err)
@@ -200,12 +209,10 @@ end
 
 function XFC.Order:Display()
     try(function()
-        if(self:HasDisplayed()) then return end
         if(not XF.Config.Chat.Crafting.Enable) then return end
         if(self:IsGuild() and not XF.Config.Chat.Crafting.GuildOrder) then return end
         if(self:IsPersonal() and not XF.Config.Chat.Crafting.PersonalOrder) then return end
-        if(self:IsPersonal() and not XF.Player.Unit:Equals(self:GetCustomerUnit())) then return end
-        if(self:HasItem() and not self:GetItem():IsCached()) then return end
+        if(self:IsPersonal() and not self:IsMyOrder() and not self:IsPlayerCrafter()) then return end
 
         local display = false
         if(not XF.Config.Chat.Crafting.Profession) then
@@ -218,11 +225,16 @@ function XFC.Order:Display()
 
         if(display) then
             XF.Frames.System:DisplayOrder(self)
-            self:HasDisplayed(true)
         end
     end).
     catch(function(err)
         XF:Warn(self:GetObjectName(), err)
     end)
+end
+
+function XFC.Order:GetLink()
+    local item = GetRecipeResultItem(self:GetRecipeID(), nil, nil, nil, self:GetQuality())
+    if(item ~= nil) then return item.hyperlink end
+    return nil
 end
 --#endregion
