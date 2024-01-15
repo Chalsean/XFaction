@@ -85,22 +85,14 @@ function GetMyOrders()
         local order = XFO.Orders:Pop()
         try(function ()
             order:SetKey(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
-            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and 
-               (self:IsFirstQuery() or not XFO.Orders:Contains(order:GetKey()))) then
+            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:GetKey())) then
                 order:SetType(myOrder.orderType)
                 order:SetID(myOrder.orderID)
                 order:SetCustomerUnit(XF.Player.Unit)
-
-                -- Different crafting quality levels have different itemIDs
-                local itemID = myOrder.itemID
-                local recipe = GetRecipe(myOrder.skillLineAbilityID)                
-                if(recipe.supportsQualities) then
-                    local quality = myOrder.minQuality > 0 and myOrder.minQuality or 1
-                    itemID = recipe.qualityItemIDs[quality]
+                if(myOrder.crafterGuid ~= nil) then
+                    order:SetCrafterGUID(myOrder.crafterGuid)
+                    order:SetCrafterName(myOrder.crafterName)
                 end
-
-                XFO.Items:Cache(itemID)
-                order:SetItem(XFO.Items:Get(itemID))
 
                 local professionName = GetProfessionForSkill(myOrder.skillLineAbilityID)
                 if(professionName ~= nil and type(professionName) == 'string') then
@@ -110,17 +102,21 @@ function GetMyOrders()
                     end
                 end
 
-                if(self:IsFirstQuery()) then
-                    order:HasCommunicated(true)
-                    order:HasDisplayed(true)
-                elseif(order:IsGuild()) then
-                    order:Display()
-                    order:Broadcast()
-                elseif(order:IsPersonal()) then
-                    order:HasDisplayed(true)
-                    order:Broadcast()                    
+                local recipe = GetRecipe(myOrder.skillLineAbilityID)
+                order:SetRecipeID(recipe.recipeID)
+
+                if(recipe.supportsQualities and myOrder.minQuality > 0) then
+                    order:SetQuality(recipe.qualityIDs[myOrder.minQuality])
                 end
-                XFO.Orders:Add(order)
+
+                -- This function is executed upon query of the player's orders, therefore we know the player is always the customer for IsPersonal
+                if(order:IsGuild() or order:IsPersonal()) then
+                    XFO.Orders:Add(order)
+                    if(not self:IsFirstQuery()) then
+                        order:Display()
+                        order:Broadcast()
+                    end
+                end                
             else
                 XFO.Orders:Push(order)
             end

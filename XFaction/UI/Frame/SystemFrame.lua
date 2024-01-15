@@ -34,6 +34,8 @@ function SystemFrame:ChatFilter(inEvent, inMessage, ...)
         return true
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_JOIN_GUILD'])) then
         return true 
+    elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
+        return true
     end
     return false, inMessage, ...
 end
@@ -86,9 +88,9 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
         end
     elseif(inType == XF.Enum.Message.ORDER) then
         if(inOrder:IsGuild()) then
-            text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:GetItem():GetFormattedLink())
+            text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:GetLink())
         else
-            text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:GetItem():GetFormattedLink())
+            text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:GetCrafterName(), inOrder:GetLink())
         end
     end
     SendSystemMessage(text) 

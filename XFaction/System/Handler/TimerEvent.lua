@@ -153,7 +153,6 @@ function TimerEvent:CallbackLoginPlayer()
 			if(XF.Cache.UIReload) then
 				XF.Friends:Restore()
 				XF.Links:Restore()
-				XFO.Items:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
 				XF.Player.Unit:Broadcast(XF.Enum.Message.DATA)
