@@ -5,6 +5,7 @@ local Deflate = XF.Lib.Deflate
 local ServerTime = GetServerTime
 local RaiderIO = _G.RaiderIO
 
+-- FIX: Move to Message class
 local function DeserializeMessage(inObject, inCompressedData)
 	local decompressed = Deflate:DecompressDeflate(inCompressedData)
 	local messageData = unpickle(decompressed)
@@ -121,11 +122,13 @@ function XF:DeserializeUnitData(inData)
 	return unit
 end
 
+-- FIX: Move to Chat class
 function XF:DecodeChatMessage(inEncodedMessage)
 	local decoded = Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
 	return DeserializeMessage(XF.Mailbox.Chat:Pop(), decoded)
 end
 
+-- FIX: Move to BNet class
 function XF:DecodeBNetMessage(inEncodedMessage)
 	local decoded = Deflate:DecodeForPrint(inEncodedMessage)
 	return DeserializeMessage(XF.Mailbox.BNet:Pop(), decoded)
