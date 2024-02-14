@@ -95,15 +95,11 @@ function XF:DeserializeUnitData(inData)
 		unit:SetSpec(XF.Specs:Get(deserializedData.V))
 	end
 
-	if(deserializedData.D ~= nil and XF.Zones:ContainsByID(tonumber(deserializedData.D))) then
-		unit:SetZone(XF.Zones:GetByID(tonumber(deserializedData.D)))
-	elseif(deserializedData.Z == nil) then
-		unit:SetZone(XF.Zones:Get('?'))
+	if(deserializedData.Z == nil) then
+		unit:SetZone(XFO.Zones:Get('?'))
 	else
-		if(not XF.Zones:Contains(deserializedData.Z)) then
-			XF.Zones:AddZone(deserializedData.Z)
-		end
-		unit:SetZone(XF.Zones:Get(deserializedData.Z))
+		XFO.Zones:Add(deserializedData.Z)
+		unit:SetZone(XFO.Zones:Get(deserializedData.Z))
 	end
 
 	if(deserializedData.Y ~= nil) then unit:SetPvPString(deserializedData.Y) end
