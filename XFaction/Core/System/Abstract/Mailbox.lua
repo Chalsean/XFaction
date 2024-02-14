@@ -3,11 +3,11 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Mailbox'
 local ServerTime = GetServerTime
 
-Mailbox = Factory:newChildConstructor()
+XFC.Mailbox = Factory:newChildConstructor()
 
 --#region Constructors
-function Mailbox:new()
-    local object = Mailbox.parent.new(self)
+function XFC.Mailbox:new()
+    local object = XFC.Mailbox.parent.new(self)
 	object.__name = ObjectName
 	object.objects = nil
     object.objectCount = 0   
@@ -15,7 +15,7 @@ function Mailbox:new()
 	return object
 end
 
-function Mailbox:newChildConstructor()
+function XFC.Mailbox:newChildConstructor()
     local object = Mailbox.parent.new(self)
     object.__name = ObjectName
     object.parent = self 
@@ -25,20 +25,20 @@ function Mailbox:newChildConstructor()
     return object
 end
 
-function Mailbox:NewObject()
-	return Message:new()
+function XFC.Mailbox:NewObject()
+	return XFC.Message:new()
 end
 --#endregion
 
 --#region Initializers
-function Mailbox:Initialize()
+function XFC.Mailbox:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self:IsInitialized(true)
 	end
 end
 
-function Mailbox:ParentInitialize()
+function XFC.Mailbox:ParentInitialize()
     self.packets = {}
     self.objects = {}
     self.checkedIn = {}
@@ -48,19 +48,19 @@ end
 --#endregion
 
 --#region Hash
-function Mailbox:ContainsPacket(inKey)
+function XFC.Mailbox:ContainsPacket(inKey)
 	assert(type(inKey) == 'string')
 	return self.packets[inKey] ~= nil
 end
 
-function Mailbox:Add(inKey)
+function XFC.Mailbox:Add(inKey)
 	assert(type(inKey) == 'string')
 	if(not self:Contains(inKey)) then
 		self.objects[inKey] = ServerTime()
 	end
 end
 
-function Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
+function XFC.Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
     assert(type(inMessageKey) == 'string')
     assert(type(inPacketNumber) == 'number')
     assert(type(inData) == 'string')
@@ -72,7 +72,7 @@ function Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
     self.packets[inMessageKey].Count = self.packets[inMessageKey].Count + 1
 end
 
-function Mailbox:RemovePacket(inKey)
+function XFC.Mailbox:RemovePacket(inKey)
 	assert(type(inKey) == 'string')
 	if(self:ContainsPacket(inKey)) then
 		self.packets[inKey] = nil
@@ -81,7 +81,7 @@ end
 --#endregion
 
 --#region Segmentation
-function Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
+function XFC.Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
 	assert(type(inEncodedData) == 'string')
 	local packets = {}
     local totalPackets = ceil(strlen(inEncodedData) / inPacketSize)
@@ -93,14 +93,14 @@ function Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
 	return packets
 end
 
-function Mailbox:HasAllPackets(inKey, inTotalPackets)
+function XFC.Mailbox:HasAllPackets(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     assert(type(inTotalPackets) == 'number')
     if(self.packets[inKey] == nil) then return false end
     return self.packets[inKey].Count == inTotalPackets
 end
 
-function Mailbox:RebuildMessage(inKey, inTotalPackets)
+function XFC.Mailbox:RebuildMessage(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     local message = ''
     -- Stitch the data back together again
@@ -113,7 +113,7 @@ end
 --#endregion
 
 --#region Receive
-function Mailbox:IsAddonTag(inTag)
+function XFC.Mailbox:IsAddonTag(inTag)
 	local addonTag = false
     for _, tag in pairs (XF.Enum.Tag) do
         if(inTag == tag) then
@@ -124,7 +124,7 @@ function Mailbox:IsAddonTag(inTag)
 	return addonTag
 end
 
-function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     XF:Trace(ObjectName, 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
 
@@ -135,11 +135,11 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     end
 
     if(inMessageTag == XF.Enum.Tag.LOCAL) then
-        XF.Metrics:Get(XF.Enum.Metric.ChannelReceive):Increment()
-        XF.Metrics:Get(XF.Enum.Metric.Messages):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.ChannelReceive):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.Messages):Increment()
     else
-        XF.Metrics:Get(XF.Enum.Metric.BNetReceive):Increment()
-        XF.Metrics:Get(XF.Enum.Metric.Messages):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.BNetReceive):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.Messages):Increment()
     end
 
     -- Ensure this message has not already been processed
@@ -149,7 +149,7 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     local messageData = string.sub(inEncodedMessage, 3 + XF.Settings.System.UIDLength, -1)
 
     -- Ignore if it's your own message or you've seen it before
-    if(XF.Mailbox.BNet:Contains(messageKey) or XF.Mailbox.Chat:Contains(messageKey)) then
+    if(XFO.BNet:Contains(messageKey) or XFO.Chat:Contains(messageKey)) then
         XF:Trace(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
         return
     end
@@ -169,22 +169,18 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     end
 end
 
-function Mailbox:Process(inMessage, inMessageTag)
+function XFC.Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
-    -- Is a newer version available?
-    if(not XF.Cache.NewVersionNotify and XF.Version:IsNewer(inMessage:GetVersion())) then
-        print(format(XF.Lib.Locale['NEW_VERSION'], XF.Title))
-        XF.Cache.NewVersionNotify = true
+    -- Deserialize unit data
+    if(inMessage:HasFrom() and inMessage:IsFromSerialized()) then
+        inMessage:SetFrom(XF:DeserializeUnitData(inMessage:GetData()))
     end
 
-    -- Deserialize unit data
-    if(inMessage:HasUnitData()) then
-        local unitData = XF:DeserializeUnitData(inMessage:GetData())
-        inMessage:SetData(unitData)
-        if(not unitData:HasVersion()) then
-            unitData:SetVersion(inMessage:GetVersion())
-        end
+    -- Is a newer version available?
+    if(not XF.Cache.NewVersionNotify and XFO.Version:IsNewer(inMessage:GetFrom():GetVersion())) then
+        print(format(XF.Lib.Locale['NEW_VERSION'], XF.Title))
+        XF.Cache.NewVersionNotify = true
     end
 
     self:Add(inMessage:GetKey())
@@ -194,20 +190,20 @@ function Mailbox:Process(inMessage, inMessageTag)
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessageTag == XF.Enum.Tag.LOCAL) then
         -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
-        local nodeCount = XF.Nodes:GetTargetCount(XF.Player.Target)
+        local nodeCount = XFO.Nodes:GetTargetCount(XF.Player.Target)
         if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
             local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
             if(math.random(1, 100) <= percentage) then
                 XF:Debug(ObjectName, 'Randomly selected, forwarding message')
                 inMessage:SetType(XF.Enum.Network.BNET)
-                XF.Mailbox.BNet:Send(inMessage)
+                XFO.BNet:Send(inMessage)
             else
                 XF:Debug(ObjectName, 'Not randomly selected, will not forward mesesage')
             end
         else
             XF:Debug(ObjectName, 'Node count under threshold, forwarding message')
             inMessage:SetType(XF.Enum.Network.BNET)
-            XF.Mailbox.BNet:Send(inMessage)
+            XFO.BNet:Send(inMessage)
         end
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
@@ -217,56 +213,32 @@ function Mailbox:Process(inMessage, inMessageTag)
         else
             inMessage:SetType(XF.Enum.Network.LOCAL)
         end
-        XF.Mailbox.Chat:Send(inMessage)
+        XFO.Chat:Send(inMessage)
     end
     --#endregion
 
     --#region Process message
     -- Process GCHAT message
     if(inMessage:GetSubject() == XF.Enum.Message.GCHAT) then
+        -- FIX: Move this check to ChatFrame
         if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:GetGuild())) then
-            XF.Frames.Chat:DisplayGuildChat(inMessage)
+            XFO.ChatFrame:DisplayGuildChat(inMessage)
         end
-        return
-    end
 
     -- Process ACHIEVEMENT message
-    if(inMessage:GetSubject() == XF.Enum.Message.ACHIEVEMENT) then
+    elseif(inMessage:GetSubject() == XF.Enum.Message.ACHIEVEMENT) then
         -- Local guild achievements should already be displayed by WoW client
+        -- FIX: Move this check to ChatFrame
         if(not XF.Player.Guild:Equals(inMessage:GetGuild())) then
-            XF.Frames.Chat:DisplayAchievement(inMessage)
+            XFO.ChatFrame:DisplayAchievement(inMessage)
         end
-        return
-    end
 
     -- Process LINK message
-    if(inMessage:GetSubject() == XF.Enum.Message.LINK) then
-        XF.Links:ProcessMessage(inMessage)
-        return
-    end
-
-    -- Process LOGOUT message
-    if(inMessage:GetSubject() == XF.Enum.Message.LOGOUT) then
-        if(XF.Player.Guild:Equals(inMessage:GetGuild())) then
-            -- In case we get a message before scan
-            if(not XF.Confederate:Contains(inMessage:GetFrom())) then
-                XF.Frames.System:DisplayLogoutMessage(inMessage)
-            else
-                if(XF.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
-                    XF.Frames.System:DisplayLogoutMessage(inMessage)
-                end
-                XF.Confederate:OfflineUnit(inMessage:GetFrom())
-            end
-        else
-            XF.Frames.System:DisplayLogoutMessage(inMessage)
-            XF.Confederate:Remove(inMessage:GetFrom())
-        end
-        XF.DataText.Guild:RefreshBroker()
-        return
-    end
+    elseif(inMessage:GetSubject() == XF.Enum.Message.LINK) then
+        XFO.Links:ProcessMessage(inMessage)
 
     -- Process ORDER message
-    if(inMessage:GetSubject() == XF.Enum.Message.ORDER) then
+    elseif(XFO.WoW:IsRetail() and inMessage:GetSubject() == XF.Enum.Message.ORDER) then
         local order = nil
         try(function ()
             order = XFO.Orders:Pop()
@@ -282,26 +254,41 @@ function Mailbox:Process(inMessage, inMessageTag)
             XF:Warn(ObjectName, inErrorMessage)
             XFO.Orders:Push(order)
         end)
-        return
     end
 
-    -- Process DATA/LOGIN message
-    if(inMessage:HasUnitData()) then
-        local unitData = inMessage:GetData()
-        if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and 
-          (not XF.Confederate:Contains(unitData:GetKey()) or XF.Confederate:Get(unitData:GetKey()):IsOffline())) then
-            XF.Frames.System:DisplayLoginMessage(inMessage)
+    -- Process LOGOUT message
+    if(inMessage:GetSubject() == XF.Enum.Message.LOGOUT) then
+        if(XF.Player.Guild:Equals(inMessage:GetGuild())) then
+            -- In case we get a message before scan
+            if(not XFO.Confederate:Contains(inMessage:GetFrom())) then
+                XFO.SystemFrame:DisplayLogoutMessage(inMessage)
+            else
+                if(XFO.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
+                    XFO.SystemFrame:DisplayLogoutMessage(inMessage)
+                end
+                XFO.Confederate:OfflineUnit(inMessage:GetFrom())
+            end
+        else
+            XFO.SystemFrame:DisplayLogoutMessage(inMessage)
+            XFO.Confederate:Remove(inMessage:GetFrom())
         end
-        XF.Confederate:Add(unitData)
-        XF:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:GetUnitName())
-        XF.DataText.Guild:RefreshBroker()
+    else
+        -- Process LOGIN message
+        if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and (not XFO.Confederate:Contains(unitData:GetKey()) or XFO.Confederate:Get(unitData:GetKey()):IsOffline())) then
+            XFO.SystemFrame:DisplayLoginMessage(inMessage)
+        end
+        -- All data packets have unit information, so just refresh
+        XFO.Confederate:Add(inMessage:GetFrom())
+        XF:Info(ObjectName, 'Updated unit [%s] information based on message received', inMessage:GetFrom():GetUnitName())
     end
+
+    XFO.DTGuild:RefreshBroker()
     --#endregion
 end
 --#endregion
 
 --#region Janitorial
-function Mailbox:Purge(inEpochTime)
+function XFC.Mailbox:Purge(inEpochTime)
 	assert(type(inEpochTime) == 'number')
 	for key, receivedTime in self:Iterator() do
 		if(receivedTime < inEpochTime) then

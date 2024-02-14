@@ -1,7 +1,7 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'MetricCollection'
-local ServerTime = C_DateAndTime.GetServerTimeLocal
+local GetCurrentTime = C_DateAndTime.GetServerTimeLocal
 local CalendarTime = C_DateAndTime.GetCurrentCalendarTime
 
 XFC.MetricCollection = ObjectCollection:newChildConstructor()
@@ -26,7 +26,7 @@ function XFC.MetricCollection:Initialize()
 			metric:SetName(metricName)
 			self:Add(metric)
 		end
-		self:SetStartTime(ServerTime())
+		self:SetStartTime(GetCurrentTime())
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

@@ -1,10 +1,11 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Chat'
 
-Chat = Mailbox:newChildConstructor()
+XFC.Chat = XFC.Mailbox:newChildConstructor()
 
 --#region Constructors
-function Chat:new()
+function XFC.Chat:new()
     local object = Chat.parent.new(self)
     object.__name = ObjectName
     return object
@@ -12,13 +13,13 @@ end
 --#endregion
 
 --#region Initializers
-function Chat:Initialize()
+function XFC.Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XF.Enum.Tag.LOCAL = XF.Confederate:GetKey() .. 'XF'						
-        XF.Events:Add({name = 'ChatMsg', 
+        XFO.Events:Add({name = 'ChatMsg', 
                         event = 'CHAT_MSG_ADDON', 
-                        callback = XF.Mailbox.Chat.ChatReceive, 
+                        callback = XFO.Chat.ChatReceive, 
                         instance = true})
         self:IsInitialized(true)
     end
@@ -27,7 +28,7 @@ end
 --#endregion
 
 --#region Send
-function Chat:Send(inMessage)
+function XFC.Chat:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(not XF.Settings.System.Roster and inMessage:GetSubject() == XF.Enum.Message.DATA) then return end
 
@@ -36,7 +37,7 @@ function Chat:Send(inMessage)
 
     --#region BNet messaging for BNET/BROADCAST types
     if(inMessage:GetType() == XF.Enum.Network.BROADCAST or inMessage:GetType() == XF.Enum.Network.BNET) then
-        XF.Mailbox.BNet:Send(inMessage)
+        XFO.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
         if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XF.Enum.Network.BNET) then
             inMessage:SetType(XF.Enum.Network.BROADCAST)
@@ -59,9 +60,9 @@ function Chat:Send(inMessage)
     -- If only guild on target, broadcast to GUILD
     local channelName, channelID
     -- Otherwise broadcast to custom channel
-    if(XF.Channels:HasLocalChannel()) then
+    if(XFO.Channels:HasLocalChannel()) then
         channelName = 'CHANNEL'
-        channelID = XF.Channels:GetLocalChannel():GetID()
+        channelID = XFO.Channels:GetLocalChannel():GetID()
     else
         channelName = 'GUILD'
         channelID = nil
@@ -69,20 +70,21 @@ function Chat:Send(inMessage)
     for index, packet in ipairs (packets) do
         XF:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:GetKey(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
         XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
-        XF.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
     --#endregion
 end
 --#endregion
 
 --#region Receive
-function Chat:DecodeMessage(inEncodedMessage)
+function XFC.Chat:DecodeMessage(inEncodedMessage)
     return XF:DecodeChatMessage(inEncodedMessage)
 end
 
-function Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function XFC.Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+    local self = XFO.Chat
     try(function ()
-        XF.Mailbox.Chat:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+        self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end).
     catch(function (inErrorMessage)
         XF:Warn(ObjectName, inErrorMessage)

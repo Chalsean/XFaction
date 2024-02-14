@@ -1,6 +1,7 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Message'
-local ServerTime = GetServerTime
+local GetCurrentTime = GetServerTime
 
 Message = Object:newChildConstructor()
 
@@ -15,15 +16,11 @@ function Message:new()
     object.epochTime = nil
     object.targets = nil
     object.targetCount = 0
-    object.unitData = nil
     object.data = nil
     object.initialized = false
     object.packetNumber = 1
     object.totalPackets = 1
     object.version = nil
-    object.unitName = nil
-    object.mainName = nil
-    object.guild = nil
     return object
 end
 --#endregion
@@ -33,10 +30,9 @@ function Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.targets = {}
-        self:SetFrom(XF.Player.Unit:GetGUID())
-        self:SetTimeStamp(ServerTime())
+        self:SetFrom(XF.Player.Unit)
+        self:SetTimeStamp(GetCurrentTime())
         self:SetAllTargets()
-        self:SetVersion(XF.Version)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -51,14 +47,9 @@ function Message:Deconstructor()
     self.epochTime = nil
     self.targets = nil
     self.targetCount = 0
-    self.unitData = nil
     self.data = nil
     self.packetNumber = 1
     self.totalPackets = 1
-    self.version = nil
-    self.unitName = nil
-    self.mainName = nil
-    self.guild = nil
     self:Initialize()
 end
 --#endregion
@@ -67,16 +58,15 @@ end
 function Message:Print()
     self:ParentPrint()
     XF:Debug(ObjectName, '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
-    XF:Debug(ObjectName, '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
     XF:Debug(ObjectName, '  packetNumber (' .. type(self.packetNumber) .. '): ' .. tostring(self.packetNumber))
     XF:Debug(ObjectName, '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
     XF:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
-    XF:Debug(ObjectName, '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
-    XF:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
     XF:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
-    if(self:HasVersion()) then self:GetVersion():Print() end
+    if(self:HasFrom() and not self:IsFromSerialized()) then
+        self:GetFrom():Print()
+    end
 end
 --#endregion
 
@@ -90,13 +80,21 @@ function Message:SetTo(inTo)
     self.to = inTo
 end
 
+function Message:HasFrom()
+    return self.from ~= nil
+end
+
 function Message:GetFrom()
     return self.from
 end
 
 function Message:SetFrom(inFrom)
-    assert(type(inFrom) == 'string')
+    -- Depending upon moment in execution, From may be string or Unit object
     self.from = inFrom
+end
+
+function Message:IsFromSerialized()
+    return type(self.from) == 'string'
 end
 
 function Message:GetType()
@@ -126,14 +124,6 @@ function Message:SetTimeStamp(inEpochTime)
     self.epochTime = inEpochTime
 end
 
-function Message:GetUnitData()
-    return self.unitData
-end
-
-function Message:SetUnitData(inData)
-    self.unitData = inData
-end
-
 function Message:GetData()
     return self.data
 end
@@ -160,61 +150,8 @@ function Message:SetTotalPackets(inTotalPackets)
     self.totalPackets = inTotalPackets
 end
 
-function Message:HasUnitData()
-    return self:GetSubject() == XF.Enum.Message.DATA or 
-           self:GetSubject() == XF.Enum.Message.LOGIN
-end
-
-function Message:HasVersion()
-    return self.version ~= nil
-end
-
-function Message:GetVersion()
-    return self.version
-end
-
-function Message:SetVersion(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')
-    self.version = inVersion
-end
-
 function Message:IsMyMessage()
-    return XF.Player.Unit:GetGUID() == self:GetFrom()
-end
-
-function Message:GetUnitName()
-    return self.unitName
-end
-
-function Message:SetUnitName(inUnitName)
-    assert(type(inUnitName) == 'string')
-    self.unitName = inUnitName
-end
-
-function Message:HasMainName()
-    return self.mainName ~= nil
-end
-
-function Message:GetMainName()
-    return self.mainName
-end
-
-function Message:SetMainName(inMainName)
-    assert(type(inMainName) == 'string')
-    self.mainName = inMainName
-end
-
-function Message:HasGuild()
-    return self.guild ~= nil
-end
-
-function Message:GetGuild()
-    return self.guild
-end
-
-function Message:SetGuild(inGuild)
-    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
-    self.guild = inGuild
+    return self:GetFrom():Equals(XF.Player.Unit)
 end
 --#endregion
 
