@@ -58,15 +58,3 @@ local function DeserializeMessage(inObject, inCompressedData)
 	inObject:SetData(messageData.D)
 	return inObject
 end
-
--- FIX: Move to Chat class
-function XF:DecodeChatMessage(inEncodedMessage)
-	local decoded = Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
-	return DeserializeMessage(XF.Mailbox.Chat:Pop(), decoded)
-end
-
--- FIX: Move to BNet class
-function XF:DecodeBNetMessage(inEncodedMessage)
-	local decoded = Deflate:DecodeForPrint(inEncodedMessage)
-	return DeserializeMessage(XF.Mailbox.BNet:Pop(), decoded)
-end

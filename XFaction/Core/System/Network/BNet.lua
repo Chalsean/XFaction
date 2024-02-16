@@ -59,8 +59,7 @@ function XFC.BNet:Send(inMessage)
 
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
-    local compressed = inMessage:Compress()
-    local messageData = Deflate:EncodeForPrint(compressed)
+    local messageData = inMessage:BNetEncode()
     local packets = self:SegmentMessage(messageData, inMessage:GetKey(), XF.Settings.Network.BNet.PacketSize)
     self:Add(inMessage:GetKey())
 
@@ -83,8 +82,18 @@ end
 --#endregion
 
 --#region Receive
-function XFC.BNet:DecodeMessage(inEncodedMessage)
-    return XF:DecodeBNetMessage(inEncodedMessage)
+function XFC.BNet:DecodeMessage(inData)
+    local message = nil
+    try(function()
+        message = self:Pop()
+        message:Initialize()
+        message:Decode(inData, XF.Enum.Network.BNET)
+    end).
+    catch(function(err)
+        self:Push(message)
+        throw(err)
+    end)
+    return message
 end
 
 function XFC.BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)

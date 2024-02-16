@@ -53,22 +53,21 @@ function XFC.Chat:Send(inMessage)
     --#endregion
 
     --#region Chat channel messaging for BROADCAST/LOCAL types
-    local compressed = inMessage:Compress()
-    local messageData = Deflate:EncodeForWoWAddonChannel(compressed)
-    local packets = self:SegmentMessage(messageData, inMessage:GetKey(), XF.Settings.Network.Chat.PacketSize)
+    -- Add to mailbox so we can ignore our own messages upon receipt 
     self:Add(inMessage:GetKey())
-
-    -- If only guild on target, broadcast to GUILD
+    
     local channelName, channelID
-    -- Otherwise broadcast to custom channel
+    -- Broadcast to custom channel if setup
     if(XFO.Channels:HasLocalChannel()) then
         channelName = 'CHANNEL'
         channelID = XFO.Channels:GetLocalChannel():GetID()
+    -- Otherwise broadcast to GUILD
     else
         channelName = 'GUILD'
         channelID = nil
     end
-    for index, packet in ipairs (packets) do
+
+    for index, packet in ipairs (inMessage:Segment()) do
         XF:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:GetKey(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
         XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
         XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
@@ -78,8 +77,18 @@ end
 --#endregion
 
 --#region Receive
-function XFC.Chat:DecodeMessage(inEncodedMessage)
-    return XF:DecodeChatMessage(inEncodedMessage)
+function XFC.Chat:DecodeMessage(inData)
+    local message = nil
+    try(function()
+        message = self:Pop()
+        message:Initialize()
+        message:Decode(inData)
+    end).
+    catch(function(err)
+        self:Push(message)
+        throw(err)
+    end)
+    return message
 end
 
 function XFC.Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)

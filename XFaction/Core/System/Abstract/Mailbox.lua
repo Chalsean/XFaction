@@ -10,7 +10,7 @@ function XFC.Mailbox:new()
     local object = XFC.Mailbox.parent.new(self)
 	object.__name = ObjectName
 	object.objects = nil
-    object.objectCount = 0   
+    object.objectCount = 0
     object.packets = nil
 	return object
 end
@@ -81,18 +81,6 @@ end
 --#endregion
 
 --#region Segmentation
-function XFC.Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
-	assert(type(inEncodedData) == 'string')
-	local packets = {}
-    local totalPackets = ceil(strlen(inEncodedData) / inPacketSize)
-    for i = 1, totalPackets do
-        local segment = string.sub(inEncodedData, inPacketSize * (i - 1) + 1, inPacketSize * i)
-        segment = tostring(i) .. tostring(totalPackets) .. inMessageKey .. segment
-        packets[#packets + 1] = segment
-    end
-	return packets
-end
-
 function XFC.Mailbox:HasAllPackets(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     assert(type(inTotalPackets) == 'number')
@@ -150,7 +138,7 @@ function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inS
 
     -- Ignore if it's your own message or you've seen it before
     if(XFO.BNet:Contains(messageKey) or XFO.Chat:Contains(messageKey)) then
-        XF:Trace(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
+        XF:Trace(ObjectName, 'Ignoring segment of duplicate message [%s]', messageKey)
         return
     end
     --#endregion
@@ -158,13 +146,14 @@ function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inS
     self:AddPacket(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
         XF:Debug(ObjectName, 'Received all packets for message [%s]', messageKey)
-        local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-        local fullMessage = self:DecodeMessage(encodedMessage)
+        local encoded = self:RebuildMessage(messageKey, totalPackets)
+        local message = self:DecodeMessage(encoded)        
         try(function ()
-            self:Process(fullMessage, inMessageTag)
+            message:SetKey(messageKey)
+            self:Process(message, inMessageTag)
         end).
         finally(function ()
-            self:Push(fullMessage)
+            self:Push(message)
         end)
     end
 end
@@ -173,9 +162,16 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
     -- Deserialize unit data
-    if(inMessage:HasFrom() and inMessage:IsFromSerialized()) then
-        inMessage:SetFrom(XF:DeserializeUnitData(inMessage:GetData()))
-    end
+    local unit = nil
+    try(function()
+        unit = XFO.Confederate:Pop()
+        unit:Deserialize(inMessage:GetFrom())
+        inMessage:SetFrom(unit)
+    end).
+    catch(function(err)
+        XFO.Confederate:Push(unit)
+        throw(err)
+    end)
 
     -- Is a newer version available?
     if(not XF.Cache.NewVersionNotify and XFO.Version:IsNewer(inMessage:GetFrom():GetVersion())) then

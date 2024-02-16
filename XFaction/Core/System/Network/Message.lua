@@ -16,9 +16,7 @@ function Message:new()
     object.epochTime = nil
     object.targets = nil
     object.targetCount = 0
-    object.data = nil
     object.initialized = false
-    object.version = nil
     return object
 end
 --#endregion
@@ -55,6 +53,7 @@ function Message:Print()
     self:ParentPrint()
     XF:Debug(ObjectName, '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
     XF:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XF:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XF:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
@@ -232,8 +231,31 @@ function Message:Deserialize(inData)
 	self:SetType(data.Y)
 end
 
-function Message:Compress()
-    local serialized = self:Serialize()
-	return compressed = Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
+function Message:Encode(inProtocol)
+    local compressed = Deflate:CompressDeflate(self:Serialize(), {level = XF.Settings.Network.CompressionLevel})
+    if(inProtocol == XF.Enum.Network.BNET) then
+        return Deflate:EncodeForPrint(compressed)
+    end
+    return Deflate:EncodeForWoWAddonChannel(compressed)
+end
+
+function Message:Decode(inData, inProtocol)
+	if(inProtocol == XF.Enum.Network.BNET) then
+        self:Deserialize(Deflate:DecodeForPrint(inData))
+    else
+        self:Deserialize(Deflate:DecodeForWoWAddonChannel(inData))
+    end
+end
+
+function Message:Segment(inProtocol)
+	local packets = {}
+    local encoded = self:Encode(inProtocol)
+    local totalPackets = ceil(strlen(encoded) / XF.Settings.Network.Chat.PacketSize)
+    for i = 1, totalPackets do
+        local segment = string.sub(encoded, XF.Settings.Network.Chat.PacketSize * (i - 1) + 1, XF.Settings.Network.Chat.PacketSize * i)
+        segment = tostring(i) .. tostring(totalPackets) .. self:GetKey() .. segment
+        packets[#packets + 1] = segment
+    end
+	return packets
 end
 --#endregion
