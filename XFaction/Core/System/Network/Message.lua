@@ -18,8 +18,6 @@ function Message:new()
     object.targetCount = 0
     object.data = nil
     object.initialized = false
-    object.packetNumber = 1
-    object.totalPackets = 1
     object.version = nil
     return object
 end
@@ -48,8 +46,6 @@ function Message:Deconstructor()
     self.targets = nil
     self.targetCount = 0
     self.data = nil
-    self.packetNumber = 1
-    self.totalPackets = 1
     self:Initialize()
 end
 --#endregion
@@ -58,8 +54,6 @@ end
 function Message:Print()
     self:ParentPrint()
     XF:Debug(ObjectName, '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
-    XF:Debug(ObjectName, '  packetNumber (' .. type(self.packetNumber) .. '): ' .. tostring(self.packetNumber))
-    XF:Debug(ObjectName, '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
     XF:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
@@ -132,24 +126,6 @@ function Message:SetData(inData)
     self.data = inData
 end
 
-function Message:GetPacketNumber()
-    return self.packetNumber
-end
-
-function Message:SetPacketNumber(inPacketNumber)
-    assert(type(inPacketNumber) == 'number')
-    self.packetNumber = inPacketNumber
-end
-
-function Message:GetTotalPackets()
-    return self.totalPackets
-end
-
-function Message:SetTotalPackets(inTotalPackets)
-    assert(type(inTotalPackets) == 'number')
-    self.totalPackets = inTotalPackets
-end
-
 function Message:IsMyMessage()
     return self:GetFrom():Equals(XF.Player.Unit)
 end
@@ -218,5 +194,46 @@ function Message:SetRemainingTargets(inTargetString)
             end
         end
     end
+end
+--#endregion
+
+--#region Network
+-- I'm sure there's a cooler way of doing this but this works for me :)
+function Message:Serialize()
+	local data = {}
+
+	data.F = self:GetFrom():Serialize()
+	data.R = self:GetRemainingTargets()
+    data.S = self:GetSubject()
+    data.T = self:GetTo()	
+	data.Y = self:GetType()
+
+	return pickle(data)
+end
+
+function Message:Deserialize(inData)
+	local decompressed = Deflate:DecompressDeflate(inData)
+	local data = unpickle(decompressed)
+	
+	local unit = nil
+	try(function()
+		unit = XFO.Confederate:Pop()
+		unit:Deserialize(data.F)
+		self:SetFrom(unit)
+	end).
+	catch(function(inErrorMessage)
+		XFO.Confederate:Push(unit)
+        throw(inErrorMessage)
+	end)
+
+	self:SetRemainingTargets(data.R)
+    self:SetSubject(data.S)
+    self:SetTo(data.T)	
+	self:SetType(data.Y)
+end
+
+function Message:Compress()
+    local serialized = self:Serialize()
+	return compressed = Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
 end
 --#endregion

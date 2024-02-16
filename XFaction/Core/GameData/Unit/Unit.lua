@@ -18,7 +18,6 @@ function Unit:new()
     local object = Unit.parent.new(self)
     object.__name = ObjectName
 
-    -- Note player ID is unique to a guild, not globally
     object.guid = nil
     object.unitName = nil    
     object.rank = nil
@@ -38,7 +37,6 @@ function Unit:new()
     object.isAlt = false
     object.mainName = nil
     object.isPlayer = false
-    object.faction = nil
     object.team = nil
     object.guild = nil
     object.version = nil
@@ -74,7 +72,6 @@ function Unit:Deconstructor()
     self.isAlt = false
     self.mainName = nil
     self.isPlayer = false
-    self.faction = nil
     self.team = nil
     self.guild = nil
     self.version = nil
@@ -135,20 +132,10 @@ function Unit:Initialize(inMemberID)
     end
     self:SetLastLogin(lastLogin)
 
-    if(self:IsPlayer()) then
-        self:SetFaction(XF.Player.Faction)
-    elseif(unitData.faction == Enum.PvPFaction.Alliance) then
-        self:SetFaction(XF.Factions:GetByName('Alliance'))
-    elseif(unitData.faction == Enum.PvPFaction.Horde) then
-        self:SetFaction(XF.Factions:GetByName('Horde'))
-    else
-        self:SetFaction(XF.Factions:GetByName('Neutral'))
-    end
-
     if(unitData.zone and XF.Zones:Contains(unitData.zone)) then
         self:SetZone(XF.Zones:Get(unitData.zone))
     elseif(unitData.zone and strlen(unitData.zone)) then
-        XF.Zones:AddZone(unitData.zone)
+        XFO.Zones:AddZone(unitData.zone)
         self:SetZone(XF.Zones:Get(unitData.zone))
     else
         self:SetZone(XF.Zones:Get('?'))
@@ -377,15 +364,6 @@ function Unit:SetNote(inNote)
     end)
 end
 
-function Unit:GetFaction()
-    return self.faction
-end
-
-function Unit:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be a Faction object')
-    self.faction = inFaction
-end
-
 function Unit:GetPresence()
     return self.presence
 end
@@ -465,10 +443,6 @@ function Unit:SetRaiderIO(inRaiderIO)
     self.raiderIO = inRaiderIO
 end
 
-function Unit:HasRace()
-    return self.race ~= nil
-end
-
 function Unit:GetRace()
     return self.race
 end
@@ -485,19 +459,6 @@ end
 function Unit:SetTimeStamp(inTimeStamp)
     assert(type(inTimeStamp) == 'number')
     self.timeStamp = inTimeStamp
-end
-
-function Unit:HasClass()
-    return self.class ~= nil
-end
-
-function Unit:GetClass()
-    return self.class
-end
-
-function Unit:SetClass(inClass)
-    assert(type(inClass) == 'table' and inClass.__name == 'Class', 'argument must be Class object')
-    self.class = inClass
 end
 
 function Unit:HasSpec()
@@ -686,6 +647,75 @@ function Unit:Broadcast(inSubject)
         XF.Mailbox.Chat:Push(message)
     end)
 end
+
+function Unit:Serialize()
+	local data = {}
+	
+	data.A = self:GetAchievementPoints()
+    data.C = self:GetRank()
+    data.G = self:GetGuild():GetKey()
+    data.I = self:GetItemLevel()
+    data.K = self:GetGUID()	
+    data.L = self:GetLevel()
+    data.M = self:HasMythicKey() and self:GetMythicKey():Serialize() or nil
+    data.N = self:GetNote()
+    data.P = self:GetPresence()
+    data.R = self:GetRace():GetKey()
+    data.S = self:GetSpec():GetKey()
+    data.U = self:GetUnitName()
+    data.V = self:GetVersion():GetKey()
+    data.W = self:HasProfession1() and self:GetProfession1():GetKey() or nil
+    data.X = self:HasProfession2() and self:GetProfession2():GetKey() or nil
+    data.Y = self:GetPvP()
+    data.Z = self:GetZone():GetKey()
+
+	return pickle(data)
+end
+
+function Unit:Deserialize(inSerialized)
+	local deserialized = unpickle(inSerialized)
+
+    self:IsRunningAddon(true)
+    self:IsOnline(true)
+
+    self:SetAchievementPoints(deserialized.A)
+    self:SetRank(deserialized.C)
+    self:SetGuild(XFO.Guilds:Get(deserialized.G))
+    self:SetItemLevel(deserialized.I)
+    self:SetGUID(deserialized.K)
+    self:SetKey(deserialized.K)
+    self:SetLevel(deserialized.L)
+
+    if(deserializedData.M ~= nil) then
+		local key = XFC.MythicKey:new(); key:Initialize()
+		key:Deserialize(deserializedData.M)
+		self:SetMythicKey(key)
+	end
+
+    self:SetNote(deserialized.N)
+    self:SetPresence(tonumber(deserialized.P))
+	self:SetRace(XFO.Races:Get(deserialized.R))
+    self:SetSpec(XFO.Specs:Get(deserialized.V))
+    self:SetUnitName(deserialized.U)
+
+    local unitNameParts = string.Split(deserialized.U, '-')
+	self:SetName(unitNameParts[1])  
+
+    XFO.Versions:Add(deserialized.V)
+    self:SetVersion(XFO.Versions:Get(deserialized.V))
+
+	if(deserialized.W ~= nil) then
+		self:SetProfession1(XFO.Professions:Get(deserialized.W))
+	end
+	if(deserialized.X ~= nil) then
+		self:SetProfession2(XFO.Professions:Get(deserialized.X))
+	end
+    
+    self:SetPvPString(deserialized.Y)
+
+    XFO.Zones:Add(deserialized.Z)
+    self:SetZone(XFO.Zones:Get(deserialized.Z))
+end
 --#endregion
 
 --#region Operators
@@ -697,7 +727,6 @@ function Unit:Equals(inUnit)
     if(self:GetKey() ~= inUnit:GetKey()) then return false end
     if(self:GetGUID() ~= inUnit:GetGUID()) then return false end
     if(self:GetPresence() ~= inUnit:GetPresence()) then return false end
-    if(self:GetID() ~= inUnit:GetID()) then return false end
     if(self:GetLevel() ~= inUnit:GetLevel()) then return false end
     if(self:GetZone() ~= inUnit:GetZone()) then return false end
     if(self:GetNote() ~= inUnit:GetNote()) then return false end

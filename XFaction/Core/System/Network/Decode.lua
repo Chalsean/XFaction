@@ -11,9 +11,19 @@ local function DeserializeMessage(inObject, inCompressedData)
 	local messageData = unpickle(decompressed)
 	inObject:Initialize()
 
+	local unit = nil
+	try(function()
+		unit = XFO.Confederate:Pop()
+		unit:Deserialize(messageData.F)
+		inObject:SetFrom(unit)
+	end).
+	catch(function(inErrorMessage)
+		XF:Warn(ObjectName, inErrorMessage)
+		XFO.Confederate:Push(unit)
+	end)
+
 	if(messageData.K ~= nil) then inObject:SetKey(messageData.K)	end
 	if(messageData.T ~= nil) then inObject:SetTo(messageData.T)	end
-	if(messageData.F ~= nil) then inObject:SetFrom(messageData.F)	end
 	if(messageData.S ~= nil) then inObject:SetSubject(messageData.S) end
 	if(messageData.Y ~= nil) then inObject:SetType(messageData.Y) end	
 	if(messageData.I ~= nil) then inObject:SetTimeStamp(messageData.I) end	
@@ -47,79 +57,6 @@ local function DeserializeMessage(inObject, inCompressedData)
 	-- Leave any UnitData serialized for now
 	inObject:SetData(messageData.D)
 	return inObject
-end
-
-function XF:DeserializeUnitData(inData)
-	local deserializedData = unpickle(inData)
-	local unit = XF.Confederate:Pop()
-	unit:IsRunningAddon(true)
-	unit:SetRace(XF.Races:Get(deserializedData.A))
-	if(deserializedData.B ~= nil) then unit:SetAchievementPoints(deserializedData.B) end
-	if(deserializedData.C ~= nil) then unit:SetID(tonumber(deserializedData.C)) end
-	if(deserializedData.E ~= nil) then 
-		unit:SetPresence(tonumber(deserializedData.E)) 
-	else
-		unit:SetPresence(Enum.ClubMemberPresence.Online)
-	end
-	unit:SetFaction(XF.Factions:Get(deserializedData.F))
-	unit:SetGUID(deserializedData.K)
-	unit:SetKey(deserializedData.K)
-	unit:SetClass(XF.Classes:Get(deserializedData.O))
-	local unitNameParts = string.Split(deserializedData.U, '-')
-	unit:SetName(unitNameParts[1])
-	unit:SetUnitName(deserializedData.U)
-	if(deserializedData.H ~= nil and XF.Guilds:Contains(deserializedData.H)) then
-		unit:SetGuild(XF.Guilds:Get(deserializedData.H))
-	else
-		-- Remove this deprecated logic after everyone on 4.4
-		unit:SetGuild(XF.Guilds:GetByRealmGuildName(XF.Realms:GetByID(deserializedData.R), deserializedData.G))
-	end
-	if(deserializedData.I ~= nil) then unit:SetItemLevel(deserializedData.I) end
-	unit:SetRank(deserializedData.J)
-	unit:SetLevel(deserializedData.L)
-	if(deserializedData.M ~= nil) then
-		local key = XFC.MythicKey:new(); key:Initialize()
-		key:Deserialize(deserializedData.M)
-		unit:SetMythicKey(key)
-	end
-	unit:SetNote(deserializedData.N)	
-	unit:IsOnline(true)
-	if(deserializedData.P1 ~= nil) then
-		unit:SetProfession1(XF.Professions:Get(deserializedData.P1))
-	end
-	if(deserializedData.P2 ~= nil) then
-		unit:SetProfession2(XF.Professions:Get(deserializedData.P2))
-	end
-	unit:IsRunningAddon(true)
-	unit:SetTimeStamp(ServerTime())
-	if(deserializedData.V ~= nil) then
-		unit:SetSpec(XF.Specs:Get(deserializedData.V))
-	end
-
-	if(deserializedData.Z == nil) then
-		unit:SetZone(XFO.Zones:Get('?'))
-	else
-		XFO.Zones:Add(deserializedData.Z)
-		unit:SetZone(XFO.Zones:Get(deserializedData.Z))
-	end
-
-	if(deserializedData.Y ~= nil) then unit:SetPvPString(deserializedData.Y) end
-	if(deserializedData.X ~= nil) then 
-		local version = XF.Versions:Get(deserializedData.X)
-		if(version == nil) then
-			version = Version:new()
-			version:SetKey(deserializedData.X)
-			XF.Versions:Add(version)
-		end
-		unit:SetVersion(version) 
-	end
-
-	local raiderIO = XF.Addons.RaiderIO:Get(unit)
-    if(raiderIO ~= nil) then
-        unit:SetRaiderIO(raiderIO)
-    end
-
-	return unit
 end
 
 -- FIX: Move to Chat class

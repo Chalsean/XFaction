@@ -53,7 +53,8 @@ function XFC.Chat:Send(inMessage)
     --#endregion
 
     --#region Chat channel messaging for BROADCAST/LOCAL types
-    local messageData = XF:EncodeChatMessage(inMessage, true)
+    local compressed = inMessage:Compress()
+    local messageData = Deflate:EncodeForWoWAddonChannel(compressed)
     local packets = self:SegmentMessage(messageData, inMessage:GetKey(), XF.Settings.Network.Chat.PacketSize)
     self:Add(inMessage:GetKey())
 
