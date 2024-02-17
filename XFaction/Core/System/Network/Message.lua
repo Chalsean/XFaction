@@ -54,7 +54,6 @@ function Message:Print()
     XF:Debug(ObjectName, '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
     XF:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
-    XF:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XF:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
     if(self:HasFrom() and not self:IsFromSerialized()) then
