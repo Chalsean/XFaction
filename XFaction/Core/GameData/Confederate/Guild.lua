@@ -87,3 +87,21 @@ function XFC.Guild:SetRealm(inRealm)
     self.realm = inRealm
 end
 --#endregion
+
+--#region Serialize
+function XFC.Guild:Deserialize(inString)
+	assert(type(inString) == 'string')
+
+	local realmNumber, factionID, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
+	local realm = XFO.Realms:GetByID(tonumber(realmNumber))
+	local faction = XFO.Factions:GetByID(factionID)
+
+	self:Initialize()
+	self:SetKey(guildInitials)
+	self:SetName(guildName)
+	self:SetFaction(faction)
+	self:SetRealm(realm)
+	self:SetInitials(guildInitials)
+    XF:Info(ObjectName, 'Initialized guild [%s:%s:%s:%s]', self:GetInitials(), self:GetName(), self:GetFaction():GetName(), self:GetRealm():GetName())
+end
+--#endregion

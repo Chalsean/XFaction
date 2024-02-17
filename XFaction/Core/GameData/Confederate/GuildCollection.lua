@@ -61,26 +61,8 @@ function XFC.GuildCollection:GetInfo()
 end
 --#endregion
 
---#region DataSet
-function XFC.GuildCollection:SetObjectFromString(inString)
-	assert(type(inString) == 'string')
-
-	local realmNumber, factionID, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
-	local realm = XF.Realms:GetByID(tonumber(realmNumber))
-	local faction = XF.Factions:GetByID(factionID)
-
-	local guild = XFC.Guild:new()
-	guild:Initialize()
-	guild:SetKey(guildInitials)
-	guild:SetName(guildName)
-	guild:SetFaction(faction)
-	guild:SetRealm(realm)
-	guild:SetInitials(guildInitials)
-
-	self:Add(guild)
-end
-
-function XFC.GuildCollection:SetFromGuildInfo()
+--#region Serialize
+function XFC.GuildCollection:Deserialize()
 	-- Parse out configuration from guild information so GMs have control
 	local xfData = ''
 	local compressed = string.match(self.info.description, 'XF:(.-):XF')
@@ -102,12 +84,16 @@ function XFC.GuildCollection:SetFromGuildInfo()
 			XF.Cache.Confederate.Key = initials
 		-- Guild within the confederate
 		elseif(string.find(line, 'XFg')) then
-			self:SetObjectFromString(line)
+			local guild = XFC.Guild:new()
+			guild:Deserialize(line)
+			self:Add(guild)
 		-- Local channel for same realm/faction communication
 		elseif(string.find(line, 'XFc')) then
 			XF.Cache.Channel.Name, XF.Cache.Channel.Password = line:match('XFc:(.-):(.*)')
 		elseif(string.find(line, 'XFt')) then
-			XFO.Teams:SetObjectFromString(line)
+			local team = XFC.Team:new()
+			team:Deserialize(line)
+			XFO.Teams:Add(team)
 		end
 	end		
 end

@@ -17,35 +17,15 @@ function XFC.TeamCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 		for initials, name in pairs (XF.Settings.Confederate.DefaultTeams) do
-			self:Add(initials, name)
+			local team = XFC.Team:new()
+			team:Initialize()
+			team:SetName(name)
+			team:SetInitials(initials)
+			team:SetKey(initials)
+			self:Add(team)
+			XF:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
 		end
 		self:IsInitialized(true)
-	end
-end
---#endregion
-
---#region DataSet
-function XFC.TeamCollection:SetObjectFromString(inString)
-	assert(type(inString) == 'string')
-	local teamInitial, teamName = inString:match('XFt:(%a-):(%a+)')
-	if(teamInitial ~= nil and teamName ~= nil) then
-		self:Add(teamInitial, teamName)
-	end
-end
---#endregion
-
---#region Hash
-function XFC.TeamCollection:Add(inTeamInitials, inTeamName)
-	assert(type(inTeamInitials) == 'string')
-	assert(type(inTeamName) == 'string')
-	if(not self:Contains(inTeamInitials)) then
-		local team = XFC.Team:new()
-		team:Initialize()
-		team:SetName(inTeamName)
-		team:SetInitials(inTeamInitials)
-		team:SetKey(inTeamInitials)
-		self.parent.Add(self, team)
-		XF:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
 	end
 end
 --#endregion

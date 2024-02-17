@@ -30,3 +30,17 @@ function XFC.Team:SetInitials(inInitials)
     self.initials = inInitials
 end
 --#endregion
+
+--#region Serialize
+function XFC.Team:Deserialize(inString)
+	assert(type(inString) == 'string')
+	local teamInitial, teamName = inString:match('XFt:(%a-):(%a+)')
+	if(teamInitial ~= nil and teamName ~= nil) then
+		team:Initialize()
+		team:SetName(inTeamName)
+		team:SetInitials(inTeamInitials)
+		team:SetKey(inTeamInitials)
+        XF:Info(ObjectName, 'Initialized team [%s:%s]', self:GetInitials(), self:GetName())
+	end
+end
+--#endregion
