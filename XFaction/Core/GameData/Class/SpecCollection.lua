@@ -7,46 +7,46 @@ XFC.SpecCollection = ObjectCollection:newChildConstructor()
 --#region Spec List
 local SpecData =
 {
-	-- [SpecID] = "EnglishName,IconID"
-	[62] = "Arcane,135932",
-	[63] = "Fire,135810",
-	[64] = "Frost,135846",
-	[65] = "Holy,135920",
-	[66] = "Protection,236264",
-	[70] = "Retribution,135873",
-	[71] = "Arms,132355",
-	[72] = "Fury,132347",
-	[73] = "Protection,132341",
-	[102] = "Balance,136096",
-	[103] = "Feral,132115",
-	[104] = "Guardian,132276",
-	[105] = "Restoration,136041",
-	[250] = "Blood,135770",
-	[251] = "Frost,135773",
-	[252] = "Unholy,135775",
-	[253] = "Beast Mastery,461112",
-	[254] = "Marksmanship,3",
-	[255] = "Survival,461113",
-	[256] = "Discipline,135940",
-	[257] = "Holy,237542",
-	[258] = "Shadow,136207",
-	[259] = "Assassination,236270",
-	[260] = "Outlaw,236286",
-	[261] = "Subtlety,132320",
-	[262] = "Elemental,136048",
-	[263] = "Enhancement,237581",
-	[264] = "Restoration,136052",
-	[265] = "Affliction,136145",
-	[266] = "Demonology,136172",
-	[267] = "Destruction,136186",
-	[268] = "Brewmaster,608951",
-	[269] = "Windwalker,608953",
-	[270] = "Mistweaver,608952",	
-	[577] = "Havoc,1247264",
-	[581] = "Vengeance,1247265",
-	[1467] = "Devastation,4511811",
-	[1468] = "Preservation,4511812",
-	[1473] = "Augmentation,5198700",
+	-- [SpecID] = "EnglishName,IconID,ClassID"
+	[62] = "Arcane,135932,8",
+	[63] = "Fire,135810,8",
+	[64] = "Frost,135846,8",
+	[65] = "Holy,135920,2",
+	[66] = "Protection,236264,2",
+	[70] = "Retribution,135873,2",
+	[71] = "Arms,132355,1",
+	[72] = "Fury,132347,1",
+	[73] = "Protection,132341,1",
+	[102] = "Balance,136096,11",
+	[103] = "Feral,132115,11",
+	[104] = "Guardian,132276,11",
+	[105] = "Restoration,136041,11",
+	[250] = "Blood,135770,6",
+	[251] = "Frost,135773,6",
+	[252] = "Unholy,135775,6",
+	[253] = "Beast Mastery,461112,3",
+	[254] = "Marksmanship,3,3",
+	[255] = "Survival,461113,3",
+	[256] = "Discipline,135940,5",
+	[257] = "Holy,237542,5",
+	[258] = "Shadow,136207,5",
+	[259] = "Assassination,236270,4",
+	[260] = "Outlaw,236286,4",
+	[261] = "Subtlety,132320,4",
+	[262] = "Elemental,136048,7",
+	[263] = "Enhancement,237581,7",
+	[264] = "Restoration,136052,7",
+	[265] = "Affliction,136145,9",
+	[266] = "Demonology,136172,9",
+	[267] = "Destruction,136186,9",
+	[268] = "Brewmaster,608951,10",
+	[269] = "Windwalker,608953,10",
+	[270] = "Mistweaver,608952,10",	
+	[577] = "Havoc,1247264,12",
+	[581] = "Vengeance,1247265,12",
+	[1467] = "Devastation,4511811,13",
+	[1468] = "Preservation,4511812,13",
+	[1473] = "Augmentation,5198700,13",
 }
 --#endregion
 
@@ -70,8 +70,9 @@ function XFC.SpecCollection:Initialize()
 			spec:SetID(tonumber(id))
 			spec:SetName(specData[1])
 			spec:SetIconID(tonumber(specData[2]))
+			spec:SetClass(XFO.Classes:Get(tonumber(specData[3])))
 			self:Add(spec)
-			XF:Info(ObjectName, 'Initialized spec [%d:%s]', spec:GetID(), spec:GetName())
+			XF:Info(ObjectName, 'Initialized spec [%d:%s:%s]', spec:GetID(), spec:GetName(), spec:GetClass():GetName())
 		end
 		self:IsInitialized(true)
 	end
