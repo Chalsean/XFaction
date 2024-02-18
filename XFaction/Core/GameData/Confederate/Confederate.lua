@@ -77,10 +77,10 @@ function XFC.Confederate:Remove(inKey)
     if(self:Contains(inKey)) then
         local unit = self:Get(inKey)
         self.parent.Remove(self, inKey)
-        if(XF.Nodes:Contains(unit:GetName())) then
-            XF.Nodes:Remove(XF.Nodes:Get(unit:GetName()))
+        if(XFO.Nodes:Contains(unit:GetName())) then
+            XFO.Nodes:Remove(XF.Nodes:Get(unit:GetName()))
         end
-        local target = XF.Targets:GetByGuild(unit:GetGuild())
+        local target = XFO.Targets:GetByGuild(unit:GetGuild())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
         if(unit:IsOnline()) then
             self.onlineCount = self.onlineCount - 1
@@ -161,13 +161,15 @@ end
 function XFC.Confederate:Restore()
     if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
     for _, data in pairs (XF.Cache.Backup.Confederate) do
+        local unit = nil
         try(function ()
-            local unitData = XF:DeserializeUnitData(data)
-            self:Add(unitData)
-            XF:Info(ObjectName, '  Restored %s unit information from backup', unitData:GetUnitName())
+            unit = self:Pop()
+            unit:Deserialize(data)
+            self:Add(unit)
+            XF:Info(ObjectName, '  Restored %s unit information from backup', unit:GetUnitName())
         end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+        catch(function (err)
+            XF:Warn(ObjectName, err)
         end)
     end
     XF.Cache.Backup.Confederate = {}
