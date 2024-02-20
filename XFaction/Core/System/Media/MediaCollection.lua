@@ -3,7 +3,7 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'MediaCollection'
 local MediaPath = 'Interface/Addons/XFaction/Core/System/Media/'
 
-XFC.MediaCollection = ObjectCollection:newChildConstructor()
+XFC.MediaCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.MediaCollection:new()

@@ -4,7 +4,7 @@ local ObjectName = 'MetricCollection'
 local GetCurrentTime = C_DateAndTime.GetServerTimeLocal
 local CalendarTime = C_DateAndTime.GetCurrentCalendarTime
 
-XFC.MetricCollection = ObjectCollection:newChildConstructor()
+XFC.MetricCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.MetricCollection:new()
@@ -22,6 +22,7 @@ function XFC.MetricCollection:Initialize()
 		self:ParentInitialize()
 		for _, metricName in pairs (XF.Enum.Metric) do
 			local metric = XFC.Metric:new()
+			metric:Initialize()
 			metric:SetKey(metricName)
 			metric:SetName(metricName)
 			self:Add(metric)
@@ -36,7 +37,7 @@ end
 --#region Print
 function XFC.MetricCollection:Print()
 	self:ParentPrint()
-	XF:Debug(ObjectName, '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
+	XF:Debug(self:GetObjectName(), '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
 end
 --#endregion
 

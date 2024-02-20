@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Metric'
 
-XFC.Metric = Object:newChildConstructor()
+XFC.Metric = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Metric:new()
@@ -16,7 +16,7 @@ end
 --#region Print
 function XFC.Metric:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
+    XF:Debug(self:GetObjectName(), '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
 end
 --#endregion
 

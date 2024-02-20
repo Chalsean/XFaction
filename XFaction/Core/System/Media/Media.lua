@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Media'
 
-XFC.Media = Object:newChildConstructor()
+XFC.Media = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Media:new()
@@ -17,8 +17,8 @@ end
 --#region Print
 function XFC.Media:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
-    XF:Debug(ObjectName, '  path (' .. type(self.path) .. '): ' .. tostring(self.path))
+    XF:Debug(self:GetObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XF:Debug(self:GetObjectName(), '  path (' .. type(self.path) .. '): ' .. tostring(self.path))
 end
 --#endregion
 
