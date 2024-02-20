@@ -1,24 +1,25 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'AchievementEvent'
 local GetAchievementInfo = GetAchievementInfo
 
-AchievementEvent = Object:newChildConstructor()
+XFC.AchievementEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function AchievementEvent:new()
-    local object = AchievementEvent.parent.new(self)
+function XFC.AchievementEvent:new()
+    local object = XFC.AchievementEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
 --#endregion
 
 --#region Initializers
-function AchievementEvent:Initialize()
+function XFC.AchievementEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Events:Add({name = 'Achievement', 
+        XFO.Events:Add({name = 'Achievement', 
                         event = 'ACHIEVEMENT_EARNED', 
-                        callback = XF.Handlers.AchievementEvent.CallbackAchievement, 
+                        callback = XFO.AchievementEvent.CallbackAchievement, 
                         instance = true})
 		self:IsInitialized(true)
 	end
@@ -26,32 +27,26 @@ end
 --#endregion
 
 --#region Callbacks
-function AchievementEvent:CallbackAchievement(inID)
+function XFC.AchievementEvent:CallbackAchievement(inID)
     try(function ()
         local _, name, _, _, _, _, _, _, _, _, _, isGuild = GetAchievementInfo(inID)
         if(not isGuild and string.find(name, XF.Lib.Locale['EXPLORE']) == nil) then
             local message = nil
             try(function ()
-                message = XF.Mailbox.Chat:Pop()
+                message = XFO.Chat:Pop()
                 message:Initialize()
                 message:SetType(XF.Enum.Network.BROADCAST)
                 message:SetSubject(XF.Enum.Message.ACHIEVEMENT)
                 message:SetData(inID) -- Leave as ID to localize on receiving end
-                message:SetName(XF.Player.Unit:GetName())
-                if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
-                    message:SetMainName(XF.Player.Unit:GetMainName())
-                end
-                message:SetUnitName(XF.Player.Unit:GetUnitName())
-                message:SetGuild(XF.Player.Guild)
-                XF.Mailbox.Chat:Send(message)
+                XFO.Chat:Send(message)
             end).
             finally(function ()
-                XF.Mailbox.Chat:Push(message)
+                XFO.Chat:Push(message)
             end)
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:GetObjectName(), err)
     end)    
 end
 --#endregion

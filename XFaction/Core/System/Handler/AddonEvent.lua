@@ -1,10 +1,10 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'AddonEvent'
-local IsAddOnLoaded = IsAddOnLoaded
-local GetAddOnEnableState = GetAddOnEnableState
+local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
+local GetAddOnEnableState = C_AddOns.GetAddOnEnableState
 
-XFC.AddonEvent = Object:newChildConstructor()
+XFC.AddonEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.AddonEvent:new()
@@ -55,7 +55,7 @@ local function InitializeCache()
     XF.Cache = _G.XFCacheDB
     
     if(XF.Cache.UIReload == nil or not XF.Cache.UIReload) then
-        XF:Info(ObjectName, 'Initializing cache')
+        XF:Info(self:GetObjectName(), 'Initializing cache')
         XF.Cache = {
             Channel = {},
             Confederate = {},
@@ -67,7 +67,7 @@ local function InitializeCache()
     elseif(XF.Cache.Errors ~= nil) then
         -- Log any reloadui errors encountered
         for _, _ErrorText in ipairs(XF.Cache.Errors) do
-            XF:Warn(ObjectName, _ErrorText)
+            XF:Warn(self:GetObjectName(), _ErrorText)
         end
         XF.Cache.Errors = {}
     else
@@ -90,7 +90,7 @@ function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
     try(function ()
         if(GetAddOnEnableState(nil, inAddonName) > 0) then
             if(inAddonName == XF.Name and not self:IsLoaded()) then
-                XF:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
+                XF:Info(self:GetObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
                 XF:ConfigInitialize()
                 XFO.ElvUI:Initialize()
@@ -104,8 +104,8 @@ function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:GetObjectName(), err)
     end)    
 end
 --#endregion

@@ -25,10 +25,10 @@ function XFC.ChannelCollection:Initialize()
 		if(XF.Cache.Channel.Name ~= nil and XF.Cache.Channel.Password ~= nil) then
 			try(function ()
 				JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
-				XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
+				XF:Info(self:GetObjectName(), 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 			end).
 			catch(function (inErrorMessage)
-				XF:Error(ObjectName, inErrorMessage)
+				XF:Error(self:GetObjectName(), inErrorMessage)
 			end)
 		end
 
@@ -45,8 +45,8 @@ end
 --#region Print
 function XFC.ChannelCollection:Print()
 	self:ParentPrint()
-	XF:Debug(ObjectName, '  useGuild (' .. type(self.useGuild) .. '): ' .. tostring(self.useGuild))
-	XF:Debug(ObjectName, '  localChannel (' .. type(self.localChannel) .. ')')
+	XF:Debug(self:GetObjectName(), '  useGuild (' .. type(self.useGuild) .. '): ' .. tostring(self.useGuild))
+	XF:Debug(self:GetObjectName(), '  localChannel (' .. type(self.localChannel) .. ')')
 	if(self:HasLocalChannel()) then self:GetLocalChannel():Print() end
 end
 --#endregion
@@ -70,7 +70,7 @@ function XFC.ChannelCollection:SetLast(inKey)
 		local nextChannel = self:GetByID(i)
 		-- Blizzard swap channel API does not work with community channels, so have to ignore them
 		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
-			XF:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
+			XF:Debug(self:GetObjectName(), 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
 			SwapChannels(channel:GetID(), i)
 			nextChannel:SetID(channel:GetID())
 			channel:SetID(i)
@@ -106,7 +106,7 @@ end
 
 --#region DataSet
 function XFC.ChannelCollection:Sync()
-	--local self = XFO.Channels
+	local self = XFO.Channels
 	try(function ()
 		self:RemoveAll()
 		self:VoidLocalChannel()
@@ -127,7 +127,7 @@ function XFC.ChannelCollection:Sync()
 		end
 	end).
 	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+		XF:Warn(self:GetObjectName(), inErrorMessage)
 	end)
 end
 --#endregion

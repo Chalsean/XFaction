@@ -34,18 +34,18 @@ function XF:CoreInit()
 	XFO.DTMetrics = XFC.DTMetrics:new()
 
 	-- Frames
-	-- XF.Frames.Chat = ChatFrame:new()
-	-- XF.Frames.System = SystemFrame:new()
+	XFO.ChatFrame = XFC.ChatFrame:new()
+	XFO.SystemFrame = XFC.SystemFrame:new()
 
 	-- Declare handlers but not listening yet
-	-- XF.Handlers.AchievementEvent = AchievementEvent:new(); XF.Handlers.AchievementEvent:Initialize()
-	-- XF.Handlers.BNetEvent = BNetEvent:new(); XF.Handlers.BNetEvent:Initialize()
-	-- XF.Handlers.ChannelEvent = ChannelEvent:new()
-	-- XF.Handlers.ChatEvent = ChatEvent:new(); XF.Handlers.ChatEvent:Initialize()
-	-- XF.Handlers.GuildEvent = GuildEvent:new(); XF.Handlers.GuildEvent:Initialize()
-	-- XF.Handlers.PlayerEvent = PlayerEvent:new(); XF.Handlers.PlayerEvent:Initialize()
-	-- XF.Handlers.SystemEvent = SystemEvent:new()
-	-- XF.Handlers.TimerEvent = TimerEvent:new()
+	XFO.AchievementEvent = XFC.AchievementEvent:new(); XFO.AchievementEvent:Initialize()
+	XFO.BNetEvent = XFC.BNetEvent:new(); XFO.BNetEvent:Initialize()
+	XFO.ChannelEvent = XFC.ChannelEvent:new()
+	XFO.ChatEvent = XFC.ChatEvent:new(); XFO.ChatEvent:Initialize()
+	XFO.GuildEvent = XFC.GuildEvent:new(); XFO.GuildEvent:Initialize()
+	XFO.PlayerEvent = XFC.PlayerEvent:new(); XFO.PlayerEvent:Initialize()
+	XFO.SystemEvent = XFC.SystemEvent:new()
+	XFO.TimerEvent = XFC.TimerEvent:new()
 
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()

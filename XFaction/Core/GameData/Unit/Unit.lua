@@ -3,7 +3,7 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Unit'
 local GetMemberInfo = C_Club.GetMemberInfo
 local GetMemberInfoForSelf = C_Club.GetMemberInfoForSelf
-local GetEpochTime = GetServerTime
+local GetCurrentTime = GetServerTime
 local GetPermissions = C_GuildInfo.GuildControlGetRankFlags
 local GetAverageIlvl = GetAverageItemLevel
 local GetSpecGroupID = GetSpecialization
@@ -108,7 +108,7 @@ function XFC.Unit:Initialize(inMemberID)
     self:SetUnitName(unitData.name .. '-' .. XF.Player.Guild:GetRealm():GetAPIName())
 	self:SetLevel(unitData.level)	
 	self:SetGuild(XF.Player.Guild)
-    self:SetTimeStamp(GetEpochTime())
+    self:SetTimeStamp(GetCurrentTime())
     self:SetSpec(XFO.Specs:GetInitialClassSpec(unitData.classID))
     self:SetRace(XFO.Races:Get(unitData.race))
     self:SetRank(unitData.guildRank)
@@ -606,22 +606,14 @@ end
 function XFC.Unit:Broadcast(inSubject)
     assert(type(inSubject) == 'string' or inSubject == nil)
 	if(inSubject == nil) then inSubject = XF.Enum.Message.DATA end
-    -- Update the last sent time, dont need to heartbeat for awhile
-    if(self:IsPlayer()) then
-        local epoch = GetEpochTime()
-        if(XF.Player.LastBroadcast > epoch - XF.Settings.Player.MinimumHeartbeat) then 
-            XF:Debug(ObjectName, 'Not sending broadcast, its been too recent')
-            return 
-        end
-        self:SetTimeStamp(epoch)
-        XF.Player.LastBroadcast = self:GetTimeStamp()
-    end
+    
     local message = nil
     try(function ()
         message = XFO.Chat:Pop()
         message:SetType(XF.Enum.Network.BROADCAST)
         message:SetSubject(inSubject)
         XFO.Chat:Send(message)
+        XF.Player.LastBroadcast = GetCurrentTime()
     end).
     finally(function ()
         XFO.Chat:Push(message)

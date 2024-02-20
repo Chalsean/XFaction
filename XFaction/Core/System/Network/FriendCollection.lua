@@ -22,18 +22,8 @@ end
 function XFC.FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		try(function ()
-			for i = 1, GetFriendCount() do
-				self:CheckFriend(i)
-			end
-			if(XF.Cache.UIReload) then
-				self:Restore()
-			end
-			self:IsInitialized(true)
-		end).
-		catch(function (inErrorMessage)
-			XF:Warn(ObjectName, inErrorMessage)
-		end)
+		self:CheckFriends()
+		self:IsInitialized(true)
 	end
 end
 --#endregion
@@ -57,8 +47,8 @@ function XFC.FriendCollection:Remove(inFriend)
 	assert(type(inFriend) == 'table' and inFriend.__name == 'Friend', 'argument must be Friend object')
 	if(self:Contains(inFriend:GetKey())) then
 		try(function ()
-			if(XF.Nodes:Contains(inFriend:GetName())) then
-				XF.Nodes:Remove(XF.Nodes:Get(inFriend:GetName()))
+			if(XFO.Nodes:Contains(inFriend:GetName())) then
+				XFO.Nodes:Remove(XF.Nodes:Get(inFriend:GetName()))
 			end
 		end).
 		catch(function (inErrorMessage)
@@ -159,6 +149,7 @@ function XFC.FriendCollection:CheckFriend(inKey)
 end
 
 function XFC.FriendCollection:CheckFriends()
+	local self = XFO.Friends
 	try(function ()
 		for i = 1, GetFriendCount() do
 			self:CheckFriend(i)
