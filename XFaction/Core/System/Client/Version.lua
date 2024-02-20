@@ -3,7 +3,7 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Version'
 local Split = string.Split
 
-XFC.Version = Object:newChildConstructor()
+XFC.Version = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Version:new()
@@ -20,10 +20,10 @@ end
 --#region Print
 function XFC.Version:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
-    XF:Debug(ObjectName, '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
-    XF:Debug(ObjectName, '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
-    XF:Debug(ObjectName, '  changeLog (' .. type(self.changeLog) .. '): ' .. tostring(self.changeLog))
+    XF:Debug(self:GetObjectName(), '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
+    XF:Debug(self:GetObjectName(), '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
+    XF:Debug(self:GetObjectName(), '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
+    XF:Debug(self:GetObjectName(), '  changeLog (' .. type(self.changeLog) .. '): ' .. tostring(self.changeLog))
 end
 --#endregion
 

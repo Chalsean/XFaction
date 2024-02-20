@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Expansion'
 
-XFC.Expansion = Object:newChildConstructor()
+XFC.Expansion = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Expansion:new()
@@ -17,7 +17,7 @@ end
 --#region Print
 function XFC.Expansion:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+    XF:Debug(self:GetObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
     if(self:HasVersion()) then self:GetVersion():Print() end
 end
 --#endregion

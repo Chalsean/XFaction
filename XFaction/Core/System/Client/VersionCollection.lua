@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'VersionCollection'
 
-XFC.VersionCollection = ObjectCollection:newChildConstructor()
+XFC.VersionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Contructors
 function XFC.VersionCollection:new()
@@ -19,15 +19,11 @@ function XFC.VersionCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        local currentVersion = XFC.Version:new()
-        currentVersion:SetKey(XF.Version)
-        self:Add(currentVersion)   
-        self:SetCurrent(currentVersion)
+		self:Add(XF.Version)
+		self:SetCurrent(self:Get(XF.Version))
 
-		local defaultVersion = XFC.Version:new()
-        defaultVersion:SetKey('0.0.0')
-        self:Add(defaultVersion)
-		self:SetDefault(defaultVersion)
+		self:Add('0.0.0')
+		self:SetDefault(self:Get('0.0.0'))
 
 		self:IsInitialized(true)
 	end
@@ -45,7 +41,7 @@ end
 --#endregion
 
 --#region Hash
-function XFC.VersionCollection:AddVersion(inKey)
+function XFC.VersionCollection:Add(inKey)
 	assert(type(inKey) == 'string')
 	if(not self:Contains(inKey)) then
 		local version = XFC.Version:new()
