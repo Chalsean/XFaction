@@ -23,6 +23,14 @@ function XFC.FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self:CheckFriends()
+		XFO.Timers:Add
+		({
+			name = 'Ping', 
+			delta = XF.Settings.Network.BNet.Ping.Timer, 
+			callback = XFO.Friends.Ping, 
+			repeater = true, 
+			instance = true
+		})
 		self:IsInitialized(true)
 	end
 end
@@ -193,5 +201,20 @@ function XFC.FriendCollection:Restore()
 		end)
 	end
 	XF.Cache.Backup.Friends = {}
+end
+
+-- Periodically ping friends to see who is running addon
+function XFC.FriendCollection:Ping()
+	local self = XFO.Friends
+    try(function()
+	    for _, friend in self:Iterator() do
+			if(not friend:IsRunningAddon()) then
+				friend:Ping()
+			end
+	    end
+	end).
+	catch(function (err)
+		XF:Warn(self:GetObjectName(), err)
+	end)
 end
 --#endregion

@@ -613,7 +613,6 @@ function XFC.Unit:Broadcast(inSubject)
         message:SetType(XF.Enum.Network.BROADCAST)
         message:SetSubject(inSubject)
         XFO.Chat:Send(message)
-        XF.Player.LastBroadcast = GetCurrentTime()
     end).
     finally(function ()
         XFO.Chat:Push(message)

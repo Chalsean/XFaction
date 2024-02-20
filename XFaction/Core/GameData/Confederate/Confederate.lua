@@ -35,6 +35,16 @@ function XFC.Confederate:Initialize()
         self:SetKey(XF.Cache.Confederate.Key)
 
         XF:Info(self:GetObjectName(), 'Initialized confederate %s <%s>', self:GetName(), self:GetKey())
+
+        XFO.Timers:Add
+        ({
+            name = 'Offline', 
+            delta = XF.Settings.Confederate.UnitScan, 
+            callback = XFO.Confederate.Offline, 
+            repeater = true, 
+            instance = true
+        })       
+
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -159,10 +169,10 @@ function XFC.Confederate:OfflineUnit(inKey)
     end
 end
 
-function XFC.Confederate:OfflineUnits(inEpochTime)
-    assert(type(inEpochTime) == 'number')
+function XFC.Confederate:Offline()
+    local ttl = GetCurrentTime() - XF.Settings.Confederate.UnitStale
     for _, unit in self:Iterator() do
-        if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < inEpochTime) then
+        if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < ttl) then
             if(XF.Player.Guild:Equals(unit:GetGuild())) then
                 self:OfflineUnit(unit:GetKey())
             else

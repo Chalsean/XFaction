@@ -37,6 +37,17 @@ function XFC.ChannelCollection:Initialize()
 			--JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
 			--XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 		end
+
+		XFO.Timers:Add
+		({
+			name = 'LoginChannelSync',
+			delta = XF.Settings.Network.Channel.LoginChannelSyncTimer, 
+			callback = XFO.Channels.Sync,
+			repeater = true,
+			maxAttempts = XF.Settings.Network.Channel.LoginChannelSyncAttempts,
+			instance = true
+		})
+
 		self:IsInitialized(true)
 	end
 end

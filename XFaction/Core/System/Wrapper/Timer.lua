@@ -1,9 +1,7 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Timer'
-local NewTicker = C_Timer.NewTicker
-local NewTimer = C_Timer.NewTimer
-local Now = GetServerTime
+local GetCurrentTime = GetServerTime
 
 XFC.Timer = XFC.Object:newChildConstructor()
 
@@ -12,7 +10,6 @@ function XFC.Timer:new()
     local object = XFC.Timer.parent.new(self)
     object.__name = ObjectName
     object.startTime = nil
-    object.handle = nil
     object.delta = 0
     object.callback = nil
     object.lastRan = 0
@@ -138,35 +135,25 @@ function XFC.Timer:SetAttempt(inCount)
     assert(type(inCount) == 'number')
     self.attempt = inCount
 end
+
+function XFC.Timer:Execute()
+    local callback = self:GetCallback()
+    try(function()
+        callback(...)
+    end).
+    catch(function(err)
+        XF:Warn(self:GetObjectName(), err)
+    end).
+    finally(function()
+        self:SetAttempt(self:GetAttempt() + 1)
+    end)
+end
 --#endregion
 
 --#region Start/Stop
 function XFC.Timer:Start()
     if(not self:IsEnabled()) then
-        local callback = self:GetCallback()
-        if(self:IsRepeat()) then
-            self.handle = NewTicker(self:GetDelta(), 
-                function (...)
-                    if(self:HasTimeToLive() and self:GetStartTime() + self:GetTimeToLive() < Now()) then
-                        XF:Debug(self:GetObjectName(), 'Timer will stop due to time limit [' .. tostring(self:GetTimeToLive()) .. '] being reached: ' .. self:GetKey())
-                        self:Stop()
-                    elseif(self:HasMaxAttempts() and self:GetMaxAttempts() < self:GetAttempt()) then
-                        XF:Debug(self:GetObjectName(), 'Timer will stop due to attempt limit [' .. tostring(self:GetMaxAttempts()) .. '] being reached: ' .. self:GetKey())
-                        self:Stop()
-                    elseif(callback(...)) then
-                        self:Stop()
-                    else
-                        self:SetAttempt(self:GetAttempt() + 1)
-                    end                    
-                end)
-        else
-            self.handle = NewTimer(self:GetDelta(), 
-                function (...) 
-                    callback(...)
-                    self:IsEnabled(false) 
-                end)
-        end
-        self:SetStartTime(Now())        
+        self:SetStartTime(GetCurrentTime())        
         self:IsEnabled(true)
         XF:Debug(self:GetObjectName(), 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
     end
@@ -174,11 +161,17 @@ end
 
 function XFC.Timer:Stop()
     if(self:IsEnabled()) then
-        if(self.handle ~= nil and not self.handle:IsCancelled()) then
-            self.handle:Cancel()
-        end
         self:IsEnabled(false)
         XF:Debug(self:GetObjectName(), 'Stopped timer [%s]', self:GetName())
     end
+end
+
+function XFC.Timer:Restart()
+    self:Stop()
+    self:Start()
+end
+
+function XFC.Timer:Reset()
+    self:SetLastRan(GetCurrentTime())
 end
 --#endregion

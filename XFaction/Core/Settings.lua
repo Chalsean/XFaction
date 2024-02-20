@@ -38,7 +38,6 @@ XF.Options = {}
 XF.Initialized = false
 
 XF.Player = {
-	LastBroadcast = 0,
 	InInstance = false
 }
 --#endregion
@@ -118,6 +117,7 @@ XF.Settings = {
 	System = {
 		Roster = true,
 		UIDLength = 11,
+		MasterTimer = 1,
 	},
 	Expansions = {
 		WOW_PROJECT_MAINLINE,

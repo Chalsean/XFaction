@@ -18,6 +18,31 @@ function XFC.LinkCollection:NewObject()
 end
 --#endregion
 
+--#region Initializer
+function XFC.LinkCollection:Initialize()
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
+		XFO.Timers:Add
+		({
+			name = 'Links', 
+			delta = XF.Settings.Network.BNet.Link.Broadcast, 
+			callback = XFO.Links.Broadcast, 
+			repeater = true, 
+			instance = true
+		})
+		XFO.Timers:Add
+		({
+			name = 'StaleLinks', 
+			delta = XF.Settings.Network.BNet.Link.Scan, 
+			callback = XFO.Links.Purge, 
+			repeater = true, 
+			instance = true
+		})
+		self:IsInitialized(true)
+	end
+end
+--#endregion
+
 --#region Hash
 function XFC.LinkCollection:Add(inLink)
     assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
@@ -145,11 +170,12 @@ function XFC.LinkCollection:Restore()
 	XF.Cache.Backup.Links = ''
 end
 
-function XFC.LinkCollection:Purge(inEpochTime)
-	assert(type(inEpochTime) == 'number')
+function XFC.LinkCollection:Purge()
 	local self = XFO.Links
+	local ttl = GetCurrentTime() - XF.Settings.Network.BNet.Link.Stale
+
 	for _, link in self:Iterator() do
-		if(not link:IsMyLink() and link:GetTimeStamp() < inEpochTime) then
+		if(not link:IsMyLink() and link:GetTimeStamp() < ttl) then
 			XF:Debug(self:GetObjectName(), 'Removing stale link')
 			self:Remove(link:GetKey())
 		end
