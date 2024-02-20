@@ -1,11 +1,12 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'ObjectCollection'
 
-ObjectCollection = Object:newChildConstructor()
+XFC.ObjectCollection = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function ObjectCollection:new()
-    local object = ObjectCollection.parent.new(self)
+function XFC.ObjectCollection:new()
+    local object = XFC.ObjectCollection.parent.new(self)
     object.__name = ObjectName
     object.objects = nil
     object.objectCount = 0
@@ -13,8 +14,8 @@ function ObjectCollection:new()
     return object
 end
 
-function ObjectCollection:newChildConstructor()
-    local object = ObjectCollection.parent.new(self)
+function XFC.ObjectCollection:newChildConstructor()
+    local object = XFC.ObjectCollection.parent.new(self)
     object.__name = ObjectName
     object.parent = self
     object.objects = nil
@@ -25,14 +26,14 @@ end
 --#endregion
 
 --#region Initializers
-function ObjectCollection:Initialize()
+function XFC.ObjectCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self:IsInitialized(true)
     end
 end
 
-function ObjectCollection:IsCached(inBoolean)
+function XFC.ObjectCollection:IsCached(inBoolean)
 	assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
 	if(inBoolean ~= nil) then
 		self.cached = inBoolean
@@ -41,18 +42,18 @@ function ObjectCollection:IsCached(inBoolean)
 end
 
 -- So can call parent init
-function ObjectCollection:ParentInitialize()
+function XFC.ObjectCollection:ParentInitialize()
     self:SetKey(math.GenerateUID())
     self.objects = {}
 end
 --#endregion
 
 --#region Print
-function ObjectCollection:Print()
+function XFC.ObjectCollection:Print()
     self:ParentPrint()
 end
 
-function ObjectCollection:ParentPrint()
+function XFC.ObjectCollection:ParentPrint()
     XF:DoubleLine(self:GetObjectName())
     XF:Debug(self:GetObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
     XF:Debug(self:GetObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
@@ -64,33 +65,33 @@ end
 --#endregion
 
 --#region Iterators
-function ObjectCollection:Iterator()
+function XFC.ObjectCollection:Iterator()
 	return next, self.objects, nil
 end
 
-function ObjectCollection:SortedIterator()
+function XFC.ObjectCollection:SortedIterator()
 	return PairsByKeys(self.objects)
 end
 
-function ObjectCollection:ReverseSortedIterator()
+function XFC.ObjectCollection:ReverseSortedIterator()
 	return PairsByKeys(self.objects, function(a, b) return a > b end)
 end
 --#endregion
 
 --#region Hash
-function ObjectCollection:Contains(inKey)
+function XFC.ObjectCollection:Contains(inKey)
     if(inKey == nil or (type(inKey) ~= 'string' and type(inKey) ~= 'number')) then
         return false
     end
 	return self.objects[inKey] ~= nil
 end
 
-function ObjectCollection:Get(inKey)
+function XFC.ObjectCollection:Get(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Collection key must be string or number')
 	return self.objects[inKey]
 end
 
-function ObjectCollection:Add(inObject)
+function XFC.ObjectCollection:Add(inObject)
     assert(type(inObject) == 'table' and inObject.__name ~= nil, 'argument must be an object')
 	if(not self:Contains(inObject:GetKey())) then
 		self.objectCount = self.objectCount + 1
@@ -98,7 +99,7 @@ function ObjectCollection:Add(inObject)
 	self.objects[inObject:GetKey()] = inObject
 end
 
-function ObjectCollection:Remove(inKey)
+function XFC.ObjectCollection:Remove(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Collection key must be string or number')
 	if(self:Contains(inKey)) then
 		self.objects[inKey] = nil
@@ -106,7 +107,7 @@ function ObjectCollection:Remove(inKey)
 	end
 end
 
-function ObjectCollection:RemoveAll()
+function XFC.ObjectCollection:RemoveAll()
     for _, object in self:Iterator() do
         self:Remove(object:GetKey())
     end
@@ -114,7 +115,7 @@ end
 --#endregion
 
 --#region Accessors
-function ObjectCollection:GetCount()
+function XFC.ObjectCollection:GetCount()
 	return self.objectCount
 end
 --#endregion

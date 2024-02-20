@@ -1,12 +1,13 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Factory'
-local ServerTime = GetServerTime
+local GetEpochTime = GetServerTime
 
-Factory = ObjectCollection:newChildConstructor()
+XFC.Factory = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function Factory:new()
-    local object = Factory.parent.new(self)
+function XFC.Factory:new()
+    local object = XFC.Factory.parent.new(self)
     object.__name = ObjectName
     object.checkedIn = nil
     object.checkedInCount = 0
@@ -15,8 +16,8 @@ function Factory:new()
     return object
 end
 
-function Factory:newChildConstructor()
-    local object = Factory.parent.new(self)
+function XFC.Factory:newChildConstructor()
+    local object = XFC.Factory.parent.new(self)
     object.__name = ObjectName
     object.parent = self
     object.checkedIn = nil
@@ -28,14 +29,14 @@ end
 --#endregion
 
 --#region Initializers
-function Factory:Initialize()
+function XFC.Factory:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self:IsInitialized(true)
     end
 end
 
-function Factory:ParentInitialize()
+function XFC.Factory:ParentInitialize()
     self:SetKey(math.GenerateUID())
     self.objects = {}
     self.checkedIn = {}
@@ -44,7 +45,7 @@ end
 --#endregion
 
 --#region Print
-function Factory:ParentPrint()
+function XFC.Factory:ParentPrint()
     if(XF.Debug) then
         XF:DoubleLine(self:GetObjectName())
         XF:Debug(self:GetObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
@@ -64,29 +65,29 @@ end
 --#endregion
 
 --#region Iterators
-function Factory:CheckedInIterator()
+function XFC.Factory:CheckedInIterator()
 	return next, self.checkedIn, nil
 end
 
-function Factory:CheckedOutIterator()
+function XFC.Factory:CheckedOutIterator()
 	return next, self.checkedOut, nil
 end
 --#endregion
 
 --#region Stack
-function Factory:IsLoaned(inKey)
+function XFC.Factory:IsLoaned(inKey)
     assert(type(inKey) == 'string')
     return self.checkedOut[inKey] ~= nil
 end
 
-function Factory:IsAvailable(inKey)
+function XFC.Factory:IsAvailable(inKey)
     assert(type(inKey) == 'string')
     return self.checkedIn[inKey] ~= nil
 end
 
-function Factory:Pop()
+function XFC.Factory:Pop()
     assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil value')
-    local currentTime = ServerTime()
+    local currentTime = GetEpochTime()
     for _, object in self:CheckedInIterator() do
         object:SetFactoryTime(currentTime)
         self.checkedIn[object:GetFactoryKey()] = nil
@@ -105,7 +106,7 @@ function Factory:Pop()
     return newObject
 end
 
-function Factory:Push(inObject)
+function XFC.Factory:Push(inObject)
     if(inObject == nil) then return end
     assert(type(inObject) == 'table' and inObject.__name ~= nil, 'argument must be an object')
     if(self:IsLoaned(inObject:GetFactoryKey())) then
@@ -120,7 +121,7 @@ end
 --#endregion
 
 --#region Janitorial
-function Factory:Purge(inPurgeTime)
+function XFC.Factory:Purge(inPurgeTime)
     assert(type(inPurgeTime) == 'number')
     for _, object in self:CheckedInIterator() do
         if(object:GetFactoryTime() < inPurgeTime) then

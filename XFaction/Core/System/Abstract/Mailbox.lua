@@ -1,9 +1,9 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Mailbox'
-local ServerTime = GetServerTime
+local GetEpochTime = GetServerTime
 
-XFC.Mailbox = Factory:newChildConstructor()
+XFC.Mailbox = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.Mailbox:new()
@@ -16,7 +16,7 @@ function XFC.Mailbox:new()
 end
 
 function XFC.Mailbox:newChildConstructor()
-    local object = Mailbox.parent.new(self)
+    local object = XFC.Mailbox.parent.new(self)
     object.__name = ObjectName
     object.parent = self 
 	object.objects = nil
@@ -56,7 +56,7 @@ end
 function XFC.Mailbox:Add(inKey)
 	assert(type(inKey) == 'string')
 	if(not self:Contains(inKey)) then
-		self.objects[inKey] = ServerTime()
+		self.objects[inKey] = GetEpochTime()
 	end
 end
 
@@ -114,7 +114,7 @@ end
 
 function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XF:Trace(ObjectName, 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
+    XF:Trace(self:GetObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
 
     --#region Ignore message
     -- If not a message from this addon, ignore
@@ -138,14 +138,14 @@ function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inS
 
     -- Ignore if it's your own message or you've seen it before
     if(XFO.BNet:Contains(messageKey) or XFO.Chat:Contains(messageKey)) then
-        XF:Trace(ObjectName, 'Ignoring segment of duplicate message [%s]', messageKey)
+        XF:Trace(self:GetObjectName(), 'Ignoring segment of duplicate message [%s]', messageKey)
         return
     end
     --#endregion
 
     self:AddPacket(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
-        XF:Debug(ObjectName, 'Received all packets for message [%s]', messageKey)
+        XF:Debug(self:GetObjectName(), 'Received all packets for message [%s]', messageKey)
         local encoded = self:RebuildMessage(messageKey, totalPackets)
         local message = self:DecodeMessage(encoded)        
         try(function ()
@@ -190,14 +190,14 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
             local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
             if(math.random(1, 100) <= percentage) then
-                XF:Debug(ObjectName, 'Randomly selected, forwarding message')
+                XF:Debug(self:GetObjectName(), 'Randomly selected, forwarding message')
                 inMessage:SetType(XF.Enum.Network.BNET)
                 XFO.BNet:Send(inMessage)
             else
-                XF:Debug(ObjectName, 'Not randomly selected, will not forward mesesage')
+                XF:Debug(self:GetObjectName(), 'Not randomly selected, will not forward mesesage')
             end
         else
-            XF:Debug(ObjectName, 'Node count under threshold, forwarding message')
+            XF:Debug(self:GetObjectName(), 'Node count under threshold, forwarding message')
             inMessage:SetType(XF.Enum.Network.BNET)
             XFO.BNet:Send(inMessage)
         end
@@ -247,7 +247,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
             end
         end).
         catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+            XF:Warn(self:GetObjectName(), inErrorMessage)
             XFO.Orders:Push(order)
         end)
     end
@@ -275,7 +275,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         end
         -- All data packets have unit information, so just refresh
         XFO.Confederate:Add(inMessage:GetFrom())
-        XF:Info(ObjectName, 'Updated unit [%s] information based on message received', inMessage:GetFrom():GetUnitName())
+        XF:Info(self:GetObjectName(), 'Updated unit [%s] information based on message received', inMessage:GetFrom():GetUnitName())
     end
 
     XFO.DTGuild:RefreshBroker()

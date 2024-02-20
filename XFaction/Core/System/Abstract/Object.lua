@@ -1,10 +1,11 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Object'
 
-Object = {}
+XFC.Object = {}
 
 --#region Constructors
-function Object:new()
+function XFC.Object:new()
     local object = {}
     setmetatable(object, self)
     self.__index = self
@@ -20,7 +21,7 @@ function Object:new()
     return object
 end
 
-function Object:newChildConstructor()
+function XFC.Object:newChildConstructor()
     local object = {}
     setmetatable(object, self)
     self.__index = self
@@ -39,7 +40,7 @@ end
 --#endregion
 
 --#region Initializers
-function Object:IsInitialized(inBoolean)
+function XFC.Object:IsInitialized(inBoolean)
     assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
     if(inBoolean ~= nil) then
         self.initialized = inBoolean
@@ -47,7 +48,7 @@ function Object:IsInitialized(inBoolean)
     return self.initialized
 end
 
-function Object:Initialize()
+function XFC.Object:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self:IsInitialized(true)
@@ -55,17 +56,17 @@ function Object:Initialize()
 end
 
 -- So can call parent init in child objects
-function Object:ParentInitialize()
+function XFC.Object:ParentInitialize()
     self.key = math.GenerateUID()
 end
 --#endregion
 
 --#region Print
-function Object:Print()
+function XFC.Object:Print()
     self:ParentPrint()
 end
 
-function Object:ParentPrint()
+function XFC.Object:ParentPrint()
     XF:SingleLine(self:GetObjectName())
     if(self.factoryKey ~= nil) then
         XF:Debug(self:GetObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))
@@ -81,62 +82,62 @@ end
 --#endregion
 
 --#region Accessors
-function Object:GetFactoryKey()
+function XFC.Object:GetFactoryKey()
     return self.factoryKey
 end
 
-function Object:SetFactoryKey(inKey)
+function XFC.Object:SetFactoryKey(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Object key must be string or number')
     self.factoryKey = inKey
 end
 
-function Object:GetFactoryTime()
+function XFC.Object:GetFactoryTime()
     return self.factoryTime
 end
 
-function Object:SetFactoryTime(inFactoryTime)
+function XFC.Object:SetFactoryTime(inFactoryTime)
     assert(type(inFactoryTime) == 'number')
     self.factoryTime = inFactoryTime
 end
 
-function Object:HasKey()
+function XFC.Object:HasKey()
     return self.key ~= nil
 end
 
-function Object:GetKey()
+function XFC.Object:GetKey()
     return self.key
 end
 
-function Object:SetKey(inKey)
+function XFC.Object:SetKey(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number', 'Object key must be string or number')
     self.key = inKey
 end
 
-function Object:GetName()
+function XFC.Object:GetName()
     return self.name
 end
 
-function Object:SetName(inName)
+function XFC.Object:SetName(inName)
     assert(type(inName) == 'string')
     self.name = inName
 end
 
-function Object:GetID()
+function XFC.Object:GetID()
     return self.id
 end
 
-function Object:SetID(inID)
+function XFC.Object:SetID(inID)
     assert(type(inID) == 'string' or type(inID) == 'number', 'Object ID must be string or number')
     self.id = inID
 end
 
-function Object:GetObjectName()
+function XFC.Object:GetObjectName()
     return self.__name
 end
 --#endregion
 
 --#region Operators
-function Object:Equals(inObject)
+function XFC.Object:Equals(inObject)
     if(inObject == nil) then return false end
     if(type(inObject) ~= 'table' or inObject.__name == nil) then return false end
     if(self:GetObjectName() ~= inObject:GetObjectName()) then return false end
@@ -146,7 +147,7 @@ end
 --#endregion
 
 --#region DataSet
-function Object:ParentDeconstructor()
+function XFC.Object:ParentDeconstructor()
     self.key = nil
     self.name = nil
     self.id = nil
