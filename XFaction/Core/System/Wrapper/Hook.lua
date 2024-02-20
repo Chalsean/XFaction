@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Hook'
 
-XFC.Hook = Object:newChildConstructor()
+XFC.Hook = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Hook:new()
@@ -20,11 +20,11 @@ end
 --#region Print
 function XFC.Hook:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  original (' .. type(self.original) .. '): ' .. tostring(self.original))
-    XF:Debug(ObjectName, '  originalFunction (' .. type(self.originalFunction) .. '): ' .. tostring(self.originalFunction))
-    XF:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
-    XF:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-    XF:Debug(ObjectName, '  isPreHook (' .. type(self.isPreHook) .. '): ' .. tostring(self.isPreHook))
+    XF:Debug(self:GetObjectName(), '  original (' .. type(self.original) .. '): ' .. tostring(self.original))
+    XF:Debug(self:GetObjectName(), '  originalFunction (' .. type(self.originalFunction) .. '): ' .. tostring(self.originalFunction))
+    XF:Debug(self:GetObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+    XF:Debug(self:GetObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+    XF:Debug(self:GetObjectName(), '  isPreHook (' .. type(self.isPreHook) .. '): ' .. tostring(self.isPreHook))
 end
 --#endregion
 
@@ -99,7 +99,7 @@ function XFC.Hook:Start()
             hooksecurefunc(_G, self:GetOriginal(), callback)
         end
         self:IsEnabled(true)
-        XF:Debug(ObjectName, 'Started hook [%s]', self:GetKey())
+        XF:Debug(self:GetObjectName(), 'Started hook [%s]', self:GetKey())
     end
 end
 
@@ -107,7 +107,7 @@ function XFC.Hook:Stop()
     if(self:HasOriginal() and self:IsEnabled()) then
         _G[self:GetOriginal()] = self:GetOriginalFunction()
         self:IsEnabled(false)
-        XF:Debug(ObjectName, 'Stopped hook [%s]', self:GetKey())
+        XF:Debug(self:GetObjectName(), 'Stopped hook [%s]', self:GetKey())
     end
 end
 --#endregion

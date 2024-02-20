@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'EventCollection'
 
-XFC.EventCollection = ObjectCollection:newChildConstructor()
+XFC.EventCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.EventCollection:new()
@@ -23,7 +23,7 @@ function XFC.EventCollection:Initialize()
             -- Still actively listen for all events but only do something if enabled
             for _, event in XFO.Events:Iterator() do
                 if(event:GetName() == inEvent and event:IsEnabled()) then
-                    XF:Trace(ObjectName, 'Event fired: %s', event:GetName())
+                    XF:Trace(self:GetObjectName(), 'Event fired: %s', event:GetName())
                     if(event:IsGroup()) then
                         if(XFO.Timers:Contains(event:GetKey())) then
                             XFO.Timers:Get(event:GetKey()):Start()
@@ -58,6 +58,7 @@ function XFC.EventCollection:Add(inArgs)
     assert(inArgs.groupDelta == nil or type(inArgs.groupDelta) == 'number')
 
     local event = XFC.Event:new()
+    event:Initialize()
     event:SetKey(inArgs.name)
     event:SetName(inArgs.event)
     event:SetCallback(inArgs.callback)

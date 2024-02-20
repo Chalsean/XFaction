@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'HookCollection'
 
-XFC.HookCollection = ObjectCollection:newChildConstructor()
+XFC.HookCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.HookCollection:new()

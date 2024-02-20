@@ -5,7 +5,7 @@ local NewTicker = C_Timer.NewTicker
 local NewTimer = C_Timer.NewTimer
 local Now = GetServerTime
 
-XFC.Timer = Object:newChildConstructor()
+XFC.Timer = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Timer:new()
@@ -29,16 +29,16 @@ end
 --#region Print
 function XFC.Timer:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
-    XF:Debug(ObjectName, '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
-    XF:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
-    XF:Debug(ObjectName, '  lastRan (' .. type(self.lastRan) .. '): ' .. tostring(self.lastRan))
-    XF:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-    XF:Debug(ObjectName, '  isRepeat (' .. type(self.isRepeat) .. '): ' .. tostring(self.isRepeat))
-    XF:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-    XF:Debug(ObjectName, '  ttl (' .. type(self.ttl) .. '): ' .. tostring(self.ttl))
-    XF:Debug(ObjectName, '  maxAttempts (' .. type(self.maxAttempts) .. '): ' .. tostring(self.maxAttempts))
-    XF:Debug(ObjectName, '  attempt (' .. type(self.attempt) .. '): ' .. tostring(self.attempt))
+    XF:Debug(self:GetObjectName(), '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
+    XF:Debug(self:GetObjectName(), '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
+    XF:Debug(self:GetObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+    XF:Debug(self:GetObjectName(), '  lastRan (' .. type(self.lastRan) .. '): ' .. tostring(self.lastRan))
+    XF:Debug(self:GetObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+    XF:Debug(self:GetObjectName(), '  isRepeat (' .. type(self.isRepeat) .. '): ' .. tostring(self.isRepeat))
+    XF:Debug(self:GetObjectName(), '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+    XF:Debug(self:GetObjectName(), '  ttl (' .. type(self.ttl) .. '): ' .. tostring(self.ttl))
+    XF:Debug(self:GetObjectName(), '  maxAttempts (' .. type(self.maxAttempts) .. '): ' .. tostring(self.maxAttempts))
+    XF:Debug(self:GetObjectName(), '  attempt (' .. type(self.attempt) .. '): ' .. tostring(self.attempt))
 end
 --#endregion
 
@@ -148,10 +148,10 @@ function XFC.Timer:Start()
             self.handle = NewTicker(self:GetDelta(), 
                 function (...)
                     if(self:HasTimeToLive() and self:GetStartTime() + self:GetTimeToLive() < Now()) then
-                        XF:Debug(ObjectName, 'Timer will stop due to time limit [' .. tostring(self:GetTimeToLive()) .. '] being reached: ' .. self:GetKey())
+                        XF:Debug(self:GetObjectName(), 'Timer will stop due to time limit [' .. tostring(self:GetTimeToLive()) .. '] being reached: ' .. self:GetKey())
                         self:Stop()
                     elseif(self:HasMaxAttempts() and self:GetMaxAttempts() < self:GetAttempt()) then
-                        XF:Debug(ObjectName, 'Timer will stop due to attempt limit [' .. tostring(self:GetMaxAttempts()) .. '] being reached: ' .. self:GetKey())
+                        XF:Debug(self:GetObjectName(), 'Timer will stop due to attempt limit [' .. tostring(self:GetMaxAttempts()) .. '] being reached: ' .. self:GetKey())
                         self:Stop()
                     elseif(callback(...)) then
                         self:Stop()
@@ -168,7 +168,7 @@ function XFC.Timer:Start()
         end
         self:SetStartTime(Now())        
         self:IsEnabled(true)
-        XF:Debug(ObjectName, 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
+        XF:Debug(self:GetObjectName(), 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
     end
 end
 
@@ -178,7 +178,7 @@ function XFC.Timer:Stop()
             self.handle:Cancel()
         end
         self:IsEnabled(false)
-        XF:Debug(ObjectName, 'Stopped timer [%s]', self:GetName())
+        XF:Debug(self:GetObjectName(), 'Stopped timer [%s]', self:GetName())
     end
 end
 --#endregion

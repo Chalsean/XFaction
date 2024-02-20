@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Event'
 
-XFC.Event = Object:newChildConstructor()
+XFC.Event = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Event:new()
@@ -19,10 +19,10 @@ end
 --#region Print
 function XFC.Event:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
-    XF:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-    XF:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-    XF:Debug(ObjectName, '  groupDelta (' .. type(self.groupDelta) .. '): ' .. tostring(self.groupDelta))
+    XF:Debug(self:GetObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+    XF:Debug(self:GetObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+    XF:Debug(self:GetObjectName(), '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+    XF:Debug(self:GetObjectName(), '  groupDelta (' .. type(self.groupDelta) .. '): ' .. tostring(self.groupDelta))
 end
 --#endregion
 
@@ -70,14 +70,14 @@ end
 function XFC.Event:Start()
     if(not self:IsEnabled()) then
         self:IsEnabled(true)
-        XF:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
+        XF:Debug(self:GetObjectName(), 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
     end
 end
 
 function XFC.Event:Stop()
     if(self:IsEnabled()) then
         self:IsEnabled(false)
-        XF:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
+        XF:Debug(self:GetObjectName(), 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
     end
 end
 --#endregion
