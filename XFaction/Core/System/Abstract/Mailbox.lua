@@ -231,7 +231,15 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
 
     -- Process LINK message
     elseif(inMessage:GetSubject() == XF.Enum.Message.LINK) then
-        XFO.Links:ProcessMessage(inMessage)
+        XFO.Links:Deserialize(inMessage:GetData())
+        -- Purge stale links from sender
+        for _, link in XFO.Links:Iterator() do
+            if(link:GetFromNode():GetName() == inMessage:GetFrom():GetName() or link:GetToNode():GetName() == inMessage:GetFrom():GetName()) then
+                if(link:GetTimeStamp() < inMessage:GetTimeStamp()) then
+                    XFO.Links:Remove(link:GetKey())
+                end
+            end
+        end
 
     -- Process ORDER message
     elseif(XFO.WoW:IsRetail() and inMessage:GetSubject() == XF.Enum.Message.ORDER) then

@@ -97,21 +97,6 @@ function XFC.LinkCollection:Deserialize(inSerialized)
 			self:Push(link)
 		end)
     end
-	-- FIX: Move to Mailbox
-	-- A link message is a reset of the links for that node
-	-- Remove stale links and update datetimes
-	-- for _, link in self:Iterator() do
-	-- 	-- Consider that we may have gotten link information from the other node
-	-- 	if(link:GetFromNode():GetName() == sourceKey or link:GetToNode():GetName() == sourceKey) then
-	-- 		if(not link:IsMyLink() and linkKeys[link:GetKey()] == nil) then
-	-- 			self:Remove(link)
-	-- 			XF:Debug(self:GetObjectName(), 'Removed link due to node broadcast [%s]', link:GetKey())
-	-- 		else
-	-- 			-- Update datetime for janitor process
-	-- 			link:SetTimeStamp(GetCurrentTime())
-	-- 		end
-	-- 	end
-	-- end
 end
 --#endregion
 

@@ -77,7 +77,7 @@ function XFC.Confederate:Remove(inKey)
         local unit = self:Get(inKey)
         self.parent.Remove(self, inKey)
         if(XFO.Nodes:Contains(unit:GetName())) then
-            XFO.Nodes:Remove(XF.Nodes:Get(unit:GetName()))
+            XFO.Nodes:Remove(XFO.Nodes:Get(unit:GetName()))
         end
         local target = XFO.Targets:GetByGuild(unit:GetGuild())
         self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
