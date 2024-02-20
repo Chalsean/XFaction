@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'ProfessionCollection'
 
-XFC.ProfessionCollection = ObjectCollection:newChildConstructor()
+XFC.ProfessionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Profession List
 local ProfessionData =
@@ -43,20 +43,9 @@ function XFC.ProfessionCollection:Initialize()
 			profession:SetKey(tonumber(id))
 			profession:IsInitialized(true)
 			self:Add(profession)
-			XF:Info(ObjectName, 'Initialized profession [%d:%s]', profession:GetID(), profession:GetName())
+			XF:Info(self:GetObjectName(), 'Initialized profession [%d:%s]', profession:GetID(), profession:GetName())
 		end
 		self:IsInitialized(true)
-	end
-end
---#endregion
-
---#region Accessors
-function XFC.ProfessionCollection:GetByName(inName)
-	assert(type(inName) == 'string')
-	for _, profession in self:Iterator() do
-		if(profession:GetName() == inName) then
-			return profession
-		end
 	end
 end
 --#endregion

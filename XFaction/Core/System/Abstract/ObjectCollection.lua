@@ -118,4 +118,13 @@ end
 function XFC.ObjectCollection:GetCount()
 	return self.objectCount
 end
+
+function XFC.ObjectCollection:GetByName(inName)
+	assert(type(inName) == 'string')
+	for _, object in self:Iterator() do
+		if(object:GetName() == inName) then
+			return object
+		end
+	end
+end
 --#endregion

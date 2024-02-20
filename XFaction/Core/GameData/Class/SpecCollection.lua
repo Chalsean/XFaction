@@ -91,3 +91,14 @@ function XFC.SpecCollection:Initialize()
 	end
 end
 --#endregion
+
+--#region Accessors
+function XFC.SpecCollection:GetInitialClassSpec(inClassID)
+	assert(type(inClassID) == 'number')
+	for _, spec in slef:Iterator() do
+		if(spec:GetClass():GetID() == inClassID and spec:GetName() == 'Initial') then
+			return spec
+		end
+	end
+end
+--#endregion

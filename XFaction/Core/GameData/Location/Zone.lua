@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Zone'
 
-XFC.Zone = Object:newChildConstructor()
+XFC.Zone = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Zone:new()

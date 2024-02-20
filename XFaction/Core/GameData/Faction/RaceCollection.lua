@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'RaceCollection'
 
-XFC.RaceCollection = ObjectCollection:newChildConstructor()
+XFC.RaceCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Race List
 local RaceData =
@@ -57,7 +57,7 @@ function XFC.RaceCollection:Initialize()
 			race:SetName(raceData[1])
 			race:SetFaction(XFO.Factions:GetByName(raceData[2]))
 			self:Add(race)
-			XF:Info(ObjectName, 'Initialized race [%d:%s:%s]', race:GetID(), race:GetName(), race:GetFaction():GetName())
+			XF:Info(self:GetObjectName(), 'Initialized race [%d:%s:%s]', race:GetID(), race:GetName(), race:GetFaction():GetName())
 		end
 		self:IsInitialized(true)
 	end

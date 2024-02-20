@@ -1,5 +1,6 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
+local ObjectName = 'DungeonCollection'
 
 --#region Abbreviated Names
 local NameData = {
@@ -14,12 +15,12 @@ local NameData = {
 }
 --#endregion
 
-XFC.DungeonCollection = ObjectCollection:newChildConstructor()
+XFC.DungeonCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.DungeonCollection:new()
     local object = XFC.DungeonCollection.parent.new(self)
-	object.__name = 'DungeonCollection'
+	object.__name = ObjectName
     return object
 end
 --#endregion

@@ -93,15 +93,6 @@ end
 --#endregion
 
 --#region Accessors
-function XFC.Confederate:GetUnitByName(inName)
-    assert(type(inName) == 'string')
-    for _, unit in self:Iterator() do
-        if(unit:GetName() == inName) then
-            return unit
-        end
-    end
-end
-
 function XFC.Confederate:GetCountByTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
     return self.countByTarget[inTarget:GetKey()] or 0

@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Profession'
 
-XFC.Profession = Object:newChildConstructor()
+XFC.Profession = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Profession:new()
@@ -16,7 +16,7 @@ end
 --#region Print
 function XFC.Profession:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+    XF:Debug(self:GetObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
 end
 --#endregion
 

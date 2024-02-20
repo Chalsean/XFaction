@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Faction'
 
-XFC.Faction = Object:newChildConstructor()
+XFC.Faction = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Faction:new()
@@ -41,8 +41,8 @@ end
 --#region Print
 function XFC.Faction:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
-    XF:Debug(ObjectName, '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
+    XF:Debug(self:GetObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+    XF:Debug(self:GetObjectName(), '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
 end
 --#endregion
 

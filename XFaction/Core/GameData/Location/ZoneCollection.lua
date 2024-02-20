@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'ZoneCollection'
 
-XFC.ZoneCollection = ObjectCollection:newChildConstructor()
+XFC.ZoneCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.ZoneCollection:new()
@@ -31,7 +31,7 @@ function XFC.ZoneCollection:Add(inZoneName)
 		zone:Initialize()
 		zone:SetKey(inZoneName)
 		zone:SetName(inZoneName)		
-		XF:Info(ObjectName, 'Initialized zone [%s]', zone:GetName())
+		XF:Info(self:GetObjectName(), 'Initialized zone [%s]', zone:GetName())
 		self.parent.Add(zone)
 	end
 end

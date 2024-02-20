@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'FactionCollection'
 
-XFC.FactionCollection = ObjectCollection:newChildConstructor()
+XFC.FactionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Faction List
 local FactionData =
@@ -31,7 +31,7 @@ function XFC.FactionCollection:Initialize()
 			faction:Initialize()
 			faction:SetKey(id)
 			self:Add(faction)
-			XF:Info(ObjectName, 'Initialized faction [%d:%s]', faction:GetKey(), faction:GetName())
+			XF:Info(self:GetObjectName(), 'Initialized faction [%d:%s]', faction:GetKey(), faction:GetName())
 		end		
 		self:IsInitialized(true)
 	end
