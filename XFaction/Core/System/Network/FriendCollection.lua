@@ -4,7 +4,7 @@ local ObjectName = 'FriendCollection'
 local GetFriendCount = BNGetNumFriends
 local GetAccountInfo = C_BattleNet.GetFriendAccountInfo
 
-XFC.FriendCollection = Factory:newChildConstructor()
+XFC.FriendCollection = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.FriendCollection:new()
@@ -48,11 +48,11 @@ function XFC.FriendCollection:Remove(inFriend)
 	if(self:Contains(inFriend:GetKey())) then
 		try(function ()
 			if(XFO.Nodes:Contains(inFriend:GetName())) then
-				XFO.Nodes:Remove(XF.Nodes:Get(inFriend:GetName()))
+				XFO.Nodes:Remove(XFO.Nodes:Get(inFriend:GetName()))
 			end
 		end).
 		catch(function (inErrorMessage)
-			XF:Warn(ObjectName, inErrorMessage)
+			XF:Warn(self:GetObjectName(), inErrorMessage)
 		end).
 		finally(function ()
 			self.parent.Remove(self, inFriend:GetKey())
@@ -97,7 +97,7 @@ local function CanLink(inAccountInfo)
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
 		local faction = XFO.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
 
-		XF:Trace(ObjectName, 'Checking friend for linkability [%s] GUID [%s] RealmID [%d] RealmName [%s]', inAccountInfo.battleTag, inAccountInfo.gameAccountInfo.playerGuid, inAccountInfo.gameAccountInfo.realmID, inAccountInfo.gameAccountInfo.realmName)
+		XF:Trace(self:GetObjectName(), 'Checking friend for linkability [%s] GUID [%s] RealmID [%d] RealmName [%s]', inAccountInfo.battleTag, inAccountInfo.gameAccountInfo.playerGuid, inAccountInfo.gameAccountInfo.realmID, inAccountInfo.gameAccountInfo.realmName)
 
 		local target = XFO.Targets:GetByRealmFaction(realm, faction)
 		if(target ~= nil and not target:IsMyTarget()) then return true, target end
@@ -109,7 +109,7 @@ function XFC.FriendCollection:CheckFriend(inKey)
 	try(function ()
 		local accountInfo = GetAccountInfo(inKey)
 		if(accountInfo == nil) then
-			error('Received nil for friend [%d]', inKey)
+			throw('Received nil for friend [%d]', inKey)
 		end
 
 		accountInfo.ID = inKey
@@ -119,7 +119,7 @@ function XFC.FriendCollection:CheckFriend(inKey)
 		if(self:Contains(accountInfo.bnetAccountID)) then
 			if(not canLink) then
 				local friend = self:Get(accountInfo.bnetAccountID)
-				XF:Info(ObjectName, 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
+				XF:Info(self:GetObjectName(), 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
 				self:Remove(friend)
 				return true
 			end
@@ -132,19 +132,19 @@ function XFC.FriendCollection:CheckFriend(inKey)
 				friend:SetTarget(target) -- reset target to found connected realm
 				self:Add(friend)
 			end).
-			catch(function (inErrorMessage)
+			catch(function (err)
 				self:Push(friend)
-				error(inErrorMessage)
+				throw(err)
 			end)
-			XF:Info(ObjectName, 'Friend logged into supported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
+			XF:Info(self:GetObjectName(), 'Friend logged into supported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
 			-- Ping them to see if they're running the addon
 			if(XF.Initialized) then 
 				friend:Ping() 
 			end
 		end
 	end).
-	catch(function (inErrorMessage)
-	    XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+	    XF:Warn(self:GetObjectName(), err)
 	end)
 end
 
@@ -155,8 +155,8 @@ function XFC.FriendCollection:CheckFriends()
 			self:CheckFriend(i)
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Warn(self:GetObjectName(), err)
 	end)
 end
 --#endregion
@@ -172,11 +172,12 @@ function XFC.FriendCollection:Backup()
 			end
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create friend backup before reload: ' .. inErrorMessage
+	catch(function (err)
+		XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create friend backup before reload: ' .. err
 	end)
 end
 
+-- FIX: This assumes a scan has already taken place
 function XFC.FriendCollection:Restore()
 	if(XF.Cache.Backup.Friends == nil) then XF.Cache.Backup.Friends = {} end
 	for _, key in pairs (XF.Cache.Backup.Friends) do
@@ -184,11 +185,11 @@ function XFC.FriendCollection:Restore()
 			if(self:Contains(key)) then
 				local friend = self:Get(key)
 				friend:IsRunningAddon(true)
-				XF:Info(ObjectName, '  Restored %s friend information from backup', friend:GetTag())
+				XF:Info(self:GetObjectName(), '  Restored %s friend information from backup', friend:GetTag())
 			end
 		end).
-		catch(function (inErrorMessage)
-			XF:Warn(ObjectName, 'Failed to restore friend list: ' .. inErrorMessage)
+		catch(function (err)
+			XF:Warn(self:GetObjectName(), 'Failed to restore friend list: ' .. err)
 		end)
 	end
 	XF.Cache.Backup.Friends = {}

@@ -35,7 +35,7 @@ end
 --#region Print
 function XFC.Node:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  linkCount (' .. type(self.linkCount) .. '): ' .. tostring(self.linkCount))
+    XF:Debug(self:GetObjectName(), '  linkCount (' .. type(self.linkCount) .. '): ' .. tostring(self.linkCount))
     if(self:HasTarget()) then self:GetTarget():Print() end
 end
 --#endregion
@@ -58,10 +58,6 @@ function XFC.Node:SetTarget(inTarget)
     self.target = inTarget
 end
 
-function XFC.Node:GetString()
-    return self:GetName() .. ':' .. self:GetTarget():GetRealm():GetID() .. ':' .. self:GetTarget():GetFaction():GetKey()
-end
-
 function XFC.Node:GetLinkCount()
     return self.linkCount
 end
@@ -80,5 +76,31 @@ function XFC.Node:DecrementLinkCount()
     if(self:GetLinkCount() == 0) then
         XFO.Nodes:Remove(self)
     end
+end
+--#endregion
+
+--#region Serialization
+function XFC.Node:Serialize()
+    return self:GetName() .. ':' .. self:GetTarget():Serialize()
+end
+
+function XFC.Node:Deserialize(inSerialized)
+    assert(type(inSerialized) == 'string')
+    local data = string.Split(inSerialized, ':')
+    self:SetKey(data[1])
+    self:SetName(data[1])
+    
+    local target = nil
+    try(function()
+        target = XFO.Targets:Pop()
+        target:Deserialize(data[2])
+        self:SetTarget(XFO.Targets:Get(target:GetKey()))
+    end).
+    catch(function(err)
+        XF:Warn(self:GetObjectName(), err)
+    end).
+    finally(function()
+        XFO.Targets:Push(target)
+    end)    
 end
 --#endregion

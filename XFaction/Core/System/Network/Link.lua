@@ -1,9 +1,9 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Link'
-local ServerTime = GetServerTime
+local GetCurrentTime = GetServerTime
 
-XFC.Link = Object:newChildConstructor()
+XFC.Link = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Link:new()
@@ -40,7 +40,7 @@ end
 --#region Print
 function XFC.Link:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
+    XF:Debug(self:GetObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     if(self:HasFromNode()) then self:GetFromNode():Print() end
     if(self:HasToNode()) then self:GetToNode():Print() end
 end
@@ -97,26 +97,42 @@ function XFC.Link:SetTimeStamp(inEpochTime)
 end
 --#endregion
 
---#region DataSet
-function XFC.Link:GetString()
-    return self:GetFromNode():GetString() .. ';' .. self:GetToNode():GetString()
+--#region Serialization
+function XFC.Link:Serialize()
+    return self:GetFromNode():Serialize() .. ';' .. self:GetToNode():Serialize()
 end
 
-function XFC.Link:SetObjectFromString(inLinkString)
-    assert(type(inLinkString) == 'string')
+local function GetNode(inSerialized)
+    assert(type(inSerlialized) == 'string')
+    local node = nil
+    local key = nil
 
-    local _Nodes = string.Split(inLinkString, ';')
-    local fromNode = XFO.Nodes:SetNodeFromString(_Nodes[1])
-    self:SetFromNode(fromNode)
+    try(function()
+        node = XFO.Nodes:Pop()
+        node:Initialize()
+        node:Deserialize(inSerialized)
+        key = node:GetKey()
+        if(XFO.Nodes:Contains(key)) then
+            XFO.Nodes:Push(node)
+        else
+            XFO.Nodes:Add(node)
+        end
+    end).
+    catch(function(err)
+        XF:Warn(self:GetObjectName(), err)
+        XFO.Nodes:Push(node)
+        throw(err)
+    end)
 
-    local toNode = XFO.Nodes:Pop()
-    toNode:SetObjectFromString(_Nodes[2])
-    if(XFO.Nodes:Contains(toNode:GetKey())) then
-        toNode = XF.Nodes:Get(toNode:GetKey())
-    else
-        XFO.Nodes:Add(toNode)
-    end
-    self:SetToNode(toNode)
+    return XFO.Nodes:Get(key)
+end
+
+function XFC.Link:Deserialize(inSerialized)
+    assert(type(inSerialized) == 'string')
+
+    local _Nodes = string.Split(inSerialized, ';')
+    self:SetFromNode(GetNode(_Nodes[1]))
+    self:SetToNode(GetNode(_Nodes[2]))
 
     self:Initialize()
 end

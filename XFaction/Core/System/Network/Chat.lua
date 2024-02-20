@@ -6,7 +6,7 @@ XFC.Chat = XFC.Mailbox:newChildConstructor()
 
 --#region Constructors
 function XFC.Chat:new()
-    local object = Chat.parent.new(self)
+    local object = XFC.Chat.parent.new(self)
     object.__name = ObjectName
     return object
 end
@@ -32,7 +32,7 @@ function XFC.Chat:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
     if(not XF.Settings.System.Roster and inMessage:GetSubject() == XF.Enum.Message.DATA) then return end
 
-    XF:Debug(ObjectName, 'Attempting to send message')
+    XF:Debug(self:GetObjectName(), 'Attempting to send message')
     inMessage:Print()
 
     --#region BNet messaging for BNET/BROADCAST types
@@ -46,7 +46,7 @@ function XFC.Chat:Send(inMessage)
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
         elseif(not inMessage:HasTargets() and inMessage:GetType() == XF.Enum.Network.BROADCAST) then
-            XF:Debug(ObjectName, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
+            XF:Debug(self:GetObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
             inMessage:SetType(XF.Enum.Network.LOCAL)        
         end
     end
@@ -68,7 +68,7 @@ function XFC.Chat:Send(inMessage)
     end
 
     for index, packet in ipairs (inMessage:Segment()) do
-        XF:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:GetKey(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
+        XF:Debug(self:GetObjectName(), 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:GetKey(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
         XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
         XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
@@ -97,7 +97,7 @@ function XFC.Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, in
         self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end).
     catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+        XF:Warn(self:GetObjectName(), inErrorMessage)
     end)
 end
 --#endregion

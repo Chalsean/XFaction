@@ -2,13 +2,17 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'TargetCollection'
 
-XFC.TargetCollection = ObjectCollection:newChildConstructor()
+XFC.TargetCollection = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.TargetCollection:new()
 	local object = XFC.TargetCollection.parent.new(self)
 	object.__name = ObjectName
     return object
+end
+
+function XFC.TargetCollection:NewObject()
+	return XFC.Target:new()
 end
 --#endregion
 
@@ -31,7 +35,7 @@ function XFC.TargetCollection:Initialize()
 				self:Get(key):IncrementTargetCount()
 			else
 				XF:Info(ObjectName, 'Initializing target [%s]', key)
-				local target = XFC.Target:new()
+				local target = self:Pop()
 				target:SetKey(key)
 				target:SetRealm(realm)
 				target:SetFaction(faction)

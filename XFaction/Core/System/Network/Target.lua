@@ -15,6 +15,13 @@ function XFC.Target:new()
     object.targetCount = 1
     return object
 end
+
+function XFC.Target:Deconstructor()
+    self:ParentDeconstructor()
+    self.realm = nil
+    self.faction = nil
+    self.targetCount = 1
+end
 --#endregion
 
 --#region Print
@@ -64,5 +71,18 @@ end
 
 function XFC.Target:IncrementTargetCount()
     self.targetCount = self.targetCount + 1
+end
+--#endregion
+
+--#region Serialization
+function XFC.Target:Serialize()
+    return self:GetTarget():GetRealm():GetID() .. '-' .. self:GetTarget():GetFaction():GetKey()
+end
+
+function XFC.Target:Deserialize(inSerialized)
+    assert(type(inSerialized) == 'string')
+    local data = string.Split(inSerialized, ':')
+    self:SetRealm(XFO.Realms:GetByID(tonumber(data[1])))
+    self:SetFaction(XFO.Factions:Get(data[2]))
 end
 --#endregion

@@ -3,7 +3,7 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Channel'
 local SetChatColor = ChangeChatColor
 
-XFC.Channel = Object:newChildConstructor()
+XFC.Channel = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Channel:new()
@@ -18,7 +18,7 @@ end
 --#region Print
 function XFC.Channel:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
+    XF:Debug(self:GetObjectName(), '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
 end
 --#endregion
 
@@ -44,7 +44,7 @@ function XFC.Channel:SetColor()
     if(XF.Config.Channels[self:GetName()] ~= nil) then
         local color = XF.Config.Channels[self:GetName()]
         SetChatColor('CHANNEL' .. self:GetID(), color.R, color.G, color.B)
-        XF:Debug(ObjectName, 'Set channel [%s] RGB [%f:%f:%f]', self:GetName(), color.R, color.G, color.B)
+        XF:Debug(self:GetObjectName(), 'Set channel [%s] RGB [%f:%f:%f]', self:GetName(), color.R, color.G, color.B)
     end
 end
 --#endregion

@@ -49,7 +49,7 @@ function XFC.BNet:Send(inMessage)
             local randomNumber = math.random(1, friendCount)
             links[#links + 1] = friends[randomNumber]
         else
-            XF:Debug(ObjectName, 'Unable to identify friends on target [%s:%s]', target:GetRealm():GetName(), target:GetFaction():GetName())
+            XF:Debug(self:GetObjectName(), 'Unable to identify friends on target [%s:%s]', target:GetRealm():GetName(), target:GetFaction():GetName())
         end
     end
 
@@ -67,7 +67,7 @@ function XFC.BNet:Send(inMessage)
     for _, friend in pairs (links) do
         try(function ()
             for index, packet in ipairs (packets) do
-                XF:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:GetName(), friend:GetGameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
+                XF:Debug(self:GetObjectName(), 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:GetName(), friend:GetGameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 XF.Lib.BCTL:BNSendGameData('NORMAL', XF.Enum.Tag.BNET, packet, _, friend:GetGameID())
                 XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
@@ -75,7 +75,7 @@ function XFC.BNet:Send(inMessage)
             inMessage:RemoveTarget(friend:GetTarget())
         end).
         catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+            XF:Warn(self:GetObjectName(), inErrorMessage)
         end)
     end
 end
@@ -111,15 +111,15 @@ function XFC.BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, in
                 friend:IsRunningAddon(true)
                 friend:CreateLink()
                 if(inEncodedMessage:sub(1, 4) == 'PING') then
-                    XF:Debug(ObjectName, 'Received ping from [%s]', friend:GetTag())
+                    XF:Debug(self:GetObjectName(), 'Received ping from [%s]', friend:GetTag())
                 elseif(inEncodedMessage:sub(1,7) == 'RE:PING') then
-                    XF:Debug(ObjectName, '[%s] Responded to ping', friend:GetTag())
+                    XF:Debug(self:GetObjectName(), '[%s] Responded to ping', friend:GetTag())
                 end
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:GetObjectName(), err)
     end)
 
     try(function ()
@@ -130,8 +130,8 @@ function XFC.BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, in
             self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    
         end        
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:GetObjectName(), err)
     end)
 end
 --#endregion

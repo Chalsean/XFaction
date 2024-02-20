@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'NodeCollection'
 
-XFC.NodeCollection = Factory:newChildConstructor()
+XFC.NodeCollection = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.NodeCollection:new()
@@ -13,15 +13,15 @@ function XFC.NodeCollection:new()
 end
 
 function XFC.NodeCollection:NewObject()
-	return Node:new()
+	return XFC.Node:new()
 end
 --#endregion
 
 --#region Print
 function XFC.NodeCollection:Print()
 	self:ParentPrint()
-	XF:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ')
-	XF:DataDumper(ObjectName, self.targetCount)
+	XF:Debug(self:GetObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ')
+	XF:DataDumper(self:GetObjectName(), self.targetCount)
 end
 --#endregion
 
@@ -29,66 +29,44 @@ end
 function XFC.NodeCollection:Add(inNode)
     assert(type(inNode) == 'table' and inNode.__name == 'Node', 'argument must be Node object')
 	self.parent.Add(self, inNode)
-	if(self.targetCount[inNode:GetTarget():GetKey()] == nil) then
-		self.targetCount[inNode:GetTarget():GetKey()] = 0
-	end
-	self.targetCount[inNode:GetTarget():GetKey()] = self.targetCount[inNode:GetTarget():GetKey()] + 1
-	XFO.DataText.Links:RefreshBroker()
+	self:IncrementTargetCount(inNode:GetTarget():GetKey())
 end
 
-function XFC.NodeCollection:Remove(inNode)
-    assert(type(inNode) == 'table' and inNode.__name == 'Node', 'argument must be Node object')
+function XFC.NodeCollection:Remove(inKey)
+    assert(type(inKey) == 'string')
+	local node = self:Get(inKey)
 	try(function ()
-		self.parent.Remove(self, inNode:GetKey())
-		if(self.targetCount[inNode:GetTarget():GetKey()] ~= nil) then
-			self.targetCount[inNode:GetTarget():GetKey()] = self.targetCount[inNode:GetTarget():GetKey()] - 1
-		end
-		for _, link in XF.Links:Iterator() do
-			if(link:GetFromNode():Equals(inNode) or link:GetToNode():Equals(inNode)) then
-				XF.Links:Remove(link)
+		self.parent.Remove(self, inKey)
+		self:DecrementTargetCount(node:GetTarget():GetKey())
+		for _, link in XFO.Links:Iterator() do
+			if(link:GetFromNode():Equals(node) or link:GetToNode():Equals(node)) then
+				XFO.Links:Remove(link:GetKey())
 			end
 		end
-		XFO.DataText.Links:RefreshBroker()
 	end).
 	finally(function ()
-		self:Push(inNode)
-	end)
-end
-
-function XFC.NodeCollection:RemoveAll()
-	try(function ()
-		if(self:IsInitialized()) then
-			for _, node in self:Iterator() do
-				self:Remove(node)
-			end
-		end
-	end).
-	catch(function (inErrorMessage)
-		XF:Error(ObjectName, inErrorMessage)
+		self:Push(node)
 	end)
 end
 --#endregion
 
 --#region Accessors
-function XFC.NodeCollection:GetTargetCount(inTarget)
-	return self.targetCount[inTarget:GetKey()] or 0
+function XFC.NodeCollection:GetTargetCount(inTargetKey)
+	return self.targetCount[inTargetKey] or 0
 end
---#endregion
 
---#region DataSet
-function XFC.NodeCollection:SetNodeFromString(inNodeString)
-    assert(type(inNodeString) == 'string')
-    local nodeData = string.Split(inNodeString, ':') 
-	if(self:Contains(nodeData[1])) then
-		return self:Get(nodeData[1])
+function XFC.NodeCollection:IncrementTargetCount(inTargetKey)
+	if(self.targetCount[inTargetKey] == nil) then
+		self.targetCount[inTargetKey] = 0
 	end
-	local node = self:Pop()
-    node:SetKey(nodeData[1])
-    node:SetName(nodeData[1])
-    local realm = XFO.Realms:GetByID(tonumber(nodeData[2]))
-    local faction = XFO.Factions:Get(tonumber(nodeData[3]))
-    node:SetTarget(XFO.Targets:GetByRealmFaction(realm, faction))
-	self:Add(node)
-	return node
+	self.targetCount[inTargetKey] = self.targetCount[inTargetKey] + 1
+end
+
+function XFC.NodeCollection:DecrementTargetCount(inTargetKey)
+	if(self.targetCount[inTargetKey] > 0) then
+		self.targetCount[inTargetKey] = self.targetCount[inTargetKey] - 1
+	else
+		self.targetCount[inTargetKey] = 0	
+	end
 end
 --#endregion

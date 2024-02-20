@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Friend'
 
-XFC.Friend = Object:newChildConstructor()
+XFC.Friend = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Friend:new()
@@ -24,12 +24,12 @@ end
 --#region Print
 function XFC.Friend:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
-    XF:Debug(ObjectName, '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
-    XF:Debug(ObjectName, '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
-    XF:Debug(ObjectName, '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
-    XF:Debug(ObjectName, '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
-    XF:Debug(ObjectName, '  myLink (' .. type(self.myLink) .. '): ' .. tostring(self.myLink))
+    XF:Debug(self:GetObjectName(), '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
+    XF:Debug(self:GetObjectName(), '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
+    XF:Debug(self:GetObjectName(), '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
+    XF:Debug(self:GetObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
+    XF:Debug(self:GetObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
+    XF:Debug(self:GetObjectName(), '  myLink (' .. type(self.myLink) .. '): ' .. tostring(self.myLink))
     if(self:HasTarget()) then self:GetTarget():Print() end
 end
 
@@ -133,7 +133,7 @@ function XFC.Friend:CreateLink()
             XFO.Links:Add(link)
         end).
         catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+            XF:Warn(self:GetObjectName(), inErrorMessage)
             XF.Links:Push(link)
         end)
     end
@@ -150,7 +150,7 @@ end
 
 --#region Network
 function XFC.Friend:Ping()
-    XF:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
+    XF:Debug(self:GetObjectName(), 'Sending ping to [%s]', self:GetTag())
     XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, self:GetGameID())
     XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
 end

@@ -5,7 +5,7 @@ local SwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
 local GetChannels = GetChannelList
 local GetChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
 
-XFC.ChannelCollection = ObjectCollection:newChildConstructor()
+XFC.ChannelCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.ChannelCollection:new()
