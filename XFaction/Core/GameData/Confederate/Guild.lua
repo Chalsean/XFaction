@@ -3,7 +3,7 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Guild'
 local GetClubMembers = C_Club.GetClubMembers
 
-XFC.Guild = Object:newChildConstructor()
+XFC.Guild = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Guild:new()
@@ -11,7 +11,6 @@ function XFC.Guild:new()
     object.__name = ObjectName
     object.streamID = nil  -- Only the player's guild will have a StreamerID (this is gchat)
     object.initials = nil
-    object.faction = nil
     object.realm = nil
     return object
 end
@@ -20,9 +19,8 @@ end
 --#region Print
 function XFC.Guild:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  streamID (' .. type(self.streamID) .. '): ' .. tostring(self.streamID))
-    XF:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
-    if(self:HasFaction()) then self:GetFaction():Print() end
+    XF:Debug(self:GetObjectName(), '  streamID (' .. type(self.streamID) .. '): ' .. tostring(self.streamID))
+    XF:Debug(self:GetObjectName(), '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
     if(self:HasRealm()) then self:GetRealm():Print() end
 end
 
@@ -61,19 +59,6 @@ function XFC.Guild:SetStreamID(inStreamID)
     self.streamID = inStreamID
 end
 
-function XFC.Guild:HasFaction()
-    return self.faction ~= nil
-end
-
-function XFC.Guild:GetFaction()
-    return self.faction
-end
-
-function XFC.Guild:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
-    self.faction = inFaction
-end
-
 function XFC.Guild:HasRealm()
     return self.realm ~= nil
 end
@@ -94,14 +79,12 @@ function XFC.Guild:Deserialize(inString)
 
 	local realmNumber, factionID, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
 	local realm = XFO.Realms:GetByID(tonumber(realmNumber))
-	local faction = XFO.Factions:GetByID(factionID)
-
+	
 	self:Initialize()
 	self:SetKey(guildInitials)
 	self:SetName(guildName)
-	self:SetFaction(faction)
 	self:SetRealm(realm)
 	self:SetInitials(guildInitials)
-    XF:Info(ObjectName, 'Initialized guild [%s:%s:%s:%s]', self:GetInitials(), self:GetName(), self:GetFaction():GetName(), self:GetRealm():GetName())
+    XF:Info(ObjectName, 'Initialized guild [%s:%s:%s]', self:GetInitials(), self:GetName(), self:GetRealm():GetName())
 end
 --#endregion

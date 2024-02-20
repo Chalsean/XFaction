@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Realm'
+local GetAPIRealmName = GetNormalizedRealmName
 
-XFC.Realm = Object:newChildConstructor()
+XFC.Realm = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Realm:new()
@@ -29,11 +30,11 @@ end
 --#region Print
 function XFC.Realm:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
-    XF:Debug(ObjectName, '  isTargeted (' .. type(self.isTargeted) .. '): ' .. tostring(self.isTargeted))
-    XF:Debug(ObjectName, '  connectedRealmCount (' .. type(self.connectedRealmCount) .. '): ' .. tostring(self.connectedRealmCount))
+    XF:Debug(self:GetObjectName(), '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
+    XF:Debug(self:GetObjectName(), '  isTargeted (' .. type(self.isTargeted) .. '): ' .. tostring(self.isTargeted))
+    XF:Debug(self:GetObjectName(), '  connectedRealmCount (' .. type(self.connectedRealmCount) .. '): ' .. tostring(self.connectedRealmCount))
     for _, realm in pairs (self.connectedRealms) do
-        XF:Debug(ObjectName, '* connectedRealm [%d]', realm:GetID())
+        XF:Debug(self:GetObjectName(), '* connectedRealm [%d]', realm:GetID())
     end
 end
 --#endregion
@@ -75,7 +76,7 @@ end
 
 function XFC.Realm:GetAPIName()
     if(self.apiName == nil) then 
-        self.apiName = GetNormalizedRealmName() 
+        self.apiName = GetAPIRealmName() 
     end
     return self.apiName
 end

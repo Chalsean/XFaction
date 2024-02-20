@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'TeamCollection'
 
-XFC.TeamCollection = ObjectCollection:newChildConstructor()
+XFC.TeamCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.TeamCollection:new()
@@ -23,7 +23,7 @@ function XFC.TeamCollection:Initialize()
 			team:SetInitials(initials)
 			team:SetKey(initials)
 			self:Add(team)
-			XF:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
+			XF:Info(self:GetObjectName(), 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
 		end
 		self:IsInitialized(true)
 	end

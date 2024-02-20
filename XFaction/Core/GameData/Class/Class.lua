@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Class'
 
-XFC.Class = Object:newChildConstructor()
+XFC.Class = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Class:new()
@@ -20,11 +20,11 @@ end
 --#region Print
 function XFC.Class:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
-    XF:Debug(ObjectName, '  r (' .. type(self.r) .. '): ' .. tostring(self.r))
-    XF:Debug(ObjectName, '  g (' .. type(self.g) .. '): ' .. tostring(self.g))
-    XF:Debug(ObjectName, '  b (' .. type(self.b) .. '): ' .. tostring(self.b))
-    XF:Debug(ObjectName, '  hex (' .. type(self.hex) .. '): ' .. tostring(self.hex))
+    XF:Debug(self:GetObjectName(), '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
+    XF:Debug(self:GetObjectName(), '  r (' .. type(self.r) .. '): ' .. tostring(self.r))
+    XF:Debug(self:GetObjectName(), '  g (' .. type(self.g) .. '): ' .. tostring(self.g))
+    XF:Debug(self:GetObjectName(), '  b (' .. type(self.b) .. '): ' .. tostring(self.b))
+    XF:Debug(self:GetObjectName(), '  hex (' .. type(self.hex) .. '): ' .. tostring(self.hex))
 end
 --#endregion
 

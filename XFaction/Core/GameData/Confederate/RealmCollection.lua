@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'RealmCollection'
 
-XFC.RealmCollection = ObjectCollection:newChildConstructor()
+XFC.RealmCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Realm list
 -- Places that Blizzard API considers a realm
@@ -837,7 +837,6 @@ end
 --#endregion
 
 --#region Initializers
--- Realm information comes from disk, so no need to stick in cache
 function XFC.RealmCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -855,16 +854,16 @@ function XFC.RealmCollection:Initialize()
 				
 				if(realm:GetName() == GetRealmName()) then
 					XF.Player.Realm = realm
-					XF:Info(ObjectName, 'Initialized player realm [%d:%s]', realm:GetID(), realm:GetName())
+					XF:Info(self:GetObjectName(), 'Initialized player realm [%d:%s]', realm:GetID(), realm:GetName())
 				else
-					XF:Trace(ObjectName, 'Initialized realm [%d:%s]', realm:GetID(), realm:GetName())
+					XF:Trace(self:GetObjectName(), 'Initialized realm [%d:%s]', realm:GetID(), realm:GetName())
 				end
 			end
 		end
 
 		-- Sanity check
 		if(XF.Player.Realm == nil) then
-			error(format('Unable to identify player realm'))
+			throw(format('Unable to identify player realm'))
 		end
 
 		-- Setup default realms (Torghast)
@@ -887,7 +886,7 @@ function XFC.RealmCollection:Initialize()
 						if(realm2 ~= nil and not realm1:Equals(realm2)) then
 							realm1:AddConnected(realm2)
 							realm2:AddConnected(realm1)
-							XF:Trace(ObjectName, 'Initialized realm connection [%d:%d]', realm1:GetID(), realm2:GetID())
+							XF:Trace(self:GetObjectName(), 'Initialized realm connection [%d:%d]', realm1:GetID(), realm2:GetID())
 						end
 					end
 				end

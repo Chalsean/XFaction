@@ -1,9 +1,8 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Confederate'
-local GuildRosterEvent = C_GuildInfo.GuildRoster
 
-XFC.Confederate = Factory:newChildConstructor()
+XFC.Confederate = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.Confederate:new()
@@ -17,7 +16,7 @@ function XFC.Confederate:new()
 end
 
 function XFC.Confederate:NewObject()
-    return Unit:new()
+    return XFC.Unit:new()
 end
 --#endregion
 
@@ -25,17 +24,17 @@ end
 function XFC.Confederate:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        -- If this is a reload, restore non-local guild members
+
         try(function ()
             self:CanModifyGuildInfo(CanEditGuildInfo())
         end).
         catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+            XF:Warn(self:GetObjectName(), inErrorMessage)
         end)
         self:SetName(XF.Cache.Confederate.Name)
         self:SetKey(XF.Cache.Confederate.Key)
-        XF:Info(ObjectName, 'Initialized confederate %s <%s>', self:GetName(), self:GetKey())
 
+        XF:Info(self:GetObjectName(), 'Initialized confederate %s <%s>', self:GetName(), self:GetKey())
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -57,7 +56,7 @@ function XFC.Confederate:Add(inUnit)
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
-        local target = XF.Targets:GetByGuild(inUnit:GetGuild())
+        local target = XFO.Targets:GetByGuild(inUnit:GetGuild())
         if(self.countByTarget[target:GetKey()] == nil) then
             self.countByTarget[target:GetKey()] = 0
         end
@@ -90,19 +89,6 @@ function XFC.Confederate:Remove(inKey)
         end
         self:Push(unit)
     end
-end
-
-function XFC.Confederate:RemoveAll()
-    try(function ()
-        if(self:IsInitialized()) then
-            for _, unit in self:Iterator() do
-                self:Remove(unit:GetKey())
-            end
-        end
-    end).
-    catch(function (inErrorMessage)
-        XF:Error(ObjectName, inErrorMessage)
-    end)
 end
 --#endregion
 
@@ -146,9 +132,7 @@ function XFC.Confederate:Backup()
         if(self:IsInitialized()) then
             for unitKey, unit in self:Iterator() do
                 if(unit:IsRunningAddon() and not unit:IsPlayer()) then
-                    XF.Cache.Backup.Confederate[unitKey] = {}
-                    local serializedData = XF:SerializeUnitData(unit)
-                    XF.Cache.Backup.Confederate[unitKey] = serializedData
+                    XF.Cache.Backup.Confederate[unitKey] = unit:Serialize()
                 end
             end
         end
@@ -166,10 +150,11 @@ function XFC.Confederate:Restore()
             unit = self:Pop()
             unit:Deserialize(data)
             self:Add(unit)
-            XF:Info(ObjectName, '  Restored %s unit information from backup', unit:GetUnitName())
+            XF:Info(self:GetObjectName(), '  Restored %s unit information from backup', unit:GetUnitName())
         end).
         catch(function (err)
-            XF:Warn(ObjectName, err)
+            XF:Warn(self:GetObjectName(), err)
+            self:Push(unit)
         end)
     end
     XF.Cache.Backup.Confederate = {}

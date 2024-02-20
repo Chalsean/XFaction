@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'ClassCollection'
 
-XFC.ClassCollection = ObjectCollection:newChildConstructor()
+XFC.ClassCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Class List
 local ClassData = {
@@ -45,7 +45,7 @@ function XFC.ClassCollection:Initialize()
 			class:SetRGB(tonumber(classData[3]), tonumber(classData[4]), tonumber(classData[5]))
 			class:SetHex(classData[6])
 			self:Add(class)
-			XF:Info(ObjectName, 'Initialized class [%d:%s]', class:GetID(), class:GetName())
+			XF:Info(self:GetObjectName(), 'Initialized class [%d:%s]', class:GetID(), class:GetName())
 		end
 		self:IsInitialized(true)
 	end

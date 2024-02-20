@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Team'
 
-XFC.Team = Object:newChildConstructor()
+XFC.Team = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Team:new()
@@ -16,7 +16,7 @@ end
 --#region Print
 function XFC.Team:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
+    XF:Debug(self:GetObjectName(), '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
 end
 --#endregion
 
@@ -40,7 +40,7 @@ function XFC.Team:Deserialize(inString)
 		team:SetName(inTeamName)
 		team:SetInitials(inTeamInitials)
 		team:SetKey(inTeamInitials)
-        XF:Info(ObjectName, 'Initialized team [%s:%s]', self:GetInitials(), self:GetName())
+        XF:Info(self:GetObjectName(), 'Initialized team [%s:%s]', self:GetInitials(), self:GetName())
 	end
 end
 --#endregion

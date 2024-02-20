@@ -1,8 +1,10 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'GuildCollection'
+local GetClubInfo = C_Club.GetClubInfo
+local GetStreams = C_Club.GetStreams
 
-XFC.GuildCollection = ObjectCollection:newChildConstructor()
+XFC.GuildCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.GuildCollection:new()
@@ -21,7 +23,7 @@ function XFC.GuildCollection:Initialize(inGuildID)
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.names = {}
-		self.info = C_Club.GetClubInfo(inGuildID)
+		self.info = GetClubInfo(inGuildID)
 		self:SetFromGuildInfo()
 		self:IsInitialized(true)
 	end
@@ -37,7 +39,7 @@ function XFC.GuildCollection:Add(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
 	self.parent.Add(self, inGuild)
 	self.names[inGuild:GetName()] = inGuild
-	XF:Info(ObjectName, 'Initialized guild [%s:%s]', inGuild:GetInitials(), inGuild:GetName())
+	XF:Info(self:GetObjectName(), 'Initialized guild [%s:%s]', inGuild:GetInitials(), inGuild:GetName())
 end
 --#endregion
 
@@ -73,7 +75,7 @@ function XFC.GuildCollection:Deserialize()
 	end
 
 	if(not string.len(xfData)) then
-		error('Failed to find setup in guild information')
+		throw('Failed to find setup in guild information')
 	end
 
 	for _, line in ipairs(string.Split(xfData, '\n')) do
@@ -102,7 +104,7 @@ function XFC.GuildCollection:SetPlayerGuild()
 	for _, guild in self:Iterator() do
 		if(guild:GetName() == self.info.name and XF.Player.Realm:Equals(guild:GetRealm())) then
 			guild:SetID(self.info.clubId)
-			for _, stream in pairs (C_Club.GetStreams(guild:GetID())) do
+			for _, stream in pairs (GetStreams(guild:GetID())) do
 				if(stream.streamType == 1) then
 					guild:SetStreamID(stream.streamId)
 					break
@@ -113,7 +115,7 @@ function XFC.GuildCollection:SetPlayerGuild()
 		end
 	end
 	if(XF.Player.Guild == nil) then		
-		error('Player is not on a supported guild or realm')
+		throw('Player is not on a supported guild or realm')
 	end
 end
 --#endregion

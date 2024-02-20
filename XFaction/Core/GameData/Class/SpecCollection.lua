@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'SpecCollection'
 
-XFC.SpecCollection = ObjectCollection:newChildConstructor()
+XFC.SpecCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Spec List
 local SpecData =
@@ -85,7 +85,7 @@ function XFC.SpecCollection:Initialize()
 			spec:SetIconID(tonumber(specData[2]))
 			spec:SetClass(XFO.Classes:Get(tonumber(specData[3])))
 			self:Add(spec)
-			XF:Info(ObjectName, 'Initialized spec [%d:%s:%s]', spec:GetID(), spec:GetName(), spec:GetClass():GetName())
+			XF:Info(self:GetObjectName(), 'Initialized spec [%d:%s:%s]', spec:GetID(), spec:GetName(), spec:GetClass():GetName())
 		end
 		self:IsInitialized(true)
 	end

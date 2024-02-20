@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Spec'
 
-XFC.Spec = Object:newChildConstructor()
+XFC.Spec = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Spec:new()
@@ -17,7 +17,7 @@ end
 --#region Print
 function XFC.Spec:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+    XF:Debug(self:GetObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
 end
 --#endregion
 

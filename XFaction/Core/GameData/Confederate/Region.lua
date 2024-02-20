@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Region'
 
-XFC.Region = Object:newChildConstructor()
+XFC.Region = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Region:new()
@@ -16,7 +16,7 @@ end
 --#region Print
 function XFC.Region:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  current (' .. type(self.current) .. '): ' .. tostring(self.current))
+    XF:Debug(self:GetObjectName(), '  current (' .. type(self.current) .. '): ' .. tostring(self.current))
 end
 --#endregion
 
