@@ -2,6 +2,9 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Confederate'
 
+local GetGuildMembers = C_Club.GetClubMembers
+local QueryServer = C_GuildInfo.GuildRoster
+
 XFC.Confederate = XFC.Factory:newChildConstructor()
 
 --#region Constructors
@@ -36,6 +39,16 @@ function XFC.Confederate:Initialize()
 
         XF:Info(self:GetObjectName(), 'Initialized confederate %s <%s>', self:GetName(), self:GetKey())
 
+        -- This is the local guild roster scan for those not running the addon
+        XFO.Events:Add
+        ({
+            name = 'Roster', 
+            event = 'GUILD_ROSTER_UPDATE', 
+            callback = XFO.Confederate.UpdateLocalRoster, 
+            instance = true,
+            groupDelta = XF.Settings.LocalGuild.ScanTimer
+        })
+        
         XFO.Timers:Add
         ({
             name = 'Offline', 
@@ -43,7 +56,10 @@ function XFC.Confederate:Initialize()
             callback = XFO.Confederate.Offline, 
             repeater = true, 
             instance = true
-        })       
+        })    
+        
+        -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
+        QueryServer()
 
         self:IsInitialized(true)
 	end
@@ -168,7 +184,9 @@ function XFC.Confederate:OfflineUnit(inKey)
         self.onlineCount = self.onlineCount - 1
     end
 end
+--#endregion
 
+--#region Callbacks
 function XFC.Confederate:Offline()
     local ttl = GetCurrentTime() - XF.Settings.Confederate.UnitStale
     for _, unit in self:Iterator() do
@@ -180,5 +198,56 @@ function XFC.Confederate:Offline()
             end
         end
     end
+end
+
+-- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
+function XFC.Confederate:UpdateLocalRoster()
+    local self = XFO.Confederate
+    XF:Trace(self:GetObjectName(), 'Scanning local guild roster')
+    for _, memberID in pairs (GetGuildMembers(XF.Player.Guild:GetID(), XF.Player.Guild:GetStreamID())) do
+        local unit = nil
+        try(function ()
+            unit = self:Pop()
+            unit:Initialize(memberID)
+            if(unit:IsInitialized()) then
+                if(self:Contains(unit:GetKey())) then
+                    local old = self:Get(unit:GetKey())
+                    if(old:IsOnline() and unit:IsOffline()) then
+                        XF:Info(self:GetObjectName(), 'Guild member logout via scan: %s', unit:GetUnitName())
+                        if(XF.Config.Chat.Login.Enable) then
+                            XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, old:GetName(), old:GetUnitName(), old:GetMainName(), old:GetGuild())
+                        end
+                        self:Add(unit)
+                    elseif(unit:IsOnline()) then
+                        if(old:IsOffline()) then
+                            XF:Info(self:GetObjectName(), 'Guild member login via scan: %s', unit:GetUnitName())
+                            if(XF.Config.Chat.Login.Enable) then
+                                XFO.SystemFrame:Display(XF.Enum.Message.LOGIN, unit:GetName(), unit:GetUnitName(), unit:GetMainName(), unit:GetGuild())
+                            end
+                            self:Add(unit)
+                        elseif(not old:IsRunningAddon()) then
+                            self:Add(unit)
+                        else
+                            -- Every logic branch should either add, remove or push, otherwise there will be a memory leak
+                            self:Push(unit)
+                        end
+                    else
+                        self:Push(unit)
+                    end
+                -- First time scan (i.e. login) do not notify
+                else
+                    self:Add(unit)
+                end
+            -- If it didnt initialize properly then we dont really know their status, so do nothing
+            else
+                self:Push(unit)
+            end
+        end).
+        catch(function (err)
+            XF:Warn(self:GetObjectName(), err)
+            self:Push(unit)
+        end)
+    end
+    XFO.DTGuild:RefreshBroker()
 end
 --#endregion

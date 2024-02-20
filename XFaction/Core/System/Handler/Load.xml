@@ -1,10 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
     <Script file='AchievementEvent.lua'/>
     <Script file='Addon.lua'/>
-    <Script file='BNetEvent.lua'/>
-    <Script file='ChannelEvent.lua'/>
-    <Script file='ChatEvent.lua'/>
-    <Script file='GuildEvent.lua'/>
     <Script file='PlayerEvent.lua'/>
     <Script file='SystemEvent.lua'/>
     <Script file='TimerEvent.lua'/>

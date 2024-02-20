@@ -38,6 +38,23 @@ function XFC.ChannelCollection:Initialize()
 			--XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 		end
 
+		XFO.Events:Add
+		({
+			name = 'ChannelChange', 
+			event = 'CHAT_MSG_CHANNEL_NOTICE', 
+			callback = XFO.Channels.Sync,
+			groupDelta = 3,
+			instance = true,
+			start = true
+		})
+		XFO.Events:Add
+		({
+			name = 'ChannelColor', 
+			event = 'UPDATE_CHAT_COLOR', 
+			callback = XFO.ChannelEvent.UpdateColor, 
+			instance = true,
+			start = true
+		})
 		XFO.Timers:Add
 		({
 			name = 'LoginChannelSync',
@@ -115,7 +132,7 @@ function XFC.ChannelCollection:UseGuild(inBoolean)
 end
 --#endregion
 
---#region DataSet
+--#region Callbacks
 function XFC.ChannelCollection:Sync()
 	local self = XFO.Channels
 	try(function ()
@@ -136,9 +153,34 @@ function XFC.ChannelCollection:Sync()
 				self:SetLocalChannel(channel)
 			end
 		end
+
+		-- FIX: Channel sorting
+		--if(XF.Config.Chat.Channel.Last)
 	end).
 	catch(function (inErrorMessage)
 		XF:Warn(self:GetObjectName(), inErrorMessage)
+	end)
+end
+
+function XFC.ChannelCollection:UpdateColor(inChannel, inR, inG, inB)
+	local self = XFO.Channels
+	try(function ()
+		if(inChannel) then
+			local channelID = tonumber(inChannel:match("(%d+)$"))
+			local channel = self:GetByID(channelID)
+			if(channel ~= nil) then
+				if(XF.Config.Channels[channel:GetName()] == nil) then
+					XF.Config.Channels[channel:GetName()] = {}
+				end
+				XF.Config.Channels[channel:GetName()].R = inR
+				XF.Config.Channels[channel:GetName()].G = inG
+				XF.Config.Channels[channel:GetName()].B = inB
+				XF:Trace(self:GetObjectName(), 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, channel:GetName())
+			end
+		end
+	end).
+	catch(function (err)
+		XF:Error(self:GetObjectName(), err)
 	end)
 end
 --#endregion

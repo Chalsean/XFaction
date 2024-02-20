@@ -24,6 +24,13 @@ function XFC.Chat:Initialize()
             callback = XFO.Chat.ChatReceive, 
             instance = true
         })
+        XFO.Events:Add
+        ({
+            name = 'GuildChat', 
+            event = 'CHAT_MSG_GUILD', 
+            callback = XFO.Chat.GuildMessage, 
+            instance = true
+        })
 
         XFO.Timers:Add
         ({
@@ -114,6 +121,32 @@ function XFC.Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, in
     end).
     catch(function (inErrorMessage)
         XF:Warn(self:GetObjectName(), inErrorMessage)
+    end)
+end
+--#endregion
+
+--#region Callbacks
+function XFC.Chat:GuildMessage(inText, _, _, _, _, _, _, _, _, _, _, inSenderGUID)
+    local self = XFO.Chat
+    try(function ()
+        -- If you are the sender, broadcast to other realms/factions
+        if(XF.Player.Unit:GetGUID() == inSenderGUID and XF.Player.Unit:CanGuildSpeak()) then
+            local message = nil
+            try(function ()
+                message = self:Pop()
+                message:Initialize()
+                message:SetType(XF.Enum.Network.BROADCAST)
+                message:SetSubject(XF.Enum.Message.GCHAT)
+                message:SetData(inText)
+                self:Send(message, true)
+            end).
+            finally(function ()
+                self:Push(message)
+            end)
+        end
+    end).
+    catch(function (err)
+        XF:Warn(self:GetObjectName(), err)
     end)
 end
 --#endregion

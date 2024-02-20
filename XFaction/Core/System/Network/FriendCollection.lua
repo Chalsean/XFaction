@@ -23,6 +23,14 @@ function XFC.FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self:CheckFriends()
+		XFO.Events:Add
+		({
+			name = 'Friend', 
+			event = 'BN_FRIEND_INFO_CHANGED', 
+			callback = XFO.Friends.CheckFriends, 
+			instance = true,
+			groupDelta = XF.Settings.Network.BNet.FriendTimer
+		})		
 		XFO.Timers:Add
 		({
 			name = 'Ping', 

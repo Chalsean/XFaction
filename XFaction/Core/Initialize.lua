@@ -44,13 +44,11 @@ function XF:CoreInit()
 
 	-- Declare handlers but not listening yet
 	XFO.AchievementEvent = XFC.AchievementEvent:new(); XFO.AchievementEvent:Initialize()
-	XFO.BNetEvent = XFC.BNetEvent:new(); XFO.BNetEvent:Initialize()
 	XFO.ChannelEvent = XFC.ChannelEvent:new()
 	XFO.ChatEvent = XFC.ChatEvent:new(); XFO.ChatEvent:Initialize()
 	XFO.GuildEvent = XFC.GuildEvent:new(); XFO.GuildEvent:Initialize()
 	XFO.PlayerEvent = XFC.PlayerEvent:new(); XFO.PlayerEvent:Initialize()
 	XFO.SystemEvent = XFC.SystemEvent:new()
-	XFO.TimerEvent = XFC.TimerEvent:new()
 
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
@@ -74,6 +72,7 @@ function XF:CoreInit()
 	XFO.Hooks = XFC.HookCollection:new(); XFO.Hooks:Initialize()
 	XFO.Metrics = XFC.MetricCollection:new(); XFO.Metrics:Initialize()	
 	XFO.Timers = XFC.TimerCollection:new(); XFO.Timers:Initialize()
+	XFO.MasterTimer = XFC.MasterTimer:new(); XFO.MasterTimer:Initialize()
 
 	XF.Player.InInstance = IsInInstance()
 	
