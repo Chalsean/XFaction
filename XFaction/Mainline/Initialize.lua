@@ -5,7 +5,6 @@ local ObjectName = 'MainlineInit'
 do
 	try(function ()
 		XF.CoreInit()
-		--XF.Handlers.TimerEvent:Initialize()
 	end).
 	catch(function (inErrorMessage)
 		XF:Error(ObjectName, inErrorMessage)

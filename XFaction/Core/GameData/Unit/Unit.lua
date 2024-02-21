@@ -49,6 +49,39 @@ function XFC.Unit:new()
     return object
 end
 
+function XFC.Unit:newChildConstructor()
+    local object = XFC.Unit.parent.new(self)
+    object.__name = ObjectName
+    object.guid = nil
+    object.unitName = nil    
+    object.rank = nil
+    object.level = 70
+    object.spec = nil
+    object.zone = nil
+    object.note = nil
+    object.presence = Enum.ClubMemberPresence.Unknown
+    object.race = nil
+    object.timeStamp = nil
+    object.profession1 = nil
+    object.profession2 = nil
+    object.achievements = 0
+    object.isRunningAddon = false
+    object.isAlt = false
+    object.mainName = nil
+    object.isPlayer = false
+    object.team = nil
+    object.guild = nil
+    object.version = nil
+    object.itemLevel = 0
+    object.pvp = ''
+    object.guildSpeak = true
+    object.guildListen = true
+    object.raiderIO = nil
+    object.lastLogin = 0
+    object.mythicKey = nil
+    return object
+end
+
 function XFC.Unit:Deconstructor()
     self:ParentDeconstructor()
     self.guid = nil
@@ -148,11 +181,9 @@ function XFC.Unit:Initialize(inMemberID)
         self:IsRunningAddon(true)
         self:SetVersion(XFO.Versions:GetCurrent())
         
-        -- FIX: MythicKey is retail
-        -- local mythicKey = XFC.MythicKey:new()
-        -- mythicKey:Initialize()
-        -- mythicKey:Refresh()
-        -- self:SetMythicKey(mythicKey)
+        if(XFO.Keys:HasMyKey()) then
+            self:SetMythicKey(XFO.Keys:GetMyKey())
+        end
 
         local permissions = GetPermissions(unitData.guildRankOrder)
         if(permissions ~= nil) then

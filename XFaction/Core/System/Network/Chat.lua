@@ -2,6 +2,8 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Chat'
 
+local GetAchievement = GetAchievementInfo
+
 XFC.Chat = XFC.Mailbox:newChildConstructor()
 
 --#region Constructors
@@ -29,7 +31,18 @@ function XFC.Chat:Initialize()
             callback = XFO.Chat.GuildMessage, 
             instance = true
         })
-
+        XFO.Events:Add({
+            name = 'Achievement', 
+            event = 'ACHIEVEMENT_EARNED', 
+            callback = XFO.Chat.Achievement, 
+            instance = true
+        })
+        XFO.Events:Add({
+            name = 'Logout',
+            event = 'PLAYER_LOGOUT',
+            callback = XFO.Chat.Logout,
+            instance = true
+        })
         XFO.Timers:Add({
             name = 'ChatMailbox', 
             delta = XF.Settings.Network.Mailbox.Scan, 
@@ -145,5 +158,53 @@ function XFC.Chat:GuildMessage(inText, _, _, _, _, _, _, _, _, _, _, inSenderGUI
     catch(function (err)
         XF:Warn(self:GetObjectName(), err)
     end)
+end
+
+function XFC.Chat:Achievement(inID)
+    local self = XFO.Chat
+    try(function ()
+        local _, name, _, _, _, _, _, _, _, _, _, isGuild = GetAchievement(inID)
+        if(not isGuild and string.find(name, XF.Lib.Locale['EXPLORE']) == nil) then
+            local message = nil
+            try(function ()
+                message = XFO.Chat:Pop()
+                message:Initialize()
+                message:SetType(XF.Enum.Network.BROADCAST)
+                message:SetSubject(XF.Enum.Message.ACHIEVEMENT)
+                message:SetData(inID) -- Leave as ID to localize on receiving end
+                self:Send(message)
+            end).
+            finally(function ()
+                self:Push(message)
+            end)
+        end
+    end).
+    catch(function (err)
+        XF:Warn(self:GetObjectName(), err)
+    end)    
+end
+
+function XFC.Chat:Logout()
+    local self = XFO.Chat
+    if(not XF.Cache.UIReload) then
+        local message = nil
+        try(function ()
+            XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout started'
+            message = self:Pop()
+            message:Initialize()
+            message:SetType(XF.Enum.Network.BROADCAST)
+            message:SetSubject(XF.Enum.Message.LOGOUT)
+            XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout sending message'
+            self:Send(message)
+            XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout message sent'
+        end).
+        catch(function (err)
+            XF:Error(self:GetObjectName(), err)
+            XF.Config.Logout[#XF.Config.Logout + 1] = 'Failed to send logout message: ' .. err
+        end).
+        finally(function()
+            self:Push(message)
+        end)
+    end
 end
 --#endregion

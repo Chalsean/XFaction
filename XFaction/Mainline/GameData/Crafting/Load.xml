@@ -1,6 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
     <Script file='Order.lua'/>    
     <Script file='OrderCollection.lua'/>
-    <Script file='Profession.lua'/>
-    <Script file='ProfessionCollection.lua'/>
 </Ui>

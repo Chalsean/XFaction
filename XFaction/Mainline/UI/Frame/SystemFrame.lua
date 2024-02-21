@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'SystemFrame'
 
 SystemFrame = Object:newChildConstructor()

@@ -1,8 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
-    <Include file='Class\Load.xml'/>
-    <Include file='Confederate\Load.xml'/>
     <Include file='Crafting\Load.xml'/>
-    <Include file='Faction\Load.xml'/>
     <Include file='Unit\Load.xml'/>
-    <Include file='Zone\Load.xml'/>
 </Ui>

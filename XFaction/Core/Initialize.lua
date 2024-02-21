@@ -58,10 +58,11 @@ function XF:CoreInit()
 	-- Unit
 	XFO.Classes = XFC.ClassCollection:new(); XFO.Classes:Initialize()
 	XFO.Professions = XFC.ProfessionCollection:new(); XFO.Professions:Initialize()
+	XFO.Orders = XFC.OrderCollection:new(); XFO.Orders:Initialize()
 	XFO.Races = XFC.RaceCollection:new(); XFO.Races:Initialize()
 	XFO.Specs = XFC.SpecCollection:new(); XFO.Specs:Initialize()
 	XFO.Zones = XFC.ZoneCollection:new(); XFO.Zones:Initialize()	
-	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
+	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()	
 	XF.Player.GUID = UnitGUID('player')
 	XF.Player.Faction = XFO.Factions:GetByName(UnitFactionGroup('player'))
 	
@@ -159,6 +160,7 @@ function XF:LoginPlayer()
 			XFO.Timers:Remove('LoginPlayer')
 
 			XFO.Confederate:Add(unit)
+			XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
 			XF.Player.Unit:Print()
 
 			-- By this point all the channels should have been joined
@@ -173,10 +175,9 @@ function XF:LoginPlayer()
 			if(XF.Cache.UIReload) then
 				XFO.Friends:Restore()
 				XFO.Links:Restore()
-				-- FIX: Move to retail
-				--XFO.Orders:Restore()
-				XF.Cache.UIReload = false
+				XFO.Orders:Restore()
 				XF.Player.Unit:Broadcast()
+				XF.Cache.UIReload = false
 			-- Otherwise send login message
 			else
 				XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
@@ -189,9 +190,14 @@ function XF:LoginPlayer()
             	repeater = true, 
             	instance = true
         	})
+			XFO.Hooks:Add({
+				name = 'ReloadUI', 
+				original = 'ReloadUI', 
+				callback = XF.Reload,
+				pre = true
+			})        	
 
 			-- Start all hooks, timers and events
-			XFO.SystemEvent:Initialize()
 			XFO.Hooks:Start()
 			XFO.Timers:Start()
 			XFO.Events:Start()				
@@ -216,6 +222,24 @@ function XF:LoginPlayer()
 	catch(function (err)
 		XF:Error(ObjectName, err)
 	end)
+end
+
+function XF:Reload()
+	try(function ()        
+        XFO.Confederate:Backup()
+        XFO.Friends:Backup()
+        XFO.Links:Backup()
+        -- FIX: Move to retail
+        --XFO.Orders:Backup()
+    end).
+    catch(function (err)
+        XF:Error(self:GetObjectName(), err)
+        XF.Config.Errors[#XF.Config.Errors + 1] = 'Failed to perform backups: ' .. err
+    end).
+    finally(function ()
+        XF.Cache.UIReload = true
+        _G.XFCacheDB = XF.Cache
+    end)
 end
 
 function XF:Stop()

@@ -1,6 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">   
-    <Script file='Faction.lua'/>    
-    <Script file='FactionCollection.lua'/>
-    <Script file='Race.lua'/>    
-    <Script file='RaceCollection.lua'/>
-</Ui>
