@@ -24,7 +24,7 @@ function XFC.GuildCollection:Initialize(inGuildID)
 		self:ParentInitialize()
 		self.names = {}
 		self.info = GetClubInfo(inGuildID)
-		self:SetFromGuildInfo()
+		self:Deserialize()
 		self:IsInitialized(true)
 	end
 end

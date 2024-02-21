@@ -139,7 +139,7 @@ end
 function XFC.Timer:Execute()
     local callback = self:GetCallback()
     try(function()
-        callback(...)
+        callback()
     end).
     catch(function(err)
         XF:Warn(self:GetObjectName(), err)

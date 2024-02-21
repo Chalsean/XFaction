@@ -3,11 +3,11 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Message'
 local GetCurrentTime = GetServerTime
 
-Message = Object:newChildConstructor()
+XFC.Message = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Message:new()
-    local object = Message.parent.new(self)
+function XFC.Message:new()
+    local object = XFC.Message.parent.new(self)
     object.__name = 'Message'
     object.to = nil
     object.from = nil
@@ -22,7 +22,7 @@ end
 --#endregion
 
 --#region Initializers
-function Message:Initialize()
+function XFC.Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.targets = {}
@@ -34,7 +34,7 @@ function Message:Initialize()
     return self:IsInitialized()
 end
 
-function Message:Deconstructor()
+function XFC.Message:Deconstructor()
     self:ParentDeconstructor()
     self.to = nil
     self.from = nil
@@ -49,13 +49,13 @@ end
 --#endregion
 
 --#region Print
-function Message:Print()
+function XFC.Message:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
-    XF:Debug(ObjectName, '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
-    XF:Debug(ObjectName, '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
-    XF:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
-    XF:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
+    XF:Debug(self:GetObjectName(), '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
+    XF:Debug(self:GetObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XF:Debug(self:GetObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
+    XF:Debug(self:GetObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
+    XF:Debug(self:GetObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
     if(self:HasFrom() and not self:IsFromSerialized()) then
         self:GetFrom():Print()
     end
@@ -63,79 +63,79 @@ end
 --#endregion
 
 --#region Accessors
-function Message:GetTo()
+function XFC.Message:GetTo()
     return self.to
 end
 
-function Message:SetTo(inTo)
+function XFC.Message:SetTo(inTo)
     assert(type(inTo) == 'string')
     self.to = inTo
 end
 
-function Message:HasFrom()
+function XFC.Message:HasFrom()
     return self.from ~= nil
 end
 
-function Message:GetFrom()
+function XFC.Message:GetFrom()
     return self.from
 end
 
-function Message:SetFrom(inFrom)
+function XFC.Message:SetFrom(inFrom)
     -- Depending upon moment in execution, From may be string or Unit object
     self.from = inFrom
 end
 
-function Message:IsFromSerialized()
+function XFC.Message:IsFromSerialized()
     return type(self.from) == 'string'
 end
 
-function Message:GetType()
+function XFC.Message:GetType()
     return self.type
 end
 
-function Message:SetType(inType)
+function XFC.Message:SetType(inType)
     assert(type(inType) == 'string')
     self.type = inType
 end
 
-function Message:GetSubject()
+function XFC.Message:GetSubject()
     return self.subject
 end
 
-function Message:SetSubject(inSubject)
+function XFC.Message:SetSubject(inSubject)
     assert(type(inSubject) == 'string')
     self.subject = inSubject
 end
 
-function Message:GetTimeStamp()
+function XFC.Message:GetTimeStamp()
     return self.epochTime
 end
 
-function Message:SetTimeStamp(inEpochTime)
+function XFC.Message:SetTimeStamp(inEpochTime)
     assert(type(inEpochTime) == 'number')
     self.epochTime = inEpochTime
 end
 
-function Message:GetData()
+function XFC.Message:GetData()
     return self.data
 end
 
-function Message:SetData(inData)
+function XFC.Message:SetData(inData)
     self.data = inData
 end
 
-function Message:IsMyMessage()
+function XFC.Message:IsMyMessage()
     return self:GetFrom():Equals(XF.Player.Unit)
 end
 --#endregion
 
 --#region Target
-function Message:ContainsTarget(inTarget)
+function XFC.Message:ContainsTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
     return self.targets[inTarget:GetKey()] ~= nil
 end
 
-function Message:AddTarget(inTarget)
+function XFC.Message:AddTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
     if(not self:ContainsTarget(inTarget)) then
         self.targetCount = self.targetCount + 1
@@ -143,7 +143,7 @@ function Message:AddTarget(inTarget)
     self.targets[inTarget:GetKey()] = inTarget
 end
 
-function Message:RemoveTarget(inTarget)
+function XFC.Message:RemoveTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
     if(self:ContainsTarget(inTarget)) then
         self.targets[inTarget:GetKey()] = nil
@@ -151,28 +151,28 @@ function Message:RemoveTarget(inTarget)
     end
 end
 
-function Message:SetAllTargets()
-    for _, target in XF.Targets:Iterator() do
+function XFC.Message:SetAllTargets()
+    for _, target in XFO.Targets:Iterator() do
         if(not target:Equals(XF.Player.Target)) then
             self:AddTarget(target)
         end
     end
 end
 
-function Message:HasTargets()
+function XFC.Message:HasTargets()
     return self.targetCount > 0
 end
 
-function Message:GetTargets()
+function XFC.Message:GetTargets()
     if(self:HasTargets()) then return self.targets end
     return {}
 end
 
-function Message:GetTargetCount()
+function XFC.Message:GetTargetCount()
     return self.targetCount
 end
 
-function Message:GetRemainingTargets()
+function XFC.Message:GetRemainingTargets()
     local targetsString = ''
     for _, target in pairs (self:GetTargets()) do
         targetsString = targetsString .. '|' .. target:GetKey()
@@ -180,7 +180,7 @@ function Message:GetRemainingTargets()
     return targetsString
 end
 
-function Message:SetRemainingTargets(inTargetString)
+function XFC.Message:SetRemainingTargets(inTargetString)
     wipe(self.targets)
     self.targetCount = 0
     local targets = string.Split(inTargetString, '|')
@@ -197,7 +197,7 @@ end
 
 --#region Network
 -- I'm sure there's a cooler way of doing this but this works for me :)
-function Message:Serialize()
+function XFC.Message:Serialize()
 	local data = {}
 
 	data.F = self:GetFrom():Serialize()
@@ -209,7 +209,7 @@ function Message:Serialize()
 	return pickle(data)
 end
 
-function Message:Deserialize(inData)
+function XFC.Message:Deserialize(inData)
 	local decompressed = Deflate:DecompressDeflate(inData)
 	local data = unpickle(decompressed)
 	
@@ -230,7 +230,7 @@ function Message:Deserialize(inData)
 	self:SetType(data.Y)
 end
 
-function Message:Encode(inProtocol)
+function XFC.Message:Encode(inProtocol)
     local compressed = Deflate:CompressDeflate(self:Serialize(), {level = XF.Settings.Network.CompressionLevel})
     if(inProtocol == XF.Enum.Network.BNET) then
         return Deflate:EncodeForPrint(compressed)
@@ -238,7 +238,7 @@ function Message:Encode(inProtocol)
     return Deflate:EncodeForWoWAddonChannel(compressed)
 end
 
-function Message:Decode(inData, inProtocol)
+function XFC.Message:Decode(inData, inProtocol)
 	if(inProtocol == XF.Enum.Network.BNET) then
         self:Deserialize(Deflate:DecodeForPrint(inData))
     else
@@ -246,7 +246,7 @@ function Message:Decode(inData, inProtocol)
     end
 end
 
-function Message:Segment(inProtocol)
+function XFC.Message:Segment(inProtocol)
 	local packets = {}
     local encoded = self:Encode(inProtocol)
     local totalPackets = ceil(strlen(encoded) / XF.Settings.Network.Chat.PacketSize)

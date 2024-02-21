@@ -4,8 +4,8 @@ local ObjectName = 'CoreInit'
 
 local InGuild = IsInGuild
 local GetGuildId = C_Club.GetGuildClubId
-local GetNumAddOns = C_Addons.GetNumAddOns
-local GetAddOnInfo = C_Addons.GetAddOnInfo
+local GetNumAddOns = C_AddOns.GetNumAddOns
+local GetAddOnInfo = C_AddOns.GetAddOnInfo
 
 -- Initialize anything not dependent upon guild information
 function XF:CoreInit()
@@ -44,9 +44,6 @@ function XF:CoreInit()
 
 	-- Declare handlers but not listening yet
 	XFO.AchievementEvent = XFC.AchievementEvent:new(); XFO.AchievementEvent:Initialize()
-	XFO.ChannelEvent = XFC.ChannelEvent:new()
-	XFO.ChatEvent = XFC.ChatEvent:new(); XFO.ChatEvent:Initialize()
-	XFO.GuildEvent = XFC.GuildEvent:new(); XFO.GuildEvent:Initialize()
 	XFO.PlayerEvent = XFC.PlayerEvent:new(); XFO.PlayerEvent:Initialize()
 	XFO.SystemEvent = XFC.SystemEvent:new()
 
@@ -71,8 +68,7 @@ function XF:CoreInit()
 	-- Wrappers	
 	XFO.Hooks = XFC.HookCollection:new(); XFO.Hooks:Initialize()
 	XFO.Metrics = XFC.MetricCollection:new(); XFO.Metrics:Initialize()	
-	XFO.Timers = XFC.TimerCollection:new(); XFO.Timers:Initialize()
-	XFO.MasterTimer = XFC.MasterTimer:new(); XFO.MasterTimer:Initialize()
+	XFO.Timers = XFC.TimerCollection:new(); XFO.Timers:Initialize()	
 
 	XF.Player.InInstance = IsInInstance()
 	
@@ -85,8 +81,7 @@ function XF:CoreInit()
 	XF:Info(ObjectName, 'WoW client version [%s:%s]', XFO.WoW:GetName(), XFO.WoW:GetVersion():GetKey())
 
 	-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
-	XFO.Timers:Add
-	({
+	XFO.Timers:Add({
 		name = 'LoginGuild', 
 		delta = 1, 
 		callback = XF.LoginGuild, 
@@ -95,6 +90,8 @@ function XF:CoreInit()
 		ttl = XF.Settings.LocalGuild.LoginTTL,
 		start = true
 	})
+
+	XFO.MasterTimer = XFC.MasterTimer:new(); XFO.MasterTimer:Initialize()
 end
 
 function XF:LoginGuild()
@@ -106,7 +103,7 @@ function XF:LoginGuild()
 			local guildID = GetGuildId()
 			if(guildID ~= nil) then
 				-- Now that guild info is available we can finish setup
-				XF:Debug(self:GetObjectName(), 'Guild info is loaded, proceeding with setup')
+				XF:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
 				XFO.Timers:Remove('LoginGuild')
 
 				-- Confederate setup via guild info
@@ -121,7 +118,6 @@ function XF:LoginGuild()
 
 				-- Start network
 				XFO.Channels:Initialize()
-				XFO.ChannelEvent:Initialize()
 				XFO.Chat:Initialize()
 				XFO.Nodes:Initialize()
 				XFO.Links:Initialize()
@@ -132,8 +128,7 @@ function XF:LoginGuild()
 					XFO.Confederate:Restore()					
 				end
 
-				XFO.Timers:Add
-				({
+				XFO.Timers:Add({
 					name = 'LoginPlayer', 
 					delta = 1, 
 					callback = XF.LoginPlayer, 
@@ -146,7 +141,7 @@ function XF:LoginGuild()
 		end
 	end).
 	catch(function (err)
-		XF:Error(self:GetObjectName(), err)
+		XF:Error(ObjectName, err)
 	end).
 	finally(function ()			
 		XF:SetupMenus()
@@ -160,7 +155,7 @@ function XF:LoginPlayer()
 		-- FIX: Dont have player id, this will throw or get wrong unit
 		unit:Initialize()
 		if(unit:IsInitialized()) then
-			XF:Debug(self:GetObjectName(), 'Player info is loaded, proceeding with setup')
+			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
 			XFO.Timers:Remove('LoginPlayer')
 
 			XFO.Confederate:Add(unit)
@@ -187,8 +182,7 @@ function XF:LoginPlayer()
 				XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
 			end	
 			
-			XFO.Timers:Add
-        	({
+			XFO.Timers:Add({
             	name = 'Heartbeat', 
             	delta = XF.Settings.Player.Heartbeat, 
             	callback = XF.Player.Unit.Broadcast, 
@@ -211,7 +205,7 @@ function XF:LoginPlayer()
 			-- For support reasons, it helps to know what addons are being used
 			for i = 1, GetNumAddOns() do
 				local name, _, _, enabled = GetAddOnInfo(i)
-				XF:Debug(self:GetObjectName(), 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
+				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
 
 			XFO.Timers:Get('LoginChannelSync'):Start()		
@@ -220,7 +214,7 @@ function XF:LoginPlayer()
 		end
 	end).
 	catch(function (err)
-		XF:Error(self:GetObjectName(), err)
+		XF:Error(ObjectName, err)
 	end)
 end
 

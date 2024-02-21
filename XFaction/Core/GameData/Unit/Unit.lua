@@ -139,7 +139,7 @@ function XFC.Unit:Initialize(inMemberID)
         self:SetProfession2(XFO.Professions:Get(unitData.profession2ID))
     end
 
-    local raiderIO = XF.Addons.RaiderIO:Get(self)
+    local raiderIO = XFO.RaiderIO:Get(self)
     if(raiderIO ~= nil) then
         self:SetRaiderIO(raiderIO)
     end
@@ -148,10 +148,11 @@ function XFC.Unit:Initialize(inMemberID)
         self:IsRunningAddon(true)
         self:SetVersion(XFO.Versions:GetCurrent())
         
-        local mythicKey = XFC.MythicKey:new()
-        mythicKey:Initialize()
-        mythicKey:Refresh()
-        self:SetMythicKey(mythicKey)
+        -- FIX: MythicKey is retail
+        -- local mythicKey = XFC.MythicKey:new()
+        -- mythicKey:Initialize()
+        -- mythicKey:Refresh()
+        -- self:SetMythicKey(mythicKey)
 
         local permissions = GetPermissions(unitData.guildRankOrder)
         if(permissions ~= nil) then
@@ -426,6 +427,10 @@ end
 function XFC.Unit:SetRaiderIO(inRaiderIO)
     assert(type(inRaiderIO) == 'table' and inRaiderIO.__name == 'RaiderIO', 'argument must be RaiderIO object')
     self.raiderIO = inRaiderIO
+end
+
+function XFC.Unit:HasRace()
+    return self.race ~= nil
 end
 
 function XFC.Unit:GetRace()

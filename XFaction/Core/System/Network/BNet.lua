@@ -18,16 +18,14 @@ function XFC.BNet:Initialize()
         self:ParentInitialize()
         XF.Enum.Tag.BNET = XFO.Confederate:GetKey() .. 'BNET'
 
-        XFO.Events:Add
-        ({
+        XFO.Events:Add({
             name = 'BNetMessage', 
             event = 'BN_CHAT_MSG_ADDON', 
             callback = XFO.BNet.BNetReceive, 
             instance = true
         })
 
-        XFO.Timers:Add
-        ({
+        XFO.Timers:Add({
             name = 'BNetMailbox', 
             delta = XF.Settings.Network.Mailbox.Scan, 
             callback = XFO.BNet.Purge, 
@@ -81,7 +79,7 @@ function XFC.BNet:Send(inMessage)
             for index, packet in ipairs (packets) do
                 XF:Debug(self:GetObjectName(), 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:GetName(), friend:GetGameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-                XF.Lib.BCTL:BNSendGameData('NORMAL', XF.Enum.Tag.BNET, packet, _, friend:GetGameID())
+                --XF.Lib.BCTL:BNSendGameData('NORMAL', XF.Enum.Tag.BNET, packet, _, friend:GetGameID())
                 XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(friend:GetTarget())

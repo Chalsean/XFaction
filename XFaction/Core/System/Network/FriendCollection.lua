@@ -23,16 +23,14 @@ function XFC.FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self:CheckFriends()
-		XFO.Events:Add
-		({
+		XFO.Events:Add({
 			name = 'Friend', 
 			event = 'BN_FRIEND_INFO_CHANGED', 
 			callback = XFO.Friends.CheckFriends, 
 			instance = true,
 			groupDelta = XF.Settings.Network.BNet.FriendTimer
 		})		
-		XFO.Timers:Add
-		({
+		XFO.Timers:Add({
 			name = 'Ping', 
 			delta = XF.Settings.Network.BNet.Ping.Timer, 
 			callback = XFO.Friends.Ping, 
@@ -113,7 +111,7 @@ local function CanLink(inAccountInfo)
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
 		local faction = XFO.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
 
-		XF:Trace(self:GetObjectName(), 'Checking friend for linkability [%s] GUID [%s] RealmID [%d] RealmName [%s]', inAccountInfo.battleTag, inAccountInfo.gameAccountInfo.playerGuid, inAccountInfo.gameAccountInfo.realmID, inAccountInfo.gameAccountInfo.realmName)
+		XF:Trace(ObjectName, 'Checking friend for linkability [%s] GUID [%s] RealmID [%d] RealmName [%s]', inAccountInfo.battleTag, inAccountInfo.gameAccountInfo.playerGuid, inAccountInfo.gameAccountInfo.realmID, inAccountInfo.gameAccountInfo.realmName)
 
 		local target = XFO.Targets:GetByRealmFaction(realm, faction)
 		if(target ~= nil and not target:IsMyTarget()) then return true, target end

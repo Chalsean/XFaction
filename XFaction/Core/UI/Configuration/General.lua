@@ -119,18 +119,18 @@ function XF:SetupMenus()
 		end
 
 		--#region Confederate Menu
-		XF.Cache.Setup.Confederate.Initials = XF.Confederate:GetInitials()
-		XF.Cache.Setup.Confederate.Name = XF.Confederate:GetName()
+		XF.Cache.Setup.Confederate.Initials = XFO.Confederate:GetInitials()
+		XF.Cache.Setup.Confederate.Name = XFO.Confederate:GetName()
 		XF.Cache.Setup.Confederate.ChannelName = XF.Cache.Channel.Name
 		XF.Cache.Setup.Confederate.Password = XF.Cache.Channel.Password
 		--#endregion
 
 		--#region Guild Menu
-		if(XF.Guilds:GetCount() > 0) then
-			for _, guild in XF.Guilds:SortedIterator() do
+		if(XFO.Guilds:GetCount() > 0) then
+			for _, guild in XFO.Guilds:SortedIterator() do
 				table.insert(XF.Cache.Setup.Guilds, {
 					realm = tostring(guild:GetRealm():GetID()),
-					faction = guild:GetFaction():GetID(),
+					--faction = guild:GetFaction():GetID(),
 					initials = guild:GetInitials(),
 					name = guild:GetName(),
 				})
@@ -142,7 +142,7 @@ function XF:SetupMenus()
 		while i < XF.Settings.Setup.MaxGuilds do
 			table.insert(XF.Cache.Setup.Guilds, {
 				realm = nil,
-				faction = nil,
+				--faction = nil,
 				initials = nil,
 				name = nil,
 			})
@@ -202,8 +202,8 @@ function XF:SetupMenus()
 		--#endregion
 
 		--#region Team Menu
-		if(XF.Teams:GetCount() > 0) then
-			for _, team in XF.Teams:SortedIterator() do
+		if(XFO.Teams:GetCount() > 0) then
+			for _, team in XFO.Teams:SortedIterator() do
 				if(team:GetInitials() ~= '?') then
 					table.insert(XF.Cache.Setup.Teams, {
 						initials = team:GetInitials(),
@@ -766,7 +766,7 @@ XF.Options = {
 									name = XF.Lib.Locale['CHANNEL'],
 									type = 'execute',
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function() XF.Channels:Print() end,
+									func = function() XFO.Channels:Print() end,
 								},
 								Class = {
 									order = 3,
@@ -780,14 +780,14 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['CONFEDERATE'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Confederate:Print() end,
+									func = function(info) XFO.Confederate:Print() end,
 								},
 								Event = {
 									order = 6,
 									type = 'execute',
 									name = XF.Lib.Locale['EVENT'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Events:Print() end,
+									func = function(info) XFO.Events:Print() end,
 								},
 								Faction = {
 									order = 7,
@@ -801,28 +801,28 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['FRIEND'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Friends:Print() end,
+									func = function(info) XFO.Friends:Print() end,
 								},
 								Guild = {
 									order = 15,
 									type = 'execute',
 									name = XF.Lib.Locale['GUILD'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Guilds:Print() end,
+									func = function(info) XFO.Guilds:Print() end,
 								},
 								Link = {
 									order = 17,
 									type = 'execute',
 									name = XF.Lib.Locale['LINK'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Links:Print() end,
+									func = function(info) XFO.Links:Print() end,
 								},
 								Node = {
 									order = 18,
 									type = 'execute',
 									name = XF.Lib.Locale['NODE'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Nodes:Print() end,
+									func = function(info) XFO.Nodes:Print() end,
 								},
 								Order = {
 									order = 19,
@@ -864,7 +864,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['REALM'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Realms:Print() end,
+									func = function(info) XFO.Realms:Print() end,
 								},				
 								Spec = {
 									order = 25,
@@ -878,28 +878,28 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['TARGET'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Targets:Print() end,
+									func = function(info) XFO.Targets:Print() end,
 								},
 								Team = {
 									order = 27,
 									type = 'execute',
 									name = XF.Lib.Locale['TEAM'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Teams:Print() end,
+									func = function(info) XFO.Teams:Print() end,
 								},
 								Timer = {
 									order = 28,
 									type = 'execute',
 									name = XF.Lib.Locale['TIMER'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Timers:Print() end,
+									func = function(info) XFO.Timers:Print() end,
 								},
 								Zone = {
 									order = 29,
 									type = 'execute',
 									name = XF.Lib.Locale['ZONE'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Zones:Print() end,
+									func = function(info) XFO.Zones:Print() end,
 								},
 							},
 						},
@@ -944,7 +944,7 @@ function XF:ConfigInitialize()
 	--#region Changelog
 	try(function ()
 		for versionKey, config in pairs(XF.ChangeLog) do
-			XFO.Versions:AddVersion(versionKey)
+			XFO.Versions:Add(versionKey)
 			XFO.Versions:Get(versionKey):IsInChangeLog(true)
 		end
 

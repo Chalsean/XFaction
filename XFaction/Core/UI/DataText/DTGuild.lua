@@ -3,7 +3,7 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'DTGuild'
 local CombatLockdown = InCombatLockdown
 
-XFC.DTGuild = Object:newChildConstructor()
+XFC.DTGuild = XFC.Object:newChildConstructor()
 local LDB_ANCHOR
 
 --#region Constructors

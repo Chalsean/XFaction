@@ -55,7 +55,7 @@ local function InitializeCache()
     XF.Cache = _G.XFCacheDB
     
     if(XF.Cache.UIReload == nil or not XF.Cache.UIReload) then
-        XF:Info(self:GetObjectName(), 'Initializing cache')
+        XF:Info(ObjectName, 'Initializing cache')
         XF.Cache = {
             Channel = {},
             Confederate = {},
@@ -67,7 +67,7 @@ local function InitializeCache()
     elseif(XF.Cache.Errors ~= nil) then
         -- Log any reloadui errors encountered
         for _, _ErrorText in ipairs(XF.Cache.Errors) do
-            XF:Warn(self:GetObjectName(), _ErrorText)
+            XF:Warn(ObjectName, _ErrorText)
         end
         XF.Cache.Errors = {}
     else
@@ -88,7 +88,7 @@ end
 function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
     local self = XFO.AddonEvent
     try(function ()
-        if(GetAddOnEnableState(nil, inAddonName) > 0) then
+        if(GetAddOnEnableState(inAddonName) > 0) then
             if(inAddonName == XF.Name and not self:IsLoaded()) then
                 XF:Info(self:GetObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()

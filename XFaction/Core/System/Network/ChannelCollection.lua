@@ -38,8 +38,7 @@ function XFC.ChannelCollection:Initialize()
 			--XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 		end
 
-		XFO.Events:Add
-		({
+		XFO.Events:Add({
 			name = 'ChannelChange', 
 			event = 'CHAT_MSG_CHANNEL_NOTICE', 
 			callback = XFO.Channels.Sync,
@@ -47,16 +46,14 @@ function XFC.ChannelCollection:Initialize()
 			instance = true,
 			start = true
 		})
-		XFO.Events:Add
-		({
+		XFO.Events:Add({
 			name = 'ChannelColor', 
 			event = 'UPDATE_CHAT_COLOR', 
-			callback = XFO.ChannelEvent.UpdateColor, 
+			callback = XFO.Channels.UpdateColor, 
 			instance = true,
 			start = true
 		})
-		XFO.Timers:Add
-		({
+		XFO.Timers:Add({
 			name = 'LoginChannelSync',
 			delta = XF.Settings.Network.Channel.LoginChannelSyncTimer, 
 			callback = XFO.Channels.Sync,

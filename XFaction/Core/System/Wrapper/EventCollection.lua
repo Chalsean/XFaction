@@ -23,7 +23,7 @@ function XFC.EventCollection:Initialize()
             -- Still actively listen for all events but only do something if enabled
             for _, event in XFO.Events:Iterator() do
                 if(event:GetName() == inEvent and event:IsEnabled()) then
-                    XF:Trace(self:GetObjectName(), 'Event fired: %s', event:GetName())
+                    XF:Trace(ObjectName, 'Event fired: %s', event:GetName())
                     if(event:IsGroup()) then
                         if(XFO.Timers:Contains(event:GetKey())) then
                             XFO.Timers:Get(event:GetKey()):Start()

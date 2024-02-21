@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'RaiderIO'
 
-XFC.RaiderIO = Object:newChildConstructor()
+XFC.RaiderIO = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.RaiderIO:new()

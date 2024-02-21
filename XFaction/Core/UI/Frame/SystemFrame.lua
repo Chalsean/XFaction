@@ -1,21 +1,22 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'SystemFrame'
 
-SystemFrame = Object:newChildConstructor()
+XFC.SystemFrame = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function SystemFrame:new()
-    local object = SystemFrame.parent.new(self)
+function XFC.SystemFrame:new()
+    local object = XFC.SystemFrame.parent.new(self)
     object.__name = ObjectName
     return object
 end
 --#endregion
 
 --#region Initializers
-function SystemFrame:Initialize()
+function XFC.SystemFrame:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XF.Frames.System.ChatFilter)
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFO.SystemFrame.ChatFilter)
         XF:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
         self:IsInitialized(true)
     end
@@ -23,7 +24,7 @@ end
 --#endregion
 
 --#region Callbacks
-function SystemFrame:ChatFilter(inEvent, inMessage, ...)
+function XFC.SystemFrame:ChatFilter(inEvent, inMessage, ...)
     if(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XF.Settings.Frames.Chat.Prepend, '')
         return false, inMessage, ...
@@ -42,7 +43,7 @@ end
 --#endregion
 
 --#region Display
-function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inOrder)
+function XFC.SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inOrder)
 
     local faction = inGuild:GetFaction()
     local text = XF.Settings.Frames.Chat.Prepend
@@ -96,20 +97,20 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     SendSystemMessage(text) 
 end
 
-function SystemFrame:DisplayLoginMessage(inMessage)
+function XFC.SystemFrame:DisplayLoginMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')    
     local unitData = inMessage:GetData()
     self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild())
 end
 
-function SystemFrame:DisplayLogoutMessage(inMessage)
+function XFC.SystemFrame:DisplayLogoutMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild())
 end
 
-function SystemFrame:DisplayOrder(inOrder)
+function XFC.SystemFrame:DisplayOrder(inOrder)
     if(not XF.Config.Chat.Crafting.Enable) then return end    
     assert(type(inOrder) == 'table' and inOrder.__name ~= nil and inOrder.__name == 'Order', 'argument must be Order type object')
     local customer = inOrder:GetCustomerUnit()

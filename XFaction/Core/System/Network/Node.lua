@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Node'
 
-XFC.Node = Object:newChildConstructor()
+XFC.Node = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Node:new()

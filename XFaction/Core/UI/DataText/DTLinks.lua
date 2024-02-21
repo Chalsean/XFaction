@@ -3,7 +3,7 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'DTLinks'
 local CombatLockdown = InCombatLockdown
 
-XFC.DTLinks = Object:newChildConstructor()
+XFC.DTLinks = XFC.Object:newChildConstructor()
 	
 --#region Constructors
 function XFC.DTLinks:new()
@@ -99,9 +99,9 @@ function XFC.DTLinks:RefreshBroker()
 	end
 
 	if(XF.Config.DataText.Link.Faction) then
-		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XF.Links:GetCount(), allianceCount, hordeCount)
+		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XFO.Links:GetCount(), allianceCount, hordeCount)
 	else
-		text = format('%s|cffffffff%d|r', text, XF.Links:GetCount())
+		text = format('%s|cffffffff%d|r', text, XFO.Links:GetCount())
 	end
 	self:GetBroker().text = text
 end
@@ -132,10 +132,10 @@ function XFC.DTLinks:OnEnter(this)
 
 	--#region Header
 	local line = self.tooltip:AddLine()
-	local guildName = XF.Confederate:GetName()
+	local guildName = XFO.Confederate:GetName()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], guildName), self.headerFont, 'LEFT', targetCount)
 	line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XF.Links:GetCount()), self.headerFont, 'LEFT', targetCount)
+	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XFO.Links:GetCount()), self.headerFont, 'LEFT', targetCount)
 
 	line = self.tooltip:AddLine()
 	line = self.tooltip:AddLine()

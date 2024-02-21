@@ -95,7 +95,7 @@ end
 --#region Accessors
 function XFC.SpecCollection:GetInitialClassSpec(inClassID)
 	assert(type(inClassID) == 'number')
-	for _, spec in slef:Iterator() do
+	for _, spec in self:Iterator() do
 		if(spec:GetClass():GetID() == inClassID and spec:GetName() == 'Initial') then
 			return spec
 		end

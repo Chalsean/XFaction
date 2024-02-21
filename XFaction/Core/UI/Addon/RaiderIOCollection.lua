@@ -4,7 +4,7 @@ local ObjectName = 'RaiderIOCollection'
 
 local RaiderIO = nil
 
-XFC.RaiderIOCollection = Factory:newChildConstructor()
+XFC.RaiderIOCollection = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.RaiderIOCollection:new()

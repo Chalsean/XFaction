@@ -40,8 +40,7 @@ function XFC.Confederate:Initialize()
         XF:Info(self:GetObjectName(), 'Initialized confederate %s <%s>', self:GetName(), self:GetKey())
 
         -- This is the local guild roster scan for those not running the addon
-        XFO.Events:Add
-        ({
+        XFO.Events:Add({
             name = 'Roster', 
             event = 'GUILD_ROSTER_UPDATE', 
             callback = XFO.Confederate.UpdateLocalRoster, 
@@ -49,8 +48,7 @@ function XFC.Confederate:Initialize()
             groupDelta = XF.Settings.LocalGuild.ScanTimer
         })
         
-        XFO.Timers:Add
-        ({
+        XFO.Timers:Add({
             name = 'Offline', 
             delta = XF.Settings.Confederate.UnitScan, 
             callback = XFO.Confederate.Offline, 
@@ -82,7 +80,7 @@ function XFC.Confederate:Add(inUnit)
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
-        local target = XFO.Targets:GetByGuild(inUnit:GetGuild())
+        local target = XFO.Targets:GetByRealmFaction(inUnit:GetGuild():GetRealm(), inUnit:GetRace():GetFaction())
         if(self.countByTarget[target:GetKey()] == nil) then
             self.countByTarget[target:GetKey()] = 0
         end

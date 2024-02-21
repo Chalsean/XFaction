@@ -1,7 +1,7 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Factory'
-local GetEpochTime = GetServerTime
+local GetCurrentTime = GetServerTime
 
 XFC.Factory = XFC.ObjectCollection:newChildConstructor()
 
@@ -87,7 +87,7 @@ end
 
 function XFC.Factory:Pop()
     assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil value')
-    local currentTime = GetEpochTime()
+    local currentTime = GetCurrentTime()
     for _, object in self:CheckedInIterator() do
         object:SetFactoryTime(currentTime)
         self.checkedIn[object:GetFactoryKey()] = nil
@@ -113,7 +113,7 @@ function XFC.Factory:Push(inObject)
         self.checkedOut[inObject:GetFactoryKey()] = nil
         self.checkedOutCount = self.checkedOutCount - 1
         inObject:Deconstructor()
-        inObject:SetFactoryTime(ServerTime())
+        inObject:SetFactoryTime(GetCurrentTime())
         self.checkedIn[inObject:GetFactoryKey()] = inObject
         self.checkedInCount = self.checkedInCount + 1         
     end

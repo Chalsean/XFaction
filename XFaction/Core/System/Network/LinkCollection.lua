@@ -22,16 +22,14 @@ end
 function XFC.LinkCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		XFO.Timers:Add
-		({
+		XFO.Timers:Add({
 			name = 'Links', 
 			delta = XF.Settings.Network.BNet.Link.Broadcast, 
 			callback = XFO.Links.Broadcast, 
 			repeater = true, 
 			instance = true
 		})
-		XFO.Timers:Add
-		({
+		XFO.Timers:Add({
 			name = 'StaleLinks', 
 			delta = XF.Settings.Network.BNet.Link.Scan, 
 			callback = XFO.Links.Purge, 

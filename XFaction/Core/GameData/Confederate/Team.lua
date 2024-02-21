@@ -36,10 +36,10 @@ function XFC.Team:Deserialize(inString)
 	assert(type(inString) == 'string')
 	local teamInitial, teamName = inString:match('XFt:(%a-):(%a+)')
 	if(teamInitial ~= nil and teamName ~= nil) then
-		team:Initialize()
-		team:SetName(inTeamName)
-		team:SetInitials(inTeamInitials)
-		team:SetKey(inTeamInitials)
+		self:Initialize()
+		self:SetName(teamName)
+		self:SetInitials(teamInitial)
+		self:SetKey(teamInitial)
         XF:Info(self:GetObjectName(), 'Initialized team [%s:%s]', self:GetInitials(), self:GetName())
 	end
 end

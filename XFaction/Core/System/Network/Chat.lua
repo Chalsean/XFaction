@@ -16,24 +16,21 @@ end
 function XFC.Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Enum.Tag.LOCAL = XF.Confederate:GetKey() .. 'XF'						
-        XFO.Events:Add
-        ({
+        XF.Enum.Tag.LOCAL = XFO.Confederate:GetKey() .. 'XF'						
+        XFO.Events:Add({
             name = 'ChatMsg', 
             event = 'CHAT_MSG_ADDON', 
             callback = XFO.Chat.ChatReceive, 
             instance = true
         })
-        XFO.Events:Add
-        ({
+        XFO.Events:Add({
             name = 'GuildChat', 
             event = 'CHAT_MSG_GUILD', 
             callback = XFO.Chat.GuildMessage, 
             instance = true
         })
 
-        XFO.Timers:Add
-        ({
+        XFO.Timers:Add({
             name = 'ChatMailbox', 
             delta = XF.Settings.Network.Mailbox.Scan, 
             callback = XFO.Chat.Purge, 
@@ -87,7 +84,7 @@ function XFC.Chat:Send(inMessage)
 
     for index, packet in ipairs (inMessage:Segment()) do
         XF:Debug(self:GetObjectName(), 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:GetKey(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
-        XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
+        --XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
         XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
 

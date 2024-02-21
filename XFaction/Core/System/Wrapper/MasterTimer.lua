@@ -22,7 +22,7 @@ function XFC.MasterTimer:Initialize()
 		self.handle = NewTicker(XF.Settings.System.MasterTimer, 
                 function (...)
 					local now = GetCurrentTime()
-					for _, timer in XFO.Timers:Iterate() do
+					for _, timer in XFO.Timers:Iterator() do
 						if(timer:IsEnabled() and timer:GetLastRan() < now - timer:GetDelta()) then
 							timer:Execute()
 							if(timer:HasMaxAttempts() and timer:GetMaxAttempts() <= timer:GetAttempt()) then

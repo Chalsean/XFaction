@@ -28,24 +28,25 @@ function XFC.TargetCollection:Initialize()
 		self:ParentInitialize()
 		for _, guild in XFO.Guilds:Iterator() do
 			local realm = guild:GetRealm()
-			local faction = guild:GetFaction()
-			local key = GetTargetKey(realm, faction)
-			
-			if(self:Contains(key)) then	
-				self:Get(key):IncrementTargetCount()
-			else
-				XF:Info(ObjectName, 'Initializing target [%s]', key)
-				local target = self:Pop()
-				target:SetKey(key)
-				target:SetRealm(realm)
-				target:SetFaction(faction)
-				self:Add(target)
-				realm:IsTargeted(true)
-				target:Print()
+			for _, faction in XFO.Factions:Iterator() do
+				local key = GetTargetKey(realm, faction)
+				
+				if(self:Contains(key)) then	
+					self:Get(key):IncrementTargetCount()
+				else
+					XF:Info(ObjectName, 'Initializing target [%s]', key)
+					local target = self:Pop()
+					target:SetKey(key)
+					target:SetRealm(realm)
+					target:SetFaction(faction)
+					self:Add(target)
+					realm:IsTargeted(true)
+					target:Print()
 
-				if(XF.Player.Target == nil and realm:Equals(XF.Player.Guild:GetRealm()) and faction:Equals(XF.Player.Faction)) then
-					XF:Info(ObjectName, 'Initializing player target [%s]', key)
-					XF.Player.Target = target
+					if(XF.Player.Target == nil and realm:Equals(XF.Player.Guild:GetRealm()) and faction:Equals(XF.Player.Faction)) then
+						XF:Info(ObjectName, 'Initializing player target [%s]', key)
+						XF.Player.Target = target
+					end
 				end
 			end
 		end
@@ -65,10 +66,5 @@ function XFC.TargetCollection:GetByRealmFaction(inRealm, inFaction)
 		local key = GetTargetKey(connectedRealm, inFaction)
     	if(self:Contains(key)) then return self:Get(key) end
 	end
-end
-
-function XFC.TargetCollection:GetByGuild(inGuild)
-    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
-	return self:GetByRealmFaction(inGuild:GetRealm(), inGuild:GetFaction())
 end
 --#endregion

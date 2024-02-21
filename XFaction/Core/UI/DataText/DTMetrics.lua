@@ -3,7 +3,7 @@ local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'DTMetrics'
 local CombatLockdown = InCombatLockdown
 
-XFC.DTMetrics = Object:newChildConstructor()
+XFC.DTMetrics = XFC.Object:newChildConstructor()
 	
 --#region Constructors
 function XFC.DTMetrics:new()

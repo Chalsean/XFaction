@@ -32,7 +32,7 @@ function XFC.ZoneCollection:Add(inZoneName)
 		zone:SetKey(inZoneName)
 		zone:SetName(inZoneName)		
 		XF:Info(self:GetObjectName(), 'Initialized zone [%s]', zone:GetName())
-		self.parent.Add(zone)
+		self.parent.Add(self, zone)
 	end
 end
 --#endregion
