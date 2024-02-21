@@ -1,8 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MetricCollection'
-local GetCurrentTime = C_DateAndTime.GetServerTimeLocal
-local CalendarTime = C_DateAndTime.GetCurrentCalendarTime
 
 XFC.MetricCollection = XFC.ObjectCollection:newChildConstructor()
 
@@ -27,7 +25,7 @@ function XFC.MetricCollection:Initialize()
 			metric:SetName(metricName)
 			self:Add(metric)
 		end
-		self:SetStartTime(GetCurrentTime())
+		self:SetStartTime(XFF.TimeGetLocal())
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -45,7 +43,7 @@ end
 function XFC.MetricCollection:SetStartTime(inEpochTime)
 	assert(type(inEpochTime) == 'number')
 	self.startTime = inEpochTime
-	self.startCalendar = CalendarTime()
+	self.startCalendar = XFF.TimeGetCalendar()
 end
 
 function XFC.MetricCollection:GetStartTime()

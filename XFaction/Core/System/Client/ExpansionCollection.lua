@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ExpansionCollection'
-local GetCurrentBuild = GetBuildInfo
 
 XFC.ExpansionCollection = XFC.ObjectCollection:newChildConstructor()
 
@@ -34,7 +33,7 @@ function XFC.ExpansionCollection:Initialize()
 
             if(WOW_PROJECT_ID == expansionID) then
                 self:SetCurrent(expansion)
-                local wowVersion = GetCurrentBuild()
+                local wowVersion = XFF.ClientGetInfo()
                 local version = XFC.Version:new()
                 version:Initialize()
                 version:SetKey(wowVersion)

@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Mailbox'
-local GetCurrentTime = GetServerTime
 
 XFC.Mailbox = XFC.Factory:newChildConstructor()
 
@@ -56,7 +55,7 @@ end
 function XFC.Mailbox:Add(inKey)
 	assert(type(inKey) == 'string')
 	if(not self:Contains(inKey)) then
-		self.objects[inKey] = GetCurrentTime()
+		self.objects[inKey] = XFF.TimeGetCurrent()
 	end
 end
 
@@ -292,7 +291,7 @@ end
 --#region Janitorial
 function XFC.Mailbox:Purge()
 	for key, receivedTime in self:Iterator() do
-		if(receivedTime < GetCurrentTime() - XF.Settings.Network.Mailbox.Stale) then
+		if(receivedTime < XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale) then
 			self:Remove(key)
 		end
 	end

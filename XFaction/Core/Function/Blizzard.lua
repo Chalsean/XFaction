@@ -3,6 +3,8 @@ local XFF = XF.Function
 
 -- Time
 XFF.TimeGetCurrent = GetServerTime
+XFF.TimeGetLocal = C_DateAndTime.GetServerTimeLocal
+XFF.TimeGetCalendar = C_DateAndTime.GetCurrentCalendarTime
 
 -- Chat
 XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter
@@ -36,3 +38,6 @@ XFF.ItemGetIlvl = GetAverageItemLevel
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo
+
+-- Client
+XFF.ClientGetInfo = GetBuildInfo
