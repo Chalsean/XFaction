@@ -52,6 +52,7 @@ function XFC.RaceCollection:Initialize()
 		for id, data in pairs (RaceData) do
 			local raceData = string.Split(data, ',')
 			local race = XFC.Race:new()
+			race:Initialize()
 			race:SetKey(tonumber(id))
 			race:SetID(tonumber(id))
 			race:SetName(raceData[1])

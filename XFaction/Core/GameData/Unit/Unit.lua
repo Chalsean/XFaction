@@ -1,15 +1,6 @@
-local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XF, G = unpack(select(2, ...))GetCurrent
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Unit'
-local GetMemberInfo = C_Club.GetMemberInfo
-local GetMemberInfoForSelf = C_Club.GetMemberInfoForSelf
-local GetCurrentTime = GetServerTime
-local GetPermissions = C_GuildInfo.GuildControlGetRankFlags
-local GetAverageIlvl = GetAverageItemLevel
-local GetSpecGroupID = GetSpecialization
-local GetSpecID = GetSpecializationInfo
-local GetPvPRating = GetPersonalRatedInfo
-local GetPlayerBNetInfo = BNGetInfo
 
 XFC.Unit = XFC.Object:newChildConstructor()
 
@@ -119,9 +110,9 @@ function XFC.Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number' or inMemberID == nil)
     local unitData
     if(inMemberID ~= nil) then
-        unitData = GetMemberInfo(XF.Player.Guild:GetID(), inMemberID)
+        unitData = XFF.GuildGetMember(XF.Player.Guild:GetID(), inMemberID)
     else
-        unitData = GetMemberInfoForSelf(XF.Player.Guild:GetID())
+        unitData = XFF.GuildGetMyself(XF.Player.Guild:GetID())
     end
 
     -- Failure conditions:
@@ -141,7 +132,7 @@ function XFC.Unit:Initialize(inMemberID)
     self:SetUnitName(unitData.name .. '-' .. XF.Player.Guild:GetRealm():GetAPIName())
 	self:SetLevel(unitData.level)	
 	self:SetGuild(XF.Player.Guild)
-    self:SetTimeStamp(GetCurrentTime())
+    self:SetTimeStamp(XFF.TimeGetCurrent())
     self:SetSpec(XFO.Specs:GetInitialClassSpec(unitData.classID))
     self:SetRace(XFO.Races:Get(unitData.race))
     self:SetRank(unitData.guildRank)
@@ -185,13 +176,13 @@ function XFC.Unit:Initialize(inMemberID)
             self:SetMythicKey(XFO.Keys:GetMyKey())
         end
 
-        local permissions = GetPermissions(unitData.guildRankOrder)
+        local permissions = XFF.GuildGetPermissions(unitData.guildRankOrder)
         if(permissions ~= nil) then
             self:CanGuildListen(permissions[1])
             self:CanGuildSpeak(permissions[2])
         end
         
-        local itemLevel = GetAverageIlvl()
+        local itemLevel = XFF.ItemGetIlvl()
         if(type(itemLevel) == 'number') then
             itemLevel = math.floor(itemLevel)
             self:SetItemLevel(itemLevel)
@@ -199,9 +190,9 @@ function XFC.Unit:Initialize(inMemberID)
 
         -- The following call will randomly fail, retries seem to help
         for i = 1, 10 do
-            local specGroupID = GetSpecGroupID()
+            local specGroupID = XFF.SpecGetGroupID()
             if(specGroupID ~= nil) then
-    	        local specID = GetSpecID(specGroupID)
+    	        local specID = XFF.SpecGetID(specGroupID)
                 if(specID ~= nil and XFO.Specs:Contains(specID)) then
                     self:SetSpec(XFO.Specs:Get(specID))
                     break
@@ -213,7 +204,7 @@ function XFC.Unit:Initialize(inMemberID)
         local highestRating = 0
         local highestIndex = 1
         for i = 1, 3 do
-            local pvpRating = GetPvPRating(i)
+            local pvpRating = XFF.PvPGetRating(i)
             if(pvpRating > highestRating) then
                 highestRating = pvpRating
                 highestIndex = i
