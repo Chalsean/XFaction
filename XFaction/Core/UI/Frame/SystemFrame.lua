@@ -96,16 +96,4 @@ function XFC.SystemFrame:Display(inType, inUnit, inOrder)
     end
     SendSystemMessage(text) 
 end
-
-function XFC.SystemFrame:DisplayLogMessage(inMessage)
-    if(not XF.Config.Chat.Login.Enable) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')    
-    self:Display(inMessage:GetSubject(), inMessage:GetFrom())
-end
-
-function XFC.SystemFrame:DisplayOrder(inOrder)
-    if(not XF.Config.Chat.Crafting.Enable) then return end    
-    assert(type(inOrder) == 'table' and inOrder.__name ~= nil and inOrder.__name == 'Order', 'argument must be Order type object')
-    self:Display(XF.Enum.Message.ORDER, inOrder:GetCustomerUnit(), inOrder)
-end
 --#endregion

@@ -157,7 +157,7 @@ function XFC.Order:Display()
         end
 
         if(display) then
-            XFO.SystemFrame:DisplayOrder(self)
+            XFO.SystemFrame:Display(XF.Enum.Message.ORDER, self:GetCustomerUnit(), self)
         end
     end).
     catch(function(err)

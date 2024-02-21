@@ -263,21 +263,21 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         if(XF.Player.Guild:Equals(inMessage:GetGuild())) then
             -- In case we get a message before scan
             if(not XFO.Confederate:Contains(inMessage:GetFrom())) then
-                XFO.SystemFrame:DisplayLogMessage(inMessage)
+                XFO.SystemFrame:Display(inMessage:GetSubject(), inMessage:GetFrom())
             else
                 if(XFO.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
-                    XFO.SystemFrame:DisplayLogMessage(inMessage)
+                    XFO.SystemFrame:Display(inMessage:GetSubject(), inMessage:GetFrom())
                 end
                 XFO.Confederate:OfflineUnit(inMessage:GetFrom())
             end
         else
-            XFO.SystemFrame:DisplayLogMessage(inMessage)
+            XFO.SystemFrame:Display(inMessage:GetSubject(), inMessage:GetFrom())
             XFO.Confederate:Remove(inMessage:GetFrom())
         end
     else
         -- Process LOGIN message
         if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and (not XFO.Confederate:Contains(unitData:GetKey()) or XFO.Confederate:Get(unitData:GetKey()):IsOffline())) then
-            XFO.SystemFrame:DisplayLogMessage(inMessage)
+            XFO.SystemFrame:Display(inMessage:GetSubject(), inMessage:GetFrom())
         end
         -- All data packets have unit information, so just refresh
         XFO.Confederate:Add(inMessage:GetFrom())
