@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Realm'
-local GetAPIRealmName = GetNormalizedRealmName
 
 XFC.Realm = XFC.Object:newChildConstructor()
 
@@ -76,7 +75,7 @@ end
 
 function XFC.Realm:GetAPIName()
     if(self.apiName == nil) then 
-        self.apiName = GetAPIRealmName() 
+        self.apiName = XFF.RealmGetAPIName() 
     end
     return self.apiName
 end
@@ -90,7 +89,7 @@ function XFC.Realm:IsTargeted(inBoolean)
 end
 
 function XFC.Realm:IsCurrent()
-    return self:GetID() == GetRealmID()
+    return self:GetID() == XFF.RealmGetID()
 end
 --#endregion
 

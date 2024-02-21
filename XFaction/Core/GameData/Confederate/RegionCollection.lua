@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RegionCollection'
-local GetMyRegion = GetCurrentRegion
 
 XFC.RegionCollection = XFC.ObjectCollection:newChildConstructor()
 
@@ -32,11 +31,12 @@ function XFC.RegionCollection:Initialize()
 		self:ParentInitialize()
 		for id, name in ipairs(RegionData) do
 			local region = XFC.Region:new()
+			region:Initialize()
 			region:SetKey(id)
 			region:SetName(name)
 			self:Add(region)
 
-			if(id == GetMyRegion()) then
+			if(id == XFF.RegionGetCurrent()) then
 				region:IsCurrent(true)
 				self:SetCurrent(region)
 				XF:Info(self:GetObjectName(), 'Initialized player region [%d:%s]', region:GetKey(), region:GetName())

@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'SystemFrame'
 
 XFC.SystemFrame = XFC.Object:newChildConstructor()
@@ -16,8 +16,8 @@ end
 function XFC.SystemFrame:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFO.SystemFrame.ChatFilter)
-        XF:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
+        XFF.ChatFrameFilter('CHAT_MSG_SYSTEM', XFO.SystemFrame.ChatFilter)
+        XF:Info(self:GetObjectName(), 'Created CHAT_MSG_SYSTEM event filter')
         self:IsInitialized(true)
     end
 end
@@ -33,8 +33,6 @@ function XFC.SystemFrame:ChatFilter(inEvent, inMessage, ...)
         return true
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_LOGOUT'])) then
         return true
-    elseif(string.find(inMessage, XF.Lib.Locale['CHAT_JOIN_GUILD'])) then
-        return true 
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
         return true
     end
@@ -95,5 +93,11 @@ function XFC.SystemFrame:Display(inType, inUnit, inOrder)
         end
     end
     SendSystemMessage(text) 
+end
+
+function XFC.SystemFrame:DisplayLogMessage(inMessage)
+    if(not XF.Config.Chat.Login.Enable) then return end
+    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')    
+    self:Display(inMessage:GetSubject(), inMessage:GetFrom())
 end
 --#endregion

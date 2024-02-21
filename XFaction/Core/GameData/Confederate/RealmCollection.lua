@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RealmCollection'
 
 XFC.RealmCollection = XFC.ObjectCollection:newChildConstructor()
@@ -852,7 +852,7 @@ function XFC.RealmCollection:Initialize()
 				realm:SetID(tonumber(id))
 				self:Add(realm)
 				
-				if(realm:GetName() == GetRealmName()) then
+				if(realm:GetName() == XFF.RealmGetName()) then
 					XF.Player.Realm = realm
 					XF:Info(self:GetObjectName(), 'Initialized player realm [%d:%s]', realm:GetID(), realm:GetName())
 				else

@@ -1,8 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'GuildCollection'
-local GetClubInfo = C_Club.GetClubInfo
-local GetStreams = C_Club.GetStreams
 
 XFC.GuildCollection = XFC.ObjectCollection:newChildConstructor()
 
@@ -23,7 +21,7 @@ function XFC.GuildCollection:Initialize(inGuildID)
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.names = {}
-		self.info = GetClubInfo(inGuildID)
+		self.info = XFF.GuildGetInfo(inGuildID)
 		self:Deserialize()
 		self:IsInitialized(true)
 	end
@@ -104,7 +102,7 @@ function XFC.GuildCollection:SetPlayerGuild()
 	for _, guild in self:Iterator() do
 		if(guild:GetName() == self.info.name and XF.Player.Realm:Equals(guild:GetRealm())) then
 			guild:SetID(self.info.clubId)
-			for _, stream in pairs (GetStreams(guild:GetID())) do
+			for _, stream in pairs (XFF.GuildGetStreams(guild:GetID())) do
 				if(stream.streamType == 1) then
 					guild:SetStreamID(stream.streamId)
 					break

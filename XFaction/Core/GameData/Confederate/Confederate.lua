@@ -1,9 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Confederate'
-
-local GetGuildMembers = C_Club.GetClubMembers
-local QueryServer = C_GuildInfo.GuildRoster
 
 XFC.Confederate = XFC.Factory:newChildConstructor()
 
@@ -14,7 +11,6 @@ function XFC.Confederate:new()
     object.onlineCount = 0
 	object.countByTarget = {}
 	object.guildInfo = nil
-    object.modifyGuildInfo = nil
     return object
 end
 
@@ -28,12 +24,6 @@ function XFC.Confederate:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        try(function ()
-            self:CanModifyGuildInfo(CanEditGuildInfo())
-        end).
-        catch(function (inErrorMessage)
-            XF:Warn(self:GetObjectName(), inErrorMessage)
-        end)
         self:SetName(XF.Cache.Confederate.Name)
         self:SetKey(XF.Cache.Confederate.Key)
 
@@ -57,7 +47,7 @@ function XFC.Confederate:Initialize()
         })    
         
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
-        QueryServer()
+        XFF.GuildQueryServer()
 
         self:IsInitialized(true)
 	end
@@ -120,16 +110,6 @@ end
 function XFC.Confederate:GetCountByTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
     return self.countByTarget[inTarget:GetKey()] or 0
-end
-
-function XFC.Confederate:CanModifyGuildInfo(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.modifyGuildInfo = inBoolean
-    elseif(not self:IsInitialized()) then
-        self:Initialize()
-    end
-    return self.modifyGuildInfo
 end
 
 function XFC.Confederate:GetInitials()
@@ -202,7 +182,7 @@ end
 function XFC.Confederate:UpdateLocalRoster()
     local self = XFO.Confederate
     XF:Trace(self:GetObjectName(), 'Scanning local guild roster')
-    for _, memberID in pairs (GetGuildMembers(XF.Player.Guild:GetID(), XF.Player.Guild:GetStreamID())) do
+    for _, memberID in pairs (XFF.GuildGetMembers(XF.Player.Guild:GetID(), XF.Player.Guild:GetStreamID())) do
         local unit = nil
         try(function ()
             unit = self:Pop()

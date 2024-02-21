@@ -6,4 +6,5 @@
     <Script file='Table\Pickle.lua'/>
     <Script file='Exception\try-catch-finally.lua'/>
     <Script file='Logger\Logger.lua'/>
+    <Script file='Blizzard.lua'/>
 </Ui>
