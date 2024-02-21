@@ -6,8 +6,13 @@ XFF.TimeGetCurrent = GetServerTime
 XFF.TimeGetLocal = C_DateAndTime.GetServerTimeLocal
 XFF.TimeGetCalendar = C_DateAndTime.GetCurrentCalendarTime
 
--- Chat
+-- Chat / Channel
 XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter
+XFF.ChatSetChannelColor = ChangeChatColor
+XFF.ChatSwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
+XFF.ChatGetChannels = GetChannelList
+XFF.ChatGetChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
+XFF.ChatJoinChannel = JoinChannelByName
 
 -- Guild
 XFF.GuildGetMembers = C_Club.GetClubMembers

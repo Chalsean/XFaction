@@ -1,9 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ChannelCollection'
-local SwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
-local GetChannels = GetChannelList
-local GetChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
 
 XFC.ChannelCollection = XFC.ObjectCollection:newChildConstructor()
 
@@ -24,7 +21,7 @@ function XFC.ChannelCollection:Initialize()
 		-- Remove this block after everyone on 4.4, its for backwards compat while guild members are a mix of 4.4 and pre-4.4
 		if(XF.Cache.Channel.Name ~= nil and XF.Cache.Channel.Password ~= nil) then
 			try(function ()
-				JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
+				XFF.ChatJoinChannel(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
 				XF:Info(self:GetObjectName(), 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 			end).
 			catch(function (inErrorMessage)
@@ -96,7 +93,7 @@ function XFC.ChannelCollection:SetLast(inKey)
 		-- Blizzard swap channel API does not work with community channels, so have to ignore them
 		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
 			XF:Debug(self:GetObjectName(), 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
-			SwapChannels(channel:GetID(), i)
+			XFF.ChatSwapChannels(channel:GetID(), i)
 			nextChannel:SetID(channel:GetID())
 			channel:SetID(i)
 		end
@@ -135,10 +132,10 @@ function XFC.ChannelCollection:Sync()
 	try(function ()
 		self:RemoveAll()
 		self:VoidLocalChannel()
-		local channels = {GetChannels()}
+		local channels = {XFF.ChatGetChannels()}
 		for i = 1, #channels, 3 do
 			local channelID, channelName, disabled = channels[i], channels[i+1], channels[i+2]
-			local channelInfo = GetChannelInfo(channelName)
+			local channelInfo = XFF.ChatGetChannelInfo(channelName)
 			local channel = XFC.Channel:new()
 			channel:SetKey(channelName)
 			channel:SetName(channelName)

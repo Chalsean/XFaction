@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Channel'
-local SetChatColor = ChangeChatColor
 
 XFC.Channel = XFC.Object:newChildConstructor()
 
@@ -43,7 +42,7 @@ end
 function XFC.Channel:SetColor()
     if(XF.Config.Channels[self:GetName()] ~= nil) then
         local color = XF.Config.Channels[self:GetName()]
-        SetChatColor('CHANNEL' .. self:GetID(), color.R, color.G, color.B)
+        XFF.ChatSetChannelColor('CHANNEL' .. self:GetID(), color.R, color.G, color.B)
         XF:Debug(self:GetObjectName(), 'Set channel [%s] RGB [%f:%f:%f]', self:GetName(), color.R, color.G, color.B)
     end
 end
