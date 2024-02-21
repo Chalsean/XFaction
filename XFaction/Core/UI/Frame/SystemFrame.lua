@@ -43,48 +43,48 @@ end
 --#endregion
 
 --#region Display
-function XFC.SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inOrder)
+function XFC.SystemFrame:Display(inType, inUnit, inOrder)
 
-    local faction = inGuild:GetFaction()
+    local faction = inUnit:GetRace():GetFaction()
     local text = XF.Settings.Frames.Chat.Prepend
     
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Faction) then  
-        text = text .. format('%s ', format(XF.Icons.String, faction:GetIconID()))
+        text = text .. format('%s ', format(XF.Icons.String, inUnit:GetRace():GetFaction():GetIconID()))
     elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Faction) then
-        text = text .. format('%s ', format(XF.Icons.String, faction:GetIconID()))
+        text = text .. format('%s ', format(XF.Icons.String, inUnit:GetRace():GetFaction():GetIconID()))
     end
   
     if(inType == XF.Enum.Message.LOGOUT) then
-        text = text .. inName .. ' '
-    elseif(faction:Equals(XF.Player.Faction)) then
-        text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
+        text = text .. inUnit:GetName() .. ' '
+    elseif(inUnit:GetRace():GetFaction():Equals(XF.Player.Faction)) then
+        text = text .. format('|Hplayer:%s|h[%s]|h', inUnit:GetUnitName(), inUnit:GetName()) .. ' '
     else
-        local friend = XF.Friends:GetByRealmUnitName(inGuild:GetRealm(), inName)
+        local friend = XFO.Friends:GetByRealmUnitName(inUnit:GetGuild():GetRealm(), inUnit:GetName())
         if(friend ~= nil) then
             text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
         else
             -- Maybe theyre in a bnet community together, no way to associate tho
-            text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
+            text = text .. format('|Hplayer:%s|h[%s]|h', inUnit:GetUnitName(), inUnit:GetName()) .. ' '
         end
     end
     
-    if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Main and inMainName ~= nil) then
-        text = text .. '(' .. inMainName .. ') '
-    elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Main and inMainName ~= nil) then
-        text = text .. '(' .. inMainName .. ') '
+    if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Main and inUnit:HasMainName()) then
+        text = text .. '(' .. inUnit:GetMainName() .. ') '
+    elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Main and inUnit:HasMainName()) then
+        text = text .. '(' .. inUnit:GetMainName() .. ') '
     end
 
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Guild) then  
-        text = text .. '<' .. inGuild:GetInitials() .. '> '
+        text = text .. '<' .. inUnit:GetGuild():GetInitials() .. '> '
     elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Guild) then
-        text = text .. '<' .. inGuild:GetInitials() .. '> '
+        text = text .. '<' .. inUnit:GetGuild():GetInitials() .. '> '
     end
     
     if(inType == XF.Enum.Message.LOGOUT) then
         text = text .. XF.Lib.Locale['CHAT_LOGOUT']
     elseif(inType == XF.Enum.Message.LOGIN) then
         text = text .. XF.Lib.Locale['CHAT_LOGIN']
-        if(XF.Config.Chat.Login.Sound and not XF.Player.Guild:Equals(inGuild)) then
+        if(XF.Config.Chat.Login.Sound and not XF.Player.Guild:Equals(inUnit:GetGuild())) then
             PlaySound(3332, 'Master')
         end
     elseif(inType == XF.Enum.Message.ORDER) then
@@ -97,23 +97,15 @@ function XFC.SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild
     SendSystemMessage(text) 
 end
 
-function XFC.SystemFrame:DisplayLoginMessage(inMessage)
+function XFC.SystemFrame:DisplayLogMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')    
-    local unitData = inMessage:GetData()
-    self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild())
-end
-
-function XFC.SystemFrame:DisplayLogoutMessage(inMessage)
-    if(not XF.Config.Chat.Login.Enable) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild())
+    self:Display(inMessage:GetSubject(), inMessage:GetFrom())
 end
 
 function XFC.SystemFrame:DisplayOrder(inOrder)
     if(not XF.Config.Chat.Crafting.Enable) then return end    
     assert(type(inOrder) == 'table' and inOrder.__name ~= nil and inOrder.__name == 'Order', 'argument must be Order type object')
-    local customer = inOrder:GetCustomerUnit()
-    self:Display(XF.Enum.Message.ORDER, customer:GetName(), customer:GetUnitName(), customer:GetMainName(), customer:GetGuild(), inOrder)
+    self:Display(XF.Enum.Message.ORDER, inOrder:GetCustomerUnit(), inOrder)
 end
 --#endregion

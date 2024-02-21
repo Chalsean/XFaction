@@ -246,16 +246,14 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         local order = nil
         try(function ()
             order = XFO.Orders:Pop()
-            order:Decode(inMessage:GetData())
-            if(not XFO.Orders:Contains(order:GetKey())) then
-                XFO.Orders:Add(order)
-                order:Display()
-            else
-                XFO.Orders:Push(order)
-            end
+            order:Deserialize(inMessage:GetData())
+            order:SetCustomerUnit(inMessage:From())
+            order:Display()
         end).
-        catch(function (inErrorMessage)
-            XF:Warn(self:GetObjectName(), inErrorMessage)
+        catch(function (err)
+            XF:Warn(self:GetObjectName(), err)            
+        end).
+        finally(function()
             XFO.Orders:Push(order)
         end)
     end
@@ -265,21 +263,21 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         if(XF.Player.Guild:Equals(inMessage:GetGuild())) then
             -- In case we get a message before scan
             if(not XFO.Confederate:Contains(inMessage:GetFrom())) then
-                XFO.SystemFrame:DisplayLogoutMessage(inMessage)
+                XFO.SystemFrame:DisplayLogMessage(inMessage)
             else
                 if(XFO.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
-                    XFO.SystemFrame:DisplayLogoutMessage(inMessage)
+                    XFO.SystemFrame:DisplayLogMessage(inMessage)
                 end
                 XFO.Confederate:OfflineUnit(inMessage:GetFrom())
             end
         else
-            XFO.SystemFrame:DisplayLogoutMessage(inMessage)
+            XFO.SystemFrame:DisplayLogMessage(inMessage)
             XFO.Confederate:Remove(inMessage:GetFrom())
         end
     else
         -- Process LOGIN message
         if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and (not XFO.Confederate:Contains(unitData:GetKey()) or XFO.Confederate:Get(unitData:GetKey()):IsOffline())) then
-            XFO.SystemFrame:DisplayLoginMessage(inMessage)
+            XFO.SystemFrame:DisplayLogMessage(inMessage)
         end
         -- All data packets have unit information, so just refresh
         XFO.Confederate:Add(inMessage:GetFrom())

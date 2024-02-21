@@ -176,21 +176,22 @@ function XFC.Order:Serialize()
     data.R = self:GetRecipeID()
     data.T = self:GetType()
     data.U = self:GetCrafterGUID()
-    return data
+    return pickle(data)
 end
 
-function XFC.Order:Deserialize(inData)
-    assert(type(inData) == 'table')
-    self:SetKey(inData.K)
-    self:SetID(inData.O)
-    self:SetType(inData.T)
-    self:SetProfession(XFO.Professions:Get(inData.P))
-    if(inData.Q ~= nil) then
-        self:SetQuality(inData.Q)
+function XFC.Order:Deserialize(inSerialized)
+    assert(type(inSerialized) == 'string')
+    local data = unpickle(inSerialized)
+    self:SetKey(data.K)
+    self:SetID(data.O)
+    self:SetType(data.T)
+    self:SetProfession(XFO.Professions:Get(data.P))
+    if(data.Q ~= nil) then
+        self:SetQuality(data.Q)
     end
-    self:SetRecipeID(inData.R)
-    if(inData.U ~= nil) then
-        self:SetCrafterGUID(inData.U)
+    self:SetRecipeID(data.R)
+    if(data.U ~= nil) then
+        self:SetCrafterGUID(data.U)
     end
     self:IsInitialized(true)
 end
@@ -198,7 +199,7 @@ end
 function XFC.Order:Broadcast()
     local message = nil
     try(function ()
-        message = XF.Mailbox.Chat:Pop()
+        message = XFO.Chat:Pop()
         message:Initialize()
         message:SetType(XF.Enum.Network.BROADCAST)
         message:SetSubject(XF.Enum.Message.ORDER)
