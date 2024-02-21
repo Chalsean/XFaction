@@ -1,8 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Chat'
-
-local GetAchievement = GetAchievementInfo
 
 XFC.Chat = XFC.Mailbox:newChildConstructor()
 
@@ -163,7 +161,7 @@ end
 function XFC.Chat:Achievement(inID)
     local self = XFO.Chat
     try(function ()
-        local _, name, _, _, _, _, _, _, _, _, _, isGuild = GetAchievement(inID)
+        local _, name, _, _, _, _, _, _, _, _, _, isGuild = XFF.PlayerGetAchievement(inID)
         if(not isGuild and string.find(name, XF.Lib.Locale['EXPLORE']) == nil) then
             local message = nil
             try(function ()

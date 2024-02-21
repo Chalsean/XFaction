@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Link'
-local GetCurrentTime = GetServerTime
 
 XFC.Link = XFC.Object:newChildConstructor()
 
@@ -27,7 +26,7 @@ end
 function XFC.Link:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self:SetTimeStamp(ServerTime())
+        self:SetTimeStamp(XFF.TimeGetCurrent())
         if(self:HasFromNode() and self:HasToNode()) then
             self:SetKey(XF:GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName()))
         end
@@ -133,6 +132,7 @@ function XFC.Link:Deserialize(inSerialized)
     local _Nodes = string.Split(inSerialized, ';')
     self:SetFromNode(GetNode(_Nodes[1]))
     self:SetToNode(GetNode(_Nodes[2]))
+    self:SetTimeStamp(XFF.TimeGetCurrent())
 
     self:Initialize()
 end

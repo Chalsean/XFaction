@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Message'
-local GetCurrentTime = GetServerTime
 
 XFC.Message = XFC.Object:newChildConstructor()
 
@@ -27,7 +26,7 @@ function XFC.Message:Initialize()
         self:ParentInitialize()
         self.targets = {}
         self:SetFrom(XF.Player.Unit)
-        self:SetTimeStamp(GetCurrentTime())
+        self:SetTimeStamp(XFF.TimeGetCurrent())
         self:SetAllTargets()
         self:IsInitialized(true)
     end
@@ -185,8 +184,8 @@ function XFC.Message:SetRemainingTargets(inTargetString)
     self.targetCount = 0
     local targets = string.Split(inTargetString, '|')
     for _, key in pairs (targets) do
-        if(key ~= nil and XF.Targets:Contains(key)) then
-            local target = XF.Targets:Get(key)
+        if(key ~= nil and XFO.Targets:Contains(key)) then
+            local target = XFO.Targets:Get(key)
             if(not XF.Player.Target:Equals(target)) then
                 self:AddTarget(target)
             end
@@ -228,6 +227,7 @@ function XFC.Message:Deserialize(inData)
     self:SetSubject(data.S)
     self:SetTo(data.T)	
 	self:SetType(data.Y)
+    self:SetTimeStamp(XFF.TimeGetCurrent())
 end
 
 function XFC.Message:Encode(inProtocol)

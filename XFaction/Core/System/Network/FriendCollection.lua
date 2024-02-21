@@ -1,8 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'FriendCollection'
-local GetFriendCount = BNGetNumFriends
-local GetAccountInfo = C_BattleNet.GetFriendAccountInfo
 
 XFC.FriendCollection = XFC.Factory:newChildConstructor()
 
@@ -121,7 +119,7 @@ end
 
 function XFC.FriendCollection:CheckFriend(inKey)
 	try(function ()
-		local accountInfo = GetAccountInfo(inKey)
+		local accountInfo = XFF.BNetGetFriendInfo(inKey)
 		if(accountInfo == nil) then
 			throw('Received nil for friend [%d]', inKey)
 		end
@@ -165,7 +163,7 @@ end
 function XFC.FriendCollection:CheckFriends()
 	local self = XFO.Friends
 	try(function ()
-		for i = 1, GetFriendCount() do
+		for i = 1, XFF.BNetGetFriendCount() do
 			self:CheckFriend(i)
 		end
 	end).

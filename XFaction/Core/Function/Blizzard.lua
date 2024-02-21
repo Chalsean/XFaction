@@ -38,11 +38,14 @@ XFF.SpecGetID = GetSpecializationInfo
 -- PvP
 XFF.PvPGetRating = GetPersonalRatedInfo
 
--- Unit
-XFF.ItemGetIlvl = GetAverageItemLevel
+-- Player
+XFF.PlayerGetIlvl = GetAverageItemLevel
+XFF.PlayerGetAchievement = GetAchievementInfo
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo
+XFF.BNetGetFriendCount = BNGetNumFriends
+XFF.BNetGetFriendInfo = C_BattleNet.GetFriendAccountInfo
 
 -- Client
 XFF.ClientGetInfo = GetBuildInfo

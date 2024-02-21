@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'LinkCollection'
-local GetCurrentTime = GetServerTime
 
 XFC.LinkCollection = XFC.Factory:newChildConstructor()
 
@@ -108,10 +107,10 @@ function XFC.LinkCollection:Deserialize(inSerialized)
 			link = self:Pop()
 			link:Deserialize(serialLink)
 			if(not self:Contains(link:GetKey())) then
-				link:SetTimeStamp(GetCurrentTime())
+				link:SetTimeStamp(XFF.TimeGetCurrent())
 				self:Add(link)
 			else
-				self:Get(link:GetKey()):SetTimeStamp(GetCurrentTime())
+				self:Get(link:GetKey()):SetTimeStamp(XFF.TimeGetCurrent())
 				self:Push(link)
 			end
 		end).
@@ -170,7 +169,7 @@ end
 
 function XFC.LinkCollection:Purge()
 	local self = XFO.Links
-	local ttl = GetCurrentTime() - XF.Settings.Network.BNet.Link.Stale
+	local ttl = XFF.TimeGetCurrent() - XF.Settings.Network.BNet.Link.Stale
 
 	for _, link in self:Iterator() do
 		if(not link:IsMyLink() and link:GetTimeStamp() < ttl) then

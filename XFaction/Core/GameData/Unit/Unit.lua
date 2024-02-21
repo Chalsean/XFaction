@@ -182,7 +182,7 @@ function XFC.Unit:Initialize(inMemberID)
             self:CanGuildSpeak(permissions[2])
         end
         
-        local itemLevel = XFF.ItemGetIlvl()
+        local itemLevel = XFF.PlayerGetIlvl()
         if(type(itemLevel) == 'number') then
             itemLevel = math.floor(itemLevel)
             self:SetItemLevel(itemLevel)
