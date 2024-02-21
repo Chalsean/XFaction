@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Timer'
-local GetCurrentTime = GetServerTime
 
 XFC.Timer = XFC.Object:newChildConstructor()
 
@@ -153,7 +152,7 @@ end
 --#region Start/Stop
 function XFC.Timer:Start()
     if(not self:IsEnabled()) then
-        self:SetStartTime(GetCurrentTime())        
+        self:SetStartTime(XFF.TimeGetCurrent())        
         self:IsEnabled(true)
         XF:Debug(self:GetObjectName(), 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
     end
@@ -172,6 +171,6 @@ function XFC.Timer:Restart()
 end
 
 function XFC.Timer:Reset()
-    self:SetLastRan(GetCurrentTime())
+    self:SetLastRan(XFF.TimeGetCurrent())
 end
 --#endregion

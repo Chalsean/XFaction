@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'TimerCollection'
-local GetCurrentTime = GetServerTime
 
 XFC.TimerCollection = XFC.ObjectCollection:newChildConstructor()
 
@@ -66,7 +65,7 @@ function XFC.TimerCollection:LeaveInstance()
     for _, timer in self:Iterator() do
         if(not timer:IsEnabled()) then
             timer:Start()
-            local now = GetCurrentTime()
+            local now = XFF.TimeGetCurrent()
             if(timer:GetLastRan() < now - timer:GetDelta()) then
                 local _Function = timer:GetCallback()
                 _Function()

@@ -6,6 +6,9 @@ XFF.TimeGetCurrent = GetServerTime
 XFF.TimeGetLocal = C_DateAndTime.GetServerTimeLocal
 XFF.TimeGetCalendar = C_DateAndTime.GetCurrentCalendarTime
 
+-- Timer
+XFF.TimerStart = C_Timer.NewTicker
+
 -- Chat / Channel
 XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter
 XFF.ChatSetChannelColor = ChangeChatColor

@@ -1,8 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MasterTimer'
-local GetCurrentTime = GetServerTime
-local NewTicker = C_Timer.NewTicker
 
 XFC.MasterTimer = XFC.Object:newChildConstructor()
 
@@ -19,9 +17,9 @@ end
 function XFC.MasterTimer:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		self.handle = NewTicker(XF.Settings.System.MasterTimer, 
+		self.handle = XFF.TimerStart(XF.Settings.System.MasterTimer, 
                 function (...)
-					local now = GetCurrentTime()
+					local now = XFF.TimeGetCurrent()
 					for _, timer in XFO.Timers:Iterator() do
 						if(timer:IsEnabled() and timer:GetLastRan() < now - timer:GetDelta()) then
 							timer:Execute()
