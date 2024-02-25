@@ -43,6 +43,8 @@ local function DeserializeMessage(inObject, inCompressedData)
 		inObject:SetGuild(XF.Guilds:GetByRealmGuildName(XF.Realms:GetByID(messageData.R), messageData.G))
 	end		
 
+	if(messageData.W ~= nil) then inObject:SetFaction(XF.Factions:Get(messageData.W)) end
+
 	-- Leave any UnitData serialized for now
 	inObject:SetData(messageData.D)
 	return inObject

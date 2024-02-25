@@ -24,6 +24,7 @@ function Message:new()
     object.unitName = nil
     object.mainName = nil
     object.guild = nil
+    object.faction = nil
     return object
 end
 --#endregion
@@ -37,6 +38,7 @@ function Message:Initialize()
         self:SetTimeStamp(ServerTime())
         self:SetAllTargets()
         self:SetVersion(XF.Version)
+        self:SetFaction(XF.Player.Faction)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -59,6 +61,7 @@ function Message:Deconstructor()
     self.unitName = nil
     self.mainName = nil
     self.guild = nil
+    self.faction = nil
     self:Initialize()
 end
 --#endregion
@@ -215,6 +218,19 @@ end
 function Message:SetGuild(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
     self.guild = inGuild
+end
+
+function Message:HasFaction()
+    return self.faction ~= nil
+end
+
+function Message:GetFaction()
+    return self.faction
+end
+
+function Message:SetFaction(inFaction)
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
+    self.faction = inFaction
 end
 --#endregion
 
