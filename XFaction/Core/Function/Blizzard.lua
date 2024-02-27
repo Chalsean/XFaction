@@ -25,6 +25,7 @@ XFF.GuildGetStreams = C_Club.GetStreams
 XFF.GuildGetMember = C_Club.GetMemberInfo
 XFF.GuildGetMyself = C_Club.GetMemberInfoForSelf
 XFF.GuildGetPermissions = C_GuildInfo.GuildControlGetRankFlags
+XFF.GuildGetID = C_Club.GetGuildClubId
 
 -- Realm
 XFF.RealmGetAPIName = GetNormalizedRealmName
@@ -38,12 +39,17 @@ XFF.RegionGetCurrent = GetCurrentRegion
 XFF.SpecGetGroupID = GetSpecialization
 XFF.SpecGetID = GetSpecializationInfo
 
+-- Faction
+XFF.PlayerGetFaction = UnitFactionGroup
+
 -- PvP
 XFF.PvPGetRating = GetPersonalRatedInfo
 
 -- Player
 XFF.PlayerGetIlvl = GetAverageItemLevel
 XFF.PlayerGetAchievement = GetAchievementInfo
+XFF.PlayerGetGUID = UnitGUID
+XFF.PlayerIsInGuild = IsInGuild
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo
@@ -51,4 +57,8 @@ XFF.BNetGetFriendCount = BNGetNumFriends
 XFF.BNetGetFriendInfo = C_BattleNet.GetFriendAccountInfo
 
 -- Client
-XFF.ClientGetInfo = GetBuildInfo
+XFF.ClientGetVersion = GetBuildInfo
+XFF.ClientGetAddonCount = C_AddOns.GetNumAddOns
+XFF.ClientGetAddonInfo = C_AddOns.GetAddOnInfo
+XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
+XFF.ClientGetAddonState = C_AddOns.GetAddOnEnableState

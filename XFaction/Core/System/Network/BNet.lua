@@ -69,8 +69,7 @@ function XFC.BNet:Send(inMessage)
 
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
-    local messageData = inMessage:BNetEncode()
-    local packets = self:SegmentMessage(messageData, inMessage:GetKey(), XF.Settings.Network.BNet.PacketSize)
+    local packets = inMessage:Segment(XF.Enum.Network.BNET)
     self:Add(inMessage:GetKey())
 
     -- Make sure all packets go to each target

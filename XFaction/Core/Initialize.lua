@@ -1,17 +1,17 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'CoreInit'
-
-local InGuild = IsInGuild
-local GetGuildId = C_Club.GetGuildClubId
-local GetNumAddOns = C_AddOns.GetNumAddOns
-local GetAddOnInfo = C_AddOns.GetAddOnInfo
 
 -- Initialize anything not dependent upon guild information
 function XF:CoreInit()
 	-- Get cache/configs asap	
 	XFO.Events = XFC.EventCollection:new(); XFO.Events:Initialize()
 	XFO.Media = XFC.MediaCollection:new(); XFO.Media:Initialize()
+
+	-- Wrappers	
+	XFO.Hooks = XFC.HookCollection:new(); XFO.Hooks:Initialize()
+	XFO.Metrics = XFC.MetricCollection:new(); XFO.Metrics:Initialize()	
+	XFO.Timers = XFC.TimerCollection:new(); XFO.Timers:Initialize()
 
 	-- External addon handling
 	XFO.ElvUI = XFC.ElvUI:new()
@@ -42,10 +42,8 @@ function XF:CoreInit()
 	XFO.ChatFrame = XFC.ChatFrame:new()
 	XFO.SystemFrame = XFC.SystemFrame:new()
 
-	-- Declare handlers but not listening yet
-	XFO.AchievementEvent = XFC.AchievementEvent:new(); XFO.AchievementEvent:Initialize()
+	-- Event Handlers
 	XFO.PlayerEvent = XFC.PlayerEvent:new(); XFO.PlayerEvent:Initialize()
-	XFO.SystemEvent = XFC.SystemEvent:new()
 
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
@@ -62,16 +60,11 @@ function XF:CoreInit()
 	XFO.Races = XFC.RaceCollection:new(); XFO.Races:Initialize()
 	XFO.Specs = XFC.SpecCollection:new(); XFO.Specs:Initialize()
 	XFO.Zones = XFC.ZoneCollection:new(); XFO.Zones:Initialize()	
-	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()	
-	XF.Player.GUID = UnitGUID('player')
-	XF.Player.Faction = XFO.Factions:GetByName(UnitFactionGroup('player'))
-	
-	-- Wrappers	
-	XFO.Hooks = XFC.HookCollection:new(); XFO.Hooks:Initialize()
-	XFO.Metrics = XFC.MetricCollection:new(); XFO.Metrics:Initialize()	
-	XFO.Timers = XFC.TimerCollection:new(); XFO.Timers:Initialize()	
-
-	XF.Player.InInstance = IsInInstance()
+	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
+	XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
+	XF.Player.GUID = XFF.PlayerGetGUID('player')
+	XF.Player.Faction = XFO.Factions:GetByName(XFF.PlayerGetFaction('player'))
+	XF.Player.InInstance = XFF.PlayerIsInGuild()
 	
 	XFO.DTGuild:Initialize()
 	XFO.DTLinks:Initialize()
@@ -95,13 +88,15 @@ function XF:CoreInit()
 	XFO.MasterTimer = XFC.MasterTimer:new(); XFO.MasterTimer:Initialize()
 end
 
+
+
 function XF:LoginGuild()
 	try(function ()
 		-- For a time Blizz API says player is not in guild, even if they are
 		-- Its not clear what event fires (if any) when this data is available, hence the poller
-		if(InGuild()) then
+		if(XFF.PlayerIsInGuild()) then
 			-- Even though it says were in guild, theres a brief time where the following calls fails, hence the sanity check
-			local guildID = GetGuildId()
+			local guildID = XFF.GuildGetID()
 			if(guildID ~= nil) then
 				-- Now that guild info is available we can finish setup
 				XF:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
@@ -209,8 +204,8 @@ function XF:LoginPlayer()
 			XFO.DTMetrics:PostInitialize()
 
 			-- For support reasons, it helps to know what addons are being used
-			for i = 1, GetNumAddOns() do
-				local name, _, _, enabled = GetAddOnInfo(i)
+			for i = 1, XFF.ClientGetAddonCount() do
+				local name, _, _, enabled = XFF.ClientGetAddonInfo(i)
 				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
 
@@ -229,8 +224,7 @@ function XF:Reload()
         XFO.Confederate:Backup()
         XFO.Friends:Backup()
         XFO.Links:Backup()
-        -- FIX: Move to retail
-        --XFO.Orders:Backup()
+        XFO.Orders:Backup()
     end).
     catch(function (err)
         XF:Error(self:GetObjectName(), err)

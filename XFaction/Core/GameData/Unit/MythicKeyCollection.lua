@@ -26,15 +26,15 @@ end
 --#endregion
 
 --#region Accessors
-function XFC.MythicCollection:HasMyKey()
+function XFC.MythicKeyCollection:HasMyKey()
     return self.myKey ~= nil
 end
 
-function XFC.MythicCollection:GetMyKey()
+function XFC.MythicKeyCollection:GetMyKey()
     return self.myKey
 end
 
-function XFC.MythicCollection:SetMyKey(inMythicKey)
+function XFC.MythicKeyCollection:SetMyKey(inMythicKey)
     assert(type(inMythicKey) == 'table' and inMythicKey.__name ~= nil and inMythicKey.__name == 'MythicKey', 'argument must be MythicKey object')
     self.myKey = inMythicKey
 end

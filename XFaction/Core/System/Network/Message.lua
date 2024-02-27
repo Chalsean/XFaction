@@ -231,18 +231,18 @@ function XFC.Message:Deserialize(inData)
 end
 
 function XFC.Message:Encode(inProtocol)
-    local compressed = Deflate:CompressDeflate(self:Serialize(), {level = XF.Settings.Network.CompressionLevel})
+    local compressed = XF.Lib.Deflate:CompressDeflate(self:Serialize(), {level = XF.Settings.Network.CompressionLevel})
     if(inProtocol == XF.Enum.Network.BNET) then
-        return Deflate:EncodeForPrint(compressed)
+        return XF.Lib.Deflate:EncodeForPrint(compressed)
     end
-    return Deflate:EncodeForWoWAddonChannel(compressed)
+    return XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
 end
 
 function XFC.Message:Decode(inData, inProtocol)
 	if(inProtocol == XF.Enum.Network.BNET) then
-        self:Deserialize(Deflate:DecodeForPrint(inData))
+        self:Deserialize(XF.Lib.Deflate:DecodeForPrint(inData))
     else
-        self:Deserialize(Deflate:DecodeForWoWAddonChannel(inData))
+        self:Deserialize(XF.Lib.Deflate:DecodeForWoWAddonChannel(inData))
     end
 end
 

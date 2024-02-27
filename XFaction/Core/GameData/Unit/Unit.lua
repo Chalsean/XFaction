@@ -1,4 +1,4 @@
-local XF, G = unpack(select(2, ...))GetCurrent
+local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Unit'
 
@@ -637,6 +637,7 @@ function XFC.Unit:Broadcast(inSubject)
     local message = nil
     try(function ()
         message = XFO.Chat:Pop()
+        message:Initialize()
         message:SetType(XF.Enum.Network.BROADCAST)
         message:SetSubject(inSubject)
         XFO.Chat:Send(message)

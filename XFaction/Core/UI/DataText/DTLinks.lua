@@ -25,8 +25,8 @@ function XFC.DTLinks:Initialize()
 		self.ldbObject = XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTLINKS_NAME'], {
 			type = 'data source',
 			label = XF.Lib.Locale['DTLINKS_NAME'],
-		    OnEnter = function(this) XF.DataText.Links:OnEnter(this) end,
-			OnLeave = function(this) XF.DataText.Links:OnLeave(this) end,
+		    OnEnter = function(this) XFO.DTLinks:OnEnter(this) end,
+			OnLeave = function(this) XFO.DTLinks:OnLeave(this) end,
 		})
 		self.headerFont = CreateFont('headerFont')
 		self.headerFont:SetTextColor(0.4,0.78,1)

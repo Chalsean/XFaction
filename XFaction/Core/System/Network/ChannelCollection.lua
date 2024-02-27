@@ -43,13 +43,13 @@ function XFC.ChannelCollection:Initialize()
 			instance = true,
 			start = true
 		})
-		XFO.Events:Add({
-			name = 'ChannelColor', 
-			event = 'UPDATE_CHAT_COLOR', 
-			callback = XFO.Channels.UpdateColor, 
-			instance = true,
-			start = true
-		})
+		-- XFO.Events:Add({
+		-- 	name = 'ChannelColor', 
+		-- 	event = 'UPDATE_CHAT_COLOR', 
+		-- 	callback = XFO.Channels.UpdateColor, 
+		-- 	instance = true,
+		-- 	start = true
+		-- })
 		XFO.Timers:Add({
 			name = 'LoginChannelSync',
 			delta = XF.Settings.Network.Channel.LoginChannelSyncTimer, 

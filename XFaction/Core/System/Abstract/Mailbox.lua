@@ -52,6 +52,7 @@ function XFC.Mailbox:ContainsPacket(inKey)
 	return self.packets[inKey] ~= nil
 end
 
+-- We don't need to store the whole message, just the uid
 function XFC.Mailbox:Add(inKey)
 	assert(type(inKey) == 'string')
 	if(not self:Contains(inKey)) then
