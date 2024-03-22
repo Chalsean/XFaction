@@ -83,14 +83,12 @@ function XFC.Chat:Send(inMessage)
     self:Add(inMessage:GetKey())
     
     local channelName, channelID
-    -- Broadcast to custom channel if setup
-    if(XFO.Channels:HasLocalChannel()) then
-        channelName = 'CHANNEL'
-        channelID = XFO.Channels:GetLocalChannel():GetID()
-    -- Otherwise broadcast to GUILD
-    else
+    if(XFO.Channels:UseGuild() or not XFO.Channels:HasLocalChannel()) then
         channelName = 'GUILD'
         channelID = nil
+    else
+        channelName = 'CHANNEL'
+        channelID = XFO.Channels:GetLocalChannel():GetID()
     end
 
     local packets = inMessage:Segment()

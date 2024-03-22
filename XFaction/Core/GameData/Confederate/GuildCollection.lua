@@ -59,6 +59,17 @@ end
 function XFC.GuildCollection:GetInfo()
 	return self.info.description
 end
+
+function XFC.GuildCollection:GetCountPerRealm(inRealm)
+	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
+	local count = 0
+	for _, guild in self:Iterator() do
+		if(inRealm:Equals(guild:GetRealm())) then
+			count = count + 1
+		end
+	end
+	return count
+end
 --#endregion
 
 --#region Serialize

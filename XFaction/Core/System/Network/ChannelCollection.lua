@@ -18,21 +18,17 @@ end
 function XFC.ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		-- Remove this block after everyone on 4.4, its for backwards compat while guild members are a mix of 4.4 and pre-4.4
-		if(XF.Cache.Channel.Name ~= nil and XF.Cache.Channel.Password ~= nil) then
+		
+		if(not XFO.WoW:IsRetail() or XFO.Guilds:GetCountPerRealm(XF.Player.Realm) < 2) then
+			self:UseGuild(true)
+		else
 			try(function ()
 				XFF.ChatJoinChannel(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
 				XF:Info(self:GetObjectName(), 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 			end).
-			catch(function (inErrorMessage)
-				XF:Error(self:GetObjectName(), inErrorMessage)
+			catch(function (err)
+				XF:Error(self:GetObjectName(), err)
 			end)
-		end
-
-		if(XF.Player.Target:GetTargetCount() > 1) then
-			self:UseGuild(false)
-			--JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
-			--XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 		end
 
 		XFO.Events:Add({
