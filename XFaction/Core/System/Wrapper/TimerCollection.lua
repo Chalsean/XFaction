@@ -8,6 +8,7 @@ XFC.TimerCollection = XFC.ObjectCollection:newChildConstructor()
 function XFC.TimerCollection:new()
     local object = XFC.TimerCollection.parent.new(self)
 	object.__name = ObjectName
+    object.handle = nil
     return object
 end
 --#endregion
@@ -76,17 +77,52 @@ function XFC.TimerCollection:LeaveInstance()
     end
 end
 
--- Start everything
-function XFC.TimerCollection:Start()
-	for _, timer in self:Iterator() do
+function XFC.TimerCollection:EnableAll()
+    for _, timer in self:Iterator() do
         timer:Start()
+    end
+end
+
+function XFC.TimerCollection:DisableAll()
+    for _, timer in self:Iterator() do
+        timer:Stop()
+    end
+end
+
+function XFC.TimerCollection:IsRunning()
+	return self.handle == nil or not self.handle:IsCancelled()
+end
+
+function XFC.TimerCollection:Start()
+	if(not self:IsRunning()) then
+		self.handle = XFF.TimerStart(XF.Settings.System.MasterTimer, 
+		function (...)
+			local now = XFF.TimeGetCurrent()
+			for _, timer in XFO.Timers:Iterator() do
+				if(timer:IsEnabled() and timer:GetLastRan() < now - timer:GetDelta()) then
+					timer:Execute()
+					if(not timer:IsRepeat()) then
+						XF:Debug(self:GetObjectName(), 'Timer will stop due to not being a repeater')
+						timer:Stop()
+					elseif(timer:HasMaxAttempts() and timer:GetMaxAttempts() <= timer:GetAttempt()) then
+						XF:Debug(self:GetObjectName(), 'Timer will stop due to attempt limit [' .. tostring(timer:GetMaxAttempts()) .. '] being reached: ' .. timer:GetKey())
+						timer:Stop()
+					elseif(timer:HasTimeToLive() and timer:GetStartTime() + timer:GetTimeToLive() < now) then
+						XF:Debug(self:GetObjectName(), 'Timer will stop due to time limit [' .. tostring(timer:GetTimeToLive()) .. '] being reached: ' .. timer:GetKey())
+						timer:Stop()
+					else
+						timer:Reset()
+					end
+				end
+			end                
+		end)
 	end
 end
 
--- Stop everything
 function XFC.TimerCollection:Stop()
-	for _, timer in self:Iterator() do
-        timer:Stop()
+	if(self:IsRunning()) then
+		self.handle:Cancel()
+		self.handle = nil
 	end
 end
 --#endregion

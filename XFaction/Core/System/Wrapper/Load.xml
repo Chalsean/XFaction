@@ -5,5 +5,4 @@
     <Script file='HookCollection.lua'/>
     <Script file='Timer.lua'/>
     <Script file='TimerCollection.lua'/>
-    <Script file='MasterTimer.lua'/>
 </Ui>
