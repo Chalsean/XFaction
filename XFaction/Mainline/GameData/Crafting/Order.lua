@@ -1,6 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
-local GetRecipeResultItem = C_TooltipInfo.GetRecipeResultItem
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 
 --#region Accessors
 function XFC.Order:IsPublic()
@@ -16,7 +15,7 @@ function XFC.Order:IsPersonal()
 end
 
 function XFC.Order:GetLink()
-    local item = GetRecipeResultItem(self:GetRecipeID(), nil, nil, nil, self:GetQuality())
+    local item = XFF.CraftingGetItem(self:GetRecipeID(), nil, nil, nil, self:GetQuality())
     if(item ~= nil) then return item.hyperlink end
     return nil
 end

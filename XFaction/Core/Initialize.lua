@@ -100,7 +100,8 @@ function XF:LoginGuild()
 			if(guildID ~= nil) then
 				-- Now that guild info is available we can finish setup
 				XF:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
-				XFO.Timers:Remove('LoginGuild')
+				XFO.MasterTimer:Stop()
+				XFO.Timers:Remove('LoginGuild')				
 
 				-- Confederate setup via guild info
 				XFO.Guilds:Initialize(guildID)
@@ -141,11 +142,13 @@ function XF:LoginGuild()
 	end).
 	finally(function ()			
 		XF:SetupMenus()
+		XFO.MasterTimer:Start()
 	end)
 end
 
 function XF:LoginPlayer()
 	try(function ()
+		XFO.MasterTimer:Stop()
 		-- Need the player data to continue setup
 		local unit = XFO.Confederate:Pop()
 		-- FIX: Dont have player id, this will throw or get wrong unit
@@ -216,11 +219,15 @@ function XF:LoginPlayer()
 	end).
 	catch(function (err)
 		XF:Error(ObjectName, err)
+	end).
+	finally(function ()
+		XFO.MasterTimer:Start()
 	end)
 end
 
 function XF:Reload()
-	try(function ()        
+	try(function ()
+		XFO.MasterTimer:Stop()
         XFO.Confederate:Backup()
         XFO.Friends:Backup()
         XFO.Links:Backup()
@@ -237,6 +244,7 @@ function XF:Reload()
 end
 
 function XF:Stop()
+	XFO.MasterTimer:Stop()
 	if(XFO.Events) then XFO.Events:Stop() end
 	if(XFO.Hooks) then XFO.Hooks:Stop() end
 	if(XFO.Timers) then XFO.Timers:Stop() end

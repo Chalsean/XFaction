@@ -1,12 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'OrderCollection'
-
-local QueryMyOrdersFromServer = C_CraftingOrders.ListMyOrders
-local GetMyOrdersFromServer = C_CraftingOrders.GetMyOrders
-local GetRecipe = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility
-local GetProfessionForSkill = C_TradeSkillUI.GetProfessionNameForSkillLineAbility
-local CreateCallback = C_FunctionContainers.CreateCallback
 
 --#region Initialize
 function XFC.OrderCollection:Initialize()
@@ -45,7 +39,7 @@ function QueryMyOrders()
                 reversed = false,
             },
             offset = 0,
-            callback = CreateCallback(function(inResultStatus, ...)
+            callback = XFF.FunctionCreateCallback(function(inResultStatus, ...)
                 if(inResultStatus == Enum.CraftingOrderResult.Ok) then
                     GetMyOrders()
                 end
@@ -53,7 +47,7 @@ function QueryMyOrders()
         }
         -- CraftOrder API is unusual, you can't just call a function to get a listing
         -- You have to make a server request and provide a callback for when the server feels like handling your query
-        QueryMyOrdersFromServer(request)
+        XFF.CraftingQueryServer(request)
     end).
     catch(function (inErrorMessage)
         XF:Warn(ObjectName, inErrorMessage)
@@ -61,7 +55,7 @@ function QueryMyOrders()
 end
 
 function GetMyOrders()
-    local myOrders = GetMyOrdersFromServer()
+    local myOrders = XFF.CraftingGetOrders()
     for _, myOrder in ipairs(myOrders) do
         local order = XFO.Orders:Pop()
         try(function ()
@@ -75,7 +69,7 @@ function GetMyOrders()
                     order:SetCrafterName(myOrder.crafterName)
                 end
 
-                local professionName = GetProfessionForSkill(myOrder.skillLineAbilityID)
+                local professionName = XFF.CraftingGetSkillProfession(myOrder.skillLineAbilityID)
                 if(professionName ~= nil and type(professionName) == 'string') then
                     local profession = XF.Professions:GetByName(professionName)
                     if(profession ~= nil) then
@@ -83,7 +77,7 @@ function GetMyOrders()
                     end
                 end
 
-                local recipe = GetRecipe(myOrder.skillLineAbilityID)
+                local recipe = XFF.CraftingGetRecipe(myOrder.skillLineAbilityID)
                 order:SetRecipeID(recipe.recipeID)
 
                 if(recipe.supportsQualities and myOrder.minQuality > 0) then

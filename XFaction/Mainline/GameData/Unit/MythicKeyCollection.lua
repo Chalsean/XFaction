@@ -1,8 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MythicKeyCollection'
-local GetKeyLevel = C_MythicPlus.GetOwnedKeystoneLevel
-local GetKeyMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID
 
 --#region Initializers
 function XFC.MythicKeyCollection:Initialize()
@@ -24,8 +22,8 @@ end
 function XFC.MythicKeyCollection:RefreshMyKey()
     local self = XFO.Keys
 
-    local level = GetKeyLevel()    
-    local mapID = GetKeyMapID()
+    local level = XFF.MythicGetKeyLevel()    
+    local mapID = XFF.MythicGetKeyMapID()
 
     if(level ~= nil and mapID ~= nil and XFO.Dungeons:Contains(mapID)) then    
         local key = nil

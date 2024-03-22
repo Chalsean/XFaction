@@ -17,7 +17,6 @@ end
 function XFC.EventCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        -- FIX
         self.frame = CreateFrame('Frame')
         -- Handle the events as they happen
         self.frame:SetScript('OnEvent', function(self, inEvent, ...)
@@ -25,21 +24,12 @@ function XFC.EventCollection:Initialize()
             for _, event in XFO.Events:Iterator() do
                 if(event:GetName() == inEvent and event:IsEnabled()) then
                     XF:Trace(ObjectName, 'Event fired: %s', event:GetName())
-                    -- if(event:IsGroup()) then
-                    --     if(XFO.Timers:Contains(event:GetKey())) then
-                    --         XFO.Timers:Get(event:GetKey()):Start()
-                    --     else
-                    --         XFO.Timers:Add({name = event:GetKey(),
-                    --                         delta = event:GetGroupDelta(),
-                    --                         callback = event:GetCallback(),
-                    --                         repeater = false,
-                    --                         instance = event:IsInstance(),
-                    --                         start = true})
-                    --     end
-                    -- else
+                    if(event:IsGroup()) then
+                        XFO.Timers:Get(event:GetKey()):Start()
+                    else
                         local _Function = event:GetCallback()
                         _Function(self, ...)
-                    --end
+                    end
                 end
             end
         end)
@@ -66,6 +56,14 @@ function XFC.EventCollection:Add(inArgs)
     event:IsInstance(inArgs.instance)
     if(inArgs.groupDelta ~= nil) then
         event:SetGroupDelta(inArgs.groupDelta)
+        XFO.Timers:Add({
+            name = event:GetKey(),
+            delta = event:GetGroupDelta(),
+            callback = event:GetCallback(),
+            repeater = false,
+            instance = event:IsInstance(),
+            start = false
+        })
     end
     if(inArgs.start and (event:IsInstance() or not XF.Player.InInstance)) then
         event:Start()

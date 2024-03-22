@@ -41,6 +41,7 @@ function XFC.TimerCollection:Add(inArgs)
     if(inArgs.start and (timer:IsInstance() or not XF.Player.InInstance)) then
         timer:Start()
     end
+
     self.parent.Add(self, timer)
 end
 
