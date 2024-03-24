@@ -26,14 +26,16 @@ function XFC.LinkCollection:Initialize()
 			delta = XF.Settings.Network.BNet.Link.Broadcast, 
 			callback = XFO.Links.Broadcast, 
 			repeater = true, 
-			instance = true
+			instance = true,
+			start = true
 		})
 		XFO.Timers:Add({
 			name = 'StaleLinks', 
 			delta = XF.Settings.Network.BNet.Link.Scan, 
 			callback = XFO.Links.Purge, 
 			repeater = true, 
-			instance = true
+			instance = true,
+			start = true
 		})
 		self:IsInitialized(true)
 	end

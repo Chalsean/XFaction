@@ -21,31 +21,36 @@ function XFC.Chat:Initialize()
             name = 'ChatMsg', 
             event = 'CHAT_MSG_ADDON', 
             callback = XFO.Chat.ChatReceive, 
-            instance = true
+            instance = true,
+            start = true
         })
         XFO.Events:Add({
             name = 'GuildChat', 
             event = 'CHAT_MSG_GUILD', 
             callback = XFO.Chat.GuildMessage, 
-            instance = true
+            instance = true,
+            start = true
         })
         XFO.Events:Add({
             name = 'Achievement', 
             event = 'ACHIEVEMENT_EARNED', 
             callback = XFO.Chat.Achievement, 
-            instance = true
+            instance = true,
+            start = true
         })
         XFO.Events:Add({
             name = 'Logout',
             event = 'PLAYER_LOGOUT',
             callback = XFO.Chat.Logout,
-            instance = true
+            instance = true,
+            start = true
         })
         XFO.Timers:Add({
             name = 'ChatMailbox', 
             delta = XF.Settings.Network.Mailbox.Scan, 
-            callback = XFO.Chat.Purge, 
-            repeater = true
+            callback = XFO.Chat.Purge,
+            repeater = true,
+            start = true
         })
         self:IsInitialized(true)
     end
@@ -116,7 +121,7 @@ function XFC.Chat:DecodeMessage(inData)
     end).
     catch(function(err)
         self:Push(message)
-        throw(err)
+        error(err)
     end)
     return message
 end

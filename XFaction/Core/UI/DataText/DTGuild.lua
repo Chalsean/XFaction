@@ -79,8 +79,8 @@ function XFC.DTGuild:RefreshBroker()
 		if(XF.Config.DataText.Guild.Label) then
 			text = XF.Lib.Locale['GUILD'] .. ': '
 		end
-		text = format('%s|cff3CE13F%d', text, XF.Confederate:GetOnlineCount())
-		XF.DataText.Guild:GetBroker().text = text
+		text = format('%s|cff3CE13F%d', text, XFO.Confederate:GetOnlineCount())
+		XFO.DTGuild:GetBroker().text = text
 	end
 end
 --#endregion
@@ -106,7 +106,7 @@ end
 
 local function PreSort()
 	local list = {}
-	for _, unit in XF.Confederate:Iterator() do
+	for _, unit in XFO.Confederate:Iterator() do
 		if(unit:IsOnline()) then
 			local unitData = {}
 
@@ -189,7 +189,7 @@ end
 
 --#region OnEnter
 local function LineClick(_, inUnitGUID, inMouseButton)
-	local unit = XF.Confederate:Get(inUnitGUID)
+	local unit = XFO.Confederate:Get(inUnitGUID)
 	local link = unit:GetLink()
 	if(link == nil) then return end
 
@@ -257,7 +257,7 @@ function XFC.DTGuild:OnEnter(this)
 	end
 
 	if(XF.Config.DataText.Guild.Confederate and XF.Cache.DTGuildTotalEnabled > 8) then
-		self.tooltip:SetCell(line, 6, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XF.Confederate:GetName()), self.headerFont, 'LEFT', -1)	
+		self.tooltip:SetCell(line, 6, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:GetName()), self.headerFont, 'LEFT', -1)	
 	end
 
 	if(XF.Config.DataText.Guild.GuildName or XF.Config.DataText.Guild.Confederate or XF.Config.DataText.Guild.MOTD) then

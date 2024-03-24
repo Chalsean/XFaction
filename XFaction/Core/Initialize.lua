@@ -12,6 +12,7 @@ function XF:CoreInit()
 	XFO.Hooks = XFC.HookCollection:new(); XFO.Hooks:Initialize()
 	XFO.Metrics = XFC.MetricCollection:new(); XFO.Metrics:Initialize()	
 	XFO.Timers = XFC.TimerCollection:new(); XFO.Timers:Initialize()
+	XFO.InitTimers = XFC.TimerCollection:new(); XFO.InitTimers:Initialize()
 
 	-- External addon handling
 	XFO.ElvUI = XFC.ElvUI:new()
@@ -75,7 +76,7 @@ function XF:CoreInit()
 	XF:Info(ObjectName, 'WoW client version [%s:%s]', XFO.WoW:GetName(), XFO.WoW:GetVersion():GetKey())
 
 	-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
-	XFO.Timers:Add({
+	XFO.InitTimers:Add({
 		name = 'LoginGuild', 
 		delta = 1, 
 		callback = XF.LoginGuild, 
@@ -85,10 +86,8 @@ function XF:CoreInit()
 		start = true
 	})
 
-	XFO.Timers:Start()
+	XFO.InitTimers:Start()
 end
-
-
 
 function XF:LoginGuild()
 	try(function ()
@@ -100,8 +99,10 @@ function XF:LoginGuild()
 			if(guildID ~= nil) then
 				-- Now that guild info is available we can finish setup
 				XF:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
-				XFO.Timers:Stop()
-				XFO.Timers:Remove('LoginGuild')				
+				XFO.InitTimers:Get('LoginGuild'):Stop()
+				
+				XF:InitializeCache()
+				XF:InitializeConfig()
 
 				-- Confederate setup via guild info
 				XFO.Guilds:Initialize(guildID)
@@ -125,7 +126,7 @@ function XF:LoginGuild()
 					XFO.Confederate:Restore()					
 				end
 
-				XFO.Timers:Add({
+				XFO.InitTimers:Add({
 					name = 'LoginPlayer', 
 					delta = 1, 
 					callback = XF.LoginPlayer, 
@@ -142,20 +143,18 @@ function XF:LoginGuild()
 	end).
 	finally(function ()			
 		XF:SetupMenus()
-		XFO.Timers:Start()
 	end)
 end
 
 function XF:LoginPlayer()
 	try(function ()
-		XFO.Timers:Stop()
 		-- Need the player data to continue setup
 		local unit = XFO.Confederate:Pop()
 		-- FIX: Dont have player id, this will throw or get wrong unit
 		unit:Initialize()
 		if(unit:IsInitialized()) then
 			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
-			XFO.Timers:Remove('LoginPlayer')
+			XFO.InitTimers:Get('LoginPlayer'):Stop()
 
 			XFO.Confederate:Add(unit)
 			XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
@@ -168,6 +167,14 @@ function XF:LoginPlayer()
 					XFO.Channels:SetLast(XFO.Channels:GetLocalChannel():GetKey())
 				end
 			end
+
+			XFO.Timers:Add({
+            	name = 'Heartbeat', 
+            	delta = XF.Settings.Player.Heartbeat, 
+            	callback = XF.Player.Unit.Broadcast, 
+            	repeater = true, 
+            	instance = true
+        	})
 			
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
@@ -179,15 +186,8 @@ function XF:LoginPlayer()
 			-- Otherwise send login message
 			else
 				XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
-			end	
+			end			
 			
-			XFO.Timers:Add({
-            	name = 'Heartbeat', 
-            	delta = XF.Settings.Player.Heartbeat, 
-            	callback = XF.Player.Unit.Broadcast, 
-            	repeater = true, 
-            	instance = true
-        	})
 			XFO.Hooks:Add({
 				name = 'ReloadUI', 
 				original = 'ReloadUI', 
@@ -198,7 +198,7 @@ function XF:LoginPlayer()
 			-- Start all hooks, events
 			XFO.Hooks:Start()
 			XFO.Events:Start()
-			XFO.Timers:EnableAll()
+			XFO.Timers:Start()
 			XF.Initialized = true
 
 			-- Finish DT init
@@ -212,16 +212,17 @@ function XF:LoginPlayer()
 				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
 
-			XFO.Timers:Get('LoginChannelSync'):Start()		
+			if(XFO.Channels:UseGuild()) then
+				XFO.InitTimers:Stop()
+			else
+				XFO.InitTimers:Get('LoginChannelSync'):Start()
+			end
 		else
 			XFO.Confederate:Push(unit)
 		end
 	end).
 	catch(function (err)
 		XF:Error(ObjectName, err)
-	end).
-	finally(function ()
-		XFO.Timers:Start()
 	end)
 end
 

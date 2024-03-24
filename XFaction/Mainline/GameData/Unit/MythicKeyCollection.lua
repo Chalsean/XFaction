@@ -10,7 +10,8 @@ function XFC.MythicKeyCollection:Initialize()
             name = 'Mythic', 
             event = 'CHALLENGE_MODE_COMPLETED', 
             callback = XFO.Keys.RefreshMyKey, 
-            instance = true
+            instance = true,
+            start = true
         })
         self:RefreshMyKey()
         self:IsInitialized(true)

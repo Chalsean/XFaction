@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ChatFrame'
 
 XFC.ChatFrame = XFC.Object:newChildConstructor()
@@ -16,10 +16,10 @@ end
 function XFC.ChatFrame:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFO.ChatFrame.ChatFilter)
-        XF:Info(ObjectName, 'Created CHAT_MSG_GUILD event filter')
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFO.ChatFrame.AchievementFilter)
-        XF:Info(ObjectName, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
+        XFF.ChatFrameFilter('CHAT_MSG_GUILD', XFO.ChatFrame.ChatFilter)
+        XF:Info(self:GetObjectName(), 'Created CHAT_MSG_GUILD event filter')
+        XFF.ChatFrameFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFO.ChatFrame.AchievementFilter)
+        XF:Info(self:GetObjectName(), 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

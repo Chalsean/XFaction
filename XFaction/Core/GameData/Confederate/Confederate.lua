@@ -35,15 +35,17 @@ function XFC.Confederate:Initialize()
             event = 'GUILD_ROSTER_UPDATE', 
             callback = XFO.Confederate.UpdateLocalRoster, 
             instance = true,
-            groupDelta = XF.Settings.LocalGuild.ScanTimer
+            groupDelta = XF.Settings.LocalGuild.ScanTimer,
+            start = true
         })
         
         XFO.Timers:Add({
-            name = 'Offline', 
+            name = 'Offline',
             delta = XF.Settings.Confederate.UnitScan, 
             callback = XFO.Confederate.Offline, 
             repeater = true, 
-            instance = true
+            instance = true,
+            start = true
         })    
         
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
@@ -166,7 +168,7 @@ end
 
 --#region Callbacks
 function XFC.Confederate:Offline()
-    local ttl = GetCurrentTime() - XF.Settings.Confederate.UnitStale
+    local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
     for _, unit in self:Iterator() do
         if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < ttl) then
             if(XF.Player.Guild:Equals(unit:GetGuild())) then

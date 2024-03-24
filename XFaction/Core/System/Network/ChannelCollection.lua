@@ -39,20 +39,19 @@ function XFC.ChannelCollection:Initialize()
 			instance = true,
 			start = true
 		})
-		-- XFO.Events:Add({
-		-- 	name = 'ChannelColor', 
-		-- 	event = 'UPDATE_CHAT_COLOR', 
-		-- 	callback = XFO.Channels.UpdateColor, 
-		-- 	instance = true,
-		-- 	start = true
-		-- })
-		XFO.Timers:Add({
+		XFO.Events:Add({
+		 	name = 'ChannelColor', 
+		 	event = 'UPDATE_CHAT_COLOR', 
+		 	callback = XFO.Channels.UpdateColor, 
+		 	instance = true,
+		 	start = true
+		})
+		XFO.InitTimers:Add({
 			name = 'LoginChannelSync',
 			delta = XF.Settings.Network.Channel.LoginChannelSyncTimer, 
-			callback = XFO.Channels.Sync,
-			repeater = true,
-			maxAttempts = XF.Settings.Network.Channel.LoginChannelSyncAttempts,
-			instance = true
+			callback = XFO.Channels.LoginSync,
+			instance = true,
+			start = false
 		})
 
 		self:IsInitialized(true)
@@ -172,5 +171,14 @@ function XFC.ChannelCollection:UpdateColor(inChannel, inR, inG, inB)
 	catch(function (err)
 		XF:Error(self:GetObjectName(), err)
 	end)
+end
+
+function XFC.ChannelCollection:LoginSync()
+	local self = XFO.Channels
+	self:Sync()
+	if(self:HasLocalChannel()) then
+		self:SetLast(self:GetLocalChannel():GetKey())
+		XFO.InitTimers:Stop()
+	end
 end
 --#endregion

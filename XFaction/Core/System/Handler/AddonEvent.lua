@@ -17,11 +17,13 @@ end
 function XFC.AddonEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFO.Events:Add({name = ObjectName, 
-                        event = 'ADDON_LOADED', 
-                        callback = XFO.AddonEvent.CallbackAddonLoaded, 
-                        instance = true,
-                        start = true})
+        XFO.Events:Add({
+            name = ObjectName, 
+            event = 'ADDON_LOADED', 
+            callback = XFO.AddonEvent.CallbackAddonLoaded, 
+            instance = true,
+            start = true
+        })
         -- In case they already loaded
         if(XFF.ClientIsAddonLoaded('ElvUI')) then
             self:CallbackAddonLoaded('ElvUI')
@@ -48,7 +50,7 @@ end
 --#endregion
 
 --#region Cache
-local function InitializeCache()
+function XF:InitializeCache()
     if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
     XF.Cache = _G.XFCacheDB
     
@@ -81,7 +83,7 @@ local function InitializeCache()
     end
 end
 
-local function InitializeConfig()
+function XF:InitializeConfig()
 	-- Get AceDB up and running as early as possible, its not available until addon is loaded
 	XF.ConfigDB = LibStub('AceDB-3.0'):New('XFactionDB', XF.Defaults, true)
 	XF.Config = XF.ConfigDB.profile
@@ -171,8 +173,8 @@ function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
         if(XFF.ClientGetAddonState(inAddonName) > 0) then
             if(inAddonName == XF.Name and not self:IsLoaded()) then
                 XF:Info(self:GetObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
-                InitializeCache()
-                InitializeConfig()
+                --InitializeCache()
+                --InitializeConfig()
                 XFO.ElvUI:Initialize()
                 self:IsLoaded(true)
             elseif(inAddonName == 'ElvUI') then

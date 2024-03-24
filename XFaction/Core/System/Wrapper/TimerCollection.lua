@@ -77,28 +77,16 @@ function XFC.TimerCollection:LeaveInstance()
     end
 end
 
-function XFC.TimerCollection:EnableAll()
-    for _, timer in self:Iterator() do
-        timer:Start()
-    end
-end
-
-function XFC.TimerCollection:DisableAll()
-    for _, timer in self:Iterator() do
-        timer:Stop()
-    end
-end
-
 function XFC.TimerCollection:IsRunning()
-	return self.handle == nil or not self.handle:IsCancelled()
+	return not self.handle == nil and not self.handle:IsCancelled()
 end
 
 function XFC.TimerCollection:Start()
 	if(not self:IsRunning()) then
 		self.handle = XFF.TimerStart(XF.Settings.System.MasterTimer, 
-		function (...)
+		function ()
 			local now = XFF.TimeGetCurrent()
-			for _, timer in XFO.Timers:Iterator() do
+			for _, timer in self:Iterator() do
 				if(timer:IsEnabled() and timer:GetLastRan() < now - timer:GetDelta()) then
 					timer:Execute()
 					if(not timer:IsRepeat()) then
@@ -120,9 +108,14 @@ function XFC.TimerCollection:Start()
 end
 
 function XFC.TimerCollection:Stop()
-	if(self:IsRunning()) then
-		self.handle:Cancel()
-		self.handle = nil
+	if(self.handle ~= nil) then
+        try(function()
+		    self.handle:Cancel()
+        end).
+        catch(function(err) end).
+        finally(function()
+		    self.handle = nil
+        end)
 	end
 end
 --#endregion

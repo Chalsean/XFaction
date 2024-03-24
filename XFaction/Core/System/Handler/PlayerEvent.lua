@@ -24,23 +24,41 @@ function XFC.PlayerEvent:Initialize()
         --                 event = 'CHALLENGE_MODE_COMPLETED', 
         --                 callback = XF.Handlers.PlayerEvent.CallbackPlayerChanged, 
         --                 instance = true})
-        XFO.Events:Add({name = 'Spec', 
-                        event = 'ACTIVE_TALENT_GROUP_CHANGED', 
-                        callback = XFO.PlayerEvent.CallbackPlayerChanged, 
-                        instance = true})        
-        XFO.Events:Add({name = 'Instance', 
-                        event = 'PLAYER_ENTERING_WORLD', 
-                        callback = XFO.PlayerEvent.CallbackInstance, 
-                        instance = true})
-        XFO.Events:Add({name = 'Level', 
-                        event = 'PLAYER_LEVEL_CHANGED', 
-                        callback = XFO.PlayerEvent.CallbackPlayerChanged})
-        XFO.Events:Add({name = 'Profession', 
-                        event = 'SKILL_LINES_CHANGED', 
-                        callback = XFO.PlayerEvent.CallbackPlayerChanged})
-        XFO.Events:Add({name = 'Zone', 
-                        event = 'ZONE_CHANGED_NEW_AREA', 
-                        callback = XFO.PlayerEvent.CallbackZoneChanged})
+        XFO.Events:Add({
+            name = 'Spec', 
+            event = 'ACTIVE_TALENT_GROUP_CHANGED', 
+            callback = XFO.PlayerEvent.CallbackPlayerChanged, 
+            instance = true,
+            start = true
+        })        
+        XFO.Events:Add({
+            name = 'Instance', 
+            event = 'PLAYER_ENTERING_WORLD', 
+            callback = XFO.PlayerEvent.CallbackInstance, 
+            instance = true,
+            start = true
+        })
+        XFO.Events:Add({
+            name = 'Level', 
+            event = 'PLAYER_LEVEL_CHANGED', 
+            callback = XFO.PlayerEvent.CallbackPlayerChanged,
+            instance = false,
+            start = true
+        })
+        XFO.Events:Add({
+            name = 'Profession', 
+            event = 'SKILL_LINES_CHANGED', 
+            callback = XFO.PlayerEvent.CallbackPlayerChanged,
+            instance = false,
+            start = true
+        })
+        XFO.Events:Add({
+            name = 'Zone', 
+            event = 'ZONE_CHANGED_NEW_AREA', 
+            callback = XFO.PlayerEvent.CallbackZoneChanged,
+            instance = false,
+            start = true
+        })
 
 		self:IsInitialized(true)
 	end

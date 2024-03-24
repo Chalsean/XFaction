@@ -22,14 +22,16 @@ function XFC.BNet:Initialize()
             name = 'BNetMessage', 
             event = 'BN_CHAT_MSG_ADDON', 
             callback = XFO.BNet.BNetReceive, 
-            instance = true
+            instance = true,
+            start = true
         })
 
         XFO.Timers:Add({
             name = 'BNetMailbox', 
             delta = XF.Settings.Network.Mailbox.Scan, 
             callback = XFO.BNet.Purge, 
-            repeater = true
+            repeater = true,
+            start = true
         })
         self:IsInitialized(true)
     end
