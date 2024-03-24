@@ -26,6 +26,8 @@ XFF.GuildGetMember = C_Club.GetMemberInfo
 XFF.GuildGetMyself = C_Club.GetMemberInfoForSelf
 XFF.GuildGetPermissions = C_GuildInfo.GuildControlGetRankFlags
 XFF.GuildGetID = C_Club.GetGuildClubId
+XFF.GuildFrame = ToggleGuildFrame
+XFF.GuildGetMOTD = GetGuildRosterMOTD
 
 -- Realm
 XFF.RealmGetAPIName = GetNormalizedRealmName
@@ -50,6 +52,7 @@ XFF.PlayerGetIlvl = GetAverageItemLevel
 XFF.PlayerGetAchievement = GetAchievementInfo
 XFF.PlayerGetGUID = UnitGUID
 XFF.PlayerIsInGuild = IsInGuild
+XFF.PlayerIsInCombat = InCombatLockdown
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo
@@ -62,3 +65,16 @@ XFF.ClientGetAddonCount = C_AddOns.GetNumAddOns
 XFF.ClientGetAddonInfo = C_AddOns.GetAddOnInfo
 XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
 XFF.ClientGetAddonState = C_AddOns.GetAddOnEnableState
+
+-- UI
+XFF.UIOptionsFrame = InterfaceOptionsFrame
+XFF.UIOptionsFrameCategory = InterfaceOptionsFrame_OpenToCategory
+XFF.UIIsMouseOver = MouseIsOver
+XFF.UICreateLink = SetItemRef
+XFF.UICreateFont = CreateFont
+XFF.UIIsShiftDown = IsShiftKeyDown
+XFF.UIIsCtrlDown = IsControlKeyDown
+
+-- Party
+XFF.PartySendInvite = C_PartyInfo.InviteUnit
+XFF.PartyRequestInvite = C_PartyInfo.RequestInviteFromUnit

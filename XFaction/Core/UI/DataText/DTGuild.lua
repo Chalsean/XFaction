@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTGuild'
-local CombatLockdown = InCombatLockdown
 
 XFC.DTGuild = XFC.Object:newChildConstructor()
 local LDB_ANCHOR
@@ -32,9 +31,9 @@ function XFC.DTGuild:Initialize()
 			OnClick = function(this, button) XFO.DTGuild:OnClick(this, button) end,
 		})
 		LDB_ANCHOR = self.ldbObject
-		self.headerFont = CreateFont('headerFont')
+		self.headerFont = XFF.UICreateFont('headerFont')
 		self.headerFont:SetTextColor(0.4,0.78,1)
-		self.regularFont = CreateFont('regularFont')
+		self.regularFont = XFF.UICreateFont('regularFont')
 		self.regularFont:SetTextColor(255,255,255)
 		self:IsInitialized(true)
 	end
@@ -193,12 +192,12 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 	local link = unit:GetLink()
 	if(link == nil) then return end
 
-	if(inMouseButton == 'RightButton' and IsShiftKeyDown()) then
- 		C_PartyInfo.InviteUnit(unit:GetUnitName())
-	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
-		C_PartyInfo.RequestInviteFromUnit(unit:GetUnitName())
+	if(inMouseButton == 'RightButton' and XFF.UIIsShiftDown()) then
+		XFF.PartySendInvite(unit:GetUnitName())
+	elseif(inMouseButton == 'RightButton' and XFF.UIIsCtrlDown()) then
+		XFF.PartyRequestInvite(unit:GetUnitName())
  	elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
-		SetItemRef(link, unit:GetName(), inMouseButton)
+		XFF.UICreateLink(link, unit:GetName(), inMouseButton)
 	end
 end
 
@@ -267,7 +266,7 @@ function XFC.DTGuild:OnEnter(this)
 	end
 
 	if(XF.Config.DataText.Guild.MOTD and XF.Cache.DTGuildTotalEnabled > 8) then
-		local motd = GetGuildRosterMOTD()
+		local motd = XFF.GuildGetMOTD()
 		local lineWords = ''
 		local lineLength = XF.Cache.DTGuildTextEnabled * 15
 		if(motd ~= nil) then
@@ -363,7 +362,7 @@ end
 
 --#region OnLeave
 function XFC.DTGuild:OnLeave()
-	if self.tooltip and MouseIsOver(self.tooltip) then
+	if self.tooltip and XFF.UIIsMouseOver(self.tooltip) then
 	    return
 	else
         XF.Lib.QT:Release(self.tooltip)
@@ -374,15 +373,15 @@ end
 
 --#region OnClick
 function XFC.DTGuild:OnClick(this, inButton)
-	if(InCombatLockdown()) then return end
+	if(XFF.PlayerIsInCombat()) then return end
 	if(inButton == 'LeftButton') then
-		ToggleGuildFrame()
+		XFF.GuildFrame()
 	elseif(inButton == 'RightButton') then
-		if not InterfaceOptionsFrame or not InterfaceOptionsFrame:IsShown() then
-			InterfaceOptionsFrame:Show()
-			InterfaceOptionsFrame_OpenToCategory(XF.Name)
+		if not XFF.UIOptionsFrame or not XFF.UIOptionsFrame:IsShown() then
+			XFF.UIOptionsFrame:Show()
+			XFF.UIOptionsFrameCategory(XF.Name)
 		else
-			InterfaceOptionsFrame:Hide()
+			XFF.UIOptionsFrame:Hide()
 		end
 	end
 end
