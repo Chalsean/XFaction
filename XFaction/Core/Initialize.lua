@@ -150,7 +150,6 @@ function XF:LoginPlayer()
 	try(function ()
 		-- Need the player data to continue setup
 		local unit = XFO.Confederate:Pop()
-		-- FIX: Dont have player id, this will throw or get wrong unit
 		unit:Initialize()
 		if(unit:IsInitialized()) then
 			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
@@ -160,12 +159,20 @@ function XF:LoginPlayer()
 			XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
 			XF.Player.Unit:Print()
 
-			-- By this point all the channels should have been joined
-			if(not XFO.Channels:UseGuild()) then
-				XFO.Channels:Sync()
-				if(XFO.Channels:HasLocalChannel()) then
-					XFO.Channels:SetLast(XFO.Channels:GetLocalChannel():GetKey())
-				end
+			if(XFO.Channels:UseGuild()) then
+				XFO.InitTimers:Stop()
+			else
+				-- The whole channel thing is a mess, the channel #s are given out in whatever order addons/client ask for them
+				-- So we have to repeatedly move the channel to last for a period of time
+				XFO.InitTimers:Add({
+					name = 'LoginChannelSync',
+					delta = XF.Settings.Network.Channel.LoginChannelSyncTimer, 
+					callback = XF.LoginChannel,
+					instance = true,
+					start = true,
+					repeater = true,
+					maxAttempts = XF.Settings.Network.Channel.LoginChannelSyncAttempts
+				})
 			end
 
 			XFO.Timers:Add({
@@ -173,7 +180,8 @@ function XF:LoginPlayer()
             	delta = XF.Settings.Player.Heartbeat, 
             	callback = XF.Player.Unit.Broadcast, 
             	repeater = true, 
-            	instance = true
+            	instance = true,
+				start = true
         	})
 			
 			-- If reload, restore backup information
@@ -195,7 +203,7 @@ function XF:LoginPlayer()
 				pre = true
 			})        	
 
-			-- Start all hooks, events
+			-- Start all hooks, events, timers
 			XFO.Hooks:Start()
 			XFO.Events:Start()
 			XFO.Timers:Start()
@@ -211,12 +219,6 @@ function XF:LoginPlayer()
 				local name, _, _, enabled = XFF.ClientGetAddonInfo(i)
 				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
-
-			if(XFO.Channels:UseGuild()) then
-				XFO.InitTimers:Stop()
-			else
-				XFO.InitTimers:Get('LoginChannelSync'):Start()
-			end
 		else
 			XFO.Confederate:Push(unit)
 		end
@@ -224,6 +226,19 @@ function XF:LoginPlayer()
 	catch(function (err)
 		XF:Error(ObjectName, err)
 	end)
+end
+
+function XF:LoginChannel()
+	try(function()
+		XFO.Channels:Sync()
+		if(XFO.Channels:HasLocalChannel()) then
+			XFO.Channels:SetLast(XFO.Channels:GetLocalChannel():GetKey())
+			XFO.InitTimers:Stop()
+		end
+	end).
+	catch(function(err)
+		XF:Warn(ObjectName, err)
+	)
 end
 
 function XF:Reload()

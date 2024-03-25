@@ -75,7 +75,7 @@ function XFC.EventCollection:Start()
             if(event:GetName() == inEvent and event:IsEnabled()) then
                 XF:Trace(ObjectName, 'Event fired: %s', event:GetName())
                 if(event:IsGroup()) then
-                    self:Get(event:GetKey()):Start()
+                    XFO.Timers:Get(event:GetKey()):Start()
                 else
                     local _Function = event:GetCallback()
                     _Function(self, ...)
@@ -93,8 +93,13 @@ end
 
 function XFC.EventCollection:Stop()
 	if(self.frame ~= nil) then
-        self.frame:UnregisterAllEvents()
-        self.frame = nil
+        try(function()
+            self.frame:UnregisterAllEvents()
+        end).
+        catch(function(err) end).
+        finally(function()
+            self.frame = nil
+        end)
     end
 end
 --#endregion
