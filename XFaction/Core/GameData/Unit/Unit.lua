@@ -155,6 +155,8 @@ function XFC.Unit:Initialize(inMemberID)
     if(unitData.zone ~= nil) then
         XFO.Zones:AddZone(unitData.zone)
         self:SetZone(XFO.Zones:Get(unitData.zone))
+    else
+        self:SetZone(XFO.Zones:Get('?'))
     end
 
     if(unitData.profession1ID ~= nil) then
@@ -679,7 +681,7 @@ function XFC.Unit:Deserialize(inSerialized)
     self:IsRunningAddon(true)
     self:IsOnline(true)
 
-    self:SetAchievementPoints(deserialized.A)
+    self:SetAchievementPoints(tonumber(deserialized.A))
     self:SetRank(deserialized.C)
     self:SetGuild(XFO.Guilds:Get(deserialized.G))
     self:SetItemLevel(deserialized.I)
@@ -687,16 +689,16 @@ function XFC.Unit:Deserialize(inSerialized)
     self:SetKey(deserialized.K)
     self:SetLevel(deserialized.L)
 
-    if(deserializedData.M ~= nil) then
+    if(deserialized.M ~= nil) then
 		local key = XFC.MythicKey:new(); key:Initialize()
-		key:Deserialize(deserializedData.M)
+		key:Deserialize(deserialized.M)
 		self:SetMythicKey(key)
 	end
 
     self:SetNote(deserialized.N)
     self:SetPresence(tonumber(deserialized.P))
 	self:SetRace(XFO.Races:Get(deserialized.R))
-    self:SetSpec(XFO.Specs:Get(deserialized.V))
+    self:SetSpec(XFO.Specs:Get(deserialized.S))
     self:SetUnitName(deserialized.U)
 
     local unitNameParts = string.Split(deserialized.U, '-')
@@ -714,8 +716,12 @@ function XFC.Unit:Deserialize(inSerialized)
     
     self:SetPvPString(deserialized.Y)
 
-    XFO.Zones:Add(deserialized.Z)
-    self:SetZone(XFO.Zones:Get(deserialized.Z))
+    if(deserialized.Z ~= nil) then        
+        self:SetZone(XFO.Zones:GetByID(tonumber(deserialized.Z)))
+    else
+        XFO.Zones:Add(deserialized.J)
+        self:SetZone(XFO.Zones:Get(deserialized.J))
+    end
 end
 --#endregion
 

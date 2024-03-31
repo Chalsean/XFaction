@@ -55,12 +55,10 @@ function XFC.Message:Print()
     XF:Debug(self:GetObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:GetObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XF:Debug(self:GetObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
-    if(self:HasFrom()) then
-        if(self:IsFromSerialized()) then
-            XF:Debug(self:GetObjectName(), '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
-        else
-            self:GetFrom():Print()
-        end
+    if(self:IsFromUnit()) then
+        self:GetFrom():Print()
+    else
+        XF:Debug(self:GetObjectName(), '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
     end
 end
 --#endregion
@@ -84,12 +82,12 @@ function XFC.Message:GetFrom()
 end
 
 function XFC.Message:SetFrom(inFrom)
-    -- Depending upon moment in execution, From may be string or Unit object
+    assert(type(inFrom) == 'table' and inFrom.__name ~= nil and inFrom.__name == 'Unit', 'argument must be Unit object')
     self.from = inFrom
 end
 
-function XFC.Message:IsFromSerialized()
-    return type(self.from) == 'string'
+function XFC.Message:IsFromUnit()
+    return type(self.from) == 'table' and self.from.__name ~= nil and self.from__name == 'Unit'
 end
 
 function XFC.Message:GetType()
@@ -212,32 +210,59 @@ function XFC.Message:Serialize()
 	return pickle(data)
 end
 
+function ConvertLegacyUnit(inSerialized)
+    local original = unpickle(inSerialized)
+    local converted = {}
+    
+    converted.R = original.A
+    converted.A = original.B
+    converted.P = original.E
+    converted.G = original.H
+    converted.K = original.K
+    converted.I = original.I
+    converted.C = original.J
+    converted.L = original.L
+    converted.M = original.M
+    converted.N = original.N
+    converted.W = original.P1
+    converted.X = original.P2
+    converted.U = original.U
+    converted.S = original.V
+    converted.V = original.X
+    converted.Y = original.Y
+    converted.Z = original.D
+    converted.J = original.Z
+
+    return pickle(converted)
+end
+
 function XFC.Message:Deserialize(inData)
 	local decompressed = XF.Lib.Deflate:DecompressDeflate(inData)
 	local data = unpickle(decompressed)
-    XF:DataDumper(self:GetObjectName(), data)
 
     self:SetSubject(data.S)
-    --self:SetTo(data.T)	
+    if(data.T ~= nil) then self:SetTo(data.T) end
     self:SetType(data.Y)    
     self:SetTimeStamp(XFF.TimeGetCurrent())
 
-    if(data.K == nil) then
-        self:SetFrom(data.F)
-        self:SetRemainingTargets(data.R)
-    -- Legacy format
-    else
-        self:SetRemainingTargets(data.A)
-        -- Old data message
-        if(self:GetSubject() == XF.Enum.Message.DATA or self:GetSubject() == XF.Enum.Message.LOGIN) then
-            self:SetFrom(data.D)
-        -- Old chat/achievement message
+    local unit = nil
+    try(function()
+        unit = XFO.Confederate:Pop()
+        unit:IsRunningAddon(true)
+        unit:IsOnline(true)
+
+        if(data.K == nil) then        
+            self:SetRemainingTargets(data.R)
+            unit:Deserialize(data.F)
+            
+        -- Legacy format
         else
-            local unit = nil
-            try(function()
-                unit = XFO.Confederate:Pop()
-                unit:IsRunningAddon(true)
-                unit:IsOnline(true)            
+            self:SetRemainingTargets(data.A)
+            -- Old data message
+            if(self:GetSubject() == XF.Enum.Message.DATA or self:GetSubject() == XF.Enum.Message.LOGIN) then
+                unit:Deserialize(ConvertLegacyUnit(data.D))
+            -- Old chat/achievement message
+            else
                 unit:SetName(data.N)
                 unit:SetUnitName(data.U)
                 if(data.M ~= nil) then
@@ -247,17 +272,14 @@ function XFC.Message:Deserialize(inData)
                 if(XFO.Guilds:Contains(data.H)) then
                     unit:SetGuild(XFO.Guilds:Get(data.H))
                 end
-                self:SetFrom(unit:Serialize())
-            end).
-            catch(function(err)
-                XF:Warn(self:GetObjectName(), err)
-            end).
-            finally(function()
-                XFO.Confederate:Push(unit)
-            end)
+            end            
         end
-    end
-    self:Print()
+        self:SetFrom(unit)
+    end).
+    catch(function(err)
+        XF:Warn(self:GetObjectName(), err)
+        XFO.Confederate:Push(unit)
+    end)
 end
 
 function XFC.Message:Encode(inProtocol)

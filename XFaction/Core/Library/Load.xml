@@ -18,4 +18,5 @@
     <Include file='AceGUI-3.0-SharedMediaWidgets\widget.xml'/>
     <!-- Modified Ace libraries that fixes DF config interaction --> 
     <Include file='MSA-Ace-3.0\MSA-Ace-3.0.xml'/>
+    <Include file='LibTourist-3.0\lib.xml'/>
 </Ui>
