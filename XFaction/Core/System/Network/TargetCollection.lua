@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'TargetCollection'
 
 XFC.TargetCollection = XFC.Factory:newChildConstructor()
@@ -29,23 +29,25 @@ function XFC.TargetCollection:Initialize()
 		for _, guild in XFO.Guilds:Iterator() do
 			local realm = guild:GetRealm()
 			for _, faction in XFO.Factions:Iterator() do
-				local key = GetTargetKey(realm, faction)
-				
-				if(self:Contains(key)) then	
-					self:Get(key):IncrementTargetCount()
-				else
-					XF:Info(ObjectName, 'Initializing target [%s]', key)
-					local target = self:Pop()
-					target:SetKey(key)
-					target:SetRealm(realm)
-					target:SetFaction(faction)
-					self:Add(target)
-					realm:IsTargeted(true)
-					target:Print()
+				if(faction:IsAlliance() or faction:IsHorde()) then
+					local key = GetTargetKey(realm, faction)
+					
+					if(self:Contains(key)) then	
+						self:Get(key):IncrementTargetCount()
+					else
+						XF:Info(ObjectName, 'Initializing target [%s]', key)
+						local target = self:Pop()
+						target:SetKey(key)
+						target:SetRealm(realm)
+						target:SetFaction(faction)
+						self:Add(target)
+						realm:IsTargeted(true)
+						target:Print()
 
-					if(XF.Player.Target == nil and realm:Equals(XF.Player.Guild:GetRealm()) and faction:Equals(XF.Player.Faction)) then
-						XF:Info(ObjectName, 'Initializing player target [%s]', key)
-						XF.Player.Target = target
+						if(XF.Player.Target == nil and realm:Equals(XF.Player.Guild:GetRealm()) and faction:Equals(XF.Player.Faction)) then
+							XF:Info(ObjectName, 'Initializing player target [%s]', key)
+							XF.Player.Target = target
+						end
 					end
 				end
 			end

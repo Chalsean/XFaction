@@ -168,6 +168,7 @@ end
 
 --#region Callbacks
 function XFC.Confederate:Offline()
+    local self = XFO.Confederate
     local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
     for _, unit in self:Iterator() do
         if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < ttl) then

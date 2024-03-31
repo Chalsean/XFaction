@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Event'
 
 XFC.Event = XFC.Object:newChildConstructor()
@@ -70,7 +70,7 @@ end
 function XFC.Event:Start()
     if(not self:IsEnabled()) then
         self:IsEnabled(true)
-        XF:Debug(self:GetObjectName(), 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
+--        XF:Debug(self:GetObjectName(), 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
     end
 end
 

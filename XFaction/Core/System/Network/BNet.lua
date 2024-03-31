@@ -102,7 +102,7 @@ function XFC.BNet:DecodeMessage(inData)
     end).
     catch(function(err)
         self:Push(message)
-        throw(err)
+        XF:Warn(self:GetObjectName(), err)
     end)
     return message
 end

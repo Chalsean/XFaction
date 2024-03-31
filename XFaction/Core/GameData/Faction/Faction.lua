@@ -64,4 +64,16 @@ function XFC.Faction:SetLanguage(inLanguage)
     assert(type(inLanguage) == 'string')
     self.language = inLanguage
 end
+
+function XFC.Faction:IsAlliance()
+    return self:GetID() == 'A'
+end
+
+function XFC.Faction:IsHorde()
+    return self:GetID() == 'H'
+end
+
+function XFC.Faction:IsNeutral()
+    return self:GetID() == 'N'
+end
 --#endregion

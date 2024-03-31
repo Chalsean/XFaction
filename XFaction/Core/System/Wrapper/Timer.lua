@@ -138,6 +138,7 @@ end
 function XFC.Timer:Execute()
     local callback = self:GetCallback()
     try(function()
+        XF:Debug(self:GetObjectName(), 'Executing timer: ' .. self:GetName())
         callback()
     end).
     catch(function(err)

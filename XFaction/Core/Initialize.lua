@@ -60,17 +60,24 @@ function XF:CoreInit()
 	XFO.Orders = XFC.OrderCollection:new(); XFO.Orders:Initialize()
 	XFO.Races = XFC.RaceCollection:new(); XFO.Races:Initialize()
 	XFO.Specs = XFC.SpecCollection:new(); XFO.Specs:Initialize()
+
+	-- Location
+	XFO.Continents = XFC.ContinentCollection:new(); XFO.Continents:Initialize()
 	XFO.Zones = XFC.ZoneCollection:new(); XFO.Zones:Initialize()	
 	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
 	XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
+
+	-- Player
 	XF.Player.GUID = XFF.PlayerGetGUID('player')
 	XF.Player.Faction = XFO.Factions:GetByName(XFF.PlayerGetFaction('player'))
 	XF.Player.InInstance = XFF.PlayerIsInGuild()
 	
+	-- DataText
 	XFO.DTGuild:Initialize()
 	XFO.DTLinks:Initialize()
 	XFO.DTMetrics:Initialize()
 
+	-- Client
 	XFO.Expansions = XFC.ExpansionCollection:new(); XFO.Expansions:Initialize()
 	XFO.WoW = XFO.Expansions:GetCurrent()
 	XF:Info(ObjectName, 'WoW client version [%s:%s]', XFO.WoW:GetName(), XFO.WoW:GetVersion():GetKey())
@@ -238,7 +245,7 @@ function XF:LoginChannel()
 	end).
 	catch(function(err)
 		XF:Warn(ObjectName, err)
-	)
+	end)
 end
 
 function XF:Reload()

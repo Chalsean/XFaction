@@ -50,7 +50,7 @@ function XFC.LinkCollection:Add(inLink)
 		inLink:GetFromNode():IncrementLinkCount()
 		inLink:GetToNode():IncrementLinkCount()
 		if(inLink:IsMyLink()) then
-			self:IncrementLinkCount()
+			self:IncrementMyLinkCount()
 		end
 		XF:Info(self:GetObjectName(), 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		XFO.DTLinks:RefreshBroker()

@@ -209,25 +209,62 @@ function XFC.Message:Serialize()
 end
 
 function XFC.Message:Deserialize(inData)
-	local decompressed = Deflate:DecompressDeflate(inData)
+	local decompressed = XF.Lib.Deflate:DecompressDeflate(inData)
 	local data = unpickle(decompressed)
-	
-	local unit = nil
-	try(function()
-		unit = XFO.Confederate:Pop()
-		unit:Deserialize(data.F)
-		self:SetFrom(unit)
-	end).
-	catch(function(inErrorMessage)
-		XFO.Confederate:Push(unit)
-        throw(inErrorMessage)
-	end)
 
-	self:SetRemainingTargets(data.R)
     self:SetSubject(data.S)
     self:SetTo(data.T)	
-	self:SetType(data.Y)
+    self:SetType(data.Y)    
     self:SetTimeStamp(XFF.TimeGetCurrent())
+	
+    local unit = nil
+    try(function()
+        unit = XFO.Confederate:Pop()
+        unit:IsRunningAddon(true)
+        unit:IsOnline(true)
+        -- pre 5.0 serialization
+        if(data.K ~= nil) then
+            self:SetRemainingTargets(data.A)
+            unit:SetName(data.N)
+            unit:SetUnitName(data.U)
+            if(data.M ~= nil) then
+                unit:IsAlt(true)
+                unit:SetMainName(data.M)
+            end            
+            if(XFO.Guilds:Contains(data.H)) then
+                unit:SetGuild(XFO.Guilds:Get(data.H))
+            end
+            -- Old data message
+            if(self:GetSubject() == XF.Enum.Message.DATA or self:GetSubject() == XF.Enum.Message.LOGIN) then
+                local unitData = unpickle(data.D)
+                unit:SetRace(XFO.Races:Get(unitData.A))
+                unit:SetAchievementPoints(unitData.B)
+                unit:SetID(unitData.C)
+                unit:SetPresence(unitData.E)
+                unit:SetGUID(unitData.K)
+                unit:SetKey(unitData.K)
+                unit:SetRank(unitData.J)
+                unit:SetLevel(unitData.L)
+                unit:SetNote(unitData.N)
+                if(unitData.P1 ~= nil) then
+                    unit:SetProfession1(XFO.Professions:Get(unitData.P1))
+                end
+                if(unitData.P2 ~= nil) then
+                    unit:SetProfession2(XFO.Professions:Get(unitData.P2))
+                end
+                unit:SetSpec(unitData.V)
+            end
+        -- post 5.0 serialization
+        else
+            unit:Deserialize(data.F)
+            self:SetFrom(unit)
+            self:SetRemainingTargets(data.R)
+        end
+    end).
+    catch(function(err)
+        XFO.Confederate:Push(unit)
+        XF:Warn(self:GetObjectName(), err)
+    end)
 end
 
 function XFC.Message:Encode(inProtocol)

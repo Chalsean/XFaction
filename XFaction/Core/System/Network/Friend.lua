@@ -113,7 +113,7 @@ function XFC.Friend:CreateLink()
             link = XFO.Links:Pop()
             local fromNode = XFO.Nodes:Get(XF.Player.Unit:GetName())
             if(fromNode == nil) then
-                fromNode = XF.Nodes:Pop()
+                fromNode = XFO.Nodes:Pop()
                 fromNode:Initialize()
                 XFO.Nodes:Add(fromNode)
             end
@@ -125,7 +125,7 @@ function XFC.Friend:CreateLink()
                 toNode:SetKey(self:GetName())
                 toNode:SetName(self:GetName())
                 toNode:SetTarget(self:GetTarget())
-                XF.Nodes:Add(toNode)
+                XFO.Nodes:Add(toNode)
             end
             link:SetToNode(toNode)
 
@@ -134,7 +134,7 @@ function XFC.Friend:CreateLink()
         end).
         catch(function (inErrorMessage)
             XF:Warn(self:GetObjectName(), inErrorMessage)
-            XF.Links:Push(link)
+            XFO.Links:Push(link)
         end)
     end
 end
