@@ -55,8 +55,12 @@ function XFC.Message:Print()
     XF:Debug(self:GetObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:GetObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XF:Debug(self:GetObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
-    if(self:HasFrom() and not self:IsFromSerialized()) then
-        self:GetFrom():Print()
+    if(self:HasFrom()) then
+        if(self:IsFromSerialized()) then
+            XF:Debug(self:GetObjectName(), '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
+        else
+            self:GetFrom():Print()
+        end
     end
 end
 --#endregion
@@ -211,60 +215,49 @@ end
 function XFC.Message:Deserialize(inData)
 	local decompressed = XF.Lib.Deflate:DecompressDeflate(inData)
 	local data = unpickle(decompressed)
+    XF:DataDumper(self:GetObjectName(), data)
 
     self:SetSubject(data.S)
-    self:SetTo(data.T)	
+    --self:SetTo(data.T)	
     self:SetType(data.Y)    
     self:SetTimeStamp(XFF.TimeGetCurrent())
-	
-    local unit = nil
-    try(function()
-        unit = XFO.Confederate:Pop()
-        unit:IsRunningAddon(true)
-        unit:IsOnline(true)
-        -- pre 5.0 serialization
-        if(data.K ~= nil) then
-            self:SetRemainingTargets(data.A)
-            unit:SetName(data.N)
-            unit:SetUnitName(data.U)
-            if(data.M ~= nil) then
-                unit:IsAlt(true)
-                unit:SetMainName(data.M)
-            end            
-            if(XFO.Guilds:Contains(data.H)) then
-                unit:SetGuild(XFO.Guilds:Get(data.H))
-            end
-            -- Old data message
-            if(self:GetSubject() == XF.Enum.Message.DATA or self:GetSubject() == XF.Enum.Message.LOGIN) then
-                local unitData = unpickle(data.D)
-                unit:SetRace(XFO.Races:Get(unitData.A))
-                unit:SetAchievementPoints(unitData.B)
-                unit:SetID(unitData.C)
-                unit:SetPresence(unitData.E)
-                unit:SetGUID(unitData.K)
-                unit:SetKey(unitData.K)
-                unit:SetRank(unitData.J)
-                unit:SetLevel(unitData.L)
-                unit:SetNote(unitData.N)
-                if(unitData.P1 ~= nil) then
-                    unit:SetProfession1(XFO.Professions:Get(unitData.P1))
-                end
-                if(unitData.P2 ~= nil) then
-                    unit:SetProfession2(XFO.Professions:Get(unitData.P2))
-                end
-                unit:SetSpec(unitData.V)
-            end
-        -- post 5.0 serialization
+
+    if(data.K == nil) then
+        self:SetFrom(data.F)
+        self:SetRemainingTargets(data.R)
+    -- Legacy format
+    else
+        self:SetRemainingTargets(data.A)
+        -- Old data message
+        if(self:GetSubject() == XF.Enum.Message.DATA or self:GetSubject() == XF.Enum.Message.LOGIN) then
+            self:SetFrom(data.D)
+        -- Old chat/achievement message
         else
-            unit:Deserialize(data.F)
-            self:SetFrom(unit)
-            self:SetRemainingTargets(data.R)
+            local unit = nil
+            try(function()
+                unit = XFO.Confederate:Pop()
+                unit:IsRunningAddon(true)
+                unit:IsOnline(true)            
+                unit:SetName(data.N)
+                unit:SetUnitName(data.U)
+                if(data.M ~= nil) then
+                    unit:IsAlt(true)
+                    unit:SetMainName(data.M)
+                end            
+                if(XFO.Guilds:Contains(data.H)) then
+                    unit:SetGuild(XFO.Guilds:Get(data.H))
+                end
+                self:SetFrom(unit:Serialize())
+            end).
+            catch(function(err)
+                XF:Warn(self:GetObjectName(), err)
+            end).
+            finally(function()
+                XFO.Confederate:Push(unit)
+            end)
         end
-    end).
-    catch(function(err)
-        XFO.Confederate:Push(unit)
-        XF:Warn(self:GetObjectName(), err)
-    end)
+    end
+    self:Print()
 end
 
 function XFC.Message:Encode(inProtocol)

@@ -152,8 +152,10 @@ function XFC.Unit:Initialize(inMemberID)
     end
     self:SetLastLogin(lastLogin)
 
-    XFO.Zones:AddZone(unitData.zone)
-    self:SetZone(XFO.Zones:Get(unitData.zone))
+    if(unitData.zone ~= nil) then
+        XFO.Zones:AddZone(unitData.zone)
+        self:SetZone(XFO.Zones:Get(unitData.zone))
+    end
 
     if(unitData.profession1ID ~= nil) then
         self:SetProfession1(XFO.Professions:Get(unitData.profession1ID))

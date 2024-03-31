@@ -114,7 +114,7 @@ function XFC.DTMetrics:OnEnter(this)
 		self.tooltip:SetHeaderFont(self.headerFont)
 		self.tooltip:SetFont(self.regularFont)
 		self.tooltip:SmartAnchorTo(this)
-		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() DTMetrics:OnLeave() end)
+		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTMetrics:OnLeave() end)
 		self.tooltip:EnableMouse(true)
 		self.tooltip:SetClampedToScreen(false)
 	end

@@ -170,7 +170,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     end).
     catch(function(err)
         XFO.Confederate:Push(unit)
-        throw(err)
+        XF:Warn(self:GetObjectName(), err)
     end)
 
     -- Is a newer version available?

@@ -125,8 +125,8 @@ local function PreSort()
 			else
 				unitData.Team = 'Unknown'
 			end
-			unitData.Class = unit:GetClass():GetHex()
-			unitData.Faction = unit:GetFaction():GetIconID()
+			unitData.Class = unit:GetSpec():GetClass():GetHex()
+			unitData.Faction = unit:GetRace():GetFaction():GetIconID()
 			unitData.PvP = unit:GetPvP()
 
 			if(unit:HasRaiderIO()) then
@@ -203,7 +203,7 @@ end
 
 function XFC.DTGuild:OnEnter(this)
 	if(not XF.Initialized) then return end
-	if(CombatLockdown()) then return end
+	if(XFF.PlayerIsInCombat()) then return end
 
 	--#region Configure Tooltip
 	local orderEnabled = {}
@@ -237,7 +237,7 @@ function XFC.DTGuild:OnEnter(this)
 		self.tooltip:SetHeaderFont(self.headerFont)
 		self.tooltip:SetFont(self.regularFont)
 		self.tooltip:SmartAnchorTo(this)
-		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() DTGuild:OnLeave() end)
+		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTGuild:OnLeave() end)
 		self.tooltip:EnableMouse(true)
 		self.tooltip:SetClampedToScreen(false)
 		self.tooltip:SetFrameStrata('FULLSCREEN_DIALOG')
@@ -343,7 +343,7 @@ function XFC.DTGuild:OnEnter(this)
 						cellValue = format('%s', format(XF.Icons.String, unitData[columnName]))
 					end
 				elseif(columnName == 'Name') then
-					cellValue = format('|c%s%s|r', unitData.Class, unitData.Name)
+					cellValue = format('|cff%s%s|r', unitData.Class, unitData.Name)
 				elseif(unitData[columnName] ~= nil) then
 					cellValue = format('|cffffffff%s|r', unitData[columnName])
 				end
