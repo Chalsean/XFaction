@@ -18,15 +18,20 @@ function XFC.ZoneCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-		local lib = LibStub('LibTourist-3.0')
-		local zoneIDs = lib:GetMapIDLookupTable()
-		local zoneLocale = lib:GetLookupTable()
+		-- Sandbox LibTourist to trick it into thinking its always retail
+		-- After initialization, library is no longer needed, thus scope it for destruction
+		local library = XFC.Library:new(); library:Initialize()
+		library:Set(LibStub:GetLibrary('LibTourist-3.0'))
+		library:Sandbox('WOW_PROJECT_ID', WOW_PROJECT_MAINLINE)
+
+		local zoneIDs = library:Execute('GetMapIDLookupTable')
+		local zoneLocale = library:Execute('GetLookupTable')
 		local alreadyAdded = {}
 
 		for zoneID, zoneName in pairs (zoneIDs) do
 			if(strlen(zoneName) > 0) then
 				zoneID = tonumber(zoneID)
-				local continentID = lib:GetContinentMapID(zoneID)
+				local continentID = library:Execute('GetContinentMapID', zoneID)
 
 				if(not alreadyAdded[zoneName]) then
 					if(continentID and tonumber(continentID) == zoneID) then
@@ -66,7 +71,7 @@ function XFC.ZoneCollection:Initialize()
 		end
 
 		for _, zone in self:Iterator() do
-			local continentID = lib:GetContinentMapID(zone:GetID())
+			local continentID = library:Execute('GetContinentMapID', zone:GetID())
 			if(continentID) then
 				local continent = XFO.Continents:GetByID(tonumber(continentID))
 				if(continent) then
