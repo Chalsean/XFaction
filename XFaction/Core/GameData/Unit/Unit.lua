@@ -208,7 +208,7 @@ function XFC.Unit:Initialize(inMemberID)
         local highestRating = 0
         local highestIndex = 1
         for i = 1, 3 do
-            local pvpRating = XFF.PvPGetRating(i)
+            local pvpRating = XFF.PlayerGetPvPRating(i)
             if(pvpRating > highestRating) then
                 highestRating = pvpRating
                 highestIndex = i
