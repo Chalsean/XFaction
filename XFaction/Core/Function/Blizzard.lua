@@ -41,18 +41,14 @@ XFF.RegionGetCurrent = GetCurrentRegion
 XFF.SpecGetGroupID = GetSpecialization
 XFF.SpecGetID = GetSpecializationInfo
 
--- Faction
-XFF.PlayerGetFaction = UnitFactionGroup
-
--- PvP
-XFF.PvPGetRating = GetPersonalRatedInfo
-
 -- Player
 XFF.PlayerGetIlvl = GetAverageItemLevel
 XFF.PlayerGetAchievement = GetAchievementInfo
 XFF.PlayerGetGUID = UnitGUID
 XFF.PlayerIsInGuild = IsInGuild
 XFF.PlayerIsInCombat = InCombatLockdown
+XFF.PlayerGetFaction = UnitFactionGroup
+XFF.PlayerGetPvPRating = GetPersonalRatedInfo
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo
