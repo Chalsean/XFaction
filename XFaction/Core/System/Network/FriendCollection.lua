@@ -26,16 +26,14 @@ function XFC.FriendCollection:Initialize()
 			event = 'BN_FRIEND_INFO_CHANGED', 
 			callback = XFO.Friends.CheckFriends, 
 			instance = true,
-			groupDelta = XF.Settings.Network.BNet.FriendTimer,
-			start = true
+			groupDelta = XF.Settings.Network.BNet.FriendTimer
 		})		
 		XFO.Timers:Add({
 			name = 'Ping', 
 			delta = XF.Settings.Network.BNet.Ping.Timer, 
 			callback = XFO.Friends.Ping, 
 			repeater = true, 
-			instance = true,
-			start = true
+			instance = true
 		})
 		self:IsInitialized(true)
 	end

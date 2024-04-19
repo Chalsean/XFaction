@@ -26,16 +26,14 @@ function XFC.LinkCollection:Initialize()
 			delta = XF.Settings.Network.BNet.Link.Broadcast, 
 			callback = XFO.Links.Broadcast, 
 			repeater = true, 
-			instance = true,
-			start = true
+			instance = true
 		})
 		XFO.Timers:Add({
 			name = 'StaleLinks', 
 			delta = XF.Settings.Network.BNet.Link.Scan, 
-			callback = XFO.Links.Purge, 
+			callback = XFO.Links.Janitor, 
 			repeater = true, 
-			instance = true,
-			start = true
+			instance = true
 		})
 		self:IsInitialized(true)
 	end
@@ -92,7 +90,7 @@ end
 function XFC.LinkCollection:Serialize()
 	local serialized = ''
 	for _, link in self:Iterator() do
-		if(link:IsMyLink()) then
+		if(link:IsMyLink() and link:IsActive()) then
 			serialized = serialized .. '|' .. link:Serialize()
 		end
 	end
@@ -169,14 +167,14 @@ function XFC.LinkCollection:Restore()
 	XF.Cache.Backup.Links = ''
 end
 
-function XFC.LinkCollection:Purge()
+function XFC.LinkCollection:Janitor()
 	local self = XFO.Links
 	local ttl = XFF.TimeGetCurrent() - XF.Settings.Network.BNet.Link.Stale
 
 	for _, link in self:Iterator() do
 		if(not link:IsMyLink() and link:GetTimeStamp() < ttl) then
-			XF:Debug(self:GetObjectName(), 'Removing stale link')
-			self:Remove(link:GetKey())
+			XF:Debug(self:GetObjectName(), 'Disabling stale link')
+			link:IsActive(false)
 		end
 	end
 end

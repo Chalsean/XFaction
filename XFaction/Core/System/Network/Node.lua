@@ -93,7 +93,7 @@ function XFC.Node:Deserialize(inSerialized)
     local target = nil
     try(function()
         target = XFO.Targets:Pop()
-        target:Deserialize(data[2])
+        target:Deserialize(#data == 2 and data[2] or data[2] .. '-' .. data[3])
         self:SetTarget(XFO.Targets:Get(target:GetKey()))
     end).
     catch(function(err)

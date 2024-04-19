@@ -28,36 +28,31 @@ function XFC.PlayerEvent:Initialize()
             name = 'Spec', 
             event = 'ACTIVE_TALENT_GROUP_CHANGED', 
             callback = XFO.PlayerEvent.CallbackPlayerChanged, 
-            instance = true,
-            start = true
+            instance = true
         })        
         XFO.Events:Add({
             name = 'Instance', 
             event = 'PLAYER_ENTERING_WORLD', 
             callback = XFO.PlayerEvent.CallbackInstance, 
-            instance = true,
-            start = true
+            instance = true
         })
         XFO.Events:Add({
             name = 'Level', 
             event = 'PLAYER_LEVEL_CHANGED', 
             callback = XFO.PlayerEvent.CallbackPlayerChanged,
-            instance = false,
-            start = true
+            instance = false
         })
         XFO.Events:Add({
             name = 'Profession', 
             event = 'SKILL_LINES_CHANGED', 
             callback = XFO.PlayerEvent.CallbackPlayerChanged,
-            instance = false,
-            start = true
+            instance = false
         })
         XFO.Events:Add({
             name = 'Zone', 
             event = 'ZONE_CHANGED_NEW_AREA', 
             callback = XFO.PlayerEvent.CallbackZoneChanged,
-            instance = false,
-            start = true
+            instance = false
         })
 
 		self:IsInitialized(true)

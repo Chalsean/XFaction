@@ -58,6 +58,10 @@ function XFC.EventCollection:EnterInstance()
 end
 
 function XFC.EventCollection:LeaveInstance()
+    self:EnableAll()
+end
+
+function XFC.EventCollection:EnableAll()
     for _, event in self:Iterator() do
         if(not event:IsEnabled()) then
             event:Start()

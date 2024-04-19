@@ -35,8 +35,7 @@ function XFC.Confederate:Initialize()
             event = 'GUILD_ROSTER_UPDATE', 
             callback = XFO.Confederate.UpdateLocalRoster, 
             instance = true,
-            groupDelta = XF.Settings.LocalGuild.ScanTimer,
-            start = true
+            groupDelta = XF.Settings.LocalGuild.ScanTimer
         })
         
         XFO.Timers:Add({
@@ -44,8 +43,7 @@ function XFC.Confederate:Initialize()
             delta = XF.Settings.Confederate.UnitScan, 
             callback = XFO.Confederate.Offline, 
             repeater = true, 
-            instance = true,
-            start = true
+            instance = true
         })    
         
         -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
@@ -196,14 +194,14 @@ function XFC.Confederate:UpdateLocalRoster()
                     if(old:IsOnline() and unit:IsOffline()) then
                         XF:Info(self:GetObjectName(), 'Guild member logout via scan: %s', unit:GetUnitName())
                         if(XF.Config.Chat.Login.Enable) then
-                            XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, old:GetName(), old:GetUnitName(), old:GetMainName(), old:GetGuild())
+                            XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, old)
                         end
                         self:Add(unit)
                     elseif(unit:IsOnline()) then
                         if(old:IsOffline()) then
                             XF:Info(self:GetObjectName(), 'Guild member login via scan: %s', unit:GetUnitName())
                             if(XF.Config.Chat.Login.Enable) then
-                                XFO.SystemFrame:Display(XF.Enum.Message.LOGIN, unit:GetName(), unit:GetUnitName(), unit:GetMainName(), unit:GetGuild())
+                                XFO.SystemFrame:Display(XF.Enum.Message.LOGIN, unit)
                             end
                             self:Add(unit)
                         elseif(not old:IsRunningAddon()) then

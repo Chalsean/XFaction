@@ -670,57 +670,65 @@ function XFC.Unit:Serialize()
     data.W = self:HasProfession1() and self:GetProfession1():GetKey() or nil
     data.X = self:HasProfession2() and self:GetProfession2():GetKey() or nil
     data.Y = self:GetPvP()
-    data.Z = self:GetZone():GetKey()
 
-	return pickle(data)
+    if(self:GetZone():HasID()) then
+        data.Z = self:GetZone():GetID()
+    else
+        data.J = self:GetZone():GetName()
+    end
+
+	return data
 end
 
 function XFC.Unit:Deserialize(inSerialized)
-	local deserialized = unpickle(inSerialized)
+    assert(type(inSerialized) == 'table')
 
     self:IsRunningAddon(true)
     self:IsOnline(true)
+    self:SetTimeStamp(XFF.TimeGetCurrent())
 
-    self:SetAchievementPoints(tonumber(deserialized.A))
-    self:SetRank(deserialized.C)
-    self:SetGuild(XFO.Guilds:Get(deserialized.G))
-    self:SetItemLevel(deserialized.I)
-    self:SetGUID(deserialized.K)
-    self:SetKey(deserialized.K)
-    self:SetLevel(deserialized.L)
+    self:SetAchievementPoints(tonumber(inSerialized.A))
+    self:SetRank(inSerialized.C)
+    self:SetGuild(XFO.Guilds:Get(inSerialized.G))
+    self:SetItemLevel(inSerialized.I)
+    self:SetGUID(inSerialized.K)
+    self:SetKey(inSerialized.K)
+    self:SetLevel(inSerialized.L)
 
-    if(deserialized.M ~= nil) then
+    if(inSerialized.M ~= nil) then
 		local key = XFC.MythicKey:new(); key:Initialize()
-		key:Deserialize(deserialized.M)
+		key:Deserialize(inSerialized.M)
 		self:SetMythicKey(key)
 	end
 
-    self:SetNote(deserialized.N)
-    self:SetPresence(tonumber(deserialized.P))
-	self:SetRace(XFO.Races:Get(deserialized.R))
-    self:SetSpec(XFO.Specs:Get(deserialized.S))
-    self:SetUnitName(deserialized.U)
+    self:SetNote(inSerialized.N)
+    self:SetPresence(tonumber(inSerialized.P))
+	self:SetRace(XFO.Races:Get(inSerialized.R))
+    self:SetSpec(XFO.Specs:Get(inSerialized.S))
+    self:SetUnitName(inSerialized.U)
 
-    local unitNameParts = string.Split(deserialized.U, '-')
+    local unitNameParts = string.Split(inSerialized.U, '-')
 	self:SetName(unitNameParts[1])  
 
-    XFO.Versions:Add(deserialized.V)
-    self:SetVersion(XFO.Versions:Get(deserialized.V))
+    XFO.Versions:Add(inSerialized.V)
+    self:SetVersion(XFO.Versions:Get(inSerialized.V))
 
-	if(deserialized.W ~= nil) then
-		self:SetProfession1(XFO.Professions:Get(deserialized.W))
+	if(inSerialized.W ~= nil) then
+		self:SetProfession1(XFO.Professions:Get(inSerialized.W))
 	end
-	if(deserialized.X ~= nil) then
-		self:SetProfession2(XFO.Professions:Get(deserialized.X))
+	if(inSerialized.X ~= nil) then
+		self:SetProfession2(XFO.Professions:Get(inSerialized.X))
 	end
     
-    self:SetPvPString(deserialized.Y)
+    self:SetPvPString(inSerialized.Y)
 
-    if(deserialized.Z ~= nil) then        
-        self:SetZone(XFO.Zones:GetByID(tonumber(deserialized.Z)))
+    if(inSerialized.Z ~= nil and XFO.Zones:ContainsByID(tonumber(inSerialized.Z))) then        
+        self:SetZone(XFO.Zones:GetByID(tonumber(inSerialized.Z)))
+    elseif(inSerialized.J ~= nil) then
+        XFO.Zones:AddZone(inSerialized.J)
+        self:SetZone(XFO.Zones:Get(inSerialized.J))
     else
-        XFO.Zones:Add(deserialized.J)
-        self:SetZone(XFO.Zones:Get(deserialized.J))
+        self:SetZone(XFO.Zones:Get('?'))
     end
 end
 --#endregion

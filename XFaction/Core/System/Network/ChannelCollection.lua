@@ -36,15 +36,13 @@ function XFC.ChannelCollection:Initialize()
 			event = 'CHAT_MSG_CHANNEL_NOTICE', 
 			callback = XFO.Channels.Sync,
 			groupDelta = 3,
-			instance = true,
-			start = true
+			instance = true
 		})
 		XFO.Events:Add({
 		 	name = 'ChannelColor', 
 		 	event = 'UPDATE_CHAT_COLOR', 
 		 	callback = XFO.Channels.UpdateColor, 
-		 	instance = true,
-		 	start = true
+		 	instance = true
 		})
 
 		self:IsInitialized(true)

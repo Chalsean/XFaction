@@ -81,8 +81,9 @@ end
 
 function XFC.Target:Deserialize(inSerialized)
     assert(type(inSerialized) == 'string')
-    local data = string.Split(inSerialized, ':')
+    self:SetKey(inSerialized)
+    local data = string.Split(inSerialized, '-')
     self:SetRealm(XFO.Realms:GetByID(tonumber(data[1])))
-    self:SetFaction(XFO.Factions:Get(data[2]))
+    self:SetFaction(XFO.Factions:Get(tonumber(data[2])))
 end
 --#endregion

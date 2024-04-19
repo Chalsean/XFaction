@@ -161,18 +161,6 @@ end
 function XFC.Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
-    -- Deserialize unit data
-    local unit = nil
-    try(function()
-        unit = XFO.Confederate:Pop()
-        unit:Deserialize(inMessage:GetFrom())
-        inMessage:SetFrom(unit)
-    end).
-    catch(function(err)
-        XFO.Confederate:Push(unit)
-        XF:Warn(self:GetObjectName(), err)
-    end)
-
     -- Is a newer version available?
     if(not XF.Cache.NewVersionNotify and XFO.Version:IsNewer(inMessage:GetFrom():GetVersion())) then
         print(format(XF.Lib.Locale['NEW_VERSION'], XF.Title))
@@ -236,7 +224,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         for _, link in XFO.Links:Iterator() do
             if(link:GetFromNode():GetName() == inMessage:GetFrom():GetName() or link:GetToNode():GetName() == inMessage:GetFrom():GetName()) then
                 if(link:GetTimeStamp() < inMessage:GetTimeStamp()) then
-                    XFO.Links:Remove(link:GetKey())
+                    link:IsActive(false)
                 end
             end
         end
@@ -276,7 +264,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         end
     else
         -- Process LOGIN message
-        if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and (not XFO.Confederate:Contains(unitData:GetKey()) or XFO.Confederate:Get(unitData:GetKey()):IsOffline())) then
+        if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and (not XFO.Confederate:Contains(inMessage:GetFrom():GetKey()) or XFO.Confederate:Get(inMessage:GetFrom():GetKey()):IsOffline())) then
             XFO.SystemFrame:Display(inMessage:GetSubject(), inMessage:GetFrom())
         end
         -- All data packets have unit information, so just refresh
@@ -291,10 +279,11 @@ end
 
 --#region Janitorial
 function XFC.Mailbox:Purge()
-	for key, receivedTime in self:Iterator() do
-		if(receivedTime < XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale) then
-			self:Remove(key)
-		end
-	end
+    -- FIX
+	--for key, receivedTime in self:Iterator() do
+	--	if(receivedTime < XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale) then
+	--		self:Remove(key)
+	--	end
+	--end
 end
 --#endregion

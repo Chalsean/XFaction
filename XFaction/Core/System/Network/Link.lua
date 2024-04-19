@@ -11,6 +11,7 @@ function XFC.Link:new()
     object.fromNode = nil
     object.toNode = nil
     object.epochTime = 0
+    object.isActive = false
     return object
 end
 
@@ -19,6 +20,7 @@ function XFC.Link:Deconstructor()
     self.fromNode = nil
     self.toNode = nil
     self.epochTime = 0
+    self.isActive = false
 end
 --#endregion
 
@@ -30,6 +32,7 @@ function XFC.Link:Initialize()
         if(self:HasFromNode() and self:HasToNode()) then
             self:SetKey(XF:GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName()))
         end
+        self:IsActive(true)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -39,6 +42,7 @@ end
 --#region Print
 function XFC.Link:Print()
     self:ParentPrint()
+    XF:Debug(self:GetObjectName(), '  isActive (' .. type(self.isActive) .. '): ' .. tostring(self.isActive))
     XF:Debug(self:GetObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     if(self:HasFromNode()) then self:GetFromNode():Print() end
     if(self:HasToNode()) then self:GetToNode():Print() end
@@ -53,6 +57,14 @@ function XF:GetLinkKey(inFromName, inToName)
     -- The string < check keeps uniqueness
     local key = (inFromName < inToName) and inFromName .. ':' .. inToName or inToName .. ':' .. inFromName
 	return key
+end
+
+function XFC.Link:IsActive(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
+    if(inBoolean ~= nil) then
+        self.isActive = inBoolean
+    end    
+    return self.isActive
 end
 
 function XFC.Link:IsMyLink()
@@ -102,7 +114,7 @@ function XFC.Link:Serialize()
 end
 
 local function GetNode(inSerialized)
-    assert(type(inSerlialized) == 'string')
+    assert(type(inSerialized) == 'string')
     local node = nil
     local key = nil
 
@@ -132,7 +144,6 @@ function XFC.Link:Deserialize(inSerialized)
     local _Nodes = string.Split(inSerialized, ';')
     self:SetFromNode(GetNode(_Nodes[1]))
     self:SetToNode(GetNode(_Nodes[2]))
-    self:SetTimeStamp(XFF.TimeGetCurrent())
 
     self:Initialize()
 end

@@ -64,15 +64,13 @@ function XFC.TimerCollection:EnterInstance()
 end
 
 function XFC.TimerCollection:LeaveInstance()
+    self:EnableAll()
+end
+
+function XFC.TimerCollection:EnableAll()
     for _, timer in self:Iterator() do
         if(not timer:IsEnabled()) then
             timer:Start()
-            local now = XFF.TimeGetCurrent()
-            if(timer:GetLastRan() < now - timer:GetDelta()) then
-                local _Function = timer:GetCallback()
-                _Function()
-                timer:SetLastRan(now)
-            end
         end
     end
 end

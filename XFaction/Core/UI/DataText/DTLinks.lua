@@ -78,30 +78,34 @@ function XFC.DTLinks:RefreshBroker()
 	local names = {}
 	local allianceCount = 0
 	local hordeCount = 0
+	local activeLinks = 0
 
 	for _, link in XFO.Links:Iterator() do
-		if(names[link:GetFromNode():GetName()] == nil) then
-			if(link:GetFromNode():GetTarget():GetFaction():GetName() == 'Alliance') then
-				allianceCount = allianceCount + 1
-			else
-				hordeCount = hordeCount + 1
+		if(link:IsActive()) then
+			activeLinks = activeLinks + 1
+			if(names[link:GetFromNode():GetName()] == nil) then
+				if(link:GetFromNode():GetTarget():GetFaction():GetName() == 'Alliance') then
+					allianceCount = allianceCount + 1
+				else
+					hordeCount = hordeCount + 1
+				end
+				names[link:GetFromNode():GetName()] = true
 			end
-			names[link:GetFromNode():GetName()] = true
-		end
-		if(names[link:GetToNode():GetName()] == nil) then
-			if(link:GetToNode():GetTarget():GetFaction():GetName() == 'Alliance') then
-				allianceCount = allianceCount + 1
-			else
-				hordeCount = hordeCount + 1
+			if(names[link:GetToNode():GetName()] == nil) then
+				if(link:GetToNode():GetTarget():GetFaction():GetName() == 'Alliance') then
+					allianceCount = allianceCount + 1
+				else
+					hordeCount = hordeCount + 1
+				end
+				names[link:GetToNode():GetName()] = true
 			end
-			names[link:GetToNode():GetName()] = true
 		end
 	end
 
 	if(XF.Config.DataText.Link.Faction) then
-		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XFO.Links:GetCount(), allianceCount, hordeCount)
+		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, activeLinks, allianceCount, hordeCount)
 	else
-		text = format('%s|cffffffff%d|r', text, XFO.Links:GetCount())
+		text = format('%s|cffffffff%d|r', text, activeLinks)
 	end
 	self:GetBroker().text = text
 end
@@ -160,20 +164,22 @@ function XFC.DTLinks:OnEnter(this)
 	--#region Populate Table
 	if(XF.Initialized) then
 		for _, link in XFO.Links:Iterator() do
-			local fromName = format('|cffffffff%s|r', link:GetFromNode():GetName())
-			if(link:IsMyLink() and link:GetFromNode():IsMyNode()) then
-				fromName = format('|cffffff00%s|r', link:GetFromNode():GetName())
-			end
+			if(link:IsActive()) then
+				local fromName = format('|cffffffff%s|r', link:GetFromNode():GetName())
+				if(link:IsMyLink() and link:GetFromNode():IsMyNode()) then
+					fromName = format('|cffffff00%s|r', link:GetFromNode():GetName())
+				end
 
-			local toName = format('|cffffffff%s|r', link:GetToNode():GetName())
-			if(link:IsMyLink() and link:GetToNode():IsMyNode()) then
-				toName = format('|cffffff00%s|r', link:GetToNode():GetName())
-			end
+				local toName = format('|cffffffff%s|r', link:GetToNode():GetName())
+				if(link:IsMyLink() and link:GetToNode():IsMyNode()) then
+					toName = format('|cffffff00%s|r', link:GetToNode():GetName())
+				end
 
-			self.tooltip:SetCell(line, targetColumn[link:GetFromNode():GetTarget():GetKey()], fromName, self.regularFont)
-			self.tooltip:SetCell(line, targetColumn[link:GetToNode():GetTarget():GetKey()], toName, self.regularFont)
-			
-			line = self.tooltip:AddLine()
+				self.tooltip:SetCell(line, targetColumn[link:GetFromNode():GetTarget():GetKey()], fromName, self.regularFont)
+				self.tooltip:SetCell(line, targetColumn[link:GetToNode():GetTarget():GetKey()], toName, self.regularFont)
+				
+				line = self.tooltip:AddLine()
+			end
 		end
 	end
 	--#endregion

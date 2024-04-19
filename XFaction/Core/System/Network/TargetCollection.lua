@@ -20,7 +20,7 @@ end
 local function GetTargetKey(inRealm, inFaction)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
-	return inRealm:GetID() .. ':' .. inFaction:GetKey()
+	return inRealm:GetID() .. '-' .. inFaction:GetKey()
 end
 
 function XFC.TargetCollection:Initialize()

@@ -187,8 +187,7 @@ function XF:LoginPlayer()
             	delta = XF.Settings.Player.Heartbeat, 
             	callback = XF.Player.Unit.Broadcast, 
             	repeater = true, 
-            	instance = true,
-				start = true
+            	instance = true
         	})
 			
 			-- If reload, restore backup information
@@ -210,9 +209,12 @@ function XF:LoginPlayer()
 				pre = true
 			})        	
 
-			-- Start all hooks, events, timers
+			-- Setup is done, turn everything on
+			XFO.Hooks:EnableAll()
 			XFO.Hooks:Start()
+			XFO.Events:EnableAll()
 			XFO.Events:Start()
+			XFO.Timers:EnableAll()
 			XFO.Timers:Start()
 			XF.Initialized = true
 

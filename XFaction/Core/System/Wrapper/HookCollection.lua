@@ -36,6 +36,14 @@ end
 --#endregion
 
 --#region Start/Stop everything
+function XFC.HookCollection:EnableAll()
+    for _, hook in self:Iterator() do
+        if(not hook:IsEnabled()) then
+            hook:Start()
+        end
+    end
+end
+
 function XFC.HookCollection:Start()
 	for _, hook in self:Iterator() do
         if(not hook:IsEnabled()) then

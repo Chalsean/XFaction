@@ -210,35 +210,36 @@ function XFC.Message:Serialize()
 	return pickle(data)
 end
 
-function ConvertLegacyUnit(inSerialized)
-    local original = unpickle(inSerialized)
+function ConvertLegacyUnit(inLegacy)
     local converted = {}
     
-    converted.R = original.A
-    converted.A = original.B
-    converted.P = original.E
-    converted.G = original.H
-    converted.K = original.K
-    converted.I = original.I
-    converted.C = original.J
-    converted.L = original.L
-    converted.M = original.M
-    converted.N = original.N
-    converted.W = original.P1
-    converted.X = original.P2
-    converted.U = original.U
-    converted.S = original.V
-    converted.V = original.X
-    converted.Y = original.Y
-    converted.Z = original.D
-    converted.J = original.Z
+    converted.R = inLegacy.A
+    converted.A = inLegacy.B
+    converted.P = inLegacy.E
+    converted.G = inLegacy.H
+    converted.K = inLegacy.K
+    converted.I = inLegacy.I
+    converted.C = inLegacy.J
+    converted.L = inLegacy.L
+    converted.M = inLegacy.M
+    converted.N = inLegacy.N
+    converted.W = inLegacy.P1
+    converted.X = inLegacy.P2
+    converted.U = inLegacy.U
+    converted.S = inLegacy.V
+    converted.V = inLegacy.X
+    converted.Y = inLegacy.Y
+    converted.Z = inLegacy.D
+    converted.J = inLegacy.Z
 
-    return pickle(converted)
+    return converted
 end
 
 function XFC.Message:Deserialize(inData)
 	local decompressed = XF.Lib.Deflate:DecompressDeflate(inData)
 	local data = unpickle(decompressed)
+
+    XF:DataDumper(self:GetObjectName(), data)
 
     self:SetSubject(data.S)
     if(data.T ~= nil) then self:SetTo(data.T) end
@@ -251,18 +252,20 @@ function XFC.Message:Deserialize(inData)
         unit:IsRunningAddon(true)
         unit:IsOnline(true)
 
-        if(data.K == nil) then        
-            self:SetRemainingTargets(data.R)
-            unit:Deserialize(data.F)
+        --if(data.K == nil) then        
+        --    self:SetRemainingTargets(data.R)
+        --    unit:Deserialize(data.F)
             
         -- Legacy format
-        else
+        --else
             self:SetRemainingTargets(data.A)
+            self:SetData(data.D)
             -- Old data message
             if(self:GetSubject() == XF.Enum.Message.DATA or self:GetSubject() == XF.Enum.Message.LOGIN) then
-                unit:Deserialize(ConvertLegacyUnit(data.D))
+                unit:Deserialize(ConvertLegacyUnit(unpickle(data.D)))
+                self:SetFrom(unit)
             -- Old chat/achievement message
-            else
+            elseif(not self:GetSubject() == XF.Enum.Message.LINK) then
                 unit:SetName(data.N)
                 unit:SetUnitName(data.U)
                 if(data.M ~= nil) then
@@ -272,9 +275,10 @@ function XFC.Message:Deserialize(inData)
                 if(XFO.Guilds:Contains(data.H)) then
                     unit:SetGuild(XFO.Guilds:Get(data.H))
                 end
+                self:SetFrom(unit)
             end            
-        end
-        self:SetFrom(unit)
+        --end
+        
     end).
     catch(function(err)
         XF:Warn(self:GetObjectName(), err)
