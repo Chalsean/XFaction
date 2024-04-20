@@ -69,9 +69,7 @@ function XFC.SpecCollection:new()
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.SpecCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -79,20 +77,20 @@ function XFC.SpecCollection:Initialize()
 			local specData = string.Split(data, ',')
 			local spec = XFC.Spec:new()
 			spec:Initialize()
-			spec:SetKey(tonumber(id))
-			spec:SetID(tonumber(id))
-			spec:SetName(specData[1])
-			spec:SetIconID(tonumber(specData[2]))
-			spec:SetClass(XFO.Classes:Get(tonumber(specData[3])))
+			spec:Key(tonumber(id))
+			spec:ID(tonumber(id))
+			spec:Name(specData[1])
+			spec:IconID(tonumber(specData[2]))
+			spec:Class(XFO.Classes:Get(tonumber(specData[3])))
 			self:Add(spec)
-			XF:Info(self:GetObjectName(), 'Initialized spec [%d:%s:%s]', spec:GetID(), spec:GetName(), spec:GetClass():GetName())
+			XF:Info(self:GetObjectName(), 'Initialized spec [%d:%s:%s]', spec:ID(), spec:Name(), spec:Class():Name())
 		end
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Accessors
+--#region Methods
 function XFC.SpecCollection:GetInitialClassSpec(inClassID)
 	assert(type(inClassID) == 'number')
 	for _, spec in self:Iterator() do

@@ -17,50 +17,45 @@ function XFC.Class:new()
 end
 --#endregion
 
---#region Print
-function XFC.Class:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
-    XF:Debug(self:GetObjectName(), '  r (' .. type(self.r) .. '): ' .. tostring(self.r))
-    XF:Debug(self:GetObjectName(), '  g (' .. type(self.g) .. '): ' .. tostring(self.g))
-    XF:Debug(self:GetObjectName(), '  b (' .. type(self.b) .. '): ' .. tostring(self.b))
-    XF:Debug(self:GetObjectName(), '  hex (' .. type(self.hex) .. '): ' .. tostring(self.hex))
-end
---#endregion
-
---#region Accessors
-function XFC.Class:GetAPIName()
+--#region Properties
+function XFC.Class:APIName(inAPIName)
+    assert(type(inAPIName) == 'string' or inAPIName == nil, 'argument must be string or nil')
+    if(inAPIName ~= nil) then
+        self.apiName = inAPIName
+    end
     return self.apiName
 end
 
-function XFC.Class:SetAPIName(inAPIName)
-    assert(type(inAPIName) == 'string')
-    self.apiName = inAPIName
-end
-
-function XFC.Class:GetRGB()
-    return self.r, self.g, self.b
-end
-
-function XFC.Class:GetRGBPercent()
+function XFC.Class:RGBPercent()
     return self.r / 255, self.g / 255, self.b / 255
 end
 
-function XFC.Class:SetRGB(inR, inG, inB)
-    assert(type(inR) == 'number')
-    assert(type(inG) == 'number')
-    assert(type(inB) == 'number')
-    self.r = inR
-    self.g = inG
-    self.b = inB
+function XFC.Class:RGB(inR, inG, inB)
+    assert((type(inR) == 'number' and type(inG) == 'number' and type(inB) == 'number') or (inR == nil and inG == nil and inB == nil), 'arguments must be number or nil')
+    if(inR ~= nil) then
+        self.r = inR
+        self.g = inG
+        self.b = inB
+    end
+    return self.r, self.g, self.b
 end
 
-function XFC.Class:SetHex(inHex)
-    assert(type(inHex) == 'string')
-    self.hex = inHex
-end
-
-function XFC.Class:GetHex()
+function XFC.Class:Hex(inHex)
+    assert(type(inHex) == 'string' or inHex == nil, 'argument must be string or nil')
+    if(inHex ~= nil) then
+        self.hex = inHex
+    end
     return self.hex
+end
+--#endregion
+
+--#region Methods
+function XFC.Class:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
+    XF:Debug(self:ObjectName(), '  r (' .. type(self.r) .. '): ' .. tostring(self.r))
+    XF:Debug(self:ObjectName(), '  g (' .. type(self.g) .. '): ' .. tostring(self.g))
+    XF:Debug(self:ObjectName(), '  b (' .. type(self.b) .. '): ' .. tostring(self.b))
+    XF:Debug(self:ObjectName(), '  hex (' .. type(self.hex) .. '): ' .. tostring(self.hex))
 end
 --#endregion

@@ -14,33 +14,26 @@ function XFC.Spec:new()
 end
 --#endregion
 
---#region Print
-function XFC.Spec:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+--#region Properties
+function XFC.Spec:IconID(inIconID)
+    assert(type(inIconID) == 'number' or inIconID == nil, 'argument must be number or nil')
+    if(inIconID ~= nil) then
+        self.iconID = inIconID
+    end
+end
+
+function XFC.Spec:Class(inClass)
+    assert(type(inClass) == 'table' and inClass.__name == 'Class' or inClass == nil, 'argument must be Class object or nil')
+    if(inClass ~= nil) then
+        self.class = inClass
+    end
+    return self.class
 end
 --#endregion
 
---#region Accessors
-function XFC.Spec:GetIconID()
-    return self.iconID
-end
-
-function XFC.Spec:SetIconID(inIconID)
-    assert(type(inIconID) == 'number')
-    self.iconID = inIconID
-end
-
-function XFC.Spec:HasClass()
-    return self.class ~= nil
-end
-
-function XFC.Spec:GetClass()
-    return self.class
-end
-
-function XFC.Spec:SetClass(inClass)
-    assert(type(inClass) == 'table' and inClass.__name ~= nil and inClass.__name == 'Class', 'argument must be Class object')
-    self.class = inClass
+--#region Methods
+function XFC.Spec:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
 end
 --#endregion

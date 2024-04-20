@@ -28,9 +28,7 @@ function XFC.ClassCollection:new()
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.ClassCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -38,14 +36,14 @@ function XFC.ClassCollection:Initialize()
 			local classData = string.Split(data, ',')
 			local class = XFC.Class:new()
 			class:Initialize()
-			class:SetKey(tonumber(id))
-			class:SetID(tonumber(id))
-			class:SetName(classData[1])
-			class:SetAPIName(classData[2])
-			class:SetRGB(tonumber(classData[3]), tonumber(classData[4]), tonumber(classData[5]))
-			class:SetHex(classData[6])
+			class:Key(tonumber(id))
+			class:ID(tonumber(id))
+			class:Name(classData[1])
+			class:APIName(classData[2])
+			class:RGB(tonumber(classData[3]), tonumber(classData[4]), tonumber(classData[5]))
+			class:Hex(classData[6])
 			self:Add(class)
-			XF:Info(self:GetObjectName(), 'Initialized class [%d:%s]', class:GetID(), class:GetName())
+			XF:Info(self:ObjectName(), 'Initialized class [%d:%s]', class:ID(), class:Name())
 		end
 		self:IsInitialized(true)
 	end

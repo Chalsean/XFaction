@@ -37,6 +37,13 @@ function XFC.Object:newChildConstructor()
 
     return object
 end
+
+function XFC.Object:ParentDeconstructor()
+    self.key = nil
+    self.name = nil
+    self.id = nil
+    self.initialized = false
+end
 --#endregion
 
 --#region Initializers
@@ -67,76 +74,67 @@ function XFC.Object:Print()
 end
 
 function XFC.Object:ParentPrint()
-    XF:SingleLine(self:GetObjectName())
+    XF:SingleLine(self:ObjectName())
     if(self.factoryKey ~= nil) then
-        XF:Debug(self:GetObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))
+        XF:Debug(self:ObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))
     end
     if(self.factoryTime ~= nil) then
-        XF:Debug(self:GetObjectName(), '  factoryTime (' .. type(self.factoryTime) .. '): ' .. tostring(self.factoryTime))
+        XF:Debug(self:ObjectName(), '  factoryTime (' .. type(self.factoryTime) .. '): ' .. tostring(self.factoryTime))
     end
-    XF:Debug(self:GetObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
-    XF:Debug(self:GetObjectName(), '  id (' .. type(self.id) .. '): ' .. tostring(self.id))
-    XF:Debug(self:GetObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))
-    XF:Debug(self:GetObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
+    XF:Debug(self:ObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
+    XF:Debug(self:ObjectName(), '  id (' .. type(self.id) .. '): ' .. tostring(self.id))
+    XF:Debug(self:ObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))
+    XF:Debug(self:ObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
 end
 --#endregion
 
---#region Accessors
-function XFC.Object:GetFactoryKey()
+--#region Properties
+function XFC.Object:FactoryKey(inKey)
+    assert(type(inKey) == 'string' or type(inKey) == 'number' or inKey == nil, 'argument must be string, number or nil')
+    if(inKey ~= nil) then
+        self.factoryKey = inKey
+    end
     return self.factoryKey
 end
 
-function XFC.Object:SetFactoryKey(inKey)
-    assert(type(inKey) == 'string' or type(inKey) == 'number', 'Object key must be string or number')
-    self.factoryKey = inKey
-end
-
-function XFC.Object:GetFactoryTime()
+function XFC.Object:FactoryTime(inFactoryTime)
+    assert(type(inFactoryTime) == 'number' or inFactoryTime == nil, 'argument must be number or nil')
+    if(inFactoryTime ~= nil) then
+        self.factoryTime = inFactoryTime
+    end
     return self.factoryTime
 end
 
-function XFC.Object:SetFactoryTime(inFactoryTime)
-    assert(type(inFactoryTime) == 'number')
-    self.factoryTime = inFactoryTime
-end
-
-function XFC.Object:HasKey()
-    return self.key ~= nil
-end
-
-function XFC.Object:GetKey()
+function XFC.Object:Key(inKey)
+    assert(type(inKey) == 'string' or type(inKey) == 'number' or inKey == nil, 'argument must be string, number or nil')
+    if(inKey ~= nil) then
+        self.key = inKey
+    end
     return self.key
 end
 
-function XFC.Object:SetKey(inKey)
-    assert(type(inKey) == 'string' or type(inKey) == 'number', 'Object key must be string or number')
-    self.key = inKey
-end
-
-function XFC.Object:GetName()
+function XFC.Object:Name(inName)
+    assert(type(inName) == 'string' or inName == nil, 'argument must be string or nil')
+    if(inName ~= nil) then
+        self.name = inName
+    end
     return self.name
 end
 
-function XFC.Object:SetName(inName)
-    assert(type(inName) == 'string')
-    self.name = inName
-end
-
-function XFC.Object:GetID()
+function XFC.Object:ID(inID)
+    assert(type(inID) == 'string' or type(inID) == 'number' or inID == nil, 'argument must be string, number or nil')
+    if(inID ~= nil) then
+        self.id = inID
+    end
     return self.id
 end
 
-function XFC.Object:SetID(inID)
-    assert(type(inID) == 'string' or type(inID) == 'number', 'Object ID must be string or number')
-    self.id = inID
-end
-
-function XFC.Object:GetObjectName()
+function XFC.Object:ObjectName()
     return self.__name
 end
 --#endregion
 
---#region Operators
+--#region Methods
 function XFC.Object:Equals(inObject)
     if(inObject == nil) then return false end
     if(type(inObject) ~= 'table' or inObject.__name == nil) then return false end
@@ -144,13 +142,11 @@ function XFC.Object:Equals(inObject)
     if(self:GetKey() ~= inObject:GetKey()) then return false end
     return true
 end
---#endregion
 
---#region DataSet
-function XFC.Object:ParentDeconstructor()
-    self.key = nil
-    self.name = nil
-    self.id = nil
-    self.initialized = false
-end
+function XF:ObjectsEquals(inObject1, inObject2)
+    if(inObject1 == nil or inObject2 == nil) then return false end
+    if(type(inObject1) ~= 'table' or type(inObject2) ~= 'table') then return false end
+    if(inObject1.__name ~= inObject2.__name) then return false end
+    return inObject1:Equals(inObject2)
+end    
 --#endregion

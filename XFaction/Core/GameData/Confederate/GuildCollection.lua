@@ -37,7 +37,6 @@ function XFC.GuildCollection:Add(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
 	self.parent.Add(self, inGuild)
 	self.names[inGuild:GetName()] = inGuild
-	XF:Info(self:GetObjectName(), 'Initialized guild [%s:%s]', inGuild:GetInitials(), inGuild:GetName())
 end
 --#endregion
 

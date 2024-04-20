@@ -155,14 +155,14 @@ function XFC.Timer:Start()
     if(not self:IsEnabled()) then
         self:SetStartTime(XFF.TimeGetCurrent())        
         self:IsEnabled(true)
-        XF:Debug(self:GetObjectName(), 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
+        XF:Trace(self:GetObjectName(), 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
     end
 end
 
 function XFC.Timer:Stop()
     if(self:IsEnabled()) then
         self:IsEnabled(false)
-        XF:Debug(self:GetObjectName(), 'Stopped timer [%s]', self:GetName())
+        XF:Trace(self:GetObjectName(), 'Stopped timer [%s]', self:GetName())
     end
 end
 

@@ -21,8 +21,8 @@ function XFC.ZoneCollection:Initialize()
 		-- Sandbox LibTourist to trick it into thinking its always retail
 		-- After initialization, library is no longer needed, thus scope it for destruction
 		local library = XFC.Library:new(); library:Initialize()
-		library:Set(LibStub:GetLibrary('LibTourist-3.0'))
-		library:Sandbox('WOW_PROJECT_ID', WOW_PROJECT_MAINLINE)
+		library:Sandbox(LibStub:GetLibrary('LibTourist-3.0'))
+		--library:Set('WOW_PROJECT_ID', WOW_PROJECT_MAINLINE)
 
 		local zoneIDs = library:Execute('GetMapIDLookupTable')
 		local zoneLocale = library:Execute('GetLookupTable')

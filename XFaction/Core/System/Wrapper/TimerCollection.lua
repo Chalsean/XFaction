@@ -88,13 +88,13 @@ function XFC.TimerCollection:Start()
 				if(timer:IsEnabled() and timer:GetLastRan() < now - timer:GetDelta()) then
 					timer:Execute()
 					if(not timer:IsRepeat()) then
-						XF:Debug(self:GetObjectName(), 'Timer will stop due to not being a repeater')
+						XF:Trace(self:GetObjectName(), 'Timer will stop due to not being a repeater')
 						timer:Stop()
 					elseif(timer:HasMaxAttempts() and timer:GetMaxAttempts() <= timer:GetAttempt()) then
-						XF:Debug(self:GetObjectName(), 'Timer will stop due to attempt limit [' .. tostring(timer:GetMaxAttempts()) .. '] being reached: ' .. timer:GetKey())
+						XF:Trace(self:GetObjectName(), 'Timer will stop due to attempt limit [' .. tostring(timer:GetMaxAttempts()) .. '] being reached: ' .. timer:GetKey())
 						timer:Stop()
 					elseif(timer:HasTimeToLive() and timer:GetStartTime() + timer:GetTimeToLive() < now) then
-						XF:Debug(self:GetObjectName(), 'Timer will stop due to time limit [' .. tostring(timer:GetTimeToLive()) .. '] being reached: ' .. timer:GetKey())
+						XF:Trace(self:GetObjectName(), 'Timer will stop due to time limit [' .. tostring(timer:GetTimeToLive()) .. '] being reached: ' .. timer:GetKey())
 						timer:Stop()
 					else
 						timer:Reset()

@@ -5,4 +5,6 @@
     <Script file='HookCollection.lua'/>
     <Script file='Timer.lua'/>
     <Script file='TimerCollection.lua'/>
+    <Script file='Library.lua'/>
+    <Script file='LibraryCollection.lua'/>
 </Ui>
