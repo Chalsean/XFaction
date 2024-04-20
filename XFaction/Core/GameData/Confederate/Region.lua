@@ -8,24 +8,23 @@ XFC.Region = XFC.Object:newChildConstructor()
 function XFC.Region:new()
     local object = XFC.Region.parent.new(self)
     object.__name = ObjectName
-    object.current = false
+    object.current = nil
     return object
 end
 --#endregion
 
---#region Print
-function XFC.Region:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  current (' .. type(self.current) .. '): ' .. tostring(self.current))
+--#region Properties
+function XFC.Region:IsCurrent()
+    if(self.current == nil) then
+        self.current = self:ID() == XFF.RegionGetCurrent()
+    end
+    return self.current
 end
 --#endregion
 
---#region Accessors
-function XFC.Region:IsCurrent(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
-    if(inBoolean ~= nil) then
-        self.current = inBoolean
-    end
-    return self.current
+--#region Methods
+function XFC.Region:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  current (' .. type(self.current) .. '): ' .. tostring(self.current))
 end
 --#endregion

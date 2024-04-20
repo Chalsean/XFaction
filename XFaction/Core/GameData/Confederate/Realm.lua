@@ -12,11 +12,11 @@ function XFC.Realm:new()
     object.connectedRealmCount = 0
     object.apiName = nil
     object.isTargeted = false
+    object.isCurrent = nil
+    object.guildCount = 0
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.Realm:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -26,54 +26,8 @@ function XFC.Realm:Initialize()
 end
 --#endregion
 
---#region Print
-function XFC.Realm:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
-    XF:Debug(self:GetObjectName(), '  isTargeted (' .. type(self.isTargeted) .. '): ' .. tostring(self.isTargeted))
-    XF:Debug(self:GetObjectName(), '  connectedRealmCount (' .. type(self.connectedRealmCount) .. '): ' .. tostring(self.connectedRealmCount))
-    for _, realm in pairs (self.connectedRealms) do
-        XF:Debug(self:GetObjectName(), '* connectedRealm [%d]', realm:GetID())
-    end
-end
---#endregion
-
---#region Iterators
-function XFC.Realm:ConnectedIterator()
-    return next, self.connectedRealms, nil
-end
---#endregion
-
---#region Hash
-function XFC.Realm:HasConnections()
-    return self.connectedRealmCount > 1
-end
-
-function XFC.Realm:AddConnected(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-    if(self.connectedRealms[inRealm:GetID()] == nil) then
-        self.connectedRealms[inRealm:GetID()] = inRealm
-        self.connectedRealmCount = self.connectedRealmCount + 1
-    end
-end
-
-function XFC.Realm:IsConnected(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-    for _, realm in pairs (self.connectedRealms) do
-        if(inRealm:Equals(realm)) then
-            return true
-        end
-    end
-    return false
-end
---#endregion
-
---#region Accessors
-function XFC.Realm:GetAPIName()
-    return self.apiName
-end
-
-function XFC.Realm:GetAPIName()
+--#region Properties
+function XFC.Realm:APIName()
     if(self.apiName == nil) then 
         self.apiName = XFF.RealmGetAPIName() 
     end
@@ -89,19 +43,68 @@ function XFC.Realm:IsTargeted(inBoolean)
 end
 
 function XFC.Realm:IsCurrent()
-    return self:GetID() == XFF.RealmGetID()
+    if(self.isCurrent == nil) then 
+        self.isCurrent = self:ID() == XFF.RealmGetID()
+    end
+    return self.isCurrent
+end
+
+function XFC.Realm:GuildCount(inCount)
+    assert(type(inCount) == 'number' or inCount == nil, 'argument must be number or nil')
+    if(inCount ~= nil) then
+        self.guildCount = inCount
+    end
+    return self.guildCount
 end
 --#endregion
 
---#region Operators
+--#region Methods
+function XFC.Realm:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
+    XF:Debug(self:ObjectName(), '  isTargeted (' .. type(self.isTargeted) .. '): ' .. tostring(self.isTargeted))
+    XF:Debug(self:ObjectName(), '  isCurrent (' .. type(self.isCurrent) .. '): ' .. tostring(self.isCurrent))
+    XF:Debug(self:ObjectName(), '  guildCount (' .. type(self.guildCount) .. '): ' .. tostring(self.guildCount))
+    XF:Debug(self:ObjectName(), '  connectedRealmCount (' .. type(self.connectedRealmCount) .. '): ' .. tostring(self.connectedRealmCount))
+    for _, realm in pairs (self.connectedRealms) do
+        XF:Debug(self:ObjectName(), '* connectedRealm [%d]', realm:ID())
+    end
+end
+
+function XFC.Realm:ConnectedIterator()
+    return next, self.connectedRealms, nil
+end
+
+function XFC.Realm:HasConnections()
+    return self.connectedRealmCount > 1
+end
+
+function XFC.Realm:AddConnected(inRealm)
+    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
+    if(self.connectedRealms[inRealm:ID()] == nil) then
+        self.connectedRealms[inRealm:ID()] = inRealm
+        self.connectedRealmCount = self.connectedRealmCount + 1
+    end
+end
+
+function XFC.Realm:IsConnected(inRealm)
+    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
+    for _, realm in pairs (self.connectedRealms) do
+        if(inRealm:Equals(realm)) then
+            return true
+        end
+    end
+    return false
+end
+
 function XFC.Realm:Equals(inRealm)
     if(inRealm == nil) then return false end
     if(type(inRealm) ~= 'table' or inRealm.__name == nil) then return false end
-    if(self:GetObjectName() ~= inRealm:GetObjectName()) then return false end
-    if(self:GetKey() == inRealm:GetKey()) then return true end
+    if(self:ObjectName() ~= inRealm:ObjectName()) then return false end
+    if(self:Key() == inRealm:Key()) then return true end
     -- Consider connected realms equal
     for _, connectedRealm in self:ConnectedIterator() do
-        if(connectedRealm:GetKey() == inRealm:GetKey()) then return true end
+        if(connectedRealm:Key() == inRealm:Key()) then return true end
     end
     return false
 end

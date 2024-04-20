@@ -22,38 +22,36 @@ function XFC.RegionCollection:new()
 	object.current = nil
     return object
 end
---#endregion
 
---#region Initializers
--- Region information comes from disk, so no need to stick in cache
 function XFC.RegionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		for id, name in ipairs(RegionData) do
+
 			local region = XFC.Region:new()
 			region:Initialize()
-			region:SetKey(id)
-			region:SetName(name)
-			self:Add(region)
+			region:Key(id)
+			region:ID(id)
+			region:Name(name)		
 
-			if(id == XFF.RegionGetCurrent()) then
-				region:IsCurrent(true)
-				self:SetCurrent(region)
-				XF:Info(self:GetObjectName(), 'Initialized player region [%d:%s]', region:GetKey(), region:GetName())
+			if(region:IsCurrent()) then
+				self:Current(region)
+				XF:Info(self:ObjectName(), 'Initialized player region [%d:%s]', region:ID(), region:Name())
 			end
+
+			self:Add(region)
 		end
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Accessors
-function XFC.RegionCollection:GetCurrent()
+--#region Properties
+function XFC.RegionCollection:Current(inRegion)
+	assert(type(inRegion) == 'table' and inRegion.__name == 'Region' or inRegion == nil, 'argument must be Region object or nil')
+	if(inRegion ~= nil) then
+		self.current = inRegion
+	end
 	return self.current
-end
-
-function XFC.RegionCollection:SetCurrent(inRegion)
-	assert(type(inRegion) == 'table' and inRegion.__name ~= nil and inRegion.__name == 'Region', 'argument must be Region object')
-	self.current = inRegion
 end
 --#endregion

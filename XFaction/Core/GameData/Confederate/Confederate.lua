@@ -31,7 +31,7 @@ function XFC.Confederate:Initialize()
         XFO.Events:Add({
             name = 'Roster', 
             event = 'GUILD_ROSTER_UPDATE', 
-            callback = XFO.Confederate.UpdateLocalRoster, 
+            callback = XFO.Confederate.LocalRoster, 
             instance = true,
             groupDelta = XF.Settings.LocalGuild.ScanTimer
         })

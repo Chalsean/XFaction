@@ -834,9 +834,7 @@ function XFC.RealmCollection:new()
 	object.cacheXref = nil
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.RealmCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -845,18 +843,18 @@ function XFC.RealmCollection:Initialize()
 		-- Setup all realms in the region
 		for id, data in pairs(RealmData) do
 			local realmData = string.Split(data, ',')
-			if(XFO.Regions:GetCurrent():GetName() == realmData[4]) then
+			if(XFO.Regions:Current():Name() == realmData[4]) then
 				local realm = XFC.Realm:new(); realm:Initialize()
-				realm:SetKey(realmData[1])
-				realm:SetName(realmData[1])
-				realm:SetID(tonumber(id))
+				realm:Key(realmData[1])
+				realm:Name(realmData[1])
+				realm:ID(tonumber(id))
 				self:Add(realm)
 				
-				if(realm:GetName() == XFF.RealmGetName()) then
+				if(realm:Name() == XFF.RealmGetName()) then
 					XF.Player.Realm = realm
-					XF:Info(self:GetObjectName(), 'Initialized player realm [%d:%s]', realm:GetID(), realm:GetName())
+					XF:Info(self:ObjectName(), 'Initialized player realm [%d:%s]', realm:ID(), realm:Name())
 				else
-					XF:Trace(self:GetObjectName(), 'Initialized realm [%d:%s]', realm:GetID(), realm:GetName())
+					XF:Trace(self:ObjectName(), 'Initialized realm [%d:%s]', realm:ID(), realm:Name())
 				end
 			end
 		end
@@ -869,9 +867,9 @@ function XFC.RealmCollection:Initialize()
 		-- Setup default realms (Torghast)
 		for realmID, realmName in pairs (DefaultRealms) do
 			local realm = XFC.Realm:new(); realm:Initialize()
-			realm:SetKey(realmName)
-			realm:SetName(realmName)
-			realm:SetID(realmID)
+			realm:Key(realmName)
+			realm:Name(realmName)
+			realm:ID(realmID)
 			self:Add(realm)
 		end
 
@@ -879,35 +877,36 @@ function XFC.RealmCollection:Initialize()
 		for _, connections in ipairs (ConnectionData) do
 			local realms = string.Split(connections, ',')
 			for _, id1 in ipairs (realms) do
-				local realm1 = self:GetByID(tonumber(id1))
+				local realm1 = self:Get(tonumber(id1))
 				if(realm1 ~= nil) then
 					for _, id2 in ipairs (realms) do
-						local realm2 = self:GetByID(tonumber(id2))
+						local realm2 = self:Get(tonumber(id2))
 						if(realm2 ~= nil and not realm1:Equals(realm2)) then
 							realm1:AddConnected(realm2)
 							realm2:AddConnected(realm1)
-							XF:Trace(self:GetObjectName(), 'Initialized realm connection [%d:%d]', realm1:GetID(), realm2:GetID())
+							XF:Trace(self:ObjectName(), 'Initialized realm connection [%d:%d]', realm1:ID(), realm2:ID())
 						end
 					end
 				end
 			end
-		end		
-
-		XF.Player.Realm:Print()
+		end
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Hash
+--#region Methods
 function XFC.RealmCollection:Add(inRealm)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-	self.realmsByID[inRealm:GetID()] = inRealm
+	self.realmsByID[inRealm:ID()] = inRealm
 	self.parent.Add(self, inRealm)
 end
 
-function XFC.RealmCollection:GetByID(inID)
-	assert(type(inID) == 'number')
-	return self.realmsByID[inID]
+function XFC.RealmCollection:Get(inKey)
+	assert(type(inKey) == 'number' or type(inKey) == 'string', 'argument must be number or string')
+	if(type(inKey) == 'number') then
+		return self.realmsByID[inKey]
+	end
+	return self.parent.Get(self, inKey)
 end
 --#endregion

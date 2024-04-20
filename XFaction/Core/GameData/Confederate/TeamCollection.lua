@@ -10,20 +10,18 @@ function XFC.TeamCollection:new()
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.TeamCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 		for initials, name in pairs (XF.Settings.Confederate.DefaultTeams) do
 			local team = XFC.Team:new()
 			team:Initialize()
-			team:SetName(name)
-			team:SetInitials(initials)
-			team:SetKey(initials)
+			team:Name(name)
+			team:Initials(initials)
+			team:Key(initials)
 			self:Add(team)
-			XF:Info(self:GetObjectName(), 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
+			XF:Info(self:ObjectName(), 'Initialized team [%s:%s]', team:Initials(), team:Name())
 		end
 		self:IsInitialized(true)
 	end
