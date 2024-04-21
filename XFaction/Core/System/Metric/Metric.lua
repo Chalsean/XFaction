@@ -13,34 +13,32 @@ function XFC.Metric:new()
 end
 --#endregion
 
---#region Print
-function XFC.Metric:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
-end
---#endregion
-
---#region Accessors
-function XFC.Metric:Increment()
-    self.count = self.count + 1
-    if(self:GetName() == XF.Enum.Metric.Messages or
-       self:GetName() == XF.Enum.Metric.Error or
-       self:GetName() == XF.Enum.Metric.Warning) then
-        XFO.DTMetrics:RefreshBroker()
-    end
-end
-
-function XFC.Metric:GetCount()
+--#region Properties
+function XFC.Metric:Count()
     return self.count
 end
 
-function XFC.Metric:GetAverage(inPer)
-    if(self:GetCount() == 0) then return 0 end
+function XFC.Metric:Average(inPer)
+    if(self:Count() == 0) then return 0 end
     assert(type(inPer) == 'number' or inPer == nil, 'argument must be number or nil')
     local delta = XFF.TimeGetCurrent() - XF.Start
     if(inPer ~= nil) then
         delta = delta / inPer
     end
-    return self:GetCount() / delta
+    return self:Count() / delta
+end
+--#endregion
+
+--#region Methods
+function XFC.Metric:Print()
+    self:ParentPrint()
+    XF:Debug(self:GetObjectName(), '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
+end
+
+function XFC.Metric:Increment()
+    self.count = self.count + 1
+    if(self:Name() == XF.Enum.Metric.Messages or self:Name() == XF.Enum.Metric.Error or self:Name() == XF.Enum.Metric.Warning) then
+        XFO.DTMetrics:RefreshBroker()
+    end
 end
 --#endregion

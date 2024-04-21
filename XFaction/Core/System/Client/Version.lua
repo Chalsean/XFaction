@@ -20,61 +20,58 @@ end
 --#region Print
 function XFC.Version:Print()
     self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
-    XF:Debug(self:GetObjectName(), '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
-    XF:Debug(self:GetObjectName(), '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
-    XF:Debug(self:GetObjectName(), '  changeLog (' .. type(self.changeLog) .. '): ' .. tostring(self.changeLog))
+    XF:Debug(self:ObjectName(), '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
+    XF:Debug(self:ObjectName(), '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
+    XF:Debug(self:ObjectName(), '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
+    XF:Debug(self:ObjectName(), '  changeLog (' .. type(self.changeLog) .. '): ' .. tostring(self.changeLog))
 end
 --#endregion
 
---#region Accessors
-function XFC.Version:SetKey(inKey)
+--#region Properties
+function XFC.Version:Key(inKey)
     assert(type(inKey) == 'string')
     self.key = inKey
 
     local parts = Split(inKey, '.')
-    self:SetMajor(tonumber(parts[1]))
-    self:SetMinor(tonumber(parts[2]))
+    self:Major(tonumber(parts[1]))
+    self:Minor(tonumber(parts[2]))
     if(#parts == 3) then
-        self:SetPatch(tonumber(parts[3]))
+        self:Patch(tonumber(parts[3]))
     else
-        self:SetPatch(0)
+        self:Patch(0)
     end
 end
 
-function XFC.Version:GetMajor()
+function XFC.Version:Major(inMajor)
+    assert(type(inMajor) == 'number' or inMajor == nil, 'argument must be number or nil')
+    if(inMajor ~= nil) then
+        self.major = inMajor
+    end
     return self.major
 end
 
-function XFC.Version:SetMajor(inMajor)
-    assert(type(inMajor) == 'number')
-    self.major = inMajor
-end
-
-function XFC.Version:GetMinor()
+function XFC.Version:Minor(inMinor)
+    assert(type(inMinor) == 'number' or inMinor == nil, 'argument must be number or nil')
+    if(inMinor ~= nil) then
+        self.minor = inMinor
+    end
     return self.minor
 end
 
-function XFC.Version:SetMinor(inMinor)
-    assert(type(inMinor) == 'number')
-    self.minor = inMinor
-end
-
-function XFC.Version:GetPatch()
+function XFC.Version:Patch(inPatch)
+    assert(type(inPatch) == 'number' or inPatch == nil, 'argument must be number or nil')
+    if(inPatch ~= nil) then
+        self.patch = inPatch
+    end
     return self.patch
 end
 
-function XFC.Version:SetPatch(inPatch)
-    assert(type(inPatch) == 'number')
-    self.patch = inPatch
-end
-
 function XFC.Version:IsAlpha()
-    return self:GetPatch() == 0
+    return self:Patch() == 0
 end
 
 function XFC.Version:IsBeta()
-    return self:GetPatch() % 2 == 1
+    return self:Patch() % 2 == 1
 end
 
 function XFC.Version:IsProduction()
@@ -86,9 +83,9 @@ function XFC.Version:IsNewer(inVersion, inIncludeAllBuilds)
     if(not inIncludeAllBuilds and (inVersion:IsAlpha() or inVersion:IsBeta())) then
         return false
     end
-    if(self:GetMajor() < inVersion:GetMajor() or 
-      (self:GetMajor() == inVersion:GetMajor() and self:GetMinor() < inVersion:GetMinor()) or
-      (self:GetMajor() == inVersion:GetMajor() and self:GetMinor() == inVersion:GetMinor() and self:GetPatch() < inVersion:GetPatch())) then
+    if(self:Major() < inVersion:Major() or 
+      (self:Major() == inVersion:Major() and self:Minor() < inVersion:Minor()) or
+      (self:Major() == inVersion:Major() and self:Minor() == inVersion:Minor() and self:Patch() < inVersion:Patch())) then
         return true
     end
     return false
@@ -103,11 +100,11 @@ function XFC.Version:IsInChangeLog(inBoolean)
 end
 --#endregion
 
---#region Operators
+--#region Methods
 function XFC.Version:Copy(inVersion)
     assert(type(inVersion) == 'table' and inVersion.__name == ObjectName, 'argument must be Version object')
-    self:SetMajor(inVersion:GetMajor())
-    self:SetMinor(inVersion:GetMinor())
-    self:SetPatch(inVersion:GetPatch())
+    self:Major(inVersion:Major())
+    self:Minor(inVersion:Minor())
+    self:Patch(inVersion:Patch())
 end
 --#endregion

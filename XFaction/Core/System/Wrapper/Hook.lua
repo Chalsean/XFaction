@@ -8,7 +8,6 @@ XFC.Hook = XFC.Object:newChildConstructor()
 function XFC.Hook:new()
     local object = XFC.Hook.parent.new(self)
     object.__name = ObjectName
-    object.original = nil
     object.originalFunction = nil
     object.callback = nil
     object.isEnabled = false
@@ -17,55 +16,21 @@ function XFC.Hook:new()
 end
 --#endregion
 
---#region Print
-function XFC.Hook:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  original (' .. type(self.original) .. '): ' .. tostring(self.original))
-    XF:Debug(self:GetObjectName(), '  originalFunction (' .. type(self.originalFunction) .. '): ' .. tostring(self.originalFunction))
-    XF:Debug(self:GetObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
-    XF:Debug(self:GetObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-    XF:Debug(self:GetObjectName(), '  isPreHook (' .. type(self.isPreHook) .. '): ' .. tostring(self.isPreHook))
-end
---#endregion
-
---#region Accessors
-function XFC.Hook:HasOriginal()
-    return self.original ~= nil
-end
-
-function XFC.Hook:GetOriginal()
-    return self.original
-end
-
-function XFC.Hook:GetOriginalFunction()
+--#region Properties
+function XFC.Hook:OriginalFunction(inFunction)
+    assert(type(inFunction) == 'function' or inFunction == nil, 'argument must be function or nil')
+    if(inFunction ~= nil) then
+        self.originalFunction = inFunction
+    end
     return self.originalFunction
 end
 
-function XFC.Hook:SetOriginal(inOriginal)
-    assert(type(inOriginal) == 'string')
-    self.original = inOriginal
-    self.originalFunction = _G[inOriginal]
-end
-
-function XFC.Hook:HasCallback()
-    return self.callback ~= nil
-end
-
-function XFC.Hook:GetCallback()
-    return self.callback
-end
-
-function XFC.Hook:SetCallback(inCallback)
-    assert(type(inCallback) == 'function')
-    self.callback = inCallback
-end
-
-function XFC.Hook:IsEnabled(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.isEnabled = inBoolean
+function XFC.Hook:Callback(inCallback)
+    assert(type(inCallback) == 'function' or inCallback == nil, 'argument must be function or nil')
+    if(inCallback ~= nil) then
+        self.callback = inCallback
     end
-	return self.isEnabled
+    return self.callback
 end
 
 function XFC.Hook:IsEnabled(inBoolean)
@@ -85,29 +50,35 @@ function XFC.Hook:IsPreHook(inBoolean)
 end
 --#endregion
 
---#region Start/Stop
+--#region Methods
+function XFC.Hook:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  originalFunction (' .. type(self.originalFunction) .. '): ' .. tostring(self.originalFunction))
+    XF:Debug(self:ObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+    XF:Debug(self:ObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+    XF:Debug(self:ObjectName(), '  isPreHook (' .. type(self.isPreHook) .. '): ' .. tostring(self.isPreHook))
+end
+
 function XFC.Hook:Start()
-    if(self:HasOriginal() and self:HasCallback()) then
-        local callback = self:GetCallback()
-        local original = self:GetOriginalFunction()
-        if(self:IsPreHook()) then    
-            _G[self:GetOriginal()] = function(...)
-                callback(...)
-                original(...)
-            end            
-        else
-            hooksecurefunc(_G, self:GetOriginal(), callback)
-        end
-        self:IsEnabled(true)
-        XF:Debug(self:GetObjectName(), 'Started hook [%s]', self:GetKey())
+    local callback = self:Callback()
+    local original = self:OriginalFunction()
+    if(self:IsPreHook()) then    
+        _G[self:Name()] = function(...)
+            callback(...)
+            original(...)
+        end            
+    else
+        hooksecurefunc(_G, self:Name(), callback)
     end
+    self:IsEnabled(true)
+    XF:Debug(self:ObjectName(), 'Started hook [%s]', self:Key())
 end
 
 function XFC.Hook:Stop()
-    if(self:HasOriginal() and self:IsEnabled()) then
-        _G[self:GetOriginal()] = self:GetOriginalFunction()
+    if(self:IsEnabled()) then
+        _G[self:Name()] = self:OriginalFunction()
         self:IsEnabled(false)
-        XF:Debug(self:GetObjectName(), 'Stopped hook [%s]', self:GetKey())
+        XF:Debug(self:ObjectName(), 'Stopped hook [%s]', self:Key())
     end
 end
 --#endregion

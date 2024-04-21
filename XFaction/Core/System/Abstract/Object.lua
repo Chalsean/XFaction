@@ -44,9 +44,7 @@ function XFC.Object:ParentDeconstructor()
     self.id = nil
     self.initialized = false
 end
---#endregion
 
---#region Initializers
 function XFC.Object:IsInitialized(inBoolean)
     assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
     if(inBoolean ~= nil) then
@@ -65,26 +63,6 @@ end
 -- So can call parent init in child objects
 function XFC.Object:ParentInitialize()
     self.key = math.GenerateUID()
-end
---#endregion
-
---#region Print
-function XFC.Object:Print()
-    self:ParentPrint()
-end
-
-function XFC.Object:ParentPrint()
-    XF:SingleLine(self:ObjectName())
-    if(self.factoryKey ~= nil) then
-        XF:Debug(self:ObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))
-    end
-    if(self.factoryTime ~= nil) then
-        XF:Debug(self:ObjectName(), '  factoryTime (' .. type(self.factoryTime) .. '): ' .. tostring(self.factoryTime))
-    end
-    XF:Debug(self:ObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
-    XF:Debug(self:ObjectName(), '  id (' .. type(self.id) .. '): ' .. tostring(self.id))
-    XF:Debug(self:ObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))
-    XF:Debug(self:ObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
 end
 --#endregion
 
@@ -135,11 +113,29 @@ end
 --#endregion
 
 --#region Methods
+function XFC.Object:Print()
+    self:ParentPrint()
+end
+
+function XFC.Object:ParentPrint()
+    XF:SingleLine(self:ObjectName())
+    if(self.factoryKey ~= nil) then
+        XF:Debug(self:ObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))
+    end
+    if(self.factoryTime ~= nil) then
+        XF:Debug(self:ObjectName(), '  factoryTime (' .. type(self.factoryTime) .. '): ' .. tostring(self.factoryTime))
+    end
+    XF:Debug(self:ObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
+    XF:Debug(self:ObjectName(), '  id (' .. type(self.id) .. '): ' .. tostring(self.id))
+    XF:Debug(self:ObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))
+    XF:Debug(self:ObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
+end
+
 function XFC.Object:Equals(inObject)
     if(inObject == nil) then return false end
     if(type(inObject) ~= 'table' or inObject.__name == nil) then return false end
-    if(self:GetObjectName() ~= inObject:GetObjectName()) then return false end
-    if(self:GetKey() ~= inObject:GetKey()) then return false end
+    if(self:ObjectName() ~= inObject:ObjectName()) then return false end
+    if(self:Key() ~= inObject:Key()) then return false end
     return true
 end
 

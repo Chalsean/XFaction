@@ -14,16 +14,6 @@ function XFC.Friend:new()
     object.isRunningAddon = false
     return object
 end
---#endregion
-
---#region Print
-function XFC.Friend:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
-    XF:Debug(self:GetObjectName(), '  isActive (' .. type(self.isActive) .. '): ' .. tostring(self.isActive))
-    XF:Debug(self:GetObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
-    if(self:HasTarget()) then self:GetTarget():Print() end
-end
 
 function XFC.Friend:Deconstructor()
     self:ParentDeconstructor()
@@ -34,27 +24,21 @@ function XFC.Friend:Deconstructor()
 end
 --#endregion
 
---#region Accessors
-function XFC.Friend:GetTag()
+--#region Properties
+function XFC.Friend:Tag(inTag)
+    assert(type(inTag) == 'string' or inTag == nil, 'argument must be string or nil')
+    if(inTag ~= nil) then
+        self.tag = inTag
+    end
     return self.tag
 end
 
-function XFC.Friend:SetTag(inTag)
-    assert(type(inTag) == 'string')
-    self.tag = inTag
-end
-
-function XFC.Friend:HasTarget()
-    return self.target ~= nil
-end
-
-function XFC.Friend:GetTarget()
+function XFC.Friend:Target(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target' or inTarget == nil, 'argument must be Target object or nil')
+    if(inTarget ~= nil) then
+        self.target = inTarget
+    end
     return self.target
-end
-
-function XFC.Friend:SetTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    self.target = inTarget
 end
 
 function XFC.Friend:IsActive(inBoolean)
@@ -74,7 +58,15 @@ function XFC.Friend:IsRunningAddon(inBoolean)
 end
 --#endregion
 
---#region Link
+--#region Methods
+function XFC.Friend:Print()
+    self:ParentPrint()
+    XF:Debug(self:GetObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
+    XF:Debug(self:GetObjectName(), '  isActive (' .. type(self.isActive) .. '): ' .. tostring(self.isActive))
+    XF:Debug(self:GetObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
+    if(self:HasTarget()) then self:GetTarget():Print() end
+end
+
 function XFC.Friend:CreateLink()
     if(self:IsRunningAddon() and self:HasTarget()) then
         local link = nil
@@ -107,17 +99,13 @@ function XFC.Friend:CreateLink()
         end)
     end
 end
---#endregion
 
---#region Network
 function XFC.Friend:Ping()
-    XF:Debug(self:GetObjectName(), 'Sending ping to [%s]', self:GetTag())
-    XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, self:GetGameID())
+    XF:Debug(self:ObjectName(), 'Sending ping to [%s]', self:Tag())
+    XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, self:GameID())
     XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
 end
---#endregion
 
---#region Serialize
 local function CanLink()
     if(inAccountInfo.isFriend and 
     inAccountInfo.gameAccountInfo.isOnline and 
@@ -140,19 +128,19 @@ local function CanLink()
 end
 
 function XFC.Friend:Deserialize(inAccountInfo)
-    self:SetKey(inAccountInfo.gameAccountInfo.gameAccountID)
-    self:SetID(inAccountInfo.bnetAccountID)
-    self:SetName(inAccountInfo.battleTag)
+    self:Key(inAccountInfo.gameAccountInfo.gameAccountID)
+    self:ID(inAccountInfo.bnetAccountID)
+    self:Name(inAccountInfo.battleTag)
 
     if(inAccountInfo.gameAccountInfo.isOnline and inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
-        self:SetName(inAccountInfo.gameAccountInfo.characterName)
-        local realm = XFO.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
+        self:Name(inAccountInfo.gameAccountInfo.characterName)
+        local realm = XFO.Realms:Get(inAccountInfo.gameAccountInfo.realmID)
             -- Ignore Torghast
             if(realm ~= nil and realm:GetID() ~= 0) then
-                local faction = XFO.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
+                local faction = XFO.Factions:Get(inAccountInfo.gameAccountInfo.factionName)
                 local target = XFO.Targets:GetByRealmFaction(realm, faction)
                 if(target ~= nil) then
-                    self:SetTarget(target)
+                    self:Target(target)
                 end
             end
             self:IsActive(true)

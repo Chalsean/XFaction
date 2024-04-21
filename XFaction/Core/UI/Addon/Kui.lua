@@ -28,7 +28,7 @@ function XF.Addons.Kui:OnShow(f)
                 elseif(XF.Config.Addons.Kui.GuildName == 'Confederate') then
                     f.state.guild_text = XF.Confederate:GetName()
                 elseif(XF.Config.Addons.Kui.GuildName == 'ConfederateInitials') then
-                    f.state.guild_text = XF.Confederate:GetKey()
+                    f.state.guild_text = XF.Confederate:Key()
                 elseif(XF.Config.Addons.Kui.GuildName == 'Team') then  
                     local guid = UnitGUID(f.unit)              
                     if(XF.Confederate:Contains(guid)) then

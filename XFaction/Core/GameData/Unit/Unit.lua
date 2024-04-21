@@ -72,9 +72,7 @@ function XFC.Unit:Deconstructor()
     self.mythicKey = nil
     self.target = nil
 end
---#endregion
 
---#region Initializers
 function XFC.Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number' or inMemberID == nil)
     local unitData
@@ -193,38 +191,6 @@ function XFC.Unit:Initialize(inMemberID)
 end
 --#endregion
 
---#region Print
-function XFC.Unit:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
-    XF:Debug(self:GetObjectName(), '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
-    XF:Debug(self:GetObjectName(), '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
-    XF:Debug(self:GetObjectName(), '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
-    XF:Debug(self:GetObjectName(), '  note (' .. type(self.note) .. '): ' .. tostring(self.note))
-    XF:Debug(self:GetObjectName(), '  presence (' .. type(self.presence) .. '): ' .. tostring(self.presence))
-    XF:Debug(self:GetObjectName(), '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
-    XF:Debug(self:GetObjectName(), '  updatedTime (' .. type(self.updatedTime) .. '): ' .. tostring(self.updatedTime))
-    XF:Debug(self:GetObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
-    XF:Debug(self:GetObjectName(), '  isAlt (' .. type(self.isAlt) .. '): ' .. tostring(self.isAlt))
-    XF:Debug(self:GetObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
-    XF:Debug(self:GetObjectName(), '  isPlayer (' .. type(self.isPlayer) .. '): ' .. tostring(self.isPlayer))
-    XF:Debug(self:GetObjectName(), '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
-    XF:Debug(self:GetObjectName(), '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
-    XF:Debug(self:GetObjectName(), '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
-    XF:Debug(self:GetObjectName(), '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
-    if(self:Zone() ~= nil) then self:Zone():Print() end
-    if(self:Version() ~= nil) then self:Version():Print() end
-    if(self:Guild() ~= nil) then self:Guild():Print() end
-    if(self:Team() ~= nil) then self:Team():Print() end
-    if(self:Race() ~= nil) then self:Race():Print() end
-    if(self:Spec() ~= nil) then self:Spec():Print() end
-    if(self:Profession1()) ~= nil then self:Profession1():Print() end
-    if(self:Profession2() ~= nil) then self:Profession2():Print() end  
-    if(self:RaiderIO() ~= nil) then self:RaiderIO():Print() end
-    if(self:MythicKey()) ~= nil then self:MythicKey():Print() end
-end
---#endregion
-
 --#region Properties
 function XFC.Unit:IsPlayer()
     return self:GetGUID() == XF.Player.GUID
@@ -263,7 +229,7 @@ function XFC.Unit:Zone(inZone)
     if(inZone ~= nil) then
         self.zone = inZone
     end
-    self.zone
+    return self.zone
 end
 
 function XFC.Unit:Note(inNote)
@@ -519,7 +485,37 @@ function XFC.Unit:MythicKey(inKey)
 end
 --#endregion
 
---#region Networking Methods
+--#region Methods
+function XFC.Unit:Print()
+    self:ParentPrint()
+    XF:Debug(self:GetObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
+    XF:Debug(self:GetObjectName(), '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
+    XF:Debug(self:GetObjectName(), '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
+    XF:Debug(self:GetObjectName(), '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
+    XF:Debug(self:GetObjectName(), '  note (' .. type(self.note) .. '): ' .. tostring(self.note))
+    XF:Debug(self:GetObjectName(), '  presence (' .. type(self.presence) .. '): ' .. tostring(self.presence))
+    XF:Debug(self:GetObjectName(), '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
+    XF:Debug(self:GetObjectName(), '  updatedTime (' .. type(self.updatedTime) .. '): ' .. tostring(self.updatedTime))
+    XF:Debug(self:GetObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
+    XF:Debug(self:GetObjectName(), '  isAlt (' .. type(self.isAlt) .. '): ' .. tostring(self.isAlt))
+    XF:Debug(self:GetObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
+    XF:Debug(self:GetObjectName(), '  isPlayer (' .. type(self.isPlayer) .. '): ' .. tostring(self.isPlayer))
+    XF:Debug(self:GetObjectName(), '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
+    XF:Debug(self:GetObjectName(), '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
+    XF:Debug(self:GetObjectName(), '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
+    XF:Debug(self:GetObjectName(), '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
+    if(self:Zone() ~= nil) then self:Zone():Print() end
+    if(self:Version() ~= nil) then self:Version():Print() end
+    if(self:Guild() ~= nil) then self:Guild():Print() end
+    if(self:Team() ~= nil) then self:Team():Print() end
+    if(self:Race() ~= nil) then self:Race():Print() end
+    if(self:Spec() ~= nil) then self:Spec():Print() end
+    if(self:Profession1()) ~= nil then self:Profession1():Print() end
+    if(self:Profession2() ~= nil) then self:Profession2():Print() end  
+    if(self:RaiderIO() ~= nil) then self:RaiderIO():Print() end
+    if(self:MythicKey()) ~= nil then self:MythicKey():Print() end
+end
+
 function XFC.Unit:Broadcast(inSubject)
     assert(type(inSubject) == 'string' or inSubject == nil)
 	if(inSubject == nil) then inSubject = XF.Enum.Message.DATA end
@@ -613,9 +609,7 @@ function XFC.Unit:Deserialize(inSerialized)
         self:Zone(XFO.Zones:Get('?'))
     end
 end
---#endregion
 
---#region Operators
 -- Usually a key check is enough for equality check, but use case is to detect any data differences
 function XFC.Unit:Equals(inUnit)
     if(inUnit == nil) then return false end

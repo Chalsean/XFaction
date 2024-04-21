@@ -22,58 +22,37 @@ function XFC.Timer:new()
 end
 --#endregion
 
---#region Print
-function XFC.Timer:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
-    XF:Debug(self:GetObjectName(), '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
-    XF:Debug(self:GetObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
-    XF:Debug(self:GetObjectName(), '  lastRan (' .. type(self.lastRan) .. '): ' .. tostring(self.lastRan))
-    XF:Debug(self:GetObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-    XF:Debug(self:GetObjectName(), '  isRepeat (' .. type(self.isRepeat) .. '): ' .. tostring(self.isRepeat))
-    XF:Debug(self:GetObjectName(), '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-    XF:Debug(self:GetObjectName(), '  ttl (' .. type(self.ttl) .. '): ' .. tostring(self.ttl))
-    XF:Debug(self:GetObjectName(), '  maxAttempts (' .. type(self.maxAttempts) .. '): ' .. tostring(self.maxAttempts))
-    XF:Debug(self:GetObjectName(), '  attempt (' .. type(self.attempt) .. '): ' .. tostring(self.attempt))
-end
---#endregion
-
---#region Accessors
-function XFC.Timer:GetStartTime()
+--#region Properties
+function XFC.Timer:StartTime(inEpochTime)
+    assert(type(inEpochTime) == 'number' or inEpochTime == nil, 'argument must be number or nil')
+    if(inEpochTime ~= nil) then
+        self.startTime = inEpochTime
+    end
     return self.startTime
 end
 
-function XFC.Timer:SetStartTime(inEpochTime)
-    assert(type(inEpochTime) == 'number')
-    self.startTime = inEpochTime
-end
-
-function XFC.Timer:GetDelta()
+function XFC.Timer:Delta(inDelta)
+    assert(type(inDelta) == 'number' or inDelta == nil, 'argument must be number or nil')
+    if(inDelta ~= nil) then
+        self.delta = inDelta
+    end
     return self.delta
 end
 
-function XFC.Timer:SetDelta(inDelta)
-    assert(type(inDelta) == 'number')
-    self.delta = inDelta
-end
-
-function XFC.Timer:GetCallback()
+function XFC.Timer:Callback(inCallback)
+    assert(type(inCallback) == 'function' or inCallback == nil, 'argument must be function or nil')
+    if(inCallback ~= nil) then
+        self.callback = inCallback
+    end
     return self.callback
 end
 
-function XFC.Timer:SetCallback(inCallback)
-    assert(type(inCallback) == 'function')
-    self.callback = inCallback
-    return self:GetCallback()
-end
-
-function XFC.Timer:GetLastRan()
+function XFC.Timer:LastRan(inLastRan)
+    assert(type(inLastRan) == 'number' or inLastRan == nil, 'argument must be number or nil')
+    if(inLastRan ~= nil) then
+        self.lastRan = inLastRan
+    end
     return self.lastRan
-end
-
-function XFC.Timer:SetLastRan(inLastRan)
-    assert(type(inLastRan) == 'number')
-    self.lastRan = inLastRan
 end
 
 function XFC.Timer:IsEnabled(inBoolean)
@@ -100,69 +79,72 @@ function XFC.Timer:IsInstance(inBoolean)
 	return self.inInstance
 end
 
-function XFC.Timer:HasTimeToLive()
-    return self.ttl ~= nil
-end
-
-function XFC.Timer:GetTimeToLive()
+function XFC.Timer:TimeToLive(inTime)
+    assert(type(inTime) == 'number' or inTime == null, 'argument must be number or nil')
+    if(inTime ~= nil) then
+        self.ttl = inTime
+    end
     return self.ttl
 end
 
-function XFC.Timer:SetTimeToLive(inTime)
-    assert(type(inTime) == 'number')
-    self.ttl = inTime
-end
-
-function XFC.Timer:HasMaxAttempts()
-    return self.maxAttempts ~= nil
-end
-
-function XFC.Timer:GetMaxAttempts()
-    return self.maxAttempts
-end
-
-function XFC.Timer:SetMaxAttempts(inCount)
-    assert(type(inCount) == 'number')
-    self.maxAttempts = inCount
-end
-
-function XFC.Timer:GetAttempt()
+function XFC.Timer:Attempt(inCount)
+    assert(type(inCount) == 'number' or inCount == nil, 'argument must be number or nil')
+    if(inCount ~= nil) then
+        self.attempt = inCount
+    end
     return self.attempt
 end
 
-function XFC.Timer:SetAttempt(inCount)
-    assert(type(inCount) == 'number')
-    self.attempt = inCount
-end
-
-function XFC.Timer:Execute()
-    local callback = self:GetCallback()
-    try(function()
-        XF:Debug(self:GetObjectName(), 'Executing timer: ' .. self:GetName())
-        callback()
-    end).
-    catch(function(err)
-        XF:Warn(self:GetObjectName(), err)
-    end).
-    finally(function()
-        self:SetAttempt(self:GetAttempt() + 1)
-    end)
+function XFC.Timer:MaxAttempts(inCount)
+    assert(type(inCount) == 'number' or inCount == nil, 'argument must be number or nil')
+    if(inCount ~= nil) then
+        self.maxAttempts = inCount
+    end
+    return self.maxAttempts
 end
 --#endregion
 
---#region Start/Stop
+--#region Methods
+function XFC.Timer:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
+    XF:Debug(self:ObjectName(), '  delta (' .. type(self.delta) .. '): ' .. tostring(self.delta))
+    XF:Debug(self:ObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+    XF:Debug(self:ObjectName(), '  lastRan (' .. type(self.lastRan) .. '): ' .. tostring(self.lastRan))
+    XF:Debug(self:ObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+    XF:Debug(self:ObjectName(), '  isRepeat (' .. type(self.isRepeat) .. '): ' .. tostring(self.isRepeat))
+    XF:Debug(self:ObjectName(), '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+    XF:Debug(self:ObjectName(), '  ttl (' .. type(self.ttl) .. '): ' .. tostring(self.ttl))
+    XF:Debug(self:ObjectName(), '  maxAttempts (' .. type(self.maxAttempts) .. '): ' .. tostring(self.maxAttempts))
+    XF:Debug(self:ObjectName(), '  attempt (' .. type(self.attempt) .. '): ' .. tostring(self.attempt))
+end
+
+function XFC.Timer:Execute()
+    local callback = self:Callback()
+    try(function()
+        XF:Debug(self:ObjectName(), 'Executing timer: ' .. self:Name())
+        callback()
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end).
+    finally(function()
+        self:Attempt(self:Attempt() + 1)
+    end)
+end
+
 function XFC.Timer:Start()
     if(not self:IsEnabled()) then
-        self:SetStartTime(XFF.TimeGetCurrent())        
+        self:StartTime(XFF.TimeGetCurrent())        
         self:IsEnabled(true)
-        XF:Trace(self:GetObjectName(), 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
+        XF:Trace(self:ObjectName(), 'Started timer [%s] for [%d] seconds', self:Name(), self:Delta())
     end
 end
 
 function XFC.Timer:Stop()
     if(self:IsEnabled()) then
         self:IsEnabled(false)
-        XF:Trace(self:GetObjectName(), 'Stopped timer [%s]', self:GetName())
+        XF:Trace(self:ObjectName(), 'Stopped timer [%s]', self:Name())
     end
 end
 
@@ -172,6 +154,6 @@ function XFC.Timer:Restart()
 end
 
 function XFC.Timer:Reset()
-    self:SetLastRan(XFF.TimeGetCurrent())
+    self:LastRan(XFF.TimeGetCurrent())
 end
 --#endregion

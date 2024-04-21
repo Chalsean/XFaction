@@ -152,7 +152,7 @@ function XFC.DTLinks:OnEnter(this)
 	for _, target in XFO.Targets:Iterator() do
 		local targetName = format('%s%s', format(XF.Icons.String, target:GetFaction():GetIconID()), target:GetRealm():GetName())
 		self.tooltip:SetCell(line, i, targetName)
-		targetColumn[target:GetKey()] = i
+		targetColumn[target:Key()] = i
 		i = i + 1
 	end
 

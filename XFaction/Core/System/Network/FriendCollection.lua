@@ -16,9 +16,7 @@ end
 function XFC.FriendCollection:NewObject()
 	return XFC.Friend:new()
 end
---#endregion
 
---#region Initializers
 function XFC.FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -42,9 +40,13 @@ function XFC.FriendCollection:Initialize()
 end
 --#endregion
 
---#region Hash
+--#region Properties
+
+--#endregion
+
+--#region Methods
 function XFC.FriendCollection:HasFriends()
-    return self:GetCount() > 0
+    return self:Count() > 0
 end
 
 function XFC.FriendCollection:HasActiveFriends()
@@ -89,7 +91,7 @@ end
 function XFC.FriendCollection:GetByGameID(inGameID)
 	assert(type(inGameID) == 'number')
 	for _, friend in self:Iterator() do
-		if(friend:GetGameID() == inGameID) then
+		if(friend:GameID() == inGameID) then
 			return friend
 		end
 	end
@@ -99,7 +101,7 @@ function XFC.FriendCollection:GetByRealmUnitName(inRealm, inName)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
 	assert(type(inName) == 'string')
 	for _, friend in self:Iterator() do
-		if(inName == friend:GetName() and inRealm:Equals(friend:GetTarget():GetRealm())) then
+		if(inName == friend:Name() and inRealm:Equals(friend:Target():Realm())) then
 			return friend
 		end
 	 end
@@ -128,8 +130,8 @@ function XFC.FriendCollection:CheckFriend(inKey)
 		error(err)
 	end)
 
-	if(self:Contains(friend:GetKey())) then
-		if(self:Get(friend:GetKey():IsActive() ~= friend:IsActive())) then
+	if(self:Contains(friend:Key())) then
+		if(self:Get(friend:Key()):IsActive() ~= friend:IsActive()) then
 
 		friend = self:Get(accountInfo.bnetAccountID)
 	else
@@ -138,13 +140,13 @@ function XFC.FriendCollection:CheckFriend(inKey)
 
 	local canLink, target = CanLink(accountInfo)
 	if(canLink and target ~= nil) then
-		friend:SetTarget(target)
+		friend:Target(target)
 		if(not friend:IsActive()) then
-			XF:Info(self:GetObjectName(), 'Friend logged into supported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
+			XF:Info(self:ObjectName(), 'Friend logged into supported guild [%s:%d:%d:%d]', friend:Tag(), friend:AccountID(), friend:ID(), friend:GameID())
 			friend:IsActive(true)
 		end
 	elseif(friend:IsActive()) then
-		XF:Info(self:GetObjectName(), 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
+		XF:Info(self:ObjectName(), 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', friend:Tag(), friend:AccountID(), friend:ID(), friend:GameID())
 		friend:IsActive(false)
 	end
 end
@@ -157,7 +159,7 @@ function XFC.FriendCollection:CheckFriends()
 		end
 	end).
 	catch(function (err)
-		XF:Warn(self:GetObjectName(), err)
+		XF:Warn(self:ObjectName(), err)
 	end)
 end
 --#endregion
@@ -168,7 +170,7 @@ function XFC.FriendCollection:Backup()
 		if(self:IsInitialized()) then
 			for _, friend in self:Iterator() do
 				if(friend:IsRunningAddon()) then
-					XF.Cache.Backup.Friends[#XF.Cache.Backup.Friends + 1] = friend:GetKey()
+					XF.Cache.Backup.Friends[#XF.Cache.Backup.Friends + 1] = friend:Key()
 				end
 			end
 		end
@@ -186,11 +188,11 @@ function XFC.FriendCollection:Restore()
 			if(self:Contains(key)) then
 				local friend = self:Get(key)
 				friend:IsRunningAddon(true)
-				XF:Info(self:GetObjectName(), '  Restored %s friend information from backup', friend:GetTag())
+				XF:Info(self:ObjectName(), '  Restored %s friend information from backup', friend:GetTag())
 			end
 		end).
 		catch(function (err)
-			XF:Warn(self:GetObjectName(), 'Failed to restore friend list: ' .. err)
+			XF:Warn(self:ObjectName(), 'Failed to restore friend list: ' .. err)
 		end)
 	end
 	XF.Cache.Backup.Friends = {}
@@ -207,7 +209,7 @@ function XFC.FriendCollection:Ping()
 	    end
 	end).
 	catch(function (err)
-		XF:Warn(self:GetObjectName(), err)
+		XF:Warn(self:ObjectName(), err)
 	end)
 end
 --#endregion

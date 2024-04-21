@@ -29,19 +29,19 @@ function XFC.MythicKeyCollection:RefreshMyKey()
     if(level ~= nil and mapID ~= nil and XFO.Dungeons:Contains(mapID)) then    
         local key = nil
         if(self:HasMyKey()) then
-            key = self:GetMyKey()
+            key = self:MyKey()
         else
             key = XFC.MythicKey:new()
             key:Initialize()
             key:IsMyKey(true)
         end
 
-        key:SetID(level)
-        key:SetDungeon(XFO.Dungeons:Get(mapID))
-        key:SetKey(key:GetID() .. '.' .. key:GetDungeon():GetKey())
+        key:ID(level)
+        key:Dungeon(XFO.Dungeons:Get(mapID))
+        key:Key(key:ID() .. '.' .. key:Dungeon():Key())
 
         self:Add(key)
-        XF.Player.Unit:SetMythicKey(key)
+        XF.Player.Unit:MythicKey(key)
     end
 end
 --#endregion

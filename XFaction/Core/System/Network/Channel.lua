@@ -14,21 +14,13 @@ function XFC.Channel:new()
 end
 --#endregion
 
---#region Print
-function XFC.Channel:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
-end
---#endregion
-
---#region Accessors
-function XFC.Channel:GetPassword()
+--#region Properties
+function XFC.Channel:Password(inPassword)
+    assert(type(inPassword) == 'string' or inPassword == nil, 'argument must be string or nil')
+    if(inPassword ~= nil) then
+        self.password = inPassword
+    end
     return self.password
-end
-
-function XFC.Channel:SetPassword(inPassword)
-    assert(type(inPassword) == 'string')
-    self.password = inPassword
 end
 
 function XFC.Channel:IsCommunity(inBoolean)
@@ -38,12 +30,19 @@ function XFC.Channel:IsCommunity(inBoolean)
     end
     return self.community
 end
+--#endregion
 
-function XFC.Channel:SetColor()
-    if(XF.Config.Channels[self:GetName()] ~= nil) then
-        local color = XF.Config.Channels[self:GetName()]
-        XFF.ChatSetChannelColor('CHANNEL' .. self:GetID(), color.R, color.G, color.B)
-        XF:Debug(self:GetObjectName(), 'Set channel [%s] RGB [%f:%f:%f]', self:GetName(), color.R, color.G, color.B)
+--#region Methods
+function XFC.Channel:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
+end
+
+function XFC.Channel:Color()
+    if(XF.Config.Channels[self:Name()] ~= nil) then
+        local color = XF.Config.Channels[self:Name()]
+        XFF.ChatSetChannelColor('CHANNEL' .. self:ID(), color.R, color.G, color.B)
+        XF:Debug(self:ObjectName(), 'Set channel [%s] RGB [%f:%f:%f]', self:Name(), color.R, color.G, color.B)
     end
 end
 --#endregion

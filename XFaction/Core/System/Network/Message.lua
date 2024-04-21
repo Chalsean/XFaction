@@ -12,7 +12,7 @@ function XFC.Message:new()
     object.from = nil
     object.type = nil
     object.subject = nil
-    object.epochTime = nil
+    object.timeStamp = nil
     object.targets = nil
     object.targetCount = 0
     object.initialized = false
@@ -37,7 +37,7 @@ function XFC.Message:Deconstructor()
     self.from = nil
     self.type = nil
     self.subject = nil
-    self.epochTime = nil
+    self.timeStamp = nil
     self.targets = nil
     self.targetCount = 0
     self.data = nil
@@ -78,12 +78,30 @@ function XFC.Message:Subject(inSubject)
     return self.subject
 end
 
-function XFC.Message:EpochTime(inEpochTime)
+function XFC.Message:TimeStamp(inEpochTime)
     assert(type(inEpochTime) == 'number' or inEpochTime == nil, 'argument must be number or nil')
     if(inEpochTime ~= nil) then
-        self.epochTime = inEpochTime
+        self.timeStamp = inEpochTime
     end
-    return self.epochTime
+    return self.timeStamp
+end
+
+function XFC.Message:Data(inData)
+    if(inData ~= nil) then
+        self.data = inData
+    end
+    return self.data
+end
+
+function XFC.Message:Targets()
+    if(self:TargetCount() > 0) then
+        return self.targets
+    end
+    return {}
+end
+
+function XFC.Message:TargetCount()
+    return self.targetCount
 end
 --#endregion
 
@@ -93,29 +111,18 @@ function XFC.Message:Print()
     XF:Debug(self:ObjectName(), '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
     XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
-    XF:Debug(self:ObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
+    XF:Debug(self:ObjectName(), '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
     XF:Debug(self:ObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
     if(self:From() ~= nil) then self:From():Print() end
 end
---#endregion
-
-function XFC.Message:GetData()
-    return self.data
-end
-
-function XFC.Message:SetData(inData)
-    self.data = inData
-end
 
 function XFC.Message:IsMyMessage()
-    return self:GetFrom():Equals(XF.Player.Unit)
+    return self:From():IsPlayer()
 end
---#endregion
 
---#region Target
 function XFC.Message:ContainsTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    return self.targets[inTarget:GetKey()] ~= nil
+    return self.targets[inTarget:Key()] ~= nil
 end
 
 function XFC.Message:AddTarget(inTarget)
@@ -123,13 +130,13 @@ function XFC.Message:AddTarget(inTarget)
     if(not self:ContainsTarget(inTarget)) then
         self.targetCount = self.targetCount + 1
     end
-    self.targets[inTarget:GetKey()] = inTarget
+    self.targets[inTarget:Key()] = inTarget
 end
 
 function XFC.Message:RemoveTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
     if(self:ContainsTarget(inTarget)) then
-        self.targets[inTarget:GetKey()] = nil
+        self.targets[inTarget:Key()] = nil
         self.targetCount = self.targetCount - 1
     end
 end
@@ -146,19 +153,10 @@ function XFC.Message:HasTargets()
     return self.targetCount > 0
 end
 
-function XFC.Message:GetTargets()
-    if(self:HasTargets()) then return self.targets end
-    return {}
-end
-
-function XFC.Message:GetTargetCount()
-    return self.targetCount
-end
-
 function XFC.Message:GetRemainingTargets()
     local targetsString = ''
-    for _, target in pairs (self:GetTargets()) do
-        targetsString = targetsString .. '|' .. target:GetKey()
+    for _, target in pairs (self:Targets()) do
+        targetsString = targetsString .. '|' .. target:Key()
     end
     return targetsString
 end
@@ -176,23 +174,20 @@ function XFC.Message:SetRemainingTargets(inTargetString)
         end
     end
 end
---#endregion
 
---#region Network
--- I'm sure there's a cooler way of doing this but this works for me :)
 function XFC.Message:Serialize()
 	local data = {}
 
-	data.F = self:GetFrom():Serialize()
+	data.F = self:From():Serialize()
 	data.R = self:GetRemainingTargets()
-    data.S = self:GetSubject()
-    data.T = self:GetTo()	
-	data.Y = self:GetType()
+    data.S = self:Subject()
+    data.T = self:To()	
+	data.Y = self:Type()
 
-	return pickle(data)
+	return data
 end
 
-function ConvertLegacyUnit(inLegacy)
+local function ConvertLegacyUnit(inLegacy)
     local converted = {}
     
     converted.R = inLegacy.A
@@ -221,12 +216,12 @@ function XFC.Message:Deserialize(inData)
 	local decompressed = XF.Lib.Deflate:DecompressDeflate(inData)
 	local data = unpickle(decompressed)
 
-    XF:DataDumper(self:GetObjectName(), data)
+    XF:DataDumper(self:ObjectName(), data)
 
-    self:SetSubject(data.S)
-    if(data.T ~= nil) then self:SetTo(data.T) end
-    self:SetType(data.Y)    
-    self:SetTimeStamp(XFF.TimeGetCurrent())
+    self:Subject(data.S)
+    if(data.T ~= nil) then self:To(data.T) end
+    self:Type(data.Y)    
+    self:TimeStamp(XFF.TimeGetCurrent())
 
     local unit = nil
     try(function()
@@ -241,29 +236,29 @@ function XFC.Message:Deserialize(inData)
         -- Legacy format
         --else
             self:SetRemainingTargets(data.A)
-            self:SetData(data.D)
+            self:Data(data.D)
             -- Old data message
-            if(self:GetSubject() == XF.Enum.Message.DATA or self:GetSubject() == XF.Enum.Message.LOGIN) then
+            if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
                 unit:Deserialize(ConvertLegacyUnit(unpickle(data.D)))
-                self:SetFrom(unit)
+                self:From(unit)
             -- Old chat/achievement message
-            elseif(not self:GetSubject() == XF.Enum.Message.LINK) then
-                unit:SetName(data.N)
-                unit:SetUnitName(data.U)
+            elseif(not self:Subject() == XF.Enum.Message.LINK) then
+                unit:Name(data.N)
+                unit:UnitName(data.U)
                 if(data.M ~= nil) then
                     unit:IsAlt(true)
-                    unit:SetMainName(data.M)
+                    unit:MainName(data.M)
                 end            
                 if(XFO.Guilds:Contains(data.H)) then
-                    unit:SetGuild(XFO.Guilds:Get(data.H))
+                    unit:Guild(XFO.Guilds:Get(data.H))
                 end
-                self:SetFrom(unit)
+                self:From(unit)
             end            
         --end
         
     end).
     catch(function(err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
         XFO.Confederate:Push(unit)
     end)
 end
@@ -290,7 +285,7 @@ function XFC.Message:Segment(inProtocol)
     local totalPackets = ceil(strlen(encoded) / XF.Settings.Network.Chat.PacketSize)
     for i = 1, totalPackets do
         local segment = string.sub(encoded, XF.Settings.Network.Chat.PacketSize * (i - 1) + 1, XF.Settings.Network.Chat.PacketSize * i)
-        segment = tostring(i) .. tostring(totalPackets) .. self:GetKey() .. segment
+        segment = tostring(i) .. tostring(totalPackets) .. self:Key() .. segment
         packets[#packets + 1] = segment
     end
 	return packets

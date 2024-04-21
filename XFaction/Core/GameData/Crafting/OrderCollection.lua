@@ -32,7 +32,7 @@ function XFC.OrderCollection:Backup()
 	try(function ()
         if(self:IsInitialized()) then
             for _, order in self:Iterator() do
-				XF.Cache.Backup.Orders[order:GetKey()] = order:Serialize()
+				XF.Cache.Backup.Orders[order:Key()] = order:Serialize()
             end
         end
     end).
@@ -49,7 +49,7 @@ function XFC.OrderCollection:Restore()
             order = self:Pop()
 			order:Deserialize(data)
 			self:Add(order)
-			XF:Info(self:GetObjectName(), '  Restored %s order information from backup', order:GetKey())
+			XF:Info(self:ObjectName(), '  Restored %s order information from backup', order:Key())
         end).
         catch(function (inErrorMessage)
             XF:Warn(ObjectName, inErrorMessage)

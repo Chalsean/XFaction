@@ -12,45 +12,46 @@ function XFC.MetricCollection:new()
 	object.startCalendar = nil
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.MetricCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		for _, metricName in pairs (XF.Enum.Metric) do
 			local metric = XFC.Metric:new()
 			metric:Initialize()
-			metric:SetKey(metricName)
-			metric:SetName(metricName)
+			metric:Key(metricName)
+			metric:Name(metricName)
 			self:Add(metric)
 		end
-		self:SetStartTime(XFF.TimeGetLocal())
+		self:StartTime(XFF.TimeGetCurrent())
+		self:StartCalendar(XFF.TimeGetCalendar())
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 --#endregion
 
---#region Print
-function XFC.MetricCollection:Print()
-	self:ParentPrint()
-	XF:Debug(self:GetObjectName(), '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
-end
---#endregion
-
---#region Accessors
-function XFC.MetricCollection:SetStartTime(inEpochTime)
+--#region Properties
+function XFC.MetricCollection:StartTime(inEpochTime)
 	assert(type(inEpochTime) == 'number')
-	self.startTime = inEpochTime
-	self.startCalendar = XFF.TimeGetCalendar()
-end
-
-function XFC.MetricCollection:GetStartTime()
+	if(inEpochTime ~= nil) then
+		self.startTime = inEpochTime
+	end
 	return self.startTime
 end
 
-function XFC.MetricCollection:GetStartCalendar()
+function XFC.MetricCollection:StartCalendar(inCalendar)
+	-- FIX:assert(type(inCalendar) == 'number' or nil, 'argument must be number or nil')
+	if(inCalendar ~= nil) then
+		self.startCalendar = inCalendar
+	end
 	return self.startCalendar
+end
+--#endregion
+
+--#region Methods
+function XFC.MetricCollection:Print()
+	self:ParentPrint()
+	XF:Debug(self:ObjectName(), '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
 end
 --#endregion

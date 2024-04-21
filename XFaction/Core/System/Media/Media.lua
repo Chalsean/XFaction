@@ -14,34 +14,31 @@ function XFC.Media:new()
 end
 --#endregion
 
---#region Print
-function XFC.Media:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
-    XF:Debug(self:GetObjectName(), '  path (' .. type(self.path) .. '): ' .. tostring(self.path))
-end
---#endregion
-
---#region Accessors
-function XFC.Media:GetType()
-    return self.type
+--#region Properties
+function XFC.Media:Type(inType)
+    assert(type(inType) == 'string' or inType == nil, 'argument must be string or nil')
+    if(inType ~= nil) then
+        self.type = inType
+    end
 end
 
-function XFC.Media:SetType(inType)
-    assert(type(inType) == 'string')
-    self.type = inType
-end
-
-function XFC.Media:GetPath()
+function XFC.Media:Path(inPath)
+    assert(type(inPath) == 'string' or inPatch == nil, 'argument must be string or nil')
+    if(inPatch ~= nil) then
+        self.path = inPath
+    end
     return self.path
 end
 
-function XFC.Media:SetPath(inPath)
-    assert(type(inPath) == 'string')
-    self.path = inPath
+function XFC.Media:Texture()
+    return format('%s', format(XF.Icons.Texture, self:Path()))
 end
+--#endregion
 
-function XFC.Media:GetTexture()
-    return format('%s', format(XF.Icons.Texture, self:GetPath()))
+--#region Methods
+function XFC.Media:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XF:Debug(self:ObjectName(), '  path (' .. type(self.path) .. '): ' .. tostring(self.path))
 end
 --#endregion

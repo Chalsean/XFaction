@@ -13,7 +13,7 @@ function XFC.TimerCollection:new()
 end
 --#endregion
 
---#region Hash
+--#region Methods
 function XFC.TimerCollection:Add(inArgs)
     assert(type(inArgs) == 'table')
     assert(type(inArgs.name) == 'string')
@@ -27,17 +27,17 @@ function XFC.TimerCollection:Add(inArgs)
 
     local timer = XFC.Timer:new()
     timer:Initialize()
-    timer:SetKey(inArgs.name)
-    timer:SetName(timer:GetKey())
-    timer:SetDelta(inArgs.delta)
-    timer:SetCallback(inArgs.callback)
+    timer:Key(inArgs.name)
+    timer:Name(timer:Key())
+    timer:Delta(inArgs.delta)
+    timer:Callback(inArgs.callback)
     timer:IsRepeat(inArgs.repeater)
     timer:IsInstance(inArgs.instance)
     if(inArgs.ttl ~= nil) then
-        timer:SetTimeToLive(inArgs.ttl)
+        timer:TimeToLive(inArgs.ttl)
     end
     if(inArgs.maxAttempts ~= nil) then
-        timer:SetMaxAttempts(inArgs.maxAttempts)
+        timer:MaxAttempts(inArgs.maxAttempts)
     end
     if(inArgs.start and (timer:IsInstance() or not XF.Player.InInstance)) then
         timer:Start()
@@ -52,9 +52,7 @@ function XFC.TimerCollection:Remove(inKey)
         self.parent.Remove(self, inKey)
     end
 end
---#endregion
 
---#region Start/Stop
 function XFC.TimerCollection:EnterInstance()
     for _, timer in self:Iterator() do
         if(timer:IsEnabled() and not timer:IsInstance()) then
@@ -85,16 +83,16 @@ function XFC.TimerCollection:Start()
 		function ()
 			local now = XFF.TimeGetCurrent()
 			for _, timer in self:Iterator() do
-				if(timer:IsEnabled() and timer:GetLastRan() < now - timer:GetDelta()) then
+				if(timer:IsEnabled() and timer:LastRan() < now - timer:Delta()) then
 					timer:Execute()
 					if(not timer:IsRepeat()) then
-						XF:Trace(self:GetObjectName(), 'Timer will stop due to not being a repeater')
+						XF:Trace(self:ObjectName(), 'Timer will stop due to not being a repeater')
 						timer:Stop()
-					elseif(timer:HasMaxAttempts() and timer:GetMaxAttempts() <= timer:GetAttempt()) then
-						XF:Trace(self:GetObjectName(), 'Timer will stop due to attempt limit [' .. tostring(timer:GetMaxAttempts()) .. '] being reached: ' .. timer:GetKey())
+					elseif(timer:MaxAttempts() ~= nil and timer:MaxAttempts() <= timer:Attempt()) then
+						XF:Trace(self:ObjectName(), 'Timer will stop due to attempt limit [' .. tostring(timer:MaxAttempts()) .. '] being reached: ' .. timer:Key())
 						timer:Stop()
-					elseif(timer:HasTimeToLive() and timer:GetStartTime() + timer:GetTimeToLive() < now) then
-						XF:Trace(self:GetObjectName(), 'Timer will stop due to time limit [' .. tostring(timer:GetTimeToLive()) .. '] being reached: ' .. timer:GetKey())
+					elseif(timer:TimeToLive() ~= nil and timer:StartTime() + timer:TimeToLive() < now) then
+						XF:Trace(self:ObjectName(), 'Timer will stop due to time limit [' .. tostring(timer:TimeToLive()) .. '] being reached: ' .. timer:Key())
 						timer:Stop()
 					else
 						timer:Reset()

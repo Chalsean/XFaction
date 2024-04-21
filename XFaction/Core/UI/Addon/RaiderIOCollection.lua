@@ -16,9 +16,7 @@ end
 function XFC.RaiderIOCollection:NewObject()
     return XFC.RaiderIO:new()
 end
---#endregion
 
---#region Initializers
 function XFC.RaiderIOCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -29,14 +27,14 @@ function XFC.RaiderIOCollection:Initialize()
 end
 --#endregion
 
---#region Hash
+--#region Methods
 function XFC.RaiderIOCollection:Get(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
     if(self:IsInitialized()) then
-        if(not self:Contains(inUnit:GetKey())) then
+        if(not self:Contains(inUnit:Key())) then
             self:AddUnit(inUnit)
         end
-        return self.parent.Get(self, inUnit:GetKey())
+        return self.parent.Get(self, inUnit:Key())
     end
 end
 
@@ -45,12 +43,12 @@ function XFC.RaiderIOCollection:AddUnit(inUnit)
     try(function ()
         local raiderIO = self:Pop()
         raiderIO:Initialize()
-        raiderIO:SetKey(inUnit:GetKey())
-        raiderIO:SetName(inUnit:GetUnitName())
+        raiderIO:SetKey(inUnit:Key())
+        raiderIO:SetName(inUnit:UnitName())
 
-        local profile = RaiderIO.GetProfile(inUnit:GetMainName(), inUnit:GetGuild():GetRealm():GetName())
+        local profile = RaiderIO.GetProfile(inUnit:MainName(), inUnit:Guild():Realm():Name())
         if(profile == nil) then
-            profile = RaiderIO.GetProfile(inUnit:GetName(), inUnit:GetGuild():GetRealm():GetName())
+            profile = RaiderIO.GetProfile(inUnit:Name(), inUnit:Guild():Realm():Name())
         end
         
         -- Raid
@@ -78,8 +76,8 @@ end
 
 function XFC.RaiderIOCollection:Remove(inRaiderIO)
     assert(type(inRaiderIO) == 'table' and inRaiderIO.__name ~= nil and inRaiderIO.__name == 'RaiderIO', 'argument must be RaiderIO object')
-    if(self:Contains(inRaiderIO:GetKey())) then
-        self.parent.Remove(self, inRaiderIO:GetKey())
+    if(self:Contains(inRaiderIO:Key())) then
+        self.parent.Remove(self, inRaiderIO:Key())
         self:Push(inRaiderIO)
     end
 end

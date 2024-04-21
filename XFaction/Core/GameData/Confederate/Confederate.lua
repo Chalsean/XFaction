@@ -56,7 +56,7 @@ end
 --#region Properties
 function XFC.Confederate:TargetCount(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    return self.countByTarget[inTarget:GetKey()] or 0
+    return self.countByTarget[inTarget:Key()] or 0
 end
 
 function XFC.Confederate:Initials()

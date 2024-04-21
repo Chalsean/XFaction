@@ -60,28 +60,28 @@ function GetMyOrders()
         local order = XFO.Orders:Pop()
         try(function ()
             order:SetKey(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
-            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:GetKey())) then
-                order:SetType(myOrder.orderType)
-                order:SetID(myOrder.orderID)
-                order:SetCustomerUnit(XF.Player.Unit)
+            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:Key())) then
+                order:Type(myOrder.orderType)
+                order:ID(myOrder.orderID)
+                order:Customer(XF.Player.Unit)
                 if(myOrder.crafterGuid ~= nil) then
-                    order:SetCrafterGUID(myOrder.crafterGuid)
-                    order:SetCrafterName(myOrder.crafterName)
+                    order:CrafterGUID(myOrder.crafterGuid)
+                    order:CrafterName(myOrder.crafterName)
                 end
 
                 local professionName = XFF.CraftingGetSkillProfession(myOrder.skillLineAbilityID)
                 if(professionName ~= nil and type(professionName) == 'string') then
-                    local profession = XF.Professions:GetByName(professionName)
+                    local profession = XF.Professions:Get(professionName)
                     if(profession ~= nil) then
-                        order:SetProfession(profession)
+                        order:Profession(profession)
                     end
                 end
 
                 local recipe = XFF.CraftingGetRecipe(myOrder.skillLineAbilityID)
-                order:SetRecipeID(recipe.recipeID)
+                order:RecipeID(recipe.recipeID)
 
                 if(recipe.supportsQualities and myOrder.minQuality > 0) then
-                    order:SetQuality(recipe.qualityIDs[myOrder.minQuality])
+                    order:Quality(recipe.qualityIDs[myOrder.minQuality])
                 end
 
                 -- This function is executed upon query of the player's orders, therefore we know the player is always the customer for IsPersonal
@@ -114,7 +114,7 @@ function XFC.OrderCollection:CraftOrder()
         QueryMyOrders()
     end).
     catch(function (err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 
@@ -125,7 +125,7 @@ function XFC.OrderCollection:RequestOrders()
         XFO.Events:Remove('CanRequestOrders')
     end).
     catch(function (err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 --#endregion

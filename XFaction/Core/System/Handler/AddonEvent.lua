@@ -129,17 +129,17 @@ function XF:InitializeConfig()
 					}
 				end
 				patchOrder = patchOrder + 1
-				XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:GetKey()] = {
+				XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:Key()] = {
 					order = patchOrder,
 					type = 'group',
-					name = version:GetKey(),
-					desc = 'Major: ' .. version:GetMajor() .. '\nMinor: ' .. version:GetMinor() .. '\nPatch: ' .. version:GetPatch(),
-					args = XF.ChangeLog[version:GetKey()],
+					name = version:Key(),
+					desc = 'Major: ' .. version:Major() .. '\nMinor: ' .. version:Minor() .. '\nPatch: ' .. version:Patch(),
+					args = XF.ChangeLog[version:Key()],
 				}
 				if(version:IsAlpha()) then
-					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:GetKey()].name = version:GetKey() .. ' |cffFF4700Alpha|r'
+					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:Key()].name = version:Key() .. ' |cffFF4700Alpha|r'
 				elseif(version:IsBeta()) then
-					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:GetKey()].name = version:GetKey() .. ' |cffFF7C0ABeta|r'
+					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:Key()].name = version:Key() .. ' |cffFF7C0ABeta|r'
 				end
 			end
 		end
@@ -147,14 +147,14 @@ function XF:InitializeConfig()
 		-- One time install logic
 		local version = XFC.Version:new()
 		if(XF.Config.InstallVersion ~= nil) then
-			version:SetKey(XF.Config.InstallVersion)
+			version:Key(XF.Config.InstallVersion)
 		else
-			version:SetKey('0.0.0')
+			version:Key('0.0.0')
 		end
 		if(version:IsNewer(XFO.Version, true)) then
 			XF:Info(ObjectName, 'Performing new install')	
 			XF:Install()
-			XF.Config.InstallVersion = XFO.Version:GetKey()
+			XF.Config.InstallVersion = XFO.Version:Key()
 		end
 	end).
 	catch(function (inErrorMessage)
@@ -172,7 +172,7 @@ function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
     try(function ()
         if(XFF.ClientGetAddonState(inAddonName) > 0) then
             if(inAddonName == XF.Name and not self:IsLoaded()) then
-                XF:Info(self:GetObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
+                XF:Info(self:ObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
                 --InitializeCache()
                 --InitializeConfig()
                 XFO.ElvUI:Initialize()
@@ -187,7 +187,7 @@ function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
         end
     end).
     catch(function (err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end)    
 end
 --#endregion

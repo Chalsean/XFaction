@@ -12,7 +12,7 @@ function XFC.HookCollection:new()
 end
 --#endregion
 
---#region Hash
+--#region Methods
 function XFC.HookCollection:Add(inArgs)
     assert(type(inArgs) == 'table')
     assert(type(inArgs.name) == 'string')
@@ -23,19 +23,18 @@ function XFC.HookCollection:Add(inArgs)
 
     local hook = XFC.Hook:new()
     hook:Initialize()
-    hook:SetKey(inArgs.name)
-    hook:SetOriginal(inArgs.original)
-    hook:SetCallback(inArgs.callback)
+    hook:Key(inArgs.name)
+    hook:Name(inArgs.original)
+    hook:OriginalFunction(_G[hook:Name()])
+    hook:Callback(inArgs.callback)
     hook:IsPreHook(inArgs.pre)
     if(inArgs.start) then
         hook:Start()
     end
     self.parent.Add(self, hook)
-    XF:Info('Hook', 'Hooked function %s', hook:GetOriginal())
+    XF:Info('Hook', 'Hooked function %s', hook:Name())
 end
---#endregion
 
---#region Start/Stop everything
 function XFC.HookCollection:EnableAll()
     for _, hook in self:Iterator() do
         if(not hook:IsEnabled()) then

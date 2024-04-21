@@ -13,7 +13,7 @@ function XFC.EventCollection:new()
 end
 --#endregion
 
---#region Hash
+--#region Methods
 function XFC.EventCollection:Add(inArgs)
     assert(type(inArgs) == 'table')
     assert(type(inArgs.name) == 'string')
@@ -25,16 +25,16 @@ function XFC.EventCollection:Add(inArgs)
 
     local event = XFC.Event:new()
     event:Initialize()
-    event:SetKey(inArgs.name)
-    event:SetName(inArgs.event)
-    event:SetCallback(inArgs.callback)
+    event:Key(inArgs.name)
+    event:Name(inArgs.event)
+    event:Callback(inArgs.callback)
     event:IsInstance(inArgs.instance)
     if(inArgs.groupDelta ~= nil) then
-        event:SetGroupDelta(inArgs.groupDelta)
+        event:GroupDelta(inArgs.groupDelta)
         XFO.Timers:Add({
-            name = event:GetKey(),
-            delta = event:GetGroupDelta(),
-            callback = event:GetCallback(),
+            name = event:Key(),
+            delta = event:GroupDelta(),
+            callback = event:Callback(),
             repeater = false,
             instance = event:IsInstance(),
             start = false
@@ -44,11 +44,9 @@ function XFC.EventCollection:Add(inArgs)
         event:Start()
     end
     self.parent.Add(self, event)
-    XF:Info('Event', 'Registered to receive [%s:%s] events', event:GetKey(), event:GetName())
+    XF:Info('Event', 'Registered to receive [%s:%s] events', event:Key(), event:Name())
 end
---#endregion
 
---#region Start/Stop
 function XFC.EventCollection:EnterInstance()
     for _, event in self:Iterator() do
         if(event:IsEnabled() and not event:IsInstance()) then
@@ -69,19 +67,18 @@ function XFC.EventCollection:EnableAll()
     end
 end
 
--- Start/Stop everything
 function XFC.EventCollection:Start()
     self.frame = CreateFrame('Frame')
     -- Handle the events as they happen
     self.frame:SetScript('OnEvent', function(_, inEvent, ...)
         -- Still actively listen for all events but only do something if enabled
         for _, event in self:Iterator() do
-            if(event:GetName() == inEvent and event:IsEnabled()) then
-                XF:Trace(ObjectName, 'Event fired: %s', event:GetName())
+            if(event:Name() == inEvent and event:IsEnabled()) then
+                XF:Trace(ObjectName, 'Event fired: %s', event:Name())
                 if(event:IsGroup()) then
-                    XFO.Timers:Get(event:GetKey()):Start()
+                    XFO.Timers:Get(event:Key()):Start()
                 else
-                    local _Function = event:GetCallback()
+                    local _Function = event:Callback()
                     _Function(self, ...)
                 end
             end
@@ -90,7 +87,7 @@ function XFC.EventCollection:Start()
 
     for _, event in self:Iterator() do
         if(event:IsEnabled()) then
-            self.frame:RegisterEvent(event:GetName())
+            self.frame:RegisterEvent(event:Name())
         end
     end
 end

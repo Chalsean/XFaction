@@ -45,7 +45,7 @@ function XFC.ElvUI:AddTags()
         local guildName = GetGuildInfo(inNameplate)
         try(function ()
             if(XF.Initialized and (XF.Confederate:Contains(guid) or XF.Guilds:ContainsName(guildName))) then
-                guildName = XF.Confederate:GetKey()
+                guildName = XF.Confederate:Key()
             end
         end)
         if(guildName ~= nil) then
@@ -59,9 +59,9 @@ function XFC.ElvUI:AddTags()
         local guildName = GetGuildInfo(inNameplate)
         try(function ()
             if(XF.Initialized and XF.Confederate:Contains(guid)) then
-                guildName = XF.Confederate:Get(guid):GetGuild():GetInitials()
+                guildName = XF.Confederate:Get(guid):Guild():Initials()
             elseif(XF.Initialized and XF.Guilds:ContainsName(guildName)) then
-                guildName = XF.Guilds:GetByName(guildName):GetInitials()
+                guildName = XF.Guilds:GetByName(guildName):Initials()
             end
         end)
         if(guildName ~= nil) then

@@ -325,7 +325,7 @@ XF.Options = {
 				},
 				Bar = {
 					order = 2,
-					name = format("|cffffffff%s|r", XFO.Version and XFO.Version:GetKey() or XF.Version),
+					name = format("|cffffffff%s|r", XFO.Version and XFO.Version:Key() or XF.Version),
 					type = 'header'
 				},
 				About = {

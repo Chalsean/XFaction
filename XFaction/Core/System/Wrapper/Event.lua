@@ -16,24 +16,13 @@ function XFC.Event:new()
 end
 --#endregion
 
---#region Print
-function XFC.Event:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
-    XF:Debug(self:GetObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-    XF:Debug(self:GetObjectName(), '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-    XF:Debug(self:GetObjectName(), '  groupDelta (' .. type(self.groupDelta) .. '): ' .. tostring(self.groupDelta))
-end
---#endregion
-
---#region Accessors
-function XFC.Event:GetCallback()
+--#region Properties
+function XFC.Event:Callback(inCallback)
+    assert(type(inCallback) == 'function' or inCallback == nil, 'argument must be function or nil')
+    if(inCallback ~= nil) then
+        self.callback = inCallback
+    end
     return self.callback
-end
-
-function XFC.Event:SetCallback(inCallback)
-    assert(type(inCallback) == 'function')
-    self.callback = inCallback
 end
 
 function XFC.Event:IsEnabled(inBoolean)
@@ -56,28 +45,35 @@ function XFC.Event:IsGroup()
     return self.groupDelta > 0
 end
 
-function XFC.Event:GetGroupDelta()
+function XFC.Event:GroupDelta(inGroupDelta)
+    assert(type(inGroupDelta) == 'number' or inGroupDelta == nil, 'argument must be number or nil')
+    if(inGroupDelta ~= nil) then
+        self.groupDelta = inGroupDelta
+    end
     return self.groupDelta
-end
-
-function XFC.Event:SetGroupDelta(inGroupDelta)
-    assert(type(inGroupDelta) == 'number')
-    self.groupDelta = inGroupDelta
 end
 --#endregion
 
---#region Start/Stop
+--#region Methods
+function XFC.Event:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+    XF:Debug(self:ObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+    XF:Debug(self:ObjectName(), '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+    XF:Debug(self:ObjectName(), '  groupDelta (' .. type(self.groupDelta) .. '): ' .. tostring(self.groupDelta))
+end
+
 function XFC.Event:Start()
     if(not self:IsEnabled()) then
         self:IsEnabled(true)
---        XF:Debug(self:GetObjectName(), 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
+        XF:Debug(self:ObjectName(), 'Started event listener [%s] for [%s]', self:Key(), self:Name())
     end
 end
 
 function XFC.Event:Stop()
     if(self:IsEnabled()) then
         self:IsEnabled(false)
-        XF:Debug(self:GetObjectName(), 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
+        XF:Debug(self:ObjectName(), 'Stopped event listener [%s] for [%s]', self:Key(), self:Name())
     end
 end
 --#endregion

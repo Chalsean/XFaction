@@ -22,8 +22,8 @@ function XF:CoreInit()
 
 	-- Log XFaction version
 	XFO.Versions = XFC.VersionCollection:new(); XFO.Versions:Initialize()
-	XFO.Version = XFO.Versions:GetCurrent()
-	XF:Info(ObjectName, 'XFaction version [%s]', XFO.Version:GetKey())
+	XFO.Version = XFO.Versions:Current()
+	XF:Info(ObjectName, 'XFaction version [%s]', XFO.Version:Key())
 	
 	-- Confederate
 	XFO.Regions = XFC.RegionCollection:new(); XFO.Regions:Initialize()
@@ -48,10 +48,9 @@ function XF:CoreInit()
 
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
-	XFO.Friends = XFC.FriendCollection:new()
-	XFO.Links = XFC.LinkCollection:new()
-	XFO.Nodes = XFC.NodeCollection:new()
-	XFO.BNet = XFC.BNet:new()
+	--XFO.Friends = XFC.FriendCollection:new()
+	--XFO.Links = XFC.LinkCollection:new()
+	--XFO.BNet = XFC.BNet:new()
 	XFO.Chat = XFC.Chat:new()
 	
 	-- Unit
@@ -69,7 +68,7 @@ function XF:CoreInit()
 
 	-- Player
 	XF.Player.GUID = XFF.PlayerGetGUID('player')
-	XF.Player.Faction = XFO.Factions:GetByName(XFF.PlayerGetFaction('player'))
+	XF.Player.Faction = XFO.Factions:Get(XFF.PlayerGetFaction('player'))
 	XF.Player.InInstance = XFF.PlayerIsInGuild()
 	
 	-- DataText
@@ -79,8 +78,8 @@ function XF:CoreInit()
 
 	-- Client
 	XFO.Expansions = XFC.ExpansionCollection:new(); XFO.Expansions:Initialize()
-	XFO.WoW = XFO.Expansions:GetCurrent()
-	XF:Info(ObjectName, 'WoW client version [%s:%s]', XFO.WoW:GetName(), XFO.WoW:GetVersion():GetKey())
+	XFO.WoW = XFO.Expansions:Current()
+	XF:Info(ObjectName, 'WoW client version [%s:%s]', XFO.WoW:Name(), XFO.WoW:Version():Key())
 
 	-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
 	XFO.InitTimers:Add({
@@ -241,7 +240,7 @@ function XF:LoginChannel()
 	try(function()
 		XFO.Channels:Sync()
 		if(XFO.Channels:HasLocalChannel()) then
-			XFO.Channels:SetLast(XFO.Channels:GetLocalChannel():GetKey())
+			XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
 			XFO.InitTimers:Stop()
 		end
 	end).

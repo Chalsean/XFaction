@@ -13,16 +13,16 @@ function XFC.MediaCollection:new()
 end
 --#endregion
 
---#region Hash
+--#region Methods
 function XFC.MediaCollection:Add(inName, inType)
     assert(type(inName) == 'string')
 	assert(type(inType) == 'string')
 	local media = XFC.Media:new()
 	media:Initialize()
-	media:SetKey(inName)
-	media:SetName(inName)
-	media:SetType(inType)
-	media:SetPath(MediaPath .. inType .. '/' .. inName .. '.blp')
+	media:Key(inName)
+	media:Name(inName)
+	media:Type(inType)
+	media:Path(MediaPath .. inType .. '/' .. inName .. '.blp')
 	self.parent.Add(self, media)
 end
 --#endregion

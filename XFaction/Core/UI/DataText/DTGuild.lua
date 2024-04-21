@@ -109,61 +109,61 @@ local function PreSort()
 		if(unit:IsOnline()) then
 			local unitData = {}
 
-			unitData.Level = unit:GetLevel()
-			unitData.Realm = unit:GetGuild():GetRealm():GetName()
-			unitData.Guild = unit:GetGuild():GetName()		
-			unitData.Name = unit:GetName()
-			unitData.UnitName = unit:GetUnitName()
-			unitData.Note = unit:GetNote()
-			unitData.GUID = unit:GetGUID()
-			unitData.Achievement = unit:GetAchievementPoints()
-			unitData.Rank = unit:GetRank()
-			unitData.ItemLevel = unit:GetItemLevel()	
-			unitData.Race = unit:GetRace():GetName()
+			unitData.Level = unit:Level()
+			unitData.Realm = unit:Guild():Realm():Name()
+			unitData.Guild = unit:Guild():Name()		
+			unitData.Name = unit:Name()
+			unitData.UnitName = unit:UnitName()
+			unitData.Note = unit:Note()
+			unitData.GUID = unit:GUID()
+			unitData.Achievement = unit:Achievements()
+			unitData.Rank = unit:Rank()
+			unitData.ItemLevel = unit:ItemLevel()	
+			unitData.Race = unit:Race():Name()
 			if(unit:HasTeam()) then 
-				unitData.Team = unit:GetTeam():GetName() 
+				unitData.Team = unit:Team():Name() 
 			else
 				unitData.Team = 'Unknown'
 			end
-			unitData.Class = unit:GetSpec():GetClass():GetHex()
-			unitData.Faction = unit:GetRace():GetFaction():GetIconID()
-			unitData.PvP = unit:GetPvP()
+			unitData.Class = unit:Spec():Class():Hex()
+			unitData.Faction = unit:Race():Faction():IconID()
+			unitData.PvP = unit:PvP()
 
 			if(unit:HasRaiderIO()) then
-				unitData.Raid = unit:GetRaiderIO():GetRaid()
-				unitData.Dungeon = unit:GetRaiderIO():GetDungeon()			
+				unitData.Raid = unit:RaiderIO():Raid()
+				unitData.Dungeon = unit:RaiderIO():Dungeon()			
 			end
 
 			if(unit:HasVersion()) then
-				unitData.Version = unit:GetVersion():GetKey()
+				unitData.Version = unit:Version():Key()
 			else
 				unitData.Version = '0.0.0'
 			end
 
 			if(unit:IsAlt() and unit:HasMainName() and XF.Config.DataText.Guild.Main) then
-				unitData.Name = unit:GetName() .. ' (' .. unit:GetMainName() .. ')'
+				unitData.Name = unit:Name() .. ' (' .. unit:MainName() .. ')'
 			end
 
 			if(unit:HasSpec()) then
-				unitData.Spec = unit:GetSpec():GetIconID()
+				unitData.Spec = unit:Spec():IconID()
 			end
 
 			if(unit:HasProfession1()) then
-				unitData.Profession1 = unit:GetProfession1():GetIconID()
+				unitData.Profession1 = unit:Profession1():IconID()
 			end
 
 			if(unit:HasProfession2()) then
-				unitData.Profession2 = unit:GetProfession2():GetIconID()
+				unitData.Profession2 = unit:Profession2():IconID()
 			end
 
 			if(unit:HasZone()) then
-				unitData.Zone = unit:GetZone():GetLocaleName()
+				unitData.Zone = unit:Zone():LocaleName()
 			else
-				unitData.Zone = unit:GetZoneName()
+				unitData.Zone = unit:ZoneName()
 			end
 
-			if(unit:HasMythicKey() and unit:GetMythicKey():HasDungeon()) then
-				unitData.MythicKey = unit:GetMythicKey():GetDungeon():GetName() .. ' +' .. unit:GetMythicKey():GetID()
+			if(unit:HasMythicKey() and unit:MythicKey():HasDungeon()) then
+				unitData.MythicKey = unit:MythicKey():Dungeon():Name() .. ' +' .. unit:MythicKey():ID()
 			end
 
 			list[#list + 1] = unitData
