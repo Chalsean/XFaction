@@ -28,22 +28,20 @@ function XFC.ProfessionCollection:new()
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.ProfessionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		for id, data in pairs (ProfessionData) do
 			local professionData = string.Split(data, ',')
 			local profession = XFC.Profession:new()
-			profession:SetID(tonumber(id))
-			profession:SetIconID(tonumber(professionData[2]))
-			profession:SetName(professionData[1])
-			profession:SetKey(tonumber(id))
+			profession:ID(tonumber(id))
+			profession:IconID(tonumber(professionData[2]))
+			profession:Name(professionData[1])
+			profession:Key(tonumber(id))
 			profession:IsInitialized(true)
 			self:Add(profession)
-			XF:Info(self:GetObjectName(), 'Initialized profession [%d:%s]', profession:GetID(), profession:GetName())
+			XF:Info(self:ObjectName(), 'Initialized profession [%d:%s]', profession:ID(), profession:Name())
 		end
 		self:IsInitialized(true)
 	end

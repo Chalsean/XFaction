@@ -12,25 +12,23 @@ function XFC.Faction:new()
     object.language = nil
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.Faction:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        if(self:GetName() ~= nil) then
+        if(self:Name() ~= nil) then
             if(self.name == 'Horde') then
-                self:SetIconID(XF.Icons.Horde)
-                self:SetLanguage('Orcish')
-                self:SetID('H')
-            elseif(self:GetName() == 'Alliance') then
-                self:SetIconID(XF.Icons.Alliance)
-                self:SetLanguage('Common')
-                self:SetID('A')
+                self:IconID(XF.Icons.Horde)
+                self:Language('Orcish')
+                self:ID('H')
+            elseif(self:Name() == 'Alliance') then
+                self:IconID(XF.Icons.Alliance)
+                self:Language('Common')
+                self:ID('A')
             else
-                self:SetIconID(XF.Icons.Neutral)
-                self:SetLanguage('Common')
-                self:SetID('N')
+                self:IconID(XF.Icons.Neutral)
+                self:Language('Common')
+                self:ID('N')
             end
         end
         self:IsInitialized(true)
@@ -38,42 +36,40 @@ function XFC.Faction:Initialize()
 end
 --#endregion
 
---#region Print
-function XFC.Faction:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
-    XF:Debug(self:GetObjectName(), '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
-end
---#endregion
-
---#region Accessors
-function XFC.Faction:GetIconID()
+--#region Properties
+function XFC.Faction:IconID(inIconID)
+    assert(type(inIconID) == 'number' or inIconID == nil, 'argument must be number or nil')
+    if(inIconID ~= nil) then
+        self.iconID = inIconID
+    end
     return self.iconID
 end
 
-function XFC.Faction:SetIconID(inIconID)
-    assert(type(inIconID) == 'number')
-    self.iconID = inIconID
-end
-
-function XFC.Faction:GetLanguage()
+function XFC.Faction:Language(inLanguage)
+    assert(type(inLanguage) == 'string' or inLanguage == nil, 'argument must be string or nil')
+    if(inLanguage ~= nil) then
+        self.language = inLanguage
+    end
     return self.language
 end
 
-function XFC.Faction:SetLanguage(inLanguage)
-    assert(type(inLanguage) == 'string')
-    self.language = inLanguage
-end
-
 function XFC.Faction:IsAlliance()
-    return self:GetID() == 'A'
+    return self:ID() == 'A'
 end
 
 function XFC.Faction:IsHorde()
-    return self:GetID() == 'H'
+    return self:ID() == 'H'
 end
 
 function XFC.Faction:IsNeutral()
-    return self:GetID() == 'N'
+    return self:ID() == 'N'
+end
+--#endregion
+
+--#region Methods
+function XFC.Faction:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+    XF:Debug(self:ObjectName(), '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
 end
 --#endregion

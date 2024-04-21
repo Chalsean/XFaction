@@ -12,9 +12,7 @@ function XFC.Continent:new()
     object.localeName = nil
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.Continent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -24,45 +22,37 @@ function XFC.Continent:Initialize()
 end
 --#endregion
 
---#region Print
-function XFC.Continent:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
-    XF:Debug(self:GetObjectName(), '  IDs: ')
-    XF:DataDumper(self:GetObjectName(), self.IDs)
-end
---#endregion
-
---#region Array
-function XFC.Continent:HasID(inID)
-    assert(type(inID) == 'number')
+--#region Properties
+function XFC.Continent:ID(inID)
+    assert(type(inID) == 'number' or inID == nil, 'argument must be number or nil')
+    if(inID == nil) then
+        if(#self.IDs > 0) then
+            return self.IDs[1]
+        end
+        return nil
+    end
     for _, ID in ipairs(self.IDs) do
         if(ID == inID) then
             return true
         end
     end
-    return false
-end
-
-function XFC.Continent:GetID()
-    if(#self.IDs > 0) then
-        return self.IDs[1]
-    end
-end
-
-function XFC.Continent:AddID(inID)
-    assert(type(inID) == 'number')
     self.IDs[#self.IDs + 1] = inID
+end
+
+function XFC.Continent:LocaleName(inName)
+    assert(type(inName) == 'string' or inName == nil, 'argument must be string or nil')
+    if(inName ~= nil) then
+        self.localeName = inName
+    end
+    return self.localeName
 end
 --#endregion
 
---#region Accessors
-function XFC.Continent:GetLocaleName()
-    return self.localeName or self:GetName()
-end
-
-function XFC.Continent:SetLocaleName(inName)
-    assert(type(inName) == 'string')
-    self.localeName = inName
+--#region Methods
+function XFC.Continent:Print()
+    self:ParentPrint()
+    XF:Debug(self:GetObjectName(), '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
+    XF:Debug(self:GetObjectName(), '  IDs: ')
+    XF:DataDumper(self:GetObjectName(), self.IDs)
 end
 --#endregion

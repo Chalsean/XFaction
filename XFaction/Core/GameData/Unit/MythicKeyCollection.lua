@@ -15,27 +15,21 @@ function XFC.MythicKeyCollection:new()
 end
 --#endregion
 
---#region Hash
-function XFC.MythicKeyCollection:Add(inMythicKey)
-    assert(type(inMythicKey) == 'table' and inMythicKey.__name ~= nil and inMythicKey.__name == 'MythicKey', 'argument must be MythicKey object')
-    if(inMythicKey.IsMyKey()) then
-        self:SetMyKey(inMythicKey)
-    end
-    self.parent.Add(self, inMythicKey)
+--#region Properties
+function XFC.MythicKeyCollection:MyKey(inMythicKey)
+    assert(type(inMythicKey) == 'table' and inMythicKey.__name == 'MythicKey', 'argument must be MythicKey object')
+    self.myKey = inMythicKey
 end
 --#endregion
 
---#region Accessors
-function XFC.MythicKeyCollection:HasMyKey()
-    return self.myKey ~= nil
-end
-
-function XFC.MythicKeyCollection:GetMyKey()
-    return self.myKey
-end
-
-function XFC.MythicKeyCollection:SetMyKey(inMythicKey)
-    assert(type(inMythicKey) == 'table' and inMythicKey.__name ~= nil and inMythicKey.__name == 'MythicKey', 'argument must be MythicKey object')
-    self.myKey = inMythicKey
+--#region Methods
+function XFC.MythicKeyCollection:Add(inMythicKey)
+    assert(type(inMythicKey) == 'table' and inMythicKey.__name == 'MythicKey', 'argument must be MythicKey object')
+    if(inMythicKey.IsMyKey()) then
+        self:MyKey(inMythicKey)
+    end
+    if(not self:Contains(inMythicKey:Key())) then
+        self.parent.Add(self, inMythicKey)
+    end
 end
 --#endregion

@@ -23,9 +23,7 @@ function XFC.DungeonCollection:new()
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.DungeonCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -33,11 +31,11 @@ function XFC.DungeonCollection:Initialize()
         for id, name in pairs (NameData) do
             local dungeon = XFC.Dungeon:new()
             dungeon:Initialize()
-            dungeon:SetKey(id)
-            dungeon:SetID(id)
-            dungeon:SetName(name)
+            dungeon:Key(id)
+            dungeon:ID(id)
+            dungeon:Name(name)
             self:Add(dungeon)
-            XF:Info(self:GetObjectName(), "Initialized dungeon [%d:%s]", dungeon:GetID(), dungeon:GetName())
+            XF:Info(self:ObjectName(), "Initialized dungeon [%d:%s]", dungeon:ID(), dungeon:Name())
         end
 
 		self:IsInitialized(true)

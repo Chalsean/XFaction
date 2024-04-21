@@ -11,9 +11,7 @@ function XFC.ZoneCollection:new()
 	object.zoneByID = {}
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.ZoneCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -39,81 +37,86 @@ function XFC.ZoneCollection:Initialize()
 						if(not XFO.Continents:Contains(zoneName)) then
 							local continent = XFC.Continent:new()
 							continent:Initialize()
-							continent:SetKey(zoneName)
-							continent:AddID(zoneID)
-							continent:SetName(zoneName)
-							if(zoneLocale[continent:GetName()]) then
-								continent:SetLocaleName(zoneLocale[continent:GetName()])
+							continent:Key(zoneName)
+							continent:ID(zoneID)
+							continent:Name(zoneName)
+							if(zoneLocale[continent:Name()]) then
+								continent:LocaleName(zoneLocale[continent:Name()])
 							end
 							XFO.Continents:Add(continent)
-							XF:Info(self:GetObjectName(), 'Initialized continent [%s]', continent:GetName())
-							alreadyAdded[continent:GetName()] = true
+							XF:Info(self:ObjectName(), 'Initialized continent [%s]', continent:Name())
+							alreadyAdded[continent:Name()] = true
 						end
 
 					elseif(not self:Contains(zoneName)) then
 						local zone = XFC.Zone:new()
 						zone:Initialize()
-						zone:SetKey(zoneName)
-						zone:AddID(zoneID)
-						zone:SetName(zoneName)
-						if(zoneLocale[zone:GetName()]) then
-							zone:SetLocaleName(zoneLocale[zone:GetName()])
+						zone:Key(zoneName)
+						zone:ID(zoneID)
+						zone:Name(zoneName)
+						if(zoneLocale[zone:Name()]) then
+							zone:LocaleName(zoneLocale[zone:Name()])
 						end
 						self:Add(zone)
-						alreadyAdded[zone:GetName()] = true
+						alreadyAdded[zone:Name()] = true
 					end
 				elseif(XFO.Continents:Contains(zoneName)) then
-					XFO.Continents:Get(zoneName):AddID(zoneID)
+					XFO.Continents:Get(zoneName):ID(zoneID)
 				else
-					self:Get(zoneName):AddID(zoneID)
+					self:Get(zoneName):ID(zoneID)
 				end
 			end
 		end
 
 		for _, zone in self:Iterator() do
-			local continentID = library:Execute('GetContinentMapID', zone:GetID())
+			local continentID = library:Execute('GetContinentMapID', zone:ID())
 			if(continentID) then
-				local continent = XFO.Continents:GetByID(tonumber(continentID))
+				local continent = XFO.Continents:Get(tonumber(continentID))
 				if(continent) then
-					zone:SetContinent(continent)
+					zone:Continent(continent)
 				end
 			end
 		end
 
-		self:AddZone('?')
+		self:Add('?')
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Hash
-function XFC.ZoneCollection:ContainsByID(inID)
-	assert(type(inID) == 'number')
-	return self.zoneByID[inID] ~= nil
+--#region Methods
+function XFC.ZoneCollection:Contains(inKey)
+	assert(type(inKey) == 'string' or type(inKey) == 'number', 'argument must be string or number')
+	if(type(inKey) == 'number') then
+		return self.zoneByID[inID] ~= nil
+	end
+	return self.parent.Contains(self, inKey)
 end
 
-function XFC.ZoneCollection:GetByID(inID)
-	assert(type(inID) == 'number')
-	return self.zoneByID[inID]
+function XFC.ZoneCollection:Get(inKey)
+	assert(type(inKey) == 'string' or type(inKey) == 'number', 'argument must be string or number')
+	if(type(inKey) == 'number') then
+		return self.zoneByID[inID]
+	end
+	return self.parent.Get(self, inKey)
 end
 
 function XFC.ZoneCollection:Add(inZone)
-    assert(type(inZone) == 'table' and inZone.__name == 'Zone', 'argument must be Zone object')
-	self.parent.Add(self, inZone)
-	for _, ID in inZone:IDIterator() do
-		self.zoneByID[ID] = inZone
-	end
-end
-
-function XFC.ZoneCollection:AddZone(inZoneName)
-	assert(type(inZoneName) == 'string')
-	if(not self:Contains(inZoneName)) then
-		local zone = XFC.Zone:new()
-		zone:Initialize()
-		zone:SetKey(inZoneName)
-		zone:SetName(inZoneName)
-		self:Add(zone)
-		XF:Info(self:GetObjectName(), 'Initialized zone [%s]', zone:GetName())
+    assert(type(inZone) == 'table' and inZone.__name == 'Zone' or type(inZone) == 'string', 'argument must be Zone object or string')
+	if(type(inZone) == 'string') then
+		if(not self:Contains(inZone)) then
+			local zone = XFC.Zone:new()
+			zone:Initialize()
+			zone:Key(inZone)
+			zone:Name(inZone)
+			self.parent.Add(self, zone)
+			XF:Info(self:ObjectName(), 'Initialized zone [%s]', zone:Name())
+		end
+	else
+		self.parent.Add(self, inZone)
+		if(inZone:ID() ~= nil) then
+			self.zoneByID[inZone:ID()] = inZone
+		end
 	end
 end
 --#endregion

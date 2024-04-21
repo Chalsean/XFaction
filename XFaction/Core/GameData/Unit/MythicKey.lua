@@ -14,25 +14,13 @@ function XFC.MythicKey:new()
 end
 --#endregion
 
---#region Print
-function XFC.MythicKey:Print()
-    self:ParentPrint()
-    if(self:HasDungeon()) then self:GetDungeon():Print() end
-end
---#endregion
-
---#region Accessors
-function XFC.MythicKey:HasDungeon()
-    return self.dungeon ~= nil
-end
-
-function XFC.MythicKey:GetDungeon()
+--#region Properties
+function XFC.MythicKey:Dungeon(inDungeon)
+    assert(type(inDungeon) == 'table' and inDungeon.__name == 'Dungeon' or inDungeon == nil, 'argument must be Dungeon object or nil')
+    if(inDungeon ~= nil) then
+        self.dungeon = inDungeon
+    end
     return self.dungeon
-end
-
-function XFC.MythicKey:SetDungeon(inDungeon)
-    assert(type(inDungeon) == 'table' and inDungeon.__name ~= nil and inDungeon.__name == 'Dungeon', 'argument must be Dungeon object')
-    self.dungeon = inDungeon
 end
 
 function XFC.MythicKey:IsMyKey(inBoolean)
@@ -44,16 +32,21 @@ function XFC.MythicKey:IsMyKey(inBoolean)
 end
 --#endregion
 
---#region Serialize
+--#region Methods
+function XFC.MythicKey:Print()
+    self:ParentPrint()
+    if(self:Dungeon() ~= nil) then self:Dungeon():Print() end
+end
+
 function XFC.MythicKey:Serialize()
-    return self:HasDungeon() and self:GetDungeon():GetKey() .. ';' .. self:GetID() or nil
+    return self:Dungeon():Key() .. ';' .. self:ID()
 end
 
 function XFC.MythicKey:Deserialize(data)
     local key = string.Split(data, ';') 
     if(XFO.Dungeons:Contains(tonumber(key[1]))) then
-        self:SetDungeon(XFO.Dungeons:Get(tonumber(key[1])))
+        self:Dungeon(XFO.Dungeons:Get(tonumber(key[1])))
     end
-    self:SetID(key[2])
+    self:ID(key[2])
 end
 --#endregion

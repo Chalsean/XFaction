@@ -27,9 +27,7 @@ end
 function XFC.Mailbox:NewObject()
 	return XFC.Message:new()
 end
---#endregion
 
---#region Initializers
 function XFC.Mailbox:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -46,7 +44,7 @@ function XFC.Mailbox:ParentInitialize()
 end
 --#endregion
 
---#region Hash
+--#region Methods
 function XFC.Mailbox:ContainsPacket(inKey)
 	assert(type(inKey) == 'string')
 	return self.packets[inKey] ~= nil
@@ -78,9 +76,7 @@ function XFC.Mailbox:RemovePacket(inKey)
 		self.packets[inKey] = nil
 	end
 end
---#endregion
 
---#region Segmentation
 function XFC.Mailbox:HasAllPackets(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     assert(type(inTotalPackets) == 'number')
@@ -98,9 +94,7 @@ function XFC.Mailbox:RebuildMessage(inKey, inTotalPackets)
     self:RemovePacket(inKey)
 	return message
 end
---#endregion
 
---#region Receive
 function XFC.Mailbox:IsAddonTag(inTag)
 	local addonTag = false
     for _, tag in pairs (XF.Enum.Tag) do
@@ -114,7 +108,7 @@ end
 
 function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XF:Trace(self:GetObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
+    XF:Trace(self:ObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
 
     --#region Ignore message
     -- If not a message from this addon, ignore
@@ -145,11 +139,11 @@ function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inS
 
     self:AddPacket(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
-        XF:Debug(self:GetObjectName(), 'Received all packets for message [%s]', messageKey)
+        XF:Debug(self:ObjectName(), 'Received all packets for message [%s]', messageKey)
         local encoded = self:RebuildMessage(messageKey, totalPackets)
         local message = self:DecodeMessage(encoded)        
         try(function ()
-            message:SetKey(messageKey)
+            message:Key(messageKey)
             self:Process(message, inMessageTag)
         end).
         finally(function ()
@@ -173,22 +167,22 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     --#region Forwarding
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessageTag == XF.Enum.Tag.LOCAL) then
-        -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
-        local nodeCount = XFO.Nodes:GetTargetCount(XF.Player.Target)
-        if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
-            local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
-            if(math.random(1, 100) <= percentage) then
-                XF:Debug(self:GetObjectName(), 'Randomly selected, forwarding message')
-                inMessage:SetType(XF.Enum.Network.BNET)
-                XFO.BNet:Send(inMessage)
-            else
-                XF:Debug(self:GetObjectName(), 'Not randomly selected, will not forward mesesage')
-            end
-        else
-            XF:Debug(self:GetObjectName(), 'Node count under threshold, forwarding message')
+        -- -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
+        -- local nodeCount = XFO.Nodes:GetTargetCount(XF.Player.Target)
+        -- if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
+        --     local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
+        --     if(math.random(1, 100) <= percentage) then
+        --         XF:Debug(self:GetObjectName(), 'Randomly selected, forwarding message')
+        --         inMessage:SetType(XF.Enum.Network.BNET)
+        --         XFO.BNet:Send(inMessage)
+        --     else
+        --         XF:Debug(self:GetObjectName(), 'Not randomly selected, will not forward mesesage')
+        --     end
+        -- else
+        --     XF:Debug(self:GetObjectName(), 'Node count under threshold, forwarding message')
             inMessage:SetType(XF.Enum.Network.BNET)
             XFO.BNet:Send(inMessage)
-        end
+--        end
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
     elseif(inMessageTag == XF.Enum.Tag.BNET) then

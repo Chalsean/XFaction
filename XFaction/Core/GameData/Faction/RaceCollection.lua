@@ -43,9 +43,7 @@ function XFC.RaceCollection:new()
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.RaceCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -53,12 +51,12 @@ function XFC.RaceCollection:Initialize()
 			local raceData = string.Split(data, ',')
 			local race = XFC.Race:new()
 			race:Initialize()
-			race:SetKey(tonumber(id))
-			race:SetID(tonumber(id))
-			race:SetName(raceData[1])
-			race:SetFaction(XFO.Factions:GetByName(raceData[2]))
+			race:Key(tonumber(id))
+			race:ID(tonumber(id))
+			race:Name(raceData[1])
+			race:Faction(XFO.Factions:Get(raceData[2]))
 			self:Add(race)
-			XF:Info(self:GetObjectName(), 'Initialized race [%d:%s:%s]', race:GetID(), race:GetName(), race:GetFaction():GetName())
+			XF:Info(self:ObjectName(), 'Initialized race [%d:%s:%s]', race:ID(), race:Name(), race:Faction():Name())
 		end
 		self:IsInitialized(true)
 	end

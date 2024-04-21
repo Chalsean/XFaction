@@ -13,20 +13,19 @@ function XFC.Profession:new()
 end
 --#endregion
 
---#region Print
-function XFC.Profession:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+--#region Properties
+function XFC.Profession:IconID(inIconID)
+    assert(type(inIconID) == 'number' or inIconID == nil, 'argument must be number or nil')
+    if(inIconID ~= nil) then
+        self.iconID = inIconID
+    end
+    return self.iconID
 end
 --#endregion
 
---#region Accessors
-function XFC.Profession:GetIconID()
-    return self.iconID
-end
-
-function XFC.Profession:SetIconID(inIconID)
-    assert(type(inIconID) == 'number')
-    self.iconID = inIconID
+--#region Methods
+function XFC.Profession:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
 end
 --#endregion

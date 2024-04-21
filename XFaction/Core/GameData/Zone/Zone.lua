@@ -13,9 +13,7 @@ function XFC.Zone:new()
     object.continent = nil
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.Zone:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -25,58 +23,41 @@ function XFC.Zone:Initialize()
 end
 --#endregion
 
---#region Print
-function XFC.Zone:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
-    XF:Debug(self:GetObjectName(), '  IDs: ')
-    XF:DataDumper(self:GetObjectName(), self.IDs)
-    if(self:HasContinent()) then self:GetContinent():Print() end
-end
---#endregion
-
---#region Hash
-function XFC.Zone:HasID()
-    return #self.IDs > 0
-end
-
-function XFC.Zone:GetID()
-    if(self:HasID()) then
-        return self.IDs[1]
+--#region Properties
+function XFC.Zone:LocaleName(inName)
+    assert(type(inName) == 'string' or inName == nil, 'argument must be string or nil')
+    if(inName ~= nil) then
+        self.localeName = inName
     end
+    return self.localeName
 end
 
-function XFC.Zone:AddID(inID)
-    assert(type(inID) == 'number')
-    self.IDs[#self.IDs + 1] = inID
-end
---#endregion
-
---#region Accessors
-function XFC.Zone:GetLocaleName()
-    return self.localeName or self:GetName()
-end
-
-function XFC.Zone:SetLocaleName(inName)
-    assert(type(inName) == 'string')
-    self.localeName = inName
-end
-
-function XFC.Zone:HasContinent()
-    return self.continent ~= nil
-end
-
-function XFC.Zone:GetContinent()
+function XFC.Zone:Continent(inContinent)
+    assert(type(inContinent) == 'table' and inContinent.__name == 'Continent' or inContinent == nil, 'argument must be Continent object or nil')
+    if(inContinent ~= nil) then
+        self.continent = inContinent
+    end
     return self.continent
 end
 
-function XFC.Zone:SetContinent(inContinent)
-    assert(type(inContinent) == 'table' and inContinent.__name == 'Continent', 'argument must be Continent object')
-    self.continent = inContinent
+function XFC.Zone:ID(inID)
+    assert(type(inID) == 'number' or inID == nil, 'argument must be number or nil')
+    if(type(inID) == 'number') then
+        self.IDs[#self.IDs + 1] = inID
+    end
+    return self.IDs[1]
 end
 --#endregion
 
---#region Iterators
+--#region Methods
+function XFC.Zone:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
+    XF:Debug(self:ObjectName(), '  IDs: ')
+    XF:DataDumper(self:ObjectName(), self.IDs)
+    if(self:Continent() ~= nil) then self:Continent():Print() end
+end
+
 function XFC.Zone:IDIterator()
 	return next, self.IDs, nil
 end

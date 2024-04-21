@@ -17,7 +17,7 @@ function XFC.OrderCollection:NewObject()
 end
 --#endregion
 
---#region Accessors
+--#region Properties
 function XFC.OrderCollection:IsFirstQuery(inBoolean)
     assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
     if(inBoolean ~= nil) then
@@ -27,7 +27,7 @@ function XFC.OrderCollection:IsFirstQuery(inBoolean)
 end
 --#endregion
 
---#region System
+--#region Methods
 function XFC.OrderCollection:Backup()
 	try(function ()
         if(self:IsInitialized()) then

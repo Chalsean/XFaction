@@ -13,24 +13,19 @@ function XFC.Race:new()
 end
 --#endregion
 
---#region Print
-function XFC.Race:Print()
-    self:ParentPrint()
-    if(self:HasFaction()) then self:GetFaction():Print() end
+--#region Properties
+function XFC.Race:Faction(inFaction)
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil, 'argument must be Faction object or nil')
+    if(inFaction ~= nil) then
+        self.faction = inFaction
+    end
+    return self.faction
 end
 --#endregion
 
---#region Accessors
-function XFC.Race:HasFaction()
-    return self.faction ~= nil
-end
-
-function XFC.Race:GetFaction()
-    return self.faction
-end
-
-function XFC.Race:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
-    self.faction = inFaction
+--#region Methods
+function XFC.Race:Print()
+    self:ParentPrint()
+    if(self:Faction() ~= nil) then self:Faction():Print() end
 end
 --#endregion

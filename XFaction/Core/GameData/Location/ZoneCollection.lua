@@ -10,9 +10,7 @@ function XFC.ZoneCollection:new()
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.ZoneCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -23,16 +21,21 @@ function XFC.ZoneCollection:Initialize()
 end
 --#endregion
 
---#region Hash
-function XFC.ZoneCollection:Add(inZoneName)
-	assert(type(inZoneName) == 'string')
-	if(not self:Contains(inZoneName)) then
-		local zone = XFC.Zone:new()
-		zone:Initialize()
-		zone:SetKey(inZoneName)
-		zone:SetName(inZoneName)		
-		XF:Info(self:GetObjectName(), 'Initialized zone [%s]', zone:GetName())
-		self.parent.Add(self, zone)
+--#region Methods
+function XFC.ZoneCollection:Add(inZone)
+	assert(type(inZone) == 'table' and inZone.__name == 'Zone' or type(inZone) == 'string', 'argument must be Zone object or string')
+	if(type(inZone) == 'string') then
+		if(not self:Contains(inZone)) then
+			local zone = XFC.Zone:new()
+			zone:Initialize()
+			zone:Key(inZone)
+			zone:Name(inZone)
+			XF:Info(self:ObjectName(), 'Initialized zone [%s]', zone:Name())
+			self.parent.Add(self, zone)
+		end
+	elseif(not self:Contains(inZone:Key())) then
+		self.parent.Add(self, inZone)
 	end
+	
 end
 --#endregion

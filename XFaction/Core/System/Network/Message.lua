@@ -18,9 +18,7 @@ function XFC.Message:new()
     object.initialized = false
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -47,75 +45,59 @@ function XFC.Message:Deconstructor()
 end
 --#endregion
 
---#region Print
-function XFC.Message:Print()
-    self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
-    XF:Debug(self:GetObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
-    XF:Debug(self:GetObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
-    XF:Debug(self:GetObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
-    XF:Debug(self:GetObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
-    if(self:IsFromUnit()) then
-        self:GetFrom():Print()
-    else
-        XF:Debug(self:GetObjectName(), '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
+--#region Properties
+function XFC.Message:To(inTo)
+    assert(type(inTo) == 'string' or inTo == nil, 'argument must be string or nil')
+    if(inTo ~= nil) then
+        self.to = inTo
     end
-end
---#endregion
-
---#region Accessors
-function XFC.Message:GetTo()
     return self.to
 end
 
-function XFC.Message:SetTo(inTo)
-    assert(type(inTo) == 'string')
-    self.to = inTo
-end
-
-function XFC.Message:HasFrom()
-    return self.from ~= nil
-end
-
-function XFC.Message:GetFrom()
+function XFC.Message:From(inFrom)
+    assert(type(inFrom) == 'table' and inFrom.__name == 'Unit' or inFrom == nil, 'argument must be Unit object or nil')
+    if(type(inFrom) ~= nil) then
+        self.from = inFrom
+    end
     return self.from
 end
 
-function XFC.Message:SetFrom(inFrom)
-    assert(type(inFrom) == 'table' and inFrom.__name ~= nil and inFrom.__name == 'Unit', 'argument must be Unit object')
-    self.from = inFrom
-end
-
-function XFC.Message:IsFromUnit()
-    return type(self.from) == 'table' and self.from.__name ~= nil and self.from__name == 'Unit'
-end
-
-function XFC.Message:GetType()
+function XFC.Message:Type(inType)
+    assert(type(inType) == 'string' or inType == nil, 'argument must be string or nil')
+    if(inType ~= nil) then
+        self.type = inType
+    end
     return self.type
 end
 
-function XFC.Message:SetType(inType)
-    assert(type(inType) == 'string')
-    self.type = inType
-end
-
-function XFC.Message:GetSubject()
+function XFC.Message:Subject(inSubject)
+    assert(type(inSubject) == 'string' or inSubject == nil, 'argument must be string or nil')
+    if(inSubject ~= nil) then
+        self.subject = inSubject
+    end
     return self.subject
 end
 
-function XFC.Message:SetSubject(inSubject)
-    assert(type(inSubject) == 'string')
-    self.subject = inSubject
-end
-
-function XFC.Message:GetTimeStamp()
+function XFC.Message:EpochTime(inEpochTime)
+    assert(type(inEpochTime) == 'number' or inEpochTime == nil, 'argument must be number or nil')
+    if(inEpochTime ~= nil) then
+        self.epochTime = inEpochTime
+    end
     return self.epochTime
 end
+--#endregion
 
-function XFC.Message:SetTimeStamp(inEpochTime)
-    assert(type(inEpochTime) == 'number')
-    self.epochTime = inEpochTime
+--#region Methods
+function XFC.Message:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
+    XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
+    XF:Debug(self:ObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
+    XF:Debug(self:ObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
+    if(self:From() ~= nil) then self:From():Print() end
 end
+--#endregion
 
 function XFC.Message:GetData()
     return self.data
