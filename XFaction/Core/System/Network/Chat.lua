@@ -63,15 +63,15 @@ function XFC.Chat:Send(inMessage)
     if(inMessage:Type() == XF.Enum.Network.BROADCAST or inMessage:Type() == XF.Enum.Network.BNET) then
         XFO.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
-        if(inMessage:TargetCount() > 0 and inMessage:IsMyMessage() and inMessage:GetType() == XF.Enum.Network.BNET) then
-            inMessage:SetType(XF.Enum.Network.BROADCAST)
+        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:Type() == XF.Enum.Network.BNET) then
+            inMessage:Type(XF.Enum.Network.BROADCAST)
         -- Successfully bnet to all targets and only were supposed to bnet, were done
-        elseif(inMessage:GetType() == XF.Enum.Network.BNET) then
+        elseif(inMessage:Type() == XF.Enum.Network.BNET) then
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
         elseif(not inMessage:HasTargets() and inMessage:GetType() == XF.Enum.Network.BROADCAST) then
             XF:Debug(self:GetObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
-            inMessage:SetType(XF.Enum.Network.LOCAL)        
+            inMessage:Type(XF.Enum.Network.LOCAL)        
         end
     end
     --#endregion
@@ -86,7 +86,7 @@ function XFC.Chat:Send(inMessage)
         channelID = nil
     else
         channelName = 'CHANNEL'
-        channelID = XFO.Channels:GetLocalChannel():GetID()
+        channelID = XFO.Channels:GetLocalChannel():ID()
     end
 
     local packets = inMessage:Segment()
@@ -124,8 +124,8 @@ function XFC.Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, in
     try(function ()
         self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(self:GetObjectName(), inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 --#endregion
@@ -135,14 +135,14 @@ function XFC.Chat:GuildMessage(inText, _, _, _, _, _, _, _, _, _, _, inSenderGUI
     local self = XFO.Chat
     try(function ()
         -- If you are the sender, broadcast to other realms/factions
-        if(XF.Player.Unit:GetGUID() == inSenderGUID and XF.Player.Unit:CanGuildSpeak()) then
+        if(XF.Player.Unit:GUID() == inSenderGUID and XF.Player.Unit:CanGuildSpeak()) then
             local message = nil
             try(function ()
                 message = self:Pop()
                 message:Initialize()
-                message:SetType(XF.Enum.Network.BROADCAST)
-                message:SetSubject(XF.Enum.Message.GCHAT)
-                message:SetData(inText)
+                message:Type(XF.Enum.Network.BROADCAST)
+                message:Subject(XF.Enum.Message.GCHAT)
+                message:Data(inText)
                 self:Send(message, true)
             end).
             finally(function ()
@@ -151,7 +151,7 @@ function XFC.Chat:GuildMessage(inText, _, _, _, _, _, _, _, _, _, _, inSenderGUI
         end
     end).
     catch(function (err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 
@@ -164,9 +164,9 @@ function XFC.Chat:Achievement(inID)
             try(function ()
                 message = XFO.Chat:Pop()
                 message:Initialize()
-                message:SetType(XF.Enum.Network.BROADCAST)
-                message:SetSubject(XF.Enum.Message.ACHIEVEMENT)
-                message:SetData(inID) -- Leave as ID to localize on receiving end
+                message:Type(XF.Enum.Network.BROADCAST)
+                message:Subject(XF.Enum.Message.ACHIEVEMENT)
+                message:Data(inID) -- Leave as ID to localize on receiving end
                 self:Send(message)
             end).
             finally(function ()
@@ -175,7 +175,7 @@ function XFC.Chat:Achievement(inID)
         end
     end).
     catch(function (err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end)    
 end
 
@@ -187,14 +187,14 @@ function XFC.Chat:Logout()
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout started'
             message = self:Pop()
             message:Initialize()
-            message:SetType(XF.Enum.Network.BROADCAST)
-            message:SetSubject(XF.Enum.Message.LOGOUT)
+            message:Type(XF.Enum.Network.BROADCAST)
+            message:Subject(XF.Enum.Message.LOGOUT)
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout sending message'
             self:Send(message)
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout message sent'
         end).
         catch(function (err)
-            XF:Error(self:GetObjectName(), err)
+            XF:Error(self:ObjectName(), err)
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Failed to send logout message: ' .. err
         end).
         finally(function()

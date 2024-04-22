@@ -56,7 +56,7 @@ end
 
 function XFC.Message:From(inFrom)
     assert(type(inFrom) == 'table' and inFrom.__name == 'Unit' or inFrom == nil, 'argument must be Unit object or nil')
-    if(type(inFrom) ~= nil) then
+    if(inFrom ~= nil) then
         self.from = inFrom
     end
     return self.from
@@ -108,12 +108,14 @@ end
 --#region Methods
 function XFC.Message:Print()
     self:ParentPrint()
+    if(self:From() ~= nil) then
+        XF:Debug(self:ObjectName(), '  from: ' .. self:From():UnitName())
+    end
     XF:Debug(self:ObjectName(), '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
     XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:ObjectName(), '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
-    XF:Debug(self:ObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
-    if(self:From() ~= nil) then self:From():Print() end
+    XF:Debug(self:ObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))    
 end
 
 function XFC.Message:IsMyMessage()
@@ -264,7 +266,7 @@ function XFC.Message:Deserialize(inData)
 end
 
 function XFC.Message:Encode(inProtocol)
-    local compressed = XF.Lib.Deflate:CompressDeflate(self:Serialize(), {level = XF.Settings.Network.CompressionLevel})
+    local compressed = XF.Lib.Deflate:CompressDeflate(pickle(self:Serialize()), {level = XF.Settings.Network.CompressionLevel})
     if(inProtocol == XF.Enum.Network.BNET) then
         return XF.Lib.Deflate:EncodeForPrint(compressed)
     end

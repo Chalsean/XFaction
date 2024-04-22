@@ -152,7 +152,7 @@ end
 -- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
 function XFC.Confederate:LocalRoster()
     local self = XFO.Confederate -- Callback
-    XF:Trace(self:GetObjectName(), 'Scanning local guild roster')
+    XF:Trace(self:ObjectName(), 'Scanning local guild roster')
     for _, memberID in pairs (XFF.GuildGetMembers(XF.Player.Guild:ID(), XF.Player.Guild:StreamID())) do
         local unit = nil
         try(function ()

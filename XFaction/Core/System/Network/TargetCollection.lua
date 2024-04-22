@@ -55,6 +55,13 @@ end
 --#endregion
 
 --#region Methods
+function XFC.TargetCollection:Contains(inRealm, inFaction)
+	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm' or type(inRealm) == 'string', 'argument must be Realm object or string')
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil, 'argument must be Faction object or nil')
+	local key = inFaction ~= nil and TargetKey(inRealm, inFaction) or inRealm
+	return self.parent.Contains(self, key)
+end
+
 function XFC.TargetCollection:Get(inRealm, inFaction)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm' or type(inRealm) == 'string', 'argument must be Realm object or string')
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil, 'argument must be Faction object or nil')

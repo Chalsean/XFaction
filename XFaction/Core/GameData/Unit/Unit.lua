@@ -223,7 +223,7 @@ function XFC.Unit:GUID(inGUID)
 end
 
 function XFC.Unit:UnitName()
-    return self:Name() .. '-' .. self:Target():Realm():APIName()
+    return self:Name() .. '-' .. self:Guild():Realm():APIName()
 end
 
 function XFC.Unit:Rank(inRank)
@@ -288,8 +288,8 @@ function XFC.Unit:Note(inNote)
             end
         end).
         catch(function(err)
-            XF:Trace(self:GetObjectName(), 'Failed to parse player note: [' .. self.note .. ']')
-            XF:Trace(self:GetObjectName(), err)
+            XF:Trace(self:ObjectName(), 'Failed to parse player note: [' .. self.note .. ']')
+            XF:Trace(self:ObjectName(), err)
         end).
         finally(function()
             if(self:Team() == nil) then
@@ -606,6 +606,7 @@ function XFC.Unit:Deserialize(inSerialized)
 	self:Race(XFO.Races:Get(inSerialized.R))
     self:Spec(XFO.Specs:Get(inSerialized.S))
     self:Name(inSerialized.U)
+    self:Target(XFO.Targets:Get(self:Guild():Realm(), self:Race():Faction()))
 
     XFO.Versions:Add(inSerialized.V)
     self:Version(XFO.Versions:Get(inSerialized.V))
@@ -619,8 +620,8 @@ function XFC.Unit:Deserialize(inSerialized)
     
     self:PvP(inSerialized.Y)
 
-    if(inSerialized.Z ~= nil and XFO.Zones:ContainsByID(tonumber(inSerialized.Z))) then        
-        self:Zone(XFO.Zones:GetByID(tonumber(inSerialized.Z)))
+    if(inSerialized.Z ~= nil and XFO.Zones:Contains(tonumber(inSerialized.Z))) then        
+        self:Zone(XFO.Zones:Get(tonumber(inSerialized.Z)))
     elseif(inSerialized.J ~= nil) then
         XFO.Zones:Add(inSerialized.J)
         self:Zone(XFO.Zones:Get(inSerialized.J))

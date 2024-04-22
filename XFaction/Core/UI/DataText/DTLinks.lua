@@ -70,44 +70,44 @@ function XFC.DTLinks:GetRegularFont()
 end
 
 function XFC.DTLinks:RefreshBroker()
-	local text = ''
-	if(XF.Config.DataText.Link.Label) then
-		text = XF.Lib.Locale['LINKS'] .. ': '
-	end
+	-- local text = ''
+	-- if(XF.Config.DataText.Link.Label) then
+	-- 	text = XF.Lib.Locale['LINKS'] .. ': '
+	-- end
 
-	local names = {}
-	local allianceCount = 0
-	local hordeCount = 0
-	local activeLinks = 0
+	-- local names = {}
+	-- local allianceCount = 0
+	-- local hordeCount = 0
+	-- local activeLinks = 0
 
-	for _, link in XFO.Links:Iterator() do
-		if(link:IsActive()) then
-			activeLinks = activeLinks + 1
-			if(names[link:GetFromNode():GetName()] == nil) then
-				if(link:GetFromNode():GetTarget():GetFaction():GetName() == 'Alliance') then
-					allianceCount = allianceCount + 1
-				else
-					hordeCount = hordeCount + 1
-				end
-				names[link:GetFromNode():GetName()] = true
-			end
-			if(names[link:GetToNode():GetName()] == nil) then
-				if(link:GetToNode():GetTarget():GetFaction():GetName() == 'Alliance') then
-					allianceCount = allianceCount + 1
-				else
-					hordeCount = hordeCount + 1
-				end
-				names[link:GetToNode():GetName()] = true
-			end
-		end
-	end
+	-- for _, link in XFO.Links:Iterator() do
+	-- 	if(link:IsActive()) then
+	-- 		activeLinks = activeLinks + 1
+	-- 		if(names[link:GetFromNode():GetName()] == nil) then
+	-- 			if(link:GetFromNode():GetTarget():GetFaction():GetName() == 'Alliance') then
+	-- 				allianceCount = allianceCount + 1
+	-- 			else
+	-- 				hordeCount = hordeCount + 1
+	-- 			end
+	-- 			names[link:GetFromNode():GetName()] = true
+	-- 		end
+	-- 		if(names[link:GetToNode():GetName()] == nil) then
+	-- 			if(link:GetToNode():GetTarget():GetFaction():GetName() == 'Alliance') then
+	-- 				allianceCount = allianceCount + 1
+	-- 			else
+	-- 				hordeCount = hordeCount + 1
+	-- 			end
+	-- 			names[link:GetToNode():GetName()] = true
+	-- 		end
+	-- 	end
+	-- end
 
-	if(XF.Config.DataText.Link.Faction) then
-		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, activeLinks, allianceCount, hordeCount)
-	else
-		text = format('%s|cffffffff%d|r', text, activeLinks)
-	end
-	self:GetBroker().text = text
+	-- if(XF.Config.DataText.Link.Faction) then
+	-- 	text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, activeLinks, allianceCount, hordeCount)
+	-- else
+	-- 	text = format('%s|cffffffff%d|r', text, activeLinks)
+	-- end
+	-- self:GetBroker().text = text
 end
 --#endregion
 

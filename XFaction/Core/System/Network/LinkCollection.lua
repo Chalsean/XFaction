@@ -50,7 +50,7 @@ function XFC.LinkCollection:Add(inLink)
 		if(inLink:IsMyLink()) then
 			self:IncrementMyLinkCount()
 		end
-		XF:Info(self:GetObjectName(), 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
+		XF:Info(self:ObjectName(), 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		XFO.DTLinks:RefreshBroker()
 	end
 end
@@ -65,7 +65,7 @@ function XFC.LinkCollection:Remove(inKey)
 		if(link:IsMyLink()) then
 			self:DecrementLinkCount()
 		end
-		XF:Info(self:GetObjectName(), 'Removed link from [%s] to [%s]', link:GetFromNode():GetName(), link:GetToNode():GetName())
+		XF:Info(self:ObjectName(), 'Removed link from [%s] to [%s]', link:GetFromNode():GetName(), link:GetToNode():GetName())
 		self:Push(link)
 		XFO.DTLinks:RefreshBroker()
 	end
@@ -125,15 +125,15 @@ end
 --#region Network
 function XFC.LinkCollection:Broadcast()
 	local self = XFO.Links
-	XF:Debug(self:GetObjectName(), 'Broadcasting links')
+	XF:Debug(self:ObjectName(), 'Broadcasting links')
 	if(self:GetMyLinkCount() > 0) then
 		local message = nil
 		try(function ()
 			message = XFO.Chat:Pop()
 			message:Initialize()
-			message:SetType(XF.Enum.Network.BROADCAST)
-			message:SetSubject(XF.Enum.Message.LINK)
-			message:SetData(self:Serialize())
+			message:Type(XF.Enum.Network.BROADCAST)
+			message:Subject(XF.Enum.Message.LINK)
+			message:Data(self:Serialize())
 			XFO.Chat:Send(message)  
 		end).
 		finally(function ()

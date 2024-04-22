@@ -39,7 +39,7 @@ function XFC.ChannelCollection:Initialize()
 		XFO.Events:Add({
 		 	name = 'ChannelColor', 
 		 	event = 'UPDATE_CHAT_COLOR', 
-		 	callback = XFO.Channels.Color, 
+		 	callback = XFO.Channels.SaveColor, 
 		 	instance = true
 		})
 
@@ -74,25 +74,25 @@ function XFC.ChannelCollection:Print()
 	if(self:LocalChannel() ~= nil) then self:LocalChannel():Print() end
 end
 
-function XFC.ChannelCollection:Get(inKey)
-	assert(type(inKey) == 'number' or type(inKey) == 'string', 'argument must be number or string')
-	if(type(inKey) == 'string') then
-		for _, channel in self:Iterator() do
-			if(channel:GetID() == inID) then
-				return channel
-			end
-		end
-	else
-		return self.parent.Get(self, inKey)
-	end
-end
+-- function XFC.ChannelCollection:Get(inKey)
+-- 	assert(type(inKey) == 'number' or type(inKey) == 'string', 'argument must be number or string')
+-- 	if(type(inKey) == 'number') then
+-- 		for _, channel in self:Iterator() do
+-- 			if(channel:ID() == inID) then
+-- 				return channel
+-- 			end
+-- 		end
+-- 	else
+-- 		return self.parent.Get(self, inKey)
+-- 	end
+-- end
 
-function XFC.ChannelCollection:Last(inKey)
+function XFC.ChannelCollection:MoveLast(inKey)
 	if(not XF.Config.Chat.Channel.Last) then return end
 	if(not self:Contains(inKey)) then return end
 	
 	local channel = self:Get(inKey)
-	for i = channel:Get() + 1, XF.Settings.Network.Channel.Total do
+	for i = channel:ID() + 1, XF.Settings.Network.Channel.Total do
 		local nextChannel = self:Get(i)
 		-- Blizzard swap channel API does not work with community channels, so have to ignore them
 		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
@@ -114,7 +114,7 @@ function XFC.ChannelCollection:Sync()
 			local channelID, channelName, disabled = channels[i], channels[i+1], channels[i+2]
 			local channelInfo = XFF.ChatGetChannelInfo(channelName)
 			local channel = XFC.Channel:new()
-			channel:Key(channelName)
+			channel:Key(channelID)
 			channel:Name(channelName)
 			channel:ID(channelID)
 			channel:IsCommunity(channelInfo.channelType == Enum.PermanentChatChannelType.Communities)
@@ -130,7 +130,7 @@ function XFC.ChannelCollection:Sync()
 	end)
 end
 
-function XFC.ChannelCollection:Color(inChannel, inR, inG, inB)
+function XFC.ChannelCollection:SaveColor(inChannel, inR, inG, inB)
 	local self = XFO.Channels
 	try(function ()
 		if(inChannel) then

@@ -154,7 +154,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
     -- Is a newer version available?
-    if(not XF.Cache.NewVersionNotify and XFO.Version:IsNewer(inMessage:GetFrom():GetVersion())) then
+    if(not XF.Cache.NewVersionNotify and XFO.Version:IsNewer(inMessage:From():Version())) then
         print(format(XF.Lib.Locale['NEW_VERSION'], XF.Title))
         XF.Cache.NewVersionNotify = true
     end
@@ -211,7 +211,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
 
     -- Process LINK message
     elseif(inMessage:Subject() == XF.Enum.Message.LINK) then
-        XFO.Links:Deserialize(inMessage:GetData())
+        XFO.Links:Deserialize(inMessage:Data())
 
     -- Process ORDER message
     elseif(XFO.WoW:IsRetail() and inMessage:Subject() == XF.Enum.Message.ORDER) then

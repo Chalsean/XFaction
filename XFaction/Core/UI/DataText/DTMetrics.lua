@@ -71,33 +71,33 @@ function XFC.DTMetrics:GetRegularFont()
 end
 
 function XFC.DTMetrics:RefreshBroker()
-	if(XF.Initialized and self:IsInitialized()) then
-		local text = ''
-		local delimiter = false
-		if(XF.Config.DataText.Metric.Total) then
-			text = text .. format('|cffffffff%d|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):GetCount())
-			delimiter = true
-		end
+	-- if(XF.Initialized and self:IsInitialized()) then
+	-- 	local text = ''
+	-- 	local delimiter = false
+	-- 	if(XF.Config.DataText.Metric.Total) then
+	-- 		text = text .. format('|cffffffff%d|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):GetCount())
+	-- 		delimiter = true
+	-- 	end
 
-		if(XF.Config.DataText.Metric.Average) then
-			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffffffff%.2f|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):GetAverage(XF.Config.DataText.Metric.Rate))
-			delimiter = true
-		end
+	-- 	if(XF.Config.DataText.Metric.Average) then
+	-- 		if(delimiter) then text = text .. ' : ' end
+	-- 		text = text .. format('|cffffffff%.2f|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):GetAverage(XF.Config.DataText.Metric.Rate))
+	-- 		delimiter = true
+	-- 	end
 
-		if(XF.Config.DataText.Metric.Error) then
-			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):GetCount())
-			delimiter = true
-		end
+	-- 	if(XF.Config.DataText.Metric.Error) then
+	-- 		if(delimiter) then text = text .. ' : ' end
+	-- 		text = text .. format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):GetCount())
+	-- 		delimiter = true
+	-- 	end
 
-		if(XF.Config.DataText.Metric.Warning) then
-			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):GetCount())
-			delimiter = true
-		end
-		self.ldbObject.text = text
-	end
+	-- 	if(XF.Config.DataText.Metric.Warning) then
+	-- 		if(delimiter) then text = text .. ' : ' end
+	-- 		text = text .. format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):GetCount())
+	-- 		delimiter = true
+	-- 	end
+	-- 	self.ldbObject.text = text
+	-- end
 end
 --#endregion
 

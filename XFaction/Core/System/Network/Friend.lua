@@ -51,15 +51,15 @@ function XFC.Friend:Initialize(inID)
     self:Tag(accountInfo.battleTag)
     self:CanLink(false)
 	
-    -- PlayerGUID is nil for Plunderstorm and we dont want to link to them
-    if(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW' and accountInfo.gameAccountInfo.playerGuid ~= nil) then
+    -- Torghast/Plunderstorm are realm 0
+    if(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW' and accountInfo.gameAccountInfo.realmID ~= 0) then
         self:Name(accountInfo.gameAccountInfo.characterName)
         self:GUID(accountInfo.gameAccountInfo.playerGuid)
 
         local realm = XFO.Realms:Get(accountInfo.gameAccountInfo.realmID)
         local faction = XFO.Factions:Get(accountInfo.gameAccountInfo.factionName)
-        local target = XFO.Targets:Get(realm, faction)
-        if(target ~= nil) then
+        if(realm ~= nil and XFO.Targets:Contains(realm, faction)) then
+            local target = XFO.Targets:Get(realm, faction)
             self:Target(target)
             if(accountInfo.isFriend and not self:Target():Faction():IsNeutral() and not target:IsMyTarget()) then
                 self:CanLink(true)

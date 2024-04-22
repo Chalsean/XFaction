@@ -55,7 +55,7 @@ function XFC.RaiderIOCollection:AddUnit(inUnit)
         if(profile and profile.raidProfile) then
             local topProgress = profile.raidProfile.sortedProgress[1]
             if(topProgress and topProgress.isProgress) then
-                raiderIO:SetRaid(topProgress.progress.progressCount, topProgress.progress.raid.bossCount, topProgress.progress.difficulty)
+                raiderIO:Raid(topProgress.progress.progressCount, topProgress.progress.raid.bossCount, topProgress.progress.difficulty)
             end
         end
         -- M+

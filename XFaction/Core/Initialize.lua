@@ -239,7 +239,7 @@ function XF:LoginChannel()
 	try(function()
 		XFO.Channels:Sync()
 		if(XFO.Channels:HasLocalChannel()) then
-			XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
+			XFO.Channels:MoveLast(XFO.Channels:LocalChannel():Key())
 			XFO.InitTimers:Stop()
 		end
 	end).

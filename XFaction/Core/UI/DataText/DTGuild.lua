@@ -73,14 +73,14 @@ function XFC.DTGuild:GetRegularFont()
 end
 
 function XFC.DTGuild:RefreshBroker()
-	if(XF.Initialized) then
-		local text = ''  
-		if(XF.Config.DataText.Guild.Label) then
-			text = XF.Lib.Locale['GUILD'] .. ': '
-		end
-		text = format('%s|cff3CE13F%d', text, XFO.Confederate:GetOnlineCount())
-		XFO.DTGuild:GetBroker().text = text
-	end
+	-- if(XF.Initialized) then
+	-- 	local text = ''  
+	-- 	if(XF.Config.DataText.Guild.Label) then
+	-- 		text = XF.Lib.Locale['GUILD'] .. ': '
+	-- 	end
+	-- 	text = format('%s|cff3CE13F%d', text, XFO.Confederate:GetOnlineCount())
+	-- 	XFO.DTGuild:GetBroker().text = text
+	-- end
 end
 --#endregion
 

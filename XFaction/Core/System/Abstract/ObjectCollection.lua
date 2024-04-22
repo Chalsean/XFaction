@@ -80,10 +80,10 @@ end
 
 --#region Hash
 function XFC.ObjectCollection:Contains(inKey)
-    if(inKey == nil or (type(inKey) ~= 'string' and type(inKey) ~= 'number')) then
-        return false
+    if(type(inKey) == 'string' or type(inKey) == 'number') then
+        return self.objects[inKey] ~= nil
     end
-	return self.objects[inKey] ~= nil
+    return false
 end
 
 function XFC.ObjectCollection:Get(inKey)
