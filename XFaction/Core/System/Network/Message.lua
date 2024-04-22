@@ -23,8 +23,8 @@ function XFC.Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.targets = {}
-        self:SetFrom(XF.Player.Unit)
-        self:SetTimeStamp(XFF.TimeGetCurrent())
+        self:From(XF.Player.Unit)
+        self:TimeStamp(XFF.TimeGetCurrent())
         self:SetAllTargets()
         self:IsInitialized(true)
     end

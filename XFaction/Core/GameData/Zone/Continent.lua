@@ -51,8 +51,8 @@ end
 --#region Methods
 function XFC.Continent:Print()
     self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
-    XF:Debug(self:GetObjectName(), '  IDs: ')
-    XF:DataDumper(self:GetObjectName(), self.IDs)
+    XF:Debug(self:ObjectName(), '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
+    XF:Debug(self:ObjectName(), '  IDs: ')
+    XF:DataDumper(self:ObjectName(), self.IDs)
 end
 --#endregion

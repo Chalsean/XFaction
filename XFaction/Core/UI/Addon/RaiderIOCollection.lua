@@ -43,8 +43,8 @@ function XFC.RaiderIOCollection:AddUnit(inUnit)
     try(function ()
         local raiderIO = self:Pop()
         raiderIO:Initialize()
-        raiderIO:SetKey(inUnit:Key())
-        raiderIO:SetName(inUnit:UnitName())
+        raiderIO:Key(inUnit:Key())
+        raiderIO:Name(inUnit:UnitName())
 
         local profile = RaiderIO.GetProfile(inUnit:MainName(), inUnit:Guild():Realm():Name())
         if(profile == nil) then

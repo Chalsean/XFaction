@@ -4,14 +4,10 @@
     <Script file='Message.lua'/>
     <Script file='Channel.lua'/>
     <Script file='ChannelCollection.lua'/>
-    <!--
     <Script file='Friend.lua'/>
     <Script file='FriendCollection.lua'/>
-    -->
     <Script file='Target.lua'/>
     <Script file='TargetCollection.lua'/>
-    <!--
     <Script file='Link.lua'/>
     <Script file='LinkCollection.lua'/>    
-    -->
 </Ui>

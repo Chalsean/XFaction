@@ -20,45 +20,42 @@ function XFC.RaiderIO:Deconstructor()
 end
 --#endregion
 
---#region Print
+--#region Properties
+function XFC.RaiderIO:Raid(inCount, inTotal, inDifficulty)
+    assert(type(inCount) == 'number' or inCount == nil)
+    assert(type(inTotal) == 'number' or inTotal == nil)
+    assert(type(inDifficulty) == 'number' or inDifficulty == nil)
+    
+    if(inCount ~= nil) then
+        local letter = nil
+        if(inDifficulty == 3) then
+            letter = 'M'
+        elseif(inDifficulty == 2) then
+            letter = 'H'
+        else
+            letter = 'N'
+        end
+        self.raid = tostring(inCount) .. '/' .. tostring(inTotal) .. ' ' .. letter
+    end
+    return self.raid
+end
+
+function XFC.RaiderIO:SetDungeon(inScore)
+    assert(type(inScore) == 'number' or inScore == nil, 'argument must be number or nil')
+    if(inScore ~= nil) then
+        self.dungeon = inScore
+    end
+    return self.dungeon
+end
+--#endregion
+
+--#region Methods
 function XFC.RaiderIO:Print()
     self:ParentPrint()
     XF:Debug(ObjectName, '  raid (' .. type(self.raid) .. '): ' .. tostring(self.raid))
     XF:Debug(ObjectName, '  dungeon (' .. type(self.dungeon) .. '): ' .. tostring(self.dungeon))
 end
---#endregion
 
---#region Accessors
-function XFC.RaiderIO:GetRaid()
-    return self.raid
-end
-
-function XFC.RaiderIO:SetRaid(inCount, inTotal, inDifficulty)
-    assert(type(inCount) == 'number')
-    assert(type(inTotal) == 'number')
-    assert(type(inDifficulty) == 'number')
-    local letter = nil
-    if(inDifficulty == 3) then
-        letter = 'M'
-    elseif(inDifficulty == 2) then
-        letter = 'H'
-    else
-        letter = 'N'
-    end
-    self.raid = tostring(inCount) .. '/' .. tostring(inTotal) .. ' ' .. letter
-end
-
-function XFC.RaiderIO:GetDungeon()
-    return self.dungeon
-end
-
-function XFC.RaiderIO:SetDungeon(inScore)
-    assert(type(inScore) == 'number')
-    self.dungeon = inScore
-end
---#endregion
-
---#region Operators
 function XFC.RaiderIO:Equals(inObject)
     if(inObject == nil) then return false end
     if(type(inObject) ~= 'table' or inObject.__name == nil) then return false end

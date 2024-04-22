@@ -56,18 +56,18 @@ function XF:SetupRealms()
 		Compress = true,
 	}
 	
-	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XFO.Regions:GetCurrent():GetName())
+	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XFO.Regions:Current():Name())
 	for _, realm in XFO.Realms:SortedIterator() do
 		table.insert(XF.Cache.Setup.Realms, {
-			id = realm:GetID(),
-			name = realm:GetName(),
+			id = realm:ID(),
+			name = realm:Name(),
 			connections = {},
 			enabled = realm:IsTargeted() or realm:IsCurrent(),
 		})
-		RealmXref[realm:GetName()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
-		RealmXref[realm:GetID()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
+		RealmXref[realm:Name()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
+		RealmXref[realm:ID()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
 		for _, connectedRealm in realm:ConnectedIterator() do
-			table.insert(XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms].connections, connectedRealm:GetName())
+			table.insert(XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms].connections, connectedRealm:Name())
 		end
 	end
 
@@ -112,15 +112,15 @@ end
 function XF:SetupMenus()
 	
 	if(not Initialized) then
-		if(XFO.Versions:GetCurrent():IsAlpha()) then
+		if(XFO.Versions:Current():IsAlpha()) then
 			XF.Options.args.General.args.Bar.name = XF.Options.args.General.args.Bar.name .. ' |cffFF4700Alpha|r'
-		elseif(XFO.Versions:GetCurrent():IsBeta()) then
+		elseif(XFO.Versions:Current():IsBeta()) then
 			XF.Options.args.General.args.Bar.name = XF.Options.args.General.args.Bar.name .. ' |cffFF7C0ABeta|r'
 		end
 
 		--#region Confederate Menu
-		XF.Cache.Setup.Confederate.Initials = XFO.Confederate:GetInitials()
-		XF.Cache.Setup.Confederate.Name = XFO.Confederate:GetName()
+		XF.Cache.Setup.Confederate.Initials = XFO.Confederate:Initials()
+		XF.Cache.Setup.Confederate.Name = XFO.Confederate:Name()
 		XF.Cache.Setup.Confederate.ChannelName = XF.Cache.Channel.Name
 		XF.Cache.Setup.Confederate.Password = XF.Cache.Channel.Password
 		--#endregion
@@ -129,12 +129,12 @@ function XF:SetupMenus()
 		if(XFO.Guilds:GetCount() > 0) then
 			for _, guild in XFO.Guilds:SortedIterator() do
 				table.insert(XF.Cache.Setup.Guilds, {
-					realm = tostring(guild:GetRealm():GetID()),
+					realm = tostring(guild:Realm():ID()),
 					--faction = guild:GetFaction():GetID(),
-					initials = guild:GetInitials(),
-					name = guild:GetName(),
+					initials = guild:Key(),
+					name = guild:Name(),
 				})
-				XF.Cache.Setup.GuildsRealms[tostring(guild:GetRealm():GetID())] = guild:GetRealm():GetName()
+				XF.Cache.Setup.GuildsRealms[tostring(guild:Realm():ID())] = guild:Realm():Name()
 			end
 		end
 
@@ -204,10 +204,10 @@ function XF:SetupMenus()
 		--#region Team Menu
 		if(XFO.Teams:GetCount() > 0) then
 			for _, team in XFO.Teams:SortedIterator() do
-				if(team:GetInitials() ~= '?') then
+				if(team:Initials() ~= '?') then
 					table.insert(XF.Cache.Setup.Teams, {
-						initials = team:GetInitials(),
-						name = team:GetName(),
+						initials = team:Initials(),
+						name = team:Name(),
 					})
 				end
 			end

@@ -25,7 +25,7 @@ function XFC.Confederate:Initialize()
         self:Name(XF.Cache.Confederate.Name)
         self:Key(XF.Cache.Confederate.Key)
 
-        XF:Info(self:GetObjectName(), 'Initialized confederate %s <%s>', self:Name(), self:Key())
+        XF:Info(self:ObjectName(), 'Initialized confederate %s <%s>', self:Name(), self:Key())
 
         -- This is the local guild roster scan for those not running the addon
         XFO.Events:Add({
@@ -83,11 +83,10 @@ function XFC.Confederate:Add(inUnit)
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
-        local target = XFO.Targets:GetByRealmFaction(inUnit:Guild():Realm(), inUnit:Race():Faction())
-        if(self.countByTarget[target:Key()] == nil) then
-            self.countByTarget[target:Key()] = 0
+        if(self.countByTarget[inUnit:Target():Key()] == nil) then
+            self.countByTarget[inUnit:Target():Key()] = 0
         end
-        self.countByTarget[target:Key()] = self.countByTarget[target:Key()] + 1
+        self.countByTarget[inUnit:Target():Key()] = self.countByTarget[inUnit:Target():Key()] + 1
         if(inUnit:IsOnline()) then
             self.onlineCount = self.onlineCount + 1
         end

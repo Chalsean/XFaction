@@ -52,11 +52,7 @@ end
 function XFC.ChannelCollection:LocalChannel(inChannel)
     assert(type(inChannel) == 'table' and inChannel.__name == 'Channel' or inChannel == nil, 'argument must be Channel object or nil')
 	if(inChannel ~= nil) then
-		if(inChannel == '') then
-			self.localChannel = nil
-		else
-    		self.localChannel = inChannel
-		end
+		self.localChannel = inChannel
 	end
 	return self.localChannel
 end
@@ -112,7 +108,7 @@ function XFC.ChannelCollection:Sync()
 	local self = XFO.Channels
 	try(function ()
 		self:RemoveAll()
-		self:LocalChannel('')
+		self.localChannel = nil
 		local channels = {XFF.ChatGetChannels()}
 		for i = 1, #channels, 3 do
 			local channelID, channelName, disabled = channels[i], channels[i+1], channels[i+2]
@@ -130,7 +126,7 @@ function XFC.ChannelCollection:Sync()
 		end
 	end).
 	catch(function (inErrorMessage)
-		XF:Warn(self:GetObjectName(), inErrorMessage)
+		XF:Warn(self:ObjectName(), inErrorMessage)
 	end)
 end
 
@@ -154,5 +150,9 @@ function XFC.ChannelCollection:Color(inChannel, inR, inG, inB)
 	catch(function (err)
 		XF:Error(self:ObjectName(), err)
 	end)
+end
+
+function XFC.ChannelCollection:HasLocalChannel()
+	return self.localChannel ~= nil
 end
 --#endregion

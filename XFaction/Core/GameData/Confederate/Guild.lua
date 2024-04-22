@@ -54,12 +54,12 @@ function XFC.Guild:Deserialize(inString)
 	assert(type(inString) == 'string')
 
 	local realmNumber, factionID, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
-	local realm = XFO.Realms:GetByID(tonumber(realmNumber))
+	local realm = XFO.Realms:Get(tonumber(realmNumber))
 	
 	self:Initialize()
-	self:SetKey(guildInitials)
-	self:SetName(guildName)
-	self:SetRealm(realm)
+	self:Key(guildInitials)
+	self:Name(guildName)
+	self:Realm(realm)
     XF:Info(self:ObjectName(), 'Initialized guild [%s:%s:%s]', self:Key(), self:Name(), self:Realm():Name())
 end
 --#endregion

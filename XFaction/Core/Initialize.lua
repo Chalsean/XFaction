@@ -48,9 +48,9 @@ function XF:CoreInit()
 
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
-	--XFO.Friends = XFC.FriendCollection:new()
-	--XFO.Links = XFC.LinkCollection:new()
-	--XFO.BNet = XFC.BNet:new()
+	XFO.Friends = XFC.FriendCollection:new()
+	XFO.Links = XFC.LinkCollection:new()
+	XFO.BNet = XFC.BNet:new()
 	XFO.Chat = XFC.Chat:new()
 	
 	-- Unit
@@ -113,7 +113,7 @@ function XF:LoginGuild()
 				-- Confederate setup via guild info
 				XFO.Guilds:Initialize(guildID)
 				XFO.Confederate:Initialize()
-				XFO.Guilds:SetPlayerGuild()
+				XF.Player.Guild = XFO.Guilds:GetPlayerGuild()
 				XFO.Targets:Initialize()	
 
 				-- Frame inits were waiting on Confederate init
@@ -123,7 +123,6 @@ function XF:LoginGuild()
 				-- Start network
 				XFO.Channels:Initialize()
 				XFO.Chat:Initialize()
-				XFO.Nodes:Initialize()
 				XFO.Links:Initialize()
 				XFO.Friends:Initialize()				
 				XFO.BNet:Initialize()

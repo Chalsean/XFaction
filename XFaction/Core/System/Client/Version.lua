@@ -29,17 +29,20 @@ end
 
 --#region Properties
 function XFC.Version:Key(inKey)
-    assert(type(inKey) == 'string')
-    self.key = inKey
+    assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil')
+    if(inKey ~= nil) then
+        self.key = inKey
 
-    local parts = Split(inKey, '.')
-    self:Major(tonumber(parts[1]))
-    self:Minor(tonumber(parts[2]))
-    if(#parts == 3) then
-        self:Patch(tonumber(parts[3]))
-    else
-        self:Patch(0)
+        local parts = Split(inKey, '.')
+        self:Major(tonumber(parts[1]))
+        self:Minor(tonumber(parts[2]))
+        if(#parts == 3) then
+            self:Patch(tonumber(parts[3]))
+        else
+            self:Patch(0)
+        end
     end
+    return self.key
 end
 
 function XFC.Version:Major(inMajor)

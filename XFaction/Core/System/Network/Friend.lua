@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Friend'
 
 XFC.Friend = XFC.Object:newChildConstructor()
@@ -8,29 +8,90 @@ XFC.Friend = XFC.Object:newChildConstructor()
 function XFC.Friend:new()
     local object = XFC.Friend.parent.new(self)
     object.__name = ObjectName
+    object.accountID = nil
+    object.accountName = nil
+    object.gameID = nil
     object.tag = nil
     object.target = nil
-    object.isActive = false
-    object.isRunningAddon = false
+    object.unit = nil
+    object.canLink = false
+    object.isLinked = false
+    object.guid = nil
     return object
 end
 
 function XFC.Friend:Deconstructor()
     self:ParentDeconstructor()
+    self.accountID = nil
+    self.accountName = nil
+    self.gameID = nil
     self.tag = nil
     self.target = nil
-    self.isActive = false
-    self.isRunningAddon = false
+    self.unit = nil
+    self.canLink = false
+    self.isLinked = false
+    self.guid = nil
+end
+
+function XFC.Friend:Initialize(inID)
+    assert(type(inID) == 'number')
+
+    local accountInfo = XFF.BNetGetFriendInfo(inID)
+	if(accountInfo == nil) then
+		error('Received nil for friend [%d]', inID)
+	elseif(not accountInfo.isFriend) then
+		return
+	end
+
+    self:Key(accountInfo.bnetAccountID)
+    self:ID(inID)
+    self:AccountID(accountInfo.bnetAccountID)
+    self:GameID(accountInfo.gameAccountInfo.gameAccountID)
+    self:AccountName(accountInfo.accountName)
+    self:Tag(accountInfo.battleTag)
+    self:CanLink(false)
+	
+    -- PlayerGUID is nil for Plunderstorm and we dont want to link to them
+    if(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW' and accountInfo.gameAccountInfo.playerGuid ~= nil) then
+        self:Name(accountInfo.gameAccountInfo.characterName)
+        self:GUID(accountInfo.gameAccountInfo.playerGuid)
+
+        local realm = XFO.Realms:Get(accountInfo.gameAccountInfo.realmID)
+        local faction = XFO.Factions:Get(accountInfo.gameAccountInfo.factionName)
+        local target = XFO.Targets:Get(realm, faction)
+        if(target ~= nil) then
+            self:Target(target)
+            if(accountInfo.isFriend and not self:Target():Faction():IsNeutral() and not target:IsMyTarget()) then
+                self:CanLink(true)
+            end
+        end
+    end
 end
 --#endregion
 
 --#region Properties
+function XFC.Friend:IsOnline()
+    return self:GUID() ~= nil
+end
+
+function XFC.Friend:IsOffline()
+    return not self:IsOnline()
+end
+
 function XFC.Friend:Tag(inTag)
     assert(type(inTag) == 'string' or inTag == nil, 'argument must be string or nil')
     if(inTag ~= nil) then
         self.tag = inTag
     end
     return self.tag
+end
+
+function XFC.Friend:GUID(inGUID)
+    assert(type(inGUID) == 'string' or inGUID == nil, 'argument must be string or nil')
+    if(inGUID ~= nil) then
+        self.guid = inGUID
+    end
+    return self.guid
 end
 
 function XFC.Friend:Target(inTarget)
@@ -41,110 +102,61 @@ function XFC.Friend:Target(inTarget)
     return self.target
 end
 
-function XFC.Friend:IsActive(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.isActive = inBoolean
+function XFC.Friend:AccountID(inID)
+    assert(type(inID) == 'number' or inID == nil, 'argument must be number or nil')
+    if(inID ~= nil) then
+        self.accountID = inID
     end
-    return self.isActive
+    return self.accountID
 end
 
-function XFC.Friend:IsRunningAddon(inBoolean)
+function XFC.Friend:AccountName(inName)
+    assert(type(inName) == 'string' or inName == nil, 'argument must be string or nil')
+    if(inName ~= nil) then
+        self.accountName = inName
+    end
+    return self.accountName
+end
+
+function XFC.Friend:GameID(inID)
+    assert(type(inID) == 'number' or inID == nil, 'argument must be number or nil')
+    if(inID ~= nil) then
+        self.gameID = inID
+    end
+    return self.gameID
+end
+
+function XFC.Friend:CanLink(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
     if(inBoolean ~= nil) then
-        self.isRunningAddon = inBoolean
+        self.canLink = inBoolean
     end
-    return self.isRunningAddon
+    return self.canLink
+end
+
+function XFC.Friend:IsLinked(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+    if(inBoolean ~= nil) then
+        self.canLink = inBoolean
+    end
+    return self.canLink
 end
 --#endregion
 
 --#region Methods
 function XFC.Friend:Print()
     self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
-    XF:Debug(self:GetObjectName(), '  isActive (' .. type(self.isActive) .. '): ' .. tostring(self.isActive))
-    XF:Debug(self:GetObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
-    if(self:HasTarget()) then self:GetTarget():Print() end
+    XF:Debug(self:ObjectName(), '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
+    XF:Debug(self:ObjectName(), '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
+    XF:Debug(self:ObjectName(), '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
+    XF:Debug(self:ObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
+    XF:Debug(self:ObjectName(), '  canLink (' .. type(self.canLink) .. '): ' .. tostring(self.canLink))
+    XF:Debug(self:ObjectName(), '  isLinked (' .. type(self.isLinked) .. '): ' .. tostring(self.isLinked))
+    XF:Debug(self:ObjectName(), '  guid (' .. type(self.canguidLink) .. '): ' .. tostring(self.guid))
+    if(self:HasTarget()) then self:Target():Print() end
 end
 
-function XFC.Friend:CreateLink()
-    if(self:IsRunningAddon() and self:HasTarget()) then
-        local link = nil
-        try(function ()
-            link = XFO.Links:Pop()
-            local fromNode = XFO.Nodes:Get(XF.Player.Unit:GetName())
-            if(fromNode == nil) then
-                fromNode = XFO.Nodes:Pop()
-                fromNode:Initialize()
-                XFO.Nodes:Add(fromNode)
-            end
-            link:SetFromNode(fromNode)
-
-            local toNode = XFO.Nodes:Get(self:GetName())
-            if(toNode == nil) then
-                toNode = XFO.Nodes:Pop()
-                toNode:SetKey(self:GetName())
-                toNode:SetName(self:GetName())
-                toNode:SetTarget(self:GetTarget())
-                XFO.Nodes:Add(toNode)
-            end
-            link:SetToNode(toNode)
-
-            link:Initialize()
-            XFO.Links:Add(link)
-        end).
-        catch(function (inErrorMessage)
-            XF:Warn(self:GetObjectName(), inErrorMessage)
-            XFO.Links:Push(link)
-        end)
-    end
-end
-
-function XFC.Friend:Ping()
-    XF:Debug(self:ObjectName(), 'Sending ping to [%s]', self:Tag())
-    XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, self:GameID())
-    XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
-end
-
-local function CanLink()
-    if(inAccountInfo.isFriend and 
-    inAccountInfo.gameAccountInfo.isOnline and 
-    inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
-
-     -- If player is in Torghast, don't link
-     local realm = XFO.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
-     if(realm == nil or realm:GetID() == 0) then return false end
-
-     -- We don't want to link to neutral faction toons
-     if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
-     local faction = XFO.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
-
-     XF:Trace(ObjectName, 'Checking friend for linkability [%s] GUID [%s] RealmID [%d] RealmName [%s]', inAccountInfo.battleTag, inAccountInfo.gameAccountInfo.playerGuid, inAccountInfo.gameAccountInfo.realmID, inAccountInfo.gameAccountInfo.realmName)
-
-     local target = XFO.Targets:GetByRealmFaction(realm, faction)
-     if(target ~= nil and not target:IsMyTarget()) then return true, target end
- end
- return false
-end
-
-function XFC.Friend:Deserialize(inAccountInfo)
-    self:Key(inAccountInfo.gameAccountInfo.gameAccountID)
-    self:ID(inAccountInfo.bnetAccountID)
-    self:Name(inAccountInfo.battleTag)
-
-    if(inAccountInfo.gameAccountInfo.isOnline and inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
-        self:Name(inAccountInfo.gameAccountInfo.characterName)
-        local realm = XFO.Realms:Get(inAccountInfo.gameAccountInfo.realmID)
-            -- Ignore Torghast
-            if(realm ~= nil and realm:GetID() ~= 0) then
-                local faction = XFO.Factions:Get(inAccountInfo.gameAccountInfo.factionName)
-                local target = XFO.Targets:GetByRealmFaction(realm, faction)
-                if(target ~= nil) then
-                    self:Target(target)
-                end
-            end
-            self:IsActive(true)
-        end
-    end
+function XFC.Friend:HasTarget()
+    return self.target ~= nil
 end
 --#endregion

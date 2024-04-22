@@ -116,7 +116,7 @@ function XF:InitializeConfig()
 		local patchOrder = 0
 		for _, version in XFO.Versions:ReverseSortedIterator() do
 			if(version:IsInChangeLog()) then
-				local minorVersion = version:GetMajor() .. '.' .. version:GetMinor()
+				local minorVersion = version:Major() .. '.' .. version:Minor()
 				if(XF.Options.args.General.args.ChangeLog.args[minorVersion] == nil) then
 					minorOrder = minorOrder + 1
 					patchOrder = 0

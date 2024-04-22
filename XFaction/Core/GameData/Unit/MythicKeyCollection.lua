@@ -32,4 +32,8 @@ function XFC.MythicKeyCollection:Add(inMythicKey)
         self.parent.Add(self, inMythicKey)
     end
 end
+
+function XFC.MythicKeyCollection:HasMyKey()
+    return self.myKey ~= nil
+end
 --#endregion

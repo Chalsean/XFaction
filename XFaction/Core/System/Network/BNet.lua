@@ -46,7 +46,7 @@ function XFC.BNet:Send(inMessage)
         for _, friend in XFO.Friends:Iterator() do
             if(target:Equals(friend:Target()) and
               -- At the time of login you may not have heard back on pings yet, so just broadcast
-              (friend:IsRunningAddon() or inMessage:Subject() == XF.Enum.Message.LOGIN)) then
+              (friend:IsLinked() or inMessage:Subject() == XF.Enum.Message.LOGIN)) then
                 friends[#friends + 1] = friend
             end
         end
@@ -140,5 +140,12 @@ function XFC.BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, in
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
     end)
+end
+
+function XFC.BNet:Ping(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend', 'argument must be Friend object')
+    XF:Debug(self:ObjectName(), 'Sending ping to [%s]', inFriend:Tag())
+    XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, inFriend:GameID())
+    XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
 end
 --#endregion

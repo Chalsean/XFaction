@@ -83,7 +83,7 @@ function XFC.SpecCollection:Initialize()
 			spec:IconID(tonumber(specData[2]))
 			spec:Class(XFO.Classes:Get(tonumber(specData[3])))
 			self:Add(spec)
-			XF:Info(self:GetObjectName(), 'Initialized spec [%d:%s:%s]', spec:ID(), spec:Name(), spec:Class():Name())
+			XF:Info(self:ObjectName(), 'Initialized spec [%d:%s:%s]', spec:ID(), spec:Name(), spec:Class():Name())
 		end
 		self:IsInitialized(true)
 	end
@@ -94,7 +94,7 @@ end
 function XFC.SpecCollection:GetInitialClassSpec(inClassID)
 	assert(type(inClassID) == 'number')
 	for _, spec in self:Iterator() do
-		if(spec:GetClass():GetID() == inClassID and spec:GetName() == 'Initial') then
+		if(spec:Class():ID() == inClassID and spec:Name() == 'Initial') then
 			return spec
 		end
 	end

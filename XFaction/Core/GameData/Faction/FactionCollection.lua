@@ -41,7 +41,7 @@ function XFC.FactionCollection:Get(inKey)
 	assert(type(inKey) == 'string' or type(inKey) == 'number', 'argument must be string or number')
 	if(type(inKey) == 'string') then
 		for _, faction in self:Iterator() do
-			if(faction:Name() == inName) then
+			if(faction:Name() == inKey) then
 				return faction
 			end
 		end

@@ -37,6 +37,7 @@ function XFC.Unit:new()
     object.lastLogin = 0
     object.mythicKey = nil
     object.target = nil
+    object.friend = nil
 
     return object
 end
@@ -71,15 +72,16 @@ function XFC.Unit:Deconstructor()
     self.lastLogin = 0
     self.mythicKey = nil
     self.target = nil
+    self.friend = nil
 end
 
 function XFC.Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number' or inMemberID == nil)
     local unitData
     if(inMemberID ~= nil) then
-        unitData = XFF.GuildGetMember(XF.Player.Guild:GetID(), inMemberID)
+        unitData = XFF.GuildGetMember(XF.Player.Guild:ID(), inMemberID)
     else
-        unitData = XFF.GuildGetMyself(XF.Player.Guild:GetID())
+        unitData = XFF.GuildGetMyself(XF.Player.Guild:ID())
     end
 
     -- Failure conditions:
@@ -92,11 +94,10 @@ function XFC.Unit:Initialize(inMemberID)
     end
 
     self:GUID(unitData.guid)
-    self:Key(self:GetGUID())
+    self:Key(unitData.guid)
     self:Presence(unitData.presence)    
     self:ID(unitData.memberId)
     self:Name(unitData.name)
-    self:UnitName(unitData.name .. '-' .. XF.Player.Guild:GetRealm():GetAPIName())
 	self:Level(unitData.level)	
 	self:Guild(XF.Player.Guild)
     self:UpdatedTime(XFF.TimeGetCurrent())
@@ -105,6 +106,11 @@ function XFC.Unit:Initialize(inMemberID)
     self:Rank(unitData.guildRank)
     self:Note(unitData.memberNote or '?')
     self:Achievements(unitData.achievementPoints or 0)
+    self:Target(XFO.Targets:Get(self:Guild():Realm(), self:Race():Faction()))
+
+    if(XFO.Friends:Contains(self:GUID())) then
+        self:Friend(XFO.Friends:Get(self:GUID()))
+    end
 
     local lastLogin = 0
     if(unitData.lastOnlineYear ~= nil) then
@@ -120,7 +126,7 @@ function XFC.Unit:Initialize(inMemberID)
 
     if(unitData.zone ~= nil) then
         if(not XFO.Zones:Contains(unitData.zone)) then
-            XFO.Zones:AddZone(unitData.zone)
+            XFO.Zones:Add(unitData.zone)
         end
         self:Zone(XFO.Zones:Get(unitData.zone))
     else
@@ -142,10 +148,10 @@ function XFC.Unit:Initialize(inMemberID)
 
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
-        self:Version(XFO.Versions:GetCurrent())
+        self:Version(XFO.Versions:Current())
         
         if(XFO.Keys:HasMyKey()) then
-            self:MythicKey(XFO.Keys:GetMyKey())
+            self:MythicKey(XFO.Keys:MyKey())
         end
 
         local permissions = XFF.GuildGetPermissions(unitData.guildRankOrder)
@@ -192,8 +198,20 @@ end
 --#endregion
 
 --#region Properties
+function XFC.Unit:Friend(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend' or inFriend == nil, 'argument must be Friend object or nil')
+    if(inFriend ~= nil) then
+        self.friend = inFriend
+    end
+    return self.friend
+end
+
+function XFC.Unit:IsFriend()
+    return self.friend ~= nil
+end
+
 function XFC.Unit:IsPlayer()
-    return self:GetGUID() == XF.Player.GUID
+    return self:GUID() == XF.Player.GUID
 end
 
 function XFC.Unit:GUID(inGUID)
@@ -205,7 +223,7 @@ function XFC.Unit:GUID(inGUID)
 end
 
 function XFC.Unit:UnitName()
-    return self:GetName() .. '-' .. self:GetTarget():GetRealm():GetAPIName()
+    return self:Name() .. '-' .. self:Target():Realm():APIName()
 end
 
 function XFC.Unit:Rank(inRank)
@@ -488,22 +506,22 @@ end
 --#region Methods
 function XFC.Unit:Print()
     self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
-    XF:Debug(self:GetObjectName(), '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
-    XF:Debug(self:GetObjectName(), '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
-    XF:Debug(self:GetObjectName(), '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
-    XF:Debug(self:GetObjectName(), '  note (' .. type(self.note) .. '): ' .. tostring(self.note))
-    XF:Debug(self:GetObjectName(), '  presence (' .. type(self.presence) .. '): ' .. tostring(self.presence))
-    XF:Debug(self:GetObjectName(), '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
-    XF:Debug(self:GetObjectName(), '  updatedTime (' .. type(self.updatedTime) .. '): ' .. tostring(self.updatedTime))
-    XF:Debug(self:GetObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
-    XF:Debug(self:GetObjectName(), '  isAlt (' .. type(self.isAlt) .. '): ' .. tostring(self.isAlt))
-    XF:Debug(self:GetObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
-    XF:Debug(self:GetObjectName(), '  isPlayer (' .. type(self.isPlayer) .. '): ' .. tostring(self.isPlayer))
-    XF:Debug(self:GetObjectName(), '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
-    XF:Debug(self:GetObjectName(), '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
-    XF:Debug(self:GetObjectName(), '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
-    XF:Debug(self:GetObjectName(), '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
+    XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
+    XF:Debug(self:ObjectName(), '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
+    XF:Debug(self:ObjectName(), '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
+    XF:Debug(self:ObjectName(), '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
+    XF:Debug(self:ObjectName(), '  note (' .. type(self.note) .. '): ' .. tostring(self.note))
+    XF:Debug(self:ObjectName(), '  presence (' .. type(self.presence) .. '): ' .. tostring(self.presence))
+    XF:Debug(self:ObjectName(), '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
+    XF:Debug(self:ObjectName(), '  updatedTime (' .. type(self.updatedTime) .. '): ' .. tostring(self.updatedTime))
+    XF:Debug(self:ObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
+    XF:Debug(self:ObjectName(), '  isAlt (' .. type(self.isAlt) .. '): ' .. tostring(self.isAlt))
+    XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
+    XF:Debug(self:ObjectName(), '  isPlayer (' .. type(self.isPlayer) .. '): ' .. tostring(self.isPlayer))
+    XF:Debug(self:ObjectName(), '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
+    XF:Debug(self:ObjectName(), '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
+    XF:Debug(self:ObjectName(), '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
+    XF:Debug(self:ObjectName(), '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
     if(self:Zone() ~= nil) then self:Zone():Print() end
     if(self:Version() ~= nil) then self:Version():Print() end
     if(self:Guild() ~= nil) then self:Guild():Print() end
@@ -514,6 +532,7 @@ function XFC.Unit:Print()
     if(self:Profession2() ~= nil) then self:Profession2():Print() end  
     if(self:RaiderIO() ~= nil) then self:RaiderIO():Print() end
     if(self:MythicKey()) ~= nil then self:MythicKey():Print() end
+    if(self:IsFriend()) then self:Friend():Print() end
 end
 
 function XFC.Unit:Broadcast(inSubject)
@@ -524,8 +543,8 @@ function XFC.Unit:Broadcast(inSubject)
     try(function ()
         message = XFO.Chat:Pop()
         message:Initialize()
-        message:SetType(XF.Enum.Network.BROADCAST)
-        message:SetSubject(inSubject)
+        message:Type(XF.Enum.Network.BROADCAST)
+        message:Subject(inSubject)
         XFO.Chat:Send(message)
     end).
     finally(function ()

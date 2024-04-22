@@ -90,7 +90,7 @@ function XFC.GuildCollection:Deserialize()
 	end		
 end
 
-function XFC.GuildCollection:Players()
+function XFC.GuildCollection:GetPlayerGuild()
 	for _, guild in self:Iterator() do
 		if(guild:Name() == self.info.name and XF.Player.Realm:Equals(guild:Realm())) then
 			for _, stream in pairs (XFF.GuildGetStreams(guild:ID(self.info.clubId))) do
