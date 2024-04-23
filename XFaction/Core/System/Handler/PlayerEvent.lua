@@ -65,7 +65,7 @@ function XFC.PlayerEvent:CallbackPlayerChanged(inEvent)
     local unit = nil
     try(function ()
         unit = XFO.Confederate:Pop()
-        unit:Initialize(XF.Player.Unit:GetID())
+        unit:Initialize(XF.Player.Unit:ID())
         if(not unit:Equals(XF.Player.Unit)) then
             XFO.Confederate:Add(unit)
             unit:Broadcast()
@@ -74,7 +74,7 @@ function XFC.PlayerEvent:CallbackPlayerChanged(inEvent)
         end
     end).
     catch(function (err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
         XFO.Confederate:Push(unit)
     end)
 end
@@ -88,14 +88,14 @@ function XFC.PlayerEvent:CallbackZoneChanged()
             if(zoneName ~= nil) then
                 XFO.Zones:Add(zoneName)
                 local zone = XFO.Zones:Get(zoneName)
-                if(not zone:Equals(XF.Player.Unit:GetZone())) then
-                    XF.Player.Unit:SetZone(zone)
+                if(not zone:Equals(XF.Player.Unit:Zone())) then
+                    XF.Player.Unit:Zone(zone)
                     XF.Player.Unit:Broadcast()
                 end
             end
         end).
         catch(function (err)
-            XF:Warn(self:GetObjectName(), err)
+            XF:Warn(self:ObjectName(), err)
         end)
     end
 end
@@ -105,21 +105,21 @@ function XFC.PlayerEvent:CallbackInstance()
         local inInstance = IsInInstance()
         -- Enter instance for first time
         if(inInstance and not XF.Player.InInstance) then
-            XF:Debug(self:GetObjectName(), 'Entering instance, disabling some event listeners and timers')
+            XF:Debug(self:ObjectName(), 'Entering instance, disabling some event listeners and timers')
             XF.Player.InInstance = true
             XFO.Events:EnterInstance()
             XFO.Timers:EnterInstance()
 
         -- Just leaving instance or UI reload
         elseif(not inInstance and XF.Player.InInstance) then
-            XF:Debug(self:GetObjectName(), 'Leaving instance, enabling some event listeners and timers')
+            XF:Debug(self:ObjectName(), 'Leaving instance, enabling some event listeners and timers')
             XF.Player.InInstance = false
             XFO.Events:LeaveInstance()
             XFO.Timers:LeaveInstance()            
         end
     end).
     catch(function (err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 --#endregion

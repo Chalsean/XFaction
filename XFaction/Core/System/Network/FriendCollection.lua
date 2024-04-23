@@ -78,7 +78,7 @@ end
 function XFC.FriendCollection:ContainsByGameID(inGameID)
 	assert(type(inGameID) == 'number')
 	for _, friend in self:Iterator() do
-		if(friend:GetGameID() == inGameID) then
+		if(friend:GameID() == inGameID) then
 			return true
 		end
 	end

@@ -120,10 +120,10 @@ function XFC.Confederate:Restore()
             unit = self:Pop()
             unit:Deserialize(data)
             self:Add(unit)
-            XF:Info(self:GetObjectName(), '  Restored %s unit information from backup', unit:GetUnitName())
+            XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
         end).
         catch(function (err)
-            XF:Warn(self:GetObjectName(), err)
+            XF:Warn(self:ObjectName(), err)
             self:Push(unit)
         end)
     end
@@ -131,7 +131,7 @@ function XFC.Confederate:Restore()
 end
 
 function XFC.Confederate:Offline(inKey)
-    assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil')
+    --assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil')
     local self = XFO.Confederate -- Callback
     if(inKey ~= nil) then
         if(self:Contains(inKey)) then

@@ -126,7 +126,7 @@ function XFC.BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, in
         end
     end).
     catch(function (err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end)
 
     try(function ()

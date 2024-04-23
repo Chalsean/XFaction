@@ -205,7 +205,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     elseif(inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
         -- Local guild achievements should already be displayed by WoW client
         -- FIX: Move this check to ChatFrame
-        if(not XF.Player.Guild:Equals(inMessage:Guild())) then
+        if(not XF.Player.Guild:Equals(inMessage:From():Guild())) then
             XFO.ChatFrame:DisplayAchievement(inMessage)
         end
 
@@ -232,7 +232,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
 
     -- Process LOGOUT message
     if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
-        if(XF.Player.Guild:Equals(inMessage:Guild())) then
+        if(XF.Player.Guild:Equals(inMessage:From():Guild())) then
             -- In case we get a message before scan
             if(not XFO.Confederate:Contains(inMessage:From():Key())) then
                 XFO.SystemFrame:Display(inMessage:Subject(), inMessage:From())

@@ -49,9 +49,9 @@ function XFC.GuildCollection:Get(inGuildName, inRealm)
 		end
 	elseif(self.names[inGuildName] ~= nil) then
 		return self.names[inGuildName]
-	else
-		self.parent.Get(self, inGuildName)
 	end
+	
+	return self.parent.Get(self, inGuildName)
 end
 
 function XFC.GuildCollection:Deserialize()
@@ -90,13 +90,13 @@ function XFC.GuildCollection:Deserialize()
 	end		
 end
 
-function XFC.GuildCollection:GetPlayerGuild()
+function XFC.GuildCollection:SetPlayerGuild()
 	for _, guild in self:Iterator() do
 		if(guild:Name() == self.info.name and XF.Player.Realm:Equals(guild:Realm())) then
 			for _, stream in pairs (XFF.GuildGetStreams(guild:ID(self.info.clubId))) do
 				if(stream.streamType == 1) then
 					guild:StreamID(stream.streamId)
-					return guild
+					XF.Player.Guild = guild
 				end
 			end
 		end

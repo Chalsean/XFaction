@@ -86,7 +86,7 @@ function XFC.Chat:Send(inMessage)
         channelID = nil
     else
         channelName = 'CHANNEL'
-        channelID = XFO.Channels:GetLocalChannel():ID()
+        channelID = XFO.Channels:LocalChannel():ID()
     end
 
     local packets = inMessage:Segment()
