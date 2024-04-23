@@ -115,7 +115,7 @@ function XFC.LinkCollection:Deserialize(inSerialized)
 			end
 		end).
 		catch(function(err)
-			XF:Warn(self:GetObjectName(), err)
+			XF:Warn(self:ObjectName(), err)
 			self:Push(link)
 		end)
     end
