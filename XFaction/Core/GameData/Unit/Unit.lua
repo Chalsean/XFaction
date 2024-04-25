@@ -223,7 +223,7 @@ function XFC.Unit:GUID(inGUID)
 end
 
 function XFC.Unit:UnitName()
-    return self:Name() .. '-' .. self:Guild():Realm():APIName()
+    return self:Name() .. '-' .. self:Target():Realm():APIName()
 end
 
 function XFC.Unit:Rank(inRank)
@@ -533,6 +533,7 @@ function XFC.Unit:Print()
     if(self:RaiderIO() ~= nil) then self:RaiderIO():Print() end
     if(self:MythicKey()) ~= nil then self:MythicKey():Print() end
     if(self:IsFriend()) then self:Friend():Print() end
+    if(self:Target() ~= nil) then self:Target():Print() end
 end
 
 function XFC.Unit:Broadcast(inSubject)
@@ -629,6 +630,9 @@ function XFC.Unit:Deserialize(inSerialized)
     else
         self:Zone(XFO.Zones:Get('?'))
     end
+
+    self:IsInitialized(true)
+    self:Print()
 end
 
 -- Usually a key check is enough for equality check, but use case is to detect any data differences

@@ -97,6 +97,25 @@ function XFC.Confederate:Add(inUnit)
     end
 end
 
+function XFC.Confederate:Get(inKey, inRealmID, inFactionID)
+    assert(type(inKey) == 'string')
+    assert(type(inRealmID) == 'number' or inRealmID == nil, 'argument must be number or nil')
+    assert(type(inFactionID) == 'number' or inFactionID == nil, 'argument must be number or nil')
+
+    if(inRealmID == nil) then
+        return self.parent.Get(self, inKey)
+    end
+
+    local realm = XFO.Realms:Get(inRealmID)
+    local faction = XFO.Factions:Get(inFactionID)
+
+    for _, unit in self:Iterator() do
+        if(XF:ObjectsEquals(realm, unit:Guild():Realm()) and XF:ObjectsEquals(faction, unit:Race():Faction()) and unit:Name() == inName) then
+            return unit
+        end
+    end
+end
+
 function XFC.Confederate:Backup()
     try(function ()
         if(self:IsInitialized()) then

@@ -156,7 +156,7 @@ function XFC.FriendCollection:Restore()
 			if(self:Contains(key)) then
 				local friend = self:Get(key)
 				friend:IsLinked(true)
-				XF:Info(self:ObjectName(), '  Restored %s friend information from backup', friend:GetTag())
+				XF:Info(self:ObjectName(), '  Restored %s friend information from backup', friend:Tag())
 			end
 		end).
 		catch(function (err)

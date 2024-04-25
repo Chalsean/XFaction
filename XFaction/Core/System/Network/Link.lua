@@ -101,11 +101,18 @@ end
 
 function XFC.Link:Deserialize(inSerialized)
     assert(type(inSerialized) == 'string')
-
     local _Nodes = string.Split(inSerialized, ';')
-    self:SetFromNode(GetNode(_Nodes[1]))
-    self:SetToNode(GetNode(_Nodes[2]))
 
-    self:Initialize()
+    local from = string.Split(_Nodes[1], ':')
+    local fromUnit = XFO.Confederate:Get(from[1], tonumber(from[2]), tonumber(from[3]))
+
+    local to = string.Split(_Nodes[2], ':')
+    local toUnit = XFO.Confederate:Get(to[1], tonumber(to[2]), tonumber(to[3]))
+
+    if(fromUnit ~= nil and toUnit ~= nil) then
+        self:SetFromNode(fromUnit)
+        self:SetToNode(toUnit)
+        self:Initialize()
+    end
 end
 --#endregion

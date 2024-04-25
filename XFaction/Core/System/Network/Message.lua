@@ -246,7 +246,6 @@ function XFC.Message:Deserialize(inData)
             -- Old chat/achievement message
             elseif(not self:Subject() == XF.Enum.Message.LINK) then
                 unit:Name(data.N)
-                unit:UnitName(data.U)
                 if(data.M ~= nil) then
                     unit:IsAlt(true)
                     unit:MainName(data.M)

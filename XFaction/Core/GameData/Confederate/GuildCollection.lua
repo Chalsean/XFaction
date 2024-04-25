@@ -96,10 +96,15 @@ function XFC.GuildCollection:SetPlayerGuild()
 			for _, stream in pairs (XFF.GuildGetStreams(guild:ID(self.info.clubId))) do
 				if(stream.streamType == 1) then
 					guild:StreamID(stream.streamId)
-					XF.Player.Guild = guild
+					break
 				end
 			end
+			XF.Player.Guild = guild
+			break
 		end
+	end
+	if(XF.Player.Guild == nil) then		
+		error('Player is not on a supported guild or realm')
 	end
 end
 --#endregion

@@ -106,11 +106,16 @@ function XFC.LinkCollection:Deserialize(inSerialized)
 		try(function()
 			link = self:Pop()
 			link:Deserialize(serialLink)
-			if(not self:Contains(link:GetKey())) then
-				link:SetTimeStamp(XFF.TimeGetCurrent())
-				self:Add(link)
+			if(link:IsInitialized()) then
+				if(not self:Contains(link:GetKey())) then
+					link:TimeStamp(XFF.TimeGetCurrent())
+					self:Add(link)
+				else
+					self:Get(link:GetKey()):SetTimeStamp(XFF.TimeGetCurrent())
+					self:Push(link)
+				end
 			else
-				self:Get(link:GetKey()):SetTimeStamp(XFF.TimeGetCurrent())
+				XF:Warn(self:ObjectName(), 'Failed to deserialize link: ' .. serialLink)
 				self:Push(link)
 			end
 		end).

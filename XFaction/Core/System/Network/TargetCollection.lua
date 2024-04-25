@@ -66,14 +66,18 @@ function XFC.TargetCollection:Get(inRealm, inFaction)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm' or type(inRealm) == 'string', 'argument must be Realm object or string')
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil, 'argument must be Faction object or nil')
 
-	local key = inFaction ~= nil and TargetKey(inRealm, inFaction) or inRealm
-	if(self:Contains(key)) then 
-		return self.parent.Get(self, key)
-	elseif(type(inRealm) == 'table') then
-		for _, connectedRealm in inRealm:ConnectedIterator() do
-			key = TargetKey(connectedRealm, inFaction)
-    		if(self:Contains(key)) then 
-				return self.parent.Get(self, key) 
+	if(inFaction == nil) then
+		return self.parent.Get(self, inRealm)
+	else
+		local key = TargetKey(inRealm, inFaction)
+		if(self:Contains(key)) then 
+			return self.parent.Get(self, key)
+		elseif(type(inRealm) == 'table') then
+			for _, connectedRealm in inRealm:ConnectedIterator() do
+				key = TargetKey(connectedRealm, inFaction)
+    			if(self:Contains(key)) then 
+					return self.parent.Get(self, key) 
+				end
 			end
 		end
 	end

@@ -69,8 +69,8 @@ function XFC.Chat:Send(inMessage)
         elseif(inMessage:Type() == XF.Enum.Network.BNET) then
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
-        elseif(not inMessage:HasTargets() and inMessage:GetType() == XF.Enum.Network.BROADCAST) then
-            XF:Debug(self:GetObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
+        elseif(not inMessage:HasTargets() and inMessage:Type() == XF.Enum.Network.BROADCAST) then
+            XF:Debug(self:ObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
             inMessage:Type(XF.Enum.Network.LOCAL)        
         end
     end
