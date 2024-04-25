@@ -110,7 +110,7 @@ function XFC.Confederate:Get(inKey, inRealmID, inFactionID)
     local faction = XFO.Factions:Get(inFactionID)
 
     for _, unit in self:Iterator() do
-        if(XF:ObjectsEquals(realm, unit:Guild():Realm()) and XF:ObjectsEquals(faction, unit:Race():Faction()) and unit:Name() == inName) then
+        if(XF:ObjectsEquals(realm, unit:Guild():Realm()) and XF:ObjectsEquals(faction, unit:Race():Faction()) and unit:Name() == inKey) then
             return unit
         end
     end

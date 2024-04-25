@@ -46,7 +46,7 @@ function XFC.FactionCollection:Get(inKey)
 			end
 		end
 	else
-		self.parent.Get(self, inKey)
+		return self.parent.Get(self, inKey)
 	end
 end
 --#endregion

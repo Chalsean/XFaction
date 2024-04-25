@@ -134,9 +134,9 @@ function XFC.Order:Display()
         local display = false
         if(not XF.Config.Chat.Crafting.Profession) then
             display = true
-        elseif(XF:ObjectsEqual(self:Profession(), XF.Player.Unit:Profession1())) then
+        elseif(XF:ObjectsEquals(self:Profession(), XF.Player.Unit:Profession1())) then
             display = true
-        elseif(XF:ObjectsEqual(self:Profession(), XF.Player.Unit:Profession2())) then
+        elseif(XF:ObjectsEquals(self:Profession(), XF.Player.Unit:Profession2())) then
             display = true
         end
 
@@ -145,7 +145,7 @@ function XFC.Order:Display()
         end
     end).
     catch(function(err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 

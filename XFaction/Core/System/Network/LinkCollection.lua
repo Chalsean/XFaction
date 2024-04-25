@@ -43,14 +43,12 @@ end
 --#region Hash
 function XFC.LinkCollection:Add(inLink)
     assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
-	if(not self:Contains(inLink:GetKey())) then
+	if(not self:Contains(inLink:Key())) then
 		self.parent.Add(self, inLink)
-		inLink:GetFromNode():IncrementLinkCount()
-		inLink:GetToNode():IncrementLinkCount()
 		if(inLink:IsMyLink()) then
 			self:IncrementMyLinkCount()
 		end
-		XF:Info(self:ObjectName(), 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
+		XF:Info(self:ObjectName(), 'Added link from [%s] to [%s]', inLink:From():UnitName(), inLink:To():UnitName())
 		XFO.DTLinks:RefreshBroker()
 	end
 end
@@ -60,12 +58,10 @@ function XFC.LinkCollection:Remove(inKey)
 	if(self:Contains(inKey)) then
 		local link = self:Get(inKey)
 		self.parent.Remove(self, inKey)
-		link:GetFromNode():DecrementLinkCount()
-		link:GetToNode():DecrementLinkCount()
 		if(link:IsMyLink()) then
 			self:DecrementLinkCount()
 		end
-		XF:Info(self:ObjectName(), 'Removed link from [%s] to [%s]', link:GetFromNode():GetName(), link:GetToNode():GetName())
+		XF:Info(self:ObjectName(), 'Removed link from [%s] to [%s]', link:From():UnitName(), link:To():UnitName())
 		self:Push(link)
 		XFO.DTLinks:RefreshBroker()
 	end
@@ -107,11 +103,11 @@ function XFC.LinkCollection:Deserialize(inSerialized)
 			link = self:Pop()
 			link:Deserialize(serialLink)
 			if(link:IsInitialized()) then
-				if(not self:Contains(link:GetKey())) then
-					link:TimeStamp(XFF.TimeGetCurrent())
+				if(not self:Contains(link:Key())) then
+					link:LastUpdatedTime(XFF.TimeGetCurrent())
 					self:Add(link)
 				else
-					self:Get(link:GetKey()):SetTimeStamp(XFF.TimeGetCurrent())
+					self:Get(link:Key()):LastUpdatedTime(XFF.TimeGetCurrent())
 					self:Push(link)
 				end
 			else
@@ -166,7 +162,7 @@ function XFC.LinkCollection:Restore()
 			self:Deserialize(XF.Cache.Backup.Links)
 		end).
 		catch(function (err)
-			XF:Warn(self:GetObjectName(), err)
+			XF:Warn(self:ObjectName(), err)
 		end)
 	end
 	XF.Cache.Backup.Links = ''
@@ -177,8 +173,8 @@ function XFC.LinkCollection:Janitor()
 	local ttl = XFF.TimeGetCurrent() - XF.Settings.Network.BNet.Link.Stale
 
 	for _, link in self:Iterator() do
-		if(not link:IsMyLink() and link:GetTimeStamp() < ttl) then
-			XF:Debug(self:GetObjectName(), 'Disabling stale link')
+		if(not link:IsMyLink() and link:LastUpdatedTime() < ttl) then
+			XF:Debug(self:ObjectName(), 'Disabling stale link')
 			link:IsActive(false)
 		end
 	end

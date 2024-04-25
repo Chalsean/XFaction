@@ -632,7 +632,6 @@ function XFC.Unit:Deserialize(inSerialized)
     end
 
     self:IsInitialized(true)
-    self:Print()
 end
 
 -- Usually a key check is enough for equality check, but use case is to detect any data differences

@@ -110,8 +110,8 @@ function XFC.Link:Deserialize(inSerialized)
     local toUnit = XFO.Confederate:Get(to[1], tonumber(to[2]), tonumber(to[3]))
 
     if(fromUnit ~= nil and toUnit ~= nil) then
-        self:SetFromNode(fromUnit)
-        self:SetToNode(toUnit)
+        self:From(fromUnit)
+        self:To(toUnit)
         self:Initialize()
     end
 end
