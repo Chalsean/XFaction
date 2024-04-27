@@ -49,7 +49,7 @@ function XF:CoreInit()
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
 	XFO.Friends = XFC.FriendCollection:new()
-	XFO.Links = XFC.LinkCollection:new()
+	--XFO.Links = XFC.LinkCollection:new()
 	XFO.BNet = XFC.BNet:new()
 	XFO.Chat = XFC.Chat:new()
 	
@@ -123,7 +123,7 @@ function XF:LoginGuild()
 				-- Start network
 				XFO.Channels:Initialize()
 				XFO.Chat:Initialize()
-				XFO.Links:Initialize()
+				--XFO.Links:Initialize()
 				XFO.Friends:Initialize()				
 				XFO.BNet:Initialize()
 
@@ -191,7 +191,7 @@ function XF:LoginPlayer()
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
 				XFO.Friends:Restore()
-				XFO.Links:Restore()
+				--XFO.Links:Restore()
 				XFO.Orders:Restore()
 				XF.Player.Unit:Broadcast()
 				XF.Cache.UIReload = false
@@ -253,11 +253,11 @@ function XF:Reload()
 		XF:Stop()
         XFO.Confederate:Backup()
         XFO.Friends:Backup()
-        XFO.Links:Backup()
+        --XFO.Links:Backup()
         XFO.Orders:Backup()
     end).
     catch(function (err)
-        XF:Error(self:GetObjectName(), err)
+        XF:Error(ObjectName(), err)
         XF.Config.Errors[#XF.Config.Errors + 1] = 'Failed to perform backups: ' .. err
     end).
     finally(function ()

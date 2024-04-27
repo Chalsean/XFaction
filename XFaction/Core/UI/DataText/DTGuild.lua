@@ -73,14 +73,14 @@ function XFC.DTGuild:GetRegularFont()
 end
 
 function XFC.DTGuild:RefreshBroker()
-	-- if(XF.Initialized) then
-	-- 	local text = ''  
-	-- 	if(XF.Config.DataText.Guild.Label) then
-	-- 		text = XF.Lib.Locale['GUILD'] .. ': '
-	-- 	end
-	-- 	text = format('%s|cff3CE13F%d', text, XFO.Confederate:GetOnlineCount())
-	-- 	XFO.DTGuild:GetBroker().text = text
-	-- end
+	if(XF.Initialized) then
+		local text = ''  
+		if(XF.Config.DataText.Guild.Label) then
+			text = XF.Lib.Locale['GUILD'] .. ': '
+		end
+		text = format('%s|cff3CE13F%d', text, XFO.Confederate:OnlineCount())
+		self.ldbObject.text = text
+	end
 end
 --#endregion
 
@@ -129,10 +129,10 @@ local function PreSort()
 			unitData.Faction = unit:Race():Faction():IconID()
 			unitData.PvP = unit:PvP()
 
-			if(unit:HasRaiderIO()) then
-				unitData.Raid = unit:RaiderIO():Raid()
-				unitData.Dungeon = unit:RaiderIO():Dungeon()			
-			end
+			-- if(unit:HasRaiderIO()) then
+			-- 	unitData.Raid = unit:RaiderIO():Raid()
+			-- 	unitData.Dungeon = unit:RaiderIO():Dungeon()			
+			-- end
 
 			if(unit:HasVersion()) then
 				unitData.Version = unit:Version():Key()
@@ -140,13 +140,11 @@ local function PreSort()
 				unitData.Version = '0.0.0'
 			end
 
-			if(unit:IsAlt() and unit:HasMainName() and XF.Config.DataText.Guild.Main) then
+			if(unit:IsAlt() and XF.Config.DataText.Guild.Main) then
 				unitData.Name = unit:Name() .. ' (' .. unit:MainName() .. ')'
 			end
 
-			if(unit:HasSpec()) then
-				unitData.Spec = unit:Spec():IconID()
-			end
+			unitData.Spec = unit:Spec():IconID()
 
 			if(unit:HasProfession1()) then
 				unitData.Profession1 = unit:Profession1():IconID()
@@ -156,11 +154,7 @@ local function PreSort()
 				unitData.Profession2 = unit:Profession2():IconID()
 			end
 
-			if(unit:HasZone()) then
-				unitData.Zone = unit:Zone():LocaleName()
-			else
-				unitData.Zone = unit:ZoneName()
-			end
+			unitData.Zone = unit:Zone():LocaleName()
 
 			if(unit:HasMythicKey() and unit:MythicKey():HasDungeon()) then
 				unitData.MythicKey = unit:MythicKey():Dungeon():Name() .. ' +' .. unit:MythicKey():ID()
@@ -193,11 +187,11 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 	if(link == nil) then return end
 
 	if(inMouseButton == 'RightButton' and XFF.UIIsShiftDown()) then
-		XFF.PartySendInvite(unit:GetUnitName())
+		XFF.PartySendInvite(unit:UnitName())
 	elseif(inMouseButton == 'RightButton' and XFF.UIIsCtrlDown()) then
-		XFF.PartyRequestInvite(unit:GetUnitName())
+		XFF.PartyRequestInvite(unit:UnitName())
  	elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
-		XFF.UICreateLink(link, unit:GetName(), inMouseButton)
+		XFF.UICreateLink(link, unit:Name(), inMouseButton)
 	end
 end
 
@@ -250,13 +244,13 @@ function XFC.DTGuild:OnEnter(this)
 	local line = self.tooltip:AddLine()
 	
 	if(XF.Config.DataText.Guild.GuildName and XF.Cache.DTGuildTotalEnabled > 4) then
-		local guildName = XF.Player.Guild:GetName()
-		guildName = guildName .. ' <' .. XF.Player.Guild:GetInitials() .. '>'
+		local guildName = XF.Player.Guild:Name()
+		guildName = guildName .. ' <' .. XF.Player.Guild:Initials() .. '>'
 		self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_GUILD'], guildName), self.headerFont, 'LEFT', 4)
 	end
 
 	if(XF.Config.DataText.Guild.Confederate and XF.Cache.DTGuildTotalEnabled > 8) then
-		self.tooltip:SetCell(line, 6, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:GetName()), self.headerFont, 'LEFT', -1)	
+		self.tooltip:SetCell(line, 6, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self.headerFont, 'LEFT', -1)	
 	end
 
 	if(XF.Config.DataText.Guild.GuildName or XF.Config.DataText.Guild.Confederate or XF.Config.DataText.Guild.MOTD) then

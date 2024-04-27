@@ -16,9 +16,9 @@ end
 function XFC.WIM:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFO.WIM:SetAPI(WIM)        
+        XFO.WIM:API(WIM)        
         XFO.WIM:IsLoaded(true)
-        XF:Info(ObjectName, 'WIM loaded successfully')
+        XF:Info(self:ObjectName(), 'WIM loaded successfully')
 		self:IsInitialized(true)
 	end
 end

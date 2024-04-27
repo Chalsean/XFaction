@@ -116,7 +116,7 @@ function XFC.BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, in
             local friend = XFO.Friends:GetByGameID(tonumber(inSender))
             if(friend ~= nil) then
                 friend:IsLinked(true)
-                friend:CreateLink()
+                --friend:CreateLink()
                 if(inEncodedMessage:sub(1, 4) == 'PING') then
                     XF:Debug(self:ObjectName(), 'Received ping from [%s]', friend:Tag())
                 elseif(inEncodedMessage:sub(1,7) == 'RE:PING') then

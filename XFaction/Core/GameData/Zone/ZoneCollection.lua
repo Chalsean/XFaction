@@ -16,20 +16,15 @@ function XFC.ZoneCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-		-- Sandbox LibTourist to trick it into thinking its always retail
-		-- After initialization, library is no longer needed, thus scope it for destruction
-		local library = XFC.Library:new(); library:Initialize()
-		library:Sandbox(LibStub:GetLibrary('LibTourist-3.0'))
-		--library:Set('WOW_PROJECT_ID', WOW_PROJECT_MAINLINE)
-
-		local zoneIDs = library:Execute('GetMapIDLookupTable')
-		local zoneLocale = library:Execute('GetLookupTable')
+		local lib = LibStub('LibTourist-3.0')
+		local zoneIDs = lib:GetMapIDLookupTable()
+		local zoneLocale = lib:GetLookupTable()
 		local alreadyAdded = {}
 
 		for zoneID, zoneName in pairs (zoneIDs) do
 			if(strlen(zoneName) > 0) then
 				zoneID = tonumber(zoneID)
-				local continentID = library:Execute('GetContinentMapID', zoneID)
+				local continentID = lib:GetContinentMapID(zoneID)
 
 				if(not alreadyAdded[zoneName]) then
 					if(continentID and tonumber(continentID) == zoneID) then
@@ -69,7 +64,7 @@ function XFC.ZoneCollection:Initialize()
 		end
 
 		for _, zone in self:Iterator() do
-			local continentID = library:Execute('GetContinentMapID', zone:ID())
+			local continentID = lib:GetContinentMapID(zone:ID())
 			if(continentID) then
 				local continent = XFO.Continents:Get(tonumber(continentID))
 				if(continent) then
@@ -88,7 +83,7 @@ end
 function XFC.ZoneCollection:Contains(inKey)
 	assert(type(inKey) == 'string' or type(inKey) == 'number', 'argument must be string or number')
 	if(type(inKey) == 'number') then
-		return self.zoneByID[inID] ~= nil
+		return self.zoneByID[inKey] ~= nil
 	end
 	return self.parent.Contains(self, inKey)
 end
@@ -96,7 +91,7 @@ end
 function XFC.ZoneCollection:Get(inKey)
 	assert(type(inKey) == 'string' or type(inKey) == 'number', 'argument must be string or number')
 	if(type(inKey) == 'number') then
-		return self.zoneByID[inID]
+		return self.zoneByID[inKey]
 	end
 	return self.parent.Get(self, inKey)
 end

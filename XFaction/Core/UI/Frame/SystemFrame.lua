@@ -56,14 +56,13 @@ function XFC.SystemFrame:Display(inType, inUnit, inOrder)
         text = text .. inUnit:Name() .. ' '
     elseif(inUnit:Race():Faction():Equals(XF.Player.Faction)) then
         text = text .. format('|Hplayer:%s|h[%s]|h', inUnit:UnitName(), inUnit:Name()) .. ' '
-    --FIXelse
-        -- local friend = XFO.Friends:GetByRealmUnitName(inUnit:GetGuild():GetRealm(), inUnit:GetName())
-        -- if(friend ~= nil) then
-        --     text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
-        -- else
-        --     -- Maybe theyre in a bnet community together, no way to associate tho
-        --     text = text .. format('|Hplayer:%s|h[%s]|h', inUnit:GetUnitName(), inUnit:GetName()) .. ' '
-        -- end
+    else
+        if(inUnit:IsFriend()) then
+            text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inUnit:Friend():AccountName(), inUnit:Friend():AccountID(), inUnit:Friend():Tag(), inUnit:Name()) .. ' '
+        else
+            -- Maybe theyre in a bnet community together, no way to associate tho
+            text = text .. format('|Hplayer:%s|h[%s]|h', inUnit:UnitName(), inUnit:Name()) .. ' '
+        end
     end
     
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Main and inUnit:IsAlt()) then

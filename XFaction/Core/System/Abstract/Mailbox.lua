@@ -154,7 +154,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
     -- Is a newer version available?
-    if(not XF.Cache.NewVersionNotify and XFO.Version:IsNewer(inMessage:From():Version())) then
+    if(not XF.Cache.NewVersionNotify and inMessage:From():HasVersion() and XFO.Version:IsNewer(inMessage:From():Version())) then
         print(format(XF.Lib.Locale['NEW_VERSION'], XF.Title))
         XF.Cache.NewVersionNotify = true
     end
@@ -199,7 +199,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     -- Process GCHAT message
     if(inMessage:Subject() == XF.Enum.Message.GCHAT) then
         -- FIX: Move this check to ChatFrame
-        if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:Guild())) then
+        if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:From():Guild())) then
             XFO.ChatFrame:DisplayGuildChat(inMessage)
         end
 
@@ -246,25 +246,29 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
             end
         else
             XFO.SystemFrame:Display(inMessage:Subject(), inMessage:From())
+            XFO.Confederate:Offline(inMessage:From())
             XFO.Confederate:Remove(inMessage:From())
+            XFO.Confederate:Push(inMessage:From())
         end    
-    else
+    elseif(inMessage:Subject() == XF.Enum.Message.LOGIN or inMessage:Subject() == XF.Enum.Message.DATA) then
         -- Process LOGIN message
         if(inMessage:Subject() == XF.Enum.Message.LOGIN and (not XFO.Confederate:Contains(inMessage:From():Key()) or XFO.Confederate:Get(inMessage:From():Key()):IsOffline())) then
             XFO.SystemFrame:Display(inMessage:Subject(), inMessage:From())
         end
         -- Is the unit data newer?
-        if(inMessage:From():IsInitialized()) then
-            if(XFO.Confederate:Contains(inMessage:From():Key())) then
-                if(XFO.Confederate:Get(inMessage:From():Key()):UpdatedTime() < inMessage:From():UpdatedTime()) then
-                    XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', inMessage:From():UnitName())
-                    XFO.Confederate:Add(inMessage:From())
-                end
-            else
+        if(XFO.Confederate:Contains(inMessage:From():Key())) then
+            if(XFO.Confederate:Get(inMessage:From():Key()):UpdatedTime() < inMessage:From():UpdatedTime()) then
                 XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', inMessage:From():UnitName())
                 XFO.Confederate:Add(inMessage:From())
+            else
+                XFO.Confederate:Push(inMessage:From())
             end
-        end        
+        else
+            XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', inMessage:From():UnitName())
+            XFO.Confederate:Add(inMessage:From())
+        end
+    else
+        XFO.Confederate:Push(inMessage:From())    
     end
 
     XFO.DTGuild:RefreshBroker()

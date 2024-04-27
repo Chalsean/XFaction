@@ -70,44 +70,41 @@ function XFC.DTLinks:GetRegularFont()
 end
 
 function XFC.DTLinks:RefreshBroker()
-	-- local text = ''
-	-- if(XF.Config.DataText.Link.Label) then
-	-- 	text = XF.Lib.Locale['LINKS'] .. ': '
-	-- end
+	local text = ''
+	if(XF.Config.DataText.Link.Label) then
+		text = XF.Lib.Locale['LINKS'] .. ': '
+	end
 
-	-- local names = {}
-	-- local allianceCount = 0
-	-- local hordeCount = 0
-	-- local activeLinks = 0
+	local names = {}
+	local hordeCount = 0
+	local allianceCount = 0
 
+	-- FIX
 	-- for _, link in XFO.Links:Iterator() do
-	-- 	if(link:IsActive()) then
-	-- 		activeLinks = activeLinks + 1
-	-- 		if(names[link:GetFromNode():GetName()] == nil) then
-	-- 			if(link:GetFromNode():GetTarget():GetFaction():GetName() == 'Alliance') then
-	-- 				allianceCount = allianceCount + 1
-	-- 			else
-	-- 				hordeCount = hordeCount + 1
-	-- 			end
-	-- 			names[link:GetFromNode():GetName()] = true
+	-- 	if(names[link:From():Name()] == nil) then
+	-- 		if(link:From():Race():Faction():IsAlliance()) then
+	-- 			allianceCount = allianceCount + 1
+	-- 		else
+	-- 			hordeCount = hordeCount + 1
 	-- 		end
-	-- 		if(names[link:GetToNode():GetName()] == nil) then
-	-- 			if(link:GetToNode():GetTarget():GetFaction():GetName() == 'Alliance') then
-	-- 				allianceCount = allianceCount + 1
-	-- 			else
-	-- 				hordeCount = hordeCount + 1
-	-- 			end
-	-- 			names[link:GetToNode():GetName()] = true
+	-- 		names[link:From():Name()] = true
+	-- 	end
+	-- 	if(names[link:To():Name()] == nil) then
+	-- 		if(link:To():Race():Faction():IsAlliance()) then
+	-- 			allianceCount = allianceCount + 1
+	-- 		else
+	-- 			hordeCount = hordeCount + 1
 	-- 		end
+	-- 		names[link:To():Name()] = true
 	-- 	end
 	-- end
 
 	-- if(XF.Config.DataText.Link.Faction) then
-	-- 	text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, activeLinks, allianceCount, hordeCount)
+	-- 	text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XFO.Links:Count(), allianceCount, hordeCount)
 	-- else
-	-- 	text = format('%s|cffffffff%d|r', text, activeLinks)
+	-- 	text = format('%s|cffffffff%d|r', text, XFO.Links:Count())
 	-- end
-	-- self:GetBroker().text = text
+	self:GetBroker().text = text
 end
 --#endregion
 
@@ -117,7 +114,7 @@ function XFC.DTLinks:OnEnter(this)
 	if(CombatLockdown()) then return end
 
 	--#region Configure Tooltip
-	local targetCount = XFO.Targets:GetCount() + 1
+	local targetCount = XFO.Targets:Count() + 1
 	
 	if XF.Lib.QT:IsAcquired(ObjectName) then
 		self.tooltip = XF.Lib.QT:Acquire(ObjectName)		
@@ -135,53 +132,51 @@ function XFC.DTLinks:OnEnter(this)
 	--#endregion
 
 	--#region Header
-	local line = self.tooltip:AddLine()
-	local guildName = XFO.Confederate:GetName()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], guildName), self.headerFont, 'LEFT', targetCount)
-	line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XFO.Links:GetCount()), self.headerFont, 'LEFT', targetCount)
+	-- local line = self.tooltip:AddLine()
+	-- local guildName = XFO.Confederate:Name()
+	-- self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], guildName), self.headerFont, 'LEFT', targetCount)
+	-- line = self.tooltip:AddLine()
+	-- self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XFO.Links:Count()), self.headerFont, 'LEFT', targetCount)
 
-	line = self.tooltip:AddLine()
-	line = self.tooltip:AddLine()
-	line = self.tooltip:AddHeader()
-	--#endregion
+	-- line = self.tooltip:AddLine()
+	-- line = self.tooltip:AddLine()
+	-- line = self.tooltip:AddHeader()
+	-- --#endregion
 
-	--#region Column Headers
-	local targetColumn = {}
-	local i = 1
-	for _, target in XFO.Targets:Iterator() do
-		local targetName = format('%s%s', format(XF.Icons.String, target:GetFaction():GetIconID()), target:GetRealm():GetName())
-		self.tooltip:SetCell(line, i, targetName)
-		targetColumn[target:Key()] = i
-		i = i + 1
-	end
+	-- --#region Column Headers
+	-- local targetColumn = {}
+	-- local i = 1
+	-- for _, target in XFO.Targets:Iterator() do
+	-- 	local targetName = format('%s%s', format(XF.Icons.String, target:Faction():IconID()), target:Realm():Name())
+	-- 	self.tooltip:SetCell(line, i, targetName)
+	-- 	targetColumn[target:Key()] = i
+	-- 	i = i + 1
+	-- end
 
-	line = self.tooltip:AddLine()
-	self.tooltip:AddSeparator()
-	line = self.tooltip:AddLine()
-	--#endregion
+	-- line = self.tooltip:AddLine()
+	-- self.tooltip:AddSeparator()
+	-- line = self.tooltip:AddLine()
+	-- --#endregion
 
-	--#region Populate Table
-	if(XF.Initialized) then
-		for _, link in XFO.Links:Iterator() do
-			if(link:IsActive()) then
-				local fromName = format('|cffffffff%s|r', link:GetFromNode():GetName())
-				if(link:IsMyLink() and link:GetFromNode():IsMyNode()) then
-					fromName = format('|cffffff00%s|r', link:GetFromNode():GetName())
-				end
+	-- --#region Populate Table
+	-- if(XF.Initialized) then
+	-- 	for _, link in XFO.Links:Iterator() do
+	-- 		local fromName = format('|cffffffff%s|r', link:From():Name())
+	-- 		if(link:From():IsPlayer()) then
+	-- 			fromName = format('|cffffff00%s|r', link:From():Name())
+	-- 		end
 
-				local toName = format('|cffffffff%s|r', link:GetToNode():GetName())
-				if(link:IsMyLink() and link:GetToNode():IsMyNode()) then
-					toName = format('|cffffff00%s|r', link:GetToNode():GetName())
-				end
+	-- 		local toName = format('|cffffffff%s|r', link:To():Name())
+	-- 		if(link:To():IsPlayer()) then
+	-- 			toName = format('|cffffff00%s|r', link:To():Name())
+	-- 		end
 
-				self.tooltip:SetCell(line, targetColumn[link:GetFromNode():GetTarget():GetKey()], fromName, self.regularFont)
-				self.tooltip:SetCell(line, targetColumn[link:GetToNode():GetTarget():GetKey()], toName, self.regularFont)
-				
-				line = self.tooltip:AddLine()
-			end
-		end
-	end
+	-- 		self.tooltip:SetCell(line, targetColumn[link:From():Target():Key()], fromName, self.regularFont)
+	-- 		self.tooltip:SetCell(line, targetColumn[link:To():Target():Key()], toName, self.regularFont)
+			
+	-- 		line = self.tooltip:AddLine()
+	-- 	end
+	-- end
 	--#endregion
 
 	self.tooltip:Show()

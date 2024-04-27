@@ -46,6 +46,10 @@ function XFC.ObjectCollection:IsCached(inBoolean)
 	end
 	return self.cached
 end
+
+function XFC.ObjectCollection:Count()
+    return self.objectCount
+end
 --#endregion
 
 --#region Methods

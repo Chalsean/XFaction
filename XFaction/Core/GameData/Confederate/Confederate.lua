@@ -120,7 +120,7 @@ function XFC.Confederate:Backup()
     try(function ()
         if(self:IsInitialized()) then
             for unitKey, unit in self:Iterator() do
-                if(unit:IsRunningAddon() and not unit:IsPlayer()) then
+                if(unit:IsOnline() and unit:IsRunningAddon() and not unit:IsPlayer()) then
                     XF.Cache.Backup.Confederate[unitKey] = unit:Serialize()
                 end
             end
@@ -157,12 +157,12 @@ function XFC.Confederate:Offline(inKey)
             self:Get(inKey):Presence(Enum.ClubMemberPresence.Offline)
             self.onlineCount = self.onlineCount - 1
         end
+        --XFO.Links:RemoveByUnit(inKey)
     else
         local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
         for _, unit in self:Iterator() do
             if(not unit:IsPlayer() and unit:IsOnline() and unit:UpdatedTime() < ttl) then
-                self:Get(inKey):Presence(Enum.ClubMemberPresence.Offline)
-                self.onlineCount = self.onlineCount - 1
+                self:Offline(unit:Key())
             end
         end
     end

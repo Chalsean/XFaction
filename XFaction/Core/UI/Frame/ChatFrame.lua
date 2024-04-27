@@ -182,12 +182,12 @@ end
 function XFC.ChatFrame:DisplayGuildChat(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     if(not XF.Config.Chat.GChat.Enable) then return end
-    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data())
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:From():Name(), inMessage:MainName(), inMessage:Guild(), inMessage:From():Key(), inMessage:Data())
 end
 
 function XFC.ChatFrame:DisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     if(not XF.Config.Chat.Achievement.Enable) then return end
-    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data())
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:From():Name(), inMessage:MainName(), inMessage:Guild(), inMessage:From():Key(), inMessage:Data())
 end
 --#endregion

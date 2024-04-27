@@ -305,7 +305,7 @@ function XFC.Unit:Presence(inPresence)
     if(inPresence ~= nil) then
         self.presence = inPresence
     end
-    self.presence = inPresence
+    return self.presence
 end
 
 function XFC.Unit:IsOnline()
@@ -504,6 +504,30 @@ end
 --#endregion
 
 --#region Methods
+function XFC.Unit:HasTeam()
+    return self.team ~= nil
+end
+
+function XFC.Unit:HasRaiderIO()
+    return self.raiderIO ~= nil
+end
+
+function XFC.Unit:HasVersion()
+    return self.version ~= nil
+end
+
+function XFC.Unit:HasProfession1()
+    return self.profession1 ~= nil
+end
+
+function XFC.Unit:HasProfession2()
+    return self.profession2 ~= nil
+end
+
+function XFC.Unit:HasMythicKey()
+    return self.mythicKey ~= nil
+end
+
 function XFC.Unit:Print()
     self:ParentPrint()
     XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))

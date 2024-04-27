@@ -108,9 +108,9 @@ end
 --#region Methods
 function XFC.Message:Print()
     self:ParentPrint()
-    if(self:From() ~= nil) then
-        XF:Debug(self:ObjectName(), '  from: ' .. self:From():UnitName())
-    end
+    -- if(self:From() ~= nil) then
+    --     XF:Debug(self:ObjectName(), '  from: ' .. self:From():UnitName())
+    -- end
     XF:Debug(self:ObjectName(), '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
     XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
@@ -220,16 +220,21 @@ function XFC.Message:Deserialize(inData)
 
     XF:DataDumper(self:ObjectName(), data)
 
+    self:Key(data.K)
     self:Subject(data.S)
     if(data.T ~= nil) then self:To(data.T) end
     self:Type(data.Y)    
-    self:TimeStamp(XFF.TimeGetCurrent())
+    self:TimeStamp(data.I)
+    self:SetRemainingTargets(data.A)
+    self:Data(data.D)
 
     local unit = nil
     try(function()
         unit = XFO.Confederate:Pop()
         unit:IsRunningAddon(true)
         unit:IsOnline(true)
+        self:From(unit)
+        unit:Key(data.F)       
 
         --if(data.K == nil) then        
         --    self:SetRemainingTargets(data.R)
@@ -237,12 +242,11 @@ function XFC.Message:Deserialize(inData)
             
         -- Legacy format
         --else
-            self:SetRemainingTargets(data.A)
-            self:Data(data.D)
+            
+            
             -- Old data message
             if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
                 unit:Deserialize(ConvertLegacyUnit(unpickle(data.D)))
-                self:From(unit)
             -- Old chat/achievement message
             elseif(not self:Subject() == XF.Enum.Message.LINK) then
                 unit:Name(data.N)
@@ -253,7 +257,6 @@ function XFC.Message:Deserialize(inData)
                 if(XFO.Guilds:Contains(data.H)) then
                     unit:Guild(XFO.Guilds:Get(data.H))
                 end
-                self:From(unit)
             end            
         --end
         

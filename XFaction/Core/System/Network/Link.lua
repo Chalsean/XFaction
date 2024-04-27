@@ -1,118 +1,121 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Link'
 
-XFC.Link = XFC.Object:newChildConstructor()
+local ServerTime = GetServerTime
+
+Link = Object:newChildConstructor()
 
 --#region Constructors
-function XFC.Link:new()
-    local object = XFC.Link.parent.new(self)
+function Link:new()
+    local object = Link.parent.new(self)
     object.__name = ObjectName
-    object.from = nil
-    object.to = nil
-    object.lastUpdatedTime = 0
-    object.isActive = false
+    object.fromNode = nil
+    object.toNode = nil
+    object.epochTime = 0
     return object
 end
 
-function XFC.Link:Deconstructor()
+function Link:Deconstructor()
     self:ParentDeconstructor()
-    self.from = nil
-    self.to = nil
-    self.lastUpdatedTime = 0
-    self.isActive = false
+    self.fromNode = nil
+    self.toNode = nil
+    self.epochTime = 0
 end
 
-function XFC.Link:Initialize()
+function Link:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self:LastUpdatedTime(XFF.TimeGetCurrent())
+        self:SetTimeStamp(ServerTime())
+        if(self:HasFromNode() and self:HasToNode()) then
+            self:SetKey(XF:GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName()))
+        end
         self:IsInitialized(true)
     end
     return self:IsInitialized()
 end
 --#endregion
 
---#region Properties
-function XFC.Link:LastUpdatedTime(inEpochTime)
-    assert(type(inEpochTime) == 'number' or inEpochTime == nil, 'argument must be number or nil')
-    if(inEpochTime ~= nil) then
-        self.lastUpdatedTime = inEpochTime
-    end
-    return self.lastUpdatedTime
-end
-
-function XFC.Link:From(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil, 'argument must be Unit object or nil')
-    if(inUnit ~= nil) then
-        self.from = inUnit
-    end
-    return self.from
-end
-
-function XFC.Link:To(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil, 'argument must be Unit object or nil')
-    if(inUnit ~= nil) then
-        self.to = inUnit
-    end
-    return self.to
-end
-
-function XFC.Link:Key()
-    if(self.key == nil and self:HasFrom() and self:HasTo()) then
-        self.key = self:From():Key() < self:To():Key() and self:From():Key() .. ':' .. self:To():Key() or self:To():Key() .. ':' .. self:From():Key()
-    end
-    return self.key
-end
-
-function XFC.Link:IsActive(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
-    if(inBoolean ~= nil) then
-        self.isActive = inBoolean
-    end    
-    return self.isActive
+--#region Print
+function Link:Print()
+    self:ParentPrint()
+    XF:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
+    if(self:HasFromNode()) then self:GetFromNode():Print() end
+    if(self:HasToNode()) then self:GetToNode():Print() end
 end
 --#endregion
 
---#region Methods
-function XFC.Link:Print()
-    self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  isActive (' .. type(self.isActive) .. '): ' .. tostring(self.isActive))
-    XF:Debug(self:ObjectName(), '  lastUpdatedTime (' .. type(self.lastUpdatedTime) .. '): ' .. tostring(self.lastUpdatedTime))
-    if(self:HasFrom()) then self:From():Print() end
-    if(self:HasTo()) then self:To():Print() end
+--#region Accessors
+-- Key is important here because it helps us avoid duplicate entries when both nodes broadcast the link
+function XF:GetLinkKey(inFromName, inToName)
+	assert(type(inFromName) == 'string')
+    assert(type(inToName) == 'string')
+    -- The string < check keeps uniqueness
+    local key = (inFromName < inToName) and inFromName .. ':' .. inToName or inToName .. ':' .. inFromName
+	return key
 end
 
-function XFC.Link:HasFrom()
-    return self.from ~= nil
+function Link:IsMyLink()
+    return (self:HasFromNode() and self:GetFromNode():IsMyNode()) or 
+           (self:HasToNode() and self:GetToNode():IsMyNode())
 end
 
-function XFC.Link:HasTo()
-    return self.to ~= nil
+function Link:HasFromNode()
+    return self.fromNode ~= nil
 end
 
-function XFC.Link:IsMyLink()
-    return (self:HasFrom() and self:From():IsPlayer()) or (self:HasTo() and self:To():IsPlayer())
+function Link:GetFromNode()
+    return self.fromNode
 end
 
-function XFC.Link:Serialize()
-    return self:GetFromNode():Serialize() .. ';' .. self:GetToNode():Serialize()
+function Link:SetFromNode(inNode)
+    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
+    self.fromNode = inNode
 end
 
-function XFC.Link:Deserialize(inSerialized)
-    assert(type(inSerialized) == 'string')
-    local _Nodes = string.Split(inSerialized, ';')
+function Link:HasToNode()
+    return self.toNode ~= nil
+end
 
-    local from = string.Split(_Nodes[1], ':')
-    local fromUnit = XFO.Confederate:Get(from[1], tonumber(from[2]), tonumber(from[3]))
+function Link:GetToNode()
+    return self.toNode
+end
 
-    local to = string.Split(_Nodes[2], ':')
-    local toUnit = XFO.Confederate:Get(to[1], tonumber(to[2]), tonumber(to[3]))
+function Link:SetToNode(inNode)
+    assert(type(inNode) == 'table' and inNode.__name ~= nil and inNode.__name == 'Node', 'argument must be Node object')
+    self.toNode = inNode
+end
 
-    if(fromUnit ~= nil and toUnit ~= nil) then
-        self:From(fromUnit)
-        self:To(toUnit)
-        self:Initialize()
+function Link:GetTimeStamp()
+    return self.epochTime
+end
+
+function Link:SetTimeStamp(inEpochTime)
+    assert(type(inEpochTime) == 'number')
+    self.epochTime = inEpochTime
+end
+--#endregion
+
+--#region DataSet
+function Link:GetString()
+    return self:GetFromNode():GetString() .. ';' .. self:GetToNode():GetString()
+end
+
+function Link:SetObjectFromString(inLinkString)
+    assert(type(inLinkString) == 'string')
+
+    local _Nodes = string.Split(inLinkString, ';')
+    local fromNode = XF.Nodes:SetNodeFromString(_Nodes[1])
+    self:SetFromNode(fromNode)
+
+    local toNode = XF.Nodes:Pop()
+    toNode:SetObjectFromString(_Nodes[2])
+    if(XF.Nodes:Contains(toNode:GetKey())) then
+        toNode = XF.Nodes:Get(toNode:GetKey())
+    else
+        XF.Nodes:Add(toNode)
     end
+    self:SetToNode(toNode)
+
+    self:Initialize()
 end
 --#endregion
