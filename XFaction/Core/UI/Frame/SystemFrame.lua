@@ -10,9 +10,7 @@ function XFC.SystemFrame:new()
     object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.SystemFrame:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -23,7 +21,7 @@ function XFC.SystemFrame:Initialize()
 end
 --#endregion
 
---#region Callbacks
+--#region Methods
 function XFC.SystemFrame:ChatFilter(inEvent, inMessage, ...)
     if(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XF.Settings.Frames.Chat.Prepend, '')
@@ -38,65 +36,58 @@ function XFC.SystemFrame:ChatFilter(inEvent, inMessage, ...)
     end
     return false, inMessage, ...
 end
---#endregion
 
---#region Display
-function XFC.SystemFrame:Display(inType, inUnit, inOrder)
+function XFC.SystemFrame:DisplayLogout(inName)
+    assert(type(inName) == 'string')
+    local text = XF.Settings.Frames.Chat.Prepend .. inName .. ' ' .. XF.Lib.Locale['CHAT_LOGOUT']
+    XFF.UISystemMessage(text) 
+end
 
-    local faction = inUnit:Race():Faction()
+function XFC.SystemFrame:DisplayOrder(inOrder, inUnit)
+
+    local text = XF.Settings.Frames.Chat.Prepend
+    if(XF.Config.Chat.Crafting.Faction) then
+        text = text .. format('%s ', format(XF.Icons.String, inUnit:Race():Faction():IconID()))
+    end
+
+    text = text .. inUnit:CreateLink() .. ' '
+    if(XF.Config.Chat.Crafting.Main and inUnit:IsAlt()) then
+        text = text .. '(' .. inUnit:MainName() .. ') '
+    end
+    if(XF.Config.Chat.Crafting.Guild) then
+        text = text .. '<' .. inUnit:Guild():Initials() .. '> '
+    end
+    if(inOrder:IsGuild()) then
+        text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:Link())
+    else
+        text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:CrafterName(), inOrder:Link())
+    end
+
+    XFF.UISystemMessage(text)
+end
+
+function XFC.SystemFrame:DisplayLogin(inUnit)
+
     local text = XF.Settings.Frames.Chat.Prepend
     
-    if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Faction) then  
-        text = text .. format('%s ', format(XF.Icons.String, inUnit:Race():Faction():IconID()))
-    elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Faction) then
+    if(XF.Config.Chat.Login.Faction) then  
         text = text .. format('%s ', format(XF.Icons.String, inUnit:Race():Faction():IconID()))
     end
   
-    if(inType == XF.Enum.Message.LOGOUT) then
-        text = text .. inUnit:Name() .. ' '
-    elseif(inUnit:Race():Faction():Equals(XF.Player.Faction)) then
-        text = text .. format('|Hplayer:%s|h[%s]|h', inUnit:UnitName(), inUnit:Name()) .. ' '
-    else
-        if(inUnit:IsFriend()) then
-            text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inUnit:Friend():AccountName(), inUnit:Friend():AccountID(), inUnit:Friend():Tag(), inUnit:Name()) .. ' '
-        else
-            -- Maybe theyre in a bnet community together, no way to associate tho
-            text = text .. format('|Hplayer:%s|h[%s]|h', inUnit:UnitName(), inUnit:Name()) .. ' '
-        end
-    end
+    text = text .. inUnit:CreateLink() .. ' '
     
-    if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Main and inUnit:IsAlt()) then
-        text = text .. '(' .. inUnit:MainName() .. ') '
-    elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Main and inUnit:IsAlt()) then
+    if(XF.Config.Chat.Login.Main and inUnit:IsAlt()) then
         text = text .. '(' .. inUnit:MainName() .. ') '
     end
 
-    if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Guild) then  
-        text = text .. '<' .. inUnit:Guild():Initials() .. '> '
-    elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Guild) then
+    if(XF.Config.Chat.Login.Guild) then  
         text = text .. '<' .. inUnit:Guild():Initials() .. '> '
     end
     
-    if(inType == XF.Enum.Message.LOGOUT) then
-        text = text .. XF.Lib.Locale['CHAT_LOGOUT']
-    elseif(inType == XF.Enum.Message.LOGIN) then
-        text = text .. XF.Lib.Locale['CHAT_LOGIN']
-        if(XF.Config.Chat.Login.Sound and not XF.Player.Guild:Equals(inUnit:Guild())) then
-            PlaySound(3332, 'Master')
-        end
-    elseif(inType == XF.Enum.Message.ORDER) then
-        if(inOrder:IsGuild()) then
-            text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:Link())
-        else
-            text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:CrafterName(), inOrder:Link())
-        end
+    text = text .. XF.Lib.Locale['CHAT_LOGIN']
+    if(XF.Config.Chat.Login.Sound and not XF.Player.Guild:Equals(inUnit:Guild())) then
+        XFF.UISystemSound(3332, 'Master')
     end
-    SendSystemMessage(text) 
-end
-
-function XFC.SystemFrame:DisplayLogMessage(inMessage)
-    if(not XF.Config.Chat.Login.Enable) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')    
-    self:Display(inMessage:Subject(), inMessage:From())
+    XFF.UISystemMessage(text) 
 end
 --#endregion

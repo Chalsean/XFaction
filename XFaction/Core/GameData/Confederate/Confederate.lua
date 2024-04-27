@@ -184,14 +184,14 @@ function XFC.Confederate:LocalRoster()
                     if(old:IsOnline() and unit:IsOffline()) then
                         XF:Info(self:ObjectName(), 'Guild member logout via scan: %s', unit:UnitName())
                         if(XF.Config.Chat.Login.Enable) then
-                            XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, old)
+                            XFO.SystemFrame:DisplayLogout(old:Name())
                         end
                         self:Add(unit)
                     elseif(unit:IsOnline()) then
                         if(old:IsOffline()) then
                             XF:Info(self:ObjectName(), 'Guild member login via scan: %s', unit:UnitName())
                             if(XF.Config.Chat.Login.Enable) then
-                                XFO.SystemFrame:Display(XF.Enum.Message.LOGIN, unit)
+                                XFO.SystemFrame:DisplayLogin(unit)
                             end
                             self:Add(unit)
                         elseif(not old:IsRunningAddon()) then

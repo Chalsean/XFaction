@@ -70,6 +70,8 @@ XFF.UICreateLink = SetItemRef
 XFF.UICreateFont = CreateFont
 XFF.UIIsShiftDown = IsShiftKeyDown
 XFF.UIIsCtrlDown = IsControlKeyDown
+XFF.UISystemMessage = SendSystemMessage
+XFF.UISystemSound = PlaySound
 
 -- Party
 XFF.PartySendInvite = C_PartyInfo.InviteUnit

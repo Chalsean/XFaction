@@ -691,4 +691,15 @@ function XFC.Unit:Equals(inUnit)
     
     return true
 end
+
+function XFC.Unit:CreateLink()
+    if(self:Race():Faction():Equals(XF.Player.Faction)) then
+        return format('|Hplayer:%s|h[%s]|h', self:UnitName(), self:Name())
+    elseif(self:IsFriend()) then
+        return format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', self:Friend():AccountName(), self:Friend():AccountID(), self:Friend():Tag(), self:Name())
+    end
+        
+    -- Maybe theyre in a bnet community together, no way to associate tho
+    return format('|Hplayer:%s|h[%s]|h', self:UnitName(), self:Name())
+end
 --#endregion

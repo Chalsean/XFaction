@@ -212,8 +212,8 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         end
 
     -- Process LINK message
-    elseif(inMessage:Subject() == XF.Enum.Message.LINK) then
-        XFO.Links:Deserialize(inMessage:Data())
+    --elseif(inMessage:Subject() == XF.Enum.Message.LINK) then
+        --XFO.Links:Deserialize(inMessage:Data())
 
     -- Process ORDER message
     elseif(XFO.WoW:IsRetail() and inMessage:Subject() == XF.Enum.Message.ORDER) then
@@ -221,8 +221,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         try(function ()
             order = XFO.Orders:Pop()
             order:Deserialize(inMessage:Data())
-            order:Customer(inMessage:From())
-            order:Display()
+            XFO.SystemFrame:DisplayOrder(order, inMessage:From())
         end).
         catch(function (err)
             XF:Warn(self:ObjectName(), err)            
@@ -237,7 +236,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         if(XF.Player.Guild:Equals(inMessage:From():Guild())) then
             -- In case we get a message before scan
             if(not XFO.Confederate:Contains(inMessage:From():Key())) then
-                XFO.SystemFrame:Display(inMessage:Subject(), inMessage:From())
+                XFO.SystemFrame:DisplayLogout(inMessage:From():Name())
             else
                 if(XFO.Confederate:Get(inMessage:From():Key()):IsOnline()) then
                     XFO.SystemFrame:Display(inMessage:Subject(), inMessage:From())
@@ -253,7 +252,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     elseif(inMessage:Subject() == XF.Enum.Message.LOGIN or inMessage:Subject() == XF.Enum.Message.DATA) then
         -- Process LOGIN message
         if(inMessage:Subject() == XF.Enum.Message.LOGIN and (not XFO.Confederate:Contains(inMessage:From():Key()) or XFO.Confederate:Get(inMessage:From():Key()):IsOffline())) then
-            XFO.SystemFrame:Display(inMessage:Subject(), inMessage:From())
+            XFO.SystemFrame:DisplayLogin(inMessage:From())
         end
         -- Is the unit data newer?
         if(XFO.Confederate:Contains(inMessage:From():Key())) then
