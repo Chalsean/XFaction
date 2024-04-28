@@ -54,7 +54,7 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
   
     if(inType == XF.Enum.Message.LOGOUT) then
         text = text .. inName .. ' '
-    elseif(faction:Equals(XF.Player.Faction)) then
+    elseif(inFaction:Equals(XF.Player.Faction)) then
         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
     else
         local friend = XF.Friends:GetByRealmUnitName(inGuild:GetRealm(), inName)
