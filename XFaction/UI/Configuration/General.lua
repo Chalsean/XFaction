@@ -284,9 +284,9 @@ end
 
 local function GenerateConfig()
 	local config = 'XFn:' .. XF.Cache.Setup.Confederate.Name .. ':' .. XF.Cache.Setup.Confederate.Initials .. '\n' 
-	if(IsMultipleOnTarget()) then
+	--if(IsMultipleOnTarget()) then
 		config = config .. 'XFc:' .. XF.Cache.Setup.Confederate.ChannelName .. ':' .. XF.Cache.Setup.Confederate.Password .. '\n'
-	end
+	--end
 
 	for i, guild in ipairs(XF.Cache.Setup.Guilds) do
 		if(guild.initials ~= nil and string.len(guild.initials) and guild.name ~= nil and string.len(guild.name)) then
@@ -585,7 +585,7 @@ XF.Options = {
 									name = XF.Lib.Locale['CHANNEL_NAME'],
 									get = function(info) return XF.Cache.Setup.Confederate.ChannelName end,
 									set = function(info, value) XF.Cache.Setup.Confederate.ChannelName = value end,
-									hidden = function () return not IsMultipleOnTarget() end,
+									--hidden = function () return not IsMultipleOnTarget() end,
 								},
 								Password = {
 									order = 6,
@@ -593,7 +593,7 @@ XF.Options = {
 									name = XF.Lib.Locale['CHANNEL_PASSWORD'],
 									get = function(info) return XF.Cache.Setup.Confederate.Password end,
 									set = function(info, value) XF.Cache.Setup.Confederate.Password = value end,
-									hidden = function () return not IsMultipleOnTarget() end,
+									--hidden = function () return not IsMultipleOnTarget() end,
 								},
 							}
 						},

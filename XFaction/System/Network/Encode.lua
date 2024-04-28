@@ -34,6 +34,7 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	messageData.P = inMessage:GetPacketNumber()
 	messageData.Q = inMessage:GetTotalPackets()
 	messageData.V = inMessage:GetVersion():GetKey()
+	messageData.W = inMessage:GetFaction():GetKey()
 
 	return pickle(messageData)
 end

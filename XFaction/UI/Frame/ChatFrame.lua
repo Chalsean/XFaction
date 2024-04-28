@@ -89,12 +89,11 @@ end
 --#endregion
 
 --#region Display
-function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFrom, inData)
+function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFrom, inData, inFaction)
     assert(type(inName) == 'string')
     assert(type(inUnitName) == 'string')
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
 
-    local faction = inGuild:GetFaction()
     local message = XF.Settings.Frames.Chat.Prepend
 
     if(inType == XF.Enum.Message.GCHAT) then inType = 'GUILD' end
@@ -116,11 +115,11 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
                     local text = ''
 
                     if(XF.Config.Chat[configNode].Faction) then  
-                        text = text .. format('%s ', format(XF.Icons.String, faction:GetIconID()))
+                        text = text .. format('%s ', format(XF.Icons.String, inFaction:GetIconID()))
                     end
 
                     if(inType == 'GUILD_ACHIEVEMENT') then
-                        if(faction:Equals(XF.Player.Faction)) then
+                        if(inFaction:Equals(XF.Player.Faction)) then
                             text = text .. '%s '
                         else
                             local friend = XF.Friends:GetByRealmUnitName(inGuild:GetRealm(), inName)
@@ -150,12 +149,12 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
                     local hex = nil
                     if(XF.Config.Chat[configNode].CColor) then
                         if(XF.Config.Chat[configNode].FColor) then
-                            hex = faction:GetName() == 'Horde' and XF:RGBPercToHex(XF.Config.Chat[configNode].HColor.Red, XF.Config.Chat[configNode].HColor.Green, XF.Config.Chat[configNode].HColor.Blue) or XF:RGBPercToHex(XF.Config.Chat[configNode].AColor.Red, XF.Config.Chat[configNode].AColor.Green, XF.Config.Chat[configNode].AColor.Blue)
+                            hex = inFaction:GetName() == 'Horde' and XF:RGBPercToHex(XF.Config.Chat[configNode].HColor.Red, XF.Config.Chat[configNode].HColor.Green, XF.Config.Chat[configNode].HColor.Blue) or XF:RGBPercToHex(XF.Config.Chat[configNode].AColor.Red, XF.Config.Chat[configNode].AColor.Green, XF.Config.Chat[configNode].AColor.Blue)
                         else
                             hex = XF:RGBPercToHex(XF.Config.Chat[configNode].Color.Red, XF.Config.Chat[configNode].Color.Green, XF.Config.Chat[configNode].Color.Blue)
                         end
                     elseif(XF.Config.Chat[configNode].FColor) then
-                        hex = faction:GetName() == 'Horde' and 'E0000D' or '378DEF'
+                        hex = inFaction:GetName() == 'Horde' and 'E0000D' or '378DEF'
                     else
                         local color = _G.ChatTypeInfo[inType]
                         hex = XF:RGBPercToHex(color.r, color.g, color.b)
@@ -181,12 +180,12 @@ end
 function ChatFrame:DisplayGuildChat(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     if(not XF.Config.Chat.GChat.Enable) then return end
-    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData())
+    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
 end
 
 function ChatFrame:DisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
     if(not XF.Config.Chat.Achievement.Enable) then return end
-    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData())
+    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
 end
 --#endregion
