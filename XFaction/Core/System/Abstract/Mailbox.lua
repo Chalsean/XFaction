@@ -89,7 +89,9 @@ function XFC.Mailbox:RebuildMessage(inKey, inTotalPackets)
     local message = ''
     -- Stitch the data back together again
     for i = 1, inTotalPackets do
-        message = message .. self.packets[inKey][i]
+        if(self.packets[inKey][i] ~= nil) then
+            message = message .. self.packets[inKey][i]
+        end
     end
     self:RemovePacket(inKey)
 	return message
@@ -137,7 +139,7 @@ function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inS
 
     self:AddPacket(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
-        XF:Debug(self:ObjectName(), 'Received all packets for message [%s]', messageKey)
+        XF:Debug(self:ObjectName(), 'Received all packets [%d] for message [%s]', totalPackets, messageKey)
         local encoded = self:RebuildMessage(messageKey, totalPackets)
         local message = self:DecodeMessage(encoded)        
         try(function ()
@@ -199,17 +201,17 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     -- Process GCHAT message
     if(inMessage:Subject() == XF.Enum.Message.GCHAT) then
         -- FIX: Move this check to ChatFrame
-        if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:From():Guild())) then
+        --if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:From():Guild())) then
             XFO.ChatFrame:DisplayGuildChat(inMessage)
-        end
+        --end
 
     -- Process ACHIEVEMENT message
     elseif(inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
         -- Local guild achievements should already be displayed by WoW client
         -- FIX: Move this check to ChatFrame
-        if(not XF.Player.Guild:Equals(inMessage:From():Guild())) then
+        --if(not XF.Player.Guild:Equals(inMessage:From():Guild())) then
             XFO.ChatFrame:DisplayAchievement(inMessage)
-        end
+        --end
 
     -- Process LINK message
     --elseif(inMessage:Subject() == XF.Enum.Message.LINK) then
@@ -233,25 +235,20 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
 
     -- Process LOGOUT message
     if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
-        if(XF.Player.Guild:Equals(inMessage:From():Guild())) then
-            -- In case we get a message before scan
-            if(not XFO.Confederate:Contains(inMessage:From():Key())) then
-                XFO.SystemFrame:DisplayLogout(inMessage:From():Name())
-            else
-                if(XFO.Confederate:Get(inMessage:From():Key()):IsOnline()) then
-                    XFO.SystemFrame:Display(inMessage:Subject(), inMessage:From())
-                end
-                XFO.Confederate:Offline(inMessage:From())
+        -- Guild scan will handle local guild logout notifications
+        if(not XF.Player.Guild:Equals(inMessage:From():Guild())) then
+            XFO.SystemFrame:DisplayLogout(inMessage:From():Name())
+            if(XFO.Confederate:Contains(inMessage:From():Key())) then
+                local oldUnit = XFO.Confederate:Get(inMessage:From():Key())
+                XFO.Confederate:Offline(oldUnit:Key())
+                XFO.Confederate:Remove(oldUnit:Key())
+                XFO.Confederate:Push(oldUnit)
+                XFO.Confederate:Push(inMessage:From())
             end
-        else
-            XFO.SystemFrame:Display(inMessage:Subject(), inMessage:From())
-            XFO.Confederate:Offline(inMessage:From())
-            XFO.Confederate:Remove(inMessage:From())
-            XFO.Confederate:Push(inMessage:From())
         end    
     elseif(inMessage:Subject() == XF.Enum.Message.LOGIN or inMessage:Subject() == XF.Enum.Message.DATA) then
         -- Process LOGIN message
-        if(inMessage:Subject() == XF.Enum.Message.LOGIN and (not XFO.Confederate:Contains(inMessage:From():Key()) or XFO.Confederate:Get(inMessage:From():Key()):IsOffline())) then
+        if(inMessage:Subject() == XF.Enum.Message.LOGIN and not XF.Player.Unit:IsSameGuild(inMessage:From())) then
             XFO.SystemFrame:DisplayLogin(inMessage:From())
         end
         -- Is the unit data newer?

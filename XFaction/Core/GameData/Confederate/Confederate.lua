@@ -132,20 +132,21 @@ function XFC.Confederate:Backup()
 end
 
 function XFC.Confederate:Restore()
-    if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
-    for _, data in pairs (XF.Cache.Backup.Confederate) do
-        local unit = nil
-        try(function ()
-            unit = self:Pop()
-            unit:Deserialize(data)
-            self:Add(unit)
-            XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
-        end).
-        catch(function (err)
-            XF:Warn(self:ObjectName(), err)
-            self:Push(unit)
-        end)
-    end
+    -- TODO
+    -- if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
+    -- for _, data in pairs (XF.Cache.Backup.Confederate) do
+    --     local unit = nil
+    --     try(function ()
+    --         unit = self:Pop()
+    --         unit:Deserialize(data)
+    --         self:Add(unit)
+    --         XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
+    --     end).
+    --     catch(function (err)
+    --         XF:Warn(self:ObjectName(), err)
+    --         self:Push(unit)
+    --     end)
+    -- end
     XF.Cache.Backup.Confederate = {}
 end
 

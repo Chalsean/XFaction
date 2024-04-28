@@ -16,6 +16,8 @@ XFF.ChatSwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
 XFF.ChatGetChannels = GetChannelList
 XFF.ChatGetChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
 XFF.ChatJoinChannel = JoinChannelByName
+XFF.ChatGetWindow = GetChatWindowMessages
+XFF.ChatHandler = ChatFrame_MessageEventHandler
 
 -- Guild
 XFF.GuildGetMembers = C_Club.GetClubMembers

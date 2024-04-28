@@ -20,6 +20,7 @@ function XFC.Spec:IconID(inIconID)
     if(inIconID ~= nil) then
         self.iconID = inIconID
     end
+    return self.iconID
 end
 
 function XFC.Spec:Class(inClass)

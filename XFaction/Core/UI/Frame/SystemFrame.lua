@@ -67,7 +67,7 @@ function XFC.SystemFrame:DisplayOrder(inOrder, inUnit)
 end
 
 function XFC.SystemFrame:DisplayLogin(inUnit)
-
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
     local text = XF.Settings.Frames.Chat.Prepend
     
     if(XF.Config.Chat.Login.Faction) then  

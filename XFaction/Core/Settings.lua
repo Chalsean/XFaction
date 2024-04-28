@@ -188,5 +188,8 @@ XF.Settings = {
 		MaxTeams = 30,
 		MaxGuilds = 10,
 	},
+	Media = {
+		Path = 'Interface/Addons/XFaction/Core/System/Media'
+	},
 }
 --#endregion

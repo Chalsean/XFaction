@@ -126,11 +126,11 @@ function XF:SetupMenus()
 		--#endregion
 
 		--#region Guild Menu
-		if(XFO.Guilds:GetCount() > 0) then
+		if(XFO.Guilds:Count() > 0) then
 			for _, guild in XFO.Guilds:SortedIterator() do
 				table.insert(XF.Cache.Setup.Guilds, {
 					realm = tostring(guild:Realm():ID()),
-					--faction = guild:GetFaction():GetID(),
+					faction = guild:Faction():ID(),
 					initials = guild:Key(),
 					name = guild:Name(),
 				})
@@ -142,7 +142,7 @@ function XF:SetupMenus()
 		while i < XF.Settings.Setup.MaxGuilds do
 			table.insert(XF.Cache.Setup.Guilds, {
 				realm = nil,
-				--faction = nil,
+				faction = nil,
 				initials = nil,
 				name = nil,
 			})

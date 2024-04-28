@@ -528,6 +528,16 @@ function XFC.Unit:HasMythicKey()
     return self.mythicKey ~= nil
 end
 
+function XFC.Unit:IsSameFaction(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
+    return self:Target():Faction():Equals(inUnit:Target():Faction())
+end
+
+function XFC.Unit:IsSameGuild(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
+    return self:Guild():Equals(inUnit:Guild())
+end
+
 function XFC.Unit:Print()
     self:ParentPrint()
     XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
@@ -570,6 +580,7 @@ function XFC.Unit:Broadcast(inSubject)
         message:Initialize()
         message:Type(XF.Enum.Network.BROADCAST)
         message:Subject(inSubject)
+        message:Data(self:Serialize())
         XFO.Chat:Send(message)
     end).
     finally(function ()
@@ -580,26 +591,26 @@ end
 function XFC.Unit:Serialize()
 	local data = {}
 	
-	data.A = self:Achievements()
-    data.C = self:Rank()
-    data.G = self:Guild():Key()
+	data.B = self:Achievements()
+    data.J = self:Rank()
+    data.H = self:Guild():Key()
     data.I = self:ItemLevel()
     data.K = self:GUID()	
     data.L = self:Level()
     data.M = self:MythicKey() ~= nil and self:MythicKey():Serialize() or nil
     data.N = self:Note()
-    data.P = self:Presence()
-    data.R = self:Race():Key()
-    data.S = self:Spec():Key()
-    data.U = self:Name()
+    data.E = self:Presence()
+    data.A = self:Race():Key()
+    data.V = self:Spec():Key()
+    data.U = self:UnitName()
     data.V = self:Version():Key()
-    data.W = self:Profession1() ~= nil and self:Profession1():Key() or nil
-    data.X = self:Profession2() ~= nil and self:Profession2():Key() or nil
+    data.P1 = self:Profession1() ~= nil and self:Profession1():Key() or nil
+    data.P2 = self:Profession2() ~= nil and self:Profession2():Key() or nil
     data.Y = self:PvP()
     data.Z = self:Zone():ID()
 
     if(data.Z == nil) then
-        data.J = self:Zone():Name()
+        data.D = self:Zone():Name()
     end
 
 	return data

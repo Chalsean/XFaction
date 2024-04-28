@@ -92,7 +92,7 @@ function XFC.Chat:Send(inMessage)
     local packets = inMessage:Segment()
     for index, packet in ipairs (packets) do
         XF:Debug(self:ObjectName(), 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
-        --XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
+        XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
         XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
 

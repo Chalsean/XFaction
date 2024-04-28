@@ -16,6 +16,7 @@ function XFC.Message:new()
     object.targets = nil
     object.targetCount = 0
     object.initialized = false
+    object.version = nil
     return object
 end
 
@@ -26,6 +27,7 @@ function XFC.Message:Initialize()
         self:From(XF.Player.Unit)
         self:TimeStamp(XFF.TimeGetCurrent())
         self:SetAllTargets()
+        self:Version(XF.Player.Unit:Version())
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -41,7 +43,7 @@ function XFC.Message:Deconstructor()
     self.targets = nil
     self.targetCount = 0
     self.data = nil
-    self:Initialize()
+    self.version = nil
 end
 --#endregion
 
@@ -103,9 +105,21 @@ end
 function XFC.Message:TargetCount()
     return self.targetCount
 end
+
+function XFC.Message:Version(inVersion)
+    assert(type(inVersion) == 'table' and inVersion.__name == 'Version' or inVersion == nil, 'property can be set using Version object or get with nil')
+    if(inVersion ~= nil) then
+        self.version = inVersion
+    end
+    return self.version
+end
 --#endregion
 
 --#region Methods
+function XFC.Message:HasVersion()
+    return self:Version() ~= nil
+end
+
 function XFC.Message:Print()
     self:ParentPrint()
     -- if(self:From() ~= nil) then
@@ -115,7 +129,8 @@ function XFC.Message:Print()
     XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:ObjectName(), '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
-    XF:Debug(self:ObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))    
+    XF:Debug(self:ObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
+    if(self:HasVersion()) then self:Version():Print() end
 end
 
 function XFC.Message:IsMyMessage()
@@ -180,11 +195,21 @@ end
 function XFC.Message:Serialize()
 	local data = {}
 
-	data.F = self:From():Serialize()
+    data.K = self:Key()
+	data.F = self:From():Key()
 	data.R = self:GetRemainingTargets()
     data.S = self:Subject()
     data.T = self:To()	
 	data.Y = self:Type()
+    data.I = self:TimeStamp()
+    data.A = self:GetRemainingTargets()
+    data.V = self:From():Version():Key()
+
+    -- TODO
+    data.M = self:From():MainName()
+    data.N = self:From():Name()
+    data.U = self:From():UnitName()
+    data.H = self:From():Guild()    
 
 	return data
 end
@@ -234,32 +259,25 @@ function XFC.Message:Deserialize(inData)
         unit:IsRunningAddon(true)
         unit:IsOnline(true)
         self:From(unit)
-        unit:Key(data.F)       
-
-        --if(data.K == nil) then        
-        --    self:SetRemainingTargets(data.R)
-        --    unit:Deserialize(data.F)
-            
-        -- Legacy format
-        --else
-            
-            
-            -- Old data message
-            if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
-                unit:Deserialize(ConvertLegacyUnit(unpickle(data.D)))
-            -- Old chat/achievement message
-            elseif(not self:Subject() == XF.Enum.Message.LINK) then
-                unit:Name(data.N)
-                if(data.M ~= nil) then
-                    unit:IsAlt(true)
-                    unit:MainName(data.M)
-                end            
-                if(XFO.Guilds:Contains(data.H)) then
-                    unit:Guild(XFO.Guilds:Get(data.H))
-                end
-            end            
-        --end
+        unit:Key(data.F)
+        unit:GUID(data.F)
         
+        if(data.N ~= nil) then
+            unit:Name(data.N)
+        end
+
+        if(data.M ~= nil) then
+            unit:IsAlt(true)
+            unit:MainName(data.M)
+        end
+
+        if(data.H ~= nil and XFO.Guilds:Contains(data.H)) then
+            unit:Guild(XFO.Guilds:Get(data.H))
+        end
+
+        if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
+            unit:Deserialize(ConvertLegacyUnit(unpickle(data.D)))
+        end
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)

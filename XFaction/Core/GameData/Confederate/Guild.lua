@@ -11,6 +11,7 @@ function XFC.Guild:new()
     object.initials = nil
     object.streamID = nil  -- Only the player's guild will have a StreamerID (this is gchat)
     object.realm = nil
+    object.faction = nil
     return object
 end
 --#endregion
@@ -39,6 +40,15 @@ function XFC.Guild:Realm(inRealm)
     end
     return self.realm
 end
+
+-- TODO: retail guilds no longer have faction iso
+function XFC.Guild:Faction(inFaction)
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil, 'argument must be Faction object or nil')
+    if(inFaction ~= nil) then
+        self.faction = inFaction
+    end
+    return self.faction
+end
 --#endregion
 
 --#region Methods
@@ -65,12 +75,14 @@ function XFC.Guild:Deserialize(inString)
 
 	local realmNumber, factionID, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
 	local realm = XFO.Realms:Get(tonumber(realmNumber))
+    local faction = XFO.Factions:Get(factionID)
 	
 	self:Initialize()
 	self:Key(guildInitials)
     self:Initials(guildInitials)
 	self:Name(guildName)
 	self:Realm(realm)
+    self:Faction(faction)
     XF:Info(self:ObjectName(), 'Initialized guild [%s:%s:%s]', self:Key(), self:Name(), self:Realm():Name())
 end
 --#endregion
