@@ -28,6 +28,24 @@ end
 --#endregion
 
 --#region Methods
+function XFC.OrderCollection:ProcessMessage(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message', 'ProcessMessage method requires Message object as parameter'
+    if(XFO.WoW:IsRetail()) then
+        local order = nil
+        try(function ()
+            order = self:Pop()
+            order:Deserialize(inMessage:Data())
+            XFO.SystemFrame:DisplayOrder(order, inMessage:From())
+        end).
+        catch(function (err)
+            XF:Warn(self:ObjectName(), err)            
+        end).
+        finally(function()
+            self:Push(order)
+        end)
+    end
+end
+
 function XFC.OrderCollection:Backup()
 	try(function ()
         if(self:IsInitialized()) then

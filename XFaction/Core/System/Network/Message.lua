@@ -17,6 +17,11 @@ function XFC.Message:new()
     object.targetCount = 0
     object.initialized = false
     object.version = nil
+    -- Deprecated
+    object.mainName = nil
+    object.unitName = nil
+    object.guild = nil
+    object.faction = nil
     return object
 end
 
@@ -24,10 +29,15 @@ function XFC.Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.targets = {}
-        self:From(XF.Player.Unit)
+        self:From(XF.Player.Unit:Key())
         self:TimeStamp(XFF.TimeGetCurrent())
         self:SetAllTargets()
         self:Version(XF.Player.Unit:Version())
+        self:MainName(XF.Player.Unit:MainName())
+        self:Name(XF.Player.Unit:Name())
+        self:UnitName(XF.Player.Unit:UnitName())
+        self:Guild(XF.Player.Guild)
+        self:Faction(XF.Player.Faction)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -44,6 +54,11 @@ function XFC.Message:Deconstructor()
     self.targetCount = 0
     self.data = nil
     self.version = nil
+
+    self.mainName = nil
+    self.unitName = nil
+    self.guild = nil
+    self.faction = nil
 end
 --#endregion
 
@@ -57,7 +72,7 @@ function XFC.Message:To(inTo)
 end
 
 function XFC.Message:From(inFrom)
-    assert(type(inFrom) == 'table' and inFrom.__name == 'Unit' or inFrom == nil, 'argument must be Unit object or nil')
+    assert(type(inFrom) == 'string' or inFrom == nil, 'From property requires string for set or nil for get')
     if(inFrom ~= nil) then
         self.from = inFrom
     end
@@ -113,6 +128,38 @@ function XFC.Message:Version(inVersion)
     end
     return self.version
 end
+
+function XFC.Message:MainName(inName)
+    assert(type(inName) == 'string' or inName == nil, 'MainName property requires a string for set or nil for get')
+    if(inName ~= nil) then
+        self.mainName = inName
+    end
+    return self.mainName
+end
+
+function XFC.Message:UnitName(inName)
+    assert(type(inName) == 'string' or inName == nil, 'UnitName property requires a string for set or nil for get')
+    if(inName ~= nil) then
+        self.unitName = inName
+    end
+    return self.unitName
+end
+
+function XFC.Message:Guild(inGuild)
+    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild' or inGuild == nil, 'Guild property can be set using Guild object or get with nil')
+    if(inGuild ~= nil) then
+        self.guild = inGuild
+    end
+    return self.guild
+end
+
+function XFC.Message:Faction(inFaction)
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil, 'Faction property can be set using Guild object or get with nil')
+    if(inFaction ~= nil) then
+        self.faction = inFaction
+    end
+    return self.faction
+end
 --#endregion
 
 --#region Methods
@@ -122,9 +169,7 @@ end
 
 function XFC.Message:Print()
     self:ParentPrint()
-    -- if(self:From() ~= nil) then
-    --     XF:Debug(self:ObjectName(), '  from: ' .. self:From():UnitName())
-    -- end
+    XF:Debug(self:ObjectName(), '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
     XF:Debug(self:ObjectName(), '  to (' .. type(self.to) .. '): ' .. tostring(self.to))
     XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
@@ -134,7 +179,7 @@ function XFC.Message:Print()
 end
 
 function XFC.Message:IsMyMessage()
-    return self:From():IsPlayer()
+    return self:From() == XF.Player.Unit:Key()
 end
 
 function XFC.Message:ContainsTarget(inTarget)
@@ -196,47 +241,26 @@ function XFC.Message:Serialize()
 	local data = {}
 
     data.K = self:Key()
-	data.F = self:From():Key()
-	data.R = self:GetRemainingTargets()
+	data.F = self:From()
+	data.A = self:GetRemainingTargets()
     data.S = self:Subject()
     data.T = self:To()	
 	data.Y = self:Type()
     data.I = self:TimeStamp()
-    data.A = self:GetRemainingTargets()
-    data.V = self:From():Version():Key()
+    data.V = XF.Player.Unit:Version()
+    data.D = type(self:Data() == 'table') and pickle(self:Data()) or self:Data()
 
-    -- TODO
-    data.M = self:From():MainName()
-    data.N = self:From():Name()
-    data.U = self:From():UnitName()
-    data.H = self:From():Guild()    
+    -- TODO: Future release replace From with this, merge LINK message
+    data.E = XF.Player.Unit:Serialize()
+
+    -- TODO: this is all dup info for legacy compat, remove after 5.0
+    data.M = self:MainName()
+    data.N = self:Name()
+    data.U = self:UnitName()
+    data.H = self:Guild():Key()
+    data.W = self:Faction():Key()
 
 	return data
-end
-
-local function ConvertLegacyUnit(inLegacy)
-    local converted = {}
-    
-    converted.R = inLegacy.A
-    converted.A = inLegacy.B
-    converted.P = inLegacy.E
-    converted.G = inLegacy.H
-    converted.K = inLegacy.K
-    converted.I = inLegacy.I
-    converted.C = inLegacy.J
-    converted.L = inLegacy.L
-    converted.M = inLegacy.M
-    converted.N = inLegacy.N
-    converted.W = inLegacy.P1
-    converted.X = inLegacy.P2
-    converted.U = inLegacy.U
-    converted.S = inLegacy.V
-    converted.V = inLegacy.X
-    converted.Y = inLegacy.Y
-    converted.Z = inLegacy.D
-    converted.J = inLegacy.Z
-
-    return converted
 end
 
 function XFC.Message:Deserialize(inData)
@@ -246,43 +270,39 @@ function XFC.Message:Deserialize(inData)
     XF:DataDumper(self:ObjectName(), data)
 
     self:Key(data.K)
+    self:From(data.F)
+    self:SetRemainingTargets(data.A)
     self:Subject(data.S)
-    if(data.T ~= nil) then self:To(data.T) end
+    self:To(data.T)
     self:Type(data.Y)    
     self:TimeStamp(data.I)
-    self:SetRemainingTargets(data.A)
-    self:Data(data.D)
 
-    local unit = nil
-    try(function()
-        unit = XFO.Confederate:Pop()
-        unit:IsRunningAddon(true)
-        unit:IsOnline(true)
-        self:From(unit)
-        unit:Key(data.F)
-        unit:GUID(data.F)
-        
-        if(data.N ~= nil) then
-            unit:Name(data.N)
-        end
+    if(data.V ~= nil) then 
+        XFO.Versions:Add(data.V)
+        self:Version(XFO.Versions:Get(data.V))
+    end
 
-        if(data.M ~= nil) then
-            unit:IsAlt(true)
-            unit:MainName(data.M)
-        end
+    if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
+        local unit = nil
+        try(function ()
+            unit = XFO.Confederate:Pop()
+            unit:Deserialize(data.D)
+            self:Data(unit)
+        end).
+        catch(function(err)
+            XF:Warn(self:ObjectName(), err)
+            XFO.Confederate:Push(unit)
+        end)
+    else
+        self:Data(data.D)
+    end
 
-        if(data.H ~= nil and XFO.Guilds:Contains(data.H)) then
-            unit:Guild(XFO.Guilds:Get(data.H))
-        end
-
-        if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
-            unit:Deserialize(ConvertLegacyUnit(unpickle(data.D)))
-        end
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-        XFO.Confederate:Push(unit)
-    end)
+    -- Deprecated
+    self:MainName(data.M)
+    self:Name(data.N)
+    self:UnitName(data.U)
+    self:Guild(XFO.Guilds:Get(data.H))
+    self:Faction(XFO.Factions:Get(data.W))
 end
 
 function XFC.Message:Encode(inProtocol)

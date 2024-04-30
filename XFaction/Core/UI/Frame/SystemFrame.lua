@@ -40,10 +40,33 @@ end
 function XFC.SystemFrame:DisplayLogout(inName)
     assert(type(inName) == 'string')
     local text = XF.Settings.Frames.Chat.Prepend .. inName .. ' ' .. XF.Lib.Locale['CHAT_LOGOUT']
-    XFF.UISystemMessage(text) 
+    XFF.UISystemMessage(text)
 end
 
-function XFC.SystemFrame:DisplayOrder(inOrder, inUnit)
+function XFC.SystemFrame:DisplayOrder(inOrder, inFaction, inName, inUnitName, inMainName, inGuild)
+
+    local text = XF.Settings.Frames.Chat.Prepend
+    if(XF.Config.Chat.Crafting.Faction) then
+        text = text .. format('%s ', format(XF.Icons.String, inFaction:IconID()))
+    end
+
+    text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
+    if(XF.Config.Chat.Crafting.Main and inMainName ~= nil) then
+        text = text .. '(' .. inMainName .. ') '
+    end
+    if(XF.Config.Chat.Crafting.Guild) then
+        text = text .. '<' .. inGuild:Initials() .. '> '
+    end
+    if(inOrder:IsGuild()) then
+        text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:Link())
+    else
+        text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:CrafterName(), inOrder:Link())
+    end
+
+    XFF.UISystemMessage(text)
+end
+
+function XFC.SystemFrame:DisplayOrderUnit(inOrder, inUnit)
 
     local text = XF.Settings.Frames.Chat.Prepend
     if(XF.Config.Chat.Crafting.Faction) then

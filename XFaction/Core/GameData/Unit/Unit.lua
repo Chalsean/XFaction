@@ -38,6 +38,7 @@ function XFC.Unit:new()
     object.mythicKey = nil
     object.target = nil
     object.friend = nil
+    object.links = nil
 
     return object
 end
@@ -73,6 +74,7 @@ function XFC.Unit:Deconstructor()
     self.mythicKey = nil
     self.target = nil
     self.friend = nil
+    self.links = nil
 end
 
 function XFC.Unit:Initialize(inMemberID)
@@ -107,6 +109,8 @@ function XFC.Unit:Initialize(inMemberID)
     self:Note(unitData.memberNote or '?')
     self:Achievements(unitData.achievementPoints or 0)
     self:Target(XFO.Targets:Get(self:Guild():Realm(), self:Race():Faction()))
+
+    self.links = {}
 
     if(XFO.Friends:Contains(self:GUID())) then
         self:Friend(XFO.Friends:Get(self:GUID()))
@@ -212,6 +216,10 @@ end
 
 function XFC.Unit:IsPlayer()
     return self:GUID() == XF.Player.GUID
+end
+
+function XFC.Unit:HasLinks()
+    return self:Links():Count() > 0
 end
 
 function XFC.Unit:GUID(inGUID)
@@ -501,9 +509,31 @@ function XFC.Unit:MythicKey(inKey)
     end
     return self.mythicKey
 end
+
+function XFC.Unit:Links()
+    return next, self.links, nil
+end
 --#endregion
 
 --#region Methods
+function XFC.Unit:AddLink(inKey)
+    assert(type(inKey) == 'string')
+    self.links[inKey] = true
+end
+
+function XFC.Unit:RemoveLink(inKey)
+    assert(type(inKey) == 'string')
+    self.links[inKey] = nil
+end
+
+function XFC.Unit:RemoveAllLinks()
+    for _, guid in self:Links() do
+        if(XFO.Confederate:Contains(guid)) then
+            XFO.Confederate:Get(guid):RemoveLink(self:Key())
+        end
+    end
+end
+
 function XFC.Unit:HasTeam()
     return self.team ~= nil
 end
@@ -529,12 +559,12 @@ function XFC.Unit:HasMythicKey()
 end
 
 function XFC.Unit:IsSameFaction(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     return self:Target():Faction():Equals(inUnit:Target():Faction())
 end
 
 function XFC.Unit:IsSameGuild(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     return self:Guild():Equals(inUnit:Guild())
 end
 
