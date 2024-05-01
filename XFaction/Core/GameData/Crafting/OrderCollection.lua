@@ -29,7 +29,7 @@ end
 
 --#region Methods
 function XFC.OrderCollection:ProcessMessage(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name == 'Message', 'ProcessMessage method requires Message object as parameter'
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message', 'ProcessMessage method requires Message object as parameter')
     if(XFO.WoW:IsRetail()) then
         local order = nil
         try(function ()

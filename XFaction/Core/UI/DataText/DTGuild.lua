@@ -156,7 +156,7 @@ local function PreSort()
 
 			unitData.Zone = unit:Zone():LocaleName()
 
-			if(unit:HasMythicKey() and unit:MythicKey():HasDungeon()) then
+			if(unit:HasMythicKey()) then
 				unitData.MythicKey = unit:MythicKey():Dungeon():Name() .. ' +' .. unit:MythicKey():ID()
 			end
 

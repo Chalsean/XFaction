@@ -126,7 +126,7 @@ local function GetChatColor(inType, inFaction)
     end
 end
 
-local function DisplayLogin(inMessage)
+local function DisplayGuildChat(inMessage)
 
     local message = XF.Settings.Frames.Chat.Prepend
     local frame = GetFrame()

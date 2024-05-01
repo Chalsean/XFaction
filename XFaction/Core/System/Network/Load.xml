@@ -6,4 +6,6 @@
     <Script file='ChannelCollection.lua'/>
     <Script file='Friend.lua'/>
     <Script file='FriendCollection.lua'/>
+    <Script file='Target.lua'/>
+    <Script file='TargetCollection.lua'/>
 </Ui>

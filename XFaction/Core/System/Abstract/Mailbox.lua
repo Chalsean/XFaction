@@ -141,6 +141,7 @@ function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inS
     if(self:HasAllPackets(messageKey, totalPackets)) then
         XF:Debug(self:ObjectName(), 'Received all packets [%d] for message [%s]', totalPackets, messageKey)
         local encoded = self:RebuildMessage(messageKey, totalPackets)
+        XF:DataDumper(ObjectName, encoded)
         local message = self:DecodeMessage(encoded)        
         try(function ()
             message:Key(messageKey)
@@ -170,7 +171,7 @@ local function ForwardMessage(inMessage)
         --    XF:Debug(self:GetObjectName(), 'Node count under threshold, forwarding message')
         --    inMessage:Type(XF.Enum.Network.BNET)
         --    XFO.BNet:Send(inMessage)
-    end
+    --end
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
     elseif(inMessageTag == XF.Enum.Tag.BNET) then
@@ -187,21 +188,23 @@ local function ProcessLinkMessage(inMessage)
     local linkStrings = string.Split(inMessage:Data(), '|')
     local links = {}
     local from = XFO.Confederate:Get(inMessage:From())
-    -- Add new links
-    for _, linkString in pairs (linkStrings) do
-        local nodes = string.Split(inData, ';')
-        local node = string.Split(nodes[2], ':')
-        local to = XFO.Confederate:Get(node[1], tonumber(node[2]), tonumber(node[3]))
-        if(to ~= nil) then
-            links[to:Key()] = true
-            from:AddLink(to:Key())
-            to:AddLink(from:Key())
+    if(from ~= nil) then
+        -- Add new links
+        for _, linkString in pairs (linkStrings) do
+            local nodes = string.Split(linkString, ';')
+            local node = string.Split(nodes[2], ':')
+            local to = XFO.Confederate:Get(node[1], tonumber(node[2]), tonumber(node[3]))
+            if(to ~= nil) then
+                links[to:Key()] = true
+                from:AddLink(to:Key())
+                to:AddLink(from:Key())
+            end
         end
-    end
-    -- Remove stale links
-    for _, linked in from:Links() do
-        if(links[linked] == nil) then
-            from:RemoveLink(linked)
+        -- Remove stale links
+        for linked in from:Links() do
+            if(links[linked] == nil) then
+                from:RemoveLink(linked)
+            end
         end
     end
 end
@@ -210,7 +213,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
     -- Is a newer version available?
-    if(not XF.Cache.NewVersionNotify and inMessage:From():HasVersion() and XFO.Version:IsNewer(inMessage:From():Version())) then
+    if(not XF.Cache.NewVersionNotify and inMessage:HasVersion() and XFO.Version:IsNewer(inMessage:Version())) then
         print(format(XF.Lib.Locale['NEW_VERSION'], XF.Title))
         XF.Cache.NewVersionNotify = true
     end
@@ -238,10 +241,11 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
 end
 
 function XFC.Mailbox:Purge()
-	for key, receivedTime in self:Iterator() do
-		if(receivedTime < XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale) then
-			self:Remove(key)
-		end
-	end
+    -- TODO
+	-- for key, receivedTime in self:Iterator() do
+	-- 	if(receivedTime < XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale) then
+	-- 		self:Remove(key)
+	-- 	end
+	-- end
 end
 --#endregion

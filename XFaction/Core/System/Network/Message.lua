@@ -248,7 +248,7 @@ function XFC.Message:Serialize()
 	data.Y = self:Type()
     data.I = self:TimeStamp()
     data.V = XF.Player.Unit:Version()
-    data.D = type(self:Data() == 'table') and pickle(self:Data()) or self:Data()
+    data.D = self:Data()
 
     -- TODO: Future release replace From with this, merge LINK message
     data.E = XF.Player.Unit:Serialize()
@@ -265,6 +265,7 @@ end
 
 function XFC.Message:Deserialize(inData)
 	local decompressed = XF.Lib.Deflate:DecompressDeflate(inData)
+    XF:DataDumper(self:ObjectName(), decompressed)
 	local data = unpickle(decompressed)
 
     XF:DataDumper(self:ObjectName(), data)
@@ -276,33 +277,23 @@ function XFC.Message:Deserialize(inData)
     self:To(data.T)
     self:Type(data.Y)    
     self:TimeStamp(data.I)
+    self:Data(data.D)
 
     if(data.V ~= nil) then 
         XFO.Versions:Add(data.V)
         self:Version(XFO.Versions:Get(data.V))
     end
 
-    if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
-        local unit = nil
-        try(function ()
-            unit = XFO.Confederate:Pop()
-            unit:Deserialize(data.D)
-            self:Data(unit)
-        end).
-        catch(function(err)
-            XF:Warn(self:ObjectName(), err)
-            XFO.Confederate:Push(unit)
-        end)
-    else
-        self:Data(data.D)
-    end
-
     -- Deprecated
     self:MainName(data.M)
     self:Name(data.N)
     self:UnitName(data.U)
-    self:Guild(XFO.Guilds:Get(data.H))
-    self:Faction(XFO.Factions:Get(data.W))
+    if(data.H ~= nil) then
+        self:Guild(XFO.Guilds:Get(data.H))
+    end
+    if(data.W ~= nil) then
+        self:Faction(XFO.Factions:Get(data.W))
+    end
 end
 
 function XFC.Message:Encode(inProtocol)

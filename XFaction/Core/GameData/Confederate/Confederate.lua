@@ -71,7 +71,7 @@ function XFC.Confederate:Add(inUnit)
         if(oldData:IsOffline() and inUnit:IsOnline()) then
             self.onlineCount = self.onlineCount + 1
         elseif(oldData:IsOnline()) then
-            for _, guid in oldData:Links() do
+            for guid in oldData:Links() do
                 inUnit:AddLink(guid)
             end
         end
@@ -124,21 +124,20 @@ function XFC.Confederate:Backup()
 end
 
 function XFC.Confederate:Restore()
-    -- TODO
-    -- if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
-    -- for _, data in pairs (XF.Cache.Backup.Confederate) do
-    --     local unit = nil
-    --     try(function ()
-    --         unit = self:Pop()
-    --         unit:Deserialize(data)
-    --         self:Add(unit)
-    --         XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
-    --     end).
-    --     catch(function (err)
-    --         XF:Warn(self:ObjectName(), err)
-    --         self:Push(unit)
-    --     end)
-    -- end
+    if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
+    for _, data in pairs (XF.Cache.Backup.Confederate) do
+        local unit = nil
+        try(function ()
+            unit = self:Pop()
+            unit:Deserialize(data)
+            self:Add(unit)
+            XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
+        end).
+        catch(function (err)
+            XF:Warn(self:ObjectName(), err)
+            self:Push(unit)
+        end)
+    end
     XF.Cache.Backup.Confederate = {}
 end
 

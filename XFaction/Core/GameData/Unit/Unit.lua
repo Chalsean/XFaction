@@ -527,7 +527,7 @@ function XFC.Unit:RemoveLink(inKey)
 end
 
 function XFC.Unit:RemoveAllLinks()
-    for _, guid in self:Links() do
+    for guid in self:Links() do
         if(XFO.Confederate:Contains(guid)) then
             XFO.Confederate:Get(guid):RemoveLink(self:Key())
         end
@@ -610,7 +610,7 @@ function XFC.Unit:Broadcast(inSubject)
         message:Initialize()
         message:Type(XF.Enum.Network.BROADCAST)
         message:Subject(inSubject)
-        message:Data(self:Serialize())
+        message:Data(XF.Player.Unit:Serialize())
         XFO.Chat:Send(message)
     end).
     finally(function ()
@@ -633,65 +633,66 @@ function XFC.Unit:Serialize()
     data.A = self:Race():Key()
     data.V = self:Spec():Key()
     data.U = self:UnitName()
-    data.V = self:Version():Key()
+    data.X = self:Version():Key()
     data.P1 = self:Profession1() ~= nil and self:Profession1():Key() or nil
     data.P2 = self:Profession2() ~= nil and self:Profession2():Key() or nil
     data.Y = self:PvP()
-    data.Z = self:Zone():ID()
+    data.D = self:Zone():ID()
 
-    if(data.Z == nil) then
-        data.D = self:Zone():Name()
+    if(data.D == nil) then
+        data.Z = self:Zone():Name()
     end
 
-	return data
+	return pickle(data)
 end
 
 function XFC.Unit:Deserialize(inSerialized)
-    assert(type(inSerialized) == 'table')
+    local data = type(inSerialized) == 'string' and unpickle(inSerialized) or inSerialized
 
+    self.links = {}
     self:IsRunningAddon(true)
     self:IsOnline(true)
     self:UpdatedTime(XFF.TimeGetCurrent())
 
-    self:Achievements(tonumber(inSerialized.A))
-    self:Rank(inSerialized.C)
-    self:Guild(XFO.Guilds:Get(inSerialized.G))
-    self:ItemLevel(inSerialized.I)
-    self:GUID(inSerialized.K)
-    self:Key(inSerialized.K)
-    self:Level(inSerialized.L)
+    self:Achievements(tonumber(data.B))
+    self:Rank(data.J)
+    self:Guild(XFO.Guilds:Get(data.H))
+    self:ItemLevel(data.I)
+    self:GUID(data.K)
+    self:Key(data.K)
+    self:Level(data.L)
 
-    if(inSerialized.M ~= nil) then
+    if(data.M ~= nil) then
 		local key = XFC.MythicKey:new(); key:Initialize()
-		key:Deserialize(inSerialized.M)
+		key:Deserialize(data.M)
 		self:MythicKey(key)
 	end
 
-    self:Note(inSerialized.N)
-    self:Presence(tonumber(inSerialized.P))
-	self:Race(XFO.Races:Get(inSerialized.R))
-    self:Spec(XFO.Specs:Get(inSerialized.S))
-    local nameParts = string.Split(inSerialized.U, '-')
+    self:Note(data.N)
+    self:Presence(tonumber(data.E))
+	self:Race(XFO.Races:Get(tonumber(data.A)))
+    self:Spec(XFO.Specs:Get(tonumber(data.V)))
+    local nameParts = string.Split(data.U, '-')
     self:Name(nameParts[1])
     self:Target(XFO.Targets:Get(self:Guild():Realm(), self:Race():Faction()))
 
-    XFO.Versions:Add(inSerialized.V)
-    self:Version(XFO.Versions:Get(inSerialized.V))
+    XFO.Versions:Add(data.X)
+    self:Version(XFO.Versions:Get(data.X))
 
-	if(inSerialized.W ~= nil) then
-		self:Profession1(XFO.Professions:Get(inSerialized.W))
+	if(data.P1 ~= nil) then
+		self:Profession1(XFO.Professions:Get(data.P1))
 	end
-	if(inSerialized.X ~= nil) then
-		self:Profession2(XFO.Professions:Get(inSerialized.X))
+	if(data.P2 ~= nil) then
+		self:Profession2(XFO.Professions:Get(data.P2))
 	end
     
-    self:PvP(inSerialized.Y)
+    self:PvP(data.Y)
 
-    if(inSerialized.Z ~= nil and XFO.Zones:Contains(tonumber(inSerialized.Z))) then        
-        self:Zone(XFO.Zones:Get(tonumber(inSerialized.Z)))
-    elseif(inSerialized.J ~= nil) then
-        XFO.Zones:Add(inSerialized.J)
-        self:Zone(XFO.Zones:Get(inSerialized.J))
+    if(data.D ~= nil and XFO.Zones:Contains(tonumber(data.D))) then        
+        self:Zone(XFO.Zones:Get(tonumber(data.D)))
+    elseif(data.Z ~= nil) then
+        XFO.Zones:Add(data.Z)
+        self:Zone(XFO.Zones:Get(data.Z))
     else
         self:Zone(XFO.Zones:Get('?'))
     end

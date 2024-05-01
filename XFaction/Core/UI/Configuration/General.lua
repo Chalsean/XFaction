@@ -130,7 +130,7 @@ function XF:SetupMenus()
 			for _, guild in XFO.Guilds:SortedIterator() do
 				table.insert(XF.Cache.Setup.Guilds, {
 					realm = tostring(guild:Realm():ID()),
-					faction = guild:Faction():ID(),
+					--faction = guild:Faction():ID(),
 					initials = guild:Key(),
 					name = guild:Name(),
 				})
