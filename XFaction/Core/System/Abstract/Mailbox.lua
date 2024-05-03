@@ -66,8 +66,10 @@ function XFC.Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
         self.packets[inMessageKey] = {}
         self.packets[inMessageKey].Count = 0
     end
-    self.packets[inMessageKey][inPacketNumber] = inData
-    self.packets[inMessageKey].Count = self.packets[inMessageKey].Count + 1
+    if(self.packets[inMessageKey][inPacketNumber] == nil) then
+        self.packets[inMessageKey][inPacketNumber] = inData
+        self.packets[inMessageKey].Count = self.packets[inMessageKey].Count + 1
+    end
 end
 
 function XFC.Mailbox:RemovePacket(inKey)
@@ -88,10 +90,8 @@ function XFC.Mailbox:RebuildMessage(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     local message = ''
     -- Stitch the data back together again
-    for i = 1, inTotalPackets do
-        if(self.packets[inKey][i] ~= nil) then
-            message = message .. self.packets[inKey][i]
-        end
+    for _, packet in pairs(self.packets[inKey]) do
+        message = message .. packet
     end
     self:RemovePacket(inKey)
 	return message
@@ -141,15 +141,16 @@ function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inS
     if(self:HasAllPackets(messageKey, totalPackets)) then
         XF:Debug(self:ObjectName(), 'Received all packets [%d] for message [%s]', totalPackets, messageKey)
         local encoded = self:RebuildMessage(messageKey, totalPackets)
-        XF:DataDumper(ObjectName, encoded)
-        local message = self:DecodeMessage(encoded)        
-        try(function ()
-            message:Key(messageKey)
-            self:Process(message, inMessageTag)
-        end).
-        finally(function ()
-            self:Push(message)
-        end)
+        if(encoded ~= nil) then
+            local message = self:DecodeMessage(encoded)        
+            try(function ()
+                message:Key(messageKey)
+                self:Process(message, inMessageTag)
+            end).
+            finally(function ()
+                self:Push(message)
+            end)
+        end
     end
 end
 

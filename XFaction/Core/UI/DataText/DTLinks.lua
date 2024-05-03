@@ -13,7 +13,7 @@ function XFC.DTLinks:new()
 	object.regularFont = nil
 	object.ldbObject = nil
 	object.tooltip = nil
-	object.count = 0    
+	object.links = nil
     return object
 end
 --#endregion
@@ -32,6 +32,7 @@ function XFC.DTLinks:Initialize()
 		self.headerFont:SetTextColor(0.4,0.78,1)
 		self.regularFont = CreateFont('regularFont')
 		self.regularFont:SetTextColor(255,255,255)
+		self.links = {}
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
@@ -69,6 +70,14 @@ function XFC.DTLinks:GetRegularFont()
 	return self.regularFont
 end
 
+function XFC.DTLinks:AddLink()
+
+end
+
+function XFC.DTLinks:RemoveLink()
+
+end
+
 function XFC.DTLinks:RefreshBroker()
 	local text = ''
 	if(XF.Config.DataText.Link.Label) then
@@ -102,7 +111,7 @@ function XFC.DTLinks:RefreshBroker()
 	-- if(XF.Config.DataText.Link.Faction) then
 	-- 	text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XFO.Links:Count(), allianceCount, hordeCount)
 	-- else
-	-- 	text = format('%s|cffffffff%d|r', text, XFO.Links:Count())
+		text = format('%s|cffffffff%d|r', text, #self.links)
 	-- end
 	self:GetBroker().text = text
 end

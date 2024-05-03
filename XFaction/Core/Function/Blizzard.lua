@@ -46,11 +46,13 @@ XFF.SpecGetID = GetSpecializationInfo
 -- Player
 XFF.PlayerGetIlvl = GetAverageItemLevel
 XFF.PlayerGetAchievement = GetAchievementInfo
+XFF.PlayerGetAchievementLink = GetAchievementLink
 XFF.PlayerGetGUID = UnitGUID
 XFF.PlayerIsInGuild = IsInGuild
 XFF.PlayerIsInCombat = InCombatLockdown
 XFF.PlayerGetFaction = UnitFactionGroup
 XFF.PlayerGetPvPRating = GetPersonalRatedInfo
+XFF.PlayerGetGuild = GetGuildInfo
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo
@@ -78,3 +80,6 @@ XFF.UISystemSound = PlaySound
 -- Party
 XFF.PartySendInvite = C_PartyInfo.InviteUnit
 XFF.PartyRequestInvite = C_PartyInfo.RequestInviteFromUnit
+
+-- Crafting
+XFF.CraftingGetItem = C_TooltipInfo.GetRecipeResultItem

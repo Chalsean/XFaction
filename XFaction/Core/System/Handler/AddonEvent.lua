@@ -11,9 +11,7 @@ function XFC.AddonEvent:new()
     self.isLoaded = false
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.AddonEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -39,7 +37,7 @@ function XFC.AddonEvent:Initialize()
 end
 --#endregion
 
---#region Accessors
+--#region Properties
 function XFC.AddonEvent:IsLoaded(inBoolean)
     assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
     if(inBoolean ~= nil) then
@@ -49,7 +47,7 @@ function XFC.AddonEvent:IsLoaded(inBoolean)
 end
 --#endregion
 
---#region Cache
+--#region Methods
 function XF:InitializeCache()
     if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
     XF.Cache = _G.XFCacheDB
@@ -152,29 +150,27 @@ function XF:InitializeConfig()
 			version:Key('0.0.0')
 		end
 		if(version:IsNewer(XFO.Version, true)) then
-			XF:Info(ObjectName, 'Performing new install')	
+			XF:Info(self:ObjectName(), 'Performing new install')	
 			XF:Install()
 			XF.Config.InstallVersion = XFO.Version:Key()
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF:Debug(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Debug(self:ObjectName(), err)
 	end)
 	--#endregion
 
 	XF:Info(ObjectName, 'Configs loaded')
 end
---#endregion
 
---#region Callbacks
 function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
     local self = XFO.AddonEvent
     try(function ()
+        XF:Info(self:ObjectName(), inAddonName)
+        XF:Info(self:ObjectName(), XFF.ClientGetAddonState(inAddonName))
         if(XFF.ClientGetAddonState(inAddonName) > 0) then
+            XF:Info(self:ObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
             if(inAddonName == XF.Name and not self:IsLoaded()) then
-                XF:Info(self:ObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
-                --InitializeCache()
-                --InitializeConfig()
                 XFO.ElvUI:Initialize()
                 self:IsLoaded(true)
             elseif(inAddonName == 'ElvUI') then

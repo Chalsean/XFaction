@@ -89,6 +89,15 @@ function XFC.Confederate:Add(inUnit)
     end
 end
 
+function XFC.Confederate:Upsert(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
+    if(self:Contains(inUnit:Key()) and inUnit:UpdatedTime() < self:Get(inUnit:Key()):UpdatedTime()) then
+        return false
+    end
+    self:Add(inUnit)
+    return true
+end
+
 function XFC.Confederate:Get(inKey, inRealmID, inFactionID)
     assert(type(inKey) == 'string')
     assert(type(inRealmID) == 'number' or inRealmID == nil, 'argument must be number or nil')

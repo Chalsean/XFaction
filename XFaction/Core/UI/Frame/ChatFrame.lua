@@ -34,7 +34,7 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
     if(XF.Config.Chat[configNode].Faction) then  
         text = text .. format('%s ', format(XF.Icons.String, inUnitData:Race():Faction():IconID()))
     end
-    if(XF.Config.Chat[configNode].Main and inUnitData:IsAlt() and inUnitData:HasMainName()) then
+    if(XF.Config.Chat[configNode].Main and inUnitData:IsAlt()) then
         text = text .. '(' .. inUnitData:MainName() .. ') '
     end
     if(XF.Config.Chat[configNode].Guild) then
@@ -50,7 +50,7 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
             hex = XF:RGBPercToHex(XF.Config.Chat[configNode].Color.Red, XF.Config.Chat[configNode].Color.Green, XF.Config.Chat[configNode].Color.Blue)
         end
     elseif(XF.Config.Chat[configNode].FColor) then
-        hex = inUnitData:Race():Faction():IsHorder() and 'E0000D' or '378DEF'
+        hex = inUnitData:Race():Faction():IsHorde() and 'E0000D' or '378DEF'
     elseif(_G.ChatTypeInfo[event]) then
         local color = _G.ChatTypeInfo[event]
         hex = XF:RGBPercToHex(color.r, color.g, color.b)
@@ -63,7 +63,8 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
     return text
 end
 
-function XFC.ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+function XFC.ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, arg14, arg15, arg16, arg17)
+    XF:Info(ObjectName, inMessage)
     if(not XF.Config.Chat.GChat.Enable) then
         return true
     elseif(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
@@ -74,7 +75,8 @@ function XFC.ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, ar
     elseif(XFO.Confederate:Contains(inGUID)) then
         inMessage = ModifyPlayerChat(inEvent, inMessage, XFO.Confederate:Get(inGUID))
     end
-    return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
+    XF:Info(ObjectName, inMessage)
+    return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, arg14, arg15, arg16, arg17
 end
 
 function XFC.ChatFrame:AchievementFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
@@ -90,7 +92,7 @@ end
 --#endregion
 
 --#region Display
-local function GetFrame()
+local function GetFrame(inType)
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
     local frameTable
@@ -129,7 +131,7 @@ end
 local function DisplayGuildChat(inMessage)
 
     local message = XF.Settings.Frames.Chat.Prepend
-    local frame = GetFrame()
+    local frame = GetFrame('GUILD')
     if(frame ~= nil) then
         local text = ''
 
@@ -147,24 +149,31 @@ local function DisplayGuildChat(inMessage)
 
         text = text .. inMessage:Data()
 
-        local hex = GetChatColor('GChat', inMessage():Faction())
+        local hex = GetChatColor('GChat', inMessage:Faction())
         if hex ~= nil then
             text = format('|cff%s%s|r', hex, text)
         end
 
-        if(XFO.Addons.WIM:IsLoaded() and XFO.Addons.WIM:API().modules.GuildChat.enabled) then
-            XFO.Addons.WIM:API():CHAT_MSG_GUILD(text, inMessage:From(), XF.Player.Faction:Language(), '', inMessage:From(), '', 0, 0, '', 0, _, inMessage:From())
-        else
+        
+
+        -- if(XFO.WIM:IsLoaded() and XFO.WIM:API().modules.GuildChat.enabled) then
+        --     XFO.WIM:API():CHAT_MSG_GUILD(text, inMessage:UnitName(), XF.Player.Faction:Language(), '', inMessage:UnitName(), '', 0, 0, '', 0, _, inMessage:From())
+        -- else
             text = XF.Settings.Frames.Chat.Prepend .. text
-            XFF.ChatHandler(frame, 'CHAT_MSG_GUILD', text, inMessage:From(), XF.Player.Faction:Language(), '', inMessage:From(), '', 0, 0, '', 0, _, inMessage:From())
-        end
+            XF:Info(ObjectName, text)
+            XF:Info(ObjectName, inMessage:UnitName())
+            XF:Info(ObjectName, XF.Player.Faction:Language())
+            XF:Info(ObjectName, inMessage:UnitName())
+            XF:Info(ObjectName, inMessage:From())
+            XFF.ChatHandler(frame, 'CHAT_MSG_GUILD', text, inMessage:UnitName(), XF.Player.Faction:Language(), '', inMessage:UnitName(), '', 0, 0, '', 0, _, inMessage:From())
+        --end
     end
 end
 
 local function DisplayAchievement(inMessage)
-    
+
     local message = XF.Settings.Frames.Chat.Prepend
-    local frame = GetFrame()
+    local frame = GetFrame('GUILD_ACHIEVEMENT')
     if(frame ~= nil) then
         local text = ''
 
@@ -175,9 +184,9 @@ local function DisplayAchievement(inMessage)
         if(XF.Player.Faction:Equals(inMessage:Faction())) then
             text = text .. '%s '
         else
-            local friend = XFO.Friends:Get(inGuild:GetRealm(), inName)
+            local friend = XFO.Friends:Get(inMessage:Guild():Realm(), inName)
             if(friend ~= nil) then
-                text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inName, friend:GetAccountID(), inName, inName) .. ' '
+                text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inName, friend:AccountID(), inName, inName) .. ' '
             else
                 -- Maybe theyre in a bnet community together, no way to associate tho
                 text = text .. '%s '
@@ -192,19 +201,15 @@ local function DisplayAchievement(inMessage)
             text = text .. '<' .. inMessage:Guild():Initials() .. '> '
         end
 
-        text = text .. inMessage:Data()
+        text = text .. XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(XFF.PlayerGetAchievementLink(inMessage:Data()), "(Player.-:.-:.-:.-:.-:)"  , inMessage:From() .. ':1:' .. date("%m:%d:%y:") ) .. '!'
 
-        local hex = GetChatColor('Achievement', inMessage():Faction())
+        local hex = GetChatColor('Achievement', inMessage:Faction())
         if hex ~= nil then
             text = format('|cff%s%s|r', hex, text)
         end
 
-        if(XFO.Addons.WIM:IsLoaded() and XFO.Addons.WIM:API().modules.GuildChat.enabled) then
-            XFO.Addons.WIM:API():CHAT_MSG_GUILD_ACHIEVEMENT(text, inMessage:From():UnitName(), XF.Player.Faction:Language(), '', inMessage:From():UnitName(), '', 0, 0, '', 0, _, inMessage:From():Key())
-        else
-            text = XF.Settings.Frames.Chat.Prepend .. text
-            XFF.ChatHandler(frame, 'CHAT_MSG_GUILD_ACHIEVEMENT', text, inMessage:From():UnitName(), XF.Player.Faction:Language(), '', inMessage:From():UnitName(), '', 0, 0, '', 0, _, inMessage:From():Key())
-        end
+        text = XF.Settings.Frames.Chat.Prepend .. text
+        XFF.ChatHandler(frame, 'CHAT_MSG_GUILD_ACHIEVEMENT', text, inMessage:UnitName(), XF.Player.Faction:Language(), '', inMessage:UnitName(), '', 0, 0, '', 0, _, inMessage:From())
     end
 end
 

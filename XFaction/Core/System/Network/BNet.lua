@@ -144,8 +144,10 @@ end
 
 function XFC.BNet:Ping(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name == 'Friend', 'argument must be Friend object')
-    XF:Debug(self:ObjectName(), 'Sending ping to [%s]', inFriend:Tag())
-    XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, inFriend:GameID())
-    XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
+    if(XF.Initialized) then
+        XF:Debug(self:ObjectName(), 'Sending ping to [%s]', inFriend:Tag())
+        XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, inFriend:GameID())
+        XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
+    end
 end
 --#endregion

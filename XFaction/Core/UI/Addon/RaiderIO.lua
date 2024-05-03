@@ -40,7 +40,7 @@ function XFC.RaiderIO:Raid(inCount, inTotal, inDifficulty)
     return self.raid
 end
 
-function XFC.RaiderIO:SetDungeon(inScore)
+function XFC.RaiderIO:Dungeon(inScore)
     assert(type(inScore) == 'number' or inScore == nil, 'argument must be number or nil')
     if(inScore ~= nil) then
         self.dungeon = inScore

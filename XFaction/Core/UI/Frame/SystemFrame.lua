@@ -58,9 +58,9 @@ function XFC.SystemFrame:DisplayOrder(inOrder, inFaction, inName, inUnitName, in
         text = text .. '<' .. inGuild:Initials() .. '> '
     end
     if(inOrder:IsGuild()) then
-        text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:Link())
+        text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:GetLink())
     else
-        text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:CrafterName(), inOrder:Link())
+        text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inName, inOrder:GetLink())
     end
 
     XFF.UISystemMessage(text)

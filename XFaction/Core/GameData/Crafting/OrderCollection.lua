@@ -35,7 +35,7 @@ function XFC.OrderCollection:ProcessMessage(inMessage)
         try(function ()
             order = self:Pop()
             order:Deserialize(inMessage:Data())
-            XFO.SystemFrame:DisplayOrder(order, inMessage:From())
+            XFO.SystemFrame:DisplayOrder(order, inMessage:Faction(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild())
         end).
         catch(function (err)
             XF:Warn(self:ObjectName(), err)            

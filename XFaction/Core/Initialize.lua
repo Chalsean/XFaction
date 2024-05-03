@@ -105,10 +105,10 @@ function XF:LoginGuild()
 				-- Now that guild info is available we can finish setup
 				XF:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
 				XFO.InitTimers:Get('LoginGuild'):Stop()
-				
-				XF:InitializeCache()
-				XF:InitializeConfig()
 
+				XF:InitializeCache()
+                XF:InitializeConfig()
+				
 				-- Confederate setup via guild info
 				XFO.Guilds:Initialize(guildID)
 				XFO.Confederate:Initialize()

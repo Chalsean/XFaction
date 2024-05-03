@@ -151,6 +151,7 @@ end
 
 function XFC.Order:Serialize()
     local data = {}
+    data.C = XF.Player.Unit:Serialize()
     data.K = self:Key()
     data.O = self:ID()
     data.P = self:Profession():Key()
@@ -167,12 +168,30 @@ function XFC.Order:Deserialize(inData)
     self:Type(inData.T)
     self:Profession(XFO.Professions:Get(inData.P))
     if(inData.Q ~= nil) then
-        self:Quality(inData.Q)
+        self:Quality(tonumber(inData.Q))
     end
-    self:RecipeID(inData.R)
+    self:RecipeID(tonumber(inData.R))
     if(inData.U ~= nil) then
         self:CrafterGUID(inData.U)
     end
+    
+    local unit = nil
+    try(function()
+        unit = XFO.Confederate:Pop()
+        unit:Deserialize(inData.C)
+        self:Customer(unit)
+        if(not XFO.Confederate:Upsert(unit)) then
+            self:Customer(XFO.Confederate:Get(unit:Key()))
+            XFO.Confederate:Push(unit)
+        end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+        if(unit ~= nil) then
+            XFO.Confederate:Push(unit)
+        end
+    end)
+
     self:IsInitialized(true)
 end
 
@@ -192,5 +211,11 @@ function XFC.Order:Broadcast()
     finally(function ()
         XFO.Chat:Push(message)
     end)
+end
+
+function XFC.Order:GetLink()
+    local item = XFF.CraftingGetItem(self:RecipeID(), nil, nil, nil, self:Quality())
+    if(item ~= nil) then return item.hyperlink end
+    return nil
 end
 --#endregion

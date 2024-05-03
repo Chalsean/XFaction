@@ -264,11 +264,16 @@ function XFC.Message:Serialize()
 end
 
 function XFC.Message:Deserialize(inData)
-	local decompressed = XF.Lib.Deflate:DecompressDeflate(inData)
-    XF:DataDumper(self:ObjectName(), decompressed)
+	local decompressed = nil
+    for i=1, 10 do
+        if(decompressed == nil) then
+            -- This sometimes fails, retries work
+            decompressed = XF.Lib.Deflate:DecompressDeflate(inData)
+        else
+            break
+        end
+    end
 	local data = unpickle(decompressed)
-
-    XF:DataDumper(self:ObjectName(), data)
 
     self:Key(data.K)
     self:From(data.F)
@@ -306,7 +311,9 @@ end
 
 function XFC.Message:Decode(inData, inProtocol)
 	if(inProtocol == XF.Enum.Network.BNET) then
-        self:Deserialize(XF.Lib.Deflate:DecodeForPrint(inData))
+        local data = XF.Lib.Deflate:DecodeForPrint(inData)
+        XF:DataDumper(ObjectName, data)
+        self:Deserialize(data)
     else
         self:Deserialize(XF.Lib.Deflate:DecodeForWoWAddonChannel(inData))
     end

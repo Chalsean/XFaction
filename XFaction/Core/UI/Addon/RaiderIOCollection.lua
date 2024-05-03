@@ -61,9 +61,9 @@ function XFC.RaiderIOCollection:AddUnit(inUnit)
         -- M+
         if(profile and profile.mythicKeystoneProfile) then
             if(profile.mythicKeystoneProfile.mainCurrentScore and profile.mythicKeystoneProfile.mainCurrentScore > 0) then
-                raiderIO:SetDungeon(profile.mythicKeystoneProfile.mainCurrentScore)
+                raiderIO:Dungeon(profile.mythicKeystoneProfile.mainCurrentScore)
             elseif(profile.mythicKeystoneProfile.currentScore and profile.mythicKeystoneProfile.currentScore > 0) then
-                raiderIO:SetDungeon(profile.mythicKeystoneProfile.currentScore)
+                raiderIO:Dungeon(profile.mythicKeystoneProfile.currentScore)
             end
         end
 
