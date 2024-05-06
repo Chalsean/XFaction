@@ -8,44 +8,50 @@ XF.ChangeLog['4.10.2'] = {
         name = XF.Lib.Locale['IMPROVEMENTS'],
         guiInline = true,
         args = {
-            One = {
+            TWW = {
                 order = 1,
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Expect to see multiple releases as TWW draws closer.',
             },
-            Two = {
+            TOC = {
                 order = 2,
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Bumped toc to 10.2.7.',
             },
-            Three = {
+            Network = {
                 order = 3,
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Fixed a rare networking issue where a packet could get lost.',
             },
-            Four = {
+            Logout = {
                 order = 4,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Implemented more robust logout detection.',
+            },
+            Refactor = {
+                order = 5,
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Restructured code to distinguish between retail and classic.',
             },
-            Five = {
-                order = 5,
+            LibSharedMedia = {
+                order = 6,
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Updated SharedMedia library to version 10.2.2.',
             },
-            Six = {
-                order = 6,
+            LibAce = {
+                order = 7,
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Updated Ace3 libraries to version 1320.',
             },
-            Seven = {
-                order = 7,
+            LibTourist = {
+                order = 8,
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Updated Tourist libraries to version 10.2.6.1.',

@@ -36,6 +36,11 @@ function ChannelCollection:Initialize()
 			--JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
 			--XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 		end
+
+		XF.Events:Add({name = 'ChannelLeft', 
+                        event = 'CHAT_MSG_CHANNEL_LEAVE', 
+                        callback = XF.Channels.UnitLeftChannel, 
+                        instance = true})
 		self:IsInitialized(true)
 	end
 end
@@ -100,6 +105,23 @@ function ChannelCollection:UseGuild(inBoolean)
 		self.useGuild = inBoolean
 	end
 	return self.useGuild
+end
+
+function ChannelCollection:UnitLeftChannel(_, _, _, _, _, _, _, _, channelName, _, _, guid)
+	local self = XF.Channels
+	if(self:HasLocalChannel()) then
+		local channel = self:GetLocalChannel()
+		if(channel:GetKey() == channelName and XF.Confederate:Contains(guid)) then
+			local unit = XF.Confederate:Get(guid)
+			if(unit:IsOnline() and not XF.Player.Guild:Equals(unit:GetGuild())) then
+				XF:Info(ObjectName, 'Guild member logout via event: ' .. unit:GetUnitName())
+				XF.Frames.System:Display(XF.Enum.Message.LOGOUT, unit:GetName(), unit:GetUnitName(), unit:GetMainName(), unit:GetGuild(), nil, unit:GetFaction())
+				XF.Confederate:Remove(unit:GetKey())
+				XF.Confederate:Push(unit)
+				XF.DataText.Guild:RefreshBroker()
+			end
+		end
+	end	
 end
 --#endregion
 
