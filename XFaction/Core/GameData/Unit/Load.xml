@@ -1,0 +1,5 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='MythicKey.lua'/>
+    <Script file='MythicKeyCollection.lua'/>
+    <Script file='Unit.lua'/>
+</Ui>
