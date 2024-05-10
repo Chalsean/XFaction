@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'NodeCollection'
 
-NodeCollection = Factory:newChildConstructor()
+NodeCollection = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function NodeCollection:new()
@@ -28,19 +29,19 @@ end
 function NodeCollection:Add(inNode)
     assert(type(inNode) == 'table' and inNode.__name == 'Node', 'argument must be Node object')
 	self.parent.Add(self, inNode)
-	if(self.targetCount[inNode:GetTarget():GetKey()] == nil) then
-		self.targetCount[inNode:GetTarget():GetKey()] = 0
+	if(self.targetCount[inNode:GetTarget():Key()] == nil) then
+		self.targetCount[inNode:GetTarget():Key()] = 0
 	end
-	self.targetCount[inNode:GetTarget():GetKey()] = self.targetCount[inNode:GetTarget():GetKey()] + 1
+	self.targetCount[inNode:GetTarget():Key()] = self.targetCount[inNode:GetTarget():Key()] + 1
 	XF.DataText.Links:RefreshBroker()
 end
 
 function NodeCollection:Remove(inNode)
     assert(type(inNode) == 'table' and inNode.__name == 'Node', 'argument must be Node object')
 	try(function ()
-		self.parent.Remove(self, inNode:GetKey())
-		if(self.targetCount[inNode:GetTarget():GetKey()] ~= nil) then
-			self.targetCount[inNode:GetTarget():GetKey()] = self.targetCount[inNode:GetTarget():GetKey()] - 1
+		self.parent.Remove(self, inNode:Key())
+		if(self.targetCount[inNode:GetTarget():Key()] ~= nil) then
+			self.targetCount[inNode:GetTarget():Key()] = self.targetCount[inNode:GetTarget():Key()] - 1
 		end
 		for _, link in XF.Links:Iterator() do
 			if(link:GetFromNode():Equals(inNode) or link:GetToNode():Equals(inNode)) then
@@ -70,7 +71,7 @@ end
 
 --#region Accessors
 function NodeCollection:GetTargetCount(inTarget)
-	return self.targetCount[inTarget:GetKey()] or 0
+	return self.targetCount[inTarget:Key()] or 0
 end
 --#endregion
 
@@ -82,8 +83,8 @@ function NodeCollection:SetNodeFromString(inNodeString)
 		return self:Get(nodeData[1])
 	end
 	local node = self:Pop()
-    node:SetKey(nodeData[1])
-    node:SetName(nodeData[1])
+    node:Key(nodeData[1])
+    node:Name(nodeData[1])
     local realm = XF.Realms:GetByID(tonumber(nodeData[2]))
     local faction = XF.Factions:Get(tonumber(nodeData[3]))
     node:SetTarget(XF.Targets:GetByRealmFaction(realm, faction))

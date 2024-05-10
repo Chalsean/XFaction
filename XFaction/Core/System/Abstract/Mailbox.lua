@@ -1,9 +1,9 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Mailbox'
 local ServerTime = GetServerTime
 
-Mailbox = Factory:newChildConstructor()
+Mailbox = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function Mailbox:new()
@@ -189,7 +189,7 @@ function Mailbox:Process(inMessage, inMessageTag)
         end
     end
 
-    self:Add(inMessage:GetKey())
+    self:Add(inMessage:Key())
     inMessage:Print()
 
     --#region Forwarding
@@ -273,7 +273,7 @@ function Mailbox:Process(inMessage, inMessageTag)
         try(function ()
             order = XFO.Orders:Pop()
             order:Decode(inMessage:GetData())
-            if(not XFO.Orders:Contains(order:GetKey())) then
+            if(not XFO.Orders:Contains(order:Key())) then
                 XFO.Orders:Add(order)
                 order:Display()
             else
@@ -291,7 +291,7 @@ function Mailbox:Process(inMessage, inMessageTag)
     if(inMessage:HasUnitData()) then
         local unitData = inMessage:GetData()
         if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and 
-          (not XF.Confederate:Contains(unitData:GetKey()) or XF.Confederate:Get(unitData:GetKey()):IsOffline())) then
+          (not XF.Confederate:Contains(unitData:Key()) or XF.Confederate:Get(unitData:Key()):IsOffline())) then
             XF.Frames.System:DisplayLoginMessage(inMessage)
         end
         XF.Confederate:Add(unitData)

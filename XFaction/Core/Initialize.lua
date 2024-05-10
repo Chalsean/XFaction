@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'CoreInit'
 
 -- Initialize anything not dependent upon guild information
@@ -17,7 +17,7 @@ function XF:CoreInit()
 	-- Log XFaction version
 	XF.Versions = VersionCollection:new(); XF.Versions:Initialize()
 	XF.Version = XF.Versions:GetCurrent()
-	XF:Info(ObjectName, 'XFaction version [%s]', XF.Version:GetKey())
+	XF:Info(ObjectName, 'XFaction version [%s]', XF.Version:Key())
 	
 	-- Confederate
 	XF.Regions = RegionCollection:new(); XF.Regions:Initialize()
@@ -41,7 +41,6 @@ function XF:CoreInit()
 	-- Declare handlers but not listening yet
 	XF.Handlers.AchievementEvent = AchievementEvent:new(); XF.Handlers.AchievementEvent:Initialize()
 	XF.Handlers.BNetEvent = BNetEvent:new(); XF.Handlers.BNetEvent:Initialize()
-	XF.Handlers.ChannelEvent = ChannelEvent:new()
 	XF.Handlers.ChatEvent = ChatEvent:new(); XF.Handlers.ChatEvent:Initialize()
 	XF.Handlers.GuildEvent = GuildEvent:new(); XF.Handlers.GuildEvent:Initialize()
 	XF.Handlers.OrderEvent = XFC.OrderEvent:new(); XF.Handlers.OrderEvent:Initialize()
@@ -50,7 +49,7 @@ function XF:CoreInit()
 	XF.Handlers.TimerEvent = TimerEvent:new()
 
 	-- Network
-	XF.Channels = ChannelCollection:new()
+	XFO.Channels = XFC.ChannelCollection:new()
 	XF.Friends = FriendCollection:new()
 	XF.Links = LinkCollection:new()
 	XF.Nodes = NodeCollection:new()
@@ -58,7 +57,7 @@ function XF:CoreInit()
 	XF.Mailbox.Chat = Chat:new()
 	
 	-- Unit
-	XF.Classes = ClassCollection:new()
+	XFO.Classes = XFC.ClassCollection:new()
 	XF.Continents = ContinentCollection:new(); XF.Continents:Initialize()
 	XF.Professions = ProfessionCollection:new()
 	XF.Races = RaceCollection:new()
@@ -85,7 +84,7 @@ function XF:CoreInit()
 
 		XF.Expansions = ExpansionCollection:new(); XF.Expansions:Initialize()
 		XF.WoW = XF.Expansions:GetCurrent()
-		XF:Info(ObjectName, 'WoW client version [%s:%s]', XF.WoW:GetName(), XF.WoW:GetVersion():GetKey())
+		XF:Info(ObjectName, 'WoW client version [%s:%s]', XF.WoW:Name(), XF.WoW:GetVersion():Key())
 	end).
 	catch(function (inErrorMessage)
 		XF:Warn(ObjectName, inErrorMessage)

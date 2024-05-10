@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ChatEvent'
 
-ChatEvent = Object:newChildConstructor()
+ChatEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function ChatEvent:new()
@@ -36,7 +37,7 @@ function ChatEvent:CallbackGuildMessage(inText, inSenderName, inLanguageName, _,
                 message:SetFrom(XF.Player.Unit:GetGUID())
                 message:SetType(XF.Enum.Network.BROADCAST)
                 message:SetSubject(XF.Enum.Message.GCHAT)
-                message:SetName(XF.Player.Unit:GetName())
+                message:Name(XF.Player.Unit:Name())
                 message:SetUnitName(XF.Player.Unit:GetUnitName())
                 message:SetGuild(XF.Player.Guild)
                 if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then

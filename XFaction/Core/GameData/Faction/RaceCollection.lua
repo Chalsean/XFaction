@@ -1,9 +1,10 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RaceCollection'
 local GetRaceInfo = C_CreatureInfo.GetRaceInfo
 local GetRaceFactionInfo = C_CreatureInfo.GetFactionInfo
 
-RaceCollection = ObjectCollection:newChildConstructor()
+RaceCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function RaceCollection:new()
@@ -22,12 +23,12 @@ function RaceCollection:Initialize()
 			local factionInfo = GetRaceFactionInfo(i)
 			if(raceInfo and factionInfo) then
 				local race = Race:new()
-				race:SetKey(raceInfo.raceID)
-				race:SetID(raceInfo.raceID)
-				race:SetName(raceInfo.raceName)
+				race:Key(raceInfo.raceID)
+				race:ID(raceInfo.raceID)
+				race:Name(raceInfo.raceName)
 				race:SetFaction(XF.Factions:GetByName(factionInfo.groupTag))
 				self:Add(race)
-				XF:Info(ObjectName, 'Initialized race [%d:%s:%s]', race:GetID(), race:GetName(), race:GetFaction():GetName())
+				XF:Info(ObjectName, 'Initialized race [%d:%s:%s]', race:ID(), race:Name(), race:GetFaction():Name())
 			end
 		end
 		self:IsInitialized(true)

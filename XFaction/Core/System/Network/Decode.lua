@@ -10,7 +10,7 @@ local function DeserializeMessage(inObject, inCompressedData)
 	local messageData = unpickle(decompressed)
 	inObject:Initialize()
 
-	if(messageData.K ~= nil) then inObject:SetKey(messageData.K)	end
+	if(messageData.K ~= nil) then inObject:Key(messageData.K)	end
 	if(messageData.T ~= nil) then inObject:SetTo(messageData.T)	end
 	if(messageData.F ~= nil) then inObject:SetFrom(messageData.F)	end
 	if(messageData.S ~= nil) then inObject:SetSubject(messageData.S) end
@@ -23,7 +23,7 @@ local function DeserializeMessage(inObject, inCompressedData)
 		local version = XF.Versions:Get(messageData.V)
 		if(version == nil) then
 			version = Version:new()
-			version:SetKey(messageData.V)
+			version:Key(messageData.V)
 			XF.Versions:Add(version)
 		end
 		inObject:SetVersion(version)
@@ -32,9 +32,9 @@ local function DeserializeMessage(inObject, inCompressedData)
 	if(messageData.M ~= nil) then inObject:SetMainName(messageData.M) end
 	if(messageData.U ~= nil) then inObject:SetUnitName(messageData.U) end
 	if(messageData.N ~= nil) then 
-		inObject:SetName(messageData.N) 
+		inObject:Name(messageData.N) 
 	elseif(messageData.U ~= nil) then
-		inObject:SetName(inObject:GetUnitName())
+		inObject:Name(inObject:GetUnitName())
 	end
 	if(messageData.H ~= nil and XF.Guilds:Contains(messageData.H)) then
 		inObject:SetGuild(XF.Guilds:Get(messageData.H))
@@ -56,7 +56,7 @@ function XF:DeserializeUnitData(inData)
 	unit:IsRunningAddon(true)
 	unit:SetRace(XF.Races:Get(deserializedData.A))
 	if(deserializedData.B ~= nil) then unit:SetAchievementPoints(deserializedData.B) end
-	if(deserializedData.C ~= nil) then unit:SetID(tonumber(deserializedData.C)) end
+	if(deserializedData.C ~= nil) then unit:ID(tonumber(deserializedData.C)) end
 	if(deserializedData.E ~= nil) then 
 		unit:SetPresence(tonumber(deserializedData.E)) 
 	else
@@ -64,10 +64,10 @@ function XF:DeserializeUnitData(inData)
 	end
 	unit:SetFaction(XF.Factions:Get(deserializedData.F))
 	unit:SetGUID(deserializedData.K)
-	unit:SetKey(deserializedData.K)
-	unit:SetClass(XF.Classes:Get(deserializedData.O))
+	unit:Key(deserializedData.K)
+	unit:SetClass(XFO.Classes:Get(deserializedData.O))
 	local unitNameParts = string.Split(deserializedData.U, '-')
-	unit:SetName(unitNameParts[1])
+	unit:Name(unitNameParts[1])
 	unit:SetUnitName(deserializedData.U)
 	if(deserializedData.H ~= nil and XF.Guilds:Contains(deserializedData.H)) then
 		unit:SetGuild(XF.Guilds:Get(deserializedData.H))
@@ -113,7 +113,7 @@ function XF:DeserializeUnitData(inData)
 		local version = XF.Versions:Get(deserializedData.X)
 		if(version == nil) then
 			version = Version:new()
-			version:SetKey(deserializedData.X)
+			version:Key(deserializedData.X)
 			XF.Versions:Add(version)
 		end
 		unit:SetVersion(version) 

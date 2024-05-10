@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Faction'
 
-Faction = Object:newChildConstructor()
+Faction = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Faction:new()
@@ -17,19 +18,19 @@ end
 function Faction:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        if(self:GetName() ~= nil) then
+        if(self:Name() ~= nil) then
             if(self.name == 'Horde') then
                 self:SetIconID(XF.Icons.Horde)
                 self:SetLanguage('Orcish')
-                self:SetID('H')
-            elseif(self:GetName() == 'Alliance') then
+                self:ID('H')
+            elseif(self:Name() == 'Alliance') then
                 self:SetIconID(XF.Icons.Alliance)
                 self:SetLanguage('Common')
-                self:SetID('A')
+                self:ID('A')
             else
                 self:SetIconID(XF.Icons.Neutral)
                 self:SetLanguage('Common')
-                self:SetID('N')
+                self:ID('N')
             end
         end
         self:IsInitialized(true)

@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTMetrics'
 local CombatLockdown = InCombatLockdown
 
-DTMetrics = Object:newChildConstructor()
+DTMetrics = XFC.Object:newChildConstructor()
 	
 --#region Constructors
 function DTMetrics:new()
@@ -122,7 +123,7 @@ function DTMetrics:OnEnter(this)
 
 	--#region Header
 	local line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XF.Confederate:GetName()), self.headerFont, 'LEFT', 3)
+	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XF.Confederate:Name()), self.headerFont, 'LEFT', 3)
 	line = self.tooltip:AddLine()
 	local calendar = XF.Metrics:GetStartCalendar()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self.headerFont, 'LEFT', 3)
@@ -145,7 +146,7 @@ function DTMetrics:OnEnter(this)
 	--#region Populate Table
 	if(XF.Initialized) then
 		for _, metric in XF.Metrics:Iterator() do
-			self.tooltip:SetCell(line, 1, metric:GetName(), self.regularFont, 'LEFT')
+			self.tooltip:SetCell(line, 1, metric:Name(), self.regularFont, 'LEFT')
 			self.tooltip:SetCell(line, 2, metric:GetCount(), self.regularFont, 'CENTER')
 			self.tooltip:SetCell(line, 3, format("%.2f", metric:GetAverage(XF.Config.DataText.Metric.Rate)), self.regularFont, 'RIGHT')
 			line = self.tooltip:AddLine()

@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'FactionCollection'
 
-FactionCollection = ObjectCollection:newChildConstructor()
+FactionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function FactionCollection:new()
@@ -17,11 +18,11 @@ function FactionCollection:Initialize()
 		self:ParentInitialize()
 		for i, factionName in pairs (XF.Settings.Factions) do
 			local faction = Faction:new()
-			faction:SetName(factionName)
+			faction:Name(factionName)
 			faction:Initialize()
-			faction:SetKey(i)
+			faction:Key(i)
 			self:Add(faction)
-			XF:Info(ObjectName, 'Initialized faction [%d:%s]', faction:GetKey(), faction:GetName())
+			XF:Info(ObjectName, 'Initialized faction [%d:%s]', faction:Key(), faction:Name())
 		end		
 		self:IsInitialized(true)
 	end
@@ -32,7 +33,7 @@ end
 function FactionCollection:GetByName(inName)
 	assert(type(inName) == 'string')
 	for _, faction in self:Iterator() do
-		if(faction:GetName() == inName) then
+		if(faction:Name() == inName) then
 			return faction
 		end
 	end
@@ -41,7 +42,7 @@ end
 function FactionCollection:GetByID(inID)
 	assert(type(inID) == 'string')
 	for _, faction in self:Iterator() do
-		if(faction:GetID() == inID) then
+		if(faction:ID() == inID) then
 			return faction
 		end
 	end

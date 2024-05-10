@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'PlayerEvent'
 local GetMemberInfo = C_Club.GetMemberInfo
 
-PlayerEvent = Object:newChildConstructor()
+PlayerEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function PlayerEvent:new()
@@ -47,7 +48,7 @@ end
 --#region Callbacks
 function PlayerEvent:CallbackPlayerChanged(inEvent) 
     try(function ()
-        XF.Player.Unit:Initialize(XF.Player.Unit:GetID())
+        XF.Player.Unit:Initialize(XF.Player.Unit:ID())
         XF.Player.Unit:Broadcast()
     end).
     catch(function (inErrorMessage)
@@ -61,7 +62,7 @@ function PlayerEvent:CallbackZoneChanged()
     if(XF.Initialized) then 
         try(function ()
             local zoneName = GetRealZoneText()
-            if(zoneName ~= nil and zoneName ~= XF.Player.Unit:GetZone():GetName()) then
+            if(zoneName ~= nil and zoneName ~= XF.Player.Unit:GetZone():Name()) then
                 if(not XF.Zones:Contains(zoneName)) then
                     XF.Zones:AddZone(zoneName)
                 end
@@ -77,11 +78,11 @@ end
 function PlayerEvent:CallbackSkillChanged()
     try(function ()
         -- We only care if player has learned/unlearned a profession, the rest is noise
-        local unitData = GetMemberInfo(XF.Player.Guild:GetID(), XF.Player.Unit:GetID())
+        local unitData = GetMemberInfo(XF.Player.Guild:ID(), XF.Player.Unit:ID())
         if(unitData.profession1ID ~= nil) then
             local profession = XF.Professions:Get(unitData.profession1ID)
             if(not profession:Equals(XF.Player.Unit:GetProfession1())) then
-                XF.Player.Unit:Initialize(XF.Player.Unit:GetID())
+                XF.Player.Unit:Initialize(XF.Player.Unit:ID())
                 XF:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
                 XF.Player.Unit:Broadcast()
                 return
@@ -91,7 +92,7 @@ function PlayerEvent:CallbackSkillChanged()
         if(unitData.profession2ID ~= nil) then
             local profession = XF.Professions:Get(unitData.profession2ID)
             if(not profession:Equals(XF.Player.Unit:GetProfession2())) then
-                XF.Player.Unit:Initialize(XF.Player.Unit:GetID())
+                XF.Player.Unit:Initialize(XF.Player.Unit:ID())
                 XF:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
                 XF.Player.Unit:Broadcast()
                 return

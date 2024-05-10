@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Addon'
 
-Addon = Object:newChildConstructor()
+Addon = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Addon:new()

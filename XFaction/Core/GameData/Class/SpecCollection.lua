@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'SpecCollection'
 local GetSpecForClass = GetSpecializationInfoForClassID
 
-SpecCollection = ObjectCollection:newChildConstructor()
+SpecCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function SpecCollection:new()
@@ -16,18 +17,18 @@ end
 function SpecCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, class in XF.Classes:Iterator() do
-			for i = 1, GetNumSpecializationsForClassID(class:GetID()) do
-				local specID, specName, _, iconID = GetSpecForClass(class:GetID(), i)
+		for _, class in XFO.Classes:Iterator() do
+			for i = 1, GetNumSpecializationsForClassID(class:ID()) do
+				local specID, specName, _, iconID = GetSpecForClass(class:ID(), i)
 				if(specID) then
 					local spec = Spec:new()
 					spec:Initialize()
-					spec:SetKey(specID)
-					spec:SetID(specID)
-					spec:SetName(specName)
+					spec:Key(specID)
+					spec:ID(specID)
+					spec:Name(specName)
 					spec:SetIconID(iconID)
 					self:Add(spec)
-					XF:Info(ObjectName, 'Initialized spec [%d:%s]', spec:GetID(), spec:GetName())
+					XF:Info(self:ObjectName(), 'Initialized spec [%d:%s]', spec:ID(), spec:Name())
 				end
 			end
 		end

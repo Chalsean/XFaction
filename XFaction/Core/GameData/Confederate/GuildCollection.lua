@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'GuildCollection'
 
-GuildCollection = ObjectCollection:newChildConstructor()
+GuildCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function GuildCollection:new()
@@ -35,8 +36,8 @@ end
 function GuildCollection:Add(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
 	self.parent.Add(self, inGuild)
-	self.names[inGuild:GetName()] = inGuild
-	XF:Info(ObjectName, 'Initialized guild [%s:%s]', inGuild:GetInitials(), inGuild:GetName())
+	self.names[inGuild:Name()] = inGuild
+	XF:Info(ObjectName, 'Initialized guild [%s:%s]', inGuild:GetInitials(), inGuild:Name())
 end
 --#endregion
 
@@ -45,7 +46,7 @@ function GuildCollection:GetByRealmGuildName(inRealm, inGuildName)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be a Realm object')	
 	assert(type(inGuildName) == 'string')
 	for _, guild in self:Iterator() do
-		if(inRealm:Equals(guild:GetRealm()) and guild:GetName() == inGuildName) then
+		if(inRealm:Equals(guild:GetRealm()) and guild:Name() == inGuildName) then
 			return guild
 		end
 	end
@@ -70,8 +71,8 @@ function GuildCollection:SetObjectFromString(inString)
 
 	local guild = Guild:new()
 	guild:Initialize()
-	guild:SetKey(guildInitials)
-	guild:SetName(guildName)
+	guild:Key(guildInitials)
+	guild:Name(guildName)
 	guild:SetFaction(faction)
 	guild:SetRealm(realm)
 	guild:SetInitials(guildInitials)
@@ -113,9 +114,9 @@ end
 
 function GuildCollection:SetPlayerGuild()
 	for _, guild in self:Iterator() do
-		if(guild:GetName() == self.info.name and XF.Player.Realm:Equals(guild:GetRealm())) then
-			guild:SetID(self.info.clubId)
-			for _, stream in pairs (C_Club.GetStreams(guild:GetID())) do
+		if(guild:Name() == self.info.name and XF.Player.Realm:Equals(guild:GetRealm())) then
+			guild:ID(self.info.clubId)
+			for _, stream in pairs (C_Club.GetStreams(guild:ID())) do
 				if(stream.streamType == 1) then
 					guild:SetStreamID(stream.streamId)
 					break

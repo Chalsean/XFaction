@@ -1,8 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'OrderCollection'
 
-XFC.OrderCollection = Factory:newChildConstructor()
+XFC.OrderCollection = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.OrderCollection:new()
@@ -21,7 +21,7 @@ function XFC.OrderCollection:Backup()
 	try(function ()
         if(self:IsInitialized()) then
             for _, order in self:Iterator() do
-				XF.Cache.Backup.Orders[order:GetKey()] = order:Encode(true)
+				XF.Cache.Backup.Orders[order:Key()] = order:Encode(true)
             end
         end
     end).
@@ -38,7 +38,7 @@ function XFC.OrderCollection:Restore()
             order = self:Pop()
 			order:Decode(data)
 			self:Add(order)
-			XF:Info(self:GetObjectName(), '  Restored %s order information from backup', order:GetKey())
+			XF:Info(self:ObjectName(), '  Restored %s order information from backup', order:Key())
         end).
         catch(function (inErrorMessage)
             XF:Warn(ObjectName, inErrorMessage)

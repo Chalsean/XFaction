@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Confederate'
 local GuildRosterEvent = C_GuildInfo.GuildRoster
 
-Confederate = Factory:newChildConstructor()
+Confederate = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function Confederate:new()
@@ -25,15 +26,16 @@ function Confederate:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         -- If this is a reload, restore non-local guild members
+        -- TODO: is this used anymore?
         try(function ()
             self:CanModifyGuildInfo(CanEditGuildInfo())
         end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+        catch(function (err)
+            XF:Warn(self:ObjectName(), err)
         end)
-        self:SetName(XF.Cache.Confederate.Name)
-        self:SetKey(XF.Cache.Confederate.Key)
-        XF:Info(ObjectName, 'Initialized confederate %s <%s>', self:GetName(), self:GetKey())
+        self:Name(XF.Cache.Confederate.Name)
+        self:Key(XF.Cache.Confederate.Key)
+        XF:Info(self:ObjectName(), 'Initialized confederate %s <%s>', self:Name(), self:Key())
 
         self:IsInitialized(true)
 	end
@@ -45,9 +47,9 @@ end
 function Confederate:Add(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
     
-    if(self:Contains(inUnit:GetKey())) then
-        local oldData = self:Get(inUnit:GetKey())
-        self.objects[inUnit:GetKey()] = inUnit
+    if(self:Contains(inUnit:Key())) then
+        local oldData = self:Get(inUnit:Key())
+        self.objects[inUnit:Key()] = inUnit
         if(oldData:IsOffline() and inUnit:IsOnline()) then
             self.onlineCount = self.onlineCount + 1
         elseif(oldData:IsOnline() and inUnit:IsOffline()) then
@@ -57,10 +59,10 @@ function Confederate:Add(inUnit)
     else
         self.parent.Add(self, inUnit)
         local target = XF.Targets:GetByGuild(inUnit:GetGuild())
-        if(self.countByTarget[target:GetKey()] == nil) then
-            self.countByTarget[target:GetKey()] = 0
+        if(self.countByTarget[target:Key()] == nil) then
+            self.countByTarget[target:Key()] = 0
         end
-        self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] + 1
+        self.countByTarget[target:Key()] = self.countByTarget[target:Key()] + 1
         if(inUnit:IsOnline()) then
             self.onlineCount = self.onlineCount + 1
         end
@@ -76,11 +78,11 @@ function Confederate:Remove(inKey)
     if(self:Contains(inKey)) then
         local unit = self:Get(inKey)
         self.parent.Remove(self, inKey)
-        if(XF.Nodes:Contains(unit:GetName())) then
-            XF.Nodes:Remove(XF.Nodes:Get(unit:GetName()))
+        if(XF.Nodes:Contains(unit:Name())) then
+            XF.Nodes:Remove(XF.Nodes:Get(unit:Name()))
         end
         local target = XF.Targets:GetByGuild(unit:GetGuild())
-        self.countByTarget[target:GetKey()] = self.countByTarget[target:GetKey()] - 1
+        self.countByTarget[target:Key()] = self.countByTarget[target:Key()] - 1
         if(unit:IsOnline()) then
             self.onlineCount = self.onlineCount - 1
         end
@@ -95,12 +97,12 @@ function Confederate:RemoveAll()
     try(function ()
         if(self:IsInitialized()) then
             for _, unit in self:Iterator() do
-                self:Remove(unit:GetKey())
+                self:Remove(unit:Key())
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Error(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Error(self:ObjectName(), err)
     end)
 end
 --#endregion
@@ -109,7 +111,7 @@ end
 function Confederate:GetUnitByName(inName)
     assert(type(inName) == 'string')
     for _, unit in self:Iterator() do
-        if(unit:GetName() == inName) then
+        if(unit:Name() == inName) then
             return unit
         end
     end
@@ -117,7 +119,7 @@ end
 
 function Confederate:GetCountByTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    return self.countByTarget[inTarget:GetKey()] or 0
+    return self.countByTarget[inTarget:Key()] or 0
 end
 
 function Confederate:CanModifyGuildInfo(inBoolean)
@@ -131,7 +133,7 @@ function Confederate:CanModifyGuildInfo(inBoolean)
 end
 
 function Confederate:GetInitials()
-    return self:GetKey()
+    return self:Key()
 end
 
 function Confederate:GetOnlineCount()
@@ -152,8 +154,8 @@ function Confederate:Backup()
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create confederate backup before reload: ' .. inErrorMessage
+    catch(function (err)
+        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create confederate backup before reload: ' .. err
     end)
 end
 
@@ -163,7 +165,7 @@ function Confederate:Restore()
         try(function ()
             local unitData = XF:DeserializeUnitData(data)
             self:Add(unitData)
-            XF:Info(ObjectName, '  Restored %s unit information from backup', unitData:GetUnitName())
+            XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unitData:GetUnitName())
         end).
         catch(function (inErrorMessage)
             XF:Warn(ObjectName, inErrorMessage)
@@ -185,9 +187,9 @@ function Confederate:OfflineUnits(inEpochTime)
     for _, unit in self:Iterator() do
         if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < inEpochTime) then
             if(XF.Player.Guild:Equals(unit:GetGuild())) then
-                self:OfflineUnit(unit:GetKey())
+                self:OfflineUnit(unit:Key())
             else
-                self:Remove(unit:GetKey())
+                self:Remove(unit:Key())
             end
         end
     end
