@@ -12,7 +12,7 @@ XF.ChangeLog['4.11.2'] = {
                 order = 1,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Hardcoded list of factions, races, classes, specs, icons so classic can recognize retail.',
+                name = 'Classic prepwork: Hardcoded list of factions, races, classes, specs, icons so classic can recognize retail identifiers.',
             },
         },
     },		
