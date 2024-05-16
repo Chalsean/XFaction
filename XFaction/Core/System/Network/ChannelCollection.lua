@@ -1,153 +1,186 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ChannelCollection'
-local SwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
-local GetChannels = GetChannelList
-local GetChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
 
-ChannelCollection = ObjectCollection:newChildConstructor()
+XFC.ChannelCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function ChannelCollection:new()
-    local object = ChannelCollection.parent.new(self)
+function XFC.ChannelCollection:new()
+    local object = XFC.ChannelCollection.parent.new(self)
 	object.__name = ObjectName
 	object.localChannel = nil
 	object.useGuild = false
     return object
 end
---#endregion
 
---#region Initializers
-function ChannelCollection:Initialize()
+function XFC.ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		-- Remove this block after everyone on 4.4, its for backwards compat while guild members are a mix of 4.4 and pre-4.4
 		if(XF.Cache.Channel.Name ~= nil and XF.Cache.Channel.Password ~= nil) then
 			try(function ()
-				JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
-				XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
+				XFF.ChatJoinChannel(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
+				XF:Info(self:ObjectName(), 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 			end).
-			catch(function (inErrorMessage)
-				XF:Error(ObjectName, inErrorMessage)
+			catch(function (err)
+				XF:Error(self:ObjectName(), err)
 			end)
 		end
 
-		if(XF.Player.Target:GetTargetCount() > 1) then
-			self:UseGuild(false)
-			--JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
-			--XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
-		end
+		XF.Events:Add({
+			name = 'ChannelLeft', 
+			event = 'CHAT_MSG_CHANNEL_LEAVE', 
+			callback = XFO.Channels.CallbackUnitLeftChannel, 
+			instance = true
+		})
 
-		XF.Events:Add({name = 'ChannelLeft', 
-                        event = 'CHAT_MSG_CHANNEL_LEAVE', 
-                        callback = XF.Channels.UnitLeftChannel, 
-                        instance = true})
+		XF.Events:Add({
+			name = 'ChannelChange', 
+			event = 'CHAT_MSG_CHANNEL_NOTICE', 
+			callback = XFO.Channels.CallbackSync,
+			groupDelta = 3,
+			instance = true
+		})
+
+		XF.Events:Add({
+			name = 'ChannelColor', 
+			event = 'UPDATE_CHAT_COLOR', 
+			callback = XFO.Channels.CallbackUpdateColor, 
+			instance = true
+		})
+
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Print
-function ChannelCollection:Print()
-	self:ParentPrint()
-	XF:Debug(ObjectName, '  useGuild (' .. type(self.useGuild) .. '): ' .. tostring(self.useGuild))
-	XF:Debug(ObjectName, '  localChannel (' .. type(self.localChannel) .. ')')
-	if(self:HasLocalChannel()) then self:GetLocalChannel():Print() end
-end
---#endregion
-
---#region Accessors
-function ChannelCollection:GetByID(inID)
-	assert(type(inID) == 'number')
-	for _, channel in self:Iterator() do
-		if(channel:GetID() == inID) then
-			return channel
-		end
+--#region Properties
+function XFC.ChannelCollection:LocalChannel(inChannel)
+    assert(type(inChannel) == 'table' and inChannel.__name == 'Channel' or inChannel == nil)
+	if(inChannel ~= nil) then
+    	self.localChannel = inChannel
 	end
+	return self.localChannel
 end
 
-function ChannelCollection:SetLast(inKey)
-	if(not XF.Config.Chat.Channel.Last) then return end
-	if(not self:Contains(inKey)) then return end
-	
-	local channel = self:Get(inKey)
-	for i = channel:GetID() + 1, XF.Settings.Network.Channel.Total do
-		local nextChannel = self:GetByID(i)
-		-- Blizzard swap channel API does not work with community channels, so have to ignore them
-		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
-			XF:Debug(ObjectName, 'Swapping [%d:%s] and [%d:%s]', channel:GetID(), channel:GetName(), nextChannel:GetID(), nextChannel:GetName()) 
-			SwapChannels(channel:GetID(), i)
-			nextChannel:SetID(channel:GetID())
-			channel:SetID(i)
-		end
-	end
-end
-
-function ChannelCollection:HasLocalChannel()
-    return self.localChannel ~= nil
-end
-
-function ChannelCollection:GetLocalChannel()
-    return self.localChannel
-end
-
-function ChannelCollection:SetLocalChannel(inChannel)
-    assert(type(inChannel) == 'table' and inChannel.__name == 'Channel', 'argument must be Channel object')
-    self.localChannel = inChannel
-end
-
-function ChannelCollection:VoidLocalChannel()
-    self.localChannel = nil
-end
-
-function ChannelCollection:UseGuild(inBoolean)
-	assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
+function XFC.ChannelCollection:UseGuild(inBoolean)
+	assert(type(inBoolean) == 'boolean' or inBoolean == nil)
 	if(inBoolean ~= nil) then
 		self.useGuild = inBoolean
 	end
 	return self.useGuild
 end
+--#endregion
 
-function ChannelCollection:UnitLeftChannel(_, _, _, _, _, _, _, _, channelName, _, _, guid)
-	local self = XF.Channels
+--#region Methods
+function XFC.ChannelCollection:Print()
+	self:ParentPrint()
+	XF:Debug(self:ObjectName(), '  useGuild (' .. type(self.useGuild) .. '): ' .. tostring(self.useGuild))
+	XF:Debug(self:ObjectName(), '  localChannel (' .. type(self.localChannel) .. ')')
+	if(self:HasLocalChannel()) then self:LocalChannel():Print() end
+end
+
+function XFC.ChannelCollection:Get(inKey)
+	assert(type(inKey) == 'number' or type(inKey) == 'string')
+	if(type(inKey) == 'string') then
+		return self.parent.Get(self, inKey)
+	end
+	for _, channel in self:Iterator() do
+		if(channel:ID() == inKey) then
+			return channel
+		end
+	end
+end
+
+function XFC.ChannelCollection:SetLast(inKey)
+	if(not XF.Config.Chat.Channel.Last) then return end
+	if(not self:Contains(inKey)) then return end
+	
+	local channel = self:Get(inKey)
+	for i = channel:ID() + 1, XF.Settings.Network.Channel.Total do
+		local nextChannel = self:Get(i)
+		-- Blizzard swap channel API does not work with community channels, so have to ignore them
+		if(nextChannel ~= nil and not nextChannel:IsCommunity()) then
+			XF:Debug(self:ObjectName(), 'Swapping [%d:%s] and [%d:%s]', channel:ID(), channel:Name(), nextChannel:ID(), nextChannel:Name()) 
+			XFF.ChatSwapChannels(channel:ID(), i)
+			nextChannel:ID(channel:ID())
+			channel:ID(i)
+		end
+	end
+end
+
+function XFC.ChannelCollection:HasLocalChannel()
+    return self.localChannel ~= nil
+end
+
+function XFC.ChannelCollection:VoidLocalChannel()
+    self.localChannel = nil
+end
+
+function XFC.ChannelCollection:CallbackUnitLeftChannel(_, _, _, _, _, _, _, _, channelName, _, _, guid)
+	local self = XFO.Channels
 	if(self:HasLocalChannel()) then
-		local channel = self:GetLocalChannel()
-		if(channel:GetKey() == channelName and XF.Confederate:Contains(guid)) then
+		if(self:LocalChannel():Key() == channelName and XF.Confederate:Contains(guid)) then
 			local unit = XF.Confederate:Get(guid)
-			if(unit:IsOnline() and not XF.Player.Guild:Equals(unit:GetGuild())) then
-				XF:Info(ObjectName, 'Guild member logout via event: ' .. unit:GetUnitName())
-				XF.Frames.System:Display(XF.Enum.Message.LOGOUT, unit:GetName(), unit:GetUnitName(), unit:GetMainName(), unit:GetGuild(), nil, unit:GetFaction())
-				XF.Confederate:Remove(unit:GetKey())
+			if(unit:IsOnline() and not unit:GetGuild():Equals(XF.Player.Guild)) then
+				XF:Info(self:ObjectName(), 'Guild member logout via event: ' .. unit:GetUnitName())
+				XF.Frames.System:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:GetUnitName(), unit:GetMainName(), unit:GetGuild(), nil, unit:GetFaction())
+				XF.Confederate:Remove(unit:Key())
 				XF.Confederate:Push(unit)
 				XF.DataText.Guild:RefreshBroker()
 			end
 		end
 	end	
 end
---#endregion
 
---#region DataSet
-function ChannelCollection:Sync()
+function XFC.ChannelCollection:CallbackSync()
+	local self = XFO.Channels
 	try(function ()
-		XF.Channels:RemoveAll()
-		XF.Channels:VoidLocalChannel()
-		local channels = {GetChannels()}
+		self:RemoveAll()
+		self:VoidLocalChannel()
+		local channels = {XFF.ChatGetChannels()}
 		for i = 1, #channels, 3 do
 			local channelID, channelName, disabled = channels[i], channels[i+1], channels[i+2]
-			local channelInfo = GetChannelInfo(channelName)
-			local channel = Channel:new()
-			channel:SetKey(channelName)
-			channel:SetName(channelName)
-			channel:SetID(channelID)
+			local channelInfo = XFF.ChatGetChannelInfo(channelName)
+			local channel = XFC.Channel:new()
+			channel:Key(channelName)
+			channel:Name(channelName)
+			channel:ID(channelID)
 			channel:IsCommunity(channelInfo.channelType == Enum.PermanentChatChannelType.Communities)
 			channel:SetColor()
 			self:Add(channel)
-			if(channel:GetName() == XF.Cache.Channel.Name) then
-				self:SetLocalChannel(channel)
+			if(channel:Name() == XF.Cache.Channel.Name) then
+				self:LocalChannel(channel)
+			end
+		end
+
+		if(XFO.Channels:HasLocalChannel()) then
+			XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
+		end
+	end).
+	catch(function (err)
+		XF:Warn(self:ObjectName(), err)
+	end)
+end
+
+function XFC.ChannelCollection:CallbackUpdateColor(inChannel, inR, inG, inB)
+	try(function ()
+		if(inChannel) then
+			local channelID = tonumber(inChannel:match("(%d+)$"))
+			local channel = XFO.Channels:Get(channelID)
+			if(channel ~= nil) then
+				if(XF.Config.Channels[channel:Name()] == nil) then
+					XF.Config.Channels[channel:Name()] = {}
+				end
+				XF.Config.Channels[channel:Name()].R = inR
+				XF.Config.Channels[channel:Name()].G = inG
+				XF.Config.Channels[channel:Name()].B = inB
+				XF:Trace(self:ObjectName(), 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, channel:Name())
 			end
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Error(self:ObjectName(), err)
 	end)
 end
 --#endregion

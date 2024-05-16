@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ContinentCollection'
 
-ContinentCollection = ObjectCollection:newChildConstructor()
+ContinentCollection = XFC.ObjectCollection:newChildConstructor()
 
 function ContinentCollection:new()
 	local object = ContinentCollection.parent.new(self)

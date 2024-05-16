@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RegionCollection'
 local Regions = {
 	'US', -- includes brazil, oceania
@@ -8,7 +9,7 @@ local Regions = {
 	'CN'
 }
 
-RegionCollection = ObjectCollection:newChildConstructor()
+RegionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function RegionCollection:new()
@@ -26,14 +27,14 @@ function RegionCollection:Initialize()
 		self:ParentInitialize()
 		for id, name in ipairs(Regions) do
 			local region = Region:new()
-			region:SetKey(id)
-			region:SetName(name)
+			region:Key(id)
+			region:Name(name)
 			self:Add(region)
 
 			if(id == GetCurrentRegion()) then
 				region:IsCurrent(true)
 				self:SetCurrent(region)
-				XF:Info(ObjectName, 'Initialized player region [%d:%s]', region:GetKey(), region:GetName())
+				XF:Info(ObjectName, 'Initialized player region [%d:%s]', region:Key(), region:Name())
 			end
 		end
 		self:IsInitialized(true)

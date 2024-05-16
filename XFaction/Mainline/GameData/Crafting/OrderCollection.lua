@@ -59,7 +59,7 @@ function GetMyOrders()
     for _, myOrder in ipairs(myOrders) do
         local order = XFO.Orders:Pop()
         try(function ()
-            order:SetKey(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
+            order:Key(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
             if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:Key())) then
                 order:Type(myOrder.orderType)
                 order:ID(myOrder.orderID)

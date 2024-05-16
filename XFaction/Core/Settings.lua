@@ -56,10 +56,6 @@ XF.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib
 XF.Icons = {
 	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
 	Texture = '|T%s:17:17|t',
-	WoWToken = 1121394,
-	Alliance = 2565243,
-	Horde = 463451,
-	Neutral = 132311,
 	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
 	Guild = 'ElvUI-Windtools-Healer', -- Kept the name to give credit to Windtools
 }
@@ -139,7 +135,6 @@ XF.Settings = {
 		LoginTTL = 60 * 5,       -- Seconds before giving up on querying for guild on login
 		MaxGuildInfo = 500,      -- Maximum # of characters guild info can take
 	},	
-	Factions = {'Alliance', 'Horde', 'Neutral'},
 	Network = {
 		CompressionLevel = 9,
 		Channel = {

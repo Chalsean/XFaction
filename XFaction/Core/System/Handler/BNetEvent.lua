@@ -1,6 +1,7 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 
-BNetEvent = Object:newChildConstructor()
+BNetEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function BNetEvent:new()

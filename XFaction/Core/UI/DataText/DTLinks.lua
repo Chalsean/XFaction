@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTLinks'
 local CombatLockdown = InCombatLockdown
 
-DTLinks = Object:newChildConstructor()
+DTLinks = XFC.Object:newChildConstructor()
 	
 --#region Constructors
 function DTLinks:new()
@@ -78,28 +79,28 @@ function DTLinks:RefreshBroker()
 	local hordeCount = 0
 
 	for _, link in XF.Links:Iterator() do
-		if(names[link:GetFromNode():GetName()] == nil) then
-			if(link:GetFromNode():GetTarget():GetFaction():GetName() == 'Alliance') then
+		if(names[link:GetFromNode():Name()] == nil) then
+			if(link:GetFromNode():GetTarget():GetFaction():Name() == 'Alliance') then
 				allianceCount = allianceCount + 1
 			else
 				hordeCount = hordeCount + 1
 			end
-			names[link:GetFromNode():GetName()] = true
+			names[link:GetFromNode():Name()] = true
 		end
-		if(names[link:GetToNode():GetName()] == nil) then
-			if(link:GetToNode():GetTarget():GetFaction():GetName() == 'Alliance') then
+		if(names[link:GetToNode():Name()] == nil) then
+			if(link:GetToNode():GetTarget():GetFaction():Name() == 'Alliance') then
 				allianceCount = allianceCount + 1
 			else
 				hordeCount = hordeCount + 1
 			end
-			names[link:GetToNode():GetName()] = true
+			names[link:GetToNode():Name()] = true
 		end
 	end
 
 	if(XF.Config.DataText.Link.Faction) then
-		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XF.Links:GetCount(), allianceCount, hordeCount)
+		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XF.Links:Count(), allianceCount, hordeCount)
 	else
-		text = format('%s|cffffffff%d|r', text, XF.Links:GetCount())
+		text = format('%s|cffffffff%d|r', text, XF.Links:Count())
 	end
 	XF.DataText.Links:GetBroker().text = text
 end
@@ -111,7 +112,7 @@ function DTLinks:OnEnter(this)
 	if(CombatLockdown()) then return end
 
 	--#region Configure Tooltip
-	local targetCount = XF.Targets:GetCount() + 1
+	local targetCount = XF.Targets:Count() + 1
 	
 	if XF.Lib.QT:IsAcquired(ObjectName) then
 		self.tooltip = XF.Lib.QT:Acquire(ObjectName)		
@@ -130,10 +131,10 @@ function DTLinks:OnEnter(this)
 
 	--#region Header
 	local line = self.tooltip:AddLine()
-	local guildName = XF.Confederate:GetName()
+	local guildName = XF.Confederate:Name()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], guildName), self.headerFont, 'LEFT', targetCount)
 	line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XF.Links:GetCount()), self.headerFont, 'LEFT', targetCount)
+	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XF.Links:Count()), self.headerFont, 'LEFT', targetCount)
 
 	line = self.tooltip:AddLine()
 	line = self.tooltip:AddLine()
@@ -144,9 +145,9 @@ function DTLinks:OnEnter(this)
 	local targetColumn = {}
 	local i = 1
 	for _, target in XF.Targets:Iterator() do
-		local targetName = format('%s%s', format(XF.Icons.String, target:GetFaction():GetIconID()), target:GetRealm():GetName())
+		local targetName = format('%s%s', format(XF.Icons.String, target:GetFaction():IconID()), target:GetRealm():Name())
 		self.tooltip:SetCell(line, i, targetName)
-		targetColumn[target:GetKey()] = i
+		targetColumn[target:Key()] = i
 		i = i + 1
 	end
 
@@ -158,18 +159,18 @@ function DTLinks:OnEnter(this)
 	--#region Populate Table
 	if(XF.Initialized) then
 		for _, link in XF.Links:Iterator() do
-			local fromName = format('|cffffffff%s|r', link:GetFromNode():GetName())
+			local fromName = format('|cffffffff%s|r', link:GetFromNode():Name())
 			if(link:IsMyLink() and link:GetFromNode():IsMyNode()) then
-				fromName = format('|cffffff00%s|r', link:GetFromNode():GetName())
+				fromName = format('|cffffff00%s|r', link:GetFromNode():Name())
 			end
 
-			local toName = format('|cffffffff%s|r', link:GetToNode():GetName())
+			local toName = format('|cffffffff%s|r', link:GetToNode():Name())
 			if(link:IsMyLink() and link:GetToNode():IsMyNode()) then
-				toName = format('|cffffff00%s|r', link:GetToNode():GetName())
+				toName = format('|cffffff00%s|r', link:GetToNode():Name())
 			end
 
-			self.tooltip:SetCell(line, targetColumn[link:GetFromNode():GetTarget():GetKey()], fromName, self.regularFont)
-			self.tooltip:SetCell(line, targetColumn[link:GetToNode():GetTarget():GetKey()], toName, self.regularFont)
+			self.tooltip:SetCell(line, targetColumn[link:GetFromNode():GetTarget():Key()], fromName, self.regularFont)
+			self.tooltip:SetCell(line, targetColumn[link:GetToNode():GetTarget():Key()], toName, self.regularFont)
 			
 			line = self.tooltip:AddLine()
 		end

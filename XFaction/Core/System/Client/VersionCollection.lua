@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'VersionCollection'
 
-VersionCollection = ObjectCollection:newChildConstructor()
+VersionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Contructors
 function VersionCollection:new()
@@ -19,12 +20,12 @@ function VersionCollection:Initialize()
         self:ParentInitialize()
 
         local currentVersion = Version:new()
-        currentVersion:SetKey(XF.Version)
+        currentVersion:Key(XF.Version)
         self:Add(currentVersion)   
         self:SetCurrent(currentVersion)
 
 		local defaultVersion = Version:new()
-        defaultVersion:SetKey('0.0.0')
+        defaultVersion:Key('0.0.0')
         self:Add(defaultVersion)
 		self:SetDefault(defaultVersion)
 
@@ -49,7 +50,7 @@ function VersionCollection:AddVersion(inKey)
 	if(not self:Contains(inKey)) then
 		local version = Version:new()
 		version:Initialize()
-		version:SetKey(inKey)
+		version:Key(inKey)
 		self.parent.Add(self, version)
 	end
 end

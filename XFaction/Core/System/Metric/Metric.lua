@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Metric'
 
-Metric = Object:newChildConstructor()
+Metric = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Metric:new()
@@ -22,9 +23,9 @@ end
 --#region Accessors
 function Metric:Increment()
     self.count = self.count + 1
-    if(self:GetName() == XF.Enum.Metric.Messages or
-       self:GetName() == XF.Enum.Metric.Error or
-       self:GetName() == XF.Enum.Metric.Warning) then
+    if(self:Name() == XF.Enum.Metric.Messages or
+       self:Name() == XF.Enum.Metric.Error or
+       self:Name() == XF.Enum.Metric.Warning) then
         XF.DataText.Metrics:RefreshBroker()
     end
 end

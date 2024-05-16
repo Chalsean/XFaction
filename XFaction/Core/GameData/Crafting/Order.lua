@@ -1,8 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local GetRecipeResultItem = C_TooltipInfo.GetRecipeResultItem
 
-XFC.Order = Object:newChildConstructor()
+XFC.Order = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Order:new()
@@ -39,14 +39,14 @@ end
 --#region Print
 function XFC.Order:Print()
     self:ParentPrint()
-    XF:Debug(self:GetObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
-    XF:Debug(self:GetObjectName(), '  recipeID (' .. type(self.recipeID) .. '): ' .. tostring(self.recipeID))
-    XF:Debug(self:GetObjectName(), '  quality (' .. type(self.quality) .. '): ' .. tostring(self.quality))
-    XF:Debug(self:GetObjectName(), '  crafterGUID (' .. type(self.crafterGUID) .. '): ' .. tostring(self.crafterGUID))
-    XF:Debug(self:GetObjectName(), '  crafterName (' .. type(self.crafterName) .. '): ' .. tostring(self.crafterName))
-    XF:Debug(self:GetObjectName(), '  hasDisplayed (' .. type(self.hasDisplayed) .. '): ' .. tostring(self.hasDisplayed))
-    XF:Debug(self:GetObjectName(), '  hasCommunicated (' .. type(self.hasCommunicated) .. '): ' .. tostring(self.hasCommunicated))
-    XF:Debug(self:GetObjectName(), '  state (' .. type(self.state) .. '): ' .. tostring(self.state))
+    XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XF:Debug(self:ObjectName(), '  recipeID (' .. type(self.recipeID) .. '): ' .. tostring(self.recipeID))
+    XF:Debug(self:ObjectName(), '  quality (' .. type(self.quality) .. '): ' .. tostring(self.quality))
+    XF:Debug(self:ObjectName(), '  crafterGUID (' .. type(self.crafterGUID) .. '): ' .. tostring(self.crafterGUID))
+    XF:Debug(self:ObjectName(), '  crafterName (' .. type(self.crafterName) .. '): ' .. tostring(self.crafterName))
+    XF:Debug(self:ObjectName(), '  hasDisplayed (' .. type(self.hasDisplayed) .. '): ' .. tostring(self.hasDisplayed))
+    XF:Debug(self:ObjectName(), '  hasCommunicated (' .. type(self.hasCommunicated) .. '): ' .. tostring(self.hasCommunicated))
+    XF:Debug(self:ObjectName(), '  state (' .. type(self.state) .. '): ' .. tostring(self.state))
     if(self:HasCustomerUnit()) then self:GetCustomerUnit():Print() end
     if(self:HasProfession()) then self:GetProfession():Print() end
 end
@@ -147,9 +147,9 @@ function XFC.Order:Encode(inBackup)
     assert(inBackup == nil or type(inBackup) == 'boolean', 'argument must be nil or boolean')
     local data = {}
     data.C = XF:SerializeUnitData(self:GetCustomerUnit())
-    data.K = self:GetKey()
-    data.O = self:GetID()
-    data.P = self:GetProfession():GetKey()
+    data.K = self:Key()
+    data.O = self:ID()
+    data.P = self:GetProfession():Key()
     data.Q = self:GetQuality()
     data.R = self:GetRecipeID()
     data.T = self:GetType()
@@ -159,8 +159,8 @@ end
 
 function XFC.Order:Decode(inData)
     assert(type(inData) == 'table')
-    self:SetKey(inData.K)
-    self:SetID(inData.O)
+    self:Key(inData.K)
+    self:ID(inData.O)
     self:SetType(inData.T)
     self:SetCustomerUnit(XF:DeserializeUnitData(inData.C))    
     self:SetProfession(XF.Professions:Get(inData.P))
@@ -188,7 +188,7 @@ function XFC.Order:Broadcast()
         XF.Mailbox.Chat:Send(message)
     end).
     catch(function(err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end).
     finally(function ()
         XF.Mailbox.Chat:Push(message)
@@ -216,7 +216,7 @@ function XFC.Order:Display()
         end
     end).
     catch(function(err)
-        XF:Warn(self:GetObjectName(), err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 --#endregion

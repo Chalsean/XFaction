@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'EventCollection'
 
-EventCollection = ObjectCollection:newChildConstructor()
+EventCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function EventCollection:new()
@@ -21,13 +22,13 @@ function EventCollection:Initialize()
         self.frame:SetScript('OnEvent', function(self, inEvent, ...)
             -- Still actively listen for all events but only do something if enabled
             for _, event in XF.Events:Iterator() do
-                if(event:GetName() == inEvent and event:IsEnabled()) then
-                    XF:Trace(ObjectName, 'Event fired: %s', event:GetName())
+                if(event:Name() == inEvent and event:IsEnabled()) then
+                    XF:Trace(ObjectName, 'Event fired: %s', event:Name())
                     if(event:IsGroup()) then
-                        if(XF.Timers:Contains(event:GetKey())) then
-                            XF.Timers:Get(event:GetKey()):Start()
+                        if(XF.Timers:Contains(event:Key())) then
+                            XF.Timers:Get(event:Key()):Start()
                         else
-                            XF.Timers:Add({name = event:GetKey(),
+                            XF.Timers:Add({name = event:Key(),
                                             delta = event:GetGroupDelta(),
                                             callback = event:GetCallback(),
                                             repeater = false,
@@ -57,8 +58,8 @@ function EventCollection:Add(inArgs)
     assert(inArgs.groupDelta == nil or type(inArgs.groupDelta) == 'number')
 
     local event = Event:new()
-    event:SetKey(inArgs.name)
-    event:SetName(inArgs.event)
+    event:Key(inArgs.name)
+    event:Name(inArgs.event)
     event:SetCallback(inArgs.callback)
     event:IsInstance(inArgs.instance)
     if(inArgs.groupDelta ~= nil) then
@@ -67,9 +68,9 @@ function EventCollection:Add(inArgs)
     if(inArgs.start and (event:IsInstance() or not XF.Player.InInstance)) then
         event:Start()
     end
-    self.frame:RegisterEvent(event:GetName())
+    self.frame:RegisterEvent(event:Name())
     self.parent.Add(self, event)
-    XF:Info('Event', 'Registered to receive [%s:%s] events', event:GetKey(), event:GetName())
+    XF:Info('Event', 'Registered to receive [%s:%s] events', event:Key(), event:Name())
 end
 --#endregion
 

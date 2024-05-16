@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Guild'
 local GetClubMembers = C_Club.GetClubMembers
 
-Guild = Object:newChildConstructor()
+Guild = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Guild:new()
@@ -27,11 +28,11 @@ end
 
 function Guild:PrintAudit()
     XF:Info('Audit', 'Name,Note,Rank,LastLoginDaysAgo')
-    for _, memberID in pairs (GetClubMembers(XF.Player.Guild:GetID(), XF.Player.Guild:GetStreamID())) do
+    for _, memberID in pairs (GetClubMembers(XF.Player.Guild:ID(), XF.Player.Guild:GetStreamID())) do
         local unit = Unit:new()
         unit:Initialize(memberID)
         if(unit:IsInitialized()) then
-            XF:Info('Audit', '%s,%s,%s,%d', unit:GetName(), unit:GetNote(), unit:GetRank(), unit:GetLastLogin())
+            XF:Info('Audit', '%s,%s,%s,%d', unit:Name(), unit:GetNote(), unit:GetRank(), unit:GetLastLogin())
         end
     end
 end

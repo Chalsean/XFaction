@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Zone'
 
-Zone = Object:newChildConstructor()
+Zone = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Zone:new()
@@ -39,7 +40,7 @@ function Zone:HasID()
     return #self.IDs > 0
 end
 
-function Zone:GetID()
+function Zone:ID()
     if(self:HasID()) then
         return self.IDs[1]
     end
@@ -53,7 +54,7 @@ end
 
 --#region Accessors
 function Zone:GetLocaleName()
-    return self.localeName or self:GetName()
+    return self.localeName or self:Name()
 end
 
 function Zone:SetLocaleName(inName)

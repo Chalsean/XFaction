@@ -1,10 +1,11 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ProfessionCollection'
 local GetAllProfessionIDs = C_TradeSkillUI.GetAllProfessionTradeSkillLines
 local GetProfessionName = C_TradeSkillUI.GetTradeSkillDisplayName
 local GetProfessionIcon = C_TradeSkillUI.GetTradeSkillTexture
 
-ProfessionCollection = ObjectCollection:newChildConstructor()
+ProfessionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function ProfessionCollection:new()
@@ -21,12 +22,12 @@ function ProfessionCollection:Initialize()
 		for _, ID in ipairs (GetAllProfessionIDs()) do
 			local name = GetProfessionName(ID)
 			local profession = Profession:new()
-			profession:SetID(ID)
+			profession:ID(ID)
 			profession:SetIconID(GetProfessionIcon(ID))
-			profession:SetName(GetProfessionName(ID))
-			profession:SetKey(ID)
+			profession:Name(GetProfessionName(ID))
+			profession:Key(ID)
 			self:Add(profession)
-			XF:Info(ObjectName, 'Initialized profession [%d:%s]', profession:GetID(), profession:GetName())
+			XF:Info(ObjectName, 'Initialized profession [%d:%s]', profession:ID(), profession:Name())
 		end
 		self:IsInitialized(true)
 	end
@@ -37,7 +38,7 @@ end
 function ProfessionCollection:GetByName(inName)
 	assert(type(inName) == 'string')
 	for _, profession in self:Iterator() do
-		if(profession:GetName() == inName) then
+		if(profession:Name() == inName) then
 			return profession
 		end
 	end

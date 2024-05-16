@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Message'
 local ServerTime = GetServerTime
 
-Message = Object:newChildConstructor()
+Message = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Message:new()
@@ -39,6 +40,7 @@ function Message:Initialize()
         self:SetAllTargets()
         self:SetVersion(XF.Version)
         self:SetFaction(XF.Player.Faction)
+        self:SetGuild(XF.Player.Guild)
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -237,7 +239,7 @@ end
 --#region Target
 function Message:ContainsTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    return self.targets[inTarget:GetKey()] ~= nil
+    return self.targets[inTarget:Key()] ~= nil
 end
 
 function Message:AddTarget(inTarget)
@@ -245,13 +247,13 @@ function Message:AddTarget(inTarget)
     if(not self:ContainsTarget(inTarget)) then
         self.targetCount = self.targetCount + 1
     end
-    self.targets[inTarget:GetKey()] = inTarget
+    self.targets[inTarget:Key()] = inTarget
 end
 
 function Message:RemoveTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
     if(self:ContainsTarget(inTarget)) then
-        self.targets[inTarget:GetKey()] = nil
+        self.targets[inTarget:Key()] = nil
         self.targetCount = self.targetCount - 1
     end
 end
@@ -280,7 +282,7 @@ end
 function Message:GetRemainingTargets()
     local targetsString = ''
     for _, target in pairs (self:GetTargets()) do
-        targetsString = targetsString .. '|' .. target:GetKey()
+        targetsString = targetsString .. '|' .. target:Key()
     end
     return targetsString
 end
