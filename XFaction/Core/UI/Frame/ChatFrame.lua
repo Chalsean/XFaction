@@ -32,7 +32,7 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
     local event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
     local text = ''
     if(XF.Config.Chat[configNode].Faction) then  
-        text = text .. format('%s ', format(XF.Icons.String, inUnitData:GetFaction():GetIconID()))
+        text = text .. format('%s ', format(XF.Icons.String, inUnitData:GetFaction():IconID()))
     end
     if(XF.Config.Chat[configNode].Main and inUnitData:IsAlt() and inUnitData:HasMainName()) then
         text = text .. '(' .. inUnitData:GetMainName() .. ') '
@@ -116,7 +116,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
                     local text = ''
 
                     if(XF.Config.Chat[configNode].Faction) then  
-                        text = text .. format('%s ', format(XF.Icons.String, inFaction:GetIconID()))
+                        text = text .. format('%s ', format(XF.Icons.String, inFaction:IconID()))
                     end
 
                     if(inType == 'GUILD_ACHIEVEMENT') then
@@ -166,10 +166,10 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
                     end
 
                     if(inType == 'GUILD' and XF.Addons.WIM:IsLoaded() and XF.Addons.WIM:GetAPI().modules.GuildChat.enabled) then
-                        XF.Addons.WIM:GetAPI():CHAT_MSG_GUILD(text, inUnitName, XF.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
+                        XF.Addons.WIM:GetAPI():CHAT_MSG_GUILD(text, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     else
                         text = XF.Settings.Frames.Chat.Prepend .. text
-                        ChatFrame_MessageEventHandler(_G[frame], 'CHAT_MSG_' .. inType, text, inUnitName, XF.Player.Faction:GetLanguage(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
+                        ChatFrame_MessageEventHandler(_G[frame], 'CHAT_MSG_' .. inType, text, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     end
                 end                                   
                 break

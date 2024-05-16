@@ -801,7 +801,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['FACTION'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Factions:Print() end,
+									func = function(info) XFO.Factions:Print() end,
 								},
 								Friend = {
 									order = 14,
@@ -864,7 +864,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['RACE'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Races:Print() end,
+									func = function(info) XFO.Races:Print() end,
 								},
 								RaiderIO = {
 									order = 23,
@@ -885,7 +885,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['SPEC'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Specs:Print() end,
+									func = function(info) XFO.Specs:Print() end,
 								},
 								Target = {
 									order = 26,

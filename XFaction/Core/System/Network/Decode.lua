@@ -43,7 +43,7 @@ local function DeserializeMessage(inObject, inCompressedData)
 		inObject:SetGuild(XF.Guilds:GetByRealmGuildName(XF.Realms:GetByID(messageData.R), messageData.G))
 	end		
 
-	if(messageData.W ~= nil) then inObject:SetFaction(XF.Factions:Get(messageData.W)) end
+	if(messageData.W ~= nil) then inObject:SetFaction(XFO.Factions:Get(messageData.W)) end
 
 	-- Leave any UnitData serialized for now
 	inObject:SetData(messageData.D)
@@ -54,7 +54,7 @@ function XF:DeserializeUnitData(inData)
 	local deserializedData = unpickle(inData)
 	local unit = XF.Confederate:Pop()
 	unit:IsRunningAddon(true)
-	unit:SetRace(XF.Races:Get(deserializedData.A))
+	unit:SetRace(XFO.Races:Get(deserializedData.A))
 	if(deserializedData.B ~= nil) then unit:SetAchievementPoints(deserializedData.B) end
 	if(deserializedData.C ~= nil) then unit:ID(tonumber(deserializedData.C)) end
 	if(deserializedData.E ~= nil) then 
@@ -62,7 +62,7 @@ function XF:DeserializeUnitData(inData)
 	else
 		unit:SetPresence(Enum.ClubMemberPresence.Online)
 	end
-	unit:SetFaction(XF.Factions:Get(deserializedData.F))
+	unit:SetFaction(XFO.Factions:Get(deserializedData.F))
 	unit:SetGUID(deserializedData.K)
 	unit:Key(deserializedData.K)
 	unit:SetClass(XFO.Classes:Get(deserializedData.O))
@@ -94,7 +94,7 @@ function XF:DeserializeUnitData(inData)
 	unit:IsRunningAddon(true)
 	unit:SetTimeStamp(ServerTime())
 	if(deserializedData.V ~= nil) then
-		unit:SetSpec(XF.Specs:Get(deserializedData.V))
+		unit:SetSpec(XFO.Specs:Get(deserializedData.V))
 	end
 
 	if(deserializedData.D ~= nil and XF.Zones:ContainsByID(tonumber(deserializedData.D))) then

@@ -94,11 +94,7 @@ function TimerEvent:CallbackLoginGuild()
 				XF.Frames.Chat:Initialize()
 				XF.Frames.System:Initialize()
 
-				-- Some of this data (spec) is like guild where its not available for a time after initial login
-				-- Seems to align with guild data becoming available
-				XF.Races:Initialize()
-				XFO.Classes:Initialize()
-				XF.Specs:Initialize()		    
+				
 				XF.Professions:Initialize()
 
 				-- Start network
@@ -176,7 +172,7 @@ function TimerEvent:CallbackLoginPlayer()
 			for i = 1, GetNumAddOns() do
 				local name, _, _, enabled = GetAddOnInfo(i)
 				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
-			end
+			end		
 
 			XF.Timers:Add({
 				name = 'LoginChannelSync',

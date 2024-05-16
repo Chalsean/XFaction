@@ -145,7 +145,7 @@ function DTLinks:OnEnter(this)
 	local targetColumn = {}
 	local i = 1
 	for _, target in XF.Targets:Iterator() do
-		local targetName = format('%s%s', format(XF.Icons.String, target:GetFaction():GetIconID()), target:GetRealm():Name())
+		local targetName = format('%s%s', format(XF.Icons.String, target:GetFaction():IconID()), target:GetRealm():Name())
 		self.tooltip:SetCell(line, i, targetName)
 		targetColumn[target:Key()] = i
 		i = i + 1

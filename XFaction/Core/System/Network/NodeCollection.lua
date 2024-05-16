@@ -86,7 +86,7 @@ function NodeCollection:SetNodeFromString(inNodeString)
     node:Key(nodeData[1])
     node:Name(nodeData[1])
     local realm = XF.Realms:GetByID(tonumber(nodeData[2]))
-    local faction = XF.Factions:Get(tonumber(nodeData[3]))
+    local faction = XFO.Factions:Get(tonumber(nodeData[3]))
     node:SetTarget(XF.Targets:GetByRealmFaction(realm, faction))
 	self:Add(node)
 	return node

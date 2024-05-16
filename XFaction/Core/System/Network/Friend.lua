@@ -167,7 +167,7 @@ function Friend:SetFromAccountInfo(inAccountInfo)
     self:Name(inAccountInfo.gameAccountInfo.characterName)
 
     local realm = XF.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
-    local faction = XF.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
+    local faction = XFO.Factions:Get(inAccountInfo.gameAccountInfo.factionName)
     local target = XF.Targets:GetByRealmFaction(realm, faction)
     self:SetTarget(target)
 end

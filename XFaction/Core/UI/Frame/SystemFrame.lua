@@ -48,9 +48,9 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     local text = XF.Settings.Frames.Chat.Prepend
     
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Faction) then  
-        text = text .. format('%s ', format(XF.Icons.String, inFaction:GetIconID()))
+        text = text .. format('%s ', format(XF.Icons.String, inFaction:IconID()))
     elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Faction) then
-        text = text .. format('%s ', format(XF.Icons.String, inFaction:GetIconID()))
+        text = text .. format('%s ', format(XF.Icons.String, inFaction:IconID()))
     end
   
     if(inType == XF.Enum.Message.LOGOUT) then

@@ -126,7 +126,7 @@ local function PreSort()
 				unitData.Team = 'Unknown'
 			end
 			unitData.Class = unit:GetClass():Hex()
-			unitData.Faction = unit:GetFaction():GetIconID()
+			unitData.Faction = unit:GetFaction():IconID()
 			unitData.PvP = unit:GetPvP()
 
 			if(unit:HasRaiderIO()) then
@@ -145,7 +145,7 @@ local function PreSort()
 			end
 
 			if(unit:HasSpec()) then
-				unitData.Spec = unit:GetSpec():GetIconID()
+				unitData.Spec = unit:GetSpec():IconID()
 			end
 
 			if(unit:HasProfession1()) then

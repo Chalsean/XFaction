@@ -105,7 +105,7 @@ local function CanLink(inAccountInfo)
 
 		-- We don't want to link to neutral faction toons
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
-		local faction = XF.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
+		local faction = XFO.Factions:Get(inAccountInfo.gameAccountInfo.factionName)
 
 		XF:Trace(ObjectName, 'Checking friend for linkability [%s] GUID [%s] RealmID [%d] RealmName [%s]', inAccountInfo.battleTag, inAccountInfo.gameAccountInfo.playerGuid, inAccountInfo.gameAccountInfo.realmID, inAccountInfo.gameAccountInfo.realmName)
 

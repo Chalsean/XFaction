@@ -40,6 +40,7 @@ function Message:Initialize()
         self:SetAllTargets()
         self:SetVersion(XF.Version)
         self:SetFaction(XF.Player.Faction)
+        self:SetGuild(XF.Player.Guild)
         self:IsInitialized(true)
     end
     return self:IsInitialized()

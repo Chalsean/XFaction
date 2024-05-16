@@ -117,7 +117,7 @@ function Unit:Initialize(inMemberID)
 	self:SetGuild(XF.Player.Guild)
     self:SetTimeStamp(ServerTime())
     self:SetClass(XFO.Classes:Get(unitData.classID))
-    self:SetRace(XF.Races:Get(unitData.race))
+    self:SetRace(XFO.Races:Get(unitData.race))
     self:SetRank(unitData.guildRank)
     self:SetNote(unitData.memberNote or '?')
     self:IsPlayer(unitData.isSelf)
@@ -138,11 +138,11 @@ function Unit:Initialize(inMemberID)
     if(self:IsPlayer()) then
         self:SetFaction(XF.Player.Faction)
     elseif(unitData.faction == Enum.PvPFaction.Alliance) then
-        self:SetFaction(XF.Factions:GetByName('Alliance'))
+        self:SetFaction(XFO.Factions:Get(unitData.faction))
     elseif(unitData.faction == Enum.PvPFaction.Horde) then
-        self:SetFaction(XF.Factions:GetByName('Horde'))
+        self:SetFaction(XFO.Factions:Get('Horde'))
     else
-        self:SetFaction(XF.Factions:GetByName('Neutral'))
+        self:SetFaction(XFO.Factions:Get('Neutral'))
     end
 
     if(unitData.zone and XF.Zones:Contains(unitData.zone)) then
@@ -193,8 +193,8 @@ function Unit:Initialize(inMemberID)
             local specGroupID = GetSpecGroupID()
             if(specGroupID ~= nil) then
     	        local specID = GetSpecID(specGroupID)
-                if(specID ~= nil and XF.Specs:Contains(specID)) then
-                    self:SetSpec(XF.Specs:Get(specID))
+                if(specID ~= nil and XFO.Specs:Contains(specID)) then
+                    self:SetSpec(XFO.Specs:Get(specID))
                     break
                 end
             end
