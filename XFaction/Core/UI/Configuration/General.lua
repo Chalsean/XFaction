@@ -57,7 +57,7 @@ function XF:SetupRealms()
 	}
 	
 	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XF.Regions:GetCurrent():Name())
-	for _, realm in XF.Realms:SortedIterator() do
+	for _, realm in XFO.Realms:SortedIterator() do
 		table.insert(XF.Cache.Setup.Realms, {
 			id = realm:ID(),
 			name = realm:Name(),
@@ -878,7 +878,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['REALM'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Realms:Print() end,
+									func = function(info) XFO.Realms:Print() end,
 								},				
 								Spec = {
 									order = 25,

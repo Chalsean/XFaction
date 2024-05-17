@@ -66,7 +66,7 @@ function GuildCollection:SetObjectFromString(inString)
 	assert(type(inString) == 'string')
 
 	local realmNumber, factionID, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
-	local realm = XF.Realms:GetByID(tonumber(realmNumber))
+	local realm = XFO.Realms:Get(tonumber(realmNumber))
 	local faction = XFO.Factions:Get(factionID)
 
 	local guild = Guild:new()

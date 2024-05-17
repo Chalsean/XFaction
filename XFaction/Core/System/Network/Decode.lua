@@ -38,9 +38,6 @@ local function DeserializeMessage(inObject, inCompressedData)
 	end
 	if(messageData.H ~= nil and XF.Guilds:Contains(messageData.H)) then
 		inObject:SetGuild(XF.Guilds:Get(messageData.H))
-	elseif(messageData.R ~= nil and messageData.G ~= nil) then
-		-- Remove this deprecated logic after everyone on 4.4
-		inObject:SetGuild(XF.Guilds:GetByRealmGuildName(XF.Realms:GetByID(messageData.R), messageData.G))
 	end		
 
 	if(messageData.W ~= nil) then inObject:SetFaction(XFO.Factions:Get(messageData.W)) end
@@ -71,9 +68,6 @@ function XF:DeserializeUnitData(inData)
 	unit:SetUnitName(deserializedData.U)
 	if(deserializedData.H ~= nil and XF.Guilds:Contains(deserializedData.H)) then
 		unit:SetGuild(XF.Guilds:Get(deserializedData.H))
-	else
-		-- Remove this deprecated logic after everyone on 4.4
-		unit:SetGuild(XF.Guilds:GetByRealmGuildName(XF.Realms:GetByID(deserializedData.R), deserializedData.G))
 	end
 	if(deserializedData.I ~= nil) then unit:SetItemLevel(deserializedData.I) end
 	unit:SetRank(deserializedData.J)
