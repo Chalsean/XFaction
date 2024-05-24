@@ -250,7 +250,7 @@ function DTGuild:OnEnter(this)
 	
 	if(XF.Config.DataText.Guild.GuildName and XF.Cache.DTGuildTotalEnabled > 4) then
 		local guildName = XF.Player.Guild:Name()
-		guildName = guildName .. ' <' .. XF.Player.Guild:GetInitials() .. '>'
+		guildName = guildName .. ' <' .. XF.Player.Guild:Initials() .. '>'
 		self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_GUILD'], guildName), self.headerFont, 'LEFT', 4)
 	end
 

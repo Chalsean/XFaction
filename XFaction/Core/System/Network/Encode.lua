@@ -46,7 +46,7 @@ function XF:SerializeUnitData(inUnitData)
 	messageData.H = inUnitData:GetGuild():Key()
 	-- Remove G/R after everyone on 4.4
 	messageData.G = inUnitData:GetGuild():Name()
-	messageData.R = inUnitData:GetGuild():GetRealm():ID()
+	messageData.R = inUnitData:GetGuild():Realm():ID()
 	messageData.K = inUnitData:GetGUID()
 	messageData.I = inUnitData:GetItemLevel()
 	messageData.J = inUnitData:GetRank()

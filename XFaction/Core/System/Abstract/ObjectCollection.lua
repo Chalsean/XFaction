@@ -112,4 +112,8 @@ function XFC.ObjectCollection:RemoveAll()
         self:Remove(object:Key())
     end
 end
+
+function XFC.ObjectCollection:HasObjects()
+    return self:Count() > 0
+end
 --#endregion

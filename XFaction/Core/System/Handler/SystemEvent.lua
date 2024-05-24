@@ -69,7 +69,7 @@ end
 
 function SystemEvent:CallbackReloadUI()
     try(function ()        
-        XF.Confederate:Backup()
+        XFO.Confederate:Backup()
         XF.Friends:Backup()
         XF.Links:Backup()
         XFO.Orders:Backup()

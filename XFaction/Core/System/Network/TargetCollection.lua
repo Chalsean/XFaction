@@ -22,9 +22,9 @@ end
 function TargetCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, guild in XF.Guilds:Iterator() do
-			local realm = guild:GetRealm()
-			local faction = guild:GetFaction()
+		for _, guild in XFO.Guilds:Iterator() do
+			local realm = guild:Realm()
+			local faction = guild:Faction()
 			local key = GetTarKey(realm, faction)
 			
 			if(self:Contains(key)) then	
@@ -39,7 +39,7 @@ function TargetCollection:Initialize()
 				realm:IsTargeted(true)
 				target:Print()
 
-				if(XF.Player.Target == nil and realm:Equals(XF.Player.Guild:GetRealm()) and faction:Equals(XF.Player.Faction)) then
+				if(XF.Player.Target == nil and realm:Equals(XF.Player.Guild:Realm()) and faction:Equals(XF.Player.Faction)) then
 					XF:Info(ObjectName, 'Initializing player target [%s]', key)
 					XF.Player.Target = target
 				end
@@ -64,7 +64,7 @@ function TargetCollection:GetByRealmFaction(inRealm, inFaction)
 end
 
 function TargetCollection:GetByGuild(inGuild)
-    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
-	return self:GetByRealmFaction(inGuild:GetRealm(), inGuild:GetFaction())
+    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild')
+	return self:GetByRealmFaction(inGuild:Realm(), inGuild:Faction())
 end
 --#endregion

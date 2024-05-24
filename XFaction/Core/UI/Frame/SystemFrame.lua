@@ -58,7 +58,7 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     elseif(inFaction:Equals(XF.Player.Faction)) then
         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
     else
-        local friend = XF.Friends:GetByRealmUnitName(inGuild:GetRealm(), inName)
+        local friend = XF.Friends:GetByRealmUnitName(inGuild:Realm(), inName)
         if(friend ~= nil) then
             text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
         else
@@ -74,9 +74,9 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     end
 
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Guild) then  
-        text = text .. '<' .. inGuild:GetInitials() .. '> '
+        text = text .. '<' .. inGuild:Initials() .. '> '
     elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Guild) then
-        text = text .. '<' .. inGuild:GetInitials() .. '> '
+        text = text .. '<' .. inGuild:Initials() .. '> '
     end
     
     if(inType == XF.Enum.Message.LOGOUT) then
@@ -106,7 +106,7 @@ end
 function SystemFrame:DisplayLogoutMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    self:Display(inMessage:GetSubject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), nil, inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
+    self:Display(inMessage:GetSubject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), nil, inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():Faction())
 end
 
 function SystemFrame:DisplayOrder(inOrder)

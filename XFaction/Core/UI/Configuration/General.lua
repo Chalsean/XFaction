@@ -56,7 +56,7 @@ function XF:SetupRealms()
 		Compress = true,
 	}
 	
-	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XF.Regions:GetCurrent():Name())
+	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XFO.Regions:GetCurrent():Name())
 	for _, realm in XFO.Realms:SortedIterator() do
 		table.insert(XF.Cache.Setup.Realms, {
 			id = realm:ID(),
@@ -126,15 +126,15 @@ function XF:SetupMenus()
 		--#endregion
 
 		--#region Guild Menu
-		if(XF.Guilds:Count() > 0) then
-			for _, guild in XF.Guilds:SortedIterator() do
+		if(XFO.Guilds:HasObjects()) then
+			for _, guild in XFO.Guilds:SortedIterator() do
 				table.insert(XF.Cache.Setup.Guilds, {
-					realm = tostring(guild:GetRealm():ID()),
-					faction = guild:GetFaction():ID(),
-					initials = guild:GetInitials(),
+					realm = tostring(guild:Realm():ID()),
+					faction = guild:Faction():ID(),
+					initials = guild:Initials(),
 					name = guild:Name(),
 				})
-				XF.Cache.Setup.GuildsRealms[tostring(guild:GetRealm():ID())] = guild:GetRealm():Name()
+				XF.Cache.Setup.GuildsRealms[tostring(guild:Realm():ID())] = guild:Realm():Name()
 			end
 		end
 
@@ -202,11 +202,11 @@ function XF:SetupMenus()
 		--#endregion
 
 		--#region Team Menu
-		if(XF.Teams:Count() > 0) then
-			for _, team in XF.Teams:SortedIterator() do
-				if(team:GetInitials() ~= '?') then
+		if(XFO.HasObject()) then
+			for _, team in XFO.Teams:SortedIterator() do
+				if(team:Initials() ~= '?') then
 					table.insert(XF.Cache.Setup.Teams, {
-						initials = team:GetInitials(),
+						initials = team:Initials(),
 						name = team:Name(),
 					})
 				end
@@ -815,7 +815,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['GUILD'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Guilds:Print() end,
+									func = function(info) XFO.Guilds:Print() end,
 								},
 								Item = {
 									order = 16,
@@ -899,7 +899,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['TEAM'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Teams:Print() end,
+									func = function(info) XFO.Teams:Print() end,
 								},
 								Timer = {
 									order = 28,

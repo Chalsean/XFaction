@@ -39,42 +39,42 @@ end
 function GuildEvent:CallbackRosterUpdate()
     local self = XF.Handlers.GuildEvent
     XF:Trace(ObjectName, 'Scanning local guild roster')
-    for _, memberID in pairs (GetClubMembers(XF.Player.Guild:ID(), XF.Player.Guild:GetStreamID())) do
-        local unitData = XF.Confederate:Pop()
+    for _, memberID in pairs (GetClubMembers(XF.Player.Guild:ID(), XF.Player.Guild:StreamID())) do
+        local unitData = XFO.Confederate:Pop()
         try(function ()
             unitData:Initialize(memberID)
             if(unitData:IsInitialized()) then
-                if(XF.Confederate:Contains(unitData:Key())) then
-                    local oldData = XF.Confederate:Get(unitData:Key())
+                if(XFO.Confederate:Contains(unitData:Key())) then
+                    local oldData = XFO.Confederate:Get(unitData:Key())
                     if(oldData:IsOnline() and unitData:IsOffline()) then
                         XF:Info(ObjectName, 'Guild member logout via scan: %s', unitData:GetUnitName())
                         if(XF.Config.Chat.Login.Enable) then
                             XF.Frames.System:Display(XF.Enum.Message.LOGOUT, oldData:Name(), oldData:GetUnitName(), oldData:GetMainName(), oldData:GetGuild(), nil, oldData:GetFaction())
                         end
-                        XF.Confederate:Add(unitData)
+                        XFO.Confederate:Add(unitData)
                     elseif(unitData:IsOnline()) then
                         if(oldData:IsOffline()) then
                             XF:Info(ObjectName, 'Guild member login via scan: %s', unitData:GetUnitName())
                             if(XF.Config.Chat.Login.Enable) then
                                 XF.Frames.System:Display(XF.Enum.Message.LOGIN, unitData:Name(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), nil, unitData:GetFaction())
                             end
-                            XF.Confederate:Add(unitData)
+                            XFO.Confederate:Add(unitData)
                         elseif(not oldData:IsRunningAddon()) then
-                            XF.Confederate:Add(unitData)
+                            XFO.Confederate:Add(unitData)
                         else
                             -- Every logic branch should either add, remove or push, otherwise there will be a memory leak
-                            XF.Confederate:Push(unitData)
+                            XFO.Confederate:Push(unitData)
                         end
                     else
-                        XF.Confederate:Push(unitData)
+                        XFO.Confederate:Push(unitData)
                     end
                 -- First time scan (i.e. login) do not notify
                 else
-                    XF.Confederate:Add(unitData)
+                    XFO.Confederate:Add(unitData)
                 end
             -- If it didnt initialize properly then we dont really know their status, so do nothing
             else
-                XF.Confederate:Push(unitData)
+                XFO.Confederate:Push(unitData)
             end
         end).
         catch(function (inErrorMessage)

@@ -20,13 +20,13 @@ function XF:CoreInit()
 	XF:Info(ObjectName, 'XFaction version [%s]', XF.Version:Key())
 	
 	-- Confederate
-	XF.Regions = RegionCollection:new(); XF.Regions:Initialize()
-	XF.Confederate = Confederate:new()
+	XFO.Regions = XFC.RegionCollection:new(); XFO.Regions:Initialize()
+	XFO.Confederate = XFC.Confederate:new()
 	XFO.Factions = XFC.FactionCollection:new(); XFO.Factions:Initialize()
-	XF.Guilds = GuildCollection:new()
+	XFO.Guilds = XFC.GuildCollection:new()
 	XFO.Realms = XFC.RealmCollection:new(); XFO.Realms:Initialize()
 	XF.Targets = TargetCollection:new()
-	XF.Teams = TeamCollection:new(); XF.Teams:Initialize()
+	XFO.Teams = XFC.TeamCollection:new(); XFO.Teams:Initialize()
 	XFO.Orders = XFC.OrderCollection:new(); XFO.Orders:Initialize()
 
 	-- DataText

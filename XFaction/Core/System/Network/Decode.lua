@@ -36,8 +36,8 @@ local function DeserializeMessage(inObject, inCompressedData)
 	elseif(messageData.U ~= nil) then
 		inObject:Name(inObject:GetUnitName())
 	end
-	if(messageData.H ~= nil and XF.Guilds:Contains(messageData.H)) then
-		inObject:SetGuild(XF.Guilds:Get(messageData.H))
+	if(messageData.H ~= nil and XFO.Guilds:Contains(messageData.H)) then
+		inObject:SetGuild(XFO.Guilds:Get(messageData.H))
 	end		
 
 	if(messageData.W ~= nil) then inObject:SetFaction(XFO.Factions:Get(messageData.W)) end
@@ -66,8 +66,8 @@ function XF:DeserializeUnitData(inData)
 	local unitNameParts = string.Split(deserializedData.U, '-')
 	unit:Name(unitNameParts[1])
 	unit:SetUnitName(deserializedData.U)
-	if(deserializedData.H ~= nil and XF.Guilds:Contains(deserializedData.H)) then
-		unit:SetGuild(XF.Guilds:Get(deserializedData.H))
+	if(deserializedData.H ~= nil and XFO.Guilds:Contains(deserializedData.H)) then
+		unit:SetGuild(XFO.Guilds:Get(deserializedData.H))
 	end
 	if(deserializedData.I ~= nil) then unit:SetItemLevel(deserializedData.I) end
 	unit:SetRank(deserializedData.J)

@@ -2,85 +2,59 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'GuildCollection'
 
-GuildCollection = XFC.ObjectCollection:newChildConstructor()
+XFC.GuildCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function GuildCollection:new()
-    local object = GuildCollection.parent.new(self)
+function XFC.GuildCollection:new()
+    local object = XFC.GuildCollection.parent.new(self)
 	object.__name = ObjectName
 	object.names = nil
-	object.cached = false
 	object.info = nil
     return object
 end
---#endregion
 
---#region Initializers
-function GuildCollection:Initialize(inGuildID)
+function XFC.GuildCollection:Initialize(inGuildID)
 	assert(type(inGuildID) == 'number')
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.names = {}
-		self.info = C_Club.GetClubInfo(inGuildID)
-		self:SetFromGuildInfo()
+		self.info = XFF.GuildGetInfo(inGuildID)
+		self:Deserialize()
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Hash
-function GuildCollection:ContainsName(inGuildName)
+--#region Methods
+function XFC.GuildCollection:ContainsName(inGuildName)
 	return self.names[inGuildName] ~= nil
 end
 
-function GuildCollection:Add(inGuild)
+function XFC.GuildCollection:Add(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
 	self.parent.Add(self, inGuild)
 	self.names[inGuild:Name()] = inGuild
-	XF:Info(ObjectName, 'Initialized guild [%s:%s]', inGuild:GetInitials(), inGuild:Name())
+	inGuild:Realm():GuildCount(inGuild:Realm():GuildCount() + 1)
 end
---#endregion
 
---#region Accessors
-function GuildCollection:GetByRealmGuildName(inRealm, inGuildName)
-	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be a Realm object')	
+function XFC.GuildCollection:Get(inGuildName, inRealm)
 	assert(type(inGuildName) == 'string')
-	for _, guild in self:Iterator() do
-		if(inRealm:Equals(guild:GetRealm()) and guild:Name() == inGuildName) then
-			return guild
+	assert(type(inRealm) == 'table' and inRealm.__name == 'realm' or inRealm == nil, 'argument must be Realm object or nil')
+	-- Search by guild name & realm
+	if(inRealm ~= nil) then
+		for _, guild in self:Iterator() do
+			if(inRealm:Equals(guild:Realm()) and guild:Name() == inGuildName) then
+				return guild
+			end
 		end
+	elseif(self.names[inGuildName] ~= nil) then
+		return self.names[inGuildName]
 	end
+	
+	return self.parent.Get(self, inGuildName)
 end
 
-function GuildCollection:GetByName(inGuildName)
-	return self.names[inGuildName]
-end
-
-function GuildCollection:GetInfo()
-	return self.info.description
-end
---#endregion
-
---#region DataSet
-function GuildCollection:SetObjectFromString(inString)
-	assert(type(inString) == 'string')
-
-	local realmNumber, factionID, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
-	local realm = XFO.Realms:Get(tonumber(realmNumber))
-	local faction = XFO.Factions:Get(factionID)
-
-	local guild = Guild:new()
-	guild:Initialize()
-	guild:Key(guildInitials)
-	guild:Name(guildName)
-	guild:SetFaction(faction)
-	guild:SetRealm(realm)
-	guild:SetInitials(guildInitials)
-
-	self:Add(guild)
-end
-
-function GuildCollection:SetFromGuildInfo()
+function XFC.GuildCollection:Deserialize()
 	-- Parse out configuration from guild information so GMs have control
 	local xfData = ''
 	local compressed = string.match(self.info.description, 'XF:(.-):XF')
@@ -102,23 +76,24 @@ function GuildCollection:SetFromGuildInfo()
 			XF.Cache.Confederate.Key = initials
 		-- Guild within the confederate
 		elseif(string.find(line, 'XFg')) then
-			self:SetObjectFromString(line)
+			local guild = XFC.Guild:new()
+			guild:Deserialize(line)
+			self:Add(guild)
 		-- Local channel for same realm/faction communication
 		elseif(string.find(line, 'XFc')) then
 			XF.Cache.Channel.Name, XF.Cache.Channel.Password = line:match('XFc:(.-):(.*)')
 		elseif(string.find(line, 'XFt')) then
-			XF.Teams:SetObjectFromString(line)
+			XFO.Teams:Deserialize(line)
 		end
 	end		
 end
 
-function GuildCollection:SetPlayerGuild()
+function XFC.GuildCollection:SetPlayerGuild()
 	for _, guild in self:Iterator() do
-		if(guild:Name() == self.info.name and XF.Player.Realm:Equals(guild:GetRealm())) then
-			guild:ID(self.info.clubId)
-			for _, stream in pairs (C_Club.GetStreams(guild:ID())) do
+		if(guild:Name() == self.info.name and XF.Player.Realm:Equals(guild:Realm())) then
+			for _, stream in pairs (XFF.GuildGetStreams(guild:ID(self.info.clubId))) do
 				if(stream.streamType == 1) then
-					guild:SetStreamID(stream.streamId)
+					guild:StreamID(stream.streamId)
 					break
 				end
 			end
