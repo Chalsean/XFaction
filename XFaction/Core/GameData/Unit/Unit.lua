@@ -145,13 +145,13 @@ function Unit:Initialize(inMemberID)
         self:SetFaction(XFO.Factions:Get('Neutral'))
     end
 
-    if(unitData.zone and XF.Zones:Contains(unitData.zone)) then
-        self:SetZone(XF.Zones:Get(unitData.zone))
+    if(unitData.zone and XFO.Zones:Contains(unitData.zone)) then
+        self:SetZone(XFO.Zones:Get(unitData.zone))
     elseif(unitData.zone and strlen(unitData.zone)) then
-        XF.Zones:AddZone(unitData.zone)
-        self:SetZone(XF.Zones:Get(unitData.zone))
+        XFO.Zones:AddZone(unitData.zone)
+        self:SetZone(XFO.Zones:Get(unitData.zone))
     else
-        self:SetZone(XF.Zones:Get('?'))
+        self:SetZone(XFO.Zones:Get('?'))
     end
 
     if(unitData.profession1ID ~= nil) then

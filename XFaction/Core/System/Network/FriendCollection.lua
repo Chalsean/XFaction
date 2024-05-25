@@ -22,18 +22,15 @@ end
 function FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		try(function ()
-			for i = 1, GetFriendCount() do
-				self:CheckFriend(i)
-			end
-			if(XF.Cache.UIReload) then
-				self:Restore()
-			end
-			self:IsInitialized(true)
-		end).
-		catch(function (inErrorMessage)
-			XF:Warn(ObjectName, inErrorMessage)
-		end)
+		self:CheckFriends()
+		XF.Events:Add({
+            name = 'Friend', 
+            event = 'BN_FRIEND_INFO_CHANGED', 
+            callback = XFO.Friends.CheckFriends, 
+            instance = true,
+            groupDelta = XF.Settings.Network.BNet.FriendTimer
+        })
+		self:IsInitialized(true)
 	end
 end
 --#endregion
@@ -160,13 +157,14 @@ function FriendCollection:CheckFriend(inKey)
 end
 
 function FriendCollection:CheckFriends()
+	local self = XFO.Friends
 	try(function ()
 		for i = 1, GetFriendCount() do
 			self:CheckFriend(i)
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Warn(self:ObjectName(), err)
 	end)
 end
 --#endregion

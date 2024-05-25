@@ -18,11 +18,15 @@ function BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XF.Enum.Tag.BNET = XFO.Confederate:Key() .. 'BNET'
-        XF.Events:Add({name = 'BNetMessage', 
-                        event = 'BN_CHAT_MSG_ADDON', 
-                        callback = XF.Mailbox.BNet.BNetReceive, 
-                        instance = true})
-        self:IsInitialized(true)
+
+        XF.Events:Add({
+            name = 'BNetMessage', 
+            event = 'BN_CHAT_MSG_ADDON', 
+            callback = XF.Mailbox.BNet.BNetReceive, 
+            instance = true
+        })
+
+        self:IsInitialized(true)        
     end
     return self:IsInitialized()
 end

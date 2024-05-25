@@ -73,6 +73,7 @@ end
 function XFC.SpecCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
+
 		for id, data in pairs (SpecData) do
 			local specData = string.Split(data, ',')
 			local spec = XFC.Spec:new()
@@ -85,6 +86,14 @@ function XFC.SpecCollection:Initialize()
 			self:Add(spec)
 			XF:Info(self:ObjectName(), 'Initialized spec [%d:%s:%s]', spec:ID(), spec:Name(), spec:Class():Name())
 		end
+
+		XF.Events:Add({
+			name = 'Spec', 
+			event = 'ACTIVE_TALENT_GROUP_CHANGED', 
+			callback = XFO.Specs.CallbackSpecChanged, 
+			instance = true
+		})
+
 		self:IsInitialized(true)
 	end
 end
@@ -98,5 +107,15 @@ function XFC.SpecCollection:GetInitialClassSpec(inClassID)
 			return spec
 		end
 	end
+end
+
+function XFC.SpecCollection:CallbackSpecChanged()
+	try(function ()
+        XF.Player.Unit:Initialize(XF.Player.Unit:ID())
+        XF.Player.Unit:Broadcast()
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 --#endregion

@@ -15,8 +15,8 @@ function XF:CoreInit()
 	XF.Handlers.AddonEvent = AddonEvent:new(); XF.Handlers.AddonEvent:Initialize()
 
 	-- Log XFaction version
-	XF.Versions = VersionCollection:new(); XF.Versions:Initialize()
-	XF.Version = XF.Versions:GetCurrent()
+	XFO.Versions = XFC.VersionCollection:new(); XFO.Versions:Initialize()
+	XF.Version = XFO.Versions:Current()
 	XF:Info(ObjectName, 'XFaction version [%s]', XF.Version:Key())
 	
 	-- Confederate
@@ -40,10 +40,7 @@ function XF:CoreInit()
 
 	-- Declare handlers but not listening yet
 	XF.Handlers.AchievementEvent = AchievementEvent:new(); XF.Handlers.AchievementEvent:Initialize()
-	XF.Handlers.BNetEvent = BNetEvent:new(); XF.Handlers.BNetEvent:Initialize()
-	XF.Handlers.ChatEvent = ChatEvent:new(); XF.Handlers.ChatEvent:Initialize()
 	XF.Handlers.OrderEvent = XFC.OrderEvent:new(); XF.Handlers.OrderEvent:Initialize()
-	XF.Handlers.PlayerEvent = PlayerEvent:new(); XF.Handlers.PlayerEvent:Initialize()
 	XF.Handlers.SystemEvent = SystemEvent:new()
 	XF.Handlers.TimerEvent = TimerEvent:new()
 
@@ -59,9 +56,9 @@ function XF:CoreInit()
 	XFO.Races = XFC.RaceCollection:new(); XFO.Races:Initialize()
 	XFO.Classes = XFC.ClassCollection:new(); XFO.Classes:Initialize()
 	XFO.Specs = XFC.SpecCollection:new(); XFO.Specs:Initialize()
-	XF.Continents = ContinentCollection:new(); XF.Continents:Initialize()
+	XFO.Continents = XFC.ContinentCollection:new(); XFO.Continents:Initialize()
 	XFO.Professions = XFC.ProfessionCollection:new(); XFO.Professions:Initialize()	
-	XF.Zones = ZoneCollection:new(); XF.Zones:Initialize()	
+	XFO.Zones = XFC.ZoneCollection:new(); XFO.Zones:Initialize()	
 	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
 	XF.Player.GUID = XFF.PlayerGetGUID('player')
 	XF.Player.Faction = XFO.Factions:Get(XFF.PlayerGetFaction('player'))
@@ -81,12 +78,12 @@ function XF:CoreInit()
 		XF.DataText.Metrics:Initialize()
 		--XF.DataText.Orders:Initialize()
 
-		XF.Expansions = ExpansionCollection:new(); XF.Expansions:Initialize()
-		XF.WoW = XF.Expansions:GetCurrent()
-		XF:Info(ObjectName, 'WoW client version [%s:%s]', XF.WoW:Name(), XF.WoW:GetVersion():Key())
+		XFO.Expansions = XFC.ExpansionCollection:new(); XFO.Expansions:Initialize()
+		XF.WoW = XFO.Expansions:Current()
+		XF:Info(ObjectName, 'WoW client version [%s:%s]', XF.WoW:Name(), XF.WoW:Version():Key())
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Warn(ObjectName, err)
 	end)
 end
 

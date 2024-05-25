@@ -112,9 +112,9 @@ end
 function XF:SetupMenus()
 	
 	if(not Initialized) then
-		if(XF.Versions:GetCurrent():IsAlpha()) then
+		if(XFO.Versions:Current():IsAlpha()) then
 			XF.Options.args.General.args.Bar.name = XF.Options.args.General.args.Bar.name .. ' |cffFF4700Alpha|r'
-		elseif(XF.Versions:GetCurrent():IsBeta()) then
+		elseif(XFO.Versions:Current():IsBeta()) then
 			XF.Options.args.General.args.Bar.name = XF.Options.args.General.args.Bar.name .. ' |cffFF7C0ABeta|r'
 		end
 
@@ -787,7 +787,14 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['CONTINENT'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Continents:Print() end,
+									func = function(info) XFO.Continents:Print() end,
+								},
+								Dungeon = {
+									order = 6,
+									type = 'execute',
+									name = XF.Lib.Locale['DUNGEON'],
+									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
+									func = function(info) XFO.Dungeons:Print() end,
 								},
 								Event = {
 									order = 6,
@@ -913,7 +920,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['ZONE'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Zones:Print() end,
+									func = function(info) XFO.Zones:Print() end,
 								},
 							},
 						},
@@ -958,13 +965,13 @@ function XF:ConfigInitialize()
 	--#region Changelog
 	try(function ()
 		for versionKey, config in pairs(XF.ChangeLog) do
-			XF.Versions:AddVersion(versionKey)
-			XF.Versions:Get(versionKey):IsInChangeLog(true)
+			XFO.Versions:AddVersion(versionKey)
+			XFO.Versions:Get(versionKey):IsInChangeLog(true)
 		end
 
 		local minorOrder = 0
 		local patchOrder = 0
-		for _, version in XF.Versions:ReverseSortedIterator() do
+		for _, version in XFO.Versions:ReverseSortedIterator() do
 			if(version:IsInChangeLog()) then
 				local minorVersion = version:GetMajor() .. '.' .. version:GetMinor()
 				if(XF.Options.args.General.args.ChangeLog.args[minorVersion] == nil) then

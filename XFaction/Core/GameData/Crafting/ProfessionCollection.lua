@@ -32,6 +32,7 @@ end
 function XFC.ProfessionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
+
 		for id, data in pairs (ProfessionData) do
 			local professionData = string.Split(data, ',')
 			local profession = XFC.Profession:new()
@@ -43,6 +44,13 @@ function XFC.ProfessionCollection:Initialize()
 			self:Add(profession)
 			XF:Info(self:ObjectName(), 'Initialized profession [%d:%s]', profession:ID(), profession:Name())
 		end
+
+		XF.Events:Add({
+			name = 'Profession', 
+			event = 'SKILL_LINES_CHANGED', 
+			callback = XFO.Professions.CallbackSkillChanged
+		})
+
 		self:IsInitialized(true)
 	end
 end
@@ -60,5 +68,14 @@ function XFC.ProfessionCollection:Get(inKey)
 	else
 		return self.parent.Get(self, inKey)
 	end
+end
+
+function XFC.ProfessionCollection:CallbackSkillChanged()
+    try(function ()
+        XF.Player.Unit:Initialize(XF.Player.Unit:ID())
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 --#endregion
