@@ -80,10 +80,10 @@ function XF:DeserializeUnitData(inData)
 	unit:SetNote(deserializedData.N)	
 	unit:IsOnline(true)
 	if(deserializedData.P1 ~= nil) then
-		unit:SetProfession1(XF.Professions:Get(deserializedData.P1))
+		unit:SetProfession1(XFO.Professions:Get(tonumber(deserializedData.P1)))
 	end
 	if(deserializedData.P2 ~= nil) then
-		unit:SetProfession2(XF.Professions:Get(deserializedData.P2))
+		unit:SetProfession2(XFO.Professions:Get(tonumber(deserializedData.P2)))
 	end
 	unit:IsRunningAddon(true)
 	unit:SetTimeStamp(ServerTime())

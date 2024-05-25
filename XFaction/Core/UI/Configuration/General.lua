@@ -857,7 +857,7 @@ XF.Options = {
 									type = 'execute',
 									name = 	XF.Lib.Locale['PROFESSION'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Professions:Print() end,
+									func = function(info) XFO.Professions:Print() end,
 								},
 								Race = {
 									order = 22,

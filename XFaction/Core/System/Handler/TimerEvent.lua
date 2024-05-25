@@ -94,9 +94,6 @@ function TimerEvent:CallbackLoginGuild()
 				XF.Frames.Chat:Initialize()
 				XF.Frames.System:Initialize()
 
-				
-				XF.Professions:Initialize()
-
 				-- Start network
 				XFO.Channels:Initialize()
 				XF.Mailbox.Chat:Initialize()

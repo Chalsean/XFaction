@@ -80,7 +80,7 @@ function PlayerEvent:CallbackSkillChanged()
         -- We only care if player has learned/unlearned a profession, the rest is noise
         local unitData = GetMemberInfo(XF.Player.Guild:ID(), XF.Player.Unit:ID())
         if(unitData.profession1ID ~= nil) then
-            local profession = XF.Professions:Get(unitData.profession1ID)
+            local profession = XFO.Professions:Get(unitData.profession1ID)
             if(not profession:Equals(XF.Player.Unit:GetProfession1())) then
                 XF.Player.Unit:Initialize(XF.Player.Unit:ID())
                 XF:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')
@@ -90,7 +90,7 @@ function PlayerEvent:CallbackSkillChanged()
         end
 
         if(unitData.profession2ID ~= nil) then
-            local profession = XF.Professions:Get(unitData.profession2ID)
+            local profession = XFO.Professions:Get(unitData.profession2ID)
             if(not profession:Equals(XF.Player.Unit:GetProfession2())) then
                 XF.Player.Unit:Initialize(XF.Player.Unit:ID())
                 XF:Info(ObjectName, 'Updated player data based on SKILL_LINES_CHANGED event')

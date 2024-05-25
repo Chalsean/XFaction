@@ -96,7 +96,7 @@ function GetMyOrders()
 
                 local professionName = GetProfessionForSkill(myOrder.skillLineAbilityID)
                 if(professionName ~= nil and type(professionName) == 'string') then
-                    local profession = XF.Professions:GetByName(professionName)
+                    local profession = XFO.Professions:Get(professionName)
                     if(profession ~= nil) then
                         order:SetProfession(profession)
                     end

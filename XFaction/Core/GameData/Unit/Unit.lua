@@ -155,11 +155,11 @@ function Unit:Initialize(inMemberID)
     end
 
     if(unitData.profession1ID ~= nil) then
-        self:SetProfession1(XF.Professions:Get(unitData.profession1ID))
+        self:SetProfession1(XFO.Professions:Get(unitData.profession1ID))
     end
 
     if(unitData.profession2ID ~= nil) then
-        self:SetProfession2(XF.Professions:Get(unitData.profession2ID))
+        self:SetProfession2(XFO.Professions:Get(unitData.profession2ID))
     end
 
     local raiderIO = XF.Addons.RaiderIO:Get(self)
