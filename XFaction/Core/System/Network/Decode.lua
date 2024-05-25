@@ -20,11 +20,11 @@ local function DeserializeMessage(inObject, inCompressedData)
 	if(messageData.P ~= nil) then inObject:SetPacketNumber(messageData.P) end
 	if(messageData.Q ~= nil) then inObject:SetTotalPackets(messageData.Q) end
 	if(messageData.V ~= nil) then 
-		local version = XF.Versions:Get(messageData.V)
+		local version = XFO.Versions:Get(messageData.V)
 		if(version == nil) then
-			version = Version:new()
+			version = XFC.Version:new()
 			version:Key(messageData.V)
-			XF.Versions:Add(version)
+			XFO.Versions:Add(version)
 		end
 		inObject:SetVersion(version)
 	end
@@ -104,11 +104,11 @@ function XF:DeserializeUnitData(inData)
 
 	if(deserializedData.Y ~= nil) then unit:SetPvPString(deserializedData.Y) end
 	if(deserializedData.X ~= nil) then 
-		local version = XF.Versions:Get(deserializedData.X)
+		local version = XFO.Versions:Get(deserializedData.X)
 		if(version == nil) then
-			version = Version:new()
+			version = XFC.Version:new()
 			version:Key(deserializedData.X)
-			XF.Versions:Add(version)
+			XFO.Versions:Add(version)
 		end
 		unit:SetVersion(version) 
 	end
