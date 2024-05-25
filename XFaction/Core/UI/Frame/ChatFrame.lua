@@ -71,8 +71,8 @@ function ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, 
     -- Whisper sometimes throws an erronous error, so hide it to avoid confusion for the player
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
         return true
-    elseif(XF.Confederate:Contains(inGUID)) then
-        inMessage = ModifyPlayerChat(inEvent, inMessage, XF.Confederate:Get(inGUID))
+    elseif(XFO.Confederate:Contains(inGUID)) then
+        inMessage = ModifyPlayerChat(inEvent, inMessage, XFO.Confederate:Get(inGUID))
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
@@ -82,8 +82,8 @@ function ChatFrame:AchievementFilter(inEvent, inMessage, arg3, arg4, arg5, arg6,
         return true
     elseif(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XF.Settings.Frames.Chat.Prepend, '')
-    elseif(XF.Confederate:Contains(inGUID)) then
-        inMessage = ModifyPlayerChat(inEvent, inMessage, XF.Confederate:Get(inGUID))
+    elseif(XFO.Confederate:Contains(inGUID)) then
+        inMessage = ModifyPlayerChat(inEvent, inMessage, XFO.Confederate:Get(inGUID))
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end

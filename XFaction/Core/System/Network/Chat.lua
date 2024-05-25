@@ -16,7 +16,7 @@ end
 function Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Enum.Tag.LOCAL = XF.Confederate:Key() .. 'XF'						
+        XF.Enum.Tag.LOCAL = XFO.Confederate:Key() .. 'XF'						
         XF.Events:Add({name = 'ChatMsg', 
                         event = 'CHAT_MSG_ADDON', 
                         callback = XF.Mailbox.Chat.ChatReceive, 

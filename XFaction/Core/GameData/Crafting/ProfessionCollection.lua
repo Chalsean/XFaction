@@ -50,7 +50,7 @@ end
 
 --#region Methods
 function XFC.ProfessionCollection:Get(inKey)
-	assert(type(inKey) == 'string' and type(inKey) == 'number')
+	assert(type(inKey) == 'string' or type(inKey) == 'number')
 	if(type(inKey) == 'string') then
 		for _, profession in self:Iterator() do
 			if(profession:Name() == inKey) then

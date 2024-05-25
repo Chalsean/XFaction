@@ -120,13 +120,13 @@ end
 function XFC.ChannelCollection:CallbackUnitLeftChannel(_, _, _, _, _, _, _, _, channelName, _, _, guid)
 	local self = XFO.Channels
 	if(self:HasLocalChannel()) then
-		if(self:LocalChannel():Key() == channelName and XF.Confederate:Contains(guid)) then
-			local unit = XF.Confederate:Get(guid)
+		if(self:LocalChannel():Key() == channelName and XFO.Confederate:Contains(guid)) then
+			local unit = XFO.Confederate:Get(guid)
 			if(unit:IsOnline() and not unit:GetGuild():Equals(XF.Player.Guild)) then
 				XF:Info(self:ObjectName(), 'Guild member logout via event: ' .. unit:GetUnitName())
 				XF.Frames.System:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:GetUnitName(), unit:GetMainName(), unit:GetGuild(), nil, unit:GetFaction())
-				XF.Confederate:Remove(unit:Key())
-				XF.Confederate:Push(unit)
+				XFO.Confederate:Remove(unit:Key())
+				XFO.Confederate:Push(unit)
 				XF.DataText.Guild:RefreshBroker()
 			end
 		end
@@ -164,10 +164,11 @@ function XFC.ChannelCollection:CallbackSync()
 end
 
 function XFC.ChannelCollection:CallbackUpdateColor(inChannel, inR, inG, inB)
+	local self = XFO.Channels
 	try(function ()
 		if(inChannel) then
 			local channelID = tonumber(inChannel:match("(%d+)$"))
-			local channel = XFO.Channels:Get(channelID)
+			local channel = self:Get(channelID)
 			if(channel ~= nil) then
 				if(XF.Config.Channels[channel:Name()] == nil) then
 					XF.Config.Channels[channel:Name()] = {}

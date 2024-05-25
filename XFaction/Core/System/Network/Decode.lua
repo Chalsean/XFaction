@@ -49,7 +49,7 @@ end
 
 function XF:DeserializeUnitData(inData)
 	local deserializedData = unpickle(inData)
-	local unit = XF.Confederate:Pop()
+	local unit = XFO.Confederate:Pop()
 	unit:IsRunningAddon(true)
 	unit:SetRace(XFO.Races:Get(deserializedData.A))
 	if(deserializedData.B ~= nil) then unit:SetAchievementPoints(deserializedData.B) end

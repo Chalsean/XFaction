@@ -56,7 +56,7 @@ function XF:SetupRealms()
 		Compress = true,
 	}
 	
-	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XFO.Regions:GetCurrent():Name())
+	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XFO.Regions:Current():Name())
 	for _, realm in XFO.Realms:SortedIterator() do
 		table.insert(XF.Cache.Setup.Realms, {
 			id = realm:ID(),
@@ -119,8 +119,8 @@ function XF:SetupMenus()
 		end
 
 		--#region Confederate Menu
-		XF.Cache.Setup.Confederate.Initials = XF.Confederate:GetInitials()
-		XF.Cache.Setup.Confederate.Name = XF.Confederate:Name()
+		XF.Cache.Setup.Confederate.Initials = XFO.Confederate:Initials()
+		XF.Cache.Setup.Confederate.Name = XFO.Confederate:Name()
 		XF.Cache.Setup.Confederate.ChannelName = XF.Cache.Channel.Name
 		XF.Cache.Setup.Confederate.Password = XF.Cache.Channel.Password
 		--#endregion
@@ -202,7 +202,7 @@ function XF:SetupMenus()
 		--#endregion
 
 		--#region Team Menu
-		if(XFO.HasObject()) then
+		if(XFO.Teams:HasObjects()) then
 			for _, team in XFO.Teams:SortedIterator() do
 				if(team:Initials() ~= '?') then
 					table.insert(XF.Cache.Setup.Teams, {
@@ -780,7 +780,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['CONFEDERATE'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Confederate:Print() end,
+									func = function(info) XFO.Confederate:Print() end,
 								},
 								Continent = {
 									order = 5,
