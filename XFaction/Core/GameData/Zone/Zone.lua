@@ -65,4 +65,8 @@ end
 function XFC.Zone:HasContinent()
     return self.continent ~= nil
 end
+
+function XFC.Zone:HasID()
+    return #self.IDs > 0
+end
 --#endregion

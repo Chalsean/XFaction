@@ -55,12 +55,14 @@ function XFC.VersionCollection:ReverseSortedIterator()
 	return PairsByKeys(self.objects, function(a, b) return not self:Get(a):IsNewer(self:Get(b), true) end)
 end
 
-function XFC.VersionCollection:Add(inKey)
-	assert(type(inKey) == 'string')
-	if(not self:Contains(inKey)) then
+function XFC.VersionCollection:Add(inVersion)
+	assert(type(inVersion) == 'table' and inVersion.__name == 'Version' or type(inVersion) == 'string')
+	if(type(inVersion) == 'table') then
+		self.parent.Add(self, inVersion)
+	elseif(not self:Contains(inKey)) then
 		local version = XFC.Version:new()
 		version:Initialize()
-		version:Key(inKey)
+		version:Key(inVersion)
 		self.parent.Add(self, version)
 	end
 end

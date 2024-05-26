@@ -23,7 +23,7 @@ function Chat:Initialize()
             event = 'CHAT_MSG_ADDON', 
             callback = XF.Mailbox.Chat.ChatReceive, 
             instance = true
-        }
+        })
         XF.Events:Add({
             name = 'GuildChat', 
             event = 'CHAT_MSG_GUILD', 
@@ -31,7 +31,6 @@ function Chat:Initialize()
             instance = true
         })
         self:IsInitialized(true)
-    )        
     end
     return self:IsInitialized()
 end

@@ -257,31 +257,6 @@ function XF:SetupMenus()
 	end
 end
 
-local function IsMultipleOnTarget()
-	local targets = {}
-	for i, guild in ipairs(XF.Cache.Setup.Guilds) do
-		if(guild.initials ~= nil and guild.name ~= nil and guild.realm ~= nil and guild.faction ~= nil) then
-			local target = guild.realm .. guild.faction
-			if(targets[target]) then
-				return true
-			else
-				targets[target] = true
-			end
-			if(RealmXref[tonumber(guild.realm)] ~= nil) then				
-				for j, connection in ipairs(RealmXref[tonumber(guild.realm)].connections) do
-					local target = RealmXref[connection].id .. guild.faction
-					if(targets[target]) then
-						return true
-					else
-						targets[target] = true
-					end
-				end
-			end			
-		end
-	end
-	return false
-end
-
 local function GenerateConfig()
 	local config = 'XFn:' .. XF.Cache.Setup.Confederate.Name .. ':' .. XF.Cache.Setup.Confederate.Initials .. '\n' 
 	--if(IsMultipleOnTarget()) then
@@ -965,15 +940,16 @@ function XF:ConfigInitialize()
 	--#region Changelog
 	try(function ()
 		for versionKey, config in pairs(XF.ChangeLog) do
-			XFO.Versions:AddVersion(versionKey)
+			XFO.Versions:Add(versionKey)
 			XFO.Versions:Get(versionKey):IsInChangeLog(true)
 		end
 
 		local minorOrder = 0
 		local patchOrder = 0
 		for _, version in XFO.Versions:ReverseSortedIterator() do
+			version:Print()
 			if(version:IsInChangeLog()) then
-				local minorVersion = version:GetMajor() .. '.' .. version:GetMinor()
+				local minorVersion = version:Major() .. '.' .. version:Minor()
 				if(XF.Options.args.General.args.ChangeLog.args[minorVersion] == nil) then
 					minorOrder = minorOrder + 1
 					patchOrder = 0
@@ -990,7 +966,7 @@ function XF:ConfigInitialize()
 					order = patchOrder,
 					type = 'group',
 					name = version:Key(),
-					desc = 'Major: ' .. version:GetMajor() .. '\nMinor: ' .. version:GetMinor() .. '\nPatch: ' .. version:GetPatch(),
+					desc = 'Major: ' .. version:Major() .. '\nMinor: ' .. version:Minor() .. '\nPatch: ' .. version:Patch(),
 					args = XF.ChangeLog[version:Key()],
 				}
 				if(version:IsAlpha()) then
@@ -1002,7 +978,7 @@ function XF:ConfigInitialize()
 		end
 
 		-- One time install logic
-		local version = Version:new()
+		local version = XFC.Version:new()
 		if(XF.Config.InstallVersion ~= nil) then
 			version:Key(XF.Config.InstallVersion)
 		else

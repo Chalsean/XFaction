@@ -148,7 +148,7 @@ function Unit:Initialize(inMemberID)
     if(unitData.zone and XFO.Zones:Contains(unitData.zone)) then
         self:SetZone(XFO.Zones:Get(unitData.zone))
     elseif(unitData.zone and strlen(unitData.zone)) then
-        XFO.Zones:AddZone(unitData.zone)
+        XFO.Zones:Add(unitData.zone)
         self:SetZone(XFO.Zones:Get(unitData.zone))
     else
         self:SetZone(XFO.Zones:Get('?'))

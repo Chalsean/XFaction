@@ -2,7 +2,6 @@
     <Script file='Defaults.lua'/>
     <Script file='General.lua'/>
     <Script file='Chat.lua'/>
-    <Script file='Addons.lua'/>
     <Script file='DataText.lua'/>
     <Include file='ChangeLog\LoadChangeLog.xml'/>
 </Ui>

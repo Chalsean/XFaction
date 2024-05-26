@@ -71,7 +71,7 @@ function XF:CoreInit()
 
 	-- These will execute "in-parallel" with remainder of setup as they are not time critical nor is anything dependent upon them
 	try(function ()		
-		XF.Player.InInstance = XFF.PlayerIsInInstances()
+		XF.Player.InInstance = XFF.PlayerIsInInstance()
 		
 		XF.DataText.Guild:Initialize()
 		XF.DataText.Links:Initialize()

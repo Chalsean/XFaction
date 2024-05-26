@@ -125,7 +125,7 @@ function DTMetrics:OnEnter(this)
 	local line = self.tooltip:AddLine()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self.headerFont, 'LEFT', 3)
 	line = self.tooltip:AddLine()
-	local calendar = XFO.Metrics:GetStartCalendar()
+	local calendar = XFO.Metrics:StartCalendar()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self.headerFont, 'LEFT', 3)
 
 	line = self.tooltip:AddLine()
@@ -147,7 +147,7 @@ function DTMetrics:OnEnter(this)
 	if(XF.Initialized) then
 		for _, metric in XFO.Metrics:Iterator() do
 			self.tooltip:SetCell(line, 1, metric:Name(), self.regularFont, 'LEFT')
-			self.tooltip:SetCell(line, 2, metric:GetCount(), self.regularFont, 'CENTER')
+			self.tooltip:SetCell(line, 2, metric:Count(), self.regularFont, 'CENTER')
 			self.tooltip:SetCell(line, 3, format("%.2f", metric:GetAverage(XF.Config.DataText.Metric.Rate)), self.regularFont, 'RIGHT')
 			line = self.tooltip:AddLine()
 		end

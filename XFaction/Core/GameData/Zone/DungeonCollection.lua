@@ -49,7 +49,7 @@ function XFC.DungeonCollection:Initialize()
         XF.Events:Add({
             name = 'Instance', 
             event = 'PLAYER_ENTERING_WORLD', 
-            callback = XF.Handlers.PlayerEvent.CallbackInstance, 
+            callback = XFO.Dungeons.CallbackInstance, 
             instance = true
         })
 

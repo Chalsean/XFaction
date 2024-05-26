@@ -157,7 +157,7 @@ local function PreSort()
 			end
 
 			if(unit:HasZone()) then
-				unitData.Zone = unit:GetZone():GetLocaleName()
+				unitData.Zone = unit:GetZone():LocaleName()
 			else
 				unitData.Zone = unit:GetZoneName()
 			end

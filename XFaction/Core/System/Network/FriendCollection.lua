@@ -26,7 +26,7 @@ function FriendCollection:Initialize()
 		XF.Events:Add({
             name = 'Friend', 
             event = 'BN_FRIEND_INFO_CHANGED', 
-            callback = XFO.Friends.CheckFriends, 
+            callback = XF.Friends.CheckFriends, 
             instance = true,
             groupDelta = XF.Settings.Network.BNet.FriendTimer
         })
@@ -157,7 +157,7 @@ function FriendCollection:CheckFriend(inKey)
 end
 
 function FriendCollection:CheckFriends()
-	local self = XFO.Friends
+	local self = XF.Friends
 	try(function ()
 		for i = 1, GetFriendCount() do
 			self:CheckFriend(i)
