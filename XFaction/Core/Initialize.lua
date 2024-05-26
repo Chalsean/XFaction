@@ -65,13 +65,13 @@ function XF:CoreInit()
 	
 	-- Wrappers	
 	XF.Hooks = HookCollection:new(); XF.Hooks:Initialize()
-	XF.Metrics = MetricCollection:new(); XF.Metrics:Initialize()	
+	XFO.Metrics = XFC.MetricCollection:new(); XFO.Metrics:Initialize()	
 	XF.Timers = TimerCollection:new(); XF.Timers:Initialize()
 	XF.Handlers.TimerEvent:Initialize()
 
 	-- These will execute "in-parallel" with remainder of setup as they are not time critical nor is anything dependent upon them
 	try(function ()		
-		XF.Player.InInstance = IsInInstance()
+		XF.Player.InInstance = XFF.PlayerIsInInstances()
 		
 		XF.DataText.Guild:Initialize()
 		XF.DataText.Links:Initialize()

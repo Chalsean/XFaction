@@ -80,7 +80,7 @@ function Chat:Send(inMessage)
     for index, packet in ipairs (packets) do
         XF:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
         XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
-        XF.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
     --#endregion
 end

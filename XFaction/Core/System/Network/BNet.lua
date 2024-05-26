@@ -75,7 +75,7 @@ function BNet:Send(inMessage)
                 XF:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:Name(), friend:GetGameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 XF.Lib.BCTL:BNSendGameData('NORMAL', XF.Enum.Tag.BNET, packet, _, friend:GetGameID())
-                XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
+                XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(friend:GetTarget())
         end).
@@ -119,7 +119,7 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
     try(function ()
         if(inEncodedMessage:sub(1, 4) == 'PING') then
             XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'RE:PING', _, inSender)
-            XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
+            XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
         elseif(inEncodedMessage:sub(1,7) ~= 'RE:PING') then
             XF.Mailbox.BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    
         end        

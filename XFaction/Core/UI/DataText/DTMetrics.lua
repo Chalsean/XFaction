@@ -74,25 +74,25 @@ function DTMetrics:RefreshBroker()
 		local text = ''
 		local delimiter = false
 		if(XF.Config.DataText.Metric.Total) then
-			text = text .. format('|cffffffff%d|r', XF.Metrics:Get(XF.Enum.Metric.Messages):GetCount())
+			text = text .. format('|cffffffff%d|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):Count())
 			delimiter = true
 		end
 
 		if(XF.Config.DataText.Metric.Average) then
 			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffffffff%.2f|r', XF.Metrics:Get(XF.Enum.Metric.Messages):GetAverage(XF.Config.DataText.Metric.Rate))
+			text = text .. format('|cffffffff%.2f|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):GetAverage(XF.Config.DataText.Metric.Rate))
 			delimiter = true
 		end
 
 		if(XF.Config.DataText.Metric.Error) then
 			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffFF4700%d|r', XF.Metrics:Get(XF.Enum.Metric.Error):GetCount())
+			text = text .. format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):Count())
 			delimiter = true
 		end
 
 		if(XF.Config.DataText.Metric.Warning) then
 			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffffff00%d|r', XF.Metrics:Get(XF.Enum.Metric.Warning):GetCount())
+			text = text .. format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):Count())
 			delimiter = true
 		end
 		self.ldbObject.text = text
@@ -125,7 +125,7 @@ function DTMetrics:OnEnter(this)
 	local line = self.tooltip:AddLine()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self.headerFont, 'LEFT', 3)
 	line = self.tooltip:AddLine()
-	local calendar = XF.Metrics:GetStartCalendar()
+	local calendar = XFO.Metrics:GetStartCalendar()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self.headerFont, 'LEFT', 3)
 
 	line = self.tooltip:AddLine()
@@ -145,7 +145,7 @@ function DTMetrics:OnEnter(this)
 
 	--#region Populate Table
 	if(XF.Initialized) then
-		for _, metric in XF.Metrics:Iterator() do
+		for _, metric in XFO.Metrics:Iterator() do
 			self.tooltip:SetCell(line, 1, metric:Name(), self.regularFont, 'LEFT')
 			self.tooltip:SetCell(line, 2, metric:GetCount(), self.regularFont, 'CENTER')
 			self.tooltip:SetCell(line, 3, format("%.2f", metric:GetAverage(XF.Config.DataText.Metric.Rate)), self.regularFont, 'RIGHT')

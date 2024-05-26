@@ -152,7 +152,7 @@ end
 function Friend:Ping()
     XF:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
     XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, self:GetGameID())
-    XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
+    XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
 end
 --#endregion
 
