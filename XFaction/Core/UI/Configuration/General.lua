@@ -947,7 +947,6 @@ function XF:ConfigInitialize()
 		local minorOrder = 0
 		local patchOrder = 0
 		for _, version in XFO.Versions:ReverseSortedIterator() do
-			version:Print()
 			if(version:IsInChangeLog()) then
 				local minorVersion = version:Major() .. '.' .. version:Minor()
 				if(XF.Options.args.General.args.ChangeLog.args[minorVersion] == nil) then
