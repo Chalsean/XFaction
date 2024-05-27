@@ -123,9 +123,6 @@ XF.Settings = {
 	Confederate = {
 		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
 		UnitScan = 60,         -- Seconds between offline checks
-		DefaultTeams = {
-			['?'] = 'Unknown',
-		},
 		DefaultRealms = {
 			[0] = 'Torghast',
 		}

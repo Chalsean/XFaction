@@ -137,11 +137,11 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     end
 
     if(inMessageTag == XF.Enum.Tag.LOCAL) then
-        XF.Metrics:Get(XF.Enum.Metric.ChannelReceive):Increment()
-        XF.Metrics:Get(XF.Enum.Metric.Messages):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.ChannelReceive):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.Messages):Increment()
     else
-        XF.Metrics:Get(XF.Enum.Metric.BNetReceive):Increment()
-        XF.Metrics:Get(XF.Enum.Metric.Messages):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.BNetReceive):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.Messages):Increment()
     end
 
     -- Ensure this message has not already been processed
@@ -251,17 +251,17 @@ function Mailbox:Process(inMessage, inMessageTag)
     if(inMessage:GetSubject() == XF.Enum.Message.LOGOUT) then
         if(XF.Player.Guild:Equals(inMessage:GetGuild())) then
             -- In case we get a message before scan
-            if(not XF.Confederate:Contains(inMessage:GetFrom())) then
+            if(not XFO.Confederate:Contains(inMessage:GetFrom())) then
                 XF.Frames.System:DisplayLogoutMessage(inMessage)
             else
-                if(XF.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
+                if(XFO.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
                     XF.Frames.System:DisplayLogoutMessage(inMessage)
                 end
-                XF.Confederate:OfflineUnit(inMessage:GetFrom())
+                XFO.Confederate:OfflineUnit(inMessage:GetFrom())
             end
         else
             XF.Frames.System:DisplayLogoutMessage(inMessage)
-            XF.Confederate:Remove(inMessage:GetFrom())
+            XFO.Confederate:Remove(inMessage:GetFrom())
         end
         XF.DataText.Guild:RefreshBroker()
         return
@@ -291,10 +291,10 @@ function Mailbox:Process(inMessage, inMessageTag)
     if(inMessage:HasUnitData()) then
         local unitData = inMessage:GetData()
         if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and 
-          (not XF.Confederate:Contains(unitData:Key()) or XF.Confederate:Get(unitData:Key()):IsOffline())) then
+          (not XFO.Confederate:Contains(unitData:Key()) or XFO.Confederate:Get(unitData:Key()):IsOffline())) then
             XF.Frames.System:DisplayLoginMessage(inMessage)
         end
-        XF.Confederate:Add(unitData)
+        XFO.Confederate:Add(unitData)
         XF:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:GetUnitName())
         XF.DataText.Guild:RefreshBroker()
     end

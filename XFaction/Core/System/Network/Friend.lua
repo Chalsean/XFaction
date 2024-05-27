@@ -152,7 +152,7 @@ end
 function Friend:Ping()
     XF:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
     XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, self:GetGameID())
-    XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
+    XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
 end
 --#endregion
 
@@ -166,7 +166,7 @@ function Friend:SetFromAccountInfo(inAccountInfo)
     self:SetTag(inAccountInfo.battleTag)
     self:Name(inAccountInfo.gameAccountInfo.characterName)
 
-    local realm = XF.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
+    local realm = XFO.Realms:Get(inAccountInfo.gameAccountInfo.realmID)
     local faction = XFO.Factions:Get(inAccountInfo.gameAccountInfo.factionName)
     local target = XF.Targets:GetByRealmFaction(realm, faction)
     self:SetTarget(target)

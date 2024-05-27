@@ -1,41 +1,50 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Confederate'
-local GuildRosterEvent = C_GuildInfo.GuildRoster
 
-Confederate = XFC.Factory:newChildConstructor()
+XFC.Confederate = XFC.Factory:newChildConstructor()
 
 --#region Constructors
-function Confederate:new()
-    local object = Confederate.parent.new(self)
+function XFC.Confederate:new()
+    local object = XFC.Confederate.parent.new(self)
 	object.__name = ObjectName
     object.onlineCount = 0
-	object.countByTarget = {}
 	object.guildInfo = nil
-    object.modifyGuildInfo = nil
     return object
 end
 
-function Confederate:NewObject()
+function XFC.Confederate:NewObject()
     return Unit:new()
 end
---#endregion
 
---#region Initializers
-function Confederate:Initialize()
+function XFC.Confederate:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        -- If this is a reload, restore non-local guild members
-        -- TODO: is this used anymore?
-        try(function ()
-            self:CanModifyGuildInfo(CanEditGuildInfo())
-        end).
-        catch(function (err)
-            XF:Warn(self:ObjectName(), err)
-        end)
+
         self:Name(XF.Cache.Confederate.Name)
         self:Key(XF.Cache.Confederate.Key)
+
         XF:Info(self:ObjectName(), 'Initialized confederate %s <%s>', self:Name(), self:Key())
+
+        -- This is the local guild roster scan for those not running the addon
+        XF.Events:Add({
+            name = 'Roster', 
+            event = 'GUILD_ROSTER_UPDATE', 
+            callback = XFO.Confederate.LocalRoster, 
+            instance = true,
+            groupDelta = XF.Settings.LocalGuild.ScanTimer
+        })
+        
+        XF.Timers:Add({
+            name = 'Offline',
+            delta = XF.Settings.Confederate.UnitScan, 
+            callback = XFO.Confederate.Offline, 
+            repeater = true, 
+            instance = true
+        })    
+        
+        -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
+        XFF.GuildQueryServer()
 
         self:IsInitialized(true)
 	end
@@ -43,26 +52,33 @@ function Confederate:Initialize()
 end
 --#endregion
 
---#region Hash
-function Confederate:Add(inUnit)
+--#region Properties
+function XFC.Confederate:Initials()
+    return self:Key()
+end
+
+function XFC.Confederate:OnlineCount()
+    return self.onlineCount
+end
+--#endregion
+
+--#region Methods
+function XFC.Confederate:Add(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
     
     if(self:Contains(inUnit:Key())) then
-        local oldData = self:Get(inUnit:Key())
-        self.objects[inUnit:Key()] = inUnit
+        local oldData = self:Get(inUnit:Key())        
         if(oldData:IsOffline() and inUnit:IsOnline()) then
             self.onlineCount = self.onlineCount + 1
-        elseif(oldData:IsOnline() and inUnit:IsOffline()) then
-            self.onlineCount = self.onlineCount - 1
+        -- elseif(oldData:IsOnline()) then
+        --     for guid in oldData:Links() do
+        --         inUnit:AddLink(guid)
+        --     end
         end
+        self.parent.Add(self, inUnit)
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
-        local target = XF.Targets:GetByGuild(inUnit:GetGuild())
-        if(self.countByTarget[target:Key()] == nil) then
-            self.countByTarget[target:Key()] = 0
-        end
-        self.countByTarget[target:Key()] = self.countByTarget[target:Key()] + 1
         if(inUnit:IsOnline()) then
             self.onlineCount = self.onlineCount + 1
         end
@@ -73,125 +89,176 @@ function Confederate:Add(inUnit)
     end
 end
 
-function Confederate:Remove(inKey)
-    assert(type(inKey) == 'string')
-    if(self:Contains(inKey)) then
-        local unit = self:Get(inKey)
-        self.parent.Remove(self, inKey)
-        if(XF.Nodes:Contains(unit:Name())) then
-            XF.Nodes:Remove(XF.Nodes:Get(unit:Name()))
-        end
-        local target = XF.Targets:GetByGuild(unit:GetGuild())
-        self.countByTarget[target:Key()] = self.countByTarget[target:Key()] - 1
-        if(unit:IsOnline()) then
-            self.onlineCount = self.onlineCount - 1
-        end
-        if(unit:HasRaiderIO()) then
-            XF.Addons.RaiderIO:Remove(unit:GetRaiderIO())
-        end
-        self:Push(unit)
+function XFC.Confederate:Upsert(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
+    if(self:Contains(inUnit:Key()) and inUnit:GetTimeStamp() < self:Get(inUnit:Key()):GetTimeStamp()) then
+        return false
     end
+    self:Add(inUnit)
+    return true
 end
 
-function Confederate:RemoveAll()
-    try(function ()
-        if(self:IsInitialized()) then
-            for _, unit in self:Iterator() do
-                self:Remove(unit:Key())
-            end
-        end
-    end).
-    catch(function (err)
-        XF:Error(self:ObjectName(), err)
-    end)
-end
---#endregion
+function XFC.Confederate:Get(inKey, inRealmID, inFactionID)
+    assert(type(inKey) == 'string')
+    assert(type(inRealmID) == 'number' or inRealmID == nil, 'argument must be number or nil')
+    assert(type(inFactionID) == 'number' or inFactionID == nil, 'argument must be number or nil')
 
---#region Accessors
-function Confederate:GetUnitByName(inName)
-    assert(type(inName) == 'string')
+    if(inRealmID == nil) then
+        return self.parent.Get(self, inKey)
+    end
+
+    local realm = XFO.Realms:Get(inRealmID)
+    local faction = XFO.Factions:Get(inFactionID)
+
     for _, unit in self:Iterator() do
-        if(unit:Name() == inName) then
+        if(XF:ObjectsEquals(realm, unit:Guild():Realm()) and XF:ObjectsEquals(faction, unit:Race():Faction()) and unit:Name() == inKey) then
             return unit
         end
     end
 end
 
-function Confederate:GetCountByTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    return self.countByTarget[inTarget:Key()] or 0
-end
-
-function Confederate:CanModifyGuildInfo(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.modifyGuildInfo = inBoolean
-    elseif(not self:IsInitialized()) then
-        self:Initialize()
-    end
-    return self.modifyGuildInfo
-end
-
-function Confederate:GetInitials()
-    return self:Key()
-end
-
-function Confederate:GetOnlineCount()
-    return self.onlineCount
-end
---#endregion
-
---#region Janitorial
-function Confederate:Backup()
+function XFC.Confederate:Backup()
     try(function ()
         if(self:IsInitialized()) then
             for unitKey, unit in self:Iterator() do
-                if(unit:IsRunningAddon() and not unit:IsPlayer()) then
-                    XF.Cache.Backup.Confederate[unitKey] = {}
-                    local serializedData = XF:SerializeUnitData(unit)
-                    XF.Cache.Backup.Confederate[unitKey] = serializedData
+                if(unit:IsOnline() and unit:IsRunningAddon() and not unit:IsPlayer()) then
+                    XF.Cache.Backup.Confederate[unitKey] = XF:SerializeUnitData(unit)
                 end
             end
         end
     end).
-    catch(function (err)
-        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create confederate backup before reload: ' .. err
+    catch(function (inErrorMessage)
+        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create confederate backup before reload: ' .. inErrorMessage
     end)
 end
 
-function Confederate:Restore()
+function XFC.Confederate:Restore()
     if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
     for _, data in pairs (XF.Cache.Backup.Confederate) do
-        try(function ()
-            local unitData = XF:DeserializeUnitData(data)
-            self:Add(unitData)
-            XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unitData:GetUnitName())
-        end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
-        end)
+        local unit = XF:DeserializeUnitData(data)
+        self:Add(unit)
+        XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:GetUnitName())
     end
     XF.Cache.Backup.Confederate = {}
 end
 
-function Confederate:OfflineUnit(inKey)
-    assert(type(inKey) == 'string')
-    if(self:Contains(inKey)) then
-        self:Get(inKey):SetPresence(Enum.ClubMemberPresence.Offline)
-        self.onlineCount = self.onlineCount - 1
-    end
-end
-
-function Confederate:OfflineUnits(inEpochTime)
-    assert(type(inEpochTime) == 'number')
-    for _, unit in self:Iterator() do
-        if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < inEpochTime) then
-            if(XF.Player.Guild:Equals(unit:GetGuild())) then
-                self:OfflineUnit(unit:Key())
-            else
-                self:Remove(unit:Key())
+function XFC.Confederate:Offline(inKey)
+    --assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil')
+    local self = XFO.Confederate -- Callback
+    if(inKey ~= nil) then
+        if(self:Contains(inKey)) then
+            local unit = self:Get(inKey)
+            unit:SetPresence(Enum.ClubMemberPresence.Offline)
+            --unit:RemoveAllLinks()
+            self.onlineCount = self.onlineCount - 1
+        end
+    else
+        local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
+        for _, unit in self:Iterator() do
+            if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < ttl) then
+                self:Offline(unit:Key())
             end
         end
     end
+end
+
+-- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
+function XFC.Confederate:LocalRoster()
+    local self = XFO.Confederate -- Callback
+    XF:Trace(self:ObjectName(), 'Scanning local guild roster')
+    for _, memberID in pairs (XFF.GuildGetMembers(XF.Player.Guild:ID(), XF.Player.Guild:StreamID())) do
+        local unit = nil
+        try(function ()
+            -- Every logic branch should either add, remove or push, otherwise there will be a memory leak
+            unit = self:Pop()
+            unit:Initialize(memberID)
+            if(unit:IsInitialized()) then
+                if(self:Contains(unit:Key())) then
+                    local old = self:Get(unit:Key())
+                    if(old:IsOnline() and unit:IsOffline()) then
+                        XF:Info(self:ObjectName(), 'Guild member logout via scan: %s', unit:GetUnitName())
+                        if(XF.Config.Chat.Login.Enable) then
+                            XF.Frames.System:DisplayLogout(old:Name())
+                        end
+                        self:Offline(old:Key())
+                        self:Push(unit)
+                    elseif(unit:IsOnline()) then
+                        if(old:IsOffline()) then
+                            XF:Info(self:ObjectName(), 'Guild member login via scan: %s', unit:GetUnitName())
+                            if(XF.Config.Chat.Login.Enable) then
+                                XF.Frames.System:DisplayLogin(unit)
+                            end
+                            self:Add(unit)
+                        elseif(not old:IsRunningAddon()) then
+                            self:Add(unit)
+                        else
+                            -- Other player is online and running addon, they will have more info than we get from a scan like spec                            
+                            self:Push(unit)
+                        end
+                    else
+                        self:Push(unit)
+                    end
+                -- First time scan (i.e. login) do not notify
+                else
+                    self:Add(unit)
+                end
+            -- If it didnt initialize properly then we dont really know their status, so do nothing
+            else
+                self:Push(unit)
+            end
+        end).
+        catch(function (err)
+            XF:Warn(self:ObjectName(), err)
+            self:Push(unit)
+        end)
+    end
+    XF.DataText.Guild:RefreshBroker()
+end
+
+function XFC.Confederate:ProcessMessage(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message', 'ProcessMessage method requires Message object for parameter')
+    if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
+        -- Guild scan will handle local guild logout notifications
+        if(not XF.Player.Guild:Equals(inMessage:Guild())) then
+            XF.Frames.System:DisplayLogout(inMessage:Name())
+            if(self:Contains(inMessage:From())) then
+                local unit = self:Get(inMessage:From())
+                self:Offline(unit:Key())
+                self:Remove(unit:Key())
+                self:Push(unit)
+            end
+        end
+    else
+        local unit = nil
+        try(function()
+            unit = self:Pop()
+            unit:Deserialize(inMessage:Data())
+
+            -- Process LOGIN message
+            if(inMessage:Subject() == XF.Enum.Message.LOGIN and not XF.Player.Guild:Equals(inMessage:Guild())) then
+                XF.Frames.System:DisplayLogin(unit)
+            end
+
+            -- Is the unit data newer?
+            if(self:Contains(unit:Key())) then
+                if(self:Get(unit:Key()):GetTimeStamp() < unit:GetTimeStamp()) then
+                    XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unit:GetUnitName())
+                    self:Add(unit)
+                else
+                    self:Push(unit)
+                end
+            else
+                XF:Info(self:ObjectName(), 'Added unit [%s] information based on message received', unit:GetUnitName())
+                self:Add(unit)
+            end
+        end).
+        catch(function(err)
+            XF:Warn(self:ObjectName(), err)
+            if(unit ~= nil) then
+                self:Push(unit)
+            end
+        end)        
+    end
+    XF.DataText.Guild:RefreshBroker()
 end
 --#endregion

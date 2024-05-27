@@ -2,30 +2,29 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Region'
 
-Region = XFC.Object:newChildConstructor()
+XFC.Region = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Region:new()
-    local object = Region.parent.new(self)
+function XFC.Region:new()
+    local object = XFC.Region.parent.new(self)
     object.__name = ObjectName
-    object.current = false
+    object.current = nil
     return object
 end
 --#endregion
 
---#region Print
-function Region:Print()
-    self:ParentPrint()
-    XF:Debug(ObjectName, '  current (' .. type(self.current) .. '): ' .. tostring(self.current))
+--#region Properties
+function XFC.Region:IsCurrent()
+    if(self.current == nil) then
+        self.current = self:ID() == XFF.RegionGetCurrent()
+    end
+    return self.current
 end
 --#endregion
 
---#region Accessors
-function Region:IsCurrent(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
-    if(inBoolean ~= nil) then
-        self.current = inBoolean
-    end
-    return self.current
+--#region Methods
+function XFC.Region:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  current (' .. type(self.current) .. '): ' .. tostring(self.current))
 end
 --#endregion

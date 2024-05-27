@@ -85,17 +85,14 @@ function TimerEvent:CallbackLoginGuild()
 				XF.Timers:Remove('LoginGuild')
 
 				-- Confederate setup via guild info
-				XF.Guilds:Initialize(guildID)
-				XF.Confederate:Initialize()
-				XF.Guilds:SetPlayerGuild()
+				XFO.Guilds:Initialize(guildID)
+				XFO.Confederate:Initialize()
+				XFO.Guilds:SetPlayerGuild()
 				XF.Targets:Initialize()	
 
 				-- Frame inits were waiting on Confederate init
 				XF.Frames.Chat:Initialize()
 				XF.Frames.System:Initialize()
-
-				
-				XF.Professions:Initialize()
 
 				-- Start network
 				XFO.Channels:Initialize()
@@ -106,7 +103,7 @@ function TimerEvent:CallbackLoginGuild()
 				XF.Mailbox.BNet:Initialize()
 
 				if(XF.Cache.UIReload) then
-					XF.Confederate:Restore()					
+					XFO.Confederate:Restore()					
 				end
 
 				XF.Timers:Get('LoginPlayer'):Start()
@@ -127,13 +124,13 @@ function TimerEvent:CallbackLoginPlayer()
 		RequestMapsFromServer()
 
 		-- Need the player data to continue setup
-		local unitData = XF.Confederate:Pop()
+		local unitData = XFO.Confederate:Pop()
 		unitData:Initialize()
 		if(unitData:IsInitialized()) then
 			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
 			XF.Timers:Remove('LoginPlayer')
 
-			XF.Confederate:Add(unitData)
+			XFO.Confederate:Add(unitData)
 			XF.Player.Unit:Print()
 
 			-- By this point all the channels should have been joined
@@ -184,7 +181,7 @@ function TimerEvent:CallbackLoginPlayer()
 				start = true
 			})
 		else
-			XF.Confederate:Push(unitData)
+			XFO.Confederate:Push(unitData)
 		end
 	end).
 	catch(function (inErrorMessage)
@@ -211,7 +208,7 @@ end
 -- If you haven't heard from a unit in X minutes, set them to offline
 function TimerEvent:CallbackOffline()
 	try(function ()
-		XF.Confederate:OfflineUnits(ServerTime() - XF.Settings.Confederate.UnitStale)
+		XFO.Confederate:OfflineUnits(ServerTime() - XF.Settings.Confederate.UnitStale)
 	end).
 	catch(function (inErrorMessage)
 		XF:Warn(ObjectName, inErrorMessage)

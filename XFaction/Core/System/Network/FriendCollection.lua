@@ -22,18 +22,15 @@ end
 function FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		try(function ()
-			for i = 1, GetFriendCount() do
-				self:CheckFriend(i)
-			end
-			if(XF.Cache.UIReload) then
-				self:Restore()
-			end
-			self:IsInitialized(true)
-		end).
-		catch(function (inErrorMessage)
-			XF:Warn(ObjectName, inErrorMessage)
-		end)
+		self:CheckFriends()
+		XF.Events:Add({
+            name = 'Friend', 
+            event = 'BN_FRIEND_INFO_CHANGED', 
+            callback = XF.Friends.CheckFriends, 
+            instance = true,
+            groupDelta = XF.Settings.Network.BNet.FriendTimer
+        })
+		self:IsInitialized(true)
 	end
 end
 --#endregion
@@ -100,7 +97,7 @@ local function CanLink(inAccountInfo)
 	   inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
 
 		-- If player is in Torghast, don't link
-		local realm = XF.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
+		local realm = XFO.Realms:Get(inAccountInfo.gameAccountInfo.realmID)
 		if(realm == nil or realm:ID() == 0) then return false end
 
 		-- We don't want to link to neutral faction toons
@@ -160,13 +157,14 @@ function FriendCollection:CheckFriend(inKey)
 end
 
 function FriendCollection:CheckFriends()
+	local self = XF.Friends
 	try(function ()
 		for i = 1, GetFriendCount() do
 			self:CheckFriend(i)
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Warn(self:ObjectName(), err)
 	end)
 end
 --#endregion

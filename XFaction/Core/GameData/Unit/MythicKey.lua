@@ -15,14 +15,12 @@ function XFC.MythicKey:new()
 end
 --#endregion
 
---#region Print
+--#region Methods
 function XFC.MythicKey:Print()
     self:ParentPrint()
     if(self:HasDungeon()) then self:GetDungeon():Print() end
 end
---#endregion
 
---#region Accessors
 function XFC.MythicKey:Refresh()
     local level = GetKeyLevel()
     if(level ~= nil) then

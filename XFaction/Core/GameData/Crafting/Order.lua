@@ -163,7 +163,7 @@ function XFC.Order:Decode(inData)
     self:ID(inData.O)
     self:SetType(inData.T)
     self:SetCustomerUnit(XF:DeserializeUnitData(inData.C))    
-    self:SetProfession(XF.Professions:Get(inData.P))
+    self:SetProfession(XFO.Professions:Get(inData.P))
     if(inData.Q ~= nil) then
         self:SetQuality(inData.Q)
     end

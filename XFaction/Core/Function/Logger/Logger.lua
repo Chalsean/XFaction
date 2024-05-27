@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local FormatSet = false
 local VerbosityLabel = {'ERR~', 'WARN~', 'OK~', '', ''}
 
@@ -27,16 +28,16 @@ end
 function XF:Error(inSubCategory, ...)
 	Log(1, inSubCategory, ...)
 	Log(1, inSubCategory, debugstack())
-	if(XF.Metrics ~= nil) then
-		XF.Metrics:Get(XF.Enum.Metric.Error):Increment()
+	if(XFO.Metrics ~= nil) then
+		XFO.Metrics:Get(XF.Enum.Metric.Error):Increment()
 	end
 end
 
 function XF:Warn(inSubCategory, ...)
 	Log(2, inSubCategory, ...)
 	Log(2, inSubCategory, debugstack())
-	if(XF.Metrics ~= nil) then
-		XF.Metrics:Get(XF.Enum.Metric.Warning):Increment()
+	if(XFO.Metrics ~= nil) then
+		XFO.Metrics:Get(XF.Enum.Metric.Warning):Increment()
 	end
 end
 

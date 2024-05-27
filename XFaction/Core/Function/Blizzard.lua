@@ -39,6 +39,9 @@ XFF.RealmGetName = GetRealmName
 -- Region
 XFF.RegionGetCurrent = GetCurrentRegion
 
+-- Zone
+XFF.ZoneGetCurrent = GetRealZoneText
+
 -- Spec
 XFF.SpecGetGroupID = GetSpecialization
 XFF.SpecGetID = GetSpecializationInfo
@@ -50,6 +53,7 @@ XFF.PlayerGetAchievementLink = GetAchievementLink
 XFF.PlayerGetGUID = UnitGUID
 XFF.PlayerIsInGuild = IsInGuild
 XFF.PlayerIsInCombat = InCombatLockdown
+XFF.PlayerIsInInstance = IsInInstance
 XFF.PlayerGetFaction = UnitFactionGroup
 XFF.PlayerGetPvPRating = GetPersonalRatedInfo
 XFF.PlayerGetGuild = GetGuildInfo
