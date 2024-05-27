@@ -60,6 +60,7 @@ end
 
 --#region Methods
 function XFC.DungeonCollection:CallbackInstance()
+    local self = XFO.Dungeons
     try(function ()
         local inInstance = XFF.PlayerIsInInstance()
         -- Enter instance for first time
