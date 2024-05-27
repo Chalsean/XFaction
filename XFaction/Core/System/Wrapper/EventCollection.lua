@@ -36,13 +36,8 @@ function EventCollection:Initialize()
                                             start = true})
                         end
                     else
-                        try(function()
-                            local _Function = event:GetCallback()
-                            _Function(self, ...)
-                        end).
-                        catch(function(err)
-                            XF:Warn(ObjectName, err)
-                        end)
+                        local _Function = event:GetCallback()
+                        _Function(self, ...)
                     end
                 end
             end
