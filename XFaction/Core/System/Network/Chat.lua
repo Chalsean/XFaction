@@ -108,14 +108,14 @@ function Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTa
             try(function ()
                 message = self:Pop()
                 message:Initialize()
-                message:SetFrom(XF.Player.Unit:GetGUID())
+                message:SetFrom(XF.Player.Unit:GUID())
                 message:SetType(XF.Enum.Network.BROADCAST)
                 message:SetSubject(XF.Enum.Message.GCHAT)
                 message:Name(XF.Player.Unit:Name())
-                message:SetUnitName(XF.Player.Unit:GetUnitName())
+                message:SetUnitName(XF.Player.Unit:UnitName())
                 message:SetGuild(XF.Player.Guild)
-                if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
-                    message:SetMainName(XF.Player.Unit:GetMainName())
+                if(XF.Player.Unit:IsAlt()) then
+                    message:SetMainName(XF.Player.Unit:MainName())
                 end
                 message:SetData(inText)
                 self:Send(message, true)

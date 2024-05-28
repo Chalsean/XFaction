@@ -14,7 +14,7 @@ function XFC.Confederate:new()
 end
 
 function XFC.Confederate:NewObject()
-    return Unit:new()
+    return XFC.Unit:new()
 end
 
 function XFC.Confederate:Initialize()
@@ -90,8 +90,8 @@ function XFC.Confederate:Add(inUnit)
 end
 
 function XFC.Confederate:Upsert(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
-    if(self:Contains(inUnit:Key()) and inUnit:GetTimeStamp() < self:Get(inUnit:Key()):GetTimeStamp()) then
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    if(self:Contains(inUnit:Key()) and inUnit:TimeStamp() < self:Get(inUnit:Key()):TimeStamp()) then
         return false
     end
     self:Add(inUnit)
@@ -100,8 +100,8 @@ end
 
 function XFC.Confederate:Get(inKey, inRealmID, inFactionID)
     assert(type(inKey) == 'string')
-    assert(type(inRealmID) == 'number' or inRealmID == nil, 'argument must be number or nil')
-    assert(type(inFactionID) == 'number' or inFactionID == nil, 'argument must be number or nil')
+    assert(type(inRealmID) == 'number' or inRealmID == nil)
+    assert(type(inFactionID) == 'number' or inFactionID == nil)
 
     if(inRealmID == nil) then
         return self.parent.Get(self, inKey)
@@ -137,7 +137,7 @@ function XFC.Confederate:Restore()
     for _, data in pairs (XF.Cache.Backup.Confederate) do
         local unit = XF:DeserializeUnitData(data)
         self:Add(unit)
-        XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:GetUnitName())
+        XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
     end
     XF.Cache.Backup.Confederate = {}
 end
@@ -148,7 +148,7 @@ function XFC.Confederate:Offline(inKey)
     if(inKey ~= nil) then
         if(self:Contains(inKey)) then
             local unit = self:Get(inKey)
-            unit:SetPresence(Enum.ClubMemberPresence.Offline)
+            unit:Presence(Enum.ClubMemberPresence.Offline)
             self.onlineCount = self.onlineCount - 1
             if(XF.Config.Chat.Login.Enable) then
                 XF.Frames.System:DisplayLogout(unit:Name())
@@ -157,7 +157,7 @@ function XFC.Confederate:Offline(inKey)
     else
         local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
         for _, unit in self:Iterator() do
-            if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < ttl) then
+            if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < ttl) then
                 self:Offline(unit:Key())
             end
         end
@@ -178,12 +178,12 @@ function XFC.Confederate:LocalRoster()
                 if(self:Contains(unit:Key())) then
                     local old = self:Get(unit:Key())
                     if(old:IsOnline() and unit:IsOffline()) then
-                        XF:Info(self:ObjectName(), 'Guild member logout via scan: %s', unit:GetUnitName())
+                        XF:Info(self:ObjectName(), 'Guild member logout via scan: %s', unit:UnitName())
                         self:Offline(old:Key())
                         self:Push(unit)
                     elseif(unit:IsOnline()) then
                         if(old:IsOffline()) then
-                            XF:Info(self:ObjectName(), 'Guild member login via scan: %s', unit:GetUnitName())
+                            XF:Info(self:ObjectName(), 'Guild member login via scan: %s', unit:UnitName())
                             if(XF.Config.Chat.Login.Enable) then
                                 XF.Frames.System:DisplayLogin(unit)
                             end
@@ -240,14 +240,14 @@ function XFC.Confederate:ProcessMessage(inMessage)
 
             -- Is the unit data newer?
             if(self:Contains(unit:Key())) then
-                if(self:Get(unit:Key()):GetTimeStamp() < unit:GetTimeStamp()) then
-                    XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unit:GetUnitName())
+                if(self:Get(unit:Key()):TimeStamp() < unit:TimeStamp()) then
+                    XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unit:UnitName())
                     self:Add(unit)
                 else
                     self:Push(unit)
                 end
             else
-                XF:Info(self:ObjectName(), 'Added unit [%s] information based on message received', unit:GetUnitName())
+                XF:Info(self:ObjectName(), 'Added unit [%s] information based on message received', unit:UnitName())
                 self:Add(unit)
             end
         end).

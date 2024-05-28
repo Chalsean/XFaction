@@ -35,7 +35,7 @@ function Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.targets = {}
-        self:SetFrom(XF.Player.Unit:GetGUID())
+        self:SetFrom(XF.Player.Unit:GUID())
         self:SetTimeStamp(ServerTime())
         self:SetAllTargets()
         self:SetVersion(XF.Version)
@@ -184,7 +184,7 @@ function Message:SetVersion(inVersion)
 end
 
 function Message:IsMyMessage()
-    return XF.Player.Unit:GetGUID() == self:GetFrom()
+    return XF.Player.Unit:GUID() == self:GetFrom()
 end
 
 function Message:GetUnitName()

@@ -107,66 +107,33 @@ local function PreSort()
 	local list = {}
 	for _, unit in XFO.Confederate:Iterator() do
 		if(unit:IsOnline()) then
-			local unitData = {}
+			local data = {}
 
-			unitData.Level = unit:GetLevel()
-			unitData.Realm = unit:GetGuild():Realm():Name()
-			unitData.Guild = unit:GetGuild():Name()		
-			unitData.Name = unit:Name()
-			unitData.UnitName = unit:GetUnitName()
-			unitData.Note = unit:GetNote()
-			unitData.GUID = unit:GetGUID()
-			unitData.Achievement = unit:GetAchievementPoints()
-			unitData.Rank = unit:GetRank()
-			unitData.ItemLevel = unit:GetItemLevel()	
-			unitData.Race = unit:GetRace():Name()
-			if(unit:HasTeam()) then 
-				unitData.Team = unit:GetTeam():Name() 
-			else
-				unitData.Team = 'Unknown'
-			end
-			unitData.Class = unit:GetClass():Hex()
-			unitData.Faction = unit:GetRace():Faction():IconID()
-			unitData.PvP = unit:GetPvP()
+			data.Level = unit:Level()
+			data.Realm = unit:Guild():Realm():Name()
+			data.Guild = unit:Guild():Name()		
+			data.Name = unit:IsAlt() and XF.Config.DataText.Guild.Main and unit:Name() .. ' (' .. unit:MainName() .. ')' or unit:Name()
+			data.UnitName = unit:UnitName()
+			data.Note = unit:Note()
+			data.GUID = unit:GUID()
+			data.Achievement = unit:AchievementPoints()
+			data.Rank = unit:Rank()
+			data.ItemLevel = unit:ItemLevel()	
+			data.Race = unit:Race():Name()
+            data.Team = unit:HasTeam() and unit:Team():Name() or 'Unknown'
+			data.Class = unit:Spec():Class():Hex()
+			data.Faction = unit:Race():Faction():IconID()
+			data.PvP = unit:PvP()
+            data.Version = unit:HasVersion() and unit:Version():Key() or '0.0.0'
+            data.Spec = unit:HasSpec() and unit:Spec():IconID() or nil
+            data.Profession1 = unit:HasProfession1() and unit:Profession1():IconID() or nil
+            data.Profession2 = unit:HasProfession2() and unit:Profession2():IconID() or nil
+            data.Zone = unit:HasZone() and unit:Zone():LocaleName() or nil
+            data.MythicKey = unit:HasMythicKey() and unit:MythicKey():Dungeon():Name() .. ' +' .. unit:MythicKey():ID() or nil
+            data.Raid = unit:HasRaiderIO() and unit:RaiderIO():GetRaid() or nil
+            data.Dungeon = unit:HasRaiderIO() and unit:RaiderIO():GetDungeon() or nil
 
-			if(unit:HasRaiderIO()) then
-				unitData.Raid = unit:GetRaiderIO():GetRaid()
-				unitData.Dungeon = unit:GetRaiderIO():GetDungeon()			
-			end
-
-			if(unit:HasVersion()) then
-				unitData.Version = unit:GetVersion():Key()
-			else
-				unitData.Version = '0.0.0'
-			end
-
-			if(unit:IsAlt() and unit:HasMainName() and XF.Config.DataText.Guild.Main) then
-				unitData.Name = unit:Name() .. ' (' .. unit:GetMainName() .. ')'
-			end
-
-			if(unit:HasSpec()) then
-				unitData.Spec = unit:GetSpec():IconID()
-			end
-
-			if(unit:HasProfession1()) then
-				unitData.Profession1 = unit:GetProfession1():IconID()
-			end
-
-			if(unit:HasProfession2()) then
-				unitData.Profession2 = unit:GetProfession2():IconID()
-			end
-
-			if(unit:HasZone()) then
-				unitData.Zone = unit:GetZone():LocaleName()
-			else
-				unitData.Zone = unit:GetZoneName()
-			end
-
-			if(unit:HasMythicKey() and unit:GetMythicKey():HasDungeon()) then
-				unitData.MythicKey = unit:GetMythicKey():GetDungeon():Name() .. ' +' .. unit:GetMythicKey():ID()
-			end
-
-			list[#list + 1] = unitData
+			list[#list + 1] = data
 		end
 	end
 	return list
@@ -188,13 +155,13 @@ end
 --#region OnEnter
 local function LineClick(_, inUnitGUID, inMouseButton)
 	local unit = XFO.Confederate:Get(inUnitGUID)
-	local link = unit:GetLink()
+	local link = unit:GetChatLink()
 	if(link == nil) then return end
 
 	if(inMouseButton == 'RightButton' and IsShiftKeyDown()) then
- 		C_PartyInfo.InviteUnit(unit:GetUnitName())
+ 		C_PartyInfo.InviteUnit(unit:UnitName())
 	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
-		C_PartyInfo.RequestInviteFromUnit(unit:GetUnitName())
+		C_PartyInfo.RequestInviteFromUnit(unit:UnitName())
  	elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
 		SetItemRef(link, unit:Name(), inMouseButton)
 	end

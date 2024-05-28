@@ -38,33 +38,30 @@ end
 function XF:SerializeUnitData(inUnitData)
 	local messageData = {}
 
-	messageData.A = inUnitData:GetRace():Key()
-	messageData.B = inUnitData:GetAchievementPoints()
+	messageData.A = inUnitData:Race():Key()
+	messageData.B = inUnitData:AchievementPoints()
 	messageData.C = inUnitData:ID()
-	messageData.E = inUnitData:GetPresence()
-	messageData.F = inUnitData:GetFaction():Key()	
-	messageData.H = inUnitData:GetGuild():Key()
-	-- Remove G/R after everyone on 4.4
-	messageData.G = inUnitData:GetGuild():Name()
-	messageData.R = inUnitData:GetGuild():Realm():ID()
-	messageData.K = inUnitData:GetGUID()
-	messageData.I = inUnitData:GetItemLevel()
-	messageData.J = inUnitData:GetRank()
-	messageData.L = inUnitData:GetLevel()
-	messageData.M = inUnitData:HasMythicKey() and inUnitData:GetMythicKey():Serialize() or nil
-	messageData.N = inUnitData:GetNote()
-	messageData.O = inUnitData:GetClass():Key()
-	messageData.P1 = inUnitData:HasProfession1() and inUnitData:GetProfession1():Key() or nil
-	messageData.P2 = inUnitData:HasProfession2() and inUnitData:GetProfession2():Key() or nil
-	messageData.U = inUnitData:GetUnitName()
-	messageData.V = inUnitData:HasSpec() and inUnitData:GetSpec():Key() or nil
-	messageData.X = inUnitData:GetVersion():Key()
-	messageData.Y = inUnitData:GetPvP()
+	messageData.E = inUnitData:Presence()
+	messageData.F = inUnitData:Race():Faction():Key()	
+	messageData.H = inUnitData:Guild():Key()
+	messageData.K = inUnitData:GUID()
+	messageData.I = inUnitData:ItemLevel()
+	messageData.J = inUnitData:Rank()
+	messageData.L = inUnitData:Level()
+	messageData.M = inUnitData:HasMythicKey() and inUnitData:MythicKey():Serialize() or nil
+	messageData.N = inUnitData:Note()
+	messageData.O = inUnitData:Spec():Class():Key()
+	messageData.P1 = inUnitData:HasProfession1() and inUnitData:Profession1():Key() or nil
+	messageData.P2 = inUnitData:HasProfession2() and inUnitData:Profession2():Key() or nil
+	messageData.U = inUnitData:UnitName()
+	messageData.V = inUnitData:Spec():Key()
+	messageData.X = inUnitData:Version():Key()
+	messageData.Y = inUnitData:PvP()
 
-	if(inUnitData:GetZone():HasID()) then
-		messageData.D = inUnitData:GetZone():ID()
+	if(inUnitData:Zone():HasID()) then
+		messageData.D = inUnitData:Zone():ID()
 	else
-		messageData.Z = inUnitData:GetZone():Name()
+		messageData.Z = inUnitData:Zone():Name()
 	end
 
 	return pickle(messageData)

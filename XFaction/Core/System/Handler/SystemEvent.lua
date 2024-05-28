@@ -35,7 +35,7 @@ function SystemEvent:Initialize()
                         callback = XF.Handlers.SystemEvent.CallbackLogin, 
                         instance = true})
 		self:IsInitialized(true)
-        XF.Config.Logout[#XF.Config.Logout + 1] = XF.Player.Unit:GetUnitName()
+        XF.Config.Logout[#XF.Config.Logout + 1] = XF.Player.Unit:UnitName()
 	end
 end
 --#endregion
@@ -50,8 +50,8 @@ function SystemEvent:CallbackLogout()
             message:Initialize()
             message:SetType(XF.Enum.Network.BROADCAST)
             message:SetSubject(XF.Enum.Message.LOGOUT)
-            if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
-                message:SetMainName(XF.Player.Unit:GetMainName())
+            if(XF.Player.Unit:IsAlt()) then
+                message:SetMainName(XF.Player.Unit:MainName())
             end
             message:SetGuild(XF.Player.Guild)
             message:SetUnitName(XF.Player.Unit:Name())

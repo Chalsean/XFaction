@@ -51,58 +51,58 @@ function XF:DeserializeUnitData(inData)
 	local deserializedData = unpickle(inData)
 	local unit = XFO.Confederate:Pop()
 	unit:IsRunningAddon(true)
-	unit:SetRace(XFO.Races:Get(deserializedData.A))
-	if(deserializedData.B ~= nil) then unit:SetAchievementPoints(deserializedData.B) end
+	unit:Race(XFO.Races:Get(deserializedData.A))
+	if(deserializedData.B ~= nil) then unit:AchievementPoints(deserializedData.B) end
 	if(deserializedData.C ~= nil) then unit:ID(tonumber(deserializedData.C)) end
 	if(deserializedData.E ~= nil) then 
-		unit:SetPresence(tonumber(deserializedData.E)) 
+		unit:Presence(tonumber(deserializedData.E)) 
 	else
-		unit:SetPresence(Enum.ClubMemberPresence.Online)
+		unit:Presence(Enum.ClubMemberPresence.Online)
 	end
-	unit:SetFaction(XFO.Factions:Get(deserializedData.F))
+	--unit:Faction(XFO.Factions:Get(deserializedData.F))
 	unit:SetGUID(deserializedData.K)
 	unit:Key(deserializedData.K)
-	unit:SetClass(XFO.Classes:Get(deserializedData.O))
+	--unit:SetClass(XFO.Classes:Get(deserializedData.O))
 	local unitNameParts = string.Split(deserializedData.U, '-')
 	unit:Name(unitNameParts[1])
-	unit:SetUnitName(deserializedData.U)
+	--unit:SetUnitName(deserializedData.U)
 	if(deserializedData.H ~= nil and XFO.Guilds:Contains(deserializedData.H)) then
-		unit:SetGuild(XFO.Guilds:Get(deserializedData.H))
+		unit:Guild(XFO.Guilds:Get(deserializedData.H))
 	end
-	if(deserializedData.I ~= nil) then unit:SetItemLevel(deserializedData.I) end
-	unit:SetRank(deserializedData.J)
-	unit:SetLevel(deserializedData.L)
+	if(deserializedData.I ~= nil) then unit:ItemLevel(deserializedData.I) end
+	unit:Rank(deserializedData.J)
+	unit:Level(deserializedData.L)
 	if(deserializedData.M ~= nil) then
 		local key = XFC.MythicKey:new(); key:Initialize()
 		key:Deserialize(deserializedData.M)
-		unit:SetMythicKey(key)
+		unit:MythicKey(key)
 	end
-	unit:SetNote(deserializedData.N)	
+	unit:Note(deserializedData.N)	
 	unit:IsOnline(true)
 	if(deserializedData.P1 ~= nil) then
-		unit:SetProfession1(XFO.Professions:Get(tonumber(deserializedData.P1)))
+		unit:Profession1(XFO.Professions:Get(tonumber(deserializedData.P1)))
 	end
 	if(deserializedData.P2 ~= nil) then
-		unit:SetProfession2(XFO.Professions:Get(tonumber(deserializedData.P2)))
+		unit:Profession2(XFO.Professions:Get(tonumber(deserializedData.P2)))
 	end
 	unit:IsRunningAddon(true)
-	unit:SetTimeStamp(ServerTime())
+	unit:TimeStamp(ServerTime())
 	if(deserializedData.V ~= nil) then
-		unit:SetSpec(XFO.Specs:Get(deserializedData.V))
+		unit:Spec(XFO.Specs:Get(deserializedData.V))
 	end
 
 	if(deserializedData.D ~= nil and XFO.Zones:Contains(tonumber(deserializedData.D))) then
-		unit:SetZone(XFO.Zones:Get(tonumber(deserializedData.D)))
+		unit:Zone(XFO.Zones:Get(tonumber(deserializedData.D)))
 	elseif(deserializedData.Z == nil) then
-		unit:SetZone(XFO.Zones:Get('?'))
+		unit:Zone(XFO.Zones:Get('?'))
 	else
 		if(not XFO.Zones:Contains(deserializedData.Z)) then
 			XFO.Zones:Add(deserializedData.Z)
 		end
-		unit:SetZone(XFO.Zones:Get(deserializedData.Z))
+		unit:Zone(XFO.Zones:Get(deserializedData.Z))
 	end
 
-	if(deserializedData.Y ~= nil) then unit:SetPvPString(deserializedData.Y) end
+	if(deserializedData.Y ~= nil) then unit:PvP(deserializedData.Y) end
 	if(deserializedData.X ~= nil) then 
 		local version = XFO.Versions:Get(deserializedData.X)
 		if(version == nil) then
@@ -110,12 +110,12 @@ function XF:DeserializeUnitData(inData)
 			version:Key(deserializedData.X)
 			XFO.Versions:Add(version)
 		end
-		unit:SetVersion(version) 
+		unit:Version(version) 
 	end
 
 	local raiderIO = XF.Addons.RaiderIO:Get(unit)
     if(raiderIO ~= nil) then
-        unit:SetRaiderIO(raiderIO)
+        unit:RaiderIO(raiderIO)
     end
 
 	return unit

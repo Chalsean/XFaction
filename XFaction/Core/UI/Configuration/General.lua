@@ -734,7 +734,7 @@ XF.Options = {
 									name = XF.Lib.Locale['AUDIT'],
 									type = 'execute',
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function() XF.Player.Unit:GetGuild():PrintAudit() end,
+									func = function() XF.Player.Unit:Guild():PrintAudit() end,
 								},
 								Channel = {
 									order = 2,

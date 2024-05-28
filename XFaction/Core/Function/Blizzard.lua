@@ -47,7 +47,7 @@ XFF.SpecGetGroupID = GetSpecialization
 XFF.SpecGetID = GetSpecializationInfo
 
 -- Player
-XFF.PlayerGetIlvl = GetAverageItemLevel
+XFF.PlayerGetItemLevel = GetAverageItemLevel
 XFF.PlayerGetAchievement = GetAchievementInfo
 XFF.PlayerGetAchievementLink = GetAchievementLink
 XFF.PlayerGetGUID = UnitGUID

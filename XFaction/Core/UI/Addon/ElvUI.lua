@@ -76,8 +76,8 @@ function XFElvUI:AddTags()
         try(function ()
             if(XF.Initialized and XFO.Confederate:Contains(guid)) then
                 local unitData = XFO.Confederate:Get(guid)
-                if(unitData:HasMainName()) then
-                    unitName = unitData:GetMainName()
+                if(unitData:IsAlt()) then
+                    unitName = unitData:MainName()
                 end
             end
         end)
@@ -92,8 +92,8 @@ function XFElvUI:AddTags()
                 local guid = UnitGUID(inNameplate)
                 if(XFO.Confederate:Contains(guid)) then
                     local unitData = XFO.Confederate:Get(guid)
-                    if(unitData:HasMainName()) then
-                        main = '(' .. unitData:GetMainName() .. ')'
+                    if(unitData:IsAlt()) then
+                        main = '(' .. unitData:MainName() .. ')'
                     end
                 end
             end
@@ -107,7 +107,7 @@ function XFElvUI:AddTags()
         try(function ()
             local guid = UnitGUID(inNameplate)
             if(XF.Initialized and XFO.Confederate:Contains(guid)) then
-                team = XFO.Confederate:Get(guid):GetTeam():Name()
+                team = XFO.Confederate:Get(guid):Team():Name()
             end
         end)
         return team

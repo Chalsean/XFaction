@@ -120,7 +120,7 @@ function XFC.Order:SetCrafterGUID(inGUID)
 end
 
 function XFC.Order:IsPlayerCrafter()
-    return XF.Player.Unit:GetGUID() == self.crafterGUID
+    return XF.Player.Unit:GUID() == self.crafterGUID
 end
 
 function XFC.Order:GetCrafterName()
@@ -179,9 +179,9 @@ function XFC.Order:Broadcast()
     try(function ()
         message = XF.Mailbox.Chat:Pop()
         message:Initialize()
-        message:SetFrom(XF.Player.Unit:GetGUID())
+        message:SetFrom(XF.Player.Unit:GUID())
         message:SetGuild(XF.Player.Guild)
-        message:SetUnitName(XF.Player.Unit:GetUnitName())
+        message:SetUnitName(XF.Player.Unit:UnitName())
         message:SetType(XF.Enum.Network.BROADCAST)
         message:SetSubject(XF.Enum.Message.ORDER)
         message:SetData(self:Encode())
@@ -205,9 +205,9 @@ function XFC.Order:Display()
         local display = false
         if(not XF.Config.Chat.Crafting.Profession) then
             display = true
-        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:GetProfession1())) then
+        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:Profession1())) then
             display = true
-        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:GetProfession2())) then
+        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:Profession2())) then
             display = true
         end
 

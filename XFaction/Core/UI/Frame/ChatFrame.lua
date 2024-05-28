@@ -32,25 +32,25 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
     local event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
     local text = ''
     if(XF.Config.Chat[configNode].Faction) then  
-        text = text .. format('%s ', format(XF.Icons.String, inUnitData:GetFaction():IconID()))
+        text = text .. format('%s ', format(XF.Icons.String, inUnitData:Race():Faction():IconID()))
     end
-    if(XF.Config.Chat[configNode].Main and inUnitData:IsAlt() and inUnitData:HasMainName()) then
-        text = text .. '(' .. inUnitData:GetMainName() .. ') '
+    if(XF.Config.Chat[configNode].Main and inUnitData:IsAlt()) then
+        text = text .. '(' .. inUnitData:MainName() .. ') '
     end
     if(XF.Config.Chat[configNode].Guild) then
-        text = text .. '<' .. inUnitData:GetGuild():Initials() .. '> '
+        text = text .. '<' .. inUnitData:Guild():Initials() .. '> '
     end
     text = text .. inMessage
 
     local hex = nil
     if(XF.Config.Chat[configNode].CColor) then
         if(XF.Config.Chat[configNode].FColor) then
-            hex = inUnitData:GetFaction():Name() == 'Horde' and XF:RGBPercToHex(XF.Config.Chat[configNode].HColor.Red, XF.Config.Chat[configNode].HColor.Green, XF.Config.Chat[configNode].HColor.Blue) or XF:RGBPercToHex(XF.Config.Chat[configNode].AColor.Red, XF.Config.Chat[configNode].AColor.Green, XF.Config.Chat[configNode].AColor.Blue)
+            hex = inUnitData:Race():Faction():IsHorde() and XF:RGBPercToHex(XF.Config.Chat[configNode].HColor.Red, XF.Config.Chat[configNode].HColor.Green, XF.Config.Chat[configNode].HColor.Blue) or XF:RGBPercToHex(XF.Config.Chat[configNode].AColor.Red, XF.Config.Chat[configNode].AColor.Green, XF.Config.Chat[configNode].AColor.Blue)
         else
             hex = XF:RGBPercToHex(XF.Config.Chat[configNode].Color.Red, XF.Config.Chat[configNode].Color.Green, XF.Config.Chat[configNode].Color.Blue)
         end
     elseif(XF.Config.Chat[configNode].FColor) then
-        hex = inUnitData:GetFaction():Name() == 'Horde' and 'E0000D' or '378DEF'
+        hex = inUnitData:Race():Faction():IsHorde() and 'E0000D' or '378DEF'
     elseif(_G.ChatTypeInfo[event]) then
         local color = _G.ChatTypeInfo[event]
         hex = XF:RGBPercToHex(color.r, color.g, color.b)

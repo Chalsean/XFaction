@@ -185,7 +185,7 @@ function Mailbox:Process(inMessage, inMessageTag)
         local unitData = XF:DeserializeUnitData(inMessage:GetData())
         inMessage:SetData(unitData)
         if(not unitData:HasVersion()) then
-            unitData:SetVersion(inMessage:GetVersion())
+            unitData:Version(inMessage:GetVersion())
         end
     end
 

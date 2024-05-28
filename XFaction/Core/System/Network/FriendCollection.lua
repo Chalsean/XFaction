@@ -102,6 +102,10 @@ function XFC.FriendCollection:GetByGameID(inGameID)
 	end
 end
 
+function XFC.FriendCollection:ContainsByGUID(inGUID)
+    return self:GetByGameGUID(inGUID) ~= nil
+end
+
 function XFC.FriendCollection:GetByGUID(inGUID)
 	assert(type(inGUID) == 'string')
 	return self.friendByGUID[inGUID]
@@ -128,20 +132,23 @@ function XFC.FriendCollection:CheckFriend(inKey)
 
 		friend:Initialize(inKey)
 
+        -- FriendCollection will only contain those friends who can be linked to
 		if(friend:CanLink()) then
-			friend:Print()
-			if(self:Contains(inKey)) then
+            -- Keep current state information if present
+		    if(self:Contains(inKey)) then
 				self:Push(friend)
 			else
 				XF:Debug(self:ObjectName(), 'Detected friend is online: %s', friend:Tag())
+                friend:Print()
 				self:Add(friend)
 			end
-		-- Either theyre offline, not a realm we care about or same faction
+		-- Either theyre offline, not on a realm we care about or same faction
 		else
 			self:Push(friend)
 			if(self:Contains(inKey)) then
 				local old = self:Get(inKey)
 				XF:Debug(self:ObjectName(), 'Friend has gone offline: %s', old:Tag())
+                old:Print()
 				XFO.Confederate:Offline(old:GUID())
 				self:Remove(old:Key())
 				self:Push(old)
@@ -198,9 +205,6 @@ function XFC.FriendCollection:CallbackPing()
 	end).
 	catch(function (err)
 		XF:Warn(self:ObjectName(), err)
-	-- end).
-	-- finally(function ()
-	-- 	XF.Timers:Get('Ping'):SetLastRan(ServerTime())
 	end)
 end
 --#endregion

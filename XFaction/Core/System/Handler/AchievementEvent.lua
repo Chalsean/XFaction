@@ -39,10 +39,10 @@ function AchievementEvent:CallbackAchievement(inID)
                 message:SetSubject(XF.Enum.Message.ACHIEVEMENT)
                 message:SetData(inID) -- Leave as ID to localize on receiving end
                 message:Name(XF.Player.Unit:Name())
-                if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
-                    message:SetMainName(XF.Player.Unit:GetMainName())
+                if(XF.Player.Unit:IsAlt()) then
+                    message:SetMainName(XF.Player.Unit:MainName())
                 end
-                message:SetUnitName(XF.Player.Unit:GetUnitName())
+                message:SetUnitName(XF.Player.Unit:UnitName())
                 message:SetGuild(XF.Player.Guild)
                 XF.Mailbox.Chat:Send(message)
             end).
