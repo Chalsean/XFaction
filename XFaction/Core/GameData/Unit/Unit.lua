@@ -625,10 +625,11 @@ function Unit:GetLink()
         return format('player:%s', self:GetUnitName())
     end
 
-    local friend = XF.Friends:GetByRealmUnitName(self:GetGuild():Realm(), self:Name())
-    if(friend ~= nil) then
-        return format('BNplayer:%s:%d:0:WHISPER:%s', friend:GetAccountName(), friend:GetAccountID(), friend:Name())
-    end
+    -- TODO
+    -- local friend = XFO.Friends:GetByRealmUnitName(self:GetGuild():Realm(), self:Name())
+    -- if(friend ~= nil) then
+    --     return format('BNplayer:%s:%d:0:WHISPER:%s', friend:GetAccountName(), friend:GetAccountID(), friend:Name())
+    -- end
 
     return format('player:%s', self:GetUnitName())
 end

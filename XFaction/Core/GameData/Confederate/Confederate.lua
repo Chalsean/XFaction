@@ -149,8 +149,10 @@ function XFC.Confederate:Offline(inKey)
         if(self:Contains(inKey)) then
             local unit = self:Get(inKey)
             unit:SetPresence(Enum.ClubMemberPresence.Offline)
-            --unit:RemoveAllLinks()
             self.onlineCount = self.onlineCount - 1
+            if(XF.Config.Chat.Login.Enable) then
+                XF.Frames.System:DisplayLogout(unit:Name())
+            end
         end
     else
         local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
@@ -177,9 +179,6 @@ function XFC.Confederate:LocalRoster()
                     local old = self:Get(unit:Key())
                     if(old:IsOnline() and unit:IsOffline()) then
                         XF:Info(self:ObjectName(), 'Guild member logout via scan: %s', unit:GetUnitName())
-                        if(XF.Config.Chat.Login.Enable) then
-                            XF.Frames.System:DisplayLogout(old:Name())
-                        end
                         self:Offline(old:Key())
                         self:Push(unit)
                     elseif(unit:IsOnline()) then

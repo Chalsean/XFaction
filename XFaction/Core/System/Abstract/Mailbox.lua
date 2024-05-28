@@ -257,7 +257,7 @@ function Mailbox:Process(inMessage, inMessageTag)
                 if(XFO.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
                     XF.Frames.System:DisplayLogoutMessage(inMessage)
                 end
-                XFO.Confederate:OfflineUnit(inMessage:GetFrom())
+                XFO.Confederate:Offline(inMessage:GetFrom())
             end
         else
             XF.Frames.System:DisplayLogoutMessage(inMessage)

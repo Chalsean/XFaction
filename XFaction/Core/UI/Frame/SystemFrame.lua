@@ -57,14 +57,15 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
         text = text .. inName .. ' '
     elseif(inFaction:Equals(XF.Player.Faction)) then
         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
-    else
-        local friend = XF.Friends:GetByRealmUnitName(inGuild:Realm(), inName)
-        if(friend ~= nil) then
-            text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
-        else
-            -- Maybe theyre in a bnet community together, no way to associate tho
-            text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
-        end
+        -- TODO
+    -- else
+    --     local friend = XFO.Friends:GetByRealmUnitName(inGuild:Realm(), inName)
+    --     if(friend ~= nil) then
+    --         text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
+    --     else
+    --         -- Maybe theyre in a bnet community together, no way to associate tho
+    --         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
+    --     end
     end
     
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Main and inMainName ~= nil) then

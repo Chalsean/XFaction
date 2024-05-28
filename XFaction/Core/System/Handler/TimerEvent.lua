@@ -50,16 +50,6 @@ function TimerEvent:Initialize()
 						delta = XF.Settings.Network.Mailbox.Scan, 
 						callback = XF.Handlers.TimerEvent.CallbackMailboxTimer, 
 						repeater = true})
-		XF.Timers:Add({name = 'Ping', 
-						delta = XF.Settings.Network.BNet.Ping.Timer, 
-						callback = XF.Handlers.TimerEvent.CallbackPingFriends, 
-						repeater = true, 
-						instance = true})
-		XF.Timers:Add({name = 'StaleLinks', 
-						delta = XF.Settings.Network.BNet.Link.Scan, 
-						callback = XF.Handlers.TimerEvent.CallbackStaleLinks, 
-						repeater = true, 
-						instance = true})
 		XF.Timers:Add({name = 'Offline', 
 						delta = XF.Settings.Confederate.UnitScan, 
 						callback = XF.Handlers.TimerEvent.CallbackOffline, 
@@ -99,7 +89,7 @@ function TimerEvent:CallbackLoginGuild()
 				XF.Mailbox.Chat:Initialize()
 				XF.Nodes:Initialize()
 				XF.Links:Initialize()
-				XF.Friends:Initialize()				
+				XFO.Friends:Initialize()				
 				XF.Mailbox.BNet:Initialize()
 
 				if(XF.Cache.UIReload) then
@@ -143,7 +133,7 @@ function TimerEvent:CallbackLoginPlayer()
 			
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
-				XF.Friends:Restore()
+				XFO.Friends:Restore()
 				XF.Links:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
@@ -262,19 +252,6 @@ function TimerEvent:CallbackLinks()
 	end).
 	finally(function ()
 		XF.Timers:Get('Links'):SetLastRan(ServerTime())
-	end)
-end
-
--- Periodically purge stale links
-function TimerEvent:CallbackStaleLinks()
-	try(function ()
-		XF.Links:Purge(ServerTime() - XF.Settings.Network.BNet.Link.Stale)
-	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
-	end).
-	finally(function ()
-		XF.Timers:Get('StaleLinks'):SetLastRan(ServerTime())
 	end)
 end
 --#endregion

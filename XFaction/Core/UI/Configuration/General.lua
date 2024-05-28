@@ -790,7 +790,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['FRIEND'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Friends:Print() end,
+									func = function(info) XFO.Friends:Print() end,
 								},
 								Guild = {
 									order = 15,

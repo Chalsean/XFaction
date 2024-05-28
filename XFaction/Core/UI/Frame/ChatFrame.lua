@@ -123,13 +123,14 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
                         if(inFaction:Equals(XF.Player.Faction)) then
                             text = text .. '%s '
                         else
-                            local friend = XF.Friends:GetByRealmUnitName(inGuild:Realm(), inName)
-                            if(friend ~= nil) then
-                                text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inName, friend:GetAccountID(), inName, inName) .. ' '
-                            else
+                            -- TODO
+                            -- local friend = XFO.Friends:GetByRealmUnitName(inGuild:Realm(), inName)
+                            -- if(friend ~= nil) then
+                            --     text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inName, friend:GetAccountID(), inName, inName) .. ' '
+                            -- else
                                 -- Maybe theyre in a bnet community together, no way to associate tho
                                 text = text .. '%s '
-                            end
+                            -- end
                         end
                     end
 

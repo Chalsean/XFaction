@@ -147,7 +147,7 @@ XF.Settings = {
 			FriendTimer = 2,
 			PacketSize = 425,	
 			Ping = {
-				Timer = 60,         -- Seconds between pinging friends
+				Timer = 60 * 5,     -- Seconds between pinging friends
 			},
 			Link = {
 				Broadcast = 60 * 2, -- Seconds between broadcasting links
