@@ -8,7 +8,7 @@ XF.ChangeLog['4.13.2'] = {
         name = XF.Lib.Locale['IMPROVEMENTS'],
         guiInline = true,
         args = {
-            Links = {
+            Links1 = {
                 order = 1,
                 type = 'description',
                 fontSize = 'medium',
@@ -24,7 +24,7 @@ XF.ChangeLog['4.13.2'] = {
                 order = 3,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Detects logouts by friends and notifies accordingly.',
+                name = 'Detects logouts by friends.',
             },
             DTLinks1 = {
                 order = 4,
@@ -48,7 +48,19 @@ XF.ChangeLog['4.13.2'] = {
                 order = 7,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Early work to reduce overall number of messages by increasing the size of each message.',
+                name = 'Early work to reduce overall number of messages by increasing the size of each message. Once everyone upgrades to this version, can reduce the overall number of messages by removing backwards compat logic.',
+            },
+            Links2 = {
+                order = 8,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Increased links messages from every 2 minutes to every 5 minutes to reduce overall message traffic.',
+            },
+            Kui = {
+                order = 9,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Removed Kui addon logic as it wasnt working for months but nobody seemed to notice.',
             },
         },
     },		
