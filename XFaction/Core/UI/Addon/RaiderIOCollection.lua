@@ -68,8 +68,8 @@ function RaiderIOCollection:AddUnit(inUnit)
 
         self:Add(raiderIO)
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(ObjectName, err)
     end)
 end
 

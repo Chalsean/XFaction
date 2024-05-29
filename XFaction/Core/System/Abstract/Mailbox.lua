@@ -26,7 +26,7 @@ function Mailbox:newChildConstructor()
 end
 
 function Mailbox:NewObject()
-	return Message:new()
+	return XFC.Message:new()
 end
 --#endregion
 

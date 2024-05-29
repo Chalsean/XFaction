@@ -57,7 +57,7 @@ function XFC.Friend:Initialize(inID)
     local realm = XFO.Realms:Get(accountInfo.gameAccountInfo.realmID)
     local faction = XFO.Factions:Get(accountInfo.gameAccountInfo.factionName)
     if(realm ~= nil and faction ~= nil and not faction:Equals(XF.Player.Faction)) then
-        local target = XF.Targets:GetByRealmFaction(realm:ID(), faction:Key())
+        local target = XFO.Targets:Get(realm, faction)
         if(target ~= nil) then
             self:Target(target)
         end

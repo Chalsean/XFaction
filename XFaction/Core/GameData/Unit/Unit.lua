@@ -664,33 +664,6 @@ function XFC.Unit:Deserialize(inData)
     end
 end
 
-function XFC.Unit:Broadcast(inSubject)
-    assert(type(inSubject) == 'string' or inSubject == nil)
-	if(inSubject == nil) then inSubject = XF.Enum.Message.DATA end
-    
-    local epoch = XFF.TimeGetCurrent()
-    if(self:TimeStamp() > epoch - XF.Settings.Player.MinimumHeartbeat) then 
-        XF:Debug(ObjectName, 'Not sending broadcast, its been too recent')
-        return 
-    end
-    self:TimeStamp(epoch)
-
-    local message = XF.Mailbox.Chat:Pop()
-    try(function ()
-        message:Initialize()
-        message:SetFrom(self:GetGUID())
-        message:SetGuild(self:GetGuild())
-        message:SetUnitName(self:Name())
-        message:SetType(XF.Enum.Network.BROADCAST)
-        message:SetSubject(inSubject)
-        message:SetData(self)
-        XF.Mailbox.Chat:Send(message)
-    end).
-    finally(function ()
-        XF.Mailbox.Chat:Push(message)
-    end)
-end
-
 -- Usually a key check is enough for equality check, but use case is to detect any data differences
 function XFC.Unit:Equals(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil)

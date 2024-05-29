@@ -60,14 +60,14 @@ end
 
 function XFC.LinkCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')	
-	self:Deserialize(inMessage:GetData())
+	self:Deserialize(inMessage:Data())
 	XF.DataText.Links:RefreshBroker()
 end
 
-function XFC.LinkCollection:Serialize(onlyMine)
+function XFC.LinkCollection:Serialize()
 	local serial = ''
 	for _, link in self:Iterator() do
-		if(link:IsMyLink() or not onlyMine) then
+		if(link:IsMyLink()) then
 			serial = serial .. '|' .. link:Serialize()
 		end
 	end
@@ -98,7 +98,7 @@ function XFC.LinkCollection:Deserialize(inSerial)
     end
 
 	for _, link in self:Iterator() do
-		if(link:HasNode(fromName, fromTarget:GetRealm(), fromTarget:GetFaction())) then
+		if(link:HasNode(fromName, fromTarget:Realm(), fromTarget:Faction())) then
 			if(links[link:Key()] == nil) then
 				self:Remove(link:Key())
 				self:Push(link)
@@ -107,21 +107,14 @@ function XFC.LinkCollection:Deserialize(inSerial)
 	end
 end
 
-function XFC.LinkCollection:Broadcast()
-	XF:Debug(ObjectName, 'Broadcasting links')
-
-	local message = nil
-	try(function ()
-		message = XF.Mailbox.Chat:Pop()
-		message:Initialize()
-		message:SetType(XF.Enum.Network.BROADCAST)
-		message:SetSubject(XF.Enum.Message.LINK)
-		message:SetData(self:Serialize(true))
-		XF.Mailbox.Chat:Send(message)  
-	end).
-	finally(function ()
-		XF.Mailbox.Chat:Push(message)
-	end)
+function XFC.LinkCollection:CallbackBroadcast()
+    local self = XFO.Links
+	try(function()
+        XF.Mailbox.Chat:SendLinkMessage(self:Serialize())
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 
 function XFC.LinkCollection:Backup()

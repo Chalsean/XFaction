@@ -127,8 +127,8 @@ function XFC.Confederate:Backup()
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create confederate backup before reload: ' .. inErrorMessage
+    catch(function (err)
+        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create confederate backup before reload: ' .. err
     end)
 end
 
@@ -223,16 +223,16 @@ function XFC.Confederate:LocalRoster()
 end
 
 function XFC.Confederate:ProcessMessage(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name == 'Message', 'ProcessMessage method requires Message object for parameter')
-    if(inMessage:GetSubject() == XF.Enum.Message.LOGOUT) then
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+    if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
         -- Guild scan will handle local guild logout notifications
-        if(not XF.Player.Guild:Equals(inMessage:GetGuild())) then
+        if(not XF.Player.Guild:Equals(inMessage:Guild())) then
             -- TODO move this check to frame
             if(XF.Config.Chat.Login.Enable) then
                 XF.Frames.System:DisplayLogout(inMessage:Name())
             end
-            if(self:Contains(inMessage:GetFrom())) then
-                local unit = self:Get(inMessage:GetFrom())
+            if(self:Contains(inMessage:From())) then
+                local unit = self:Get(inMessage:From())
                 self:Remove(unit:Key())
                 self:Push(unit)
             end

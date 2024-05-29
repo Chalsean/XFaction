@@ -34,7 +34,7 @@ end
 
 --#region Send
 function BNet:Send(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     -- Before we do work, lets make sure there are targets and we can message those targets
     local links = {}
@@ -52,7 +52,7 @@ function BNet:Send(inMessage)
             local randomNumber = math.random(1, friendCount)
             links[#links + 1] = friends[randomNumber]
         else
-            XF:Debug(ObjectName, 'Unable to identify friends on target [%s:%s]', target:GetRealm():Name(), target:GetFaction():Name())
+            XF:Debug(self:ObjectName(), 'Unable to identify friends on target [%s:%s]', target:Realm():Name(), target:Faction():Name())
         end
     end
 
@@ -77,8 +77,8 @@ function BNet:Send(inMessage)
             end
             inMessage:RemoveTarget(friend:Target())
         end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+        catch(function (err)
+            XF:Warn(ObjectName, err)
         end)
     end
 end
@@ -122,8 +122,8 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
             self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(ObjectName, err)
     end)
 end
 

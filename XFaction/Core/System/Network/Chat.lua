@@ -38,25 +38,25 @@ end
 
 --#region Send
 function Chat:Send(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Settings.System.Roster and inMessage:GetSubject() == XF.Enum.Message.DATA) then return end
 
     XF:Debug(ObjectName, 'Attempting to send message')
     inMessage:Print()
 
     --#region BNet messaging for BNET/BROADCAST types
-    if(inMessage:GetType() == XF.Enum.Network.BROADCAST or inMessage:GetType() == XF.Enum.Network.BNET) then
+    if(inMessage:Type() == XF.Enum.Network.BROADCAST or inMessage:Type() == XF.Enum.Network.BNET) then
         XF.Mailbox.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
-        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XF.Enum.Network.BNET) then
-            inMessage:SetType(XF.Enum.Network.BROADCAST)
+        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:Type() == XF.Enum.Network.BNET) then
+            inMessage:Type(XF.Enum.Network.BROADCAST)
         -- Successfully bnet to all targets and only were supposed to bnet, were done
-        elseif(inMessage:GetType() == XF.Enum.Network.BNET) then
+        elseif(inMessage:Type() == XF.Enum.Network.BNET) then
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
-        elseif(not inMessage:HasTargets() and inMessage:GetType() == XF.Enum.Network.BROADCAST) then
+        elseif(not inMessage:HasTargets() and inMessage:Type() == XF.Enum.Network.BROADCAST) then
             XF:Debug(ObjectName, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
-            inMessage:SetType(XF.Enum.Network.LOCAL)        
+            inMessage:Type(XF.Enum.Network.LOCAL)        
         end
     end
     --#endregion
@@ -83,11 +83,69 @@ function Chat:Send(inMessage)
     end
     --#endregion
 end
+
+local function _SendMessage(inSubject, inData)
+    local message = self:Pop()
+    try(function ()
+        message:Initialize()
+        message:Type(XF.Enum.Network.BROADCAST)
+        message:Subject(inSubject)
+        message:Data(inData)
+        self:Send(message)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end).
+    finally(function ()
+        self:Push(message)
+    end)
+end
+
+function Chat:SendOrderMessage(inOrder)
+    assert(type(inOrder) == 'table' and inOrder.__name == 'Order')
+    XF:Info(self:ObjectName(), 'Sending order message')
+    inOrder:Print()
+    _SendMessage(XF.Enum.Message.ORDER, inOrder:Encode())
+end
+
+function Chat:SendDataMessage(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    XF:Info(self:ObjectName(), 'Sending data message for unit [%s]', inUnit:UnitName())
+    _SendMessage(XF.Enum.Message.DATA, inUnit)
+end
+
+function Chat:SendLoginMessage(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    XF:Info(self:ObjectName(), 'Sending login message for unit [%s]', inUnit:UnitName())
+    _SendMessage(XF.Enum.Message.LOGIN, inUnit)
+end
+
+function Chat:SendAchievementMessage(inID)
+    assert(type(inID) == 'number')
+    XF:Info(self:ObjectName(), 'Sending achievement message for [%d]', inID)
+    _SendMessage(XF.Enum.Message.ACHIEVEMENT, inID)
+end
+
+function Chat:SendLogoutMessage()
+    _SendMessage(XF.Enum.Message.LOGOUT, '')
+end
+
+function Chat:SendLinkMessage(inLinks)
+    assert(type(inLinks) == 'string')
+    XF:Info(self:ObjectName(), 'Sending links message')
+    _SendMessage(XF.Enum.Message.LINK, inLinks)
+end
+
+function Chat:SendChatMessage(inText)
+    assert(type(inText) == 'string')
+    XF:Info(self:ObjectName(), 'Sending guild chat message [%s]', inText)
+    _SendMessage(XF.Enum.Message.GCHAT, inText)
+end
 --#endregion
 
 --#region Receive
-function Chat:DecodeMessage(inEncodedMessage)
-    return XF:DecodeChatMessage(inEncodedMessage)
+function Chat:DecodeMessage(err)
+    return XF:DecodeChatMessage(err)
 end
 
 function Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
@@ -104,25 +162,7 @@ function Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTa
     try(function ()
         -- If you are the sender, broadcast to other realms/factions
         if(XF.Player.GUID == inSenderGUID and XF.Player.Unit:CanGuildSpeak()) then
-            local message = nil
-            try(function ()
-                message = self:Pop()
-                message:Initialize()
-                message:SetFrom(XF.Player.Unit:GUID())
-                message:SetType(XF.Enum.Network.BROADCAST)
-                message:SetSubject(XF.Enum.Message.GCHAT)
-                message:Name(XF.Player.Unit:Name())
-                message:SetUnitName(XF.Player.Unit:UnitName())
-                message:SetGuild(XF.Player.Guild)
-                if(XF.Player.Unit:IsAlt()) then
-                    message:SetMainName(XF.Player.Unit:MainName())
-                end
-                message:SetData(inText)
-                self:Send(message, true)
-            end).
-            finally(function ()
-                self:Push(message)
-            end)
+            self:SendChatMessage(inText)
         end
     end).
     catch(function (err)

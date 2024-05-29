@@ -78,7 +78,7 @@ function TimerEvent:CallbackLoginGuild()
 				XFO.Guilds:Initialize(guildID)
 				XFO.Confederate:Initialize()
 				XFO.Guilds:SetPlayerGuild()
-				XF.Targets:Initialize()	
+				XFO.Targets:Initialize()	
 
 				-- Frame inits were waiting on Confederate init
 				XF.Frames.Chat:Initialize()
@@ -98,8 +98,8 @@ function TimerEvent:CallbackLoginGuild()
 			end
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF:Error(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Error(ObjectName, err)
 	end).
 	finally(function ()			
 		XF:SetupMenus()
@@ -172,8 +172,8 @@ function TimerEvent:CallbackLoginPlayer()
 			XFO.Confederate:Push(unitData)
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF:Error(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Error(ObjectName, err)
 	end)
 end
 --#endregion
@@ -185,8 +185,8 @@ function TimerEvent:CallbackMailboxTimer()
 		XF.Mailbox.Chat:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
 		XF.Mailbox.BNet:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Warn(ObjectName, err)
 	end).
 	finally(function ()
 		XF.Timers:Get('Mailbox'):SetLastRan(ServerTime())
@@ -198,8 +198,8 @@ function TimerEvent:CallbackOffline()
 	try(function ()
 		XFO.Confederate:OfflineUnits(ServerTime() - XF.Settings.Confederate.UnitStale)
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Warn(ObjectName, err)
 	end).
 	finally(function ()
 		XF.Timers:Get('Offline'):SetLastRan(ServerTime())
@@ -215,8 +215,8 @@ function TimerEvent:CallbackHeartbeat()
 			XF.Player.Unit:Broadcast()
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Warn(ObjectName, err)
 	end).
 	finally(function ()
 		XF.Timers:Get('Heartbeat'):SetLastRan(ServerTime())
@@ -232,8 +232,8 @@ function TimerEvent:CallbackPingFriends()
 			end
 	    end
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Warn(ObjectName, err)
 	end).
 	finally(function ()
 		XF.Timers:Get('Ping'):SetLastRan(ServerTime())
@@ -245,8 +245,8 @@ function TimerEvent:CallbackLinks()
 	try(function ()
     	XFO.Links:Broadcast()
 	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Warn(ObjectName, err)
 	end).
 	finally(function ()
 		XF.Timers:Get('Links'):SetLastRan(ServerTime())

@@ -73,8 +73,8 @@ function QueryMyOrders()
         -- You have to make a server request and provide a callback for when the server feels like handling your query
         QueryMyOrdersFromServer(request)
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(ObjectName, err)
     end)
 end
 
@@ -121,8 +121,8 @@ function GetMyOrders()
                 XFO.Orders:Push(order)
             end
         end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+        catch(function (err)
+            XF:Warn(ObjectName, err)
             XFO.Orders:Push(order)
         end)
     end
@@ -138,8 +138,8 @@ function XFC.OrderEvent:CallbackCraftOrder(inEvent)
     try(function ()
         QueryMyOrders()
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(self:ObjectName(), inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 
@@ -149,8 +149,8 @@ function XFC.OrderEvent:CallbackCanRequestOrders(inEvent)
         QueryMyOrders()
         XF.Events:Remove('CanRequestOrders')
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(ObjectName, err)
     end)
 end
 --#endregion

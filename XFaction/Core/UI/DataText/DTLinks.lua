@@ -116,7 +116,7 @@ function DTLinks:OnEnter(this)
 	if(CombatLockdown()) then return end
 
 	--#region Configure Tooltip
-	local targetCount = XF.Targets:Count() + 1
+	local targetCount = XFO.Targets:Count() + 1
 	
 	if XF.Lib.QT:IsAcquired(ObjectName) then
 		self.tooltip = XF.Lib.QT:Acquire(ObjectName)		
@@ -148,8 +148,8 @@ function DTLinks:OnEnter(this)
 	--#region Column Headers
 	local targetColumn = {}
 	local i = 1
-	for _, target in XF.Targets:Iterator() do
-		local targetName = format('%s%s', format(XF.Icons.String, target:GetFaction():IconID()), target:GetRealm():Name())
+	for _, target in XFO.Targets:Iterator() do
+		local targetName = format('%s%s', format(XF.Icons.String, target:Faction():IconID()), target:Realm():Name())
 		self.tooltip:SetCell(line, i, targetName)
 		targetColumn[target:Key()] = i
 		i = i + 1

@@ -25,8 +25,8 @@ function XFC.OrderCollection:Backup()
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create item backup before reload: ' .. inErrorMessage
+    catch(function (err)
+        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create item backup before reload: ' .. err
     end)
 end
 
@@ -40,8 +40,8 @@ function XFC.OrderCollection:Restore()
 			self:Add(order)
 			XF:Info(self:ObjectName(), '  Restored %s order information from backup', order:Key())
         end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+        catch(function (err)
+            XF:Warn(ObjectName, err)
 			self:Push(order)
         end)
     end

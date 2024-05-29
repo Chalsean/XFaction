@@ -115,11 +115,11 @@ function XFC.Link:Deserialize(inSerial)
 
     local fromNode = string.Split(_Nodes[1], ':')
     self:FromName(fromNode[1])
-    self:FromTarget(XF.Targets:GetByRealmFaction(tonumber(fromNode[2]), tonumber(fromNode[3])))
+    self:FromTarget(XFO.Targets:Get(tonumber(fromNode[2]), tonumber(fromNode[3])))
 
     local toNode = string.Split(_Nodes[2], ':')
     self:ToName(toNode[1])
-    self:ToTarget(XF.Targets:GetByRealmFaction(tonumber(toNode[2]), tonumber(toNode[3])))
+    self:ToTarget(XFO.Targets:Get(tonumber(toNode[2]), tonumber(toNode[3])))
 
     self:Initialize()
 end

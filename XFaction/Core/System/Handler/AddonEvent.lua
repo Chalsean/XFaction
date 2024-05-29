@@ -103,8 +103,8 @@ function AddonEvent:CallbackAddonLoaded(inAddonName)
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(ObjectName, err)
     end)    
 end
 --#endregion

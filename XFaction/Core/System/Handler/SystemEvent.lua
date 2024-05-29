@@ -43,27 +43,7 @@ end
 --#region Callbacks
 function SystemEvent:CallbackLogout()
     if(not XF.Cache.UIReload) then
-        local message = nil
-        try(function ()
-            XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout started'
-            message = XF.Mailbox.Chat:Pop()
-            message:Initialize()
-            message:SetType(XF.Enum.Network.BROADCAST)
-            message:SetSubject(XF.Enum.Message.LOGOUT)
-            if(XF.Player.Unit:IsAlt()) then
-                message:SetMainName(XF.Player.Unit:MainName())
-            end
-            message:SetGuild(XF.Player.Guild)
-            message:SetUnitName(XF.Player.Unit:Name())
-            message:SetData(' ')
-            XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout sending message'
-            XF.Mailbox.Chat:Send(message)
-            XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout message sent'
-        end).
-        catch(function (inErrorMessage)
-            XF:Error(ObjectName, inErrorMessage)
-            XF.Config.Logout[#XF.Config.Logout + 1] = 'Failed to send logout message: ' .. inErrorMessage
-        end)
+        XF.Mailbox.Chat:SendLogoutMessage()
     end
 end
 
@@ -74,9 +54,9 @@ function SystemEvent:CallbackReloadUI()
         XFO.Links:Backup()
         XFO.Orders:Backup()
     end).
-    catch(function (inErrorMessage)
-        XF:Error(ObjectName, inErrorMessage)
-        XF.Config.Errors[#XF.Config.Errors + 1] = 'Failed to perform backups: ' .. inErrorMessage
+    catch(function (err)
+        XF:Error(ObjectName, err)
+        XF.Config.Errors[#XF.Config.Errors + 1] = 'Failed to perform backups: ' .. err
     end).
     finally(function ()
         XF.Cache.UIReload = true

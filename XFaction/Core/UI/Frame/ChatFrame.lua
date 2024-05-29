@@ -180,14 +180,14 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
 end
 
 function ChatFrame:DisplayGuildChat(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Config.Chat.GChat.Enable) then return end
-    self:Display(inMessage:GetSubject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():Faction())
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data(), inMessage:Faction())
 end
 
 function ChatFrame:DisplayAchievement(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Config.Chat.Achievement.Enable) then return end
-    self:Display(inMessage:GetSubject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():Faction())
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data(), inMessage:Faction())
 end
 --#endregion

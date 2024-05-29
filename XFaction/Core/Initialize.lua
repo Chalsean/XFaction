@@ -25,7 +25,7 @@ function XF:CoreInit()
 	XFO.Factions = XFC.FactionCollection:new(); XFO.Factions:Initialize()
 	XFO.Guilds = XFC.GuildCollection:new()
 	XFO.Realms = XFC.RealmCollection:new(); XFO.Realms:Initialize()
-	XF.Targets = TargetCollection:new()
+	XFO.Targets = XFC.TargetCollection:new()
 	XFO.Teams = XFC.TeamCollection:new(); XFO.Teams:Initialize()
 	XFO.Orders = XFC.OrderCollection:new(); XFO.Orders:Initialize()
 

@@ -99,21 +99,21 @@ end
 
 function SystemFrame:DisplayLoginMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')    
-    local unitData = inMessage:GetData()
-    self:Display(inMessage:GetSubject(), unitData:Name(), unitData:UnitName(), unitData:MainName(), unitData:Guild(), nil, unitData:Race():Faction())
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')    
+    local unitData = inMessage:Data()
+    self:Display(inMessage:Subject(), unitData:Name(), unitData:UnitName(), unitData:MainName(), unitData:Guild(), nil, unitData:Race():Faction())
 end
 
 function SystemFrame:DisplayLogoutMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    self:Display(inMessage:GetSubject(), inMessage:Name(), inMessage:UnitName(), inMessage:GetMainName(), inMessage:GetGuild(), nil, inMessage:GetFaction())
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), nil, inMessage:Faction())
 end
 
 function SystemFrame:DisplayOrder(inOrder)
     if(not XF.Config.Chat.Crafting.Enable) then return end    
-    assert(type(inOrder) == 'table' and inOrder.__name ~= nil and inOrder.__name == 'Order', 'argument must be Order type object')
+    assert(type(inOrder) == 'table' and inOrder.__name == 'Order')
     local customer = inOrder:GetCustomerUnit()
-    self:Display(XF.Enum.Message.ORDER, customer:Name(), customer:GetUnitName(), customer:GetMainName(), customer:GetGuild(), inOrder, customer:GetFaction())
+    self:Display(XF.Enum.Message.ORDER, customer:Name(), customer:UnitName(), customer:MainName(), customer:Guild(), inOrder, customer:Faction())
 end
 --#endregion

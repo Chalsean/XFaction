@@ -31,28 +31,11 @@ function AchievementEvent:CallbackAchievement(inID)
     try(function ()
         local _, name, _, _, _, _, _, _, _, _, _, isGuild = GetAchievementInfo(inID)
         if(not isGuild and string.find(name, XF.Lib.Locale['EXPLORE']) == nil) then
-            local message = nil
-            try(function ()
-                message = XF.Mailbox.Chat:Pop()
-                message:Initialize()
-                message:SetType(XF.Enum.Network.BROADCAST)
-                message:SetSubject(XF.Enum.Message.ACHIEVEMENT)
-                message:SetData(inID) -- Leave as ID to localize on receiving end
-                message:Name(XF.Player.Unit:Name())
-                if(XF.Player.Unit:IsAlt()) then
-                    message:SetMainName(XF.Player.Unit:MainName())
-                end
-                message:SetUnitName(XF.Player.Unit:UnitName())
-                message:SetGuild(XF.Player.Guild)
-                XF.Mailbox.Chat:Send(message)
-            end).
-            finally(function ()
-                XF.Mailbox.Chat:Push(message)
-            end)
+            XF.Mailbox.Chat:SendAchievementMessage(inID)
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(ObjectName, err)
     end)    
 end
 --#endregion

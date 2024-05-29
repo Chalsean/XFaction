@@ -861,7 +861,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['TARGET'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Targets:Print() end,
+									func = function(info) XFO.Targets:Print() end,
 								},
 								Team = {
 									order = 27,
@@ -975,8 +975,8 @@ function XF:ConfigInitialize()
 			XF.Config.InstallVersion = XF.Version:Key()
 		end
 	end).
-	catch(function (inErrorMessage)
-		XF:Debug(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Debug(ObjectName, err)
 	end)
 	--#endregion
 

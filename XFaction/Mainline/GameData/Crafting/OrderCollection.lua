@@ -49,8 +49,8 @@ function QueryMyOrders()
         -- You have to make a server request and provide a callback for when the server feels like handling your query
         XFF.CraftingQueryServer(request)
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(ObjectName, err)
     end)
 end
 

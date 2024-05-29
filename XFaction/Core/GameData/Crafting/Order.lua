@@ -174,27 +174,6 @@ function XFC.Order:Decode(inData)
     self:IsInitialized(true)
 end
 
-function XFC.Order:Broadcast()
-    local message = nil
-    try(function ()
-        message = XF.Mailbox.Chat:Pop()
-        message:Initialize()
-        message:SetFrom(XF.Player.Unit:GUID())
-        message:SetGuild(XF.Player.Guild)
-        message:SetUnitName(XF.Player.Unit:UnitName())
-        message:SetType(XF.Enum.Network.BROADCAST)
-        message:SetSubject(XF.Enum.Message.ORDER)
-        message:SetData(self:Encode())
-        XF.Mailbox.Chat:Send(message)
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-    end).
-    finally(function ()
-        XF.Mailbox.Chat:Push(message)
-    end)
-end
-
 function XFC.Order:Display()
     try(function()
         if(not XF.Config.Chat.Crafting.Enable) then return end
