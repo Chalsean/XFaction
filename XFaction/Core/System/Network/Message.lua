@@ -25,6 +25,7 @@ function XFC.Message:new()
     object.mainName = nil
     object.guild = nil
     object.faction = nil
+    object.links = nil
     return object
 end
 
@@ -46,7 +47,7 @@ function XFC.Message:Deconstructor()
     self.mainName = nil
     self.guild = nil
     self.faction = nil
-    self:Initialize()
+    self.links = nil
 end
 
 function XFC.Message:Initialize()
@@ -60,6 +61,7 @@ function XFC.Message:Initialize()
         self:Version(XF.Version)
         self:Faction(XF.Player.Faction)
         self:Guild(XF.Player.Guild)
+        self:Links(XFO.Links:Serialize())
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -73,15 +75,6 @@ function XFC.Message:FromUnit(inUnit)
         self.fromUnit = inUnit
     end
     return self.fromUnit
-end
-
--- Deprecated, remove after 4.13
-function XFC.Message:From(inGUID)
-    assert(type(inGUID) == 'string' or inGUID == nil)
-    if(inGUID ~= nil) then
-        self.from = inGUID
-    end
-    return self.from
 end
 
 function XFC.Message:To(inTo)
@@ -116,6 +109,14 @@ function XFC.Message:TimeStamp(inEpochTime)
     return self.epochTime
 end
 
+function XFC.Message:Links(inLinks)
+    assert(type(inLinks) == 'string' or inLinks == nil)
+    if(inLinks ~= nil) then
+        self.links = inLinks
+    end
+    return self.links
+end
+
 function XFC.Message:Data(inData)
     if(inData ~= nil) then
         self.data = inData
@@ -147,7 +148,15 @@ function XFC.Message:Version(inVersion)
     return self.version
 end
 
--- Deprecated, remove after 4.13
+--#region Deprecated, remove after 4.13
+function XFC.Message:From(inGUID)
+    assert(type(inGUID) == 'string' or inGUID == nil)
+    if(inGUID ~= nil) then
+        self.from = inGUID
+    end
+    return self.from
+end
+
 function XFC.Message:UnitName(inUnitName)
     assert(type(inUnitName) == 'string' or inUnitName == nil)
     if(inUnitName ~= nil) then
@@ -156,7 +165,6 @@ function XFC.Message:UnitName(inUnitName)
     return self.unitName
 end
 
--- Deprecated, remove after 4.13
 function XFC.Message:MainName(inMainName)
     assert(type(inMainName) == 'string' or inMainName == nil)
     if(inMainName ~= nil) then
@@ -165,7 +173,6 @@ function XFC.Message:MainName(inMainName)
     return self.mainName
 end
 
--- Deprecated, remove after 4.13
 function XFC.Message:Guild(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild' or inGuild == nil)
     if(inGuild ~= nil) then
@@ -174,7 +181,6 @@ function XFC.Message:Guild(inGuild)
     return self.guild
 end
 
--- Deprecated, remove after 4.13
 function XFC.Message:Faction(inFaction)
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil)
     if(inFaction ~= nil) then
@@ -182,6 +188,7 @@ function XFC.Message:Faction(inFaction)
     end
     return self.faction
 end
+--#endregion
 --#endregion
 
 --#region Methods
@@ -197,6 +204,7 @@ function XFC.Message:Print()
     XF:Debug(self:ObjectName(), '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
     XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
     XF:Debug(self:ObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
+    XF:Debug(self:ObjectName(), '  links (' .. type(self.links) .. '): ' .. tostring(self.links))
     if(self:HasVersion()) then self:Version():Print() end
     if(self:HasGuild()) then self:Guild():Print() end
     if(self:HasFromUnit()) then self:FromUnit():Print() end
@@ -284,5 +292,227 @@ function XFC.Message:SetRemainingTargets(inTargetString)
             end
         end
     end
+end
+
+local function _LegacyUnitSerialize(inUnit)
+    local data = {}
+
+	data.A = inUnit:Race():Key()
+	data.B = inUnit:AchievementPoints()
+	data.E = inUnit:Presence()
+	data.F = inUnit:Race():Faction():Key()	
+	data.H = inUnit:Guild():Key()
+	data.K = inUnit:GUID()
+	data.I = inUnit:ItemLevel()
+	data.J = inUnit:Rank()
+	data.L = inUnit:Level()
+	data.M = inUnit:HasMythicKey() and inUnit:MythicKey():Serialize() or nil
+	data.N = inUnit:Note()
+	data.O = inUnit:Spec():Class():Key()
+	data.P1 = inUnit:HasProfession1() and inUnit:Profession1():Key() or nil
+	data.P2 = inUnit:HasProfession2() and inUnit:Profession2():Key() or nil
+	data.U = inUnit:UnitName()
+	data.V = inUnit:Spec():Key()
+	data.X = inUnit:Version():Key()
+	data.Y = inUnit:PvP()
+
+	if(inUnit:Zone():HasID()) then
+		data.D = inUnit:Zone():ID()
+	else
+		data.Z = inUnit:Zone():Name()
+	end
+
+	return pickle(data)
+end
+
+function XFC.Message:Serialize(inEncodingType)
+    local data = {}
+
+    data.K = self:Key()
+	data.T = self:To()
+    data.S = self:Subject()
+	data.Y = self:Type()
+	data.I = self:TimeStamp()
+	data.A = self:GetRemainingTargets()
+	data.P = self:PacketNumber()
+	data.Q = self:TotalPackets()
+    data.X = self:FromUnit():Serialize()
+	data.L = self:Links()
+    data.D = self:GetData()
+
+    --#region Deprecated, remove after 4.13
+	data.M = self:MainName()
+	data.N = self:Name()
+	data.U = self:UnitName()
+	data.H = self:Guild():Key()
+    data.F = self:From()
+    data.V = self:Version():Key()
+    data.W = self:Faction():Key()
+
+	if(inMessage:Subject() == XF.Enum.Message.DATA or inMessage:Subject() == XF.Enum.Message.LOGIN) then
+		data.D = XF:SerializeUnitData(self:Data())
+	end
+    --#endregion
+
+    local serialized = pickle(data)
+    local compressed = nil
+    for i=1, 10 do
+        if(compressed == nil) then
+            compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
+        end
+    end
+    return inEncodingType == XF.Enum.Tag.BNET and XF.Lib.Deflate:EncodeForPrint(compressed) or XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
+end
+
+local function _LegacyUnitDeserialize(inSerial)
+    local deserializedData = unpickle(inSerial)
+	local unit = XFO.Confederate:Pop()
+	unit:IsRunningAddon(true)
+	unit:Race(XFO.Races:Get(deserializedData.A))
+	if(deserializedData.B ~= nil) then unit:AchievementPoints(deserializedData.B) end
+	if(deserializedData.C ~= nil) then unit:ID(tonumber(deserializedData.C)) end
+	if(deserializedData.E ~= nil) then 
+		unit:Presence(tonumber(deserializedData.E)) 
+	else
+		unit:Presence(Enum.ClubMemberPresence.Online)
+	end
+	--unit:Faction(XFO.Factions:Get(deserializedData.F))
+	unit:GUID(deserializedData.K)
+	unit:Key(deserializedData.K)
+	--unit:SetClass(XFO.Classes:Get(deserializedData.O))
+	local unitNameParts = string.Split(deserializedData.U, '-')
+	unit:Name(unitNameParts[1])
+	--unit:SetUnitName(deserializedData.U)
+	if(deserializedData.H ~= nil and XFO.Guilds:Contains(deserializedData.H)) then
+		unit:Guild(XFO.Guilds:Get(deserializedData.H))
+		unit:Realm(unit:Guild():Realm())
+	end
+	if(deserializedData.I ~= nil) then unit:ItemLevel(deserializedData.I) end
+	unit:Rank(deserializedData.J)
+	unit:Level(deserializedData.L)
+	if(deserializedData.M ~= nil) then
+		local key = XFC.MythicKey:new(); key:Initialize()
+		key:Deserialize(deserializedData.M)
+		unit:MythicKey(key)
+	end
+	unit:Note(deserializedData.N)	
+	unit:IsOnline(true)
+	if(deserializedData.P1 ~= nil) then
+		unit:Profession1(XFO.Professions:Get(tonumber(deserializedData.P1)))
+	end
+	if(deserializedData.P2 ~= nil) then
+		unit:Profession2(XFO.Professions:Get(tonumber(deserializedData.P2)))
+	end
+	unit:IsRunningAddon(true)
+	unit:TimeStamp(ServerTime())
+	if(deserializedData.V ~= nil) then
+		unit:Spec(XFO.Specs:Get(deserializedData.V))
+	end
+
+	if(deserializedData.D ~= nil and XFO.Zones:Contains(tonumber(deserializedData.D))) then
+		unit:Zone(XFO.Zones:Get(tonumber(deserializedData.D)))
+	elseif(deserializedData.Z == nil) then
+		unit:Zone(XFO.Zones:Get('?'))
+	else
+		if(not XFO.Zones:Contains(deserializedData.Z)) then
+			XFO.Zones:Add(deserializedData.Z)
+		end
+		unit:Zone(XFO.Zones:Get(deserializedData.Z))
+	end
+
+	if(deserializedData.Y ~= nil) then unit:PvP(deserializedData.Y) end
+	if(deserializedData.X ~= nil) then 
+		local version = XFO.Versions:Get(deserializedData.X)
+		if(version == nil) then
+			version = XFC.Version:new()
+			version:Key(deserializedData.X)
+			XFO.Versions:Add(version)
+		end
+		unit:Version(version) 
+	end
+
+	local raiderIO = XF.Addons.RaiderIO:Get(unit)
+    if(raiderIO ~= nil) then
+        unit:RaiderIO(raiderIO)
+    end
+
+	return unit
+end
+
+function XFC.Message:Deserialize(inData, inEncodingType)
+    try(function()
+        local decoded = inEncodingType == XF.Enum.Tag.BNET and XF.Lib.Deflate:DecodeForPrint(inData) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inData)
+        local decompressed = nil
+        for i = 1, 10 do
+            if(decompressed == nil) then
+                decompressed = XF.Lib.Deflate:DecompressDeflate(decoded)
+            end
+        end
+        local data = unpickle(decompressed)
+        
+        self:Initialize()
+        if(data.K ~= nil) then self:Key(data.K)	end
+        if(data.T ~= nil) then self:To(data.T)	end	
+        if(data.S ~= nil) then self:Subject(data.S) end
+        if(data.Y ~= nil) then self:Type(data.Y) end	
+        if(data.I ~= nil) then self:TimeStamp(data.I) end	
+        if(data.A ~= nil) then self:SetRemainingTargets(data.A) end
+        if(data.P ~= nil) then self:PacketNumber(data.P) end
+        if(data.Q ~= nil) then self:TotalPackets(data.Q) end
+
+        if(XF.Version:IsNewer('4.13.0', true) and (self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN)) then
+            local unit = _LegacyUnitDeserialize(data.D)
+            XFO.Confederate:Add(unit)
+            data.D = unit
+        else
+            self:Data(data.D)
+        end
+
+        if(data.X ~= nil) then
+            local unit = XFO.Confederate:Pop()
+            try(function()
+                unit:Deserialize(data.X)
+                XFO.Confederate:Add(unit)
+                self:FromUnit(unit)
+            end).
+            catch(function(err)
+                XF:Error(self:ObjectName(), err)
+                XFO.Confederate:Push(unit)
+            end)
+        end
+
+        if(data.L ~= nil) then
+            XFO.Links:Deserialize(self:FromUnit(), data.L)
+        end
+
+        --#region Deprecated, remove after 4.13
+        if(data.F ~= nil) then self:From(data.F) end
+        if(data.V ~= nil) then 
+            local version = XFO.Versions:Get(data.V)
+            if(version == nil) then
+                version = XFC.Version:new()
+                version:Key(data.V)
+                XFO.Versions:Add(version)
+            end
+            self:Version(version)
+        end
+
+        if(data.M ~= nil) then self:MainName(data.M) end
+        if(data.U ~= nil) then self:UnitName(data.U) end
+        if(data.N ~= nil) then 
+            self:Name(data.N) 
+        elseif(data.U ~= nil) then
+            self:Name(self:UnitName())
+        end
+        if(data.H ~= nil and XFO.Guilds:Contains(data.H)) then
+            self:Guild(XFO.Guilds:Get(data.H))
+        end		
+
+        if(data.W ~= nil) then self:Faction(XFO.Factions:Get(data.W)) end
+        --#endregion
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), 'Failed to deserialize message: ' .. err)
+    end)
 end
 --#endregion

@@ -37,15 +37,13 @@ function XFC.LinkCollection:Remove(inKey)
 	end
 end
 
-function XFC.LinkCollection:RemoveAll(inName, inRealm, inFaction)
-	assert(type(inName) == 'string')
-	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm')
-	assert(type(inFaction) == 'table' and inFaction.__name == 'Faction')
+function XFC.LinkCollection:RemoveAll(inUnit)
+	assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil)
 
 	if(inName ~= nil) then
 		local remove = {}
 		for _, link in self:Iterator() do
-			if(link:HasNode(inName, inRealm, inFaction)) then
+			if(link:HasNode(inUnit)) then
 				remove[link:Key()] = true
 			end
 		end
@@ -59,13 +57,22 @@ function XFC.LinkCollection:RemoveAll(inName, inRealm, inFaction)
 end
 
 function XFC.LinkCollection:ProcessMessage(inMessage)
-	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')	
-	self:Deserialize(inMessage:Data())
-	XF.DataText.Links:RefreshBroker()
+	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+
+    -- Deprecated, remove after 4.13
+    if(XF.Version:IsNewer('4.13.0', true)) then
+        if(inMessage:Subject() == XF.Enum.Message.LINK) then
+            self:LegacyDeserialize(inMessage:Data())
+            XF.DataText.Links:RefreshBroker()
+        end
+    else
+        self:Deserialize(inMessage:Links())
+        XF.DataText.Links:RefreshBroker()
+    end
 end
 
 function XFC.LinkCollection:Serialize()
-	local serial = ''
+    local serial = ''
 	for _, link in self:Iterator() do
 		if(link:IsMyLink()) then
 			serial = serial .. '|' .. link:Serialize()
@@ -74,7 +81,46 @@ function XFC.LinkCollection:Serialize()
 	return serial
 end
 
-function XFC.LinkCollection:Deserialize(inSerial)
+function XFC.LinkCollection:Deserialize(inFromUnit, inSerial)
+    assert(type(inSerial) == 'string')
+    for _, link in pairs (string.Split(inSerial, '|')) do
+        local obj = self:Pop()
+		try(function()
+			obj:Deserialize(inFromUnit, link)
+			links[obj:Key()] = true
+			if(not self:Contains(obj:Key())) then
+				self:Add(obj)
+			end
+		end).
+		catch(function(err)
+			XF:Warn(self:ObjectName(), err)
+			self:Push(obj)
+		end)
+    end
+
+    for _, link in self:Iterator() do
+		if(link:HasNode(inFromUnit)) then
+			if(links[link:Key()] == nil) then
+				self:Remove(link:Key())
+				self:Push(link)
+			end
+		end
+	end
+end
+
+-- Deprecated, remove after 4.13
+function XFC.LinkCollection:LegacySerialize()
+	local serial = ''
+	for _, link in self:Iterator() do
+		if(link:IsMyLink()) then
+			serial = serial .. '|' .. link:LegacySerialize()
+		end
+	end
+	return serial
+end
+
+-- Deprecated, remove after 4.13
+function XFC.LinkCollection:LegacyDeserialize(inSerial)
 	assert(type(inSerial) == 'string')
 	local links = {}
 	local fromName
@@ -83,7 +129,7 @@ function XFC.LinkCollection:Deserialize(inSerial)
     for _, link in pairs (string.Split(inSerial, '|')) do
 		local obj = self:Pop()
 		try(function()
-			obj:Deserialize(link)
+			obj:LegacyDeserialize(link)
 			fromName = obj:FromName()
 			fromTarget = obj:FromTarget()
 			links[obj:Key()] = true
@@ -98,7 +144,7 @@ function XFC.LinkCollection:Deserialize(inSerial)
     end
 
 	for _, link in self:Iterator() do
-		if(link:HasNode(fromName, fromTarget:Realm(), fromTarget:Faction())) then
+		if(link:LegacyHasNode(fromName, fromTarget:Realm(), fromTarget:Faction())) then
 			if(links[link:Key()] == nil) then
 				self:Remove(link:Key())
 				self:Push(link)
@@ -107,10 +153,11 @@ function XFC.LinkCollection:Deserialize(inSerial)
 	end
 end
 
+-- Deprecated, remove after 4.13
 function XFC.LinkCollection:CallbackBroadcast()
     local self = XFO.Links
 	try(function()
-        XF.Mailbox.Chat:SendLinkMessage(self:Serialize())
+        XF.Mailbox.Chat:SendLinkMessage(self:LegacySerialize())
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
@@ -119,10 +166,10 @@ end
 
 function XFC.LinkCollection:Backup()
 	try(function ()
-		XF.Cache.Backup.Links = self:Serialize(true)
+		XF.Cache.Backup.Links = self:Serialize()
 	end).
-	catch(function (inErrorMessage)
-		XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create links backup before reload: ' .. inErrorMessage
+	catch(function (err)
+		XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create links backup before reload: ' .. err
 	end)
 end
 
@@ -131,8 +178,8 @@ function XFC.LinkCollection:Restore()
 		try(function ()
 			self:Deserialize(XF.Cache.Backup.Links)
 		end).
-		catch(function (inErrorMessage)
-			XF:Warn(ObjectName, inErrorMessage)
+		catch(function (err)
+			XF:Warn(self:ObjectName(), err)
 		end)
 	end
 	XF.Cache.Backup.Links = ''

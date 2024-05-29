@@ -70,10 +70,6 @@ function XFC.Confederate:Add(inUnit)
         local oldData = self:Get(inUnit:Key())        
         if(oldData:IsOffline() and inUnit:IsOnline()) then
             self.onlineCount = self.onlineCount + 1
-        -- elseif(oldData:IsOnline()) then
-        --     for guid in oldData:Links() do
-        --         inUnit:AddLink(guid)
-        --     end
         end
         self.parent.Add(self, inUnit)
         self:Push(oldData)
@@ -157,7 +153,7 @@ function XFC.Confederate:OfflineUnit(inKey)
     if(self:Contains(inKey)) then
         local unit = self:Get(inKey)
 
-        XFO.Links:RemoveAll(unit:Name(), unit:Realm(), unit:Race():Faction())
+        XFO.Links:RemoveAll(unit)
         if(XF.Config.Chat.Login.Enable) then
             XF.Frames.System:DisplayLogout(unit:Name())
         end
@@ -225,17 +221,28 @@ end
 function XFC.Confederate:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
+        -- Deprecated, remove after 4.13
+        if(XF.Version:IsNewer('4.13.0', true)) then
+            if(not XF.Player.Guild:Equals(inMessage:Guild())) then
+                if(XF.Config.Chat.Login.Enable) then
+                    XF.Frames.System:DisplayLogout(inMessage:Name())
+                end
+                if(self:Contains(inMessage:From())) then
+                    local unit = self:Get(inMessage:From())
+                    XFO.Links:RemoveAll(unit)
+                    self:Remove(unit:Key())
+                    self:Push(unit)
+                end
+            end
         -- Guild scan will handle local guild logout notifications
-        if(not XF.Player.Guild:Equals(inMessage:Guild())) then
+        elseif(not inMessage:FromUnit():IsSameGuild()) then
             -- TODO move this check to frame
             if(XF.Config.Chat.Login.Enable) then
-                XF.Frames.System:DisplayLogout(inMessage:Name())
+                XF.Frames.System:DisplayLogout(inMessage:FromUnit():Name())
             end
-            if(self:Contains(inMessage:From())) then
-                local unit = self:Get(inMessage:From())
-                self:Remove(unit:Key())
-                self:Push(unit)
-            end
+            XFO.Links:RemoveAll(inMessage:FromUnit())
+            self:Remove(inMessage:FromUnit():Key())
+            self:Push(inMessage:FromUnit())
         end
     -- else
     --     local unit = nil

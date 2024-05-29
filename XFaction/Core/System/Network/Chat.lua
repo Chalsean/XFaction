@@ -130,6 +130,7 @@ function Chat:SendLogoutMessage()
     _SendMessage(XF.Enum.Message.LOGOUT, '')
 end
 
+-- Deprecated, remove after 4.13
 function Chat:SendLinkMessage(inLinks)
     assert(type(inLinks) == 'string')
     XF:Info(self:ObjectName(), 'Sending links message')

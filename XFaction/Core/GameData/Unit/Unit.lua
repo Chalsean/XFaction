@@ -572,6 +572,10 @@ function XFC.Unit:IsSameFaction()
     return self:HasRace() and self:Race():Faction():Equals(XF.Player.Faction)
 end
 
+function XFC.Unit:IsSameGuild()
+    return self:HasGuild() and self:Guild():Equals(XF.Player.Guild)
+end
+
 function XFC.Unit:GetChatLink()
 
     if(self:IsFriend()) then

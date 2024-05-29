@@ -85,30 +85,76 @@ function XFC.Link:HasToTarget()
     return self:ToTarget() ~= nil
 end
 
-function XFC.Link:HasNode(inName, inRealm, inFaction)
+function XFC.Link:HasNode(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    if(self:FromName() == inUnit:Name()) then
+        return self:FromTarget():Realm():Equals(inUnit:Realm()) and self:FromTarget():Faction():Equals(inUnit:Race():Faction())
+    elseif(self:ToName() == inUnit:Name()) then
+        return self:ToTarget():Realm():Equals(inUnit:Realm()) and self:ToTarget():Faction():Equals(inUnit:Race():Faction())
+    end
+    return false
+end
+
+-- Deprecate, remove after 4.13
+function XFC.Link:LegacyHasNode(inName, inRealm, inFaction)
     assert(type(inName) == 'string')
     assert(type(inRealm) == 'table' and inRealm.__name == 'Realm')
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction')
 
-    if(self:FromName() == inName and self:FromTarget():GetRealm():Equals(inRealm) and self:FromTarget():GetFaction():Equals(inFaction)) then
+    if(self:FromName() == inName and self:FromTarget():Realm():Equals(inRealm) and self:FromTarget():Faction():Equals(inFaction)) then
         return true
-    elseif(self:ToName() == inName and self:ToTarget():GetRealm():Equals(inRealm) and self:ToTarget():GetFaction():Equals(inFaction)) then
+    elseif(self:ToName() == inName and self:ToTarget():Realm():Equals(inRealm) and self:ToTarget():Faction():Equals(inFaction)) then
         return true
     end
     return false
 end
 
 function XFC.Link:IsMyLink()
-    return self:HasNode(XF.Player.Unit:Name(), XF.Player.Realm, XF.Player.Faction)
+    return self:FromNodeIsPlayer() or self:ToNodeIsPlayer()
+end
+
+function XFC.Link:FromNodeIsPlayer()
+    return self:FromName() == XF.Player.Unit:Name() and self:HasFromTarget() and self:FromTarget():Equals(XF.Player.Target)
+end
+
+function XFC.Link:ToNodeIsPlayer()
+    return self:ToName() == XF.Player.Unit:Name() and self:HasToTarget() and self:ToTarget():Equals(XF.Player.Target)
 end
 
 function XFC.Link:Serialize()
-    local from = self:FromName() .. ':' .. self:FromTarget():GetRealm():ID() .. ':' .. self:FromTarget():GetFaction():Key()
-    local to = self:ToName() .. ':' .. self:ToTarget():GetRealm():ID() .. ':' .. self:ToTarget():GetFaction():Key()
-    return from .. ';' .. to
+    local serial = ''
+    -- Assumption is the player will always be one of the nodes, so no reason to serialize both nodes
+    if(not self:FromNodeIsPlayer()) then
+        serial = self:FromName() .. ':' .. self:FromTarget():Realm():ID() .. ':' .. self:FromTarget():Faction():Key()
+    else
+        serial = self:ToName() .. ':' .. self:ToTarget():GetRealm():ID() .. ':' .. self:ToTarget():GetFaction():Key()
+    end
+    return serial
 end
 
-function XFC.Link:Deserialize(inSerial)
+function XFC.Link:Deserialize(inUnit, inSerial)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    assert(type(inSerial) == 'string')
+
+    self:FromName(inUnit:Name())
+    self:FromTarget(XFO.Targets:Get(inUnit:Realm(), inUnit:Faction()))
+
+    local toNode = string.Split(inSerial, ':')
+    self:ToName(toNode[1])
+    self:ToTarget(XFO.Targets:Get(tonumber(toNode[2]), tonumber(toNode[3])))
+
+    self:Initialize()
+end
+
+-- Deprecated, remove after 4.13
+function XFC.Link:LegacySerialize()
+    local serial = self:FromName() .. ':' .. self:FromTarget():Realm():ID() .. ':' .. self:FromTarget():Faction():Key() .. ';'
+    serial = serial .. self:ToName() .. ':' .. self:ToTarget():GetRealm():ID() .. ':' .. self:ToTarget():GetFaction():Key()
+    return serial
+end
+
+-- Deprecated, remove after 4.13
+function XFC.Link:LegacyDeserialize(inSerial)
     assert(type(inSerial) == 'string')
 
     local _Nodes = string.Split(inSerial, ';')
