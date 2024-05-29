@@ -65,4 +65,14 @@ end
 function Target:IncrementTargetCount()
     self.targetCount = self.targetCount + 1
 end
+
+function Target:Serialize()
+    return self:GetRealm():ID() .. ':' .. self:GetFaction():Key()
+end
+
+function Target:IsTarget(inRealm, inFaction)
+    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm')
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction')
+    return inRealm:Equals(self:GetRealm()) and inFaction:Equals(self:GetFaction())
+end
 --#endregion

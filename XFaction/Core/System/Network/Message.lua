@@ -11,6 +11,7 @@ function Message:new()
     object.__name = 'Message'
     object.to = nil
     object.from = nil
+    object.fromUnit = nil
     object.type = nil
     object.subject = nil
     object.epochTime = nil
@@ -28,28 +29,12 @@ function Message:new()
     object.faction = nil
     return object
 end
---#endregion
-
---#region Initializers
-function Message:Initialize()
-    if(not self:IsInitialized()) then
-        self:ParentInitialize()
-        self.targets = {}
-        self:SetFrom(XF.Player.Unit:GUID())
-        self:SetTimeStamp(ServerTime())
-        self:SetAllTargets()
-        self:SetVersion(XF.Version)
-        self:SetFaction(XF.Player.Faction)
-        self:SetGuild(XF.Player.Guild)
-        self:IsInitialized(true)
-    end
-    return self:IsInitialized()
-end
 
 function Message:Deconstructor()
     self:ParentDeconstructor()
     self.to = nil
     self.from = nil
+    self.fromUnit = nil
     self.type = nil
     self.subject = nil
     self.epochTime = nil
@@ -65,6 +50,38 @@ function Message:Deconstructor()
     self.guild = nil
     self.faction = nil
     self:Initialize()
+end
+
+function Message:Initialize()
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
+        self.targets = {}
+        self:SetFrom(XF.Player.Unit:GUID())
+        self:FromUnit(XF.Player.Unit)
+        self:SetTimeStamp(ServerTime())
+        self:SetAllTargets()
+        self:SetVersion(XF.Version)
+        self:SetFaction(XF.Player.Faction)
+        self:SetGuild(XF.Player.Guild)
+        self:IsInitialized(true)
+    end
+    return self:IsInitialized()
+end
+--#endregion
+
+--#region Properties
+function Message:FromUnit(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil)
+    if(inUnit ~= nil) then
+        self.fromUnit = inUnit
+    end
+    return self.fromUnit
+end
+--#endregion
+
+--#region Methods
+function Message:HasFromUnit()
+    return self:FromUnit() ~= nil
 end
 --#endregion
 

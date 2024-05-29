@@ -47,8 +47,7 @@ function XF:CoreInit()
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
 	XFO.Friends = XFC.FriendCollection:new()
-	XF.Links = LinkCollection:new()
-	XF.Nodes = NodeCollection:new()
+	XFO.Links = XFC.LinkCollection:new(); XFO.Links:Initialize()
 	XF.Mailbox.BNet = BNet:new()
 	XF.Mailbox.Chat = Chat:new()
 	

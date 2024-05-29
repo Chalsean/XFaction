@@ -87,8 +87,6 @@ function TimerEvent:CallbackLoginGuild()
 				-- Start network
 				XFO.Channels:Initialize()
 				XF.Mailbox.Chat:Initialize()
-				XF.Nodes:Initialize()
-				XF.Links:Initialize()
 				XFO.Friends:Initialize()				
 				XF.Mailbox.BNet:Initialize()
 
@@ -134,7 +132,7 @@ function TimerEvent:CallbackLoginPlayer()
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
 				XFO.Friends:Restore()
-				XF.Links:Restore()
+				XFO.Links:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
 				XF.Player.Unit:Broadcast(XF.Enum.Message.DATA)
@@ -245,7 +243,7 @@ end
 -- Periodically broadcast your links
 function TimerEvent:CallbackLinks()
 	try(function ()
-    	XF.Links:Broadcast()
+    	XFO.Links:Broadcast()
 	end).
 	catch(function (inErrorMessage)
 		XF:Warn(ObjectName, inErrorMessage)

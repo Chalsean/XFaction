@@ -194,22 +194,32 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     --#region Forwarding
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-    if(inMessage:HasTargets() and inMessageTag == XF.Enum.Tag.LOCAL) then
-        -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
-        local nodeCount = XF.Nodes:GetTargetCount(XF.Player.Target)
-        if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
-            local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
-            if(math.random(1, 100) <= percentage) then
-                XF:Debug(ObjectName, 'Randomly selected, forwarding message')
+    if(inMessageTag == XF.Enum.Tag.LOCAL) then
+
+        if(XFO.Friends:ContainsByGUID(inMessage:GetFrom())) then
+            local friend = XFO.Friends:GetByGUID(inMessage:GetFrom())
+            if(not friend:IsLinked()) then
+                XF.Mailbox.BNet:Ping(friend)
+            end
+        end
+
+        if(inMessage:HasTargets()) then
+            -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
+            -- local nodeCount = XF.Nodes:GetTargetCount(XF.Player.Target)
+            -- if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
+            --     local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
+            --     if(math.random(1, 100) <= percentage) then
+            --         XF:Debug(ObjectName, 'Randomly selected, forwarding message')
+            --         inMessage:SetType(XF.Enum.Network.BNET)
+            --         XF.Mailbox.BNet:Send(inMessage)
+            --     else
+            --         XF:Debug(ObjectName, 'Not randomly selected, will not forward mesesage')
+            --     end
+            -- else
+            --     XF:Debug(ObjectName, 'Node count under threshold, forwarding message')
                 inMessage:SetType(XF.Enum.Network.BNET)
                 XF.Mailbox.BNet:Send(inMessage)
-            else
-                XF:Debug(ObjectName, 'Not randomly selected, will not forward mesesage')
-            end
-        else
-            XF:Debug(ObjectName, 'Node count under threshold, forwarding message')
-            inMessage:SetType(XF.Enum.Network.BNET)
-            XF.Mailbox.BNet:Send(inMessage)
+            -- end
         end
 
     -- If there are still BNet targets remaining and came via BNet, broadcast
@@ -243,27 +253,13 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     -- Process LINK message
     if(inMessage:GetSubject() == XF.Enum.Message.LINK) then
-        XF.Links:ProcessMessage(inMessage)
+        XFO.Links:ProcessMessage(inMessage)
         return
     end
 
     -- Process LOGOUT message
     if(inMessage:GetSubject() == XF.Enum.Message.LOGOUT) then
-        if(XF.Player.Guild:Equals(inMessage:GetGuild())) then
-            -- In case we get a message before scan
-            if(not XFO.Confederate:Contains(inMessage:GetFrom())) then
-                XF.Frames.System:DisplayLogoutMessage(inMessage)
-            else
-                if(XFO.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
-                    XF.Frames.System:DisplayLogoutMessage(inMessage)
-                end
-                XFO.Confederate:Offline(inMessage:GetFrom())
-            end
-        else
-            XF.Frames.System:DisplayLogoutMessage(inMessage)
-            XFO.Confederate:Remove(inMessage:GetFrom())
-        end
-        XF.DataText.Guild:RefreshBroker()
+        XFO.Confederate:ProcessMessage(inMessage)        
         return
     end
 
@@ -295,7 +291,7 @@ function Mailbox:Process(inMessage, inMessageTag)
             XF.Frames.System:DisplayLoginMessage(inMessage)
         end
         XFO.Confederate:Add(unitData)
-        XF:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:GetUnitName())
+        XF:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:UnitName())
         XF.DataText.Guild:RefreshBroker()
     end
     --#endregion

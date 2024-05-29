@@ -142,24 +142,32 @@ function XFC.Confederate:Restore()
     XF.Cache.Backup.Confederate = {}
 end
 
-function XFC.Confederate:Offline(inKey)
-    --assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil')
-    local self = XFO.Confederate -- Callback
-    if(inKey ~= nil) then
-        if(self:Contains(inKey)) then
-            local unit = self:Get(inKey)
+function XFC.Confederate:Offline()
+    local self = XFO.Confederate
+    local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
+    for _, unit in self:Iterator() do
+        if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < ttl) then
+            self:OfflineUnit(unit:Key())
+        end
+    end
+end
+
+function XFC.Confederate:OfflineUnit(inKey)
+    assert(type(inKey) == 'string')
+    if(self:Contains(inKey)) then
+        local unit = self:Get(inKey)
+
+        XFO.Links:RemoveAll(unit:Name(), unit:Realm(), unit:Race():Faction())
+        if(XF.Config.Chat.Login.Enable) then
+            XF.Frames.System:DisplayLogout(unit:Name())
+        end
+
+        if(unit:Guild():Equals(XF.Player.Guild)) then
             unit:Presence(Enum.ClubMemberPresence.Offline)
             self.onlineCount = self.onlineCount - 1
-            if(XF.Config.Chat.Login.Enable) then
-                XF.Frames.System:DisplayLogout(unit:Name())
-            end
-        end
-    else
-        local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
-        for _, unit in self:Iterator() do
-            if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < ttl) then
-                self:Offline(unit:Key())
-            end
+        else
+            self:Remove(inKey)
+            self:Push(unit)
         end
     end
 end
@@ -179,7 +187,7 @@ function XFC.Confederate:LocalRoster()
                     local old = self:Get(unit:Key())
                     if(old:IsOnline() and unit:IsOffline()) then
                         XF:Info(self:ObjectName(), 'Guild member logout via scan: %s', unit:UnitName())
-                        self:Offline(old:Key())
+                        self:OfflineUnit(old:Key())
                         self:Push(unit)
                     elseif(unit:IsOnline()) then
                         if(old:IsOffline()) then
@@ -216,47 +224,49 @@ end
 
 function XFC.Confederate:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message', 'ProcessMessage method requires Message object for parameter')
-    if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
+    if(inMessage:GetSubject() == XF.Enum.Message.LOGOUT) then
         -- Guild scan will handle local guild logout notifications
-        if(not XF.Player.Guild:Equals(inMessage:Guild())) then
-            XF.Frames.System:DisplayLogout(inMessage:Name())
-            if(self:Contains(inMessage:From())) then
-                local unit = self:Get(inMessage:From())
-                self:Offline(unit:Key())
+        if(not XF.Player.Guild:Equals(inMessage:GetGuild())) then
+            -- TODO move this check to frame
+            if(XF.Config.Chat.Login.Enable) then
+                XF.Frames.System:DisplayLogout(inMessage:Name())
+            end
+            if(self:Contains(inMessage:GetFrom())) then
+                local unit = self:Get(inMessage:GetFrom())
                 self:Remove(unit:Key())
                 self:Push(unit)
             end
         end
-    else
-        local unit = nil
-        try(function()
-            unit = self:Pop()
-            unit:Deserialize(inMessage:Data())
+    -- else
+    --     local unit = nil
+    --     try(function()
+    --         unit = self:Pop()
+    --         unit:Deserialize(inMessage:Data())
 
-            -- Process LOGIN message
-            if(inMessage:Subject() == XF.Enum.Message.LOGIN and not XF.Player.Guild:Equals(inMessage:Guild())) then
-                XF.Frames.System:DisplayLogin(unit)
-            end
+    --         -- Process LOGIN message
+    --         if(inMessage:Subject() == XF.Enum.Message.LOGIN and not XF.Player.Guild:Equals(inMessage:Guild())) then
+    --             XF.Frames.System:DisplayLogin(unit)
+    --         end
 
-            -- Is the unit data newer?
-            if(self:Contains(unit:Key())) then
-                if(self:Get(unit:Key()):TimeStamp() < unit:TimeStamp()) then
-                    XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unit:UnitName())
-                    self:Add(unit)
-                else
-                    self:Push(unit)
-                end
-            else
-                XF:Info(self:ObjectName(), 'Added unit [%s] information based on message received', unit:UnitName())
-                self:Add(unit)
-            end
-        end).
-        catch(function(err)
-            XF:Warn(self:ObjectName(), err)
-            if(unit ~= nil) then
-                self:Push(unit)
-            end
-        end)        
+    --         -- Is the unit data newer?
+    --         if(self:Contains(unit:Key())) then
+    --             if(self:Get(unit:Key()):TimeStamp() < unit:TimeStamp()) then
+    --                 XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unit:UnitName())
+    --                 self:Add(unit)
+    --             else
+    --                 self:Push(unit)
+    --             end
+    --         else
+    --             XF:Info(self:ObjectName(), 'Added unit [%s] information based on message received', unit:UnitName())
+    --             self:Add(unit)
+    --         end
+    --     end).
+    --     catch(function(err)
+    --         XF:Warn(self:ObjectName(), err)
+    --         if(unit ~= nil) then
+    --             self:Push(unit)
+    --         end
+    --     end)        
     end
     XF.DataText.Guild:RefreshBroker()
 end

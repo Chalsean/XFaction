@@ -57,7 +57,7 @@ function XFC.Friend:Initialize(inID)
     local realm = XFO.Realms:Get(accountInfo.gameAccountInfo.realmID)
     local faction = XFO.Factions:Get(accountInfo.gameAccountInfo.factionName)
     if(realm ~= nil and faction ~= nil and not faction:Equals(XF.Player.Faction)) then
-        local target = XF.Targets:GetByRealmFaction(realm, faction)
+        local target = XF.Targets:GetByRealmFaction(realm:ID(), faction:Key())
         if(target ~= nil) then
             self:Target(target)
         end
@@ -125,6 +125,9 @@ end
 function XFC.Friend:IsLinked(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean')
     if(inBoolean ~= nil) then
+        if(inBoolean and self.isLinked ~= inBoolean) then
+            self:CreateLink()
+        end
         self.isLinked = inBoolean
     end
     return self.isLinked
@@ -153,5 +156,21 @@ end
 
 function XFC.Friend:HasGUID()
     return self.guid ~= nil
+end
+
+function XFC.Friend:CreateLink()
+    local link = XFO.Links:Pop()
+    try(function ()
+        link:FromName(XF.Player.Unit:Name())
+        link:FromTarget(XF.Player.Target)
+        link:ToName(self:Name())
+        link:ToTarget(self:Target())
+        link:Initialize()
+        XFO.Links:Add(link)
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+        XFO.Links:Push(link)
+    end)
 end
 --#endregion

@@ -31,6 +31,8 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	messageData.Q = inMessage:GetTotalPackets()
 	messageData.V = inMessage:GetVersion():Key()
 	messageData.W = inMessage:GetFaction():Key()
+	messageData.X = inMessage:HasFromUnit() and inMessage:FromUnit():Serialize() or nil
+	messageData.L = XFO.Links:Serialize(true)
 
 	return pickle(messageData)
 end

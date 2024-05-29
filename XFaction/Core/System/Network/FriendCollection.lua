@@ -103,7 +103,7 @@ function XFC.FriendCollection:GetByGameID(inGameID)
 end
 
 function XFC.FriendCollection:ContainsByGUID(inGUID)
-    return self:GetByGameGUID(inGUID) ~= nil
+    return self:GetByGUID(inGUID) ~= nil
 end
 
 function XFC.FriendCollection:GetByGUID(inGUID)

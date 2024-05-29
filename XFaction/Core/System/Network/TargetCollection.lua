@@ -39,7 +39,7 @@ function TargetCollection:Initialize()
 				realm:IsTargeted(true)
 				target:Print()
 
-				if(XF.Player.Target == nil and realm:Equals(XF.Player.Guild:Realm()) and faction:Equals(XF.Player.Faction)) then
+				if(XF.Player.Target == nil and realm:Equals(XF.Player.Realm) and faction:Equals(XF.Player.Faction)) then
 					XF:Info(ObjectName, 'Initializing player target [%s]', key)
 					XF.Player.Target = target
 				end
@@ -53,18 +53,24 @@ end
 
 --#region Hash
 function TargetCollection:GetByRealmFaction(inRealm, inFaction)
-	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
-	local key = GetTarKey(inRealm, inFaction)
-    if(self:Contains(key)) then return self:Get(key) end
-	for _, connectedRealm in inRealm:ConnectedIterator() do
-		local key = GetTarKey(connectedRealm, inFaction)
-    	if(self:Contains(key)) then return self:Get(key) end
+	assert(type(inRealm) == 'number')
+    assert(type(inFaction) == 'number')
+
+	local realm = XFO.Realms:Get(inRealm)
+	local faction = XFO.Factions:Get(inFaction)
+
+	if(realm ~= nil and faction ~= nil) then
+		local key = GetTarKey(realm, faction)
+		if(self:Contains(key)) then return self:Get(key) end
+		for _, connectedRealm in realm:ConnectedIterator() do
+			local key = GetTarKey(connectedRealm, faction)
+			if(self:Contains(key)) then return self:Get(key) end
+		end
 	end
 end
 
 function TargetCollection:GetByGuild(inGuild)
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild')
-	return self:GetByRealmFaction(inGuild:Realm(), inGuild:Faction())
+	return self:GetByRealmFaction(inGuild:Realm():ID(), inGuild:Faction():Key())
 end
 --#endregion

@@ -6,7 +6,13 @@ local ServerTime = GetServerTime
 local RaiderIO = _G.RaiderIO
 
 local function DeserializeMessage(inObject, inCompressedData)
-	local decompressed = Deflate:DecompressDeflate(inCompressedData)
+	local decompressed = nil
+	for i = 1, 10 do
+		if(decompressed == nil) then
+			decompressed = Deflate:DecompressDeflate(inCompressedData)
+		end
+	end
+
 	local messageData = unpickle(decompressed)
 	inObject:Initialize()
 
@@ -41,8 +47,19 @@ local function DeserializeMessage(inObject, inCompressedData)
 	end		
 
 	if(messageData.W ~= nil) then inObject:SetFaction(XFO.Factions:Get(messageData.W)) end
+	if(messageData.X ~= nil) then
+		local unit = XFO.Confederate:Pop()
+		try(function()
+			unit:Deserialize(messageData.X)
+			XFO.Confederate:Add(unit)
+			inObject:FromUnit(unit)
+		end).
+		catch(function(err)
+			XF:Error(ObjectName, err)
+			XFO.Confederate:Push(unit)
+		end)
+	end
 
-	-- Leave any UnitData serialized for now
 	inObject:SetData(messageData.D)
 	return inObject
 end
@@ -60,7 +77,7 @@ function XF:DeserializeUnitData(inData)
 		unit:Presence(Enum.ClubMemberPresence.Online)
 	end
 	--unit:Faction(XFO.Factions:Get(deserializedData.F))
-	unit:SetGUID(deserializedData.K)
+	unit:GUID(deserializedData.K)
 	unit:Key(deserializedData.K)
 	--unit:SetClass(XFO.Classes:Get(deserializedData.O))
 	local unitNameParts = string.Split(deserializedData.U, '-')
@@ -68,6 +85,7 @@ function XF:DeserializeUnitData(inData)
 	--unit:SetUnitName(deserializedData.U)
 	if(deserializedData.H ~= nil and XFO.Guilds:Contains(deserializedData.H)) then
 		unit:Guild(XFO.Guilds:Get(deserializedData.H))
+		unit:Realm(unit:Guild():Realm())
 	end
 	if(deserializedData.I ~= nil) then unit:ItemLevel(deserializedData.I) end
 	unit:Rank(deserializedData.J)

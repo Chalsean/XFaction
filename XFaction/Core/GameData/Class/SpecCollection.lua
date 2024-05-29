@@ -67,6 +67,7 @@ local SpecData =
 function XFC.SpecCollection:new()
     local object = XFC.SpecCollection.parent.new(self)
 	object.__name = ObjectName
+	object.initial = {}
     return object
 end
 
@@ -85,6 +86,10 @@ function XFC.SpecCollection:Initialize()
 			spec:Class(XFO.Classes:Get(tonumber(specData[3])))
 			self:Add(spec)
 			XF:Info(self:ObjectName(), 'Initialized spec [%d:%s:%s]', spec:ID(), spec:Name(), spec:Class():Name())
+
+			if(spec:IsInitial()) then
+				self.initial[spec:Class():ID()] = spec
+			end
 		end
 
 		XF.Events:Add({
@@ -102,11 +107,7 @@ end
 --#region Methods
 function XFC.SpecCollection:GetInitialClassSpec(inClassID)
 	assert(type(inClassID) == 'number')
-	for _, spec in self:Iterator() do
-		if(spec:Class():ID() == inClassID and spec:Name() == 'Initial') then
-			return spec
-		end
-	end
+	return self.initial[inClassID]
 end
 
 function XFC.SpecCollection:CallbackSpecChanged()

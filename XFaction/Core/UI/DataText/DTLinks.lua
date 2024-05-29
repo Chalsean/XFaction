@@ -77,30 +77,34 @@ function DTLinks:RefreshBroker()
 	local names = {}
 	local allianceCount = 0
 	local hordeCount = 0
+	local myCount = 0
 
-	for _, link in XF.Links:Iterator() do
-		if(names[link:GetFromNode():Name()] == nil) then
-			if(link:GetFromNode():GetTarget():GetFaction():Name() == 'Alliance') then
+	for _, link in XFO.Links:Iterator() do
+		if(names[link:FromName()] == nil) then
+			if(link:FromTarget():GetFaction():IsAlliance()) then
 				allianceCount = allianceCount + 1
 			else
 				hordeCount = hordeCount + 1
 			end
-			names[link:GetFromNode():Name()] = true
+			names[link:FromName()] = true
 		end
-		if(names[link:GetToNode():Name()] == nil) then
-			if(link:GetToNode():GetTarget():GetFaction():Name() == 'Alliance') then
+		if(names[link:ToName()] == nil) then
+			if(link:ToTarget():GetFaction():IsAlliance()) then
 				allianceCount = allianceCount + 1
 			else
 				hordeCount = hordeCount + 1
 			end
-			names[link:GetToNode():Name()] = true
+			names[link:ToName()] = true
+		end
+		if(link:IsMyLink()) then
+			myCount = myCount + 1
 		end
 	end
 
 	if(XF.Config.DataText.Link.Faction) then
-		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XF.Links:Count(), allianceCount, hordeCount)
+		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r-|cffFF4700%d|r-|cffffff00%d|r\)', text, XFO.Links:Count(), allianceCount, hordeCount, myCount)
 	else
-		text = format('%s|cffffffff%d|r', text, XF.Links:Count())
+		text = format('%s|cffffffff%d|r', text, XFO.Links:Count())
 	end
 	XF.DataText.Links:GetBroker().text = text
 end
@@ -134,7 +138,7 @@ function DTLinks:OnEnter(this)
 	local guildName = XFO.Confederate:Name()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], guildName), self.headerFont, 'LEFT', targetCount)
 	line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XF.Links:Count()), self.headerFont, 'LEFT', targetCount)
+	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XFO.Links:Count()), self.headerFont, 'LEFT', targetCount)
 
 	line = self.tooltip:AddLine()
 	line = self.tooltip:AddLine()
@@ -158,25 +162,26 @@ function DTLinks:OnEnter(this)
 
 	--#region Populate Table
 	if(XF.Initialized) then
-		for _, link in XF.Links:Iterator() do
-			local fromName = format('|cffffffff%s|r', link:GetFromNode():Name())
-			if(link:IsMyLink() and link:GetFromNode():IsMyNode()) then
-				fromName = format('|cffffff00%s|r', link:GetFromNode():Name())
+		for _, link in XFO.Links:Iterator() do
+			local fromName = format('|cffffffff%s|r', link:FromName())
+			if(link:IsMyLink() and link:FromName() == XF.Player.Unit:Name()) then
+				fromName = format('|cffffff00%s|r', link:FromName())
 			end
 
-			local toName = format('|cffffffff%s|r', link:GetToNode():Name())
-			if(link:IsMyLink() and link:GetToNode():IsMyNode()) then
-				toName = format('|cffffff00%s|r', link:GetToNode():Name())
+			local toName = format('|cffffffff%s|r', link:ToName())
+			if(link:IsMyLink() and link:ToName() == XF.Player.Unit:Name()) then
+				toName = format('|cffffff00%s|r', link:ToName())
 			end
 
-			self.tooltip:SetCell(line, targetColumn[link:GetFromNode():GetTarget():Key()], fromName, self.regularFont)
-			self.tooltip:SetCell(line, targetColumn[link:GetToNode():GetTarget():Key()], toName, self.regularFont)
+			self.tooltip:SetCell(line, targetColumn[link:FromTarget():Key()], fromName, self.regularFont)
+			self.tooltip:SetCell(line, targetColumn[link:ToTarget():Key()], toName, self.regularFont)
 			
 			line = self.tooltip:AddLine()
 		end
 	end
 	--#endregion
 
+	self.tooltip:UpdateScrolling(XF.Config.DataText.Guild.Size)
 	self.tooltip:Show()
 end
 --#endregion

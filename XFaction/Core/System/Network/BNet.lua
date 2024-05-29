@@ -104,7 +104,7 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
             XFO.Friends:CheckFriends()
             friend = XFO.Friends:GetByGameID(tonumber(inSender))
             if(friend == nil) then
-                error('Received BNet whisper from someone not in cache [%s:%d]', inMessageTag, inSender)
+                XF:Error(self:ObjectName(), 'Received BNet whisper from someone not in cache [%s:%d]', inMessageTag, inSender)
             end
         end
 

@@ -379,12 +379,6 @@ XF.Options = {
 									fontSize = 'medium',
 									name = XF.Lib.Locale['ADDON_ELVUI_DESCRIPTION']
 								},
-								Kui = {
-									order = 2,
-									type = 'description',
-									fontSize = 'medium',
-									name = XF.Lib.Locale['NAMEPLATE_KUI_DESCRIPTION']
-								},
 								RaiderIO = {
 									order = 3,
 									type = 'description',
@@ -811,7 +805,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['LINK'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Links:Print() end,
+									func = function(info) XFO.Links:Print() end,
 								},
 								Node = {
 									order = 18,
@@ -926,7 +920,6 @@ function XF:ConfigInitialize()
 	XF.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XF.ConfigDB)
 	XF.Lib.Config:RegisterOptionsTable(XF.Name, XF.Options, nil)
 	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, XF.Name, nil, 'General')
-	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'Addons', XF.Name, 'Addons')
 	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'Chat', XF.Name, 'Chat')
 	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'DataText', XF.Name, 'DataText')
 	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'Profile', XF.Name, 'Profile')

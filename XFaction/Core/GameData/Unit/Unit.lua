@@ -98,7 +98,7 @@ function XFC.Unit:Initialize(inMemberID)
     end
 
     self:GUID(unitData.guid)
-    self:Key(self:GetGUID())
+    self:Key(unitData.guid)
     self:Presence(unitData.presence) 
     self:ID(unitData.memberId)
     self:Name(unitData.name)
@@ -193,6 +193,8 @@ function XFC.Unit:Initialize(inMemberID)
         if(highestRating > 0) then
             self:PvP(highestRating, highestIndex)
         end
+    else
+        self:Spec(XFO.Specs:GetInitialClassSpec(unitData.classID))
     end
 
     self:IsInitialized(true)
@@ -201,7 +203,7 @@ end
 
 --#region Properties
 function XFC.Unit:IsPlayer(inBoolean)
-    return self:Key() == XF.Player.Unit:Key()
+    return self:Key() == XF.Player.GUID
 end
 
 function XFC.Unit:GUID(inGUID)
@@ -490,7 +492,7 @@ function XFC.Unit:Print()
     if(self:HasZone()) then self:Zone():Print() end
     if(self:HasVersion()) then self:Version():Print() end
     if(self:HasGuild()) then self:Guild():Print() end
-    if(self:HasRealm()) then self:Realm():Print()
+    if(self:HasRealm()) then self:Realm():Print() end
     if(self:HasTeam()) then self:Team():Print() end
     if(self:HasRace()) then self:Race():Print() end
     if(self:HasSpec()) then self:Spec():Print() end
@@ -584,9 +586,9 @@ function XFC.Unit:Serialize()
     local data = {}
 
     data.A = self:AchievementPoints()  
-    data.E = XF.WoW:Key()  
+    data.E = XF.WoW:Key()
     data.G = self:Guild():Key()
-    data.H = self:Realm():Key()
+    data.H = self:Realm():ID()
     data.I = self:ItemLevel()
     data.J = self:Rank()
     data.K = self:Key()
@@ -617,6 +619,7 @@ function XFC.Unit:Deserialize(inData)
     self:AchievementPoints(tonumber(data.A))
     self:Expansion(XFO.Expansions:Get(tonumber(data.E)))
     self:Guild(XFO.Guilds:Get(data.G))
+    self:Realm(XFO.Realms:Get(data.H))
     self:ItemLevel(tonumber(data.I))
     self:Rank(data.J)
     self:GUID(data.K)
