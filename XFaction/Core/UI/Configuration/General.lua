@@ -807,13 +807,6 @@ XF.Options = {
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
 									func = function(info) XFO.Links:Print() end,
 								},
-								Node = {
-									order = 18,
-									type = 'execute',
-									name = XF.Lib.Locale['NODE'],
-									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Nodes:Print() end,
-								},
 								Order = {
 									order = 19,
 									type = 'execute',
