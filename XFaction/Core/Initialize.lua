@@ -7,7 +7,7 @@ function XF:CoreInit()
 	-- Get cache/configs asap	
 	XFO.Events = XFC.EventCollection:new(); XFO.Events:Initialize()
 	XFO.Timers = XFC.TimerCollection:new(); XFO.Timers:Initialize()
-	XF.Media = MediaCollection:new(); XF.Media:Initialize()
+	XFO.Media = XFC.MediaCollection:new(); XFO.Media:Initialize()
 
 	-- External addon handling
 	XF.Addons.ElvUI = XFElvUI:new()
