@@ -33,7 +33,7 @@ function XFC.Event:IsEnabled(inBoolean)
 	return self.isEnabled
 end
 
-function XFC.XFC.Event:IsInstance(inBoolean)
+function XFC.Event:IsInstance(inBoolean)
     assert(type(inBoolean) == 'boolean' or inBoolean == nil)
     if(inBoolean ~= nil) then
         self.inInstance = inBoolean

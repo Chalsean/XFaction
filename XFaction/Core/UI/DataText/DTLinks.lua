@@ -26,7 +26,7 @@ function XFC.DTLinks:Initialize()
 			type = 'data source',
 			label = XF.Lib.Locale['DTLINKS_NAME'],
 		    OnEnter = function(this) XFO.DTLinks:OnEnter(this) end,
-			OnLeave = function(this) XFO.DTLinks.Links:OnLeave(this) end,
+			OnLeave = function(this) XFO.DTLinks:OnLeave(this) end,
 		})
 		self.headerFont = CreateFont('headerFont')
 		self.headerFont:SetTextColor(0.4,0.78,1)
@@ -39,7 +39,7 @@ end
 
 function XFC.DTLinks:PostInitialize()
 	XFO.DTLinks:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XFO.DTLinkss:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XFO.DTLinks:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
 	XFO.DTLinks:RefreshBroker()
 end
 --#endregion
@@ -125,7 +125,7 @@ function XFC.DTLinks:OnEnter(this)
 		self.tooltip:SetHeaderFont(self.headerFont)
 		self.tooltip:SetFont(self.regularFont)
 		self.tooltip:SmartAnchorTo(this)
-		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() DTLinks:OnLeave() end)
+		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTLinks:OnLeave() end)
 		self.tooltip:EnableMouse(true)
 		self.tooltip:SetClampedToScreen(false)
 	end

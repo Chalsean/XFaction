@@ -154,7 +154,7 @@ function XFC.Confederate:CallbackOffline()
         XF:Warn(self:ObjectName(), err)
     end).
     finally(function()
-        XFO.Timers:Get('Offline'):SetLastRan(XFF.TimeGetCurrent())
+        XFO.Timers:Get('Offline'):LastRan(XFF.TimeGetCurrent())
     end)
 end
 
@@ -199,7 +199,7 @@ function XFC.Confederate:LocalRoster()
                         if(old:IsOffline()) then
                             XF:Info(self:ObjectName(), 'Guild member login via scan: %s', unit:UnitName())
                             if(XF.Config.Chat.Login.Enable) then
-                                XFO.SystemFrame:DisplayLogin(unit)
+                                XFO.SystemFrame:Display(XF.Enum.Message.LOGIN, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
                             end
                             self:Add(unit)
                         elseif(not old:IsRunningAddon()) then
@@ -233,14 +233,15 @@ function XFC.Confederate:ProcessMessage(inMessage)
     if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
         -- Deprecated, remove after 4.13
         if(inMessage:Version():IsNewer(XF.DeprecatedVersion, true)) then
-            if(not XF.Player.Guild:Equals(inMessage:Guild())) then
-                if(XF.Config.Chat.Login.Enable) then
-                    XFO.SystemFrame:DisplayLogout(inMessage:Name())
-                end
+            if(not XF.Player.Guild:Equals(inMessage:Guild())) then                
                 if(self:Contains(inMessage:From())) then
                     local unit = self:Get(inMessage:From())
+                    XF:Info(self:ObjectName(), 'Guild member logout via message: %s', unit:UnitName())
                     XFO.Links:RemoveAll(unit)
                     self:Remove(unit:Key())
+                    if(XF.Config.Chat.Login.Enable) then
+                        XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
+                    end
                     self:Push(unit)
                 end
             end
@@ -248,8 +249,9 @@ function XFC.Confederate:ProcessMessage(inMessage)
         elseif(not inMessage:FromUnit():IsSameGuild()) then
             -- TODO move this check to frame
             if(XF.Config.Chat.Login.Enable) then
-                XFO.SystemFrame:DisplayLogout(inMessage:FromUnit():Name())
+                XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, inMessage:FromUnit():Name(), inMessage:FromUnit():UnitName(), inMessage:FromUnit():MainName(), inMessage:FromUnit():Guild(), nil, inMessage:FromUnit():Race():Faction())
             end
+            XF:Info(self:ObjectName(), 'Guild member logout via message: %s', inMessage:FromUnit():UnitName())
             XFO.Links:RemoveAll(inMessage:FromUnit())
             self:Remove(inMessage:FromUnit():Key())
             self:Push(inMessage:FromUnit())
@@ -301,7 +303,7 @@ function XFC.Confederate:CallbackHeartbeat()
 		XF:Warn(self:ObjectName(), err)
 	end).
 	finally(function ()
-		XFO.Timers:Get('Heartbeat'):SetLastRan(XFF.TimeGetCurrent())
+		XFO.Timers:Get('Heartbeat'):LastRan(XFF.TimeGetCurrent())
 	end)
 end
 --#endregion

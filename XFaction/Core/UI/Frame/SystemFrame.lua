@@ -6,7 +6,7 @@ XFC.SystemFrame = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.SystemFrame:new()
-    local object = SystemFrame.parent.new(self)
+    local object = XFC.SystemFrame.parent.new(self)
     object.__name = ObjectName
     return object
 end
@@ -55,14 +55,14 @@ function XFC.SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild
     elseif(inFaction:Equals(XF.Player.Faction)) then
         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
         -- TODO
-    -- else
-    --     local friend = XFO.Friends:GetByRealmUnitName(inGuild:Realm(), inName)
-    --     if(friend ~= nil) then
-    --         text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
-    --     else
-    --         -- Maybe theyre in a bnet community together, no way to associate tho
-    --         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
-    --     end
+    else
+        local friend = XFO.Friends:Get(inGuild:Realm(), inName)
+        if(friend ~= nil) then
+            text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
+        else
+            -- Maybe theyre in a bnet community together, no way to associate tho
+            text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
+        end
     end
     
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Main and inMainName ~= nil) then

@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'WIM'
 
-XFC.WIM = Addon:newChildConstructor()
+XFC.WIM = XFC.Addon:newChildConstructor()
 
 --#region Constructors
 function XFC.WIM:new()

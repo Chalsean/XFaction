@@ -84,7 +84,7 @@ end
 function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
     local self = XFO.AddonHandler
     try(function ()
-        if(XFF.ClientGetAddonState(nil, inAddonName) > 0) then
+        if(XFF.ClientGetAddonState(inAddonName) > 0) then
             if(inAddonName == XF.Name and not self:IsLoaded()) then
                 XF:Info(self:ObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
                 -- AceDB is available once addon is loaded

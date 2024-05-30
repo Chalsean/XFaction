@@ -272,10 +272,12 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         local unitData = inMessage:Data()
         if(inMessage:Subject() == XF.Enum.Message.LOGIN and 
           (not XFO.Confederate:Contains(unitData:Key()) or XFO.Confederate:Get(unitData:Key()):IsOffline())) then
-            XFO.SystemFrame:DisplayLoginMessage(inMessage)
+            XFO.SystemFrame:Display(XF.Enum.Message.LOGIN, unitData:Name(), unitData:UnitName(), unitData:MainName(), unitData:Guild(), nil, unitData:Race():Faction())
+            XF:Info(self:ObjectName(), 'Guild member login via message: %s', unitData:UnitName())
+        else
+            XF:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:UnitName())
         end
-        XFO.Confederate:Add(unitData)
-        XF:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:UnitName())
+        XFO.Confederate:Add(unitData)        
         XFO.DTGuild:RefreshBroker()
     end
     --#endregion

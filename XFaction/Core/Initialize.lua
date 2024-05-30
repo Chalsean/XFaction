@@ -138,7 +138,8 @@ function XF:CallbackLoginGuild()
                     callback = XF.CallbackLoginPlayer, 
                     repeater = true, 
                     instance = true,
-                    maxAttempts = XF.Settings.Player.Retry
+                    maxAttempts = XF.Settings.Player.Retry,
+					start = true
                 })
 			end
 		end

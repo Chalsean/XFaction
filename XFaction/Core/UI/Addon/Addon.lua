@@ -6,7 +6,7 @@ XFC.Addon = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Addon:new()
-    local object = Addon.parent.new(self)
+    local object = XFC.Addon.parent.new(self)
     object.__name = ObjectName
     object.isLoaded = false
     object.api = nil
@@ -14,7 +14,7 @@ function XFC.Addon:new()
 end
 
 function XFC.Addon:newChildConstructor()
-    local object = Addon.parent.new(self)
+    local object = XFC.Addon.parent.new(self)
     object.__name = ObjectName
     object.parent = self
     object.isLoaded = false

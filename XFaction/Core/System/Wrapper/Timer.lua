@@ -6,7 +6,7 @@ XFC.Timer = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Timer:new()
-    local object = Timer.parent.new(self)
+    local object = XFC.Timer.parent.new(self)
     object.__name = ObjectName
     object.startTime = nil
     object.handle = nil

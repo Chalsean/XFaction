@@ -132,8 +132,8 @@ local function PreSort()
             data.Profession2 = unit:HasProfession2() and unit:Profession2():IconID() or nil
             data.Zone = unit:HasZone() and unit:Zone():Name() or nil
             data.MythicKey = unit:HasMythicKey() and unit:MythicKey():HasDungeon() and unit:MythicKey():Dungeon():Name() .. ' +' .. unit:MythicKey():ID() or nil
-            data.Raid = unit:HasRaiderIO() and unit:RaiderIO():GetRaid() or nil
-            data.Dungeon = unit:HasRaiderIO() and unit:RaiderIO():GetDungeon() or nil
+            data.Raid = unit:HasRaiderIO() and unit:RaiderIO():Raid() or nil
+            data.Dungeon = unit:HasRaiderIO() and unit:RaiderIO():DungeonScore() or nil
 
 			list[#list + 1] = data
 		end
@@ -205,7 +205,7 @@ function XFC.DTGuild:OnEnter(this)
 		self.tooltip:SetHeaderFont(self.headerFont)
 		self.tooltip:SetFont(self.regularFont)
 		self.tooltip:SmartAnchorTo(this)
-		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() DTGuild:OnLeave() end)
+		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTGuild:OnLeave() end)
 		self.tooltip:EnableMouse(true)
 		self.tooltip:SetClampedToScreen(false)
 		self.tooltip:SetFrameStrata('FULLSCREEN_DIALOG')

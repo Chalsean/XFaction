@@ -41,10 +41,6 @@ function XFC.FriendCollection:Initialize()
 end
 --#endregion
 
---#region Properties
-
---#endregion
-
 --#region Methods
 function XFC.FriendCollection:Add(inFriend)
 	assert(type(inFriend) == 'table' and inFriend.__name == 'Friend', 'argument must be Friend object')
@@ -149,7 +145,7 @@ function XFC.FriendCollection:CheckFriend(inKey)
 				local old = self:Get(inKey)
 				XF:Debug(self:ObjectName(), 'Friend has gone offline: %s', old:Tag())
                 old:Print()
-				XFO.Confederate:Offline(old:GUID())
+				XFO.Confederate:OfflineUnit(old:GUID())
 				self:Remove(old:Key())
 				self:Push(old)
 			end
