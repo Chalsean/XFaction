@@ -1,41 +1,41 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'AchievementEvent'
-local GetAchievementInfo = GetAchievementInfo
 
-AchievementEvent = XFC.Object:newChildConstructor()
+XFC.AchievementEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function AchievementEvent:new()
-    local object = AchievementEvent.parent.new(self)
+function XFC.AchievementEvent:new()
+    local object = XFC.AchievementEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function AchievementEvent:Initialize()
+function XFC.AchievementEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFO.Events:Add({name = 'Achievement', 
-                        event = 'ACHIEVEMENT_EARNED', 
-                        callback = XF.Handlers.AchievementEvent.CallbackAchievement, 
-                        instance = true})
+        XFO.Events:Add({
+            name = 'Achievement', 
+            event = 'ACHIEVEMENT_EARNED', 
+            callback = XFO.AchievementHandler.CallbackAchievementEarned, 
+            instance = true
+        })
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Callbacks
-function AchievementEvent:CallbackAchievement(inID)
+--#region Methods
+function XFC.AchievementEvent:CallbackAchievementEarned(inID)
+    local self = XFO.AchievementHandler
     try(function ()
-        local _, name, _, _, _, _, _, _, _, _, _, isGuild = GetAchievementInfo(inID)
+        local _, name, _, _, _, _, _, _, _, _, _, isGuild = XFF.PlayerGetAchievement(inID)
         if(not isGuild and string.find(name, XF.Lib.Locale['EXPLORE']) == nil) then
             XFO.Chat:SendAchievementMessage(inID)
         end
     end).
     catch(function (err)
-        XF:Warn(ObjectName, err)
+        XF:Warn(self:ObjectName(), err)
     end)    
 end
 --#endregion

@@ -13,7 +13,7 @@ function XF:CoreInit()
 	XF.Addons.ElvUI = XFElvUI:new()
 	XF.Addons.RaiderIO = RaiderIOCollection:new()
 	XF.Addons.WIM = XFWIM:new()
-	XF.Handlers.AddonEvent = AddonEvent:new(); XF.Handlers.AddonEvent:Initialize()
+	XFO.AddonHandler = XFC.AddonEvent:new(); XFO.AddonHandler:Initialize()
 
 	-- Log XFaction version
 	XFO.Versions = XFC.VersionCollection:new(); XFO.Versions:Initialize()
@@ -40,11 +40,9 @@ function XF:CoreInit()
 	XF.Frames.System = SystemFrame:new()
 
 	-- Declare handlers but not listening yet
-	XF.Handlers.AchievementEvent = AchievementEvent:new(); XF.Handlers.AchievementEvent:Initialize()
-	XF.Handlers.OrderEvent = XFC.OrderEvent:new(); XF.Handlers.OrderEvent:Initialize()
-	XF.Handlers.SystemEvent = SystemEvent:new()
-	XF.Handlers.TimerEvent = TimerEvent:new()
-
+	XFO.AchievementHandler = XFC.AchievementEvent:new(); XFO.AchievementHandler:Initialize()
+	XFO.SystemHandler = XFC.SystemEvent:new()
+	
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
 	XFO.Friends = XFC.FriendCollection:new()
@@ -189,7 +187,7 @@ function XF:CallbackLoginPlayer()
 			end			
 
 			-- Start all hooks, timers and events
-			XF.Handlers.SystemEvent:Initialize()
+			XFO.SystemHandler:Initialize()
 			XFO.Hooks:Start()
 			XFO.Timers:Start()
 			XFO.Events:Start()				
