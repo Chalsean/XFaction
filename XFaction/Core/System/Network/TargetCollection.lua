@@ -11,7 +11,7 @@ function XFC.TargetCollection:new()
     return object
 end
 
-local function GetTargetKey(inRealm, inFaction)
+local function _GetTargetKey(inRealm, inFaction)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm')
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction')
 	return inRealm:ID() .. ':' .. inFaction:Key()
@@ -23,7 +23,7 @@ function XFC.TargetCollection:Initialize()
 		for _, guild in XFO.Guilds:Iterator() do
 			local realm = guild:Realm()
 			local faction = guild:Faction()
-			local key = GetTargetKey(realm, faction)
+			local key = _GetTargetKey(realm, faction)
 			
 			if(not self:Contains(key)) then	
 				XF:Info(self:ObjectName(), 'Initializing target [%s]', key)
@@ -55,20 +55,20 @@ function XFC.TargetCollection:Get(inObject, inFaction)
     if(inFaction ~= nil) then
         local realm = type(inObject) == 'table' and inObject or XFO.Realms:Get(inObject)
         local faction = type(inFaction) == 'table' and inFaction or XFO.Factions:Get(inFaction)
-        local key = GetTargetKey(realm, faction)
+        local key = _GetTargetKey(realm, faction)
 
 		if(self:Contains(key)) then 
             return self.parent.Get(self, key)
         else
             for _, connectedRealm in realm:ConnectedIterator() do
-                local key = GetTargetKey(connectedRealm, faction)
+                local key = _GetTargetKey(connectedRealm, faction)
                 if(self:Contains(key)) then 
                     return self.parent.Get(self, key) 
                 end
             end
         end
-    end
-
-    return self.parent.Get(self, inObject)
+    else
+    	return self.parent.Get(self, inObject)
+	end
 end
 --#endregion

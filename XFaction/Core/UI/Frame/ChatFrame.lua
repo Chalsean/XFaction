@@ -97,7 +97,7 @@ function XFC.ChatFrame:ProcessMessage(inMessage)
     end
 
     if(XF.Player.Unit:CanGuildListen()) then
-        if(not inMessage:FromUnit():IsSameGuild())
+        if(not inMessage:FromUnit():IsSameGuild()) then
             if(inMessage:IsGuildChat()) then
                 XFO.ChatFrame:DisplayGuildChat(inMessage:FromUnit(), inMessage:GetData())
             else
