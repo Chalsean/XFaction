@@ -14,7 +14,7 @@ end
 function XFC.SystemFrame:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFO.SystemFrame.CallbackChatFilter)
+        XFF.ChatFrameFilter('CHAT_MSG_SYSTEM', XFO.SystemFrame.CallbackChatFilter)
         XF:Info(self:ObjectName(), 'Created CHAT_MSG_SYSTEM event filter')
         self:IsInitialized(true)
     end
@@ -32,85 +32,77 @@ function XFC.SystemFrame:CallbackChatFilter(inEvent, inMessage, ...)
         return true
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_LOGOUT'])) then
         return true
-    elseif(string.find(inMessage, XF.Lib.Locale['CHAT_JOIN_GUILD'])) then
-        return true 
+    -- Hide Blizz API spam
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
         return true
     end
     return false, inMessage, ...
 end
 
-function XFC.SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inOrder, inFaction)
+local function _GetChatLink(inUnit)
+
+    if(inUnit:IsFriend() and not inUnit:IsSameFaction()) then
+        local friend = XFO.Friends:Get(inUnit:GUID())
+        return format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:AccountName(), friend:AccountID(), friend:Tag(), inUnit:Name())
+    end
+    
+    -- Maybe theyre in a bnet community together, no way to associate tho
+    return format('|Hplayer:%s|h[%s]|h', inUnit:UnitName(), inUnit:Name())
+end
+
+function XFC.SystemFrame:DisplayLogin(inUnit)
+    if(not XF.Config.Chat.Login.Enable) then return end
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
 
     local text = XF.Settings.Frames.Chat.Prepend
-    
-    if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Faction) then  
-        text = text .. format('%s ', format(XF.Icons.String, inFaction:IconID()))
-    elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Faction) then
-        text = text .. format('%s ', format(XF.Icons.String, inFaction:IconID()))
-    end
-  
-    if(inType == XF.Enum.Message.LOGOUT) then
-        text = text .. inName .. ' '
-    elseif(inFaction:Equals(XF.Player.Faction)) then
-        text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
-        -- TODO
-    else
-        local friend = XFO.Friends:Get(inGuild:Realm(), inName)
-        if(friend ~= nil) then
-            text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
-        else
-            -- Maybe theyre in a bnet community together, no way to associate tho
-            text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
-        end
-    end
-    
-    if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Main and inMainName ~= nil) then
-        text = text .. '(' .. inMainName .. ') '
-    elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Main and inMainName ~= nil) then
-        text = text .. '(' .. inMainName .. ') '
+    if(XF.Config.Chat.Login.Faction) then
+        text = text .. format('%s ', format(XF.Icons.String, inUnit:Race():Faction():IconID()))
     end
 
-    if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Guild) then  
-        text = text .. '<' .. inGuild:Initials() .. '> '
-    elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Guild) then
-        text = text .. '<' .. inGuild:Initials() .. '> '
+    text = text .. _GetChatLink(inUnit) .. ' '
+    if(inUnit:IsAlt() and XF.Config.Chat.Login.Main) then
+        text = text .. '(' .. inUnit:MainName() .. ') '
     end
-    
-    if(inType == XF.Enum.Message.LOGOUT) then
-        text = text .. XF.Lib.Locale['CHAT_LOGOUT']
-    elseif(inType == XF.Enum.Message.LOGIN) then
-        text = text .. XF.Lib.Locale['CHAT_LOGIN']
-        if(XF.Config.Chat.Login.Sound and not XF.Player.Guild:Equals(inGuild)) then
-            XFF.UISystemSound(3332, 'Master')
-        end
-    elseif(inType == XF.Enum.Message.ORDER) then
-        if(inOrder:IsGuild()) then
-            text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:GetLink())
-        else
-            text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:CrafterName(), inOrder:GetLink())
-        end
+    if(XF.Config.Chat.Login.Guild) then  
+        text = text .. '<' .. inUnit:Guild():Initials() .. '> '
+    end
+    text = text .. XF.Lib.Locale['CHAT_LOGIN']
+
+    if(not inUnit:IsSameGuild() and XF.Config.Chat.Login.Sound) then
+        XFF.UISystemSound(3332, 'Master')
     end
     XFF.UISystemMessage(text) 
 end
 
-function XFC.SystemFrame:DisplayLoginMessage(inMessage)
+function XFC.SystemFrame:DisplayLogout(inName)
     if(not XF.Config.Chat.Login.Enable) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')    
-    local unitData = inMessage:Data()
-    self:Display(inMessage:Subject(), unitData:Name(), unitData:UnitName(), unitData:MainName(), unitData:Guild(), nil, unitData:Race():Faction())
-end
-
-function XFC.SystemFrame:DisplayLogoutMessage(inMessage)
-    if(not XF.Config.Chat.Login.Enable) then return end
-    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), nil, inMessage:Faction())
+    assert(type(inName) == 'string')
+    XFF.UISystemMessage(XF.Settings.Frames.Chat.Prepend .. inName .. ' ' .. XF.Lib.Locale['CHAT_LOGOUT'])
 end
 
 function XFC.SystemFrame:DisplayOrder(inOrder)
     if(not XF.Config.Chat.Crafting.Enable) then return end    
     assert(type(inOrder) == 'table' and inOrder.__name == 'Order')
-    local customer = inOrder:Customer()
-    self:Display(XF.Enum.Message.ORDER, customer:Name(), customer:UnitName(), customer:MainName(), customer:Guild(), inOrder, customer:Faction())
+
+    local text = XF.Settings.Frames.Chat.Prepend    
+    if(XF.Config.Chat.Crafting.Faction) then
+        text = text .. format('%s ', format(XF.Icons.String, inOrder:Customer():Race():Faction():IconID()))
+    end
+
+    text = text .. _GetChatLink(inOrder:Customer()) .. ' '
+    if(inOrder:Customer():IsAlt() and XF.Config.Chat.Crafting.Main) then
+        text = text .. '(' .. inOrder:Customer():MainName() .. ') '
+    end
+    if(XF.Config.Chat.Crafting.Guild) then  
+        text = text .. '<' .. inOrder:Customer():Guild():Initials() .. '> '
+    end
+
+    if(inOrder:IsGuild()) then
+        text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:GetLink())
+    else
+        text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:CrafterName(), inOrder:GetLink())
+    end
+
+    XFF.UISystemMessage(text)
 end
 --#endregion

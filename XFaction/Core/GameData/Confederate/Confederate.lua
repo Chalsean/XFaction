@@ -164,9 +164,7 @@ function XFC.Confederate:OfflineUnit(inKey)
         local unit = self:Get(inKey)
 
         XFO.Links:RemoveAll(unit)
-        if(XF.Config.Chat.Login.Enable) then
-            XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
-        end
+        XFO.SystemFrame:DisplayLogout(unit:Name())
 
         if(unit:Guild():Equals(XF.Player.Guild)) then
             unit:Presence(Enum.ClubMemberPresence.Offline)
@@ -198,9 +196,7 @@ function XFC.Confederate:LocalRoster()
                     elseif(unit:IsOnline()) then
                         if(old:IsOffline()) then
                             XF:Info(self:ObjectName(), 'Guild member login via scan: %s', unit:UnitName())
-                            if(XF.Config.Chat.Login.Enable) then
-                                XFO.SystemFrame:Display(XF.Enum.Message.LOGIN, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
-                            end
+                            XFO.SystemFrame:DisplayLogin(unit)
                             self:Add(unit)
                         elseif(not old:IsRunningAddon()) then
                             self:Add(unit)
@@ -239,18 +235,13 @@ function XFC.Confederate:ProcessMessage(inMessage)
                     XF:Info(self:ObjectName(), 'Guild member logout via message: %s', unit:UnitName())
                     XFO.Links:RemoveAll(unit)
                     self:Remove(unit:Key())
-                    if(XF.Config.Chat.Login.Enable) then
-                        XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
-                    end
+                    XFO.SystemFrame:DisplayLogout(unit:Name())
                     self:Push(unit)
                 end
             end
         -- Guild scan will handle local guild logout notifications
         elseif(not inMessage:FromUnit():IsSameGuild()) then
-            -- TODO move this check to frame
-            if(XF.Config.Chat.Login.Enable) then
-                XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, inMessage:FromUnit():Name(), inMessage:FromUnit():UnitName(), inMessage:FromUnit():MainName(), inMessage:FromUnit():Guild(), nil, inMessage:FromUnit():Race():Faction())
-            end
+            XFO.SystemFrame:DisplayLogout(inMessage:FromUnit():Name())
             XF:Info(self:ObjectName(), 'Guild member logout via message: %s', inMessage:FromUnit():UnitName())
             XFO.Links:RemoveAll(inMessage:FromUnit())
             self:Remove(inMessage:FromUnit():Key())

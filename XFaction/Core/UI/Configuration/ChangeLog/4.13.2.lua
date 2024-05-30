@@ -72,7 +72,7 @@ XF.ChangeLog['4.13.2'] = {
                 order = 11,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Finished moving all classes/objects under XF namespace to avoid conflict with other addons.',
+                name = 'Finished moving all classes/objects under XF namespace to avoid naming conflict with other addons.',
             },
         },
     },		
