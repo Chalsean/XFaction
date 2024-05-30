@@ -10,33 +10,19 @@ XFC.MythicKeyCollection = XFC.ObjectCollection:newChildConstructor()
 function XFC.MythicKeyCollection:new()
     local object = XFC.MythicKeyCollection.parent.new(self)
     object.__name = ObjectName
-    object.myKey = nil
     return object
 end
 --#endregion
 
---#region Properties
-function XFC.MythicKeyCollection:MyKey(inKey)
-    assert(type(inKey) == 'table' and inKey.__name == 'MythicKey' or inKey == nil)
-    if(inKey ~= nil) then
-        self.myKey = inKey
-    end
-    return self.myKey
-end
---#endregion
-
 --#region Methods
-function XFC.MythicKeyCollection:Add(inMythicKey)
-    assert(type(inMythicKey) == 'table' and inMythicKey.__name == 'MythicKey')
-    if(inMythicKey.IsMyKey()) then
-        self:MyKey(inMythicKey)
+function XFC.MythicKeyCollection:Deserialize(inKey)
+    assert(type(inKey) == 'string')
+    if(not self:Contains(inKey)) then
+        local key = XFC.MythicKey:new()
+        key:Initialize()
+        key:Key(inKey)
+        self:Add(key)
     end
-    if(not self:Contains(inMythicKey:Key())) then
-        self.parent.Add(self, inMythicKey)
-    end
-end
-
-function XFC.MythicKeyCollection:HasMyKey()
-    return self.myKey ~= nil
+    return self:Get(inKey)
 end
 --#endregion

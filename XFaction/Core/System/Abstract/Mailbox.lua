@@ -175,18 +175,9 @@ function Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
 
     -- Is a newer version available?
-    if(not XF.Cache.NewVersionNotify and XF.Version:IsNewer(inMessage:GetVersion())) then
+    if(not XF.Cache.NewVersionNotify and inMessage:HasVersion() and XF.Version:IsNewer(inMessage:Version())) then
         print(format(XF.Lib.Locale['NEW_VERSION'], XF.Title))
         XF.Cache.NewVersionNotify = true
-    end
-
-    -- Deserialize unit data
-    if(inMessage:HasUnitData()) then
-        local unitData = XF:DeserializeUnitData(inMessage:GetData())
-        inMessage:SetData(unitData)
-        if(not unitData:HasVersion()) then
-            unitData:Version(inMessage:GetVersion())
-        end
     end
 
     self:Add(inMessage:Key())
@@ -196,8 +187,8 @@ function Mailbox:Process(inMessage, inMessageTag)
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessageTag == XF.Enum.Tag.LOCAL) then
 
-        if(XFO.Friends:ContainsByGUID(inMessage:GetFrom())) then
-            local friend = XFO.Friends:GetByGUID(inMessage:GetFrom())
+        if(XFO.Friends:ContainsByGUID(inMessage:From())) then
+            local friend = XFO.Friends:GetByGUID(inMessage:From())
             if(not friend:IsLinked()) then
                 XF.Mailbox.BNet:Ping(friend)
             end
@@ -217,7 +208,7 @@ function Mailbox:Process(inMessage, inMessageTag)
             --     end
             -- else
             --     XF:Debug(ObjectName, 'Node count under threshold, forwarding message')
-                inMessage:SetType(XF.Enum.Network.BNET)
+                inMessage:Type(XF.Enum.Network.BNET)
                 XF.Mailbox.BNet:Send(inMessage)
             -- end
         end
@@ -225,9 +216,9 @@ function Mailbox:Process(inMessage, inMessageTag)
     -- If there are still BNet targets remaining and came via BNet, broadcast
     elseif(inMessageTag == XF.Enum.Tag.BNET) then
         if(inMessage:HasTargets()) then
-            inMessage:SetType(XF.Enum.Network.BROADCAST)
+            inMessage:Type(XF.Enum.Network.BROADCAST)
         else
-            inMessage:SetType(XF.Enum.Network.LOCAL)
+            inMessage:Type(XF.Enum.Network.LOCAL)
         end
         XF.Mailbox.Chat:Send(inMessage)
     end
@@ -235,40 +226,40 @@ function Mailbox:Process(inMessage, inMessageTag)
 
     --#region Process message
     -- Process GCHAT message
-    if(inMessage:GetSubject() == XF.Enum.Message.GCHAT) then
-        if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:GetGuild())) then
+    if(inMessage:Subject() == XF.Enum.Message.GCHAT) then
+        if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:Guild())) then
             XF.Frames.Chat:DisplayGuildChat(inMessage)
         end
         return
     end
 
     -- Process ACHIEVEMENT message
-    if(inMessage:GetSubject() == XF.Enum.Message.ACHIEVEMENT) then
+    if(inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
         -- Local guild achievements should already be displayed by WoW client
-        if(not XF.Player.Guild:Equals(inMessage:GetGuild())) then
+        if(not XF.Player.Guild:Equals(inMessage:Guild())) then
             XF.Frames.Chat:DisplayAchievement(inMessage)
         end
         return
     end
 
     -- Process LINK message
-    if(inMessage:GetSubject() == XF.Enum.Message.LINK) then
+    if(inMessage:Subject() == XF.Enum.Message.LINK) then
         XFO.Links:ProcessMessage(inMessage)
         return
     end
 
     -- Process LOGOUT message
-    if(inMessage:GetSubject() == XF.Enum.Message.LOGOUT) then
+    if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
         XFO.Confederate:ProcessMessage(inMessage)        
         return
     end
 
     -- Process ORDER message
-    if(inMessage:GetSubject() == XF.Enum.Message.ORDER) then
+    if(inMessage:Subject() == XF.Enum.Message.ORDER) then
         local order = nil
         try(function ()
             order = XFO.Orders:Pop()
-            order:Decode(inMessage:GetData())
+            order:Decode(inMessage:Data())
             if(not XFO.Orders:Contains(order:Key())) then
                 XFO.Orders:Add(order)
                 order:Display()
@@ -284,9 +275,9 @@ function Mailbox:Process(inMessage, inMessageTag)
     end
 
     -- Process DATA/LOGIN message
-    if(inMessage:HasUnitData()) then
-        local unitData = inMessage:GetData()
-        if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and 
+    if(inMessage:Subject() == XF.Enum.Message.LOGIN or inMessage:Subject() == XF.Enum.Message.DATA) then
+        local unitData = inMessage:Data()
+        if(inMessage:Subject() == XF.Enum.Message.LOGIN and 
           (not XFO.Confederate:Contains(unitData:Key()) or XFO.Confederate:Get(unitData:Key()):IsOffline())) then
             XF.Frames.System:DisplayLoginMessage(inMessage)
         end

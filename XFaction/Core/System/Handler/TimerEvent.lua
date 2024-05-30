@@ -135,10 +135,10 @@ function TimerEvent:CallbackLoginPlayer()
 				XFO.Links:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
-				XF.Player.Unit:Broadcast(XF.Enum.Message.DATA)
+				XF.Mailbox.Chat:SendDataMessage(XF.Player.Unit)
 			-- Otherwise send login message
 			else
-				XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
+				XF.Mailbox.Chat:SendLoginMessage(XF.Player.Unit)
 			end			
 
 			-- Start all hooks, timers and events
@@ -211,8 +211,7 @@ function TimerEvent:CallbackHeartbeat()
 	try(function ()
 		if(XF.Initialized and XF.Player.LastBroadcast < ServerTime() - XF.Settings.Player.Heartbeat) then
 			XF:Debug(ObjectName, 'Sending heartbeat')
-			XF.Player.Unit:Initialize(XF.Player.Unit:ID())
-			XF.Player.Unit:Broadcast()
+			XF.Mailbox.Chat:SendDataMessage(XF.Player.Unit)
 		end
 	end).
 	catch(function (err)
@@ -243,7 +242,7 @@ end
 -- Periodically broadcast your links
 function TimerEvent:CallbackLinks()
 	try(function ()
-    	XFO.Links:Broadcast()
+		XF.Mailbox.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
 	end).
 	catch(function (err)
 		XF:Warn(ObjectName, err)

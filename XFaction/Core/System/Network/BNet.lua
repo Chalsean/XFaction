@@ -62,7 +62,7 @@ function BNet:Send(inMessage)
 
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
-    local messageData = XF:EncodeBNetMessage(inMessage, true)
+    local messageData = inMessage:Serialize(XF.Enum.Tag.BNET)
     local packets = self:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
     self:Add(inMessage:Key())
 
@@ -85,8 +85,16 @@ end
 --#endregion
 
 --#region Receive
-function BNet:DecodeMessage(inEncodedMessage)
-    return XF:DecodeBNetMessage(inEncodedMessage)
+function BNet:DecodeMessage(inMsg)
+    local message = self:Pop()
+    try(function()
+        message:Deserialize(inMsg, XF.Enum.Tag.BNET)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+        self:Push(message)
+    end)
+    return message
 end
 
 function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
@@ -97,14 +105,15 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
             return
         end
 
-        -- People can only whisper you if friend and running addon, so if you got a whisper and theyre not in cache, something is wrong
+        -- People can only whisper you if friend and running addon, so if you got a whisper and theyre not in cache, something is weird
         local friend = XFO.Friends:GetByGameID(tonumber(inSender))
         if(friend == nil) then
             -- Refresh cache and check again
             XFO.Friends:CheckFriends()
             friend = XFO.Friends:GetByGameID(tonumber(inSender))
             if(friend == nil) then
-                XF:Error(self:ObjectName(), 'Received BNet whisper from someone not in cache [%s:%d]', inMessageTag, inSender)
+                XF:Debug(self:ObjectName(), 'Ignoring BNet whisper from unknown sender [%s:%d]', inMessageTag, inSender)
+                return
             end
         end
 

@@ -40,7 +40,7 @@ end
 function XFC.LinkCollection:RemoveAll(inUnit)
 	assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil)
 
-	if(inName ~= nil) then
+	if(inUnit ~= nil) then
 		local remove = {}
 		for _, link in self:Iterator() do
 			if(link:HasNode(inUnit)) then
@@ -60,7 +60,7 @@ function XFC.LinkCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     -- Deprecated, remove after 4.13
-    if(XF.Version:IsNewer('4.13.0', true)) then
+    if(inMessage:Version():IsNewer(XF.DeprecatedVersion, true)) then
         if(inMessage:Subject() == XF.Enum.Message.LINK) then
             self:LegacyDeserialize(inMessage:Data())
             XF.DataText.Links:RefreshBroker()
@@ -83,6 +83,7 @@ end
 
 function XFC.LinkCollection:Deserialize(inFromUnit, inSerial)
     assert(type(inSerial) == 'string')
+	local links = {}
     for _, link in pairs (string.Split(inSerial, '|')) do
         local obj = self:Pop()
 		try(function()
@@ -176,7 +177,7 @@ end
 function XFC.LinkCollection:Restore()
 	if(XF.Cache.Backup.Links ~= nil and strlen(XF.Cache.Backup.Links) > 0) then
 		try(function ()
-			self:Deserialize(XF.Cache.Backup.Links)
+			self:Deserialize(XF.Player.Unit, XF.Cache.Backup.Links)
 		end).
 		catch(function (err)
 			XF:Warn(self:ObjectName(), err)

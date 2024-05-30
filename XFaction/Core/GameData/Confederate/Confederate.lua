@@ -64,7 +64,7 @@ end
 
 --#region Methods
 function XFC.Confederate:Add(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     
     if(self:Contains(inUnit:Key())) then
         local oldData = self:Get(inUnit:Key())        
@@ -118,7 +118,7 @@ function XFC.Confederate:Backup()
         if(self:IsInitialized()) then
             for unitKey, unit in self:Iterator() do
                 if(unit:IsOnline() and unit:IsRunningAddon() and not unit:IsPlayer()) then
-                    XF.Cache.Backup.Confederate[unitKey] = XF:SerializeUnitData(unit)
+                    XF.Cache.Backup.Confederate[unitKey] = unit:Serialize()
                 end
             end
         end
@@ -131,7 +131,9 @@ end
 function XFC.Confederate:Restore()
     if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
     for _, data in pairs (XF.Cache.Backup.Confederate) do
-        local unit = XF:DeserializeUnitData(data)
+        local unit = self:Pop()
+        unit:Deserialize(data)
+        unit:IsRunningAddon(true)
         self:Add(unit)
         XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
     end
@@ -222,7 +224,7 @@ function XFC.Confederate:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
         -- Deprecated, remove after 4.13
-        if(XF.Version:IsNewer('4.13.0', true)) then
+        if(inMessage:Version():IsNewer(XF.DeprecatedVersion, true)) then
             if(not XF.Player.Guild:Equals(inMessage:Guild())) then
                 if(XF.Config.Chat.Login.Enable) then
                     XF.Frames.System:DisplayLogout(inMessage:Name())

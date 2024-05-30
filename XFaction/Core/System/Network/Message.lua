@@ -54,14 +54,6 @@ function XFC.Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.targets = {}
-        self:From(XF.Player.Unit:GUID())
-        self:FromUnit(XF.Player.Unit)
-        self:TimeStamp(XFF.TimeGetCurrent())
-        self:SetAllTargets()
-        self:Version(XF.Version)
-        self:Faction(XF.Player.Faction)
-        self:Guild(XF.Player.Guild)
-        self:Links(XFO.Links:Serialize())
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -204,10 +196,10 @@ function XFC.Message:Print()
     XF:Debug(self:ObjectName(), '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
     XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
     XF:Debug(self:ObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
-    XF:Debug(self:ObjectName(), '  links (' .. type(self.links) .. '): ' .. tostring(self.links))
-    if(self:HasVersion()) then self:Version():Print() end
-    if(self:HasGuild()) then self:Guild():Print() end
-    if(self:HasFromUnit()) then self:FromUnit():Print() end
+    --XF:Debug(self:ObjectName(), '  links (' .. type(self.links) .. '): ' .. tostring(self.links))
+    --if(self:HasVersion()) then self:Version():Print() end
+    --if(self:HasGuild()) then self:Guild():Print() end
+    --if(self:HasFromUnit()) then self:FromUnit():Print() end
 end
 
 function XFC.Message:HasFromUnit()
@@ -336,21 +328,21 @@ function XFC.Message:Serialize(inEncodingType)
 	data.A = self:GetRemainingTargets()
 	data.P = self:PacketNumber()
 	data.Q = self:TotalPackets()
-    data.X = self:FromUnit():Serialize()
+    data.X = self:HasFromUnit() and self:FromUnit():Serialize() or nil
 	data.L = self:Links()
-    data.D = self:GetData()
+    data.D = self:Data()
 
     --#region Deprecated, remove after 4.13
 	data.M = self:MainName()
 	data.N = self:Name()
 	data.U = self:UnitName()
-	data.H = self:Guild():Key()
+	data.H = self:HasGuild() and self:Guild():Key() or nil
     data.F = self:From()
     data.V = self:Version():Key()
-    data.W = self:Faction():Key()
+    data.W = self:HasFaction() and self:Faction():Key() or nil
 
-	if(inMessage:Subject() == XF.Enum.Message.DATA or inMessage:Subject() == XF.Enum.Message.LOGIN) then
-		data.D = XF:SerializeUnitData(self:Data())
+	if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
+		data.D = _LegacyUnitSerialize(self:Data())
 	end
     --#endregion
 
@@ -404,7 +396,7 @@ local function _LegacyUnitDeserialize(inSerial)
 		unit:Profession2(XFO.Professions:Get(tonumber(deserializedData.P2)))
 	end
 	unit:IsRunningAddon(true)
-	unit:TimeStamp(ServerTime())
+	unit:TimeStamp(XFF.TimeGetCurrent())
 	if(deserializedData.V ~= nil) then
 		unit:Spec(XFO.Specs:Get(deserializedData.V))
 	end
@@ -435,6 +427,7 @@ local function _LegacyUnitDeserialize(inSerial)
     if(raiderIO ~= nil) then
         unit:RaiderIO(raiderIO)
     end
+    unit:TimeStamp(XFF.TimeGetCurrent())
 
 	return unit
 end
@@ -460,25 +453,22 @@ function XFC.Message:Deserialize(inData, inEncodingType)
         if(data.P ~= nil) then self:PacketNumber(data.P) end
         if(data.Q ~= nil) then self:TotalPackets(data.Q) end
 
-        if(XF.Version:IsNewer('4.13.0', true) and (self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN)) then
-            local unit = _LegacyUnitDeserialize(data.D)
-            XFO.Confederate:Add(unit)
-            data.D = unit
-        else
-            self:Data(data.D)
-        end
-
         if(data.X ~= nil) then
             local unit = XFO.Confederate:Pop()
             try(function()
                 unit:Deserialize(data.X)
-                XFO.Confederate:Add(unit)
+                unit:IsRunningAddon(true)
                 self:FromUnit(unit)
             end).
             catch(function(err)
                 XF:Error(self:ObjectName(), err)
                 XFO.Confederate:Push(unit)
             end)
+        -- Deprecated, remove after 4.13
+        elseif(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
+            self:Data(_LegacyUnitDeserialize(data.D))
+        else
+            self:Data(data.D)
         end
 
         if(data.L ~= nil) then

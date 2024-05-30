@@ -59,6 +59,7 @@ function XF:CoreInit()
 	XFO.Professions = XFC.ProfessionCollection:new(); XFO.Professions:Initialize()	
 	XFO.Zones = XFC.ZoneCollection:new(); XFO.Zones:Initialize()	
 	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
+	XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
 	XF.Player.GUID = XFF.PlayerGetGUID('player')
 	XF.Player.Faction = XFO.Factions:Get(XFF.PlayerGetFaction('player'))
 	
@@ -80,6 +81,10 @@ function XF:CoreInit()
 		XFO.Expansions = XFC.ExpansionCollection:new(); XFO.Expansions:Initialize()
 		XF.WoW = XFO.Expansions:Current()
 		XF:Info(ObjectName, 'WoW client version [%s:%s]', XF.WoW:Name(), XF.WoW:Version():Key())
+
+		XF.DeprecatedVersion = XFC.Version:new()
+		XF.DeprecatedVersion:Key('4.13.0')
+
 	end).
 	catch(function (err)
 		XF:Warn(ObjectName, err)

@@ -385,6 +385,8 @@ function XFC.Unit:TimeStamp(inTimeStamp)
     assert(type(inTimeStamp) == 'number' or inTimeStamp == nil)
     if(inTimeStamp ~= nil) then
         self.timeStamp = inTimeStamp
+    elseif(self.timeStamp == nil) then
+        self.timeStamp = XFF.TimeGetCurrent()
     end
     return self.timeStamp
 end
@@ -603,7 +605,8 @@ function XFC.Unit:Serialize()
     data.P = self:PvP()
 	data.R = self:Race():Key()
     data.S = self:Spec():Key()
-    data.T = self:Note()
+    data.T = self:TimeStamp()
+    data.U = self:Note()
     data.V = self:Version():Key()
     data.X = self:HasProfession1() and self:Profession1():Key() or nil
 	data.Y = self:HasProfession2() and self:Profession2():Key() or nil
@@ -636,7 +639,6 @@ function XFC.Unit:Deserialize(inData)
     end
 
     if(data.M ~= nil) then
-        -- TODO augment deserialize function
         self:MythicKey(XFO.Keys:Deserialize(data.M))
     end
     self:Name(data.N)
@@ -644,7 +646,8 @@ function XFC.Unit:Deserialize(inData)
     self:PvP(data.P)
     self:Race(XFO.Races:Get(tonumber(data.R)))
     self:Spec(XFO.Specs:Get(tonumber(data.S)))
-    self:Note(data.T)
+    self:TimeStamp(tonumber(data.T))
+    self:Note(data.U)
 
     if(not XFO.Versions:Contains(data.V)) then
         XFO.Versions:Add(data.V)

@@ -29,8 +29,8 @@ function XFC.TargetCollection:Initialize()
 				XF:Info(self:ObjectName(), 'Initializing target [%s]', key)
 				local target = XFC.Target:new()
 				target:Key(key)
-				target:SetRealm(realm)
-				target:SetFaction(faction)
+				target:Realm(realm)
+				target:Faction(faction)
 				self:Add(target)
 				realm:IsTargeted(true)
 				target:Print()
@@ -49,7 +49,7 @@ end
 
 --#region Methods
 function XFC.TargetCollection:Get(inObject, inFaction)
-    assert(type(inObject) == 'table' and inObject == 'Realm' or type(inObject) == 'string' or type(inObject) == 'number')
+    assert(type(inObject) == 'table' and inObject.__name == 'Realm' or type(inObject) == 'string' or type(inObject) == 'number')
     assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or type(inFaction) == 'number' or inFaction == nil)
 
     if(inFaction ~= nil) then

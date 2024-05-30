@@ -43,6 +43,7 @@ function TimerCollection:Add(inArgs)
         timer:Start()
     end
     self.parent.Add(self, timer)
+    XF:Info(self:ObjectName(), 'Created timer [%s]', timer:Name())
 end
 
 function TimerCollection:Remove(inKey)

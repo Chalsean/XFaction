@@ -127,7 +127,7 @@ function XFC.Link:Serialize()
     if(not self:FromNodeIsPlayer()) then
         serial = self:FromName() .. ':' .. self:FromTarget():Realm():ID() .. ':' .. self:FromTarget():Faction():Key()
     else
-        serial = self:ToName() .. ':' .. self:ToTarget():GetRealm():ID() .. ':' .. self:ToTarget():GetFaction():Key()
+        serial = self:ToName() .. ':' .. self:ToTarget():Realm():ID() .. ':' .. self:ToTarget():Faction():Key()
     end
     return serial
 end
@@ -137,7 +137,7 @@ function XFC.Link:Deserialize(inUnit, inSerial)
     assert(type(inSerial) == 'string')
 
     self:FromName(inUnit:Name())
-    self:FromTarget(XFO.Targets:Get(inUnit:Realm(), inUnit:Faction()))
+    self:FromTarget(XFO.Targets:Get(inUnit:Realm(), inUnit:Race():Faction()))
 
     local toNode = string.Split(inSerial, ':')
     self:ToName(toNode[1])
@@ -149,7 +149,7 @@ end
 -- Deprecated, remove after 4.13
 function XFC.Link:LegacySerialize()
     local serial = self:FromName() .. ':' .. self:FromTarget():Realm():ID() .. ':' .. self:FromTarget():Faction():Key() .. ';'
-    serial = serial .. self:ToName() .. ':' .. self:ToTarget():GetRealm():ID() .. ':' .. self:ToTarget():GetFaction():Key()
+    serial = serial .. self:ToName() .. ':' .. self:ToTarget():Realm():ID() .. ':' .. self:ToTarget():Faction():Key()
     return serial
 end
 

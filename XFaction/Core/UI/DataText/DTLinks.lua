@@ -81,7 +81,7 @@ function DTLinks:RefreshBroker()
 
 	for _, link in XFO.Links:Iterator() do
 		if(names[link:FromName()] == nil) then
-			if(link:FromTarget():GetFaction():IsAlliance()) then
+			if(link:FromTarget():Faction():IsAlliance()) then
 				allianceCount = allianceCount + 1
 			else
 				hordeCount = hordeCount + 1
@@ -89,7 +89,7 @@ function DTLinks:RefreshBroker()
 			names[link:FromName()] = true
 		end
 		if(names[link:ToName()] == nil) then
-			if(link:ToTarget():GetFaction():IsAlliance()) then
+			if(link:ToTarget():Faction():IsAlliance()) then
 				allianceCount = allianceCount + 1
 			else
 				hordeCount = hordeCount + 1
@@ -163,20 +163,26 @@ function DTLinks:OnEnter(this)
 	--#region Populate Table
 	if(XF.Initialized) then
 		for _, link in XFO.Links:Iterator() do
-			local fromName = format('|cffffffff%s|r', link:FromName())
-			if(link:IsMyLink() and link:FromName() == XF.Player.Unit:Name()) then
-				fromName = format('|cffffff00%s|r', link:FromName())
-			end
+			if(link:IsMyLink()) then
+				local fromName = link:FromName() == XF.Player.Unit:Name() and format('|cffffff00%s|r', link:FromName()) or format('|cffffffff%s|r', link:FromName())
+				local toName = link:ToName() == XF.Player.Unit:Name() and format('|cffffff00%s|r', link:ToName()) or format('|cffffffff%s|r', link:ToName())
 
-			local toName = format('|cffffffff%s|r', link:ToName())
-			if(link:IsMyLink() and link:ToName() == XF.Player.Unit:Name()) then
-				toName = format('|cffffff00%s|r', link:ToName())
+				self.tooltip:SetCell(line, targetColumn[link:FromTarget():Key()], fromName, self.regularFont)
+				self.tooltip:SetCell(line, targetColumn[link:ToTarget():Key()], toName, self.regularFont)
+				
+				line = self.tooltip:AddLine()
 			end
+		end
+		for _, link in XFO.Links:Iterator() do
+			if(not link:IsMyLink()) then
+				local fromName = format('|cffffffff%s|r', link:FromName())
+				local toName = format('|cffffffff%s|r', link:ToName())
 
-			self.tooltip:SetCell(line, targetColumn[link:FromTarget():Key()], fromName, self.regularFont)
-			self.tooltip:SetCell(line, targetColumn[link:ToTarget():Key()], toName, self.regularFont)
-			
-			line = self.tooltip:AddLine()
+				self.tooltip:SetCell(line, targetColumn[link:FromTarget():Key()], fromName, self.regularFont)
+				self.tooltip:SetCell(line, targetColumn[link:ToTarget():Key()], toName, self.regularFont)
+				
+				line = self.tooltip:AddLine()
+			end
 		end
 	end
 	--#endregion

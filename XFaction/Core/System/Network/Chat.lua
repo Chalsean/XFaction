@@ -62,7 +62,7 @@ function Chat:Send(inMessage)
     --#endregion
 
     --#region Chat channel messaging for BROADCAST/LOCAL types
-    local messageData = XF:EncodeChatMessage(inMessage, true)
+    local messageData = inMessage:Serialize()
     local packets = self:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
     self:Add(inMessage:Key())
 
@@ -85,11 +85,20 @@ function Chat:Send(inMessage)
 end
 
 local function _SendMessage(inSubject, inData)
+    local self = XF.Mailbox.Chat
     local message = self:Pop()
     try(function ()
         message:Initialize()
         message:Type(XF.Enum.Network.BROADCAST)
         message:Subject(inSubject)
+        message:From(XF.Player.Unit:GUID())
+        message:FromUnit(XF.Player.Unit)
+        message:TimeStamp(XFF.TimeGetCurrent())
+        message:SetAllTargets()
+        message:Version(XF.Version)
+        message:Faction(XF.Player.Faction)
+        message:Guild(XF.Player.Guild)
+        message:Links(XFO.Links:Serialize())
         message:Data(inData)
         self:Send(message)
     end).
@@ -145,8 +154,16 @@ end
 --#endregion
 
 --#region Receive
-function Chat:DecodeMessage(err)
-    return XF:DecodeChatMessage(err)
+function Chat:DecodeMessage(inMsg)
+    local message = self:Pop()
+    try(function()
+        message:Deserialize(inMsg)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+        self:Push(message)
+    end)
+    return message
 end
 
 function Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)

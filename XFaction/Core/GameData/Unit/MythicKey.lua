@@ -21,6 +21,17 @@ function XFC.MythicKey:Dungeon(inDungeon)
     end
     return self.dungeon
 end
+
+function XFC.MythicKey:Key(inKey)
+    assert(type(inKey) == 'string' or inKey == nil)    
+    if(inKey ~= nil) then
+        self:Deserialize(inKey)
+        self.key = inKey
+    elseif(self.key == nil) then
+        self.key = self:Serialize()
+    end
+    return self.key
+end
 --#endregion
 
 --#region Methods

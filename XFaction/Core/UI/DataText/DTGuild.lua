@@ -128,7 +128,7 @@ local function PreSort()
             data.Spec = unit:HasSpec() and unit:Spec():IconID() or nil
             data.Profession1 = unit:HasProfession1() and unit:Profession1():IconID() or nil
             data.Profession2 = unit:HasProfession2() and unit:Profession2():IconID() or nil
-            data.Zone = unit:HasZone() and unit:Zone():LocaleName() or nil
+            data.Zone = unit:HasZone() and unit:Zone():Name() or nil
             data.MythicKey = unit:HasMythicKey() and unit:MythicKey():HasDungeon() and unit:MythicKey():Dungeon():Name() .. ' +' .. unit:MythicKey():ID() or nil
             data.Raid = unit:HasRaiderIO() and unit:RaiderIO():GetRaid() or nil
             data.Dungeon = unit:HasRaiderIO() and unit:RaiderIO():GetDungeon() or nil
