@@ -48,8 +48,8 @@ function XF:CoreInit()
 	XFO.Channels = XFC.ChannelCollection:new()
 	XFO.Friends = XFC.FriendCollection:new()
 	XFO.Links = XFC.LinkCollection:new(); XFO.Links:Initialize()
-	XF.Mailbox.BNet = BNet:new()
-	XF.Mailbox.Chat = Chat:new()
+	XFO.BNet = XFC.BNet:new()
+	XFO.Chat = XFC.Chat:new()
 	
 	-- Unit
 	XFO.Races = XFC.RaceCollection:new(); XFO.Races:Initialize()

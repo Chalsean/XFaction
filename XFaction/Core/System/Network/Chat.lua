@@ -2,18 +2,16 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Chat'
 
-Chat = Mailbox:newChildConstructor()
+XFC.Chat = XFC.Mailbox:newChildConstructor()
 
 --#region Constructors
-function Chat:new()
-    local object = Chat.parent.new(self)
+function XFC.Chat:new()
+    local object = XFC.Chat.parent.new(self)
     object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function Chat:Initialize()
+function XFC.Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XF.Enum.Tag.LOCAL = XFO.Confederate:Key() .. 'XF'
@@ -21,32 +19,33 @@ function Chat:Initialize()
         XF.Events:Add({
             name = 'ChatMsg', 
             event = 'CHAT_MSG_ADDON', 
-            callback = XF.Mailbox.Chat.ChatReceive, 
+            callback = XFO.Chat.CallbackChatReceive, 
             instance = true
         })
         XF.Events:Add({
             name = 'GuildChat', 
             event = 'CHAT_MSG_GUILD', 
-            callback = XF.Mailbox.Chat.CallbackGuildMessage, 
+            callback = XFO.Chat.CallbackGuildMessage, 
             instance = true
         })
+
         self:IsInitialized(true)
     end
     return self:IsInitialized()
 end
 --#endregion
 
---#region Send
-function Chat:Send(inMessage)
+--#region Methods
+function XFC.Chat:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Settings.System.Roster and inMessage:GetSubject() == XF.Enum.Message.DATA) then return end
 
-    XF:Debug(ObjectName, 'Attempting to send message')
+    XF:Debug(self:ObjectName(), 'Attempting to send message')
     inMessage:Print()
 
     --#region BNet messaging for BNET/BROADCAST types
     if(inMessage:Type() == XF.Enum.Network.BROADCAST or inMessage:Type() == XF.Enum.Network.BNET) then
-        XF.Mailbox.BNet:Send(inMessage)
+        XFO.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
         if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:Type() == XF.Enum.Network.BNET) then
             inMessage:Type(XF.Enum.Network.BROADCAST)
@@ -55,7 +54,7 @@ function Chat:Send(inMessage)
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
         elseif(not inMessage:HasTargets() and inMessage:Type() == XF.Enum.Network.BROADCAST) then
-            XF:Debug(ObjectName, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
+            XF:Debug(self:ObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
             inMessage:Type(XF.Enum.Network.LOCAL)        
         end
     end
@@ -77,7 +76,7 @@ function Chat:Send(inMessage)
         channelID = nil
     end
     for index, packet in ipairs (packets) do
-        XF:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
+        XF:Debug(self:ObjectName(), 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
         XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
         XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
@@ -85,7 +84,7 @@ function Chat:Send(inMessage)
 end
 
 local function _SendMessage(inSubject, inData)
-    local self = XF.Mailbox.Chat
+    local self = XFO.Chat
     local message = self:Pop()
     try(function ()
         message:Initialize()
@@ -110,51 +109,49 @@ local function _SendMessage(inSubject, inData)
     end)
 end
 
-function Chat:SendOrderMessage(inOrder)
+function XFC.Chat:SendOrderMessage(inOrder)
     assert(type(inOrder) == 'table' and inOrder.__name == 'Order')
     XF:Info(self:ObjectName(), 'Sending order message')
     inOrder:Print()
     _SendMessage(XF.Enum.Message.ORDER, inOrder:Encode())
 end
 
-function Chat:SendDataMessage(inUnit)
+function XFC.Chat:SendDataMessage(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     XF:Info(self:ObjectName(), 'Sending data message for unit [%s]', inUnit:UnitName())
     _SendMessage(XF.Enum.Message.DATA, inUnit)
 end
 
-function Chat:SendLoginMessage(inUnit)
+function XFC.Chat:SendLoginMessage(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     XF:Info(self:ObjectName(), 'Sending login message for unit [%s]', inUnit:UnitName())
     _SendMessage(XF.Enum.Message.LOGIN, inUnit)
 end
 
-function Chat:SendAchievementMessage(inID)
+function XFC.Chat:SendAchievementMessage(inID)
     assert(type(inID) == 'number')
     XF:Info(self:ObjectName(), 'Sending achievement message for [%d]', inID)
     _SendMessage(XF.Enum.Message.ACHIEVEMENT, inID)
 end
 
-function Chat:SendLogoutMessage()
+function XFC.Chat:SendLogoutMessage()
     _SendMessage(XF.Enum.Message.LOGOUT, '')
 end
 
 -- Deprecated, remove after 4.13
-function Chat:SendLinkMessage(inLinks)
+function XFC.Chat:SendLinkMessage(inLinks)
     assert(type(inLinks) == 'string')
     XF:Info(self:ObjectName(), 'Sending links message')
     _SendMessage(XF.Enum.Message.LINK, inLinks)
 end
 
-function Chat:SendChatMessage(inText)
+function XFC.Chat:SendChatMessage(inText)
     assert(type(inText) == 'string')
     XF:Info(self:ObjectName(), 'Sending guild chat message [%s]', inText)
     _SendMessage(XF.Enum.Message.GCHAT, inText)
 end
---#endregion
 
---#region Receive
-function Chat:DecodeMessage(inMsg)
+function XFC.Chat:DecodeMessage(inMsg)
     local message = self:Pop()
     try(function()
         message:Deserialize(inMsg)
@@ -166,17 +163,18 @@ function Chat:DecodeMessage(inMsg)
     return message
 end
 
-function Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function XFC.Chat:CallbackChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+    local self = XFO.Chat
     try(function ()
-        XF.Mailbox.Chat:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+        self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 
-function Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
-    local self = XF.Mailbox.Chat
+function XFC.Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTargetName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
+    local self = XFO.Chat
     try(function ()
         -- If you are the sender, broadcast to other realms/factions
         if(XF.Player.GUID == inSenderGUID and XF.Player.Unit:CanGuildSpeak()) then

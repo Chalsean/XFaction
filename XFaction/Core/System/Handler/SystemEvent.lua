@@ -43,7 +43,7 @@ end
 --#region Callbacks
 function SystemEvent:CallbackLogout()
     if(not XF.Cache.UIReload) then
-        XF.Mailbox.Chat:SendLogoutMessage()
+        XFO.Chat:SendLogoutMessage()
     end
 end
 

@@ -1,20 +1,17 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'BNet'
-local ServerTime = GetServerTime
 
-BNet = Mailbox:newChildConstructor()
+XFC.BNet = XFC.Mailbox:newChildConstructor()
 
 --#region Constructors
-function BNet:new()
-    local object = BNet.parent.new(self)
+function XFC.BNet:new()
+    local object = XFC.BNet.parent.new(self)
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function BNet:Initialize()
+function XFC.BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XF.Enum.Tag.BNET = XFO.Confederate:Key() .. 'BNET'
@@ -22,7 +19,7 @@ function BNet:Initialize()
         XF.Events:Add({
             name = 'BNetMessage', 
             event = 'BN_CHAT_MSG_ADDON', 
-            callback = XF.Mailbox.BNet.BNetReceive, 
+            callback = XFO.BNet.CallbackBNetReceive, 
             instance = true
         })
 
@@ -32,8 +29,8 @@ function BNet:Initialize()
 end
 --#endregion
 
---#region Send
-function BNet:Send(inMessage)
+--#region Methods
+function XFC.BNet:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     -- Before we do work, lets make sure there are targets and we can message those targets
@@ -70,7 +67,7 @@ function BNet:Send(inMessage)
     for _, friend in pairs (links) do
         try(function ()
             for index, packet in ipairs (packets) do
-                XF:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:Name(), friend:GameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
+                XF:Debug(self:ObjectName(), 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:Name(), friend:GameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 XF.Lib.BCTL:BNSendGameData('NORMAL', XF.Enum.Tag.BNET, packet, _, friend:GameID())
                 XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
@@ -78,14 +75,12 @@ function BNet:Send(inMessage)
             inMessage:RemoveTarget(friend:Target())
         end).
         catch(function (err)
-            XF:Warn(ObjectName, err)
+            XF:Warn(self:ObjectName(), err)
         end)
     end
 end
---#endregion
 
---#region Receive
-function BNet:DecodeMessage(inMsg)
+function XFC.BNet:DecodeMessage(inMsg)
     local message = self:Pop()
     try(function()
         message:Deserialize(inMsg, XF.Enum.Tag.BNET)
@@ -93,12 +88,13 @@ function BNet:DecodeMessage(inMsg)
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
         self:Push(message)
+        message = nil
     end)
     return message
 end
 
-function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
-    local self = XF.Mailbox.BNet
+function XFC.BNet:CallbackBNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+    local self = XFO.BNet
     try(function ()
         -- If not a message from this addon, ignore
         if(not self:IsAddonTag(inMessageTag)) then
@@ -132,11 +128,11 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
         end
     end).
     catch(function (err)
-        XF:Warn(ObjectName, err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 
-function BNet:Ping(inFriend)
+function XFC.BNet:Ping(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
     if(XF.Initialized) then
         XF:Debug(self:ObjectName(), 'Sending ping to [%s]', inFriend:Tag())
@@ -145,7 +141,7 @@ function BNet:Ping(inFriend)
     end
 end
 
-function BNet:RespondPing(inFriend)
+function XFC.BNet:RespondPing(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
     if(XF.Initialized) then
         XF:Debug(self:ObjectName(), 'Sending ping response to [%s]', inFriend:Tag())

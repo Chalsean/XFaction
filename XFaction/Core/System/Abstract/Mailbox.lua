@@ -1,13 +1,12 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Mailbox'
-local ServerTime = GetServerTime
 
-Mailbox = XFC.Factory:newChildConstructor()
+XFC.Mailbox = XFC.Factory:newChildConstructor()
 
 --#region Constructors
-function Mailbox:new()
-    local object = Mailbox.parent.new(self)
+function XFC.Mailbox:new()
+    local object = XFC.Mailbox.parent.new(self)
 	object.__name = ObjectName
 	object.objects = nil
     object.objectCount = 0   
@@ -15,8 +14,8 @@ function Mailbox:new()
 	return object
 end
 
-function Mailbox:newChildConstructor()
-    local object = Mailbox.parent.new(self)
+function XFC.Mailbox:newChildConstructor()
+    local object = XFC.Mailbox.parent.new(self)
     object.__name = ObjectName
     object.parent = self 
 	object.objects = nil
@@ -25,20 +24,18 @@ function Mailbox:newChildConstructor()
     return object
 end
 
-function Mailbox:NewObject()
+function XFC.Mailbox:NewObject()
 	return XFC.Message:new()
 end
---#endregion
 
---#region Initializers
-function Mailbox:Initialize()
+function XFC.Mailbox:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self:IsInitialized(true)
 	end
 end
 
-function Mailbox:ParentInitialize()
+function XFC.Mailbox:ParentInitialize()
     self.packets = {}
     self.objects = {}
     self.checkedIn = {}
@@ -47,20 +44,20 @@ function Mailbox:ParentInitialize()
 end
 --#endregion
 
---#region Hash
-function Mailbox:ContainsPacket(inKey)
+--#region Methods
+function XFC.Mailbox:ContainsPacket(inKey)
 	assert(type(inKey) == 'string')
 	return self.packets[inKey] ~= nil
 end
 
-function Mailbox:Add(inKey)
+function XFC.Mailbox:Add(inKey)
 	assert(type(inKey) == 'string')
 	if(not self:Contains(inKey)) then
-		self.objects[inKey] = ServerTime()
+		self.objects[inKey] = XFF.TimeGetCurrent()
 	end
 end
 
-function Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
+function XFC.Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
     assert(type(inMessageKey) == 'string')
     assert(type(inPacketNumber) == 'number')
     assert(type(inData) == 'string')
@@ -74,16 +71,14 @@ function Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
     end
 end
 
-function Mailbox:RemovePacket(inKey)
+function XFC.Mailbox:RemovePacket(inKey)
 	assert(type(inKey) == 'string')
 	if(self:ContainsPacket(inKey)) then
 		self.packets[inKey] = nil
 	end
 end
---#endregion
 
---#region Segmentation
-function Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
+function XFC.Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
 	assert(type(inEncodedData) == 'string')
 	local packets = {}
     local totalPackets = ceil(strlen(inEncodedData) / inPacketSize)
@@ -95,14 +90,14 @@ function Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
 	return packets
 end
 
-function Mailbox:HasAllPackets(inKey, inTotalPackets)
+function XFC.Mailbox:HasAllPackets(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     assert(type(inTotalPackets) == 'number')
     if(self.packets[inKey] == nil) then return false end
     return self.packets[inKey].Count == inTotalPackets
 end
 
-function Mailbox:RebuildMessage(inKey, inTotalPackets)
+function XFC.Mailbox:RebuildMessage(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     local message = ''
     -- Stitch the data back together again
@@ -112,10 +107,8 @@ function Mailbox:RebuildMessage(inKey, inTotalPackets)
     self:RemovePacket(inKey)
 	return message
 end
---#endregion
 
---#region Receive
-function Mailbox:IsAddonTag(inTag)
+function XFC.Mailbox:IsAddonTag(inTag)
 	local addonTag = false
     for _, tag in pairs (XF.Enum.Tag) do
         if(inTag == tag) then
@@ -126,9 +119,9 @@ function Mailbox:IsAddonTag(inTag)
 	return addonTag
 end
 
-function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XF:Trace(ObjectName, 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
+    XF:Trace(self:ObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
 
     --#region Ignore message
     -- If not a message from this addon, ignore
@@ -151,15 +144,15 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     local messageData = string.sub(inEncodedMessage, 3 + XF.Settings.System.UIDLength, -1)
 
     -- Ignore if it's your own message or you've seen it before
-    if(XF.Mailbox.BNet:Contains(messageKey) or XF.Mailbox.Chat:Contains(messageKey)) then
-        XF:Trace(ObjectName, 'Ignoring duplicate message [%s]', messageKey)
+    if(XFO.BNet:Contains(messageKey) or XFO.Chat:Contains(messageKey)) then
+        XF:Trace(self:ObjectName(), 'Ignoring duplicate message [%s]', messageKey)
         return
     end
     --#endregion
 
     self:AddPacket(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
-        XF:Debug(ObjectName, 'Received all packets for message [%s]', messageKey)
+        XF:Debug(self:ObjectName(), 'Received all packets for message [%s]', messageKey)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
         local fullMessage = self:DecodeMessage(encodedMessage)
         try(function ()
@@ -171,8 +164,8 @@ function Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSende
     end
 end
 
-function Mailbox:Process(inMessage, inMessageTag)
-    assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+function XFC.Mailbox:Process(inMessage, inMessageTag)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     -- Is a newer version available?
     if(not XF.Cache.NewVersionNotify and inMessage:HasVersion() and XF.Version:IsNewer(inMessage:Version())) then
@@ -190,7 +183,7 @@ function Mailbox:Process(inMessage, inMessageTag)
         if(XFO.Friends:ContainsByGUID(inMessage:From())) then
             local friend = XFO.Friends:GetByGUID(inMessage:From())
             if(not friend:IsLinked()) then
-                XF.Mailbox.BNet:Ping(friend)
+                XFO.BNet:Ping(friend)
             end
         end
 
@@ -209,7 +202,7 @@ function Mailbox:Process(inMessage, inMessageTag)
             -- else
             --     XF:Debug(ObjectName, 'Node count under threshold, forwarding message')
                 inMessage:Type(XF.Enum.Network.BNET)
-                XF.Mailbox.BNet:Send(inMessage)
+                XFO.BNet:Send(inMessage)
             -- end
         end
 
@@ -220,7 +213,7 @@ function Mailbox:Process(inMessage, inMessageTag)
         else
             inMessage:Type(XF.Enum.Network.LOCAL)
         end
-        XF.Mailbox.Chat:Send(inMessage)
+        XFO.Chat:Send(inMessage)
     end
     --#endregion
 
@@ -287,10 +280,8 @@ function Mailbox:Process(inMessage, inMessageTag)
     end
     --#endregion
 end
---#endregion
 
---#region Janitorial
-function Mailbox:Purge(inEpochTime)
+function XFC.Mailbox:Purge(inEpochTime)
 	assert(type(inEpochTime) == 'number')
 	for key, receivedTime in self:Iterator() do
 		if(receivedTime < inEpochTime) then

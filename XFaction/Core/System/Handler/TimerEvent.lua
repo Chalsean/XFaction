@@ -86,9 +86,9 @@ function TimerEvent:CallbackLoginGuild()
 
 				-- Start network
 				XFO.Channels:Initialize()
-				XF.Mailbox.Chat:Initialize()
+				XFO.Chat:Initialize()
 				XFO.Friends:Initialize()				
-				XF.Mailbox.BNet:Initialize()
+				XFO.BNet:Initialize()
 
 				if(XF.Cache.UIReload) then
 					XFO.Confederate:Restore()					
@@ -135,10 +135,10 @@ function TimerEvent:CallbackLoginPlayer()
 				XFO.Links:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
-				XF.Mailbox.Chat:SendDataMessage(XF.Player.Unit)
+				XFO.Chat:SendDataMessage(XF.Player.Unit)
 			-- Otherwise send login message
 			else
-				XF.Mailbox.Chat:SendLoginMessage(XF.Player.Unit)
+				XFO.Chat:SendLoginMessage(XF.Player.Unit)
 			end			
 
 			-- Start all hooks, timers and events
@@ -182,8 +182,8 @@ end
 -- Cleanup mailbox
 function TimerEvent:CallbackMailboxTimer()
 	try(function ()
-		XF.Mailbox.Chat:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
-		XF.Mailbox.BNet:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
+		XFO.Chat:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
+		XFO.BNet:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
 	end).
 	catch(function (err)
 		XF:Warn(ObjectName, err)
@@ -211,7 +211,7 @@ function TimerEvent:CallbackHeartbeat()
 	try(function ()
 		if(XF.Initialized and XF.Player.LastBroadcast < ServerTime() - XF.Settings.Player.Heartbeat) then
 			XF:Debug(ObjectName, 'Sending heartbeat')
-			XF.Mailbox.Chat:SendDataMessage(XF.Player.Unit)
+			XFO.Chat:SendDataMessage(XF.Player.Unit)
 		end
 	end).
 	catch(function (err)
@@ -232,7 +232,7 @@ function TimerEvent:CallbackPingFriends()
 	    end
 	end).
 	catch(function (err)
-		XF:Warn(ObjectName, err)
+		XF:Warn(self:ObjectName(), err)
 	end).
 	finally(function ()
 		XF.Timers:Get('Ping'):SetLastRan(ServerTime())
@@ -242,10 +242,10 @@ end
 -- Periodically broadcast your links
 function TimerEvent:CallbackLinks()
 	try(function ()
-		XF.Mailbox.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
+		XFO.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
 	end).
 	catch(function (err)
-		XF:Warn(ObjectName, err)
+		XF:Warn(self:ObjectName(), err)
 	end).
 	finally(function ()
 		XF.Timers:Get('Links'):SetLastRan(ServerTime())

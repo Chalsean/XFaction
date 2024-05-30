@@ -158,7 +158,7 @@ end
 function XFC.LinkCollection:CallbackBroadcast()
     local self = XFO.Links
 	try(function()
-        XF.Mailbox.Chat:SendLinkMessage(self:LegacySerialize())
+        XFO.Chat:SendLinkMessage(self:LegacySerialize())
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)

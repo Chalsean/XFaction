@@ -199,7 +199,7 @@ function XFC.FriendCollection:CallbackPing()
     try(function()
 	    for _, friend in self:Iterator() do
 			if(not friend:IsLinked()) then
-				XF.Mailbox.BNet:Ping(friend)
+				XFO.BNet:Ping(friend)
 			end
 	    end
 	end).

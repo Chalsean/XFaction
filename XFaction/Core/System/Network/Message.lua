@@ -196,10 +196,10 @@ function XFC.Message:Print()
     XF:Debug(self:ObjectName(), '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
     XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
     XF:Debug(self:ObjectName(), '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
-    --XF:Debug(self:ObjectName(), '  links (' .. type(self.links) .. '): ' .. tostring(self.links))
-    --if(self:HasVersion()) then self:Version():Print() end
-    --if(self:HasGuild()) then self:Guild():Print() end
-    --if(self:HasFromUnit()) then self:FromUnit():Print() end
+    XF:Debug(self:ObjectName(), '  links (' .. type(self.links) .. '): ' .. tostring(self.links))
+    if(self:HasVersion()) then self:Version():Print() end
+    if(self:HasGuild()) then self:Guild():Print() end
+    if(self:HasFromUnit()) then self:FromUnit():Print() end
 end
 
 function XFC.Message:HasFromUnit()
