@@ -14,9 +14,9 @@ end
 function XFC.ChatFrame:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFO.ChatFrame.CallbackChatFilter)
+        XFF.ChatFrameFilter('CHAT_MSG_GUILD', XFO.ChatFrame.CallbackChatFilter)
         XF:Info(self:ObjectName(), 'Created CHAT_MSG_GUILD event filter')
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFO.ChatFrame.CallbackAchievementFilter)
+        XFF.ChatFrameFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFO.ChatFrame.CallbackAchievementFilter)
         XF:Info(self:ObjectName(), 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
@@ -25,30 +25,30 @@ end
 --#endregion
 
 --#region Methods
-local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
+local function _ModifyPlayerChat(inEvent, inText, inUnit)
     local configNode = inEvent == 'CHAT_MSG_GUILD' and 'GChat' or 'Achievement'
     local event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
     local text = ''
     if(XF.Config.Chat[configNode].Faction) then  
-        text = text .. format('%s ', format(XF.Icons.String, inUnitData:Race():Faction():IconID()))
+        text = text .. format('%s ', format(XF.Icons.String, inUnit:Race():Faction():IconID()))
     end
-    if(XF.Config.Chat[configNode].Main and inUnitData:IsAlt()) then
-        text = text .. '(' .. inUnitData:MainName() .. ') '
+    if(XF.Config.Chat[configNode].Main and inUnit:IsAlt()) then
+        text = text .. '(' .. inUnit:MainName() .. ') '
     end
     if(XF.Config.Chat[configNode].Guild) then
-        text = text .. '<' .. inUnitData:Guild():Initials() .. '> '
+        text = text .. '<' .. inUnit:Guild():Initials() .. '> '
     end
-    text = text .. inMessage
+    text = text .. inText
 
     local hex = nil
     if(XF.Config.Chat[configNode].CColor) then
         if(XF.Config.Chat[configNode].FColor) then
-            hex = inUnitData:Race():Faction():IsHorde() and XF:RGBPercToHex(XF.Config.Chat[configNode].HColor.Red, XF.Config.Chat[configNode].HColor.Green, XF.Config.Chat[configNode].HColor.Blue) or XF:RGBPercToHex(XF.Config.Chat[configNode].AColor.Red, XF.Config.Chat[configNode].AColor.Green, XF.Config.Chat[configNode].AColor.Blue)
+            hex = inUnit:Race():Faction():IsHorde() and XF:RGBPercToHex(XF.Config.Chat[configNode].HColor.Red, XF.Config.Chat[configNode].HColor.Green, XF.Config.Chat[configNode].HColor.Blue) or XF:RGBPercToHex(XF.Config.Chat[configNode].AColor.Red, XF.Config.Chat[configNode].AColor.Green, XF.Config.Chat[configNode].AColor.Blue)
         else
             hex = XF:RGBPercToHex(XF.Config.Chat[configNode].Color.Red, XF.Config.Chat[configNode].Color.Green, XF.Config.Chat[configNode].Color.Blue)
         end
     elseif(XF.Config.Chat[configNode].FColor) then
-        hex = inUnitData:Race():Faction():IsHorde() and 'E0000D' or '378DEF'
+        hex = inUnit:Race():Faction():IsHorde() and 'E0000D' or '378DEF'
     elseif(_G.ChatTypeInfo[event]) then
         local color = _G.ChatTypeInfo[event]
         hex = XF:RGBPercToHex(color.r, color.g, color.b)
@@ -71,7 +71,7 @@ function XFC.ChatFrame:CallbackChatFilter(inEvent, inMessage, arg3, arg4, arg5, 
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
         return true
     elseif(XFO.Confederate:Contains(inGUID)) then
-        inMessage = ModifyPlayerChat(inEvent, inMessage, XFO.Confederate:Get(inGUID))
+        inMessage = _ModifyPlayerChat(inEvent, inMessage, XFO.Confederate:Get(inGUID))
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
@@ -83,12 +83,72 @@ function XFC.ChatFrame:CallbackAchievementFilter(inEvent, inMessage, arg3, arg4,
     elseif(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XF.Settings.Frames.Chat.Prepend, '')
     elseif(XFO.Confederate:Contains(inGUID)) then
-        inMessage = ModifyPlayerChat(inEvent, inMessage, XFO.Confederate:Get(inGUID))
+        inMessage = _ModifyPlayerChat(inEvent, inMessage, XFO.Confederate:Get(inGUID))
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
 
-function XFC.ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFrom, inData, inFaction)
+function XFC.ChatFrame:ProcessMessage(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+
+    if(inMessage:IsLegacy()) then
+        self:LegacyProcessMessage(inMessage)
+        return
+    end
+
+    if(XF.Player.Unit:CanGuildListen()) then
+        if(not inMessage:FromUnit():IsSameGuild())
+            if(inMessage:IsGuildChat()) then
+                XFO.ChatFrame:DisplayGuildChat(inMessage:FromUnit(), inMessage:GetData())
+            else
+                XFO.ChatFrame:DisplayAchievement(inMessage:FromUnit(), inMessage:GetData())
+            end
+        end
+    end
+end
+
+local function _DisplayChatWindows(inUnit, inType, inText)
+    -- There are multiple chat windows, each registers for certain types of messages to display
+    -- Thus GUILD can be on multiple chat windows and we need to display on all
+    for i = 1, NUM_CHAT_WINDOWS do
+        local frameTable = { XFF.ChatGetWindow(i) }
+        for _, frameName in ipairs(frameTable) do
+            if frameName == inType then -- GUILD or GUILD_ACHIEVEMENT
+                local frame = 'ChatFrame' .. i
+                if _G[frame] then
+                    if(inType == 'GUILD' and XFO.WIM:IsLoaded() and XFO.WIM:API().modules.GuildChat.enabled) then
+                        XFO.WIM:API():CHAT_MSG_GUILD(inText, inUnit:UnitName(), XF.Player.Faction:Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
+                    else
+                        XFF.ChatHandler(_G[frame], 'CHAT_MSG_' .. inType, inText, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inUnit:GUID())
+                    end
+                end
+            end
+        end
+    end
+end
+
+function XFC.ChatFrame:DisplayGuildChat(inUnit, inText)
+    if(not XF.Config.Chat.GChat.Enable) then return end
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    assert(type(inText) == 'string')
+
+    local text = XF.Settings.Frames.Chat.Prepend .. _ModifyPlayerChat('CHAT_MSG_GUILD', inText, inUnit)
+    _DisplayChatWindows(inUnit, 'GUILD', text)
+end
+
+function XFC.ChatFrame:DisplayAchievement(inUnit, inID)
+    if(not XF.Config.Chat.Achievement.Enable) then return end
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    assert(type(inID) == 'number')
+
+    local text = XF.Settings.Frames.Chat.Prepend
+    local achievement = XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(XFF.PlayerGetAchievementLink(inID), "(Player.-:.-:.-:.-:.-:)"  , inUnit:GUID() .. ':1:' .. date("%m:%d:%y:") ) .. '!'
+    text = text .. _ModifyPlayerChat('CHAT_MSG_GUILD_ACHIEVEMENT', achievement, inUnit)
+    _DisplayChatWindows(inUnit, 'GUILD_ACHIEVEMENT', text)
+end
+
+--#region Deprecated, remove after 4.13
+function XFC.ChatFrame:LegacyDisplay(inType, inName, inUnitName, inMainName, inGuild, inFrom, inData, inFaction)
     assert(type(inName) == 'string')
     assert(type(inUnitName) == 'string')
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild')
@@ -104,7 +164,7 @@ function XFC.ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, 
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
     for i = 1, NUM_CHAT_WINDOWS do
-        frameTable = { GetChatWindowMessages(i) }
+        frameTable = { XFF.ChatGetWindow(i) }
         local v
         for _, frameName in ipairs(frameTable) do
             if frameName == inType then
@@ -168,7 +228,7 @@ function XFC.ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, 
                         XFO.WIM:API():CHAT_MSG_GUILD(text, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     else
                         text = XF.Settings.Frames.Chat.Prepend .. text
-                        ChatFrame_MessageEventHandler(_G[frame], 'CHAT_MSG_' .. inType, text, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
+                        XFF.ChatHandler(_G[frame], 'CHAT_MSG_' .. inType, text, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     end
                 end                                   
                 break
@@ -177,15 +237,28 @@ function XFC.ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, 
     end
 end
 
-function XFC.ChatFrame:DisplayGuildChat(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    if(not XF.Config.Chat.GChat.Enable) then return end
-    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data(), inMessage:Faction())
+function XFC.ChatFrame:LegacyProcessMessage(inMessage)
+    if(XF.Player.Unit:CanGuildListen()) then
+        if(not XF.Player.Guild:Equals(inMessage:Guild())) then
+            if(inMessage:IsGuildChat()) then
+                XFO.ChatFrame:LegacyDisplayGuildChat(inMessage)
+            else
+                XFO.ChatFrame:LegacyDisplayAchievement(inMessage)
+            end
+        end
+    end
 end
 
-function XFC.ChatFrame:DisplayAchievement(inMessage)
+function XFC.ChatFrame:LegacyDisplayGuildChat(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+    if(not XF.Config.Chat.GChat.Enable) then return end
+    self:LegacyDisplay(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data(), inMessage:Faction())
+end
+
+function XFC.ChatFrame:LegacyDisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Config.Chat.Achievement.Enable) then return end
-    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data(), inMessage:Faction())
+    self:LegacyDisplay(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data(), inMessage:Faction())
 end
+--#endregion
 --#endregion

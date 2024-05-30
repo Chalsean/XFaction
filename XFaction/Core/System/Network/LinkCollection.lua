@@ -76,15 +76,12 @@ function XFC.LinkCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     -- Deprecated, remove after 4.13
-    if(inMessage:Version():IsNewer(XF.DeprecatedVersion, true)) then
-        if(inMessage:Subject() == XF.Enum.Message.LINK) then
-            self:LegacyDeserialize(inMessage:Data())
-            XFO.DTLinks:RefreshBroker()
-        end
+    if(inMessage:IsLegacy()) then
+        self:LegacyDeserialize(inMessage:Data())
     else
         self:Deserialize(inMessage:Links())
-        XFO.DTLinks:RefreshBroker()
     end
+    XFO.DTLinks:RefreshBroker()
 end
 
 function XFC.LinkCollection:Serialize()

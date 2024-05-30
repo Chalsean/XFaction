@@ -224,59 +224,55 @@ function XFC.Confederate:LocalRoster()
     XFO.DTGuild:RefreshBroker()
 end
 
+function XFC.Confederate:LegacyProcessMessage(inMessage)
+    if(inMessage:IsLogout()) then
+        if(not XF.Player.Guild:Equals(inMessage:Guild())) then                
+            if(self:Contains(inMessage:From())) then
+                local unit = self:Get(inMessage:From())
+                XF:Info(self:ObjectName(), 'Guild member logout via message: %s', unit:UnitName())
+                XFO.Links:RemoveAll(unit)
+                self:Remove(unit:Key())
+                XFO.SystemFrame:DisplayLogout(unit:Name())
+                self:Push(unit)
+            end
+        end
+    else
+        local unitData = inMessage:Data()
+        if(inMessage:IsLogin() and (not self:Contains(unitData:Key()) or self:Get(unitData:Key()):IsOffline())) then
+            XFO.SystemFrame:DisplayLogin(unitData)
+            XF:Info(self:ObjectName(), 'Guild member login via message: %s', unitData:UnitName())
+        else
+            XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unitData:UnitName())
+        end
+        XFO.Confederate:Add(unitData)        
+        XFO.DTGuild:RefreshBroker()
+    end
+end
+
 function XFC.Confederate:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
-        -- Deprecated, remove after 4.13
-        if(inMessage:Version():IsNewer(XF.DeprecatedVersion, true)) then
-            if(not XF.Player.Guild:Equals(inMessage:Guild())) then                
-                if(self:Contains(inMessage:From())) then
-                    local unit = self:Get(inMessage:From())
-                    XF:Info(self:ObjectName(), 'Guild member logout via message: %s', unit:UnitName())
-                    XFO.Links:RemoveAll(unit)
-                    self:Remove(unit:Key())
-                    XFO.SystemFrame:DisplayLogout(unit:Name())
-                    self:Push(unit)
-                end
-            end
+    if(inMessage:IsLegacy()) then
+        self:LegacyProcessMessage(inMessage)
+        return
+    end
+
+    if(inMessage:IsLogout()) then
         -- Guild scan will handle local guild logout notifications
-        elseif(not inMessage:FromUnit():IsSameGuild()) then
+        if(not inMessage:FromUnit():IsSameGuild()) then
             XFO.SystemFrame:DisplayLogout(inMessage:FromUnit():Name())
             XF:Info(self:ObjectName(), 'Guild member logout via message: %s', inMessage:FromUnit():UnitName())
             XFO.Links:RemoveAll(inMessage:FromUnit())
             self:Remove(inMessage:FromUnit():Key())
             self:Push(inMessage:FromUnit())
         end
-    -- else
-    --     local unit = nil
-    --     try(function()
-    --         unit = self:Pop()
-    --         unit:Deserialize(inMessage:Data())
-
-    --         -- Process LOGIN message
-    --         if(inMessage:Subject() == XF.Enum.Message.LOGIN and not XF.Player.Guild:Equals(inMessage:Guild())) then
-    --             XF.Frames.System:DisplayLogin(unit)
-    --         end
-
-    --         -- Is the unit data newer?
-    --         if(self:Contains(unit:Key())) then
-    --             if(self:Get(unit:Key()):TimeStamp() < unit:TimeStamp()) then
-    --                 XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unit:UnitName())
-    --                 self:Add(unit)
-    --             else
-    --                 self:Push(unit)
-    --             end
-    --         else
-    --             XF:Info(self:ObjectName(), 'Added unit [%s] information based on message received', unit:UnitName())
-    --             self:Add(unit)
-    --         end
-    --     end).
-    --     catch(function(err)
-    --         XF:Warn(self:ObjectName(), err)
-    --         if(unit ~= nil) then
-    --             self:Push(unit)
-    --         end
-    --     end)        
+    else
+        if(inMessage:IsLogin() and (not self:Contains(inMessage:FromUnit():Key()) or self:Get(inMessage:FromUnit():Key()):IsOffline())) then
+            XFO.SystemFrame:DisplayLogin(inMessage:FromUnit())
+            XF:Info(self:ObjectName(), 'Guild member login via message: %s', inMessage:FromUnit():UnitName())
+        else
+            XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', inMessage:FromUnit():UnitName())
+        end
+        XFO.Confederate:Add(inMessage:FromUnit())
     end
     XFO.DTGuild:RefreshBroker()
 end

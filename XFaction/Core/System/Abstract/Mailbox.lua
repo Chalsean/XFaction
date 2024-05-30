@@ -218,67 +218,40 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     --#endregion
 
     --#region Process message
-    -- Process GCHAT message
-    if(inMessage:Subject() == XF.Enum.Message.GCHAT) then
-        if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:Guild())) then
-            XFO.ChatFrame:DisplayGuildChat(inMessage)
-        end
-        return
-    end
-
-    -- Process ACHIEVEMENT message
-    if(inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
-        -- Local guild achievements should already be displayed by WoW client
-        if(not XF.Player.Guild:Equals(inMessage:Guild())) then
-            XFO.ChatFrame:DisplayAchievement(inMessage)
-        end
-        return
-    end
-
-    -- Process LINK message
-    if(inMessage:Subject() == XF.Enum.Message.LINK) then
-        XFO.Links:ProcessMessage(inMessage)
-        return
-    end
-
-    -- Process LOGOUT message
-    if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
+    -- LOGOUT message
+    if(inMessage:IsLogout()) then
         XFO.Confederate:ProcessMessage(inMessage)        
         return
     end
 
-    -- Process ORDER message
-    if(inMessage:Subject() == XF.Enum.Message.ORDER) then
-        local order = nil
-        try(function ()
-            order = XFO.Orders:Pop()
-            order:Decode(inMessage:Data())
-            if(not XFO.Orders:Contains(order:Key())) then
-                XFO.Orders:Add(order)
-                order:Display()
-            else
-                XFO.Orders:Push(order)
-            end
-        end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
-            XFO.Orders:Push(order)
-        end)
+    -- Legacy DATA/LOGIN message
+    if(inMessage:IsLegacy() and (inMessage:IsLogin() or inMessage:IsData())) then
+        XFO.Confederate:ProcessMessage(inMessage)
         return
     end
 
-    -- Process DATA/LOGIN message
-    if(inMessage:Subject() == XF.Enum.Message.LOGIN or inMessage:Subject() == XF.Enum.Message.DATA) then
-        local unitData = inMessage:Data()
-        if(inMessage:Subject() == XF.Enum.Message.LOGIN and 
-          (not XFO.Confederate:Contains(unitData:Key()) or XFO.Confederate:Get(unitData:Key()):IsOffline())) then
-            XFO.SystemFrame:DisplayLogin(unitData)
-            XF:Info(self:ObjectName(), 'Guild member login via message: %s', unitData:UnitName())
-        else
-            XF:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:UnitName())
-        end
-        XFO.Confederate:Add(unitData)        
-        XFO.DTGuild:RefreshBroker()
+    -- Legacy LINK message
+    if(inMessage:IsLink()) then
+        XFO.Links:ProcessMessage(inMessage)
+        return
+    end
+
+    -- All non-LOGOUT messages have unit and link data
+    if(not inMessage:IsLegacy()) then
+        XFO.Confederate:ProcessMessage(inMessage)
+        XFO.Links:ProcessMessage(inMessage)
+    end
+
+    -- ACHIEVEMENT/GCHAT message
+    if(inMessage:IsAchievement() or inMessage:IsGuildChat()) then
+        XFO.ChatFrame:ProcessMessage(inMessage)
+        return
+    end    
+
+    -- ORDER message
+    if(inMessage:IsOrder()) then
+        XFO.Orders:ProcessMessage(inMessage)
+        return
     end
     --#endregion
 end

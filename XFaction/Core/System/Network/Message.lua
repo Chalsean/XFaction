@@ -202,6 +202,38 @@ function XFC.Message:Print()
     if(self:HasFromUnit()) then self:FromUnit():Print() end
 end
 
+function XFC.Message:IsLegacy()
+    return self:Version():IsNewer(XF.DeprecatedVersion, true)
+end
+
+function XFC.Message:IsGuildChat()
+    return self:Subject() == XF.Enum.Message.GCHAT
+end
+
+function XFC.Message:IsAchievement()
+    return self:Subject() == XF.Enum.Message.ACHIEVEMENT
+end
+
+function XFC.Message:IsLink()
+    return self:Subject() == XF.Enum.Message.LINK
+end
+
+function XFC.Message:IsOrder()
+    return self:Subject() == XF.Enum.Message.ORDER
+end
+
+function XFC.Message:IsData()
+    return self:Subject() == XF.Enum.Message.DATA
+end
+
+function XFC.Message:IsLogin()
+    return self:Subject() == XF.Enum.Message.LOGIN
+end
+
+function XFC.Message:IsLogout()
+    return self:Subject() == XF.Enum.Message.LOGOUT
+end
+
 function XFC.Message:HasFromUnit()
     return self:FromUnit() ~= nil
 end
