@@ -8,7 +8,7 @@ XFC.Order = XFC.Object:newChildConstructor()
 function XFC.Order:new()
     local object = XFC.Order.parent.new(self)
     object.__name = 'Order'
-    object.customerUnit = nil
+    object.customer = nil
     object.profession = nil
     object.type = 0
     object.hasDisplayed = false
@@ -23,7 +23,7 @@ end
 
 function XFC.Order:Deconstructor()
     self:ParentDeconstructor()
-    self.customerUnit = nil
+    self.customer = nil
     self.profession = nil
     self.type = 0
     self.hasDisplayed = false
@@ -36,7 +36,73 @@ function XFC.Order:Deconstructor()
 end
 --#endregion
 
---#region Print
+--#region Properties
+function XFC.Order:Customer(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil)
+    if(inUnit ~= nil) then
+        self.customer = inUnit
+    end
+    return self.customer
+end
+
+function XFC.Order:Profession(inProfession)
+    assert(type(inProfession) == 'table' and inProfession.__name == 'Profession' or inProfession == nil)
+    if(inProfession ~= nil) then
+        self.profession = inProfession
+    end
+    return self.profession
+end
+
+function XFC.Order:Type(inType)
+    assert(type(inType) == 'number' or inType == nil)
+    if(inType ~= nil) then
+        self.type = inType
+    end
+    return self.type
+end
+
+function XFC.Order:RecipeID(inID)
+    assert(type(inID) == 'number' or inID == nil)
+    if(inID ~= nil) then
+        self.recipeID = inID
+    end
+    return self.recipeID
+end
+
+function XFC.Order:Quality(inQuality)
+    assert(type(inQuality) == 'number' or inQuality == nil)
+    if(inQuality ~= nil) then
+        self.quality = inQuality
+    end
+    return self.quality
+end
+
+function XFC.Order:CrafterGUID(inGUID)
+    assert(type(inGUID) == 'string' or inGUID == nil)
+    if(inGUID ~= nil) then
+        self.crafterGUID = inGUID
+    end
+    return self.crafterGUID
+end
+
+function XFC.Order:CrafterName(inName)
+    assert(type(inName) == 'string' or inName == nil)
+    if(inName ~= nil) then
+        self.crafterName = inName
+    end
+    return self.crafterName
+end
+
+function XFC.Order:State(inState)
+    assert(type(inState) == 'number' or inState == nil)
+    if(inState ~= nil) then
+        self.state = inState
+    end
+    return self.state
+end
+--#endregion
+
+--#region Methods
 function XFC.Order:Print()
     self:ParentPrint()
     XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
@@ -47,113 +113,38 @@ function XFC.Order:Print()
     XF:Debug(self:ObjectName(), '  hasDisplayed (' .. type(self.hasDisplayed) .. '): ' .. tostring(self.hasDisplayed))
     XF:Debug(self:ObjectName(), '  hasCommunicated (' .. type(self.hasCommunicated) .. '): ' .. tostring(self.hasCommunicated))
     XF:Debug(self:ObjectName(), '  state (' .. type(self.state) .. '): ' .. tostring(self.state))
-    if(self:HasCustomerUnit()) then self:GetCustomerUnit():Print() end
-    if(self:HasProfession()) then self:GetProfession():Print() end
-end
---#endregion
-
---#region Accessors
-function XFC.Order:HasCustomerUnit()
-    return self.customerUnit ~= nil
+    if(self:HasCustomer()) then self:Customer():Print() end
+    if(self:HasProfession()) then self:Profession():Print() end
 end
 
-function XFC.Order:GetCustomerUnit()
-    return self.customerUnit
-end
-
-function XFC.Order:SetCustomerUnit(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argment must be Unit class')
-    self.customerUnit = inUnit
+function XFC.Order:HasCustomer()
+    return self:Customer() ~= nil
 end
 
 function XFC.Order:HasProfession()
-    return self.profession ~= nil
-end
-
-function XFC.Order:GetProfession()
-    return self.profession
-end
-
-function XFC.Order:SetProfession(inProfession)
-    assert(type(inProfession) == 'table' and inProfession.__name ~= nil and inProfession.__name == 'Profession', 'argument must be Profession object')
-    self.profession = inProfession
+    return self:Profession() ~= nil
 end
 
 function XFC.Order:IsMyOrder()
-    return XF.Player.Unit:Equals(self:GetCustomerUnit())
+    return self:Customer():Key() == XF.Player.Unit:Key()
 end
 
-function XFC.Order:GetType()
-    return self.type
-end
-
-function XFC.Order:SetType(inType)
-    assert(type(inType) == 'number')
-    self.type = inType
-end
-
-function XFC.Order:GetRecipeID()
-    return self.recipeID
-end
-
-function XFC.Order:SetRecipeID(inID)
-    assert(type(inID) == 'number')
-    self.recipeID = inID
-end
-
-function XFC.Order:GetQuality()
-    return self.quality
-end
-
-function XFC.Order:SetQuality(inQuality)
-    assert(type(inQuality) == 'number')
-    self.quality = inQuality
-end
-
-function XFC.Order:GetCrafterGUID()
-    return self.crafterGUID
-end
-
-function XFC.Order:SetCrafterGUID(inGUID)
-    assert(type(inGUID) == 'string')
-    self.crafterGUID = inGUID
-end
-
-function XFC.Order:IsPlayerCrafter()
+function XFC.Order:IsMyCraft()
     return XF.Player.Unit:GUID() == self.crafterGUID
 end
 
-function XFC.Order:GetCrafterName()
-    return self.crafterName
-end
-
-function XFC.Order:SetCrafterName(inName)
-    assert(type(inName) == 'string')
-    self.crafterName = inName
-end
-
-function XFC.Order:GetState()
-    return self.state
-end
-
-function XFC.Order:SetState(inState)
-    assert(type(inState) == 'number')
-    self.state = inState
-end
---#endregion
-
---#region Networking
+--#region Deprecated, remove after 4.13
 function XFC.Order:Encode(inBackup)
-    assert(inBackup == nil or type(inBackup) == 'boolean', 'argument must be nil or boolean')
+    assert(type(inBackup) == 'boolean' or inBackup == nil)
     local data = {}
-    data.C = XF:SerializeUnitData(self:GetCustomerUnit())
+    data.C = self:Customer():LegacySerialize()
     data.K = self:Key()
     data.O = self:ID()
-    data.P = self:GetProfession():Key()
-    data.Q = self:GetQuality()
-    data.R = self:GetRecipeID()
-    data.T = self:GetType()
-    data.U = self:GetCrafterGUID()
+    data.P = self:Profession():Key()
+    data.Q = self:Quality()
+    data.R = self:RecipeID()
+    data.T = self:Type()
+    data.U = self:CrafterGUID()
     return data
 end
 
@@ -161,32 +152,44 @@ function XFC.Order:Decode(inData)
     assert(type(inData) == 'table')
     self:Key(inData.K)
     self:ID(inData.O)
-    self:SetType(inData.T)
-    self:SetCustomerUnit(XF:DeserializeUnitData(inData.C))    
-    self:SetProfession(XFO.Professions:Get(inData.P))
+    self:Type(inData.T)
+
+    local unit = XFO.Confederate:Pop()
+    try(function()
+        unit:LegacyDeserialize(inData.C)
+        XFO.Confederate:Add(unit)
+        self:Customer(unit)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+        XFO.Confederate:Push(unit)
+    end)
+    self:Profession(XFO.Professions:Get(tonumber(inData.P)))
     if(inData.Q ~= nil) then
-        self:SetQuality(inData.Q)
+        self:Quality(tonumber(inData.Q))
     end
-    self:SetRecipeID(inData.R)
+    self:RecipeID(tonumber(inData.R))
     if(inData.U ~= nil) then
-        self:SetCrafterGUID(inData.U)
+        self:CrafterGUID(inData.U)
     end
     self:IsInitialized(true)
 end
+--#endregion
 
 function XFC.Order:Display()
     try(function()
         if(not XF.Config.Chat.Crafting.Enable) then return end
+        -- TODO this will not work in classic
         if(self:IsGuild() and not XF.Config.Chat.Crafting.GuildOrder) then return end
         if(self:IsPersonal() and not XF.Config.Chat.Crafting.PersonalOrder) then return end
-        if(self:IsPersonal() and not self:IsMyOrder() and not self:IsPlayerCrafter()) then return end
+        if(self:IsPersonal() and not self:IsMyOrder() and not self:IsMyCraft()) then return end
 
         local display = false
         if(not XF.Config.Chat.Crafting.Profession) then
             display = true
-        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:Profession1())) then
+        elseif(self:HasProfession() and self:Profession():Equals(XF.Player.Unit:Profession1())) then
             display = true
-        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:Profession2())) then
+        elseif(self:HasProfession() and self:Profession():Equals(XF.Player.Unit:Profession2())) then
             display = true
         end
 

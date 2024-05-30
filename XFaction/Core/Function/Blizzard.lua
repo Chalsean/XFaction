@@ -7,7 +7,8 @@ XFF.TimeGetLocal = C_DateAndTime.GetServerTimeLocal
 XFF.TimeGetCalendar = C_DateAndTime.GetCurrentCalendarTime
 
 -- Timer
-XFF.TimerStart = C_Timer.NewTicker
+XFF.TimerStart = C_Timer.NewTimer
+XFF.TimerStartRepeater = C_Timer.NewTicker
 
 -- Chat / Channel
 XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter
@@ -71,6 +72,7 @@ XFF.ClientGetAddonCount = C_AddOns.GetNumAddOns
 XFF.ClientGetAddonInfo = C_AddOns.GetAddOnInfo
 XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
 XFF.ClientGetAddonState = C_AddOns.GetAddOnEnableState
+XFF.ClientRequestMaps = C_MythicPlus.RequestMapInfo
 
 -- UI
 XFF.UIOptionsFrame = InterfaceOptionsFrame

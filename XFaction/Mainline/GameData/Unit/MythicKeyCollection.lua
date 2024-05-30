@@ -6,7 +6,7 @@ local ObjectName = 'MythicKeyCollection'
 function XFC.MythicKeyCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'Mythic', 
             event = 'CHALLENGE_MODE_COMPLETED', 
             callback = XFO.Keys.RefreshMyKey, 

@@ -62,6 +62,12 @@ XF.ChangeLog['4.13.2'] = {
                 fontSize = 'medium',
                 name = 'Removed Kui addon logic as it wasnt working for months but nobody seemed to notice.',
             },
+            C_Addons = {
+                order = 10,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Updated to use Blizzards new C_Addons API.',
+            },
         },
     },		
 }

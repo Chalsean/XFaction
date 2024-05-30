@@ -710,4 +710,113 @@ function XFC.Unit:Equals(inUnit)
     
     return true
 end
+
+--#region Deprecated, remove after 4.13
+function XFC.Unit:LegacySerialize()
+    local data = {}
+
+	data.A = self:Race():Key()
+	data.B = self:AchievementPoints()
+	data.E = self:Presence()
+	data.F = self:Race():Faction():Key()	
+	data.H = self:Guild():Key()
+	data.K = self:GUID()
+	data.I = self:ItemLevel()
+	data.J = self:Rank()
+	data.L = self:Level()
+	data.M = self:HasMythicKey() and self:MythicKey():Key() or nil
+	data.N = self:Note()
+	data.O = self:Spec():Class():Key()
+	data.P1 = self:HasProfession1() and self:Profession1():Key() or nil
+	data.P2 = self:HasProfession2() and self:Profession2():Key() or nil
+	data.U = self:UnitName()
+	data.V = self:Spec():Key()
+	data.X = self:Version():Key()
+	data.Y = self:PvP()
+
+	if(self:Zone():HasID()) then
+		data.D = self:Zone():ID()
+	else
+		data.Z = self:Zone():Name()
+	end
+
+	return pickle(data)
+end
+
+function XFC.Unit:LegacyDeserialize(inSerial)
+    local data = unpickle(inSerial)
+	self:IsRunningAddon(true)
+	self:Race(XFO.Races:Get(data.A))
+	if(data.B ~= nil) then self:AchievementPoints(data.B) end
+	if(data.C ~= nil) then self:ID(tonumber(data.C)) end
+	if(data.E ~= nil) then 
+		self:Presence(tonumber(data.E)) 
+	else
+		self:Presence(Enum.ClubMemberPresence.Online)
+	end
+	--unit:Faction(XFO.Factions:Get(data.F))
+	self:GUID(data.K)
+	self:Key(data.K)
+	--unit:SetClass(XFO.Classes:Get(data.O))
+	local unitNameParts = string.Split(data.U, '-')
+	self:Name(unitNameParts[1])
+	--unit:SetUnitName(data.U)
+	if(data.H ~= nil and XFO.Guilds:Contains(data.H)) then
+		self:Guild(XFO.Guilds:Get(data.H))
+		self:Realm(self:Guild():Realm())
+	end
+	if(data.I ~= nil) then self:ItemLevel(data.I) end
+	self:Rank(data.J)
+	self:Level(data.L)
+	if(data.M ~= nil) then
+        local key = XFO.Keys:Get(data.M)
+        if(key == nil) then
+		    key = XFC.MythicKey:new()
+            key:Initialize()
+		    key:Key(data.M)
+            XFO.Keys:Add(key)
+        end
+		self:MythicKey(key)
+	end
+	self:Note(data.N)	
+	self:IsOnline(true)
+	if(data.P1 ~= nil) then
+		self:Profession1(XFO.Professions:Get(tonumber(data.P1)))
+	end
+	if(data.P2 ~= nil) then
+		self:Profession2(XFO.Professions:Get(tonumber(data.P2)))
+	end
+	
+    if(data.V ~= nil) then
+		self:Spec(XFO.Specs:Get(data.V))
+	end
+
+	if(data.D ~= nil and XFO.Zones:Contains(tonumber(data.D))) then
+		self:Zone(XFO.Zones:Get(tonumber(data.D)))
+	elseif(data.Z == nil) then
+		self:Zone(XFO.Zones:Get('?'))
+	else
+		if(not XFO.Zones:Contains(data.Z)) then
+			XFO.Zones:Add(data.Z)
+		end
+		self:Zone(XFO.Zones:Get(data.Z))
+	end
+
+	if(data.Y ~= nil) then self:PvP(data.Y) end
+	if(data.X ~= nil) then 
+		local version = XFO.Versions:Get(data.X)
+		if(version == nil) then
+			version = XFC.Version:new()
+			version:Key(data.X)
+			XFO.Versions:Add(version)
+		end
+		self:Version(version) 
+	end
+
+	local raiderIO = XF.Addons.RaiderIO:Get(self)
+    if(raiderIO ~= nil) then
+        self:RaiderIO(raiderIO)
+    end
+    self:TimeStamp(XFF.TimeGetCurrent())
+end
 --#endregion

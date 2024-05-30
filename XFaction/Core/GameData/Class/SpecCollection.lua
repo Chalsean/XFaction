@@ -92,7 +92,7 @@ function XFC.SpecCollection:Initialize()
 			end
 		end
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'Spec', 
 			event = 'ACTIVE_TALENT_GROUP_CHANGED', 
 			callback = XFO.Specs.CallbackSpecChanged, 

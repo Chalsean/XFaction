@@ -16,19 +16,19 @@ function XFC.Chat:Initialize()
         self:ParentInitialize()
         XF.Enum.Tag.LOCAL = XFO.Confederate:Key() .. 'XF'
 
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'ChatMsg', 
             event = 'CHAT_MSG_ADDON', 
             callback = XFO.Chat.CallbackChatReceive, 
             instance = true
         })
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'GuildChat', 
             event = 'CHAT_MSG_GUILD', 
             callback = XFO.Chat.CallbackGuildMessage, 
             instance = true
         })
-        XF.Timers:Add({
+        XFO.Timers:Add({
             name = 'ChatJanitor', 
             delta = XF.Settings.Network.Mailbox.Scan, 
             callback = XFO.Chat.CallbackJanitor,
@@ -200,7 +200,7 @@ function XFC.Chat:CallbackJanitor()
 		XF:Warn(self:ObjectName(), err)
 	end).
 	finally(function ()
-		XF.Timers:Get('ChatJanitor'):SetLastRan(XFF.TimeGetCurrent())
+		XFO.Timers:Get('ChatJanitor'):LastRan(XFF.TimeGetCurrent())
 	end)
 end
 --#endregion

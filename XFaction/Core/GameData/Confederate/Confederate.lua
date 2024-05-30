@@ -27,7 +27,7 @@ function XFC.Confederate:Initialize()
         XF:Info(self:ObjectName(), 'Initialized confederate %s <%s>', self:Name(), self:Key())
 
         -- This is the local guild roster scan for those not running the addon
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'Roster', 
             event = 'GUILD_ROSTER_UPDATE', 
             callback = XFO.Confederate.LocalRoster, 
@@ -35,7 +35,7 @@ function XFC.Confederate:Initialize()
             groupDelta = XF.Settings.LocalGuild.ScanTimer
         })
         
-        XF.Timers:Add({
+        XFO.Timers:Add({
             name = 'Offline',
             delta = XF.Settings.Confederate.UnitScan, 
             callback = XFO.Confederate.CallbackOffline, 
@@ -154,7 +154,7 @@ function XFC.Confederate:CallbackOffline()
         XF:Warn(self:ObjectName(), err)
     end).
     finally(function()
-        XF.Timers:Get('Offline'):SetLastRan(XFF.TimeGetCurrent())
+        XFO.Timers:Get('Offline'):SetLastRan(XFF.TimeGetCurrent())
     end)
 end
 
@@ -286,5 +286,22 @@ function XFC.Confederate:ProcessMessage(inMessage)
     --     end)        
     end
     XF.DataText.Guild:RefreshBroker()
+end
+
+-- Doesnt really belong here but cant find a good home
+function XFC.Confederate:CallbackHeartbeat()
+    local self = XFO.Confederate
+	try(function ()
+		if(XF.Initialized and XF.Player.LastBroadcast < XFF.TimeGetCurrent() - XF.Settings.Player.Heartbeat) then
+			XF:Debug(self:ObjectName(), 'Sending heartbeat')
+			XFO.Chat:SendDataMessage(XF.Player.Unit)
+		end
+	end).
+	catch(function (err)
+		XF:Warn(self:ObjectName(), err)
+	end).
+	finally(function ()
+		XFO.Timers:Get('Heartbeat'):SetLastRan(XFF.TimeGetCurrent())
+	end)
 end
 --#endregion

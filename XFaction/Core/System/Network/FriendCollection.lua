@@ -22,13 +22,13 @@ function XFC.FriendCollection:Initialize()
 		self:ParentInitialize()
 		self:CheckFriends()
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'Friend', 
 			event = 'BN_FRIEND_INFO_CHANGED', 
 			callback = XFO.Friends.CheckFriend, 
 			instance = true
 		})
-		XF.Timers:Add({
+		XFO.Timers:Add({
 			name = 'Ping', 
 			delta = XF.Settings.Network.BNet.Ping.Timer, 
 			callback = XFO.Friends.CallbackPing, 

@@ -286,37 +286,6 @@ function XFC.Message:SetRemainingTargets(inTargetString)
     end
 end
 
-local function _LegacyUnitSerialize(inUnit)
-    local data = {}
-
-	data.A = inUnit:Race():Key()
-	data.B = inUnit:AchievementPoints()
-	data.E = inUnit:Presence()
-	data.F = inUnit:Race():Faction():Key()	
-	data.H = inUnit:Guild():Key()
-	data.K = inUnit:GUID()
-	data.I = inUnit:ItemLevel()
-	data.J = inUnit:Rank()
-	data.L = inUnit:Level()
-	data.M = inUnit:HasMythicKey() and inUnit:MythicKey():Serialize() or nil
-	data.N = inUnit:Note()
-	data.O = inUnit:Spec():Class():Key()
-	data.P1 = inUnit:HasProfession1() and inUnit:Profession1():Key() or nil
-	data.P2 = inUnit:HasProfession2() and inUnit:Profession2():Key() or nil
-	data.U = inUnit:UnitName()
-	data.V = inUnit:Spec():Key()
-	data.X = inUnit:Version():Key()
-	data.Y = inUnit:PvP()
-
-	if(inUnit:Zone():HasID()) then
-		data.D = inUnit:Zone():ID()
-	else
-		data.Z = inUnit:Zone():Name()
-	end
-
-	return pickle(data)
-end
-
 function XFC.Message:Serialize(inEncodingType)
     local data = {}
 
@@ -342,7 +311,7 @@ function XFC.Message:Serialize(inEncodingType)
     data.W = self:HasFaction() and self:Faction():Key() or nil
 
 	if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
-		data.D = _LegacyUnitSerialize(self:Data())
+		data.D = self:Data():LegacySerialize()
 	end
     --#endregion
 
@@ -354,82 +323,6 @@ function XFC.Message:Serialize(inEncodingType)
         end
     end
     return inEncodingType == XF.Enum.Tag.BNET and XF.Lib.Deflate:EncodeForPrint(compressed) or XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
-end
-
-local function _LegacyUnitDeserialize(inSerial)
-    local deserializedData = unpickle(inSerial)
-	local unit = XFO.Confederate:Pop()
-	unit:IsRunningAddon(true)
-	unit:Race(XFO.Races:Get(deserializedData.A))
-	if(deserializedData.B ~= nil) then unit:AchievementPoints(deserializedData.B) end
-	if(deserializedData.C ~= nil) then unit:ID(tonumber(deserializedData.C)) end
-	if(deserializedData.E ~= nil) then 
-		unit:Presence(tonumber(deserializedData.E)) 
-	else
-		unit:Presence(Enum.ClubMemberPresence.Online)
-	end
-	--unit:Faction(XFO.Factions:Get(deserializedData.F))
-	unit:GUID(deserializedData.K)
-	unit:Key(deserializedData.K)
-	--unit:SetClass(XFO.Classes:Get(deserializedData.O))
-	local unitNameParts = string.Split(deserializedData.U, '-')
-	unit:Name(unitNameParts[1])
-	--unit:SetUnitName(deserializedData.U)
-	if(deserializedData.H ~= nil and XFO.Guilds:Contains(deserializedData.H)) then
-		unit:Guild(XFO.Guilds:Get(deserializedData.H))
-		unit:Realm(unit:Guild():Realm())
-	end
-	if(deserializedData.I ~= nil) then unit:ItemLevel(deserializedData.I) end
-	unit:Rank(deserializedData.J)
-	unit:Level(deserializedData.L)
-	if(deserializedData.M ~= nil) then
-		local key = XFC.MythicKey:new(); key:Initialize()
-		key:Deserialize(deserializedData.M)
-		unit:MythicKey(key)
-	end
-	unit:Note(deserializedData.N)	
-	unit:IsOnline(true)
-	if(deserializedData.P1 ~= nil) then
-		unit:Profession1(XFO.Professions:Get(tonumber(deserializedData.P1)))
-	end
-	if(deserializedData.P2 ~= nil) then
-		unit:Profession2(XFO.Professions:Get(tonumber(deserializedData.P2)))
-	end
-	unit:IsRunningAddon(true)
-	unit:TimeStamp(XFF.TimeGetCurrent())
-	if(deserializedData.V ~= nil) then
-		unit:Spec(XFO.Specs:Get(deserializedData.V))
-	end
-
-	if(deserializedData.D ~= nil and XFO.Zones:Contains(tonumber(deserializedData.D))) then
-		unit:Zone(XFO.Zones:Get(tonumber(deserializedData.D)))
-	elseif(deserializedData.Z == nil) then
-		unit:Zone(XFO.Zones:Get('?'))
-	else
-		if(not XFO.Zones:Contains(deserializedData.Z)) then
-			XFO.Zones:Add(deserializedData.Z)
-		end
-		unit:Zone(XFO.Zones:Get(deserializedData.Z))
-	end
-
-	if(deserializedData.Y ~= nil) then unit:PvP(deserializedData.Y) end
-	if(deserializedData.X ~= nil) then 
-		local version = XFO.Versions:Get(deserializedData.X)
-		if(version == nil) then
-			version = XFC.Version:new()
-			version:Key(deserializedData.X)
-			XFO.Versions:Add(version)
-		end
-		unit:Version(version) 
-	end
-
-	local raiderIO = XF.Addons.RaiderIO:Get(unit)
-    if(raiderIO ~= nil) then
-        unit:RaiderIO(raiderIO)
-    end
-    unit:TimeStamp(XFF.TimeGetCurrent())
-
-	return unit
 end
 
 function XFC.Message:Deserialize(inData, inEncodingType)
@@ -466,7 +359,15 @@ function XFC.Message:Deserialize(inData, inEncodingType)
             end)
         -- Deprecated, remove after 4.13
         elseif(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
-            self:Data(_LegacyUnitDeserialize(data.D))
+            local unit = XFO.Confederate:Pop()
+            try(function()
+                unit:LegacyDeserialize(data.D)
+                self:Data(unit)
+            end).
+            catch(function(err)
+                XF:Error(self:ObjectName(), err)
+                XFO.Confederate:Push(unit)
+            end)
         else
             self:Data(data.D)
         end

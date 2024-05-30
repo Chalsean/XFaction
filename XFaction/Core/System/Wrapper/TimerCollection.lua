@@ -1,20 +1,19 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'TimerCollection'
-local ServerTime = GetServerTime
 
-TimerCollection = XFC.ObjectCollection:newChildConstructor()
+XFC.TimerCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function TimerCollection:new()
-    local object = TimerCollection.parent.new(self)
+function XFC.TimerCollection:new()
+    local object = XFC.TimerCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
 --#endregion
 
---#region Hash
-function TimerCollection:Add(inArgs)
+--#region Methods
+function XFC.TimerCollection:Add(inArgs)
     assert(type(inArgs) == 'table')
     assert(type(inArgs.name) == 'string')
     assert(type(inArgs.delta) == 'number')
@@ -25,19 +24,19 @@ function TimerCollection:Add(inArgs)
     assert(inArgs.ttl == nil or type(inArgs.ttl) == 'number')
     assert(inArgs.maxAttempts == nil or type(inArgs.maxAttempts) == 'number')
 
-    local timer = Timer:new()
+    local timer = XFC.Timer:new()
     timer:Initialize()
     timer:Key(inArgs.name)
     timer:Name(timer:Key())
-    timer:SetDelta(inArgs.delta)
-    timer:SetCallback(inArgs.callback)
+    timer:Delta(inArgs.delta)
+    timer:Callback(inArgs.callback)
     timer:IsRepeat(inArgs.repeater)
     timer:IsInstance(inArgs.instance)
     if(inArgs.ttl ~= nil) then
-        timer:SetTimeToLive(inArgs.ttl)
+        timer:TimeToLive(inArgs.ttl)
     end
     if(inArgs.maxAttempts ~= nil) then
-        timer:SetMaxAttempts(inArgs.maxAttempts)
+        timer:MaxAttempts(inArgs.maxAttempts)
     end
     if(inArgs.start and (timer:IsInstance() or not XF.Player.InInstance)) then
         timer:Start()
@@ -46,16 +45,14 @@ function TimerCollection:Add(inArgs)
     XF:Info(self:ObjectName(), 'Created timer [%s]', timer:Name())
 end
 
-function TimerCollection:Remove(inKey)
+function XFC.TimerCollection:Remove(inKey)
     if(self:Contains(inKey)) then
         self:Get(inKey):Stop()
         self.parent.Remove(self, inKey)
     end
 end
---#endregion
 
---#region Start/Stop
-function TimerCollection:EnterInstance()
+function XFC.TimerCollection:EnterInstance()
     for _, timer in self:Iterator() do
         if(timer:IsEnabled() and not timer:IsInstance()) then
             timer:Stop()
@@ -63,29 +60,29 @@ function TimerCollection:EnterInstance()
     end
 end
 
-function TimerCollection:LeaveInstance()
+function XFC.TimerCollection:LeaveInstance()
     for _, timer in self:Iterator() do
         if(not timer:IsEnabled()) then
             timer:Start()
-            local now = ServerTime()
-            if(timer:GetLastRan() < now - timer:GetDelta()) then
-                local _Function = timer:GetCallback()
+            local now = XFF.TimeGetCurrent()
+            if(timer:LastRan() < now - timer:Delta()) then
+                local _Function = timer:Callback()
                 _Function()
-                timer:SetLastRan(now)
+                timer:LastRan(now)
             end
         end
     end
 end
 
 -- Start everything
-function TimerCollection:Start()
+function XFC.TimerCollection:Start()
 	for _, timer in self:Iterator() do
         timer:Start()
 	end
 end
 
 -- Stop everything
-function TimerCollection:Stop()
+function XFC.TimerCollection:Stop()
 	for _, timer in self:Iterator() do
         timer:Stop()
 	end

@@ -8,6 +8,7 @@ XFC.OrderCollection = XFC.Factory:newChildConstructor()
 function XFC.OrderCollection:new()
 	local object = XFC.OrderCollection.parent.new(self)
 	object.__name = ObjectName
+    object.firstQuery = true
     return object
 end
 
@@ -16,7 +17,17 @@ function XFC.OrderCollection:NewObject()
 end
 --#endregion
 
---#region System
+--#region Properties
+function XFC.OrderCollection:IsFirstQuery(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
+    if(inBoolean ~= nil) then
+        self.firstQuery = inBoolean
+    end    
+    return self.firstQuery
+end
+--#endregion
+
+--#region Methods
 function XFC.OrderCollection:Backup()
 	try(function ()
         if(self:IsInitialized()) then

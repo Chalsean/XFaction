@@ -16,13 +16,13 @@ function XFC.BNet:Initialize()
         self:ParentInitialize()
         XF.Enum.Tag.BNET = XFO.Confederate:Key() .. 'BNET'
 
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'BNetMessage', 
             event = 'BN_CHAT_MSG_ADDON', 
             callback = XFO.BNet.CallbackBNetReceive, 
             instance = true
         })
-        XF.Timers:Add({
+        XFO.Timers:Add({
             name = 'BNetJanitor', 
             delta = XF.Settings.Network.Mailbox.Scan, 
             callback = XFO.BNet.CallbackJanitor,
@@ -164,7 +164,7 @@ function XFC.BNet:CallbackJanitor()
 		XF:Warn(self:ObjectName(), err)
 	end).
 	finally(function ()
-		XF.Timers:Get('BNetJanitor'):SetLastRan(XFF.TimeGetCurrent())
+		XFO.Timers:Get('BNetJanitor'):LastRan(XFF.TimeGetCurrent())
 	end)
 end
 --#endregion

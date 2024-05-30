@@ -19,7 +19,7 @@ function XFC.LinkCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-		XF.Timers:Add({
+		XFO.Timers:Add({
 			name = 'Links', 
 			delta = XF.Settings.Network.BNet.Link.Broadcast, 
 			callback = XFO.Links.CallbackLegacyBroadcast,
@@ -211,7 +211,7 @@ function XFC.LinkCollection:CallbackLegacyBroadcast()
 		XF:Warn(self:ObjectName(), err)
 	end).
 	finally(function ()
-		XF.Timers:Get('Links'):SetLastRan(XFF.TimeGetCurrent())
+		XFO.Timers:Get('Links'):LastRan(XFF.TimeGetCurrent())
 	end)
 end
 --#endregion

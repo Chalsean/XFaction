@@ -770,7 +770,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['EVENT'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Events:Print() end,
+									func = function(info) XFO.Events:Print() end,
 								},
 								Faction = {
 									order = 7,
@@ -875,7 +875,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['TIMER'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Timers:Print() end,
+									func = function(info) XFO.Timers:Print() end,
 								},
 								Zone = {
 									order = 29,

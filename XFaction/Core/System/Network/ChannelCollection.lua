@@ -27,14 +27,14 @@ function XFC.ChannelCollection:Initialize()
 			end)
 		end
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'ChannelLeft', 
 			event = 'CHAT_MSG_CHANNEL_LEAVE', 
 			callback = XFO.Channels.CallbackUnitLeftChannel, 
 			instance = true
 		})
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'ChannelChange', 
 			event = 'CHAT_MSG_CHANNEL_NOTICE', 
 			callback = XFO.Channels.CallbackSync,
@@ -42,7 +42,7 @@ function XFC.ChannelCollection:Initialize()
 			instance = true
 		})
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'ChannelColor', 
 			event = 'UPDATE_CHAT_COLOR', 
 			callback = XFO.Channels.CallbackUpdateColor, 

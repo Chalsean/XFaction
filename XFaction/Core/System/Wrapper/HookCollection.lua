@@ -2,18 +2,18 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'HookCollection'
 
-HookCollection = XFC.ObjectCollection:newChildConstructor()
+XFC.HookCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function HookCollection:new()
-    local object = HookCollection.parent.new(self)
+function XFC.HookCollection:new()
+    local object = XFC.HookCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
 --#endregion
 
---#region Hash
-function HookCollection:Add(inArgs)
+--#region Methods
+function XFC.HookCollection:Add(inArgs)
     assert(type(inArgs) == 'table')
     assert(type(inArgs.name) == 'string')
     assert(type(inArgs.original) == 'string')
@@ -21,22 +21,21 @@ function HookCollection:Add(inArgs)
     assert(inArgs.pre == nil or type(inArgs.pre) == 'boolean')
     assert(inArgs.start == nil or type(inArgs.start) == 'boolean')
 
-    local hook = Hook:new()
+    local hook = XFC.Hook:new()
     hook:Initialize()
     hook:Key(inArgs.name)
-    hook:SetOriginal(inArgs.original)
-    hook:SetCallback(inArgs.callback)
+    hook:Name(inArgs.original)
+    hook:OriginalFunction(_G[inArgs.original])
+    hook:Callback(inArgs.callback)
     hook:IsPreHook(inArgs.pre)
     if(inArgs.start) then
         hook:Start()
     end
     self.parent.Add(self, hook)
-    XF:Info('Hook', 'Hooked function %s', hook:GetOriginal())
+    XF:Info(self:ObjectName(), 'Hooked function %s', hook:Name())
 end
---#endregion
 
---#region Start/Stop everything
-function HookCollection:Start()
+function XFC.HookCollection:Start()
 	for _, hook in self:Iterator() do
         if(not hook:IsEnabled()) then
             hook:Start()
@@ -44,7 +43,7 @@ function HookCollection:Start()
 	end
 end
 
-function HookCollection:Stop()
+function XFC.HookCollection:Stop()
 	for _, hook in self:Iterator() do
         if(hook:IsEnabled()) then
             hook:Stop()

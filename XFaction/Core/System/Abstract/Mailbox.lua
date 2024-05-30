@@ -281,19 +281,6 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     --#endregion
 end
 
-function XFC.Mailbox:CallbackMailboxJanitor()
-	try(function ()
-		XFO.Chat:Purge(XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale)
-		XFO.BNet:Purge(XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale)
-	end).
-	catch(function (err)
-		XF:Warn(self:ObjectName(), err)
-	end).
-	finally(function ()
-		XF.Timers:Get('Mailbox'):SetLastRan(XFF.TimeGetCurrent())
-	end)
-end
-
 function XFC.Mailbox:Purge(inEpochTime)
 	assert(type(inEpochTime) == 'number')
 	for key, receivedTime in self:Iterator() do

@@ -21,19 +21,26 @@ function SystemEvent:Initialize()
             XF:Debug(ObjectName, '* Previous Logout: %s', message)
         end
         XF.Config.Logout = {}
-        XF.Hooks:Add({name = 'ReloadUI', 
-                       original = 'ReloadUI', 
-                       callback = XF.Handlers.SystemEvent.CallbackReloadUI,
-                       pre = true})
-        XF.Events:Add({name = 'Logout',
-                        event = 'PLAYER_LOGOUT',
-                        callback = XF.Handlers.SystemEvent.CallbackLogout,
-                        instance = true})
+
+        XFO.Hooks:Add({
+            name = 'ReloadUI', 
+            original = 'ReloadUI', 
+            callback = XF.Handlers.SystemEvent.CallbackReloadUI,
+            pre = true
+        })
+        XFO.Events:Add({
+            name = 'Logout',
+            event = 'PLAYER_LOGOUT',
+            callback = XF.Handlers.SystemEvent.CallbackLogout,
+            instance = true
+        })
         -- Not sure this is necessary but don't feel like taking the risk of removing it
-        XF.Events:Add({name = 'LoadScreen', 
-                        event = 'PLAYER_ENTERING_WORLD', 
-                        callback = XF.Handlers.SystemEvent.CallbackLogin, 
-                        instance = true})
+        XFO.Events:Add({
+            name = 'LoadScreen', 
+            event = 'PLAYER_ENTERING_WORLD', 
+            callback = XF.Handlers.SystemEvent.CallbackLogin, 
+            instance = true
+        })
 		self:IsInitialized(true)
         XF.Config.Logout[#XF.Config.Logout + 1] = XF.Player.Unit:UnitName()
 	end
