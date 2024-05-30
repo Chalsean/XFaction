@@ -3,11 +3,11 @@ local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTLinks'
 local CombatLockdown = InCombatLockdown
 
-DTLinks = XFC.Object:newChildConstructor()
+XFC.DTLinks = XFC.Object:newChildConstructor()
 	
 --#region Constructors
-function DTLinks:new()
-	local object = DTGuild.parent.new(self)
+function XFC.DTLinks:new()
+	local object = XFC.DTLinks.parent.new(self)
     object.__name = ObjectName
     object.headerFont = nil
 	object.regularFont = nil
@@ -19,14 +19,14 @@ end
 --#endregion
 
 --#region Initializers
-function DTLinks:Initialize()
+function XFC.DTLinks:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.ldbObject = XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTLINKS_NAME'], {
 			type = 'data source',
 			label = XF.Lib.Locale['DTLINKS_NAME'],
-		    OnEnter = function(this) XF.DataText.Links:OnEnter(this) end,
-			OnLeave = function(this) XF.DataText.Links:OnLeave(this) end,
+		    OnEnter = function(this) XFO.DTLinks:OnEnter(this) end,
+			OnLeave = function(this) XFO.DTLinks.Links:OnLeave(this) end,
 		})
 		self.headerFont = CreateFont('headerFont')
 		self.headerFont:SetTextColor(0.4,0.78,1)
@@ -37,15 +37,15 @@ function DTLinks:Initialize()
 	return self:IsInitialized()
 end
 
-function DTLinks:PostInitialize()
-	XF.DataText.Links:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Links:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Links:RefreshBroker()
+function XFC.DTLinks:PostInitialize()
+	XFO.DTLinks:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XFO.DTLinkss:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XFO.DTLinks:RefreshBroker()
 end
 --#endregion
 
 --#region Print
-function DTLinks:Print()
+function XFC.DTLinks:Print()
 	self:ParentPrint()
 	XF:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
 	XF:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
@@ -56,19 +56,19 @@ end
 --#endregion
 
 --#region Accessors
-function DTLinks:GetBroker()
+function XFC.DTLinks:GetBroker()
 	return self.ldbObject
 end
 
-function DTLinks:GetHeaderFont()
+function XFC.DTLinks:GetHeaderFont()
 	return self.headerFont
 end
 
-function DTLinks:GetRegularFont()
+function XFC.DTLinks:GetRegularFont()
 	return self.regularFont
 end
 
-function DTLinks:RefreshBroker()
+function XFC.DTLinks:RefreshBroker()
 	local text = ''
 	if(XF.Config.DataText.Link.Label) then
 		text = XF.Lib.Locale['LINKS'] .. ': '
@@ -106,12 +106,12 @@ function DTLinks:RefreshBroker()
 	else
 		text = format('%s|cffffffff%d|r', text, XFO.Links:Count())
 	end
-	XF.DataText.Links:GetBroker().text = text
+	XFO.DTLinks:GetBroker().text = text
 end
 --#endregion
 
 --#region OnEnter
-function DTLinks:OnEnter(this)
+function XFC.DTLinks:OnEnter(this)
 	if(not XF.Initialized) then return end
 	if(CombatLockdown()) then return end
 
@@ -193,7 +193,7 @@ end
 --#endregion
 
 --#region OnLeave
-function DTLinks:OnLeave()
+function XFC.DTLinks:OnLeave()
 	if self.tooltip and MouseIsOver(self.tooltip) then
         return
     else

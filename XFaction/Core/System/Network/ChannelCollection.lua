@@ -127,7 +127,7 @@ function XFC.ChannelCollection:CallbackUnitLeftChannel(_, _, _, _, _, _, _, _, c
 				XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
 				XFO.Confederate:Remove(unit:Key())
 				XFO.Confederate:Push(unit)
-				XF.DataText.Guild:RefreshBroker()
+				XFO.DTGuild:RefreshBroker()
 			end
 		end
 	end	

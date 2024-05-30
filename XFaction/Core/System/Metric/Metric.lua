@@ -28,7 +28,7 @@ end
 function XFC.Metric:Increment()
     self.count = self.count + 1
     if(self:Name() == XF.Enum.Metric.Messages or self:Name() == XF.Enum.Metric.Error or self:Name() == XF.Enum.Metric.Warning) then
-        XF.DataText.Metrics:RefreshBroker()
+        XFO.DTMetrics:RefreshBroker()
     end
 end
 

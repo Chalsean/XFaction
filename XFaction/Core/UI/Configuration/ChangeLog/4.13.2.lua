@@ -68,6 +68,12 @@ XF.ChangeLog['4.13.2'] = {
                 fontSize = 'medium',
                 name = 'Updated to use Blizzards new C_Addons API.',
             },
+            Namespace = {
+                order = 11,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Finished moving all classes/objects under XF namespace to avoid conflict with other addons.',
+            },
         },
     },		
 }

@@ -225,7 +225,7 @@ function XFC.Confederate:LocalRoster()
             self:Push(unit)
         end)
     end
-    XF.DataText.Guild:RefreshBroker()
+    XFO.DTGuild:RefreshBroker()
 end
 
 function XFC.Confederate:ProcessMessage(inMessage)
@@ -285,7 +285,7 @@ function XFC.Confederate:ProcessMessage(inMessage)
     --         end
     --     end)        
     end
-    XF.DataText.Guild:RefreshBroker()
+    XFO.DTGuild:RefreshBroker()
 end
 
 -- Doesnt really belong here but cant find a good home

@@ -3,12 +3,14 @@ local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTGuild'
 local CombatLockdown = InCombatLockdown
 
-DTGuild = XFC.Object:newChildConstructor()
+XFC.DTGuild = XFC.Object:newChildConstructor()
 local LDB_ANCHOR
 
+-- Very old code that desperately needs refactoring
+
 --#region Constructors
-function DTGuild:new()
-	local object = DTGuild.parent.new(self)
+function XFC.DTGuild:new()
+	local object = XFC.DTGuild.parent.new(self)
     object.__name = ObjectName
 	object.headerFont = nil
 	object.regularFont = nil
@@ -21,15 +23,15 @@ end
 --#endregion
 
 --#region Initializers
-function DTGuild:Initialize()
+function XFC.DTGuild:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.ldbObject = XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTGUILD_NAME'], {
 			type = 'data source',
 			label = XF.Lib.Locale['DTGUILD_NAME'],
-		    OnEnter = function(this) XF.DataText.Guild:OnEnter(this) end,
-			OnLeave = function(this) XF.DataText.Guild:OnLeave(this) end,
-			OnClick = function(this, button) XF.DataText.Guild:OnClick(this, button) end,
+		    OnEnter = function(this) XFO.DTGuild:OnEnter(this) end,
+			OnLeave = function(this) XFO.DTGuild:OnLeave(this) end,
+			OnClick = function(this, button) XFO.DTGuild:OnClick(this, button) end,
 		})
 		LDB_ANCHOR = self.ldbObject
 		self.headerFont = CreateFont('headerFont')
@@ -41,15 +43,15 @@ function DTGuild:Initialize()
 	return self:IsInitialized()
 end
 
-function DTGuild:PostInitialize()
-	XF.DataText.Guild:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Guild:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Guild:RefreshBroker()
+function XFC.DTGuild:PostInitialize()
+	XFO.DTGuild:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XFO.DTGuild:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XFO.DTGuild:RefreshBroker()
 end
 --#endregion
 
 --#region Print
-function DTGuild:Print()
+function XFC.DTGuild:Print()
 	self:ParentPrint()
 	XF:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
 	XF:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
@@ -60,32 +62,32 @@ end
 --#endregion
 
 --#region Accessors
-function DTGuild:GetBroker()
+function XFC.DTGuild:GetBroker()
 	return self.ldbObject
 end
 
-function DTGuild:GetHeaderFont()
+function XFC.DTGuild:GetHeaderFont()
 	return self.headerFont
 end
 
-function DTGuild:GetRegularFont()
+function XFC.DTGuild:GetRegularFont()
 	return self.regularFont
 end
 
-function DTGuild:RefreshBroker()
+function XFC.DTGuild:RefreshBroker()
 	if(XF.Initialized) then
 		local text = ''  
 		if(XF.Config.DataText.Guild.Label) then
 			text = XF.Lib.Locale['GUILD'] .. ': '
 		end
 		text = format('%s|cff3CE13F%d', text, XFO.Confederate:OnlineCount())
-		XF.DataText.Guild:GetBroker().text = text
+		XFO.DTGuild:GetBroker().text = text
 	end
 end
 --#endregion
 
 --#region Sorting
-function DTGuild:IsReverseSort(inBoolean)
+function XFC.DTGuild:IsReverseSort(inBoolean)
 	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
 	if(inBoolean ~= nil) then
 		self.isReverseSort = inBoolean
@@ -93,11 +95,11 @@ function DTGuild:IsReverseSort(inBoolean)
 	return self.isReverseSort
 end
 
-function DTGuild:GetSort()
+function XFC.DTGuild:GetSort()
 	return self.sortColumn == nil and self:SetSort(XF.Config.DataText.Guild.Sort) or self.sortColumn
 end
 
-function DTGuild:SetSort(inColumnName)
+function XFC.DTGuild:SetSort(inColumnName)
 	assert(type(inColumnName) == 'string')
 	self.sortColumn = inColumnName
 	return self:GetSort()
@@ -140,15 +142,15 @@ local function PreSort()
 end
 
 local function SetSortColumn(_, inColumnName)
-	if(XF.DataText.Guild:GetSort() == inColumnName and XF.DataText.Guild:IsReverseSort()) then
-		XF.DataText.Guild:IsReverseSort(false)
-	elseif(XF.DataText.Guild:GetSort() == inColumnName) then
-		XF.DataText.Guild:IsReverseSort(true)
+	if(XFO.DTGuild:GetSort() == inColumnName and XFO.DTGuild:IsReverseSort()) then
+		XFO.DTGuild:IsReverseSort(false)
+	elseif(XFO.DTGuild:GetSort() == inColumnName) then
+		XFO.DTGuild:IsReverseSort(true)
 	else
-		XF.DataText.Guild:SetSort(inColumnName)
-		XF.DataText.Guild:IsReverseSort(false)
+		XFO.DTGuild:SetSort(inColumnName)
+		XFO.DTGuild:IsReverseSort(false)
 	end
-	XF.DataText.Guild:OnEnter(LDB_ANCHOR)
+	XFO.DTGuild:OnEnter(LDB_ANCHOR)
 end
 --#endregion
 
@@ -167,7 +169,7 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 	end
 end
 
-function DTGuild:OnEnter(this)
+function XFC.DTGuild:OnEnter(this)
 	if(not XF.Initialized) then return end
 	if(CombatLockdown()) then return end
 
@@ -273,21 +275,21 @@ function DTGuild:OnEnter(this)
 
 		local list = PreSort()
 		sort(list, function(a, b) 
-			if(XF.DataText.Guild:IsReverseSort()) then
-				if(a[XF.DataText.Guild:GetSort()] == nil) then 
+			if(XFO.DTGuild:IsReverseSort()) then
+				if(a[XFO.DTGuild:GetSort()] == nil) then 
 					return false
-				elseif(b[XF.DataText.Guild:GetSort()] == nil) then
+				elseif(b[XFO.DTGuild:GetSort()] == nil) then
 					return true
 				else
-					return a[XF.DataText.Guild:GetSort()] > b[XF.DataText.Guild:GetSort()]
+					return a[XFO.DTGuild:GetSort()] > b[XFO.DTGuild:GetSort()]
 				end
 			else
-				if(b[XF.DataText.Guild:GetSort()] == nil) then
+				if(b[XFO.DTGuild:GetSort()] == nil) then
 					return false
-				elseif(a[XF.DataText.Guild:GetSort()] == nil) then
+				elseif(a[XFO.DTGuild:GetSort()] == nil) then
 					return true
 				else
-					return a[XF.DataText.Guild:GetSort()] < b[XF.DataText.Guild:GetSort()]
+					return a[XFO.DTGuild:GetSort()] < b[XFO.DTGuild:GetSort()]
 				end
 			end end)
 
@@ -327,7 +329,7 @@ end
 --#endregion
 
 --#region OnLeave
-function DTGuild:OnLeave()
+function XFC.DTGuild:OnLeave()
 	if self.tooltip and MouseIsOver(self.tooltip) then
 	    return
 	else
@@ -338,7 +340,7 @@ end
 --#endregion
 
 --#region OnClick
-function DTGuild:OnClick(this, inButton)
+function XFC.DTGuild:OnClick(this, inButton)
 	if(InCombatLockdown()) then return end
 	if(inButton == 'LeftButton') then
 		ToggleGuildFrame()

@@ -276,7 +276,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         end
         XFO.Confederate:Add(unitData)
         XF:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:UnitName())
-        XF.DataText.Guild:RefreshBroker()
+        XFO.DTGuild:RefreshBroker()
     end
     --#endregion
 end

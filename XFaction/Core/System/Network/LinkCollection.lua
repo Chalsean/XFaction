@@ -38,7 +38,7 @@ function XFC.LinkCollection:Add(inLink)
 	if(not self:Contains(inLink:Key())) then
 		self.parent.Add(self, inLink)
 		XF:Info(self:ObjectName(), 'Added link from [%s] to [%s]', inLink:FromName(), inLink:ToName())
-		XF.DataText.Links:RefreshBroker()
+		XFO.DTLinks:RefreshBroker()
 	end
 end
 
@@ -49,7 +49,7 @@ function XFC.LinkCollection:Remove(inKey)
 		XF:Info(self:ObjectName(), 'Removing link from [%s] to [%s]', link:FromName(), link:ToName())
 		self.parent.Remove(self, inKey)
 		self:Push(link)
-		XF.DataText.Links:RefreshBroker()
+		XFO.DTLinks:RefreshBroker()
 	end
 end
 
@@ -79,11 +79,11 @@ function XFC.LinkCollection:ProcessMessage(inMessage)
     if(inMessage:Version():IsNewer(XF.DeprecatedVersion, true)) then
         if(inMessage:Subject() == XF.Enum.Message.LINK) then
             self:LegacyDeserialize(inMessage:Data())
-            XF.DataText.Links:RefreshBroker()
+            XFO.DTLinks:RefreshBroker()
         end
     else
         self:Deserialize(inMessage:Links())
-        XF.DataText.Links:RefreshBroker()
+        XFO.DTLinks:RefreshBroker()
     end
 end
 
