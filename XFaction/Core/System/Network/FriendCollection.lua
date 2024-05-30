@@ -145,7 +145,7 @@ function XFC.FriendCollection:CheckFriend(inKey)
 				local old = self:Get(inKey)
 				XF:Debug(self:ObjectName(), 'Friend has gone offline: %s', old:Tag())
                 old:Print()
-				XFO.Confederate:Offline(old:GUID())
+				XFO.Confederate:OfflineUnit(old:GUID())
 				self:Remove(old:Key())
 				self:Push(old)
 			end
