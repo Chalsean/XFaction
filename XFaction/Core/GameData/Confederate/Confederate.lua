@@ -38,7 +38,7 @@ function XFC.Confederate:Initialize()
         XF.Timers:Add({
             name = 'Offline',
             delta = XF.Settings.Confederate.UnitScan, 
-            callback = XFO.Confederate.Offline, 
+            callback = XFO.Confederate.CallbackOffline, 
             repeater = true, 
             instance = true
         })    
@@ -140,14 +140,22 @@ function XFC.Confederate:Restore()
     XF.Cache.Backup.Confederate = {}
 end
 
-function XFC.Confederate:Offline()
+function XFC.Confederate:CallbackOffline()
     local self = XFO.Confederate
-    local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
-    for _, unit in self:Iterator() do
-        if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < ttl) then
-            self:OfflineUnit(unit:Key())
+    try(function()
+        local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
+        for _, unit in self:Iterator() do
+            if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < ttl) then
+                self:OfflineUnit(unit:Key())
+            end
         end
-    end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end).
+    finally(function()
+        XF.Timers:Get('Offline'):SetLastRan(XFF.TimeGetCurrent())
+    end)
 end
 
 function XFC.Confederate:OfflineUnit(inKey)
@@ -157,7 +165,7 @@ function XFC.Confederate:OfflineUnit(inKey)
 
         XFO.Links:RemoveAll(unit)
         if(XF.Config.Chat.Login.Enable) then
-            XF.Frames.System:DisplayLogout(unit:Name())
+            XF.Frames.System:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
         end
 
         if(unit:Guild():Equals(XF.Player.Guild)) then

@@ -41,20 +41,6 @@ function TimerEvent:Initialize()
 						callback = XF.Handlers.TimerEvent.CallbackHeartbeat, 
 						repeater = true, 
 						instance = true})
-		XF.Timers:Add({name = 'Links', 
-						delta = XF.Settings.Network.BNet.Link.Broadcast, 
-						callback = XF.Handlers.TimerEvent.CallbackLinks, 
-						repeater = true, 
-						instance = true})		    		    
-		XF.Timers:Add({name = 'Mailbox', 
-						delta = XF.Settings.Network.Mailbox.Scan, 
-						callback = XF.Handlers.TimerEvent.CallbackMailboxTimer, 
-						repeater = true})
-		XF.Timers:Add({name = 'Offline', 
-						delta = XF.Settings.Confederate.UnitScan, 
-						callback = XF.Handlers.TimerEvent.CallbackOffline, 
-						repeater = true, 
-						instance = true})
 		self:IsInitialized(true)
 	end
 end
@@ -179,32 +165,10 @@ end
 --#endregion
 
 --#region Janitorial Callbacks
--- Cleanup mailbox
-function TimerEvent:CallbackMailboxTimer()
-	try(function ()
-		XFO.Chat:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
-		XFO.BNet:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
-	end).
-	catch(function (err)
-		XF:Warn(ObjectName, err)
-	end).
-	finally(function ()
-		XF.Timers:Get('Mailbox'):SetLastRan(ServerTime())
-	end)
-end
+
 
 -- If you haven't heard from a unit in X minutes, set them to offline
-function TimerEvent:CallbackOffline()
-	try(function ()
-		XFO.Confederate:OfflineUnits(ServerTime() - XF.Settings.Confederate.UnitStale)
-	end).
-	catch(function (err)
-		XF:Warn(ObjectName, err)
-	end).
-	finally(function ()
-		XF.Timers:Get('Offline'):SetLastRan(ServerTime())
-	end)
-end
+
 
 -- Periodically send update to avoid other considering you offline
 function TimerEvent:CallbackHeartbeat()
@@ -219,36 +183,6 @@ function TimerEvent:CallbackHeartbeat()
 	end).
 	finally(function ()
 		XF.Timers:Get('Heartbeat'):SetLastRan(ServerTime())
-	end)
-end
-
--- Periodically ping friends to see who is running addon
-function TimerEvent:CallbackPingFriends()
-    try(function()
-	    for _, friend in XF.Friends:Iterator() do
-			if(not friend:IsRunningAddon()) then
-				friend:Ping()
-			end
-	    end
-	end).
-	catch(function (err)
-		XF:Warn(self:ObjectName(), err)
-	end).
-	finally(function ()
-		XF.Timers:Get('Ping'):SetLastRan(ServerTime())
-	end)
-end
-
--- Periodically broadcast your links
-function TimerEvent:CallbackLinks()
-	try(function ()
-		XFO.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
-	end).
-	catch(function (err)
-		XF:Warn(self:ObjectName(), err)
-	end).
-	finally(function ()
-		XF.Timers:Get('Links'):SetLastRan(ServerTime())
 	end)
 end
 --#endregion

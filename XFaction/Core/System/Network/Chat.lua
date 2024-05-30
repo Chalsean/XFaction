@@ -28,6 +28,12 @@ function XFC.Chat:Initialize()
             callback = XFO.Chat.CallbackGuildMessage, 
             instance = true
         })
+        XF.Timers:Add({
+            name = 'ChatJanitor', 
+            delta = XF.Settings.Network.Mailbox.Scan, 
+            callback = XFO.Chat.CallbackJanitor,
+            repeater = true
+        })
 
         self:IsInitialized(true)
     end
@@ -184,5 +190,17 @@ function XFC.Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, 
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
     end)
+end
+
+function XFC.Chat:CallbackJanitor()
+	try(function ()
+		XFO.Chat:Purge(XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale)
+	end).
+	catch(function (err)
+		XF:Warn(self:ObjectName(), err)
+	end).
+	finally(function ()
+		XF.Timers:Get('ChatJanitor'):SetLastRan(XFF.TimeGetCurrent())
+	end)
 end
 --#endregion

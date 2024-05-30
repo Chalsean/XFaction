@@ -22,6 +22,12 @@ function XFC.BNet:Initialize()
             callback = XFO.BNet.CallbackBNetReceive, 
             instance = true
         })
+        XF.Timers:Add({
+            name = 'BNetJanitor', 
+            delta = XF.Settings.Network.Mailbox.Scan, 
+            callback = XFO.BNet.CallbackJanitor,
+            repeater = true
+        })
 
         self:IsInitialized(true)        
     end
@@ -148,5 +154,17 @@ function XFC.BNet:RespondPing(inFriend)
         XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'RE:PING', _, inFriend:GameID())
         XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
     end
+end
+
+function XFC.BNet:CallbackJanitor()
+	try(function ()
+		XFO.BNet:Purge(XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale)
+	end).
+	catch(function (err)
+		XF:Warn(self:ObjectName(), err)
+	end).
+	finally(function ()
+		XF.Timers:Get('BNetJanitor'):SetLastRan(XFF.TimeGetCurrent())
+	end)
 end
 --#endregion

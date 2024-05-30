@@ -6,6 +6,7 @@ local ObjectName = 'CoreInit'
 function XF:CoreInit()
 	-- Get cache/configs asap	
 	XF.Events = EventCollection:new(); XF.Events:Initialize()
+	XF.Timers = TimerCollection:new(); XF.Timers:Initialize()
 	XF.Media = MediaCollection:new(); XF.Media:Initialize()
 
 	-- External addon handling
@@ -66,7 +67,6 @@ function XF:CoreInit()
 	-- Wrappers	
 	XF.Hooks = HookCollection:new(); XF.Hooks:Initialize()
 	XFO.Metrics = XFC.MetricCollection:new(); XFO.Metrics:Initialize()	
-	XF.Timers = TimerCollection:new(); XF.Timers:Initialize()
 	XF.Handlers.TimerEvent:Initialize()
 
 	-- These will execute "in-parallel" with remainder of setup as they are not time critical nor is anything dependent upon them
@@ -88,6 +88,50 @@ function XF:CoreInit()
 	end).
 	catch(function (err)
 		XF:Warn(ObjectName, err)
+	end)
+end
+
+function XF:CallbackLoginGuild()
+	try(function ()
+		-- For a time Blizz API says player is not in guild, even if they are
+		-- Its not clear what event fires (if any) when this data is available, hence the poller
+		if(InGuild()) then
+			-- Even though it says were in guild, theres a brief time where the following calls fails, hence the sanity check
+			local guildID = GetGuildClubId()
+			if(guildID ~= nil) then
+				-- Now that guild info is available we can finish setup
+				XF:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
+				XF.Timers:Remove('LoginGuild')
+
+				-- Confederate setup via guild info
+				XFO.Guilds:Initialize(guildID)
+				XFO.Confederate:Initialize()
+				XFO.Guilds:SetPlayerGuild()
+				XFO.Targets:Initialize()	
+
+				-- Frame inits were waiting on Confederate init
+				XF.Frames.Chat:Initialize()
+				XF.Frames.System:Initialize()
+
+				-- Start network
+				XFO.Channels:Initialize()
+				XFO.Chat:Initialize()
+				XFO.Friends:Initialize()				
+				XFO.BNet:Initialize()
+
+				if(XF.Cache.UIReload) then
+					XFO.Confederate:Restore()					
+				end
+
+				XF.Timers:Get('LoginPlayer'):Start()
+			end
+		end
+	end).
+	catch(function (err)
+		XF:Error(ObjectName, err)
+	end).
+	finally(function ()			
+		XF:SetupMenus()
 	end)
 end
 

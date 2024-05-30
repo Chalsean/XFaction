@@ -14,6 +14,22 @@ end
 function XFC.LinkCollection:NewObject()
 	return XFC.Link:new()
 end
+
+function XFC.LinkCollection:Initialize()
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
+
+		XF.Timers:Add({
+			name = 'Links', 
+			delta = XF.Settings.Network.BNet.Link.Broadcast, 
+			callback = XFO.Links.CallbackLegacyBroadcast,
+			repeater = true, 
+			instance = true
+		})	
+
+		self:IsInitialized(true)
+	end
+end
 --#endregion
 
 --#region Methods
@@ -184,5 +200,18 @@ function XFC.LinkCollection:Restore()
 		end)
 	end
 	XF.Cache.Backup.Links = ''
+end
+
+-- Deprecated, remove after 4.13
+function XFC.LinkCollection:CallbackLegacyBroadcast()
+	try(function ()
+		XFO.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
+	end).
+	catch(function (err)
+		XF:Warn(self:ObjectName(), err)
+	end).
+	finally(function ()
+		XF.Timers:Get('Links'):SetLastRan(XFF.TimeGetCurrent())
+	end)
 end
 --#endregion
