@@ -90,14 +90,14 @@ function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
                 -- AceDB is available once addon is loaded
                 InitializeCache()
                 XF:ConfigInitialize()
-                XF.Addons.ElvUI:Initialize()
+                XFO.ElvUI:Initialize()
                 self:IsLoaded(true)
             elseif(inAddonName == 'ElvUI') then
-                XF.Addons.ElvUI:Initialize()
+                XFO.ElvUI:Initialize()
             elseif(inAddonName == 'WIM') then
-                XF.Addons.WIM:Initialize()
+                XFO.WIM:Initialize()
             elseif(inAddonName == 'RaiderIO') then
-                XF.Addons.RaiderIO:Initialize()
+                XFO.RaiderIO:Initialize()
             end
         end
     end).

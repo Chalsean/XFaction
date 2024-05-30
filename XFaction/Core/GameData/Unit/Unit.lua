@@ -142,7 +142,7 @@ function XFC.Unit:Initialize(inMemberID)
         self:Profession2(XFO.Professions:Get(unitData.profession2ID))
     end
 
-    local raiderIO = XF.Addons.RaiderIO:Get(self)
+    local raiderIO = XFO.RaiderIO:Get(self)
     if(raiderIO ~= nil) then
         self:RaiderIO(raiderIO)
     end
@@ -813,7 +813,7 @@ function XFC.Unit:LegacyDeserialize(inSerial)
 		self:Version(version) 
 	end
 
-	local raiderIO = XF.Addons.RaiderIO:Get(self)
+	local raiderIO = XFO.RaiderIO:Get(self)
     if(raiderIO ~= nil) then
         self:RaiderIO(raiderIO)
     end

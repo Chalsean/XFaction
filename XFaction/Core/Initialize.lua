@@ -10,9 +10,9 @@ function XF:CoreInit()
 	XFO.Media = XFC.MediaCollection:new(); XFO.Media:Initialize()
 
 	-- External addon handling
-	XF.Addons.ElvUI = XFElvUI:new()
-	XF.Addons.RaiderIO = RaiderIOCollection:new()
-	XF.Addons.WIM = XFWIM:new()
+	XFO.ElvUI = XFC.ElvUI:new()
+	XFO.RaiderIO = XFC.RaiderIOCollection:new()
+	XFO.WIM = XFC.WIM:new()
 	XFO.AddonHandler = XFC.AddonEvent:new(); XFO.AddonHandler:Initialize()
 
 	-- Log XFaction version

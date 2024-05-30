@@ -167,7 +167,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
                     end
 
                     if(inType == 'GUILD' and XF.Addons.WIM:IsLoaded() and XF.Addons.WIM:GetAPI().modules.GuildChat.enabled) then
-                        XF.Addons.WIM:GetAPI():CHAT_MSG_GUILD(text, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
+                        XFO.WIM:API():CHAT_MSG_GUILD(text, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     else
                         text = XF.Settings.Frames.Chat.Prepend .. text
                         ChatFrame_MessageEventHandler(_G[frame], 'CHAT_MSG_' .. inType, text, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)

@@ -2,10 +2,10 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Addon'
 
-Addon = XFC.Object:newChildConstructor()
+XFC.Addon = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Addon:new()
+function XFC.Addon:new()
     local object = Addon.parent.new(self)
     object.__name = ObjectName
     object.isLoaded = false
@@ -13,7 +13,7 @@ function Addon:new()
     return object
 end
 
-function Addon:newChildConstructor()
+function XFC.Addon:newChildConstructor()
     local object = Addon.parent.new(self)
     object.__name = ObjectName
     object.parent = self
@@ -21,10 +21,8 @@ function Addon:newChildConstructor()
     object.api = nil
     return object
 end
---#endregion
 
---#region Initializers
-function Addon:OnLoad(inAPI)
+function XFC.Addon:OnLoad(inAPI)
     assert(type(inAPI) == 'table')
     if(not self:IsLoaded()) then
         self:SetAPI(inAPI)
@@ -33,32 +31,31 @@ function Addon:OnLoad(inAPI)
 end
 --#endregion
 
---#region Print
-function Addon:Print()
-	self:ParentPrint()
-	XF:Debug(ObjectName, '  isLoaded (' .. type(self.isLoaded) .. '): ' .. tostring(self.isLoaded))
-end
---#endregion
-
---#region Accessors
-function Addon:HasAPI()
-    return self.api ~= nil
-end
-
-function Addon:GetAPI()
-    return self.api
-end
-
-function Addon:SetAPI(inAPI)
-    assert(type(inAPI) == 'table')
-    self.api = inAPI
-end
-
-function Addon:IsLoaded(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
+--#region Properties
+function XFC.Addon:IsLoaded(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
     if(inBoolean ~= nil) then
         self.isLoaded = inBoolean
     end
     return self.isLoaded
+end
+
+function XFC.Addon:API(inAPI)
+    assert(type(inAPI) == 'table' or inAPI == nil)
+    if(inAPI ~= nil) then
+        self.api = inAPI
+    end
+    return self.api
+end
+--#endregion
+
+--#region Methods
+function XFC.Addon:Print()
+	self:ParentPrint()
+	XF:Debug(ObjectName, '  isLoaded (' .. type(self.isLoaded) .. '): ' .. tostring(self.isLoaded))
+end
+
+function XFC.Addon:HasAPI()
+    return self:API() ~= nil
 end
 --#endregion

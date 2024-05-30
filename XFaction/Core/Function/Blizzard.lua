@@ -60,6 +60,7 @@ XFF.PlayerGetPvPRating = GetPersonalRatedInfo
 XFF.PlayerGetGuild = GetGuildInfo
 XFF.PlayerGetKeyLevel = C_MythicPlus.GetOwnedKeystoneLevel
 XFF.PlayerGetKeyMap = C_MythicPlus.GetOwnedKeystoneChallengeMapID
+XFF.PlayerGetUnitName = UnitName
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo
