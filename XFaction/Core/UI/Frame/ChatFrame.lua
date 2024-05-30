@@ -2,31 +2,29 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ChatFrame'
 
-ChatFrame = XFC.Object:newChildConstructor()
+XFC.ChatFrame = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function ChatFrame:new()
-    local object = ChatFrame.parent.new(self)
+function XFC.ChatFrame:new()
+    local object = XFC.ChatFrame.parent.new(self)
     object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function ChatFrame:Initialize()
+function XFC.ChatFrame:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XF.Frames.Chat.ChatFilter)
-        XF:Info(ObjectName, 'Created CHAT_MSG_GUILD event filter')
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XF.Frames.Chat.AchievementFilter)
-        XF:Info(ObjectName, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XFO.ChatFrame.CallbackChatFilter)
+        XF:Info(self:ObjectName(), 'Created CHAT_MSG_GUILD event filter')
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFO.ChatFrame.CallbackAchievementFilter)
+        XF:Info(self:ObjectName(), 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 --#endregion
 
---#region Callbacks
+--#region Methods
 local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
     local configNode = inEvent == 'CHAT_MSG_GUILD' and 'GChat' or 'Achievement'
     local event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
@@ -63,7 +61,8 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
     return text
 end
 
-function ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+function XFC.ChatFrame:CallbackChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+    local self = XFO.ChatFrame
     if(not XF.Config.Chat.GChat.Enable) then
         return true
     elseif(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
@@ -77,7 +76,8 @@ function ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, 
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
 
-function ChatFrame:AchievementFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+function XFC.ChatFrame:CallbackAchievementFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+    local self = XFO.ChatFrame
     if(not XF.Config.Chat.Achievement.Enable) then
         return true
     elseif(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
@@ -87,10 +87,8 @@ function ChatFrame:AchievementFilter(inEvent, inMessage, arg3, arg4, arg5, arg6,
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
---#endregion
 
---#region Display
-function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFrom, inData, inFaction)
+function XFC.ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFrom, inData, inFaction)
     assert(type(inName) == 'string')
     assert(type(inUnitName) == 'string')
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild')
@@ -179,13 +177,13 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
     end
 end
 
-function ChatFrame:DisplayGuildChat(inMessage)
+function XFC.ChatFrame:DisplayGuildChat(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Config.Chat.GChat.Enable) then return end
     self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data(), inMessage:Faction())
 end
 
-function ChatFrame:DisplayAchievement(inMessage)
+function XFC.ChatFrame:DisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Config.Chat.Achievement.Enable) then return end
     self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), inMessage:From(), inMessage:Data(), inMessage:Faction())

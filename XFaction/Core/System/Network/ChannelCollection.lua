@@ -124,7 +124,7 @@ function XFC.ChannelCollection:CallbackUnitLeftChannel(_, _, _, _, _, _, _, _, c
 			local unit = XFO.Confederate:Get(guid)
 			if(unit:IsOnline() and not unit:Guild():Equals(XF.Player.Guild)) then
 				XF:Info(self:ObjectName(), 'Guild member logout via event: ' .. unit:UnitName())
-				XF.Frames.System:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
+				XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
 				XFO.Confederate:Remove(unit:Key())
 				XFO.Confederate:Push(unit)
 				XF.DataText.Guild:RefreshBroker()

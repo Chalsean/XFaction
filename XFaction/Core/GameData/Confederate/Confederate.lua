@@ -165,7 +165,7 @@ function XFC.Confederate:OfflineUnit(inKey)
 
         XFO.Links:RemoveAll(unit)
         if(XF.Config.Chat.Login.Enable) then
-            XF.Frames.System:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
+            XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:UnitName(), unit:MainName(), unit:Guild(), nil, unit:Race():Faction())
         end
 
         if(unit:Guild():Equals(XF.Player.Guild)) then
@@ -199,7 +199,7 @@ function XFC.Confederate:LocalRoster()
                         if(old:IsOffline()) then
                             XF:Info(self:ObjectName(), 'Guild member login via scan: %s', unit:UnitName())
                             if(XF.Config.Chat.Login.Enable) then
-                                XF.Frames.System:DisplayLogin(unit)
+                                XFO.SystemFrame:DisplayLogin(unit)
                             end
                             self:Add(unit)
                         elseif(not old:IsRunningAddon()) then
@@ -235,7 +235,7 @@ function XFC.Confederate:ProcessMessage(inMessage)
         if(inMessage:Version():IsNewer(XF.DeprecatedVersion, true)) then
             if(not XF.Player.Guild:Equals(inMessage:Guild())) then
                 if(XF.Config.Chat.Login.Enable) then
-                    XF.Frames.System:DisplayLogout(inMessage:Name())
+                    XFO.SystemFrame:DisplayLogout(inMessage:Name())
                 end
                 if(self:Contains(inMessage:From())) then
                     local unit = self:Get(inMessage:From())
@@ -248,7 +248,7 @@ function XFC.Confederate:ProcessMessage(inMessage)
         elseif(not inMessage:FromUnit():IsSameGuild()) then
             -- TODO move this check to frame
             if(XF.Config.Chat.Login.Enable) then
-                XF.Frames.System:DisplayLogout(inMessage:FromUnit():Name())
+                XFO.SystemFrame:DisplayLogout(inMessage:FromUnit():Name())
             end
             XFO.Links:RemoveAll(inMessage:FromUnit())
             self:Remove(inMessage:FromUnit():Key())

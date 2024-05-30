@@ -36,8 +36,8 @@ function XF:CoreInit()
 	XF.DataText.Metrics = DTMetrics:new()
 
 	-- Frames
-	XF.Frames.Chat = ChatFrame:new()
-	XF.Frames.System = SystemFrame:new()
+	XFO.ChatFrame = XFC.ChatFrame:new()
+	XFO.SystemFrame = XFC.SystemFrame:new()
 
 	-- Declare handlers but not listening yet
 	XFO.AchievementHandler = XFC.AchievementEvent:new(); XFO.AchievementHandler:Initialize()
@@ -118,8 +118,8 @@ function XF:CallbackLoginGuild()
 				XFO.Targets:Initialize()	
 
 				-- Frame inits were waiting on Confederate init
-				XF.Frames.Chat:Initialize()
-				XF.Frames.System:Initialize()
+				XFO.ChatFrame:Initialize()
+				XFO.SystemFrame:Initialize()
 
 				-- Start network
 				XFO.Channels:Initialize()

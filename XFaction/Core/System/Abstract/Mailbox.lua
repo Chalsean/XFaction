@@ -221,7 +221,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     -- Process GCHAT message
     if(inMessage:Subject() == XF.Enum.Message.GCHAT) then
         if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:Guild())) then
-            XF.Frames.Chat:DisplayGuildChat(inMessage)
+            XFO.ChatFrame:DisplayGuildChat(inMessage)
         end
         return
     end
@@ -230,7 +230,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     if(inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
         -- Local guild achievements should already be displayed by WoW client
         if(not XF.Player.Guild:Equals(inMessage:Guild())) then
-            XF.Frames.Chat:DisplayAchievement(inMessage)
+            XFO.ChatFrame:DisplayAchievement(inMessage)
         end
         return
     end
@@ -272,7 +272,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         local unitData = inMessage:Data()
         if(inMessage:Subject() == XF.Enum.Message.LOGIN and 
           (not XFO.Confederate:Contains(unitData:Key()) or XFO.Confederate:Get(unitData:Key()):IsOffline())) then
-            XF.Frames.System:DisplayLoginMessage(inMessage)
+            XFO.SystemFrame:DisplayLoginMessage(inMessage)
         end
         XFO.Confederate:Add(unitData)
         XF:Info(ObjectName, 'Updated unit [%s] information based on message received', unitData:UnitName())

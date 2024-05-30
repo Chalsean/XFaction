@@ -2,29 +2,28 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'SystemFrame'
 
-SystemFrame = XFC.Object:newChildConstructor()
+XFC.SystemFrame = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function SystemFrame:new()
+function XFC.SystemFrame:new()
     local object = SystemFrame.parent.new(self)
     object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function SystemFrame:Initialize()
+function XFC.SystemFrame:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XF.Frames.System.ChatFilter)
-        XF:Info(ObjectName, 'Created CHAT_MSG_SYSTEM event filter')
+        ChatFrame_AddMessageEventFilter('CHAT_MSG_SYSTEM', XFO.SystemFrame.CallbackChatFilter)
+        XF:Info(self:ObjectName(), 'Created CHAT_MSG_SYSTEM event filter')
         self:IsInitialized(true)
     end
 end
 --#endregion
 
---#region Callbacks
-function SystemFrame:ChatFilter(inEvent, inMessage, ...)
+--#region Methods
+function XFC.SystemFrame:CallbackChatFilter(inEvent, inMessage, ...)
+    local self = XFO.SystemFrame
     if(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
         inMessage = string.gsub(inMessage, XF.Settings.Frames.Chat.Prepend, '')
         return false, inMessage, ...
@@ -40,10 +39,8 @@ function SystemFrame:ChatFilter(inEvent, inMessage, ...)
     end
     return false, inMessage, ...
 end
---#endregion
 
---#region Display
-function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inOrder, inFaction)
+function XFC.SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inOrder, inFaction)
 
     local text = XF.Settings.Frames.Chat.Prepend
     
@@ -85,35 +82,35 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     elseif(inType == XF.Enum.Message.LOGIN) then
         text = text .. XF.Lib.Locale['CHAT_LOGIN']
         if(XF.Config.Chat.Login.Sound and not XF.Player.Guild:Equals(inGuild)) then
-            PlaySound(3332, 'Master')
+            XFF.UISystemSound(3332, 'Master')
         end
     elseif(inType == XF.Enum.Message.ORDER) then
         if(inOrder:IsGuild()) then
             text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:GetLink())
         else
-            text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:GetCrafterName(), inOrder:GetLink())
+            text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:CrafterName(), inOrder:GetLink())
         end
     end
-    SendSystemMessage(text) 
+    XFF.UISystemMessage(text) 
 end
 
-function SystemFrame:DisplayLoginMessage(inMessage)
+function XFC.SystemFrame:DisplayLoginMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')    
     local unitData = inMessage:Data()
     self:Display(inMessage:Subject(), unitData:Name(), unitData:UnitName(), unitData:MainName(), unitData:Guild(), nil, unitData:Race():Faction())
 end
 
-function SystemFrame:DisplayLogoutMessage(inMessage)
+function XFC.SystemFrame:DisplayLogoutMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:MainName(), inMessage:Guild(), nil, inMessage:Faction())
 end
 
-function SystemFrame:DisplayOrder(inOrder)
+function XFC.SystemFrame:DisplayOrder(inOrder)
     if(not XF.Config.Chat.Crafting.Enable) then return end    
     assert(type(inOrder) == 'table' and inOrder.__name == 'Order')
-    local customer = inOrder:GetCustomerUnit()
+    local customer = inOrder:Customer()
     self:Display(XF.Enum.Message.ORDER, customer:Name(), customer:UnitName(), customer:MainName(), customer:Guild(), inOrder, customer:Faction())
 end
 --#endregion
