@@ -161,15 +161,16 @@ function XFC.Confederate:RemoveUnit(inKey)
             XFO.SystemFrame:DisplayLogout(unit:Name())
 
             XFO.Links:RemoveAll(unit)
-            if(unit:IsFriend()) then
-                local friend = XFO.Friends:Get(unit:GUID())
-                XFO.Friends:Remove(friend:Key())
-                XFO.Friends:Push(friend)
-            end
-
             self:Remove(inKey)
             self:Push(unit)
+
             XFO.DTGuild:RefreshBroker()
+        end
+
+        if(XFO.Friends:ContainsByGUID(inKey)) then
+            local friend = XFO.Friends:GetByGUID(inKey)
+            XFO.Friends:Remove(friend:Key())
+            XFO.Friends:Push(friend)
         end
     end).
     catch(function(err)
