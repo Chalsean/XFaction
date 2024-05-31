@@ -42,7 +42,8 @@ end
 local function _GetChatLink(inUnit)
 
     if(inUnit:IsFriend() and not inUnit:IsSameFaction()) then
-        local friend = XFO.Friends:Get(inUnit:GUID())
+        local friend = XFO.Friends:GetByGUID(inUnit:GUID())
+        friend:Print()
         return format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:AccountName(), friend:AccountID(), friend:Tag(), inUnit:Name())
     end
     

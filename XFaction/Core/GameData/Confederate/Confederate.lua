@@ -83,15 +83,8 @@ function XFC.Confederate:Add(inUnit)
     if(inUnit:IsPlayer()) then
         XF.Player.Unit = inUnit
     end
-end
 
-function XFC.Confederate:Upsert(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
-    if(self:Contains(inUnit:Key()) and inUnit:TimeStamp() < self:Get(inUnit:Key()):TimeStamp()) then
-        return false
-    end
-    self:Add(inUnit)
-    return true
+    XFO.DTGuild:RefreshBroker()
 end
 
 function XFC.Confederate:Get(inKey, inRealmID, inFactionID)
@@ -158,22 +151,54 @@ function XFC.Confederate:CallbackOffline()
     end)
 end
 
-function XFC.Confederate:OfflineUnit(inKey)
+function XFC.Confederate:RemoveUnit(inKey)
     assert(type(inKey) == 'string')
-    if(self:Contains(inKey)) then
-        local unit = self:Get(inKey)
+    try(function()
+        if(self:Contains(inKey)) then
 
-        XFO.Links:RemoveAll(unit)
-        XFO.SystemFrame:DisplayLogout(unit:Name())
+            local unit = self:Get(inKey)
+            XFO.SystemFrame:DisplayLogout(unit:Name())
 
-        if(unit:Guild():Equals(XF.Player.Guild)) then
-            unit:Presence(Enum.ClubMemberPresence.Offline)
-            self.onlineCount = self.onlineCount - 1
-        else
+            XFO.Links:RemoveAll(unit)
+            if(unit:IsFriend()) then
+                local friend = XFO.Friends:Get(unit:GUID())
+                XFO.Friends:Remove(friend:Key())
+                XFO.Friends:Push(friend)
+            end
+
             self:Remove(inKey)
             self:Push(unit)
+            XFO.DTGuild:RefreshBroker()
         end
-    end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
+end
+
+function XFC.Confederate:OfflineUnit(inKey)
+    assert(type(inKey) == 'string')
+    try(function()
+        if(self:Contains(inKey)) then
+
+            local unit = self:Get(inKey)
+            XFO.SystemFrame:DisplayLogout(unit:Name())
+
+            XFO.Links:RemoveAll(unit)
+            if(unit:IsFriend()) then
+                local friend = XFO.Friends:Get(unit:GUID())
+                XFO.Friends:Remove(friend:Key())
+                XFO.Friends:Push(friend)
+            end
+
+            unit:Presence(Enum.ClubMemberPresence.Offline)
+            self.onlineCount = self.onlineCount - 1
+            XFO.DTGuild:RefreshBroker()
+        end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 
 -- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
@@ -221,7 +246,6 @@ function XFC.Confederate:LocalRoster()
             self:Push(unit)
         end)
     end
-    XFO.DTGuild:RefreshBroker()
 end
 
 function XFC.Confederate:LegacyProcessMessage(inMessage)
@@ -230,10 +254,8 @@ function XFC.Confederate:LegacyProcessMessage(inMessage)
             if(self:Contains(inMessage:From())) then
                 local unit = self:Get(inMessage:From())
                 XF:Info(self:ObjectName(), 'Guild member logout via message: %s', unit:UnitName())
-                XFO.Links:RemoveAll(unit)
-                self:Remove(unit:Key())
+                self:RemoveUnit(inMessage:From())
                 XFO.SystemFrame:DisplayLogout(unit:Name())
-                self:Push(unit)
             end
         end
     else
@@ -244,8 +266,7 @@ function XFC.Confederate:LegacyProcessMessage(inMessage)
         else
             XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unitData:UnitName())
         end
-        XFO.Confederate:Add(unitData)        
-        XFO.DTGuild:RefreshBroker()
+        XFO.Confederate:Add(unitData)
     end
 end
 
@@ -261,9 +282,7 @@ function XFC.Confederate:ProcessMessage(inMessage)
         if(not inMessage:FromUnit():IsSameGuild()) then
             XFO.SystemFrame:DisplayLogout(inMessage:FromUnit():Name())
             XF:Info(self:ObjectName(), 'Guild member logout via message: %s', inMessage:FromUnit():UnitName())
-            XFO.Links:RemoveAll(inMessage:FromUnit())
-            self:Remove(inMessage:FromUnit():Key())
-            self:Push(inMessage:FromUnit())
+            self:RemoveUnit(inMessage:FromUnit():GUID())
         end
     else
         if(inMessage:IsLogin() and (not self:Contains(inMessage:FromUnit():Key()) or self:Get(inMessage:FromUnit():Key()):IsOffline())) then
@@ -274,7 +293,6 @@ function XFC.Confederate:ProcessMessage(inMessage)
         end
         XFO.Confederate:Add(inMessage:FromUnit())
     end
-    XFO.DTGuild:RefreshBroker()
 end
 
 -- Doesnt really belong here but cant find a good home

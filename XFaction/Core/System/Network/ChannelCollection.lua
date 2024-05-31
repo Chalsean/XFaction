@@ -117,18 +117,15 @@ function XFC.ChannelCollection:VoidLocalChannel()
     self.localChannel = nil
 end
 
-function XFC.ChannelCollection:CallbackUnitLeftChannel(_, _, _, _, _, _, _, _, channelName, _, _, guid)
+function XFC.ChannelCollection:CallbackUnitLeftChannel(_, name, _, _, name2, _, _, _, channelName, _, _, guid)
 	local self = XFO.Channels
 	if(self:HasLocalChannel()) then
 		if(self:LocalChannel():Key() == channelName and XFO.Confederate:Contains(guid)) then
 			local unit = XFO.Confederate:Get(guid)
-			if(unit:IsOnline() and not unit:Guild():Equals(XF.Player.Guild)) then
-				XF:Info(self:ObjectName(), 'Guild member logout via event: ' .. unit:UnitName())
-                XFO.SystemFrame:DisplayLogout(unit:Name())
-				XFO.Links:RemoveAll(unit)
-				XFO.Confederate:Remove(unit:Key())
-				XFO.Confederate:Push(unit)
-				XFO.DTGuild:RefreshBroker()
+			if(unit:IsOnline() and not unit:IsSameGuild()) then
+				XF:Info(self:ObjectName(), 'Guild member logout via event: ' .. name2)
+                XFO.SystemFrame:DisplayLogout(name)
+				XFO.Confederate:RemoveUnit(guid)
 			end
 		end
 	end	

@@ -54,7 +54,7 @@ XF.ChangeLog['4.13.2'] = {
                 order = 8,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Increased links messages from every 2 minutes to every 5 minutes to reduce overall message traffic.',
+                name = 'Increased links messages from every 2 minutes to every 3 minutes to reduce overall message traffic.',
             },
             Kui = {
                 order = 9,

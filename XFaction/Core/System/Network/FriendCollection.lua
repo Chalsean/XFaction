@@ -145,9 +145,7 @@ function XFC.FriendCollection:CheckFriend(inKey)
 				local old = self:Get(inKey)
 				XF:Debug(self:ObjectName(), 'Friend has gone offline: %s', old:Tag())
                 old:Print()
-				XFO.Confederate:OfflineUnit(old:GUID())
-				self:Remove(old:Key())
-				self:Push(old)
+				XFO.Confederate:RemoveUnit(old:GUID())
 			end
 		end
 
@@ -193,6 +191,7 @@ end
 function XFC.FriendCollection:CallbackPing()
 	local self = XFO.Friends
     try(function()
+		self:CheckFriends()
 	    for _, friend in self:Iterator() do
 			if(not friend:IsLinked()) then
 				XFO.BNet:Ping(friend)

@@ -89,7 +89,7 @@ function GetMyOrders()
                     XFO.Orders:Add(order)
                     if(not self:IsFirstQuery()) then
                         order:Display()
-                        order:Broadcast()
+                        XFO.Chat:SendOrderMessage(order)
                     end
                 end                
             else

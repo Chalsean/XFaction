@@ -111,9 +111,10 @@ function XFC.SpecCollection:GetInitialClassSpec(inClassID)
 end
 
 function XFC.SpecCollection:CallbackSpecChanged()
+	local self = XFO.Specs
 	try(function ()
         XF.Player.Unit:Initialize(XF.Player.Unit:ID())
-        XF.Player.Unit:Broadcast()
+		XFO.Chat:SendDataMessage(XF.Player.Unit)
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)

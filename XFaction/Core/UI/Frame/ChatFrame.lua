@@ -224,7 +224,7 @@ function XFC.ChatFrame:LegacyDisplay(inType, inName, inUnitName, inMainName, inG
                         text = format('|cff%s%s|r', hex, text)
                     end
 
-                    if(inType == 'GUILD' and XF.Addons.WIM:IsLoaded() and XF.Addons.WIM:GetAPI().modules.GuildChat.enabled) then
+                    if(inType == 'GUILD' and XFO.WIM:IsLoaded() and XFO.WIM:API().modules.GuildChat.enabled) then
                         XFO.WIM:API():CHAT_MSG_GUILD(text, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inFrom)
                     else
                         text = XF.Settings.Frames.Chat.Prepend .. text

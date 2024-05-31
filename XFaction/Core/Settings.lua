@@ -145,12 +145,12 @@ XF.Settings = {
 		},
 		BNet = {
 			FriendTimer = 2,
-			PacketSize = 425,	
+			PacketSize = 420,	
 			Ping = {
 				Timer = 60 * 5,     -- Seconds between pinging friends
 			},
 			Link = {
-				Broadcast = 60 * 5, -- Seconds between broadcasting links
+				Broadcast = 60 * 3, -- Seconds between broadcasting links
 			},
 		},
 		Mailbox = {
