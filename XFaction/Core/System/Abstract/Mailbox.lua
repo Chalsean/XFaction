@@ -63,11 +63,9 @@ function XFC.Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
     assert(type(inData) == 'string')
     if(not self:ContainsPacket(inMessageKey)) then
         self.packets[inMessageKey] = {}
-        self.packets[inMessageKey].Count = 0
     end
     if(self.packets[inMessageKey][inPacketNumber] == nil) then
         self.packets[inMessageKey][inPacketNumber] = inData
-        self.packets[inMessageKey].Count = self.packets[inMessageKey].Count + 1
     end
 end
 
@@ -94,14 +92,14 @@ function XFC.Mailbox:HasAllPackets(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     assert(type(inTotalPackets) == 'number')
     if(self.packets[inKey] == nil) then return false end
-    return self.packets[inKey].Count == inTotalPackets
+    return #self.packets[inKey] == inTotalPackets
 end
 
 function XFC.Mailbox:RebuildMessage(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     local message = ''
     -- Stitch the data back together again
-    for _, packet in pairs(self.packets[inKey]) do
+    for _, packet in PairsByKeys(self.packets[inKey]) do
         message = message .. packet
     end
     self:RemovePacket(inKey)

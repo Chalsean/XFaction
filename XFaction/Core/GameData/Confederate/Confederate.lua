@@ -139,6 +139,7 @@ function XFC.Confederate:CallbackOffline()
         local ttl = XFF.TimeGetCurrent() - XF.Settings.Confederate.UnitStale
         for _, unit in self:Iterator() do
             if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < ttl) then
+                XF:Info(self:ObjectName(), 'Removing ghost guild member: ' .. unit:UnitName())
                 self:OfflineUnit(unit:Key())
             end
         end
