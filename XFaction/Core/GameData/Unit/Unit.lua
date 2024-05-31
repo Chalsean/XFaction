@@ -598,7 +598,7 @@ function XFC.Unit:Serialize()
     data.I = self:ItemLevel()
     data.J = self:Rank()
     data.K = self:Key()
-    data.L = self:Level() ~= XF.WoW:MaxLevel() and self:Level() or nil
+    data.L = self:Level()
     data.M = self:HasMythicKey() and self:MythicKey():Serialize() or nil
     data.N = self:Name()
     data.O = self:Presence()
@@ -631,13 +631,8 @@ function XFC.Unit:Deserialize(inData)
     self:Rank(data.J)
     self:GUID(data.K)
     self:Key(data.K)
+    self:Level(data.L)
     
-    if(data.L ~= nil) then
-        self:Level(tonumber(data.L))
-    else
-        self:Level(self:Expansion():MaxLevel())
-    end
-
     if(data.M ~= nil) then
         self:MythicKey(XFO.Keys:Deserialize(data.M))
     end

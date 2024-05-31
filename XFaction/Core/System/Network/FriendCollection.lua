@@ -191,7 +191,7 @@ end
 function XFC.FriendCollection:CallbackPing()
 	local self = XFO.Friends
     try(function()
-		self:CheckFriends()
+		--self:CheckFriends()
 	    for _, friend in self:Iterator() do
 			if(not friend:IsLinked()) then
 				XFO.BNet:Ping(friend)
