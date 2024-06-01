@@ -62,6 +62,8 @@ function XFC.Friend:Initialize(inID)
             self:Target(target)
         end
     end
+
+    self:IsInitialized(true)
 end
 --#endregion
 

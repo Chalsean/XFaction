@@ -55,7 +55,7 @@ function XFC.RaiderIOCollection:AddUnit(inUnit)
         raiderIO:Key(inUnit:Key())
         raiderIO:Name(inUnit:UnitName())
 
-        local profile = inUnit:IsAlt() and self:API().GetProfile(inUnit:MainName(), inUnit:Guild():Realm():Name()) or self:API().GetProfile(inUnit:Name(), inUnit:Guild():Realm():Name())
+        local profile = inUnit:IsAlt() and self:API().GetProfile(inUnit:MainName(), inUnit:Realm():Name()) or self:API().GetProfile(inUnit:Name(), inUnit:Realm():Name())
         
         -- Raid
         if(profile and profile.raidProfile) then

@@ -178,29 +178,9 @@ function XFC.LinkCollection:CallbackBroadcast()
     end)
 end
 
-function XFC.LinkCollection:Backup()
-	try(function ()
-		XF.Cache.Backup.Links = self:Serialize()
-	end).
-	catch(function (err)
-		XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create links backup before reload: ' .. err
-	end)
-end
-
-function XFC.LinkCollection:Restore()
-	if(XF.Cache.Backup.Links ~= nil and strlen(XF.Cache.Backup.Links) > 0) then
-		try(function ()
-			self:Deserialize(XF.Player.Unit, XF.Cache.Backup.Links)
-		end).
-		catch(function (err)
-			XF:Warn(self:ObjectName(), err)
-		end)
-	end
-	XF.Cache.Backup.Links = ''
-end
-
 -- Deprecated, remove after 4.13
 function XFC.LinkCollection:CallbackLegacyBroadcast()
+	local self = XFO.Links
 	try(function ()
 		XFO.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
 	end).

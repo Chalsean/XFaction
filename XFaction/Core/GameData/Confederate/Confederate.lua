@@ -140,7 +140,7 @@ function XFC.Confederate:CallbackOffline()
         for _, unit in self:Iterator() do
             if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < ttl) then
                 XF:Info(self:ObjectName(), 'Removing ghost guild member: ' .. unit:UnitName())
-                self:OfflineUnit(unit:Key())
+                self:UnitOffline(unit:Key())
             end
         end
     end).
@@ -152,49 +152,22 @@ function XFC.Confederate:CallbackOffline()
     end)
 end
 
-function XFC.Confederate:RemoveUnit(inKey)
+function XFC.Confederate:UnitOffline(inKey)
     assert(type(inKey) == 'string')
     try(function()
         if(self:Contains(inKey)) then
 
             local unit = self:Get(inKey)
-            XFO.SystemFrame:DisplayLogout(unit:Name())
-
             XFO.Links:RemoveAll(unit)
-            self:Remove(inKey)
-            self:Push(unit)
 
-            XFO.DTGuild:RefreshBroker()
-        end
-
-        if(XFO.Friends:ContainsByGUID(inKey)) then
-            local friend = XFO.Friends:GetByGUID(inKey)
-            XFO.Friends:Remove(friend:Key())
-            XFO.Friends:Push(friend)
-        end
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-    end)
-end
-
-function XFC.Confederate:OfflineUnit(inKey)
-    assert(type(inKey) == 'string')
-    try(function()
-        if(self:Contains(inKey)) then
-
-            local unit = self:Get(inKey)
-            XFO.SystemFrame:DisplayLogout(unit:Name())
-
-            XFO.Links:RemoveAll(unit)
-            if(unit:IsFriend()) then
-                local friend = XFO.Friends:Get(unit:GUID())
-                XFO.Friends:Remove(friend:Key())
-                XFO.Friends:Push(friend)
+            if(unit:IsSameGuild()) then
+                unit:Presence(Enum.ClubMemberPresence.Offline)
+                self.onlineCount = self.onlineCount - 1
+            else
+                self:Remove(inKey)
+                self:Push(unit)
             end
 
-            unit:Presence(Enum.ClubMemberPresence.Offline)
-            self.onlineCount = self.onlineCount - 1
             XFO.DTGuild:RefreshBroker()
         end
     end).
@@ -218,7 +191,8 @@ function XFC.Confederate:LocalRoster()
                     local old = self:Get(unit:Key())
                     if(old:IsOnline() and unit:IsOffline()) then
                         XF:Info(self:ObjectName(), 'Guild member logout via scan: %s', unit:UnitName())
-                        self:OfflineUnit(old:Key())
+                        XFO.SystemFrame:DisplayLogout(unit:Name())
+                        self:UnitOffline(old:Key())
                         self:Push(unit)
                     elseif(unit:IsOnline()) then
                         if(old:IsOffline()) then
@@ -256,8 +230,8 @@ function XFC.Confederate:LegacyProcessMessage(inMessage)
             if(self:Contains(inMessage:From())) then
                 local unit = self:Get(inMessage:From())
                 XF:Info(self:ObjectName(), 'Guild member logout via message: %s', unit:UnitName())
-                self:RemoveUnit(inMessage:From())
                 XFO.SystemFrame:DisplayLogout(unit:Name())
+                self:UnitOffline(inMessage:From())                
             end
         end
     else
@@ -284,7 +258,7 @@ function XFC.Confederate:ProcessMessage(inMessage)
         if(not inMessage:FromUnit():IsSameGuild()) then
             XFO.SystemFrame:DisplayLogout(inMessage:FromUnit():Name())
             XF:Info(self:ObjectName(), 'Guild member logout via message: %s', inMessage:FromUnit():UnitName())
-            self:RemoveUnit(inMessage:FromUnit():GUID())
+            self:UnitOffline(inMessage:FromUnit():GUID())
         end
     else
         if(inMessage:IsLogin() and (not self:Contains(inMessage:FromUnit():Key()) or self:Get(inMessage:FromUnit():Key()):IsOffline())) then

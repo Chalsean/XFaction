@@ -567,7 +567,7 @@ function XFC.Unit:IsAlt()
 end
 
 function XFC.Unit:IsFriend()
-    return XFO.Friends:ContainsByGUID(self:GUID())
+    return XFO.Friends:ContainsByGUID(self:GUID()) and XFO.Friends:GetByGUID(self:GUID()):IsLinked()
 end
 
 function XFC.Unit:IsSameFaction()
@@ -758,6 +758,9 @@ function XFC.Unit:LegacyDeserialize(inSerial)
 	--unit:SetUnitName(data.U)
 	if(data.H ~= nil and XFO.Guilds:Contains(data.H)) then
 		self:Guild(XFO.Guilds:Get(data.H))
+		self:Realm(self:Guild():Realm())
+    elseif(data.G ~= nil and XFO.Guilds:Contains(data.G)) then
+        self:Guild(XFO.Guilds:Get(data.G))
 		self:Realm(self:Guild():Realm())
 	end
 	if(data.I ~= nil) then self:ItemLevel(data.I) end

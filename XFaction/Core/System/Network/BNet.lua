@@ -123,11 +123,13 @@ function XFC.BNet:CallbackBNetReceive(inMessageTag, inEncodedMessage, inDistribu
         -- PING and RE:PING mean a link has been established
         if(inEncodedMessage:sub(1, 4) == 'PING') then
             XF:Debug(self:ObjectName(), 'Received ping from [%s]', friend:Tag())
-            friend:IsLinked(true)
-            self:RespondPing(friend)
+            if(friend:CanLink()) then
+                friend:IsLinked(true)
+                self:RespondPing(friend)
+            end
         elseif(inEncodedMessage:sub(1,7) == 'RE:PING') then
             XF:Debug(self:ObjectName(), '[%s] Responded to ping', friend:Tag())
-            friend:IsLinked(true)
+            friend:IsLinked(friend:CanLink())
         -- Otherwise its a normal message that needs to be processed
         else
             self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)

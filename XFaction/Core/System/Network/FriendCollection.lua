@@ -122,31 +122,34 @@ end
 function XFC.FriendCollection:CheckFriend(inKey)
 	local self = XFO.Friends
 	if(inKey == nil) then return end
-		
+
 	local friend = self:Pop()
 	try(function()
 
 		friend:Initialize(inKey)
+		if(not friend:IsInitialized()) then
+			self:Push(friend)
+			return
+		end
 
-        -- FriendCollection will only contain those friends who can be linked to
-		if(friend:CanLink()) then
-            -- Keep current state information if present
-		    if(self:Contains(inKey)) then
-				self:Push(friend)
-			else
+		if(self:Contains(inKey)) then
+			local old = self:Get(inKey)
+			if(friend:IsOnline() and old:IsOffline()) then
 				XF:Debug(self:ObjectName(), 'Detected friend is online: %s', friend:Tag())
                 friend:Print()
 				self:Add(friend)
-			end
-		-- Either theyre offline, not on a realm we care about or same faction
-		else
-			self:Push(friend)
-			if(self:Contains(inKey)) then
-				local old = self:Get(inKey)
+				self:Push(old)
+			elseif(friend:IsOffline() and old:IsOnline()) then
 				XF:Debug(self:ObjectName(), 'Friend has gone offline: %s', old:Tag())
                 old:Print()
-				XFO.Confederate:RemoveUnit(old:GUID())
+				XFO.Confederate:UnitOffline(old:GUID())
+				self:Add(friend)
+				self:Push(old)
+			else
+				self:Push(friend)
 			end
+		else
+			self:Add(friend)
 		end
 
 	end).
@@ -177,7 +180,7 @@ function XFC.FriendCollection:Restore()
 		try(function ()	
 			if(self:Contains(key)) then
 				local friend = self:Get(key)
-				friend:IsLinked(true)
+				friend:IsLinked(friend:CanLink())
 				XF:Info(self:ObjectName(), '  Restored %s friend information from backup', friend:Tag())
 			end
 		end).
@@ -193,7 +196,7 @@ function XFC.FriendCollection:CallbackPing()
     try(function()
 		--self:CheckFriends()
 	    for _, friend in self:Iterator() do
-			if(not friend:IsLinked()) then
+			if(friend:CanLink() and not friend:IsLinked()) then
 				XFO.BNet:Ping(friend)
 			end
 	    end

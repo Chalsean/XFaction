@@ -180,7 +180,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
 
         if(XFO.Friends:ContainsByGUID(inMessage:From())) then
             local friend = XFO.Friends:GetByGUID(inMessage:From())
-            if(not friend:IsLinked()) then
+            if(friend:CanLink() and not friend:IsLinked()) then
                 XFO.BNet:Ping(friend)
             end
         end
