@@ -239,7 +239,8 @@ function XFC.Message:HasFromUnit()
 end
 
 function XFC.Message:HasLinks()
-    return self:Links() ~= nil
+    local links = self:Links()
+    return links ~= nil and links.len() > 0
 end
 
 function XFC.Message:HasVersion()
@@ -347,7 +348,11 @@ function XFC.Message:Serialize(inEncodingType)
     data.W = self:HasFaction() and self:Faction():Key() or nil
 
 	if(self:IsData() or self:IsLogin()) then
-		data.D = self:Data():LegacySerialize()
+        if(self:IsLegacy()) then
+            data.D = self:Data():LegacySerialize()
+        else
+            data.D = self:FromUnit():LegacySerialize()
+        end
 	end
     --#endregion
 

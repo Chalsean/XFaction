@@ -78,13 +78,14 @@ function XFC.LinkCollection:ProcessMessage(inMessage)
     -- Deprecated, remove after 4.13
     if(inMessage:IsLegacy()) then
         self:LegacyDeserialize(inMessage:Data())
-    else
+	elseif(inMessage:HasLinks()) then
         self:Deserialize(inMessage:FromUnit(), inMessage:Links())
     end
     XFO.DTLinks:RefreshBroker()
 end
 
 function XFC.LinkCollection:Serialize()
+	if(self:Count() == 0) then return nil end
     local serial = ''
 	for _, link in self:Iterator() do
 		if(link:IsMyLink()) then
@@ -125,6 +126,7 @@ end
 
 -- Deprecated, remove after 4.13
 function XFC.LinkCollection:LegacySerialize()
+	if(self:Count() == 0) then return nil end
 	local serial = ''
 	for _, link in self:Iterator() do
 		if(link:IsMyLink()) then
@@ -138,8 +140,8 @@ end
 function XFC.LinkCollection:LegacyDeserialize(inSerial)
 	assert(type(inSerial) == 'string')
 	local links = {}
-	local fromName
-	local fromTarget
+	local fromName = nil
+	local fromTarget = nil
 
     for _, link in pairs (string.Split(inSerial, '|')) do
 		local obj = self:Pop()
@@ -157,12 +159,14 @@ function XFC.LinkCollection:LegacyDeserialize(inSerial)
 			self:Push(obj)
 		end)
     end
-
-	for _, link in self:Iterator() do
-		if(link:LegacyHasNode(fromName, fromTarget:Realm(), fromTarget:Faction())) then
-			if(links[link:Key()] == nil) then
-				self:Remove(link:Key())
-				self:Push(link)
+ 
+	if(fromName ~= nil and fromTarget ~= nil) then
+		for _, link in self:Iterator() do
+			if(link:LegacyHasNode(fromName, fromTarget:Realm(), fromTarget:Faction())) then
+				if(links[link:Key()] == nil) then
+					self:Remove(link:Key())
+					self:Push(link)
+				end
 			end
 		end
 	end
