@@ -79,7 +79,7 @@ function XFC.LinkCollection:ProcessMessage(inMessage)
     if(inMessage:IsLegacy()) then
         self:LegacyDeserialize(inMessage:Data())
     else
-        self:Deserialize(inMessage:Links())
+        self:Deserialize(inMessage:FromUnit(), inMessage:Links())
     end
     XFO.DTLinks:RefreshBroker()
 end
@@ -95,6 +95,7 @@ function XFC.LinkCollection:Serialize()
 end
 
 function XFC.LinkCollection:Deserialize(inFromUnit, inSerial)
+	assert(type(inFromUnit) == 'table' and inFromUnit.__name == 'Unit')
     assert(type(inSerial) == 'string')
 	local links = {}
     for _, link in pairs (string.Split(inSerial, '|')) do

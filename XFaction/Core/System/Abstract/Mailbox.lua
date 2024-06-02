@@ -237,7 +237,9 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     -- All non-LOGOUT messages have unit and link data
     if(not inMessage:IsLegacy()) then
         XFO.Confederate:ProcessMessage(inMessage)
-        XFO.Links:ProcessMessage(inMessage)
+        if(inMessage:HasLinks()) then
+            XFO.Links:ProcessMessage(inMessage)
+        end
     end
 
     -- ACHIEVEMENT/GCHAT message

@@ -203,7 +203,7 @@ function XFC.Message:Print()
 end
 
 function XFC.Message:IsLegacy()
-    return self:Version():IsNewer(XF.DeprecatedVersion, true)
+    return self:Version():IsNewer(XF.DeprecatedVersion, true) or not self:HasFromUnit()
 end
 
 function XFC.Message:IsGuildChat()
@@ -236,6 +236,10 @@ end
 
 function XFC.Message:HasFromUnit()
     return self:FromUnit() ~= nil
+end
+
+function XFC.Message:HasLinks()
+    return self:Links() ~= nil
 end
 
 function XFC.Message:HasVersion()
@@ -342,7 +346,7 @@ function XFC.Message:Serialize(inEncodingType)
     data.V = self:Version():Key()
     data.W = self:HasFaction() and self:Faction():Key() or nil
 
-	if(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
+	if(self:IsData() or self:IsLogin()) then
 		data.D = self:Data():LegacySerialize()
 	end
     --#endregion
@@ -367,7 +371,7 @@ function XFC.Message:Deserialize(inData, inEncodingType)
             end
         end
         local data = unpickle(decompressed)
-        
+
         self:Initialize()
         if(data.K ~= nil) then self:Key(data.K)	end
         if(data.T ~= nil) then self:To(data.T)	end	
@@ -390,7 +394,7 @@ function XFC.Message:Deserialize(inData, inEncodingType)
                 XFO.Confederate:Push(unit)
             end)
         -- Deprecated, remove after 4.13
-        elseif(self:Subject() == XF.Enum.Message.DATA or self:Subject() == XF.Enum.Message.LOGIN) then
+        elseif(self:IsData() or self:IsLogin()) then
             local unit = XFO.Confederate:Pop()
             try(function()
                 unit:LegacyDeserialize(data.D)
@@ -404,8 +408,8 @@ function XFC.Message:Deserialize(inData, inEncodingType)
             self:Data(data.D)
         end
 
-        if(data.L ~= nil) then
-            XFO.Links:Deserialize(self:FromUnit(), data.L)
+        if(data.L ~= nil and string.len(data.L) > 0) then
+            self:Links(data.L)
         end
 
         --#region Deprecated, remove after 4.13
