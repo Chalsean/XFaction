@@ -161,7 +161,7 @@ end
 -- Deprecated, remove after 4.13
 function XFC.Mailbox:SendLinkMessage(inLinks)
     assert(type(inLinks) == 'string')
-    XF:Info(Mailbox:ObjectName(), 'Sending links message')
+    XF:Info(self:ObjectName(), 'Sending links message')
     _SendMessage(XF.Enum.Message.LINK, inLinks)
 end
 
