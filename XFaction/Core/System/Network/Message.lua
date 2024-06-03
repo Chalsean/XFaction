@@ -240,7 +240,7 @@ end
 
 function XFC.Message:HasLinks()
     local links = self:Links()
-    return links ~= nil and links.len() > 0
+    return links ~= nil and string.len(links) > 0
 end
 
 function XFC.Message:HasVersion()

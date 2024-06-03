@@ -176,7 +176,9 @@ end
 function XFC.LinkCollection:CallbackBroadcast()
     local self = XFO.Links
 	try(function()
-        XFO.Chat:SendLinkMessage(self:LegacySerialize())
+		if(self:Count() > 0) then
+        	XFO.Chat:SendLinkMessage(self:LegacySerialize())
+		end
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
@@ -187,7 +189,9 @@ end
 function XFC.LinkCollection:CallbackLegacyBroadcast()
 	local self = XFO.Links
 	try(function ()
-		XFO.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
+		if(self:Count() > 0) then
+			XFO.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
+		end
 	end).
 	catch(function (err)
 		XF:Warn(self:ObjectName(), err)
