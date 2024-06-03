@@ -1,173 +1,203 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'LinkCollection'
-local ServerTime = GetServerTime
 
-LinkCollection = XFC.Factory:newChildConstructor()
+XFC.LinkCollection = XFC.Factory:newChildConstructor()
 
 --#region Constructors
-function LinkCollection:new()
-    local object = LinkCollection.parent.new(self)
+function XFC.LinkCollection:new()
+    local object = XFC.LinkCollection.parent.new(self)
 	object.__name = ObjectName
 	return object
 end
 
-function LinkCollection:NewObject()
-	return Link:new()
+function XFC.LinkCollection:NewObject()
+	return XFC.Link:new()
+end
+
+function XFC.LinkCollection:Initialize()
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
+
+		XFO.Timers:Add({
+			name = 'Links', 
+			delta = XF.Settings.Network.BNet.Link.Broadcast, 
+			callback = XFO.Links.CallbackLegacyBroadcast,
+			repeater = true, 
+			instance = true
+		})	
+
+		self:IsInitialized(true)
+	end
 end
 --#endregion
 
---#region Hash
-function LinkCollection:Add(inLink)
-    assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
+--#region Methods
+function XFC.LinkCollection:Add(inLink)
+    assert(type(inLink) == 'table' and inLink.__name == 'Link')
 	if(not self:Contains(inLink:Key())) then
 		self.parent.Add(self, inLink)
-		inLink:GetFromNode():IncrementLinkCount()
-		inLink:GetToNode():IncrementLinkCount()
-		XF:Info(ObjectName, 'Added link from [%s] to [%s]', inLink:GetFromNode():Name(), inLink:GetToNode():Name())
-		XF.DataText.Links:RefreshBroker()
+		XF:Info(self:ObjectName(), 'Added link from [%s] to [%s]', inLink:FromName(), inLink:ToName())
+		XFO.DTLinks:RefreshBroker()
 	end
 end
 
-function LinkCollection:Remove(inLink)
-    assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
-	if(self:Contains(inLink:Key())) then
-		self.parent.Remove(self, inLink:Key())
-		inLink:GetFromNode():DecrementLinkCount()
-		inLink:GetToNode():DecrementLinkCount()
-		XF:Info(ObjectName, 'Removed link from [%s] to [%s]', inLink:GetFromNode():Name(), inLink:GetToNode():Name())
-		self:Push(inLink)
-		XF.DataText.Links:RefreshBroker()
+function XFC.LinkCollection:Remove(inKey)
+    assert(type(inKey) == 'string')
+	if(self:Contains(inKey)) then
+		local link = self:Get(inKey)
+		XF:Info(self:ObjectName(), 'Removing link from [%s] to [%s]', link:FromName(), link:ToName())
+		self.parent.Remove(self, inKey)
+		self:Push(link)
+		XFO.DTLinks:RefreshBroker()
 	end
 end
---#endregion
 
---#region DataSet
--- A link message is a reset of the links for that node
-function LinkCollection:ProcessMessage(inMessage)
-	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', 'argument must be Message object')
-	local linkStrings = string.Split(inMessage:GetData(), '|')
-	local linkKeys = {}
-	local sourceKey = nil	
-	-- Add new links
-    for _, linkString in pairs (linkStrings) do
-		local linkKey, from = self:SetLinkFromString(linkString)
-		if(linkKey ~= nil) then 
-			linkKeys[linkKey] = true 
-			sourceKey = from
-		end
-    end
-	-- Remove stale links and update datetimes
-	for _, link in self:Iterator() do
-		-- Consider that we may have gotten link information from the other node
-		if(link:GetFromNode():Name() == sourceKey or link:GetToNode():Name() == sourceKey) then
-			if(not link:IsMyLink() and linkKeys[link:Key()] == nil) then
-				self:Remove(link)
-				XF:Debug(ObjectName, 'Removed link due to node broadcast [%s]', link:Key())
-			else
-				-- Update datetime for janitor process
-				link:SetTimeStamp(ServerTime())
+function XFC.LinkCollection:RemoveAll(inUnit)
+	assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil)
+
+	if(inUnit ~= nil) then
+		local remove = {}
+		for _, link in self:Iterator() do
+			if(link:HasNode(inUnit)) then
+				remove[link:Key()] = true
 			end
 		end
+
+		for key in pairs(remove) do
+			self:Remove(key)
+		end
+	else
+		self.parent.RemoveAll(self)
 	end
 end
 
-function LinkCollection:SetLinkFromString(inLinkString)
-    assert(type(inLinkString) == 'string')
+function XFC.LinkCollection:ProcessMessage(inMessage)
+	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
-    local nodes = string.Split(inLinkString, ';')
-    local fromNode = XF.Nodes:SetNodeFromString(nodes[1])
-    local toNode = XF.Nodes:SetNodeFromString(nodes[2])
-
-	-- Can remove equality check once everyone updates to 3.9.6
-	if(fromNode:IsMyNode() or toNode:IsMyNode() or fromNode:Equals(toNode)) then
-		return nil
-	end
-
-	local key = XF:GetLinkKey(fromNode:Name(), toNode:Name())
-	if(self:Contains(key)) then
-		return self:Get(key), fromNode:Name()
-	end
-
-	local link = self:Pop()
-	link:SetFromNode(fromNode)
-	link:SetToNode(toNode)
-    link:Initialize()
-	self:Add(link)
-	fromNode:IncrementLinkCount()
-	toNode:IncrementLinkCount()
-
-	return key, fromNode:Name()
+    -- Deprecated, remove after 4.13
+    if(inMessage:IsLegacy()) then
+        self:LegacyDeserialize(inMessage:Data())
+	elseif(inMessage:HasLinks()) then
+        self:Deserialize(inMessage:FromUnit(), inMessage:Links())
+    end
+    XFO.DTLinks:RefreshBroker()
 end
---#endregion
 
---#region Network
-function LinkCollection:Broadcast()
-	XF:Debug(ObjectName, 'Broadcasting links')
-	local linksString = ''
-	local haveLinks = false
+function XFC.LinkCollection:Serialize()
+	if(self:Count() == 0) then return nil end
+    local serial = ''
 	for _, link in self:Iterator() do
 		if(link:IsMyLink()) then
-			haveLinks = true
-			linksString = linksString .. '|' .. link:GetString()
+			serial = serial .. '|' .. link:Serialize()
 		end
 	end
-
-	if(not haveLinks) then return end
-
-	local message = nil
-	try(function ()
-		message = XF.Mailbox.Chat:Pop()
-		message:Initialize()
-		message:SetType(XF.Enum.Network.BROADCAST)
-		message:SetSubject(XF.Enum.Message.LINK)
-		message:SetData(linksString)
-		XF.Mailbox.Chat:Send(message)  
-	end).
-	finally(function ()
-		XF.Mailbox.Chat:Push(message)
-	end)
-end
---#endregion
-
---#region Janitorial
-function LinkCollection:Backup()
-	try(function ()
-		if(self:IsInitialized()) then
-			local linksString = ''
-			for _, link in self:Iterator() do
-				linksString = linksString .. '|' .. link:GetString()
-			end
-			XF.Cache.Backup.Links = linksString
-		end
-	end).
-	catch(function (inErrorMessage)
-		XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create links backup before reload: ' .. inErrorMessage
-	end)
+	return serial
 end
 
-function LinkCollection:Restore()
-	if(XF.Cache.Backup.Links ~= nil and strlen(XF.Cache.Backup.Links) > 0) then
-		try(function ()
-			local links = string.Split(XF.Cache.Backup.Links, '|')
-			for _, link in pairs (links) do
-				self:SetLinkFromString(link)
+function XFC.LinkCollection:Deserialize(inFromUnit, inSerial)
+	assert(type(inFromUnit) == 'table' and inFromUnit.__name == 'Unit')
+    assert(type(inSerial) == 'string')
+	local links = {}
+    for _, link in pairs (string.Split(inSerial, '|')) do
+        local obj = self:Pop()
+		try(function()
+			obj:Deserialize(inFromUnit, link)
+			links[obj:Key()] = true
+			if(not self:Contains(obj:Key())) then
+				self:Add(obj)
 			end
 		end).
-		catch(function (inErrorMessage)
-			XF:Warn(ObjectName, inErrorMessage)
+		catch(function(err)
+			XF:Warn(self:ObjectName(), err)
+			self:Push(obj)
 		end)
-	end
-	XF.Cache.Backup.Links = ''
-end
+    end
 
-function LinkCollection:Purge(inEpochTime)
-	assert(type(inEpochTime) == 'number')
-	for _, link in self:Iterator() do
-		if(not link:IsMyLink() and link:GetTimeStamp() < inEpochTime) then
-			XF:Debug(ObjectName, 'Removing stale link')
-			self:Remove(link)
+    for _, link in self:Iterator() do
+		if(link:HasNode(inFromUnit)) then
+			if(links[link:Key()] == nil) then
+				self:Remove(link:Key())
+				self:Push(link)
+			end
 		end
 	end
+end
+
+-- Deprecated, remove after 4.13
+function XFC.LinkCollection:LegacySerialize()
+	if(self:Count() == 0) then return nil end
+	local serial = ''
+	for _, link in self:Iterator() do
+		if(link:IsMyLink()) then
+			serial = serial .. '|' .. link:LegacySerialize()
+		end
+	end
+	return serial
+end
+
+-- Deprecated, remove after 4.13
+function XFC.LinkCollection:LegacyDeserialize(inSerial)
+	assert(type(inSerial) == 'string')
+	local links = {}
+	local fromName = nil
+	local fromTarget = nil
+
+    for _, link in pairs (string.Split(inSerial, '|')) do
+		local obj = self:Pop()
+		try(function()
+			obj:LegacyDeserialize(link)
+			fromName = obj:FromName()
+			fromTarget = obj:FromTarget()
+			links[obj:Key()] = true
+			if(not self:Contains(obj:Key())) then
+				self:Add(obj)
+			end
+		end).
+		catch(function(err)
+			XF:Warn(self:ObjectName(), err)
+			self:Push(obj)
+		end)
+    end
+ 
+	if(fromName ~= nil and fromTarget ~= nil) then
+		for _, link in self:Iterator() do
+			if(link:LegacyHasNode(fromName, fromTarget:Realm(), fromTarget:Faction())) then
+				if(links[link:Key()] == nil) then
+					self:Remove(link:Key())
+					self:Push(link)
+				end
+			end
+		end
+	end
+end
+
+-- Deprecated, remove after 4.13
+function XFC.LinkCollection:CallbackBroadcast()
+    local self = XFO.Links
+	try(function()
+		if(self:Count() > 0) then
+        	XFO.Chat:SendLinkMessage(self:LegacySerialize())
+		end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
+end
+
+-- Deprecated, remove after 4.13
+function XFC.LinkCollection:CallbackLegacyBroadcast()
+	local self = XFO.Links
+	try(function ()
+		if(self:Count() > 0) then
+			XFO.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
+		end
+	end).
+	catch(function (err)
+		XF:Warn(self:ObjectName(), err)
+	end).
+	finally(function ()
+		XFO.Timers:Get('Links'):LastRan(XFF.TimeGetCurrent())
+	end)
 end
 --#endregion

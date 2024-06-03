@@ -6,8 +6,8 @@ do
 	try(function ()
 		XF.CoreInit()
 	end).
-	catch(function (inErrorMessage)
-		XF:Error(ObjectName, inErrorMessage)
+	catch(function (err)
+		XF:Error(ObjectName, err)
 		XF:Stop()
 	end)
 end

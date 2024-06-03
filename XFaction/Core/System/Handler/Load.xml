@@ -1,7 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
     <Script file='AchievementEvent.lua'/>
     <Script file='AddonEvent.lua'/>
-    <Script file='OrderEvent.lua'/>
     <Script file='SystemEvent.lua'/>
-    <Script file='TimerEvent.lua'/>
 </Ui>

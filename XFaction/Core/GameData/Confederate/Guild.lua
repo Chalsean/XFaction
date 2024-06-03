@@ -62,7 +62,7 @@ end
 function XFC.Guild:PrintAudit()
     XF:Info('Audit', 'Name,Note,Rank,LastLoginDaysAgo')
     for _, memberID in pairs (XFF.GuildGetMembers(XF.Player.Guild:ID(), XF.Player.Guild:StreamID())) do
-        local unit = Unit:new()
+        local unit = XFC.Unit:new()
         unit:Initialize(memberID)
         if(unit:IsInitialized()) then
             XF:Info('Audit', '%s,%s,%s,%d', unit:Name(), unit:Note(), unit:Rank(), unit:LastLogin())

@@ -1,6 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
-    <Script file='Encode.lua'/>
-    <Script file='Decode.lua'/>
     <Script file='BNet.lua'/>
     <Script file='Chat.lua'/>    
     <Script file='Message.lua'/>
@@ -10,8 +8,6 @@
     <Script file='FriendCollection.lua'/>
     <Script file='Target.lua'/>
     <Script file='TargetCollection.lua'/>
-    <Script file='Node.lua'/>
-    <Script file='NodeCollection.lua'/>
     <Script file='Link.lua'/>
     <Script file='LinkCollection.lua'/>    
 </Ui>

@@ -6,17 +6,17 @@ local ObjectName = 'OrderCollection'
 function XFC.OrderCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'CraftOrder', 
             event = 'CRAFTINGORDERS_ORDER_PLACEMENT_RESPONSE', 
-            callback = XFO.Orders.CraftOrder, 
+            callback = XFO.Orders.CallbackCraftOrder, 
             instance = false,
             start = true
         })
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'CanRequestOrders', 
             event = 'CRAFTINGORDERS_CAN_REQUEST', 
-            callback = XFO.Orders.RequestOrders, 
+            callback = XFO.Orders.CallbackRequestOrders, 
             instance = false,
             start = true
         })
@@ -49,8 +49,8 @@ function QueryMyOrders()
         -- You have to make a server request and provide a callback for when the server feels like handling your query
         XFF.CraftingQueryServer(request)
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(ObjectName, err)
     end)
 end
 
@@ -59,7 +59,7 @@ function GetMyOrders()
     for _, myOrder in ipairs(myOrders) do
         local order = XFO.Orders:Pop()
         try(function ()
-            order:Key(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
+            order:Key(XF.Player.Unit:UnitName() .. ':' .. myOrder.orderID)   
             if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:Key())) then
                 order:Type(myOrder.orderType)
                 order:ID(myOrder.orderID)
@@ -89,7 +89,7 @@ function GetMyOrders()
                     XFO.Orders:Add(order)
                     if(not self:IsFirstQuery()) then
                         order:Display()
-                        order:Broadcast()
+                        XFO.Chat:SendOrderMessage(order)
                     end
                 end                
             else
@@ -108,7 +108,7 @@ function GetMyOrders()
     end
 end
 
-function XFC.OrderCollection:CraftOrder() 
+function XFC.OrderCollection:CallbackCraftOrder() 
     local self = XFO.Orders
     try(function ()
         QueryMyOrders()
@@ -118,14 +118,32 @@ function XFC.OrderCollection:CraftOrder()
     end)
 end
 
-function XFC.OrderCollection:RequestOrders() 
+function XFC.OrderCollection:CallbackRequestOrders() 
     local self = XFO.Orders
     try(function ()        
         QueryMyOrders()
-        XF.Events:Remove('CanRequestOrders')
+        XFO.Events:Remove('CanRequestOrders')
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
+    end)
+end
+
+function XFC.OrderCollection:ProcessMessage(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+    local order = self:Pop()
+    try(function ()
+        order:Decode(inMessage:Data())
+        if(not self:Contains(order:Key())) then
+            self:Add(order)
+            order:Display()
+        else
+            self:Push(order)
+        end
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+        self:Push(order)
     end)
 end
 --#endregion

@@ -32,15 +32,15 @@ function XFC.Faction:Language(inLanguage)
 end
 
 function XFC.Faction:IsAlliance()
-    return self:ID() == 'A'
+    return self:Name() == 'Alliance'
 end
 
 function XFC.Faction:IsHorde()
-    return self:ID() == 'H'
+    return self:Name() == 'Horde'
 end
 
 function XFC.Faction:IsNeutral()
-    return self:ID() == 'N'
+    return self:Name() == 'Neutral'
 end
 --#endregion
 

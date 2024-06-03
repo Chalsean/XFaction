@@ -1,29 +1,32 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'BNet'
-local ServerTime = GetServerTime
 
-BNet = Mailbox:newChildConstructor()
+XFC.BNet = XFC.Mailbox:newChildConstructor()
 
 --#region Constructors
-function BNet:new()
-    local object = BNet.parent.new(self)
+function XFC.BNet:new()
+    local object = XFC.BNet.parent.new(self)
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function BNet:Initialize()
+function XFC.BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XF.Enum.Tag.BNET = XFO.Confederate:Key() .. 'BNET'
 
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'BNetMessage', 
             event = 'BN_CHAT_MSG_ADDON', 
-            callback = XF.Mailbox.BNet.BNetReceive, 
+            callback = XFO.BNet.CallbackBNetReceive, 
             instance = true
+        })
+        XFO.Timers:Add({
+            name = 'BNetJanitor', 
+            delta = XF.Settings.Network.Mailbox.Scan, 
+            callback = XFO.BNet.CallbackJanitor,
+            repeater = true
         })
 
         self:IsInitialized(true)        
@@ -32,18 +35,16 @@ function BNet:Initialize()
 end
 --#endregion
 
---#region Send
-function BNet:Send(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+--#region Methods
+function XFC.BNet:Send(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     -- Before we do work, lets make sure there are targets and we can message those targets
     local links = {}
     for _, target in pairs(inMessage:GetTargets()) do
         local friends = {}
-        for _, friend in XF.Friends:Iterator() do
-            if(target:Equals(friend:GetTarget()) and
-              -- At the time of login you may not have heard back on pings yet, so just broadcast
-              (friend:IsRunningAddon() or inMessage:GetSubject() == XF.Enum.Message.LOGIN)) then
+        for _, friend in XFO.Friends:Iterator() do
+            if(friend:IsLinked() and target:Equals(friend:Target())) then
                 friends[#friends + 1] = friend
             end
         end
@@ -54,7 +55,7 @@ function BNet:Send(inMessage)
             local randomNumber = math.random(1, friendCount)
             links[#links + 1] = friends[randomNumber]
         else
-            XF:Debug(ObjectName, 'Unable to identify friends on target [%s:%s]', target:GetRealm():Name(), target:GetFaction():Name())
+            XF:Debug(self:ObjectName(), 'Unable to identify friends on target [%s:%s]', target:Realm():Name(), target:Faction():Name())
         end
     end
 
@@ -64,7 +65,7 @@ function BNet:Send(inMessage)
 
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
-    local messageData = XF:EncodeBNetMessage(inMessage, true)
+    local messageData = inMessage:Serialize(XF.Enum.Tag.BNET)
     local packets = self:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
     self:Add(inMessage:Key())
 
@@ -72,60 +73,100 @@ function BNet:Send(inMessage)
     for _, friend in pairs (links) do
         try(function ()
             for index, packet in ipairs (packets) do
-                XF:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:Name(), friend:GetGameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
+                XF:Debug(self:ObjectName(), 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:Name(), friend:GameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-                XF.Lib.BCTL:BNSendGameData('NORMAL', XF.Enum.Tag.BNET, packet, _, friend:GetGameID())
+                XF.Lib.BCTL:BNSendGameData('NORMAL', XF.Enum.Tag.BNET, packet, _, friend:GameID())
                 XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
             end
-            inMessage:RemoveTarget(friend:GetTarget())
+            inMessage:RemoveTarget(friend:Target())
         end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+        catch(function (err)
+            XF:Warn(self:ObjectName(), err)
         end)
     end
 end
---#endregion
 
---#region Receive
-function BNet:DecodeMessage(inEncodedMessage)
-    return XF:DecodeBNetMessage(inEncodedMessage)
+function XFC.BNet:DecodeMessage(inMsg)
+    local message = self:Pop()
+    try(function()
+        message:Deserialize(inMsg, XF.Enum.Tag.BNET)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+        self:Push(message)
+        message = nil
+    end)
+    return message
 end
 
-function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function XFC.BNet:CallbackBNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+    local self = XFO.BNet
     try(function ()
-        -- People can only whisper you if friend, so if you got a whisper you need to check friends cache
-        if(not XF.Friends:ContainsByGameID(tonumber(inSender))) then
-            XF.Friends:CheckFriends()
+        -- If not a message from this addon, ignore
+        if(not self:IsAddonTag(inMessageTag)) then
+            return
         end
 
-        -- If you get it from BNet, they should be in your friend list and obviously they are running addon
-        if(XF.Friends:ContainsByGameID(tonumber(inSender))) then
-            local friend = XF.Friends:GetByGameID(tonumber(inSender))
-            if(friend ~= nil) then
-                friend:IsRunningAddon(true)
-                friend:CreateLink()
-                if(inEncodedMessage:sub(1, 4) == 'PING') then
-                    XF:Debug(ObjectName, 'Received ping from [%s]', friend:GetTag())
-                elseif(inEncodedMessage:sub(1,7) == 'RE:PING') then
-                    XF:Debug(ObjectName, '[%s] Responded to ping', friend:GetTag())
-                end
+        -- People can only whisper you if friend and running addon, so if you got a whisper and theyre not in cache, something is weird
+        local friend = XFO.Friends:GetByGameID(tonumber(inSender))
+        if(friend == nil) then
+            -- Refresh cache and check again
+            XFO.Friends:CheckFriends()
+            friend = XFO.Friends:GetByGameID(tonumber(inSender))
+            if(friend == nil) then
+                XF:Debug(self:ObjectName(), 'Ignoring BNet whisper from unknown sender [%s:%d]', inMessageTag, inSender)
+                return
             end
         end
-    end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
-    end)
 
-    try(function ()
+        XF:Debug(self:ObjectName(), 'Got BNet whisper from [%s]', friend:Tag())
+        -- PING and RE:PING mean a link has been established
         if(inEncodedMessage:sub(1, 4) == 'PING') then
-            XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'RE:PING', _, inSender)
-            XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
-        elseif(inEncodedMessage:sub(1,7) ~= 'RE:PING') then
-            XF.Mailbox.BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    
-        end        
+            XF:Debug(self:ObjectName(), 'Received ping from [%s]', friend:Tag())
+            if(friend:CanLink()) then
+                friend:IsLinked(true)
+                self:RespondPing(friend)
+            end
+        elseif(inEncodedMessage:sub(1,7) == 'RE:PING') then
+            XF:Debug(self:ObjectName(), '[%s] Responded to ping', friend:Tag())
+            friend:IsLinked(friend:CanLink())
+        -- Otherwise its a normal message that needs to be processed
+        else
+            self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+        end
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
     end)
+end
+
+function XFC.BNet:Ping(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
+    if(XF.Initialized) then
+        XF:Debug(self:ObjectName(), 'Sending ping to [%s]', inFriend:Tag())
+        XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, inFriend:GameID())
+        XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
+    end
+end
+
+function XFC.BNet:RespondPing(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
+    if(XF.Initialized) then
+        XF:Debug(self:ObjectName(), 'Sending ping response to [%s]', inFriend:Tag())
+        XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'RE:PING', _, inFriend:GameID())
+        XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
+    end
+end
+
+function XFC.BNet:CallbackJanitor()
+	try(function ()
+		XFO.BNet:Purge(XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale)
+	end).
+	catch(function (err)
+		XF:Warn(self:ObjectName(), err)
+	end).
+	finally(function ()
+		XFO.Timers:Get('BNetJanitor'):LastRan(XFF.TimeGetCurrent())
+	end)
 end
 --#endregion

@@ -27,14 +27,14 @@ function XFC.ChannelCollection:Initialize()
 			end)
 		end
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'ChannelLeft', 
 			event = 'CHAT_MSG_CHANNEL_LEAVE', 
 			callback = XFO.Channels.CallbackUnitLeftChannel, 
 			instance = true
 		})
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'ChannelChange', 
 			event = 'CHAT_MSG_CHANNEL_NOTICE', 
 			callback = XFO.Channels.CallbackSync,
@@ -42,7 +42,7 @@ function XFC.ChannelCollection:Initialize()
 			instance = true
 		})
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'ChannelColor', 
 			event = 'UPDATE_CHAT_COLOR', 
 			callback = XFO.Channels.CallbackUpdateColor, 
@@ -122,12 +122,10 @@ function XFC.ChannelCollection:CallbackUnitLeftChannel(_, _, _, _, _, _, _, _, c
 	if(self:HasLocalChannel()) then
 		if(self:LocalChannel():Key() == channelName and XFO.Confederate:Contains(guid)) then
 			local unit = XFO.Confederate:Get(guid)
-			if(unit:IsOnline() and not unit:GetGuild():Equals(XF.Player.Guild)) then
-				XF:Info(self:ObjectName(), 'Guild member logout via event: ' .. unit:GetUnitName())
-				XF.Frames.System:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:GetUnitName(), unit:GetMainName(), unit:GetGuild(), nil, unit:GetFaction())
-				XFO.Confederate:Remove(unit:Key())
-				XFO.Confederate:Push(unit)
-				XF.DataText.Guild:RefreshBroker()
+			if(unit:IsOnline() and not unit:IsSameGuild()) then
+				XF:Info(self:ObjectName(), 'Guild member logout via event: ' .. unit:UnitName())
+                XFO.SystemFrame:DisplayLogout(unit:Name())
+				XFO.Confederate:UnitOffline(guid)
 			end
 		end
 	end	

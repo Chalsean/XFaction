@@ -46,7 +46,7 @@ function XFC.DungeonCollection:Initialize()
             XF:Info(self:ObjectName(), "Initialized dungeon [%d:%s]", dungeon:ID(), dungeon:Name())
         end
 
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'Instance', 
             event = 'PLAYER_ENTERING_WORLD', 
             callback = XFO.Dungeons.CallbackInstance, 
@@ -60,21 +60,22 @@ end
 
 --#region Methods
 function XFC.DungeonCollection:CallbackInstance()
+    local self = XFO.Dungeons
     try(function ()
         local inInstance = XFF.PlayerIsInInstance()
         -- Enter instance for first time
         if(inInstance and not XF.Player.InInstance) then
             XF:Debug(self:ObjectName(), 'Entering instance, disabling some event listeners and timers')
             XF.Player.InInstance = true
-            XF.Events:EnterInstance()
-            XF.Timers:EnterInstance()
+            XFO.Events:EnterInstance()
+            XFO.Timers:EnterInstance()
 
         -- Just leaving instance or UI reload
         elseif(not inInstance and XF.Player.InInstance) then
             XF:Debug(self:ObjectName(), 'Leaving instance, enabling some event listeners and timers')
             XF.Player.InInstance = false
-            XF.Events:LeaveInstance()
-            XF.Timers:LeaveInstance()            
+            XFO.Events:LeaveInstance()
+            XFO.Timers:LeaveInstance()            
         end
     end).
     catch(function (err)

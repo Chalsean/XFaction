@@ -2,173 +2,177 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Friend'
 
-Friend = XFC.Object:newChildConstructor()
+XFC.Friend = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Friend:new()
-    local object = Friend.parent.new(self)
+function XFC.Friend:new()
+    local object = XFC.Friend.parent.new(self)
     object.__name = ObjectName
-
-    object.accountID = nil  -- This is the only constant ID
-    object.gameID = nil     -- This is the game ID you use to send whispers
+    object.accountID = nil
     object.accountName = nil
+    object.gameID = nil
     object.tag = nil
     object.target = nil
-    object.isRunningAddon = false
-    object.myLink = false
-
+    object.unit = nil
+    object.canLink = false
+    object.isLinked = false
+    object.guid = nil
     return object
 end
---#endregion
 
---#region Print
-function Friend:Print()
-    self:ParentPrint()
-    XF:Debug(ObjectName, '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
-    XF:Debug(ObjectName, '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
-    XF:Debug(ObjectName, '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
-    XF:Debug(ObjectName, '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
-    XF:Debug(ObjectName, '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
-    XF:Debug(ObjectName, '  myLink (' .. type(self.myLink) .. '): ' .. tostring(self.myLink))
-    if(self:HasTarget()) then self:GetTarget():Print() end
-end
-
-function Friend:Deconstructor()
+function XFC.Friend:Deconstructor()
     self:ParentDeconstructor()
-    self.accountID = nil  
-    self.gameID = nil     
+    self.accountID = nil
     self.accountName = nil
+    self.gameID = nil
     self.tag = nil
     self.target = nil
-    self.isRunningAddon = false
-    self.myLink = false
-    self:Initialize()
+    self.unit = nil
+    self.canLink = false
+    self.isLinked = false
+    self.guid = nil
+end
+
+function XFC.Friend:Initialize(inID)
+    assert(type(inID) == 'number')
+
+    local accountInfo = XFF.BNetGetFriendInfo(inID)
+	if(accountInfo == nil) then
+        XF:Warn(self:ObjectName(), 'Failed to get friend status from BNet: [%d]', inID)
+		return
+    -- Torghast/Plunderstorm are realm 0
+	elseif(not accountInfo.isFriend or not accountInfo.gameAccountInfo.isOnline or accountInfo.gameAccountInfo.clientProgram ~= 'WoW' or accountInfo.gameAccountInfo.realmID == 0) then
+		return
+	end
+
+    self:Key(inID)
+    self:ID(inID)
+    self:AccountID(accountInfo.bnetAccountID)
+    self:GameID(accountInfo.gameAccountInfo.gameAccountID)
+    self:AccountName(accountInfo.accountName)
+    self:Tag(accountInfo.battleTag)
+    self:Name(accountInfo.gameAccountInfo.characterName)
+    self:GUID(accountInfo.gameAccountInfo.playerGuid)
+
+    local realm = XFO.Realms:Get(accountInfo.gameAccountInfo.realmID)
+    local faction = XFO.Factions:Get(accountInfo.gameAccountInfo.factionName)
+    if(realm ~= nil and faction ~= nil and not faction:Equals(XF.Player.Faction)) then
+        local target = XFO.Targets:Get(realm, faction)
+        if(target ~= nil) then
+            self:Target(target)
+        end
+    end
+
+    self:IsInitialized(true)
 end
 --#endregion
 
---#region Accessors
-function Friend:GetAccountID()
-    return self.accountID
+--#region Properties
+function XFC.Friend:IsOnline()
+    return self:GUID() ~= nil
 end
 
-function Friend:SetAccountID(inAccountID)
-    assert(type(inAccountID) == 'number')
-    self.accountID = inAccountID
+function XFC.Friend:IsOffline()
+    return not self:IsOnline()
 end
 
-function Friend:GetGameID()
-    return self.gameID
-end
-
-function Friend:SetGameID(inGameID)
-    assert(type(inGameID) == 'number')
-    self.gameID = inGameID
-end
-
-function Friend:GetAccountName()
-    return self.accountName
-end
-
-function Friend:SetAccountName(inAccountName)
-    assert(type(inAccountName) == 'string')
-    self.accountName = inAccountName
-end
-
-function Friend:GetTag()
+function XFC.Friend:Tag(inTag)
+    assert(type(inTag) == 'string' or inTag == nil)
+    if(inTag ~= nil) then
+        self.tag = inTag
+    end
     return self.tag
 end
 
-function Friend:SetTag(inTag)
-    assert(type(inTag) == 'string')
-    self.tag = inTag
+function XFC.Friend:GUID(inGUID)
+    assert(type(inGUID) == 'string' or inGUID == nil)
+    if(inGUID ~= nil) then
+        self.guid = inGUID
+    end
+    return self.guid
 end
 
-function Friend:HasTarget()
-    return self.target ~= nil
-end
-
-function Friend:GetTarget()
+function XFC.Friend:Target(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target' or inTarget == nil)
+    if(inTarget ~= nil) then
+        self.target = inTarget
+    end
     return self.target
 end
 
-function Friend:SetTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    self.target = inTarget
+function XFC.Friend:AccountID(inID)
+    assert(type(inID) == 'number' or inID == nil)
+    if(inID ~= nil) then
+        self.accountID = inID
+    end
+    return self.accountID
 end
 
-function Friend:IsRunningAddon(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+function XFC.Friend:AccountName(inName)
+    assert(type(inName) == 'string' or inName == nil)
+    if(inName ~= nil) then
+        self.accountName = inName
+    end
+    return self.accountName
+end
+
+function XFC.Friend:GameID(inID)
+    assert(type(inID) == 'number' or inID == nil)
+    if(inID ~= nil) then
+        self.gameID = inID
+    end
+    return self.gameID
+end
+
+function XFC.Friend:IsLinked(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean')
     if(inBoolean ~= nil) then
-        self.isRunningAddon = inBoolean
+        if(inBoolean and self.isLinked ~= inBoolean) then
+            self:CreateLink()
+        end
+        self.isLinked = inBoolean
     end
-    return self.isRunningAddon
+    return self.isLinked
 end
 --#endregion
 
---#region Link
-function Friend:CreateLink()
-    if(self:IsRunningAddon() and self:HasTarget()) then
-        local link = nil
-        try(function ()
-            link = XF.Links:Pop()
-            local fromNode = XF.Nodes:Get(XF.Player.Unit:Name())
-            if(fromNode == nil) then
-                fromNode = XF.Nodes:Pop()
-                fromNode:Initialize()
-                XF.Nodes:Add(fromNode)
-            end
-            link:SetFromNode(fromNode)
-
-            local toNode = XF.Nodes:Get(self:Name())
-            if(toNode == nil) then
-                toNode = XF.Nodes:Pop()
-                toNode:Key(self:Name())
-                toNode:Name(self:Name())
-                toNode:SetTarget(self:GetTarget())
-                XF.Nodes:Add(toNode)
-            end
-            link:SetToNode(toNode)
-
-            link:Initialize()
-            XF.Links:Add(link)
-        end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
-            XF.Links:Push(link)
-        end)
-    end
+--#region Methods
+function XFC.Friend:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
+    XF:Debug(self:ObjectName(), '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
+    XF:Debug(self:ObjectName(), '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
+    XF:Debug(self:ObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
+    XF:Debug(self:ObjectName(), '  isLinked (' .. type(self.isLinked) .. '): ' .. tostring(self.isLinked))
+    XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
+    if(self:HasTarget()) then self:Target():Print() end
 end
 
-function Friend:IsMyLink(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', "argument must be nil or boolean")
-    if(inBoolean ~= nil) then
-        self.myLink = inBoolean
-    end
-    return self.myLink
+function XFC.Friend:HasTarget()
+    return self.target ~= nil
 end
---#endregion
 
---#region Network
-function Friend:Ping()
-    XF:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
-    XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, self:GetGameID())
-    XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
+function XFC.Friend:CanLink()
+    return self:IsOnline() and self:HasTarget()
 end
---#endregion
 
---#region DataSet
-function Friend:SetFromAccountInfo(inAccountInfo)
-    self:Key(inAccountInfo.bnetAccountID)
-    self:ID(inAccountInfo.ID)
-    self:SetAccountID(inAccountInfo.bnetAccountID)
-    self:SetGameID(inAccountInfo.gameAccountInfo.gameAccountID)
-    self:SetAccountName(inAccountInfo.accountName)
-    self:SetTag(inAccountInfo.battleTag)
-    self:Name(inAccountInfo.gameAccountInfo.characterName)
+function XFC.Friend:HasGUID()
+    return self.guid ~= nil
+end
 
-    local realm = XFO.Realms:Get(inAccountInfo.gameAccountInfo.realmID)
-    local faction = XFO.Factions:Get(inAccountInfo.gameAccountInfo.factionName)
-    local target = XF.Targets:GetByRealmFaction(realm, faction)
-    self:SetTarget(target)
+function XFC.Friend:CreateLink()
+    local link = XFO.Links:Pop()
+    try(function ()
+        link:FromName(XF.Player.Unit:Name())
+        link:FromTarget(XF.Player.Target)
+        link:ToName(self:Name())
+        link:ToTarget(self:Target())
+        link:Initialize()
+        XFO.Links:Add(link)
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+        XFO.Links:Push(link)
+    end)
 end
 --#endregion
