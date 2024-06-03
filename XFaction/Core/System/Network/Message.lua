@@ -368,7 +368,17 @@ end
 
 function XFC.Message:Deserialize(inData, inEncodingType)
     try(function()
-        local decoded = inEncodingType == XF.Enum.Tag.BNET and XF.Lib.Deflate:DecodeForPrint(inData) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inData)
+        local decoded = nil
+        for i = 1, 10 do
+            if(decoded == nil) then
+                if(inEncodingType == XF.Enum.Tag.BNET) then
+                    decoded = XF.Lib.Deflate:DecodeForPrint(inData)
+                else
+                    decoded = XF.Lib.Deflate:DecodeForWoWAddonChannel(inData)
+                end
+            end
+        end
+
         local decompressed = nil
         for i = 1, 10 do
             if(decompressed == nil) then

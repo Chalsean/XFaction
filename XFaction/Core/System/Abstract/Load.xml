@@ -2,5 +2,4 @@
     <Script file='Object.lua'/>
     <Script file='ObjectCollection.lua'/>
     <Script file='Factory.lua'/>
-    <Script file='Mailbox.lua'/>
 </Ui>

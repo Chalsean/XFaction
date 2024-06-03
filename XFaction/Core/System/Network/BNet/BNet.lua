@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'BNet'
 
-XFC.BNet = XFC.Mailbox:newChildConstructor()
+XFC.BNet = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.BNet:new()
@@ -21,12 +21,6 @@ function XFC.BNet:Initialize()
             event = 'BN_CHAT_MSG_ADDON', 
             callback = XFO.BNet.CallbackBNetReceive, 
             instance = true
-        })
-        XFO.Timers:Add({
-            name = 'BNetJanitor', 
-            delta = XF.Settings.Network.Mailbox.Scan, 
-            callback = XFO.BNet.CallbackJanitor,
-            repeater = true
         })
 
         self:IsInitialized(true)        
@@ -66,8 +60,8 @@ function XFC.BNet:Send(inMessage)
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
     local messageData = inMessage:Serialize(XF.Enum.Tag.BNET)
-    local packets = self:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
-    self:Add(inMessage:Key())
+    local packets = PostOffice:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
+    XFO.Mailbox:Add(inMessage:Key())
 
     -- Make sure all packets go to each target
     for _, friend in pairs (links) do
@@ -87,13 +81,13 @@ function XFC.BNet:Send(inMessage)
 end
 
 function XFC.BNet:DecodeMessage(inMsg)
-    local message = self:Pop()
+    local message = XFO.Mailbox:Pop()
     try(function()
         message:Deserialize(inMsg, XF.Enum.Tag.BNET)
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
-        self:Push(message)
+        XFO.Mailbox:Push(message)
         message = nil
     end)
     return message
@@ -132,7 +126,7 @@ function XFC.BNet:CallbackBNetReceive(inMessageTag, inEncodedMessage, inDistribu
             friend:IsLinked(friend:CanLink())
         -- Otherwise its a normal message that needs to be processed
         else
-            self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+            XFO.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
         end
     end).
     catch(function (err)
@@ -156,17 +150,5 @@ function XFC.BNet:RespondPing(inFriend)
         XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'RE:PING', _, inFriend:GameID())
         XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
     end
-end
-
-function XFC.BNet:CallbackJanitor()
-	try(function ()
-		XFO.BNet:Purge(XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale)
-	end).
-	catch(function (err)
-		XF:Warn(self:ObjectName(), err)
-	end).
-	finally(function ()
-		XFO.Timers:Get('BNetJanitor'):LastRan(XFF.TimeGetCurrent())
-	end)
 end
 --#endregion

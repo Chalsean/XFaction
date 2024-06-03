@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Chat'
 
-XFC.Chat = XFC.Mailbox:newChildConstructor()
+XFC.Chat = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Chat:new()
@@ -27,12 +27,6 @@ function XFC.Chat:Initialize()
             event = 'CHAT_MSG_GUILD', 
             callback = XFO.Chat.CallbackGuildMessage, 
             instance = true
-        })
-        XFO.Timers:Add({
-            name = 'ChatJanitor', 
-            delta = XF.Settings.Network.Mailbox.Scan, 
-            callback = XFO.Chat.CallbackJanitor,
-            repeater = true
         })
 
         self:IsInitialized(true)
@@ -68,8 +62,8 @@ function XFC.Chat:Send(inMessage)
 
     --#region Chat channel messaging for BROADCAST/LOCAL types
     local messageData = inMessage:Serialize()
-    local packets = self:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
-    self:Add(inMessage:Key())
+    local packets = XFO.PostOffice:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
+    XFO.Mailbox:Add(inMessage:Key())
 
     -- If only guild on target, broadcast to GUILD
     local channelName, channelID
@@ -91,7 +85,7 @@ end
 
 local function _SendMessage(inSubject, inData)
     local self = XFO.Chat
-    local message = self:Pop()
+    local message = XFO.Mailbox:Pop()
     try(function ()
         message:Initialize()
         message:Type(XF.Enum.Network.BROADCAST)
@@ -111,7 +105,7 @@ local function _SendMessage(inSubject, inData)
         XF:Warn(self:ObjectName(), err)
     end).
     finally(function ()
-        self:Push(message)
+        XFO.Mailbox:Push(message)
     end)
 end
 
@@ -158,13 +152,13 @@ function XFC.Chat:SendChatMessage(inText)
 end
 
 function XFC.Chat:DecodeMessage(inMsg)
-    local message = self:Pop()
+    local message = XFO.Mailbox:Pop()
     try(function()
         message:Deserialize(inMsg)
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
-        self:Push(message)
+        XFO.Mailbox:Push(message)
     end)
     return message
 end
@@ -172,7 +166,7 @@ end
 function XFC.Chat:CallbackChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     local self = XFO.Chat
     try(function ()
-        self:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+        XFO.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
@@ -190,17 +184,5 @@ function XFC.Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, 
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
     end)
-end
-
-function XFC.Chat:CallbackJanitor()
-	try(function ()
-		XFO.Chat:Purge(XFF.TimeGetCurrent() - XF.Settings.Network.Mailbox.Stale)
-	end).
-	catch(function (err)
-		XF:Warn(self:ObjectName(), err)
-	end).
-	finally(function ()
-		XFO.Timers:Get('ChatJanitor'):LastRan(XFF.TimeGetCurrent())
-	end)
 end
 --#endregion
