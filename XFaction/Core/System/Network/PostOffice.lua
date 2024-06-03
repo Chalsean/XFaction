@@ -99,15 +99,91 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
 
     self:Add(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
+
         XF:Debug(self:ObjectName(), 'Received all packets for message [%s]', messageKey)
+
+        XFO.Mailbox:Add(messageKey)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-        local fullMessage = inMessageTag == XF.Enum.Tag.LOCAL and XFO.Chat:DecodeMessage(encodedMessage) or XFO.BNet:DecodeMessage(encodedMessage)
+        local message = XFO.Mailbox:Pop()
+
         try(function ()
-            XFO.Mailbox:Process(fullMessage, inMessageTag)
+            message:Deserialize(encodedMessage, inMessageTag)
+            XFO.Mailbox:Process(message, inMessageTag)
+            self:Forward(message, inMessageTag)
         end).
         finally(function ()
-            XFO.Mailbox:Push(fullMessage)
+            XFO.Mailbox:Push(message)
         end)
     end
+end
+
+function XFC.PostOffice:Forward(inMessage, inMessageTag)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+
+    -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
+    if(inMessageTag == XF.Enum.Tag.LOCAL) then
+
+        if(XFO.Friends:ContainsByGUID(inMessage:From())) then
+            local friend = XFO.Friends:GetByGUID(inMessage:From())
+            if(friend:CanLink() and not friend:IsLinked()) then
+                XFO.BNet:Ping(friend)
+            end
+        end
+
+        if(inMessage:HasTargets()) then
+            -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
+            -- local nodeCount = XF.Nodes:GetTargetCount(XF.Player.Target)
+            -- if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
+            --     local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
+            --     if(math.random(1, 100) <= percentage) then
+            --         XF:Debug(ObjectName, 'Randomly selected, forwarding message')
+            --         inMessage:SetType(XF.Enum.Network.BNET)
+            --         XF.Mailbox.BNet:Send(inMessage)
+            --     else
+            --         XF:Debug(ObjectName, 'Not randomly selected, will not forward mesesage')
+            --     end
+            -- else
+            --     XF:Debug(ObjectName, 'Node count under threshold, forwarding message')
+                inMessage:Type(XF.Enum.Network.BNET)
+                XFO.BNet:Send(inMessage)
+            -- end
+        end
+
+    -- If there are still BNet targets remaining and came via BNet, broadcast
+    elseif(inMessageTag == XF.Enum.Tag.BNET) then
+        if(inMessage:HasTargets()) then
+            inMessage:Type(XF.Enum.Network.BROADCAST)
+        else
+            inMessage:Type(XF.Enum.Network.LOCAL)
+        end
+        XFO.Chat:SendChannel(inMessage)
+    end
+end
+
+function XFC.PostOffice:Send(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+
+    XF:Debug(self:ObjectName(), 'Attempting to send message')
+    inMessage:Print()
+    XFO.Mailbox:Add(inMessage:Key())
+
+    -- BNET/BROADCAST
+    if(inMessage:Type() == XF.Enum.Network.BROADCAST or inMessage:Type() == XF.Enum.Network.BNET) then
+        XFO.BNet:Send(inMessage)
+        -- Failed to bnet to all targets, broadcast to leverage others links
+        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:Type() == XF.Enum.Network.BNET) then
+            inMessage:Type(XF.Enum.Network.BROADCAST)
+        -- Successfully bnet to all targets and only were supposed to bnet, were done
+        elseif(inMessage:Type() == XF.Enum.Network.BNET) then
+            return
+        -- Successfully bnet to all targets and was broadcast, switch to local only
+        elseif(not inMessage:HasTargets() and inMessage:Type() == XF.Enum.Network.BROADCAST) then
+            XF:Debug(self:ObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
+            inMessage:Type(XF.Enum.Network.LOCAL)        
+        end
+    end
+
+    -- BROADCAST/LOCAL
+    XFO.Chat:SendChannel(inMessage)
 end
 --#endregion

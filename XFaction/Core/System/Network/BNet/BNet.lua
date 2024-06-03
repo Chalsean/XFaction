@@ -61,8 +61,7 @@ function XFC.BNet:Send(inMessage)
     -- Split once and then message all the targets
     local messageData = inMessage:Serialize(XF.Enum.Tag.BNET)
     local packets = XFO.PostOffice:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
-    XFO.Mailbox:Add(inMessage:Key())
-
+    
     -- Make sure all packets go to each target
     for _, friend in pairs (links) do
         try(function ()
@@ -78,19 +77,6 @@ function XFC.BNet:Send(inMessage)
             XF:Warn(self:ObjectName(), err)
         end)
     end
-end
-
-function XFC.BNet:DecodeMessage(inMsg)
-    local message = XFO.Mailbox:Pop()
-    try(function()
-        message:Deserialize(inMsg, XF.Enum.Tag.BNET)
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-        XFO.Mailbox:Push(message)
-        message = nil
-    end)
-    return message
 end
 
 function XFC.BNet:CallbackBNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)

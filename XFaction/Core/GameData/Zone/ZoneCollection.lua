@@ -134,7 +134,7 @@ function XFC.ZoneCollection:CallbackZoneChanged()
                     self:Add(zoneName)
                 end
                 XF.Player.Unit:Zone(self:Get(zoneName))
-				XFO.Chat:SendDataMessage(XF.Player.Unit)
+				XFO.Mailbox:SendDataMessage(XF.Player.Unit)
             end
         end).
         catch(function (err)

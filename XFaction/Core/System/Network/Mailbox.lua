@@ -51,49 +51,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         XF.Cache.NewVersionNotify = true
     end
 
-    self:Add(inMessage:Key())
     inMessage:Print()
-
-    --#region Forwarding
-    -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-    if(inMessageTag == XF.Enum.Tag.LOCAL) then
-
-        if(XFO.Friends:ContainsByGUID(inMessage:From())) then
-            local friend = XFO.Friends:GetByGUID(inMessage:From())
-            if(friend:CanLink() and not friend:IsLinked()) then
-                XFO.BNet:Ping(friend)
-            end
-        end
-
-        if(inMessage:HasTargets()) then
-            -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
-            -- local nodeCount = XF.Nodes:GetTargetCount(XF.Player.Target)
-            -- if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
-            --     local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
-            --     if(math.random(1, 100) <= percentage) then
-            --         XF:Debug(ObjectName, 'Randomly selected, forwarding message')
-            --         inMessage:SetType(XF.Enum.Network.BNET)
-            --         XF.Mailbox.BNet:Send(inMessage)
-            --     else
-            --         XF:Debug(ObjectName, 'Not randomly selected, will not forward mesesage')
-            --     end
-            -- else
-            --     XF:Debug(ObjectName, 'Node count under threshold, forwarding message')
-                inMessage:Type(XF.Enum.Network.BNET)
-                XFO.BNet:Send(inMessage)
-            -- end
-        end
-
-    -- If there are still BNet targets remaining and came via BNet, broadcast
-    elseif(inMessageTag == XF.Enum.Tag.BNET) then
-        if(inMessage:HasTargets()) then
-            inMessage:Type(XF.Enum.Network.BROADCAST)
-        else
-            inMessage:Type(XF.Enum.Network.LOCAL)
-        end
-        XFO.Chat:Send(inMessage)
-    end
-    --#endregion
 
     --#region Process message
     -- LOGOUT message
@@ -143,5 +101,73 @@ function XFC.Mailbox:CallbackJanitor()
 			self:Remove(key)
 		end
 	end
+end
+
+local function _SendMessage(inSubject, inData)
+    local self = XFO.Mailbox
+    local message = self:Pop()
+    try(function ()
+        message:Initialize()
+        message:Type(XF.Enum.Network.BROADCAST)
+        message:Subject(inSubject)
+        message:From(XF.Player.Unit:GUID())
+        message:FromUnit(XF.Player.Unit)
+        message:TimeStamp(XFF.TimeGetCurrent())
+        message:SetAllTargets()
+        message:Version(XF.Version)
+        message:Faction(XF.Player.Faction)
+        message:Guild(XF.Player.Guild)
+        message:Links(XFO.Links:Serialize())
+        message:Data(inData)
+        XFO.PostOffice:Send(message)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end).
+    finally(function ()
+        self:Push(message)
+    end)
+end
+
+function XFC.Mailbox:SendOrderMessage(inOrder)
+    assert(type(inOrder) == 'table' and inOrder.__name == 'Order')
+    XF:Info(self:ObjectName(), 'Sending order message')
+    inOrder:Print()
+    _SendMessage(XF.Enum.Message.ORDER, inOrder:Encode())
+end
+
+function XFC.Mailbox:SendDataMessage(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    XF:Info(self:ObjectName(), 'Sending data message for unit [%s]', inUnit:UnitName())
+    _SendMessage(XF.Enum.Message.DATA, inUnit)
+end
+
+function XFC.Mailbox:SendLoginMessage(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    XF:Info(self:ObjectName(), 'Sending login message for unit [%s]', inUnit:UnitName())
+    _SendMessage(XF.Enum.Message.LOGIN, inUnit)
+end
+
+function XFC.Mailbox:SendAchievementMessage(inID)
+    assert(type(inID) == 'number')
+    XF:Info(self:ObjectName(), 'Sending achievement message for [%d]', inID)
+    _SendMessage(XF.Enum.Message.ACHIEVEMENT, inID)
+end
+
+function XFC.Mailbox:SendLogoutMessage()
+    _SendMessage(XF.Enum.Message.LOGOUT, '')
+end
+
+-- Deprecated, remove after 4.13
+function XFC.Mailbox:SendLinkMessage(inLinks)
+    assert(type(inLinks) == 'string')
+    XF:Info(Mailbox:ObjectName(), 'Sending links message')
+    _SendMessage(XF.Enum.Message.LINK, inLinks)
+end
+
+function XFC.Mailbox:SendChatMessage(inText)
+    assert(type(inText) == 'string')
+    XF:Info(self:ObjectName(), 'Sending guild chat message [%s]', inText)
+    _SendMessage(XF.Enum.Message.GCHAT, inText)
 end
 --#endregion

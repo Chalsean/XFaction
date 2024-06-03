@@ -16,7 +16,8 @@ end
 function XFC.ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		if(XF.Player.Realm:GuildCount() > 1) then
+        
+		if(XF.Player.Realm:GetGuildCount() > 1) then
 			if(XF.Cache.Channel.Name ~= nil and XF.Cache.Channel.Password ~= nil) then
 				try(function ()
 					XFF.ChatJoinChannel(XF.Cache.Channel.Name, XF.Cache.Channel.Password)

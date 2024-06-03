@@ -114,7 +114,7 @@ function XFC.SpecCollection:CallbackSpecChanged()
 	local self = XFO.Specs
 	try(function ()
         XF.Player.Unit:Initialize(XF.Player.Unit:ID())
-		XFO.Chat:SendDataMessage(XF.Player.Unit)
+		XFO.Mailbox:SendDataMessage(XF.Player.Unit)
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)

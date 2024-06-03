@@ -180,10 +180,10 @@ function XF:CallbackLoginPlayer()
 				XFO.Friends:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
-				XFO.Chat:SendDataMessage(XF.Player.Unit)
+				XFO.Mailbox:SendDataMessage(XF.Player.Unit)
 			-- Otherwise send login message
 			else
-				XFO.Chat:SendLoginMessage(XF.Player.Unit)
+				XFO.Mailbox:SendLoginMessage(XF.Player.Unit)
 			end			
 
 			-- Start all hooks, timers and events

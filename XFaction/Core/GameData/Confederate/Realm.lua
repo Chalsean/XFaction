@@ -49,6 +49,7 @@ function XFC.Realm:IsCurrent()
     return self.isCurrent
 end
 
+-- Returns guild count for just this realm
 function XFC.Realm:GuildCount(inCount)
     assert(type(inCount) == 'number' or inCount == nil, 'argument must be number or nil')
     if(inCount ~= nil) then
@@ -69,6 +70,15 @@ function XFC.Realm:Print()
     for _, realm in pairs (self.connectedRealms) do
         XF:Debug(self:ObjectName(), '* connectedRealm [%d]', realm:ID())
     end
+end
+
+-- Returns guild count for this realm and all connected realms
+function XFC.Realm:GetGuildCount()
+    local count = self:GuildCount()
+    for _, connected in self:ConnectedIterator() do
+        count = count + connected:GuildCount()
+    end
+    return count
 end
 
 function XFC.Realm:ConnectedIterator()

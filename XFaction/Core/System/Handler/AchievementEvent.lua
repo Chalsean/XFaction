@@ -31,7 +31,7 @@ function XFC.AchievementEvent:CallbackAchievementEarned(inID)
     try(function ()
         local _, name, _, _, _, _, _, _, _, _, _, isGuild = XFF.PlayerGetAchievement(inID)
         if(not isGuild and string.find(name, XF.Lib.Locale['EXPLORE']) == nil) then
-            XFO.Chat:SendAchievementMessage(inID)
+            XFO.Mailbox:SendAchievementMessage(inID)
         end
     end).
     catch(function (err)
