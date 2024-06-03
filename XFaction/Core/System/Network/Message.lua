@@ -397,6 +397,16 @@ function XFC.Message:Deserialize(inData, inEncodingType)
         if(data.P ~= nil) then self:PacketNumber(data.P) end
         if(data.Q ~= nil) then self:TotalPackets(data.Q) end
 
+        if(data.V ~= nil) then 
+            local version = XFO.Versions:Get(data.V)
+            if(version == nil) then
+                version = XFC.Version:new()
+                version:Key(data.V)
+                XFO.Versions:Add(version)
+            end
+            self:Version(version)
+        end
+
         if(data.X ~= nil) then
             local unit = XFO.Confederate:Pop()
             try(function()
@@ -408,8 +418,10 @@ function XFC.Message:Deserialize(inData, inEncodingType)
                 XF:Error(self:ObjectName(), err)
                 XFO.Confederate:Push(unit)
             end)
+        end
+            
         -- Deprecated, remove after 4.13
-        elseif(self:IsData() or self:IsLogin()) then
+        if(self:IsLegacy() and (self:IsData() or self:IsLogin())) then
             local unit = XFO.Confederate:Pop()
             try(function()
                 unit:LegacyDeserialize(data.D)
@@ -429,15 +441,7 @@ function XFC.Message:Deserialize(inData, inEncodingType)
 
         --#region Deprecated, remove after 4.13
         if(data.F ~= nil) then self:From(data.F) end
-        if(data.V ~= nil) then 
-            local version = XFO.Versions:Get(data.V)
-            if(version == nil) then
-                version = XFC.Version:new()
-                version:Key(data.V)
-                XFO.Versions:Add(version)
-            end
-            self:Version(version)
-        end
+        
 
         if(data.M ~= nil) then self:MainName(data.M) end
         if(data.U ~= nil) then self:UnitName(data.U) end
