@@ -60,7 +60,7 @@ function XFC.BNet:Send(inMessage)
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
     local messageData = inMessage:Serialize(XF.Enum.Tag.BNET)
-    local packets = PostOffice:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
+    local packets = XFO.PostOffice:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
     XFO.Mailbox:Add(inMessage:Key())
 
     -- Make sure all packets go to each target
