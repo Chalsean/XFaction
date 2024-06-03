@@ -9,6 +9,7 @@ function XFC.MythicKey:new()
     local object = XFC.MythicKey.parent.new(self)
     object.__name = ObjectName
     object.dungeon = nil
+    object.isMyKey = false
     return object
 end
 --#endregion
@@ -32,12 +33,20 @@ function XFC.MythicKey:Key(inKey)
     end
     return self.key
 end
+
+function XFC.MythicKey:IsMyKey(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
+    if(inBoolean ~= nil) then
+        self.isMyKey = inBoolean
+    end
+    --return self.isMyKey
+end
 --#endregion
 
 --#region Methods
 function XFC.MythicKey:Print()
     self:ParentPrint()
-    if(self:HasDungeon()) then self:GetDungeon():Print() end
+    if(self:HasDungeon()) then self:Dungeon():Print() end
 end
 
 function XFC.MythicKey:Refresh()
