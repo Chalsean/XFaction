@@ -203,7 +203,7 @@ function XFC.Message:Print()
 end
 
 function XFC.Message:IsLegacy()
-    return self:Version():IsNewer(XF.DeprecatedVersion, true) or not self:HasFromUnit()
+    return not self:HasVersion() or self:Version():IsNewer(XF.DeprecatedVersion, true) or not self:HasFromUnit()
 end
 
 function XFC.Message:IsGuildChat()
