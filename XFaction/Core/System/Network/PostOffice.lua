@@ -1,82 +1,31 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
-local ObjectName = 'Mailbox'
+local ObjectName = 'PostOffice'
 
-XFC.Mailbox = XFC.Factory:newChildConstructor()
+XFC.PostOffice = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function XFC.Mailbox:new()
-    local object = XFC.Mailbox.parent.new(self)
+function XFC.PostOffice:new()
+    local object = XFC.PostOffice.parent.new(self)
 	object.__name = ObjectName
-	object.objects = nil
-    object.objectCount = 0   
-    object.packets = nil
 	return object
-end
-
-function XFC.Mailbox:newChildConstructor()
-    local object = XFC.Mailbox.parent.new(self)
-    object.__name = ObjectName
-    object.parent = self 
-	object.objects = nil
-    object.objectCount = 0   
-    object.packets = nil
-    return object
-end
-
-function XFC.Mailbox:NewObject()
-	return XFC.Message:new()
-end
-
-function XFC.Mailbox:Initialize()
-	if(not self:IsInitialized()) then
-		self:ParentInitialize()
-		self:IsInitialized(true)
-	end
-end
-
-function XFC.Mailbox:ParentInitialize()
-    self.packets = {}
-    self.objects = {}
-    self.checkedIn = {}
-    self.checkedOut = {}
-    self.key = math.GenerateUID()
 end
 --#endregion
 
 --#region Methods
-function XFC.Mailbox:ContainsPacket(inKey)
-	assert(type(inKey) == 'string')
-	return self.packets[inKey] ~= nil
-end
-
-function XFC.Mailbox:Add(inKey)
-	assert(type(inKey) == 'string')
-	if(not self:Contains(inKey)) then
-		self.objects[inKey] = XFF.TimeGetCurrent()
-	end
-end
-
-function XFC.Mailbox:AddPacket(inMessageKey, inPacketNumber, inData)
+function XFC.PostOffice:Add(inMessageKey, inPacketNumber, inData)
     assert(type(inMessageKey) == 'string')
     assert(type(inPacketNumber) == 'number')
     assert(type(inData) == 'string')
-    if(not self:ContainsPacket(inMessageKey)) then
-        self.packets[inMessageKey] = {}
+    if(not self:Contains(inMessageKey)) then
+        self.objects[inMessageKey] = {}
     end
-    if(self.packets[inMessageKey][inPacketNumber] == nil) then
-        self.packets[inMessageKey][inPacketNumber] = inData
+    if(self.objects[inMessageKey][inPacketNumber] == nil) then
+        self.objects[inMessageKey][inPacketNumber] = inData
     end
 end
 
-function XFC.Mailbox:RemovePacket(inKey)
-	assert(type(inKey) == 'string')
-	if(self:ContainsPacket(inKey)) then
-		self.packets[inKey] = nil
-	end
-end
-
-function XFC.Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
+function XFC.PostOffice:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
 	assert(type(inEncodedData) == 'string')
 	local packets = {}
     local totalPackets = ceil(strlen(inEncodedData) / inPacketSize)
@@ -88,25 +37,25 @@ function XFC.Mailbox:SegmentMessage(inEncodedData, inMessageKey, inPacketSize)
 	return packets
 end
 
-function XFC.Mailbox:HasAllPackets(inKey, inTotalPackets)
+function XFC.PostOffice:HasAllPackets(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     assert(type(inTotalPackets) == 'number')
-    if(self.packets[inKey] == nil) then return false end
-    return #self.packets[inKey] == inTotalPackets
+    if(not self:Contains(inKey)) then return false end
+    return #self.objects[inKey] == inTotalPackets
 end
 
-function XFC.Mailbox:RebuildMessage(inKey, inTotalPackets)
+function XFC.PostOffice:RebuildMessage(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     local message = ''
     -- Stitch the data back together again
-    for _, packet in PairsByKeys(self.packets[inKey]) do
+    for _, packet in PairsByKeys(self:Get(inKey)) do
         message = message .. packet
     end
-    self:RemovePacket(inKey)
+    self:Remove(inKey)
 	return message
 end
 
-function XFC.Mailbox:IsAddonTag(inTag)
+function XFC.PostOffice:IsAddonTag(inTag)
 	local addonTag = false
     for _, tag in pairs (XF.Enum.Tag) do
         if(inTag == tag) then
@@ -117,7 +66,7 @@ function XFC.Mailbox:IsAddonTag(inTag)
 	return addonTag
 end
 
-function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     XF:Trace(self:ObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
 
@@ -142,39 +91,35 @@ function XFC.Mailbox:Receive(inMessageTag, inEncodedMessage, inDistribution, inS
     local messageData = string.sub(inEncodedMessage, 3 + XF.Settings.System.UIDLength, -1)
 
     -- Ignore if it's your own message or you've seen it before
-    if(XFO.BNet:Contains(messageKey) or XFO.Chat:Contains(messageKey)) then
+    if(XFO.Mailbox:Contains(messageKey)) then
         XF:Trace(self:ObjectName(), 'Ignoring duplicate message [%s]', messageKey)
         return
     end
     --#endregion
 
-    self:AddPacket(messageKey, packetNumber, messageData)
+    self:Add(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
+
         XF:Debug(self:ObjectName(), 'Received all packets for message [%s]', messageKey)
+
+        XFO.Mailbox:Add(messageKey)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-        local fullMessage = self:DecodeMessage(encodedMessage)
+        local message = XFO.Mailbox:Pop()
+
         try(function ()
-            self:Process(fullMessage, inMessageTag)
+            message:Deserialize(encodedMessage, inMessageTag)
+            XFO.Mailbox:Process(message, inMessageTag)
+            self:Forward(message, inMessageTag)
         end).
         finally(function ()
-            self:Push(fullMessage)
+            XFO.Mailbox:Push(message)
         end)
     end
 end
 
-function XFC.Mailbox:Process(inMessage, inMessageTag)
+function XFC.PostOffice:Forward(inMessage, inMessageTag)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
-    -- Is a newer version available?
-    if(not XF.Cache.NewVersionNotify and inMessage:HasVersion() and XF.Version:IsNewer(inMessage:Version())) then
-        print(format(XF.Lib.Locale['NEW_VERSION'], XF.Title))
-        XF.Cache.NewVersionNotify = true
-    end
-
-    self:Add(inMessage:Key())
-    inMessage:Print()
-
-    --#region Forwarding
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessageTag == XF.Enum.Tag.LOCAL) then
 
@@ -211,57 +156,34 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         else
             inMessage:Type(XF.Enum.Network.LOCAL)
         end
-        XFO.Chat:Send(inMessage)
+        XFO.Chat:SendChannel(inMessage)
     end
-    --#endregion
+end
 
-    --#region Process message
-    -- LOGOUT message
-    if(inMessage:IsLogout()) then
-        XFO.Confederate:ProcessMessage(inMessage)        
-        return
-    end
+function XFC.PostOffice:Send(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
-    -- Legacy DATA/LOGIN message
-    if(inMessage:IsLegacy() and (inMessage:IsLogin() or inMessage:IsData())) then
-        XFO.Confederate:ProcessMessage(inMessage)
-        return
-    end
+    XF:Debug(self:ObjectName(), 'Attempting to send message')
+    inMessage:Print()
+    XFO.Mailbox:Add(inMessage:Key())
 
-    -- Legacy LINK message
-    if(inMessage:IsLink()) then
-        XFO.Links:ProcessMessage(inMessage)
-        return
-    end
-
-    -- All non-LOGOUT messages have unit and link data
-    if(not inMessage:IsLegacy()) then
-        XFO.Confederate:ProcessMessage(inMessage)
-        if(inMessage:HasLinks()) then
-            XFO.Links:ProcessMessage(inMessage)
+    -- BNET/BROADCAST
+    if(inMessage:Type() == XF.Enum.Network.BROADCAST or inMessage:Type() == XF.Enum.Network.BNET) then
+        XFO.BNet:Send(inMessage)
+        -- Failed to bnet to all targets, broadcast to leverage others links
+        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:Type() == XF.Enum.Network.BNET) then
+            inMessage:Type(XF.Enum.Network.BROADCAST)
+        -- Successfully bnet to all targets and only were supposed to bnet, were done
+        elseif(inMessage:Type() == XF.Enum.Network.BNET) then
+            return
+        -- Successfully bnet to all targets and was broadcast, switch to local only
+        elseif(not inMessage:HasTargets() and inMessage:Type() == XF.Enum.Network.BROADCAST) then
+            XF:Debug(self:ObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
+            inMessage:Type(XF.Enum.Network.LOCAL)        
         end
     end
 
-    -- ACHIEVEMENT/GCHAT message
-    if(inMessage:IsAchievement() or inMessage:IsGuildChat()) then
-        XFO.ChatFrame:ProcessMessage(inMessage)
-        return
-    end    
-
-    -- ORDER message
-    if(inMessage:IsOrder()) then
-        XFO.Orders:ProcessMessage(inMessage)
-        return
-    end
-    --#endregion
-end
-
-function XFC.Mailbox:Purge(inEpochTime)
-	assert(type(inEpochTime) == 'number')
-	for key, receivedTime in self:Iterator() do
-		if(receivedTime < inEpochTime) then
-			self:Remove(key)
-		end
-	end
+    -- BROADCAST/LOCAL
+    XFO.Chat:SendChannel(inMessage)
 end
 --#endregion

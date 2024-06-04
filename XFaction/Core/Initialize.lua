@@ -47,6 +47,8 @@ function XF:CoreInit()
 	XFO.Channels = XFC.ChannelCollection:new()
 	XFO.Friends = XFC.FriendCollection:new()
 	XFO.Links = XFC.LinkCollection:new(); XFO.Links:Initialize()
+	XFO.Mailbox = XFC.Mailbox:new(); XFO.Mailbox:Initialize()
+	XFO.PostOffice = XFC.PostOffice:new(); XFO.PostOffice:Initialize()
 	XFO.BNet = XFC.BNet:new()
 	XFO.Chat = XFC.Chat:new()
 	
@@ -168,11 +170,9 @@ function XF:CallbackLoginPlayer()
 			XF.Player.Unit:Print()
 
 			-- By this point all the channels should have been joined
-			if(not XFO.Channels:UseGuild()) then
-				XFO.Channels:CallbackSync()
-				if(XFO.Channels:HasLocalChannel()) then
-					XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
-				end
+			XFO.Channels:CallbackSync()
+			if(XFO.Channels:HasLocalChannel()) then
+				XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
 			end
 			
 			-- If reload, restore backup information
@@ -180,10 +180,10 @@ function XF:CallbackLoginPlayer()
 				XFO.Friends:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
-				XFO.Chat:SendDataMessage(XF.Player.Unit)
+				XFO.Mailbox:SendDataMessage(XF.Player.Unit)
 			-- Otherwise send login message
 			else
-				XFO.Chat:SendLoginMessage(XF.Player.Unit)
+				XFO.Mailbox:SendLoginMessage(XF.Player.Unit)
 			end			
 
 			-- Start all hooks, timers and events

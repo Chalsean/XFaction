@@ -75,13 +75,13 @@ end
 function XFC.LinkCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
-    -- Deprecated, remove after 4.13
-    if(inMessage:IsLegacy()) then
-        self:LegacyDeserialize(inMessage:Data())
+	-- Deprecated, remove after 4.13
+	if(inMessage:IsLegacy() and inMessage:Data() ~= nil and string.len(inMessage:Data()) > 0) then
+		self:LegacyDeserialize(inMessage:Data())
 	elseif(inMessage:HasLinks()) then
-        self:Deserialize(inMessage:FromUnit(), inMessage:Links())
-    end
-    XFO.DTLinks:RefreshBroker()
+		self:Deserialize(inMessage:FromUnit(), inMessage:Links())
+	end
+	XFO.DTLinks:RefreshBroker()
 end
 
 function XFC.LinkCollection:Serialize()
@@ -177,7 +177,7 @@ function XFC.LinkCollection:CallbackBroadcast()
     local self = XFO.Links
 	try(function()
 		if(self:Count() > 0) then
-        	XFO.Chat:SendLinkMessage(self:LegacySerialize())
+        	XFO.Mailbox:SendLinkMessage(self:LegacySerialize())
 		end
     end).
     catch(function(err)
@@ -190,7 +190,7 @@ function XFC.LinkCollection:CallbackLegacyBroadcast()
 	local self = XFO.Links
 	try(function ()
 		if(self:Count() > 0) then
-			XFO.Chat:SendLinkMessage(XFO.Links:LegacySerialize())
+			XFO.Mailbox:SendLinkMessage(XFO.Links:LegacySerialize())
 		end
 	end).
 	catch(function (err)

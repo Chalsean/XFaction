@@ -189,6 +189,7 @@ function XFC.Confederate:LocalRoster()
             if(unit:IsInitialized()) then
                 if(self:Contains(unit:Key())) then
                     local old = self:Get(unit:Key())
+                    old:TimeStamp(XFF.TimeGetCurrent())
                     if(old:IsOnline() and unit:IsOffline()) then
                         XF:Info(self:ObjectName(), 'Guild member logout via scan: %s', unit:UnitName())
                         XFO.SystemFrame:DisplayLogout(unit:Name())
@@ -277,7 +278,7 @@ function XFC.Confederate:CallbackHeartbeat()
 	try(function ()
 		if(XF.Initialized and XF.Player.LastBroadcast < XFF.TimeGetCurrent() - XF.Settings.Player.Heartbeat) then
 			XF:Debug(self:ObjectName(), 'Sending heartbeat')
-			XFO.Chat:SendDataMessage(XF.Player.Unit)
+			XFO.Mailbox:SendDataMessage(XF.Player.Unit)
 		end
 	end).
 	catch(function (err)

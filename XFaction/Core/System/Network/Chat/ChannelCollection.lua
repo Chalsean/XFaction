@@ -9,45 +9,53 @@ function XFC.ChannelCollection:new()
     local object = XFC.ChannelCollection.parent.new(self)
 	object.__name = ObjectName
 	object.localChannel = nil
-	object.useGuild = false
+	object.guildChannel = nil
     return object
 end
 
 function XFC.ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		-- Remove this block after everyone on 4.4, its for backwards compat while guild members are a mix of 4.4 and pre-4.4
-		if(XF.Cache.Channel.Name ~= nil and XF.Cache.Channel.Password ~= nil) then
-			try(function ()
-				XFF.ChatJoinChannel(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
-				XF:Info(self:ObjectName(), 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
-			end).
-			catch(function (err)
-				XF:Error(self:ObjectName(), err)
-			end)
+        
+		if(XF.Player.Realm:GetGuildCount() > 1) then
+			if(XF.Cache.Channel.Name ~= nil and XF.Cache.Channel.Password ~= nil) then
+				try(function ()
+					XFF.ChatJoinChannel(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
+					XF:Info(self:ObjectName(), 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
+				end).
+				catch(function (err)
+					XF:Error(self:ObjectName(), err)
+				end)
+			end
+
+			XFO.Events:Add({
+				name = 'ChannelLeft', 
+				event = 'CHAT_MSG_CHANNEL_LEAVE', 
+				callback = XFO.Channels.CallbackUnitLeftChannel, 
+				instance = true
+			})
+
+			XFO.Events:Add({
+				name = 'ChannelChange', 
+				event = 'CHAT_MSG_CHANNEL_NOTICE', 
+				callback = XFO.Channels.CallbackSync,
+				groupDelta = 3,
+				instance = true
+			})
+
+			XFO.Events:Add({
+				name = 'ChannelColor', 
+				event = 'UPDATE_CHAT_COLOR', 
+				callback = XFO.Channels.CallbackUpdateColor, 
+				instance = true
+			})
 		end
 
-		XFO.Events:Add({
-			name = 'ChannelLeft', 
-			event = 'CHAT_MSG_CHANNEL_LEAVE', 
-			callback = XFO.Channels.CallbackUnitLeftChannel, 
-			instance = true
-		})
-
-		XFO.Events:Add({
-			name = 'ChannelChange', 
-			event = 'CHAT_MSG_CHANNEL_NOTICE', 
-			callback = XFO.Channels.CallbackSync,
-			groupDelta = 3,
-			instance = true
-		})
-
-		XFO.Events:Add({
-			name = 'ChannelColor', 
-			event = 'UPDATE_CHAT_COLOR', 
-			callback = XFO.Channels.CallbackUpdateColor, 
-			instance = true
-		})
+		local channel = XFC.Channel:new()
+		channel:Initialize()
+		channel:Name('GUILD')
+		channel:Key('GUILD')
+		self:Add(channel)
 
 		self:IsInitialized(true)
 	end
@@ -63,20 +71,20 @@ function XFC.ChannelCollection:LocalChannel(inChannel)
 	return self.localChannel
 end
 
-function XFC.ChannelCollection:UseGuild(inBoolean)
-	assert(type(inBoolean) == 'boolean' or inBoolean == nil)
-	if(inBoolean ~= nil) then
-		self.useGuild = inBoolean
+function XFC.ChannelCollection:GuildChannel(inChannel)
+    assert(type(inChannel) == 'table' and inChannel.__name == 'Channel' or inChannel == nil)
+	if(inChannel ~= nil) then
+    	self.guildChannel = inChannel
 	end
-	return self.useGuild
+	return self.guildChannel
 end
 --#endregion
 
 --#region Methods
 function XFC.ChannelCollection:Print()
 	self:ParentPrint()
-	XF:Debug(self:ObjectName(), '  useGuild (' .. type(self.useGuild) .. '): ' .. tostring(self.useGuild))
 	XF:Debug(self:ObjectName(), '  localChannel (' .. type(self.localChannel) .. ')')
+	XF:Debug(self:ObjectName(), '  guildChannel (' .. type(self.guildChannel) .. ')')
 	if(self:HasLocalChannel()) then self:LocalChannel():Print() end
 end
 
@@ -129,6 +137,14 @@ function XFC.ChannelCollection:CallbackUnitLeftChannel(_, _, _, _, _, _, _, _, c
 			end
 		end
 	end	
+end
+
+function XFC.ChannelCollection:RemoveAll()
+	for _, channel in self:Iterator() do
+		if(not channel:IsGuild()) then
+			self:Remove(channel:Key())
+		end
+	end
 end
 
 function XFC.ChannelCollection:CallbackSync()

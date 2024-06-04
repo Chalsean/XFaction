@@ -49,7 +49,7 @@ end
 function XFC.SystemEvent:CallbackLogout()
     local self = XFO.SystemHandler
     if(not XF.Cache.UIReload) then
-        XFO.Chat:SendLogoutMessage()
+        XFO.MailboxMailbox:SendLogoutMessage()
     end
 end
 

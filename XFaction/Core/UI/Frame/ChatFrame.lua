@@ -99,9 +99,9 @@ function XFC.ChatFrame:ProcessMessage(inMessage)
     if(XF.Player.Unit:CanGuildListen()) then
         if(not inMessage:FromUnit():IsSameGuild()) then
             if(inMessage:IsGuildChat()) then
-                XFO.ChatFrame:DisplayGuildChat(inMessage:FromUnit(), inMessage:Data())
+                self:DisplayGuildChat(inMessage:FromUnit(), inMessage:Data())
             else
-                XFO.ChatFrame:DisplayAchievement(inMessage:FromUnit(), inMessage:Data())
+                self:DisplayAchievement(inMessage:FromUnit(), inMessage:Data())
             end
         end
     end
@@ -119,7 +119,7 @@ local function _DisplayChatWindows(inUnit, inType, inText)
                     if(inType == 'GUILD' and XFO.WIM:IsLoaded() and XFO.WIM:API().modules.GuildChat.enabled) then
                         XFO.WIM:API():CHAT_MSG_GUILD(inText, inUnit:UnitName(), XF.Player.Faction:Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
                     else
-                        XFF.ChatHandler(_G[frame], 'CHAT_MSG_' .. inType, inText, inUnitName, XF.Player.Faction:Language(), '', inUnitName, '', 0, 0, '', 0, _, inUnit:GUID())
+                        XFF.ChatHandler(_G[frame], 'CHAT_MSG_' .. inType, inText, inUnit:UnitName(), XF.Player.Faction:Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
                     end
                 end
             end
