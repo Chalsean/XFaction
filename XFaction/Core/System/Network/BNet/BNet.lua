@@ -83,7 +83,7 @@ function XFC.BNet:CallbackBNetReceive(inMessageTag, inEncodedMessage, inDistribu
     local self = XFO.BNet
     try(function ()
         -- If not a message from this addon, ignore
-        if(not self:IsAddonTag(inMessageTag)) then
+        if(not XFO.PostOffice:IsAddonTag(inMessageTag)) then
             return
         end
 

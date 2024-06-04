@@ -388,6 +388,18 @@ function XFC.Message:Deserialize(inData, inEncodingType)
         local data = unpickle(decompressed)
 
         self:Initialize()
+        if(data.V ~= nil) then 
+            local version = XFO.Versions:Get(data.V)
+            if(version == nil) then
+                version = XFC.Version:new()
+                version:Key(data.V)
+                XFO.Versions:Add(version)
+            end
+            self:Version(version)
+        else
+            self:Version(XF.Version)
+        end
+
         if(data.K ~= nil) then self:Key(data.K)	end
         if(data.T ~= nil) then self:To(data.T)	end	
         if(data.S ~= nil) then self:Subject(data.S) end
