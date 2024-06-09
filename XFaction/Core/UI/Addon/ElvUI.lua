@@ -2,34 +2,34 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ElvUI'
 
-XFC.ElvUI = XFC.Addon:newChildConstructor()
+XFElvUI = Addon:newChildConstructor()
 
 --#region Constructors
-function XFC.ElvUI:new()
-    local object = XFC.ElvUI.parent.new(self)
+function XFElvUI:new()
+    local object = XFElvUI.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
-function XFC.ElvUI:Initialize()
+--#region Initializers
+function XFElvUI:Initialize()
     if(not self:IsInitialized() and XF.Config ~= nil and ElvUI ~= nil) then
         self:ParentInitialize()
-        XFO.Media:Add(XF.Icons.Guild, 'Icon')
-        XFO.ElvUI:API(ElvUI[1])        
-        XFO.ElvUI:AddTags()
-        XFO.ElvUI:IsLoaded(true)
-        XF:Info(self:ObjectName(), 'ElvUI loaded successfully')
+        XF.Media:Add(XF.Icons.Guild, 'Icon')
+        XF.Addons.ElvUI:SetAPI(ElvUI[1])        
+        XF.Addons.ElvUI:AddTags()
+        XF.Addons.ElvUI:IsLoaded(true)
+        XF:Info(ObjectName, 'ElvUI loaded successfully')
 		self:IsInitialized(true)
 	end
 end
---#endregion
 
---#region Methods
-function XFC.ElvUI:AddTags()
+function XFElvUI:AddTags()
     -- This will add uOF tags for availability to ElvUI nameplates/unitframes
-    self:API():AddTag('xf:confederate', 'UNIT_NAME_UPDATE PLAYER_GUILD_UPDATE', function(inNameplate) 
-        local guid = XFF.PlayerGetGUID(inNameplate)
-        local guildName = XFF.PlayerGetGuild(inNameplate)
+    self:GetAPI():AddTag('xf:confederate', 'UNIT_NAME_UPDATE PLAYER_GUILD_UPDATE', function(inNameplate) 
+        local guid = UnitGUID(inNameplate)
+        local guildName = GetGuildInfo(inNameplate)
         try(function ()
             -- The guild check is not correct, could have sharded in a guild of same name from another realm
             if(XF.Initialized and (XFO.Confederate:Contains(guid) or XFO.Guilds:ContainsName(guildName))) then
@@ -38,11 +38,11 @@ function XFC.ElvUI:AddTags()
         end)
         return guildName
     end)
-    self:API():AddTagInfo('xf:confederate', XF.Name, XF.Lib.Locale['ADDON_ELVUI_CONFEDERATE'])
+    self:GetAPI():AddTagInfo('xf:confederate', XF.Name, XF.Lib.Locale['ADDON_ELVUI_CONFEDERATE'])
 
-    self:API():AddTag('xf:confederate:initials', 'PLAYER_GUILD_UPDATE', function(inNameplate) 
-        local guid = XFF.PlayerGetGUID(inNameplate)
-        local guildName = XFF.PlayerGetGuild(inNameplate)
+    self:GetAPI():AddTag('xf:confederate:initials', 'PLAYER_GUILD_UPDATE', function(inNameplate) 
+        local guid = UnitGUID(inNameplate)
+        local guildName = GetGuildInfo(inNameplate)
         try(function ()
             if(XF.Initialized and (XFO.Confederate:Contains(guid) or XFO.Guilds:ContainsName(guildName))) then
                 guildName = XFO.Confederate:Key()
@@ -52,11 +52,11 @@ function XFC.ElvUI:AddTags()
             return format('<%s>', guildName)
         end
     end)
-    self:API():AddTagInfo('xf:confederate:initials', XF.Name, XF.Lib.Locale['ADDON_ELVUI_CONFEDERATE_INITIALS'])
+    self:GetAPI():AddTagInfo('xf:confederate:initials', XF.Name, XF.Lib.Locale['ADDON_ELVUI_CONFEDERATE_INITIALS'])
 
-    self:API():AddTag('xf:guild:initials', 'PLAYER_GUILD_UPDATE', function(inNameplate) 
-        local guid = XFF.PlayerGetGUID(inNameplate)
-        local guildName = XFF.PlayerGetGuild(inNameplate)
+    self:GetAPI():AddTag('xf:guild:initials', 'PLAYER_GUILD_UPDATE', function(inNameplate) 
+        local guid = UnitGUID(inNameplate)
+        local guildName = GetGuildInfo(inNameplate)
         try(function ()
             if(XF.Initialized and XFO.Confederate:Contains(guid)) then
                 guildName = XFO.Confederate:Get(guid):GetGuild():Initials()
@@ -68,63 +68,63 @@ function XFC.ElvUI:AddTags()
             return format('<%s>', guildName)
         end 
     end)
-    self:API():AddTagInfo('xf:guild:initials', XF.Name, XF.Lib.Locale['ADDON_ELVUI_GUILD_INITIALS'])
+    self:GetAPI():AddTagInfo('xf:guild:initials', XF.Name, XF.Lib.Locale['ADDON_ELVUI_GUILD_INITIALS'])
 
-    self:API():AddTag('xf:main', 'UNIT_NAME_UPDATE', function(inNameplate) 
-        local guid = XFF.PlayerGetGUID(inNameplate)
-        local unitName = XFF.PlayerGetUnitName(inNameplate)
+    self:GetAPI():AddTag('xf:main', 'UNIT_NAME_UPDATE', function(inNameplate) 
+        local guid = UnitGUID(inNameplate)
+        local unitName = UnitName(inNameplate)
         try(function ()
             if(XF.Initialized and XFO.Confederate:Contains(guid)) then
                 local unitData = XFO.Confederate:Get(guid)
-                if(unitData:IsAlt()) then
-                    unitName = unitData:MainName()
+                if(unitData:HasMainName()) then
+                    unitName = unitData:GetMainName()
                 end
             end
         end)
         return unitName
     end)
-    self:API():AddTagInfo('xf:main', XF.Name, XF.Lib.Locale['ADDON_ELVUI_MAIN'])
+    self:GetAPI():AddTagInfo('xf:main', XF.Name, XF.Lib.Locale['ADDON_ELVUI_MAIN'])
 
-    self:API():AddTag('xf:main:parenthesis', 'UNIT_NAME_UPDATE', function(inNameplate) 
+    self:GetAPI():AddTag('xf:main:parenthesis', 'UNIT_NAME_UPDATE', function(inNameplate) 
         local main = ''
         try(function ()
             if(XF.Initialized) then
-                local guid = XFF.PlayerGetGUID(inNameplate)
+                local guid = UnitGUID(inNameplate)
                 if(XFO.Confederate:Contains(guid)) then
                     local unitData = XFO.Confederate:Get(guid)
-                    if(unitData:IsAlt()) then
-                        main = '(' .. unitData:MainName() .. ')'
+                    if(unitData:HasMainName()) then
+                        main = '(' .. unitData:GetMainName() .. ')'
                     end
                 end
             end
         end)
         return main
     end)
-    self:API():AddTagInfo('xf:main:parenthesis', XF.Name, XF.Lib.Locale['ADDON_ELVUI_MAIN_PARENTHESIS'])
+    self:GetAPI():AddTagInfo('xf:main:parenthesis', XF.Name, XF.Lib.Locale['ADDON_ELVUI_MAIN_PARENTHESIS'])
 
-    self:API():AddTag('xf:team', 'UNIT_NAME_UPDATE', function(inNameplate) 
+    self:GetAPI():AddTag('xf:team', 'UNIT_NAME_UPDATE', function(inNameplate) 
         local team = ''
         try(function ()
-            local guid = XFF.PlayerGetGUID(inNameplate)
+            local guid = UnitGUID(inNameplate)
             if(XF.Initialized and XFO.Confederate:Contains(guid)) then
-                team = XFO.Confederate:Get(guid):Team():Name()
+                team = XFO.Confederate:Get(guid):GetTeam():Name()
             end
         end)
         return team
     end)
-    self:API():AddTagInfo('xf:team', XF.Name, XF.Lib.Locale['ADDON_ELVUI_TEAM'])
+    self:GetAPI():AddTagInfo('xf:team', XF.Name, XF.Lib.Locale['ADDON_ELVUI_TEAM'])
 
-    self:API():AddTag('xf:confederate:icon', 'UNIT_NAME_UPDATE', function(inNameplate) 
+    self:GetAPI():AddTag('xf:confederate:icon', 'UNIT_NAME_UPDATE', function(inNameplate) 
         local icon = ''
         try(function ()
-            local guid = XFF.PlayerGetGUID(inNameplate)
-            local guildName = XFF.PlayerGetGuild(inNameplate)
+            local guid = UnitGUID(inNameplate)
+            local guildName = GetGuildInfo(inNameplate)
             if(XF.Initialized and (XFO.Confederate:Contains(guid) or XFO.Guilds:ContainsName(guildName))) then
-                icon = XFO.Media:Get(XF.Icons.Guild):Texture()
+                icon = XF.Media:Get(XF.Icons.Guild):GetTexture()
             end
         end)
         return icon
     end)
-    self:API():AddTagInfo('xf:confederate:icon', XF.Name, XF.Lib.Locale['ADDON_ELVUI_MEMBER_ICON'])
+    self:GetAPI():AddTagInfo('xf:confederate:icon', XF.Name, XF.Lib.Locale['ADDON_ELVUI_MEMBER_ICON'])
 end
 --#endregion

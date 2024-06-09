@@ -2,41 +2,41 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'EventCollection'
 
-XFC.EventCollection = XFC.ObjectCollection:newChildConstructor()
+EventCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function XFC.EventCollection:new()
-    local object = XFC.EventCollection.parent.new(self)
+function EventCollection:new()
+    local object = EventCollection.parent.new(self)
 	object.__name = ObjectName
     object.frame = nil
     return object
 end
+--#endregion
 
-function XFC.EventCollection:Initialize()
+--#region Initializers
+function EventCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.frame = CreateFrame('Frame')
         -- Handle the events as they happen
         self.frame:SetScript('OnEvent', function(self, inEvent, ...)
             -- Still actively listen for all events but only do something if enabled
-            for _, event in XFO.Events:Iterator() do
+            for _, event in XF.Events:Iterator() do
                 if(event:Name() == inEvent and event:IsEnabled()) then
                     XF:Trace(ObjectName, 'Event fired: %s', event:Name())
                     if(event:IsGroup()) then
-                        if(XFO.Timers:Contains(event:Key())) then
-                            XFO.Timers:Get(event:Key()):Start()
+                        if(XF.Timers:Contains(event:Key())) then
+                            XF.Timers:Get(event:Key()):Start()
                         else
-                            XFO.Timers:Add({
-                                name = event:Key(),
-                                delta = event:GroupDelta(),
-                                callback = event:Callback(),
-                                repeater = false,
-                                instance = event:IsInstance(),
-                                start = true
-                            })
+                            XF.Timers:Add({name = event:Key(),
+                                            delta = event:GetGroupDelta(),
+                                            callback = event:GetCallback(),
+                                            repeater = false,
+                                            instance = event:IsInstance(),
+                                            start = true})
                         end
                     else
-                        local _Function = event:Callback()
+                        local _Function = event:GetCallback()
                         _Function(self, ...)
                     end
                 end
@@ -47,8 +47,8 @@ function XFC.EventCollection:Initialize()
 end
 --#endregion
 
---#region Methods
-function XFC.EventCollection:Add(inArgs)
+--#region Hash
+function EventCollection:Add(inArgs)
     assert(type(inArgs) == 'table')
     assert(type(inArgs.name) == 'string')
     assert(type(inArgs.event) == 'string')
@@ -57,13 +57,13 @@ function XFC.EventCollection:Add(inArgs)
     assert(inArgs.start == nil or type(inArgs.start) == 'boolean')
     assert(inArgs.groupDelta == nil or type(inArgs.groupDelta) == 'number')
 
-    local event = XFC.Event:new()
+    local event = Event:new()
     event:Key(inArgs.name)
     event:Name(inArgs.event)
-    event:Callback(inArgs.callback)
+    event:SetCallback(inArgs.callback)
     event:IsInstance(inArgs.instance)
     if(inArgs.groupDelta ~= nil) then
-        event:GroupDelta(inArgs.groupDelta)
+        event:SetGroupDelta(inArgs.groupDelta)
     end
     if(inArgs.start and (event:IsInstance() or not XF.Player.InInstance)) then
         event:Start()
@@ -72,8 +72,10 @@ function XFC.EventCollection:Add(inArgs)
     self.parent.Add(self, event)
     XF:Info('Event', 'Registered to receive [%s:%s] events', event:Key(), event:Name())
 end
+--#endregion
 
-function XFC.EventCollection:EnterInstance()
+--#region Start/Stop
+function EventCollection:EnterInstance()
     for _, event in self:Iterator() do
         if(event:IsEnabled() and not event:IsInstance()) then
             event:Stop()
@@ -81,7 +83,7 @@ function XFC.EventCollection:EnterInstance()
     end
 end
 
-function XFC.EventCollection:LeaveInstance()
+function EventCollection:LeaveInstance()
     for _, event in self:Iterator() do
         if(not event:IsEnabled()) then
             event:Start()
@@ -89,7 +91,8 @@ function XFC.EventCollection:LeaveInstance()
     end
 end
 
-function XFC.EventCollection:Start()
+-- Start/Stop everything
+function EventCollection:Start()
 	for _, event in self:Iterator() do
         if(not event:IsEnabled()) then
             event:Start()
@@ -97,7 +100,7 @@ function XFC.EventCollection:Start()
 	end
 end
 
-function XFC.EventCollection:Stop()
+function EventCollection:Stop()
 	for _, event in self:Iterator() do
         if(event:IsEnabled()) then
             event:Stop()

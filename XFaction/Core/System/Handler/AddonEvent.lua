@@ -1,35 +1,37 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'AddonEvent'
+local IsAddOnLoaded = IsAddOnLoaded
+local GetAddOnEnableState = GetAddOnEnableState
 
-XFC.AddonEvent = XFC.Object:newChildConstructor()
+AddonEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function XFC.AddonEvent:new()
-    local object = XFC.AddonEvent.parent.new(self)
+function AddonEvent:new()
+    local object = AddonEvent.parent.new(self)
     object.__name = ObjectName
     self.isLoaded = false
     return object
 end
+--#endregion
 
-function XFC.AddonEvent:Initialize()
+--#region Initializers
+function AddonEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XFO.Events:Add({
-            name = 'AddonEvent', 
-            event = 'ADDON_LOADED', 
-            callback = XFO.AddonHandler.CallbackAddonLoaded, 
-            instance = true,
-            start = true
-        })
+        XF.Events:Add({name = 'AddonEvent', 
+                        event = 'ADDON_LOADED', 
+                        callback = XF.Handlers.AddonEvent.CallbackAddonLoaded, 
+                        instance = true,
+                        start = true})
         -- In case they already loaded
-        if(XFF.ClientIsAddonLoaded('ElvUI')) then
+        if(IsAddOnLoaded('ElvUI')) then
             self:CallbackAddonLoaded('ElvUI')
         end
-        if(XFF.ClientIsAddonLoaded('WIM')) then
+        if(IsAddOnLoaded('WIM')) then
             self:CallbackAddonLoaded('WIM')
         end
-        if(XFF.ClientIsAddonLoaded('RaiderIO')) then
+        if(IsAddOnLoaded('RaiderIO')) then
             self:CallbackAddonLoaded('RaiderIO')
         end
 		self:IsInitialized(true)
@@ -37,9 +39,9 @@ function XFC.AddonEvent:Initialize()
 end
 --#endregion
 
---#region Properties
-function XFC.AddonEvent:IsLoaded(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
+--#region Accessors
+function AddonEvent:IsLoaded(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
     if(inBoolean ~= nil) then
         self.isLoaded = inBoolean
     end
@@ -47,7 +49,7 @@ function XFC.AddonEvent:IsLoaded(inBoolean)
 end
 --#endregion
 
---#region Methods
+--#region Cache
 local function InitializeCache()
     if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
     XF.Cache = _G.XFCacheDB
@@ -80,29 +82,29 @@ local function InitializeCache()
         }
     end
 end
+--#endregion
 
-function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
-    local self = XFO.AddonHandler
+--#region Callbacks
+function AddonEvent:CallbackAddonLoaded(inAddonName)
     try(function ()
-        if(XFF.ClientGetAddonState(inAddonName) > 0) then
-            if(inAddonName == XF.Name and not self:IsLoaded()) then
-                XF:Info(self:ObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
-                -- AceDB is available once addon is loaded
+        if(GetAddOnEnableState(nil, inAddonName) > 0) then
+            if(inAddonName == XF.Name and not XF.Handlers.AddonEvent:IsLoaded()) then
+                XF:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
                 XF:ConfigInitialize()
-                XFO.ElvUI:Initialize()
-                self:IsLoaded(true)
+                XF.Addons.ElvUI:Initialize()
+                XF.Handlers.AddonEvent:IsLoaded(true)
             elseif(inAddonName == 'ElvUI') then
-                XFO.ElvUI:Initialize()
+                XF.Addons.ElvUI:Initialize()
             elseif(inAddonName == 'WIM') then
-                XFO.WIM:Initialize()
+                XF.Addons.WIM:Initialize()
             elseif(inAddonName == 'RaiderIO') then
-                XFO.RaiderIO:Initialize()
+                XF.Addons.RaiderIO:Initialize()
             end
         end
     end).
-    catch(function (err)
-        XF:Warn(self:ObjectName(), err)
+    catch(function (inErrorMessage)
+        XF:Warn(ObjectName, inErrorMessage)
     end)    
 end
 --#endregion

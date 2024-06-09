@@ -9,7 +9,7 @@ function XFC.Channel:new()
     local object = XFC.Channel.parent.new(self)
     object.__name = ObjectName
     object.password = nil
-    object.isCommunity = false
+    object.community = false
     return object
 end
 --#endregion
@@ -24,26 +24,22 @@ function XFC.Channel:Password(inPassword)
 end
 
 function XFC.Channel:IsCommunity(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
     if(inBoolean ~= nil) then
-        self.isCommunity = inBoolean
+        self.community = inBoolean
     end
-    return self.isCommunity
+    return self.community
 end
 --#endregion
 
 --#region Methods
 function XFC.Channel:Print()
     self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  isCommunity (' .. type(self.isCommunity) .. '): ' .. tostring(self.isCommunity))
-end
-
-function XFC.Channel:IsGuild(inBoolean)
-    return self:Name() == 'GUILD'
+    XF:Debug(self:ObjectName(), '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
 end
 
 function XFC.Channel:SetColor()
-    if(not self:IsGuild() and XF.Config.Channels[self:Name()] ~= nil) then
+    if(XF.Config.Channels[self:Name()] ~= nil) then
         local color = XF.Config.Channels[self:Name()]
         XFF.ChatSetChannelColor('CHANNEL' .. self:ID(), color.R, color.G, color.B)
         XF:Debug(self:ObjectName(), 'Set channel [%s] RGB [%f:%f:%f]', self:Name(), color.R, color.G, color.B)

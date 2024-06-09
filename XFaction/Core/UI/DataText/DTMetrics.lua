@@ -3,11 +3,11 @@ local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTMetrics'
 local CombatLockdown = InCombatLockdown
 
-XFC.DTMetrics = XFC.Object:newChildConstructor()
+DTMetrics = XFC.Object:newChildConstructor()
 	
 --#region Constructors
-function XFC.DTMetrics:new()
-	local object = XFC.DTMetrics.parent.new(self)
+function DTMetrics:new()
+	local object = DTGuild.parent.new(self)
     object.__name = ObjectName
 	object.headerFont = nil
 	object.regularFont = nil
@@ -19,14 +19,14 @@ end
 --#endregion
 
 --#region Initializers
-function XFC.DTMetrics:Initialize()
+function DTMetrics:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.ldbObject = XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTMETRICS_NAME'], {
 			type = 'data source',
 			label = XF.Lib.Locale['DTMETRICS_NAME'],
-		    OnEnter = function(this) XFO.DTMetrics:OnEnter(this) end,
-			OnLeave = function(this) XFO.DTMetrics:OnLeave(this) end,
+		    OnEnter = function(this) XF.DataText.Metrics:OnEnter(this) end,
+			OnLeave = function(this) XF.DataText.Metrics:OnLeave(this) end,
 		})
 		LDB_ANCHOR = self.ldbObject
 		self.headerFont = CreateFont('headerFont')
@@ -38,15 +38,15 @@ function XFC.DTMetrics:Initialize()
 	return self:IsInitialized()
 end
 
-function XFC.DTMetrics:PostInitialize()
-	XFO.DTMetrics:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XFO.DTMetrics:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XFO.DTMetrics:RefreshBroker()
+function DTMetrics:PostInitialize()
+	XF.DataText.Metrics:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XF.DataText.Metrics:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XF.DataText.Metrics:RefreshBroker()
 end
 --#endregion
 
 --#region Print
-function XFC.DTMetrics:Print()
+function DTMetrics:Print()
 	self:ParentPrint()
 	XF:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
 	XF:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
@@ -57,19 +57,19 @@ end
 --#endregion
 
 --#region Broker
-function XFC.DTMetrics:GetBroker()
+function DTMetrics:GetBroker()
 	return self.ldbObject
 end
 
-function XFC.DTMetrics:GetHeaderFont()
+function DTMetrics:GetHeaderFont()
 	return self.headerFont
 end
 
-function XFC.DTMetrics:GetRegularFont()
+function DTMetrics:GetRegularFont()
 	return self.regularFont
 end
 
-function XFC.DTMetrics:RefreshBroker()
+function DTMetrics:RefreshBroker()
 	if(XF.Initialized and self:IsInitialized()) then
 		local text = ''
 		local delimiter = false
@@ -101,7 +101,7 @@ end
 --#endregion
 
 --#region OnEnter
-function XFC.DTMetrics:OnEnter(this)
+function DTMetrics:OnEnter(this)
 	if(XF.Initialized == false) then return end
 	if(CombatLockdown()) then return end
 
@@ -113,7 +113,7 @@ function XFC.DTMetrics:OnEnter(this)
 		self.tooltip:SetHeaderFont(self.headerFont)
 		self.tooltip:SetFont(self.regularFont)
 		self.tooltip:SmartAnchorTo(this)
-		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTMetrics:OnLeave() end)
+		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() DTMetrics:OnLeave() end)
 		self.tooltip:EnableMouse(true)
 		self.tooltip:SetClampedToScreen(false)
 	end
@@ -159,7 +159,7 @@ end
 --#endregion
 
 --#region OnLeave
-function XFC.DTMetrics:OnLeave()
+function DTMetrics:OnLeave()
 	if self.tooltip and MouseIsOver(self.tooltip) then
         return
     else

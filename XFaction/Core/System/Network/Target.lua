@@ -4,62 +4,65 @@ local ObjectName = 'Target'
 
 -- A target is a collection of connected realms + faction
 -- As long as someone on the target receives, they rebroadcast to local channel
-XFC.Target = XFC.Object:newChildConstructor()
+Target = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function XFC.Target:new()
-    local object = XFC.Target.parent.new(self)
+function Target:new()
+    local object = Target.parent.new(self)
     object.__name = ObjectName
     object.realm = nil
     object.faction = nil
+    object.targetCount = 1
     return object
 end
 --#endregion
 
---#region Properties
-function XFC.Target:Realm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm' or inRealm == nil)
-    if(inRealm ~= nil) then
-        self.realm = inRealm
-    end
-    return self.realm
-end
-
-function XFC.Target:Faction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil)
-    if(inFaction ~= nil) then
-        self.faction = inFaction
-    end
-    return self.faction
+--#region Print
+function Target:Print()
+    self:ParentPrint()
+    XF:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
+    if(self:HasRealm()) then self:GetRealm():Print() end
+    if(self:HasFaction()) then self:GetFaction():Print() end
 end
 --#endregion
 
---#region Methods
-function XFC.Target:Print()
-    self:ParentPrint()
-    if(self:HasRealm()) then self:Realm():Print() end
-    if(self:HasFaction()) then self:Faction():Print() end
+--#region Accessors
+function Target:HasRealm()
+    return self.realm ~= nil
 end
 
-function XFC.Target:HasRealm()
-    return self:Realm() ~= nil
+function Target:GetRealm()
+    return self.realm
 end
 
-function XFC.Target:HasFaction()
-    return self:Faction() ~= nil
+function Target:SetRealm(inRealm)
+    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
+    self.realm = inRealm
 end
 
-function XFC.Target:IsMyTarget()
+function Target:HasFaction()
+    return self.faction ~= nil
+end
+
+
+function Target:GetFaction()
+    return self.faction
+end
+
+function Target:SetFaction(inFaction)
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
+    self.faction = inFaction
+end
+
+function Target:IsMyTarget()
     return XF.Player.Target:Equals(self)
 end
 
-function XFC.Target:Serialize()
-    return self:GetRealm():ID() .. ':' .. self:GetFaction():Key()
+function Target:GetTargetCount()
+    return self.targetCount
 end
 
-function XFC.Target:IsTarget(inRealm, inFaction)
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm')
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction')
-    return inRealm:Equals(self:GetRealm()) and inFaction:Equals(self:GetFaction())
+function Target:IncrementTargetCount()
+    self.targetCount = self.targetCount + 1
 end
 --#endregion

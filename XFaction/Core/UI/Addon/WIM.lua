@@ -1,22 +1,23 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'WIM'
 
-XFC.WIM = XFC.Addon:newChildConstructor()
+XFWIM = Addon:newChildConstructor()
 
 --#region Constructors
-function XFC.WIM:new()
-    local object = XFC.WIM.parent.new(self)
+function XFWIM:new()
+    local object = XFWIM.parent.new(self)
     object.__name = ObjectName
     return object
 end
+--#endregion
 
-function XFC.WIM:Initialize()
+--#region Initializers
+function XFWIM:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self:API(WIM)
-        self:IsLoaded(true)
-        XF:Info(self:ObjectName(), 'WIM loaded successfully')
+        XF.Addons.WIM:SetAPI(WIM)        
+        XF.Addons.WIM:IsLoaded(true)
+        XF:Info(ObjectName, 'WIM loaded successfully')
 		self:IsInitialized(true)
 	end
 end

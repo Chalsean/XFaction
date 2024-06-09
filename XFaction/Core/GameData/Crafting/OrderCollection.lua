@@ -8,7 +8,6 @@ XFC.OrderCollection = XFC.Factory:newChildConstructor()
 function XFC.OrderCollection:new()
 	local object = XFC.OrderCollection.parent.new(self)
 	object.__name = ObjectName
-    object.firstQuery = true
     return object
 end
 
@@ -17,17 +16,7 @@ function XFC.OrderCollection:NewObject()
 end
 --#endregion
 
---#region Properties
-function XFC.OrderCollection:IsFirstQuery(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
-    if(inBoolean ~= nil) then
-        self.firstQuery = inBoolean
-    end    
-    return self.firstQuery
-end
---#endregion
-
---#region Methods
+--#region System
 function XFC.OrderCollection:Backup()
 	try(function ()
         if(self:IsInitialized()) then
@@ -36,8 +25,8 @@ function XFC.OrderCollection:Backup()
             end
         end
     end).
-    catch(function (err)
-        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create item backup before reload: ' .. err
+    catch(function (inErrorMessage)
+        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create item backup before reload: ' .. inErrorMessage
     end)
 end
 
@@ -51,8 +40,8 @@ function XFC.OrderCollection:Restore()
 			self:Add(order)
 			XF:Info(self:ObjectName(), '  Restored %s order information from backup', order:Key())
         end).
-        catch(function (err)
-            XF:Warn(ObjectName, err)
+        catch(function (inErrorMessage)
+            XF:Warn(ObjectName, inErrorMessage)
 			self:Push(order)
         end)
     end

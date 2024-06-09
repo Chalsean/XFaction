@@ -379,6 +379,12 @@ XF.Options = {
 									fontSize = 'medium',
 									name = XF.Lib.Locale['ADDON_ELVUI_DESCRIPTION']
 								},
+								Kui = {
+									order = 2,
+									type = 'description',
+									fontSize = 'medium',
+									name = XF.Lib.Locale['NAMEPLATE_KUI_DESCRIPTION']
+								},
 								RaiderIO = {
 									order = 3,
 									type = 'description',
@@ -728,7 +734,7 @@ XF.Options = {
 									name = XF.Lib.Locale['AUDIT'],
 									type = 'execute',
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function() XF.Player.Unit:Guild():PrintAudit() end,
+									func = function() XF.Player.Unit:GetGuild():PrintAudit() end,
 								},
 								Channel = {
 									order = 2,
@@ -770,7 +776,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['EVENT'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XFO.Events:Print() end,
+									func = function(info) XF.Events:Print() end,
 								},
 								Faction = {
 									order = 7,
@@ -784,7 +790,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['FRIEND'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XFO.Friends:Print() end,
+									func = function(info) XF.Friends:Print() end,
 								},
 								Guild = {
 									order = 15,
@@ -805,7 +811,14 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['LINK'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XFO.Links:Print() end,
+									func = function(info) XF.Links:Print() end,
+								},
+								Node = {
+									order = 18,
+									type = 'execute',
+									name = XF.Lib.Locale['NODE'],
+									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
+									func = function(info) XF.Nodes:Print() end,
 								},
 								Order = {
 									order = 19,
@@ -861,7 +874,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['TARGET'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XFO.Targets:Print() end,
+									func = function(info) XF.Targets:Print() end,
 								},
 								Team = {
 									order = 27,
@@ -875,7 +888,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['TIMER'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XFO.Timers:Print() end,
+									func = function(info) XF.Timers:Print() end,
 								},
 								Zone = {
 									order = 29,
@@ -913,6 +926,7 @@ function XF:ConfigInitialize()
 	XF.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XF.ConfigDB)
 	XF.Lib.Config:RegisterOptionsTable(XF.Name, XF.Options, nil)
 	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, XF.Name, nil, 'General')
+	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'Addons', XF.Name, 'Addons')
 	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'Chat', XF.Name, 'Chat')
 	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'DataText', XF.Name, 'DataText')
 	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'Profile', XF.Name, 'Profile')
@@ -975,8 +989,8 @@ function XF:ConfigInitialize()
 			XF.Config.InstallVersion = XF.Version:Key()
 		end
 	end).
-	catch(function (err)
-		XF:Debug(ObjectName, err)
+	catch(function (inErrorMessage)
+		XF:Debug(ObjectName, inErrorMessage)
 	end)
 	--#endregion
 

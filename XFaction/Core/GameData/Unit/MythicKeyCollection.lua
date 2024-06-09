@@ -39,15 +39,4 @@ end
 function XFC.MythicKeyCollection:HasMyKey()
     return self.myKey ~= nil
 end
-
-function XFC.MythicKeyCollection:Deserialize(inKey)
-    assert(type(inKey) == 'string')
-    if(not self:Contains(inKey)) then
-        local key = XFC.MythicKey:new()
-        key:Initialize()
-        key:Key(inKey)
-        self:Add(key)
-    end
-    return self:Get(inKey)
-end
 --#endregion

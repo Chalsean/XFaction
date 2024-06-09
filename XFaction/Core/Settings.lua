@@ -145,12 +145,15 @@ XF.Settings = {
 		},
 		BNet = {
 			FriendTimer = 2,
-			PacketSize = 420,	
+			PacketSize = 425,	
 			Ping = {
-				Timer = 60 * 3,     -- Seconds between pinging friends
+				Timer = 60,         -- Seconds between pinging friends
 			},
 			Link = {
-				Broadcast = 60 * 3, -- Seconds between broadcasting links
+				Broadcast = 60 * 2, -- Seconds between broadcasting links
+				Scan = 60 * 3,      -- Seconds between link scans for stale links
+				Stale = 60 * 10,    -- Seconds until considering a link stale
+				PercentStart = 10,  -- Number of links across confederate before random selection kicks in
 			},
 		},
 		Mailbox = {

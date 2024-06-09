@@ -42,8 +42,4 @@ end
 function XFC.Spec:HasClass()
     return self.class ~= nil
 end
-
-function XFC.Spec:IsInitial()
-    return self:Name() == 'Initial'
-end
 --#endregion

@@ -2,43 +2,36 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RaiderIOCollection'
 
-XFC.RaiderIOCollection = XFC.Factory:newChildConstructor()
+local RaiderIO = nil
+
+RaiderIOCollection = XFC.Factory:newChildConstructor()
 
 --#region Constructors
-function XFC.RaiderIOCollection:new()
-    local object = XFC.RaiderIOCollection.parent.new(self)
+function RaiderIOCollection:new()
+    local object = RaiderIOCollection.parent.new(self)
     object.__name = ObjectName
-    object.api = nil
     return object
 end
 
-function XFC.RaiderIOCollection:NewObject()
-    return XFC.RaiderIO:new()
+function RaiderIOCollection:NewObject()
+    return XFRaiderIO:new()
 end
+--#endregion
 
-function XFC.RaiderIOCollection:Initialize()
+--#region Initializers
+function RaiderIOCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self:API(_G.RaiderIO)
+        RaiderIO = _G.RaiderIO
         self:IsInitialized(true)        
     end
     return self:IsInitialized()
 end
 --#endregion
 
---#region Properties
-function XFC.RaiderIOCollection:API(inAPI)
-    assert(type(inAPI) == 'table' or inAPI == nil)
-    if(inAPI ~= nil) then
-        self.api = inAPI
-    end
-    return self.api
-end
---#endregion
-
---#region Methods
-function XFC.RaiderIOCollection:Get(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+--#region Hash
+function RaiderIOCollection:Get(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
     if(self:IsInitialized()) then
         if(not self:Contains(inUnit:Key())) then
             self:AddUnit(inUnit)
@@ -47,41 +40,44 @@ function XFC.RaiderIOCollection:Get(inUnit)
     end
 end
 
-function XFC.RaiderIOCollection:AddUnit(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit') 
+function RaiderIOCollection:AddUnit(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object') 
     try(function ()
         local raiderIO = self:Pop()
         raiderIO:Initialize()
         raiderIO:Key(inUnit:Key())
-        raiderIO:Name(inUnit:UnitName())
+        raiderIO:Name(inUnit:GetUnitName())
 
-        local profile = inUnit:IsAlt() and self:API().GetProfile(inUnit:MainName(), inUnit:Realm():Name()) or self:API().GetProfile(inUnit:Name(), inUnit:Realm():Name())
+        local profile = RaiderIO.GetProfile(inUnit:GetMainName(), inUnit:GetGuild():Realm():Name())
+        if(profile == nil) then
+            profile = RaiderIO.GetProfile(inUnit:Name(), inUnit:GetGuild():Realm():Name())
+        end
         
         -- Raid
         if(profile and profile.raidProfile) then
             local topProgress = profile.raidProfile.sortedProgress[1]
             if(topProgress and topProgress.isProgress) then
-                raiderIO:Raid(topProgress.progress.progressCount, topProgress.progress.raid.bossCount, topProgress.progress.difficulty)
+                raiderIO:SetRaid(topProgress.progress.progressCount, topProgress.progress.raid.bossCount, topProgress.progress.difficulty)
             end
         end
         -- M+
         if(profile and profile.mythicKeystoneProfile) then
             if(profile.mythicKeystoneProfile.mainCurrentScore and profile.mythicKeystoneProfile.mainCurrentScore > 0) then
-                raiderIO:DungeonScore(profile.mythicKeystoneProfile.mainCurrentScore)
+                raiderIO:SetDungeon(profile.mythicKeystoneProfile.mainCurrentScore)
             elseif(profile.mythicKeystoneProfile.currentScore and profile.mythicKeystoneProfile.currentScore > 0) then
-                raiderIO:DungeonScore(profile.mythicKeystoneProfile.currentScore)
+                raiderIO:SetDungeon(profile.mythicKeystoneProfile.currentScore)
             end
         end
 
         self:Add(raiderIO)
     end).
-    catch(function (err)
-        XF:Warn(self:ObjectName(), err)
+    catch(function (inErrorMessage)
+        XF:Warn(ObjectName, inErrorMessage)
     end)
 end
 
-function XFC.RaiderIOCollection:Remove(inRaiderIO)
-    assert(type(inRaiderIO) == 'table' and inRaiderIO.__name == 'RaiderIO')
+function RaiderIOCollection:Remove(inRaiderIO)
+    assert(type(inRaiderIO) == 'table' and inRaiderIO.__name ~= nil and inRaiderIO.__name == 'RaiderIO', 'argument must be RaiderIO object')
     if(self:Contains(inRaiderIO:Key())) then
         self.parent.Remove(self, inRaiderIO:Key())
         self:Push(inRaiderIO)

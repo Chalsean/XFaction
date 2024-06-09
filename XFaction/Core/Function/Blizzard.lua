@@ -7,8 +7,7 @@ XFF.TimeGetLocal = C_DateAndTime.GetServerTimeLocal
 XFF.TimeGetCalendar = C_DateAndTime.GetCurrentCalendarTime
 
 -- Timer
-XFF.TimerStart = C_Timer.NewTimer
-XFF.TimerStartRepeater = C_Timer.NewTicker
+XFF.TimerStart = C_Timer.NewTicker
 
 -- Chat / Channel
 XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter
@@ -48,7 +47,7 @@ XFF.SpecGetGroupID = GetSpecialization
 XFF.SpecGetID = GetSpecializationInfo
 
 -- Player
-XFF.PlayerGetItemLevel = GetAverageItemLevel
+XFF.PlayerGetIlvl = GetAverageItemLevel
 XFF.PlayerGetAchievement = GetAchievementInfo
 XFF.PlayerGetAchievementLink = GetAchievementLink
 XFF.PlayerGetGUID = UnitGUID
@@ -58,9 +57,6 @@ XFF.PlayerIsInInstance = IsInInstance
 XFF.PlayerGetFaction = UnitFactionGroup
 XFF.PlayerGetPvPRating = GetPersonalRatedInfo
 XFF.PlayerGetGuild = GetGuildInfo
-XFF.PlayerGetKeyLevel = C_MythicPlus.GetOwnedKeystoneLevel
-XFF.PlayerGetKeyMap = C_MythicPlus.GetOwnedKeystoneChallengeMapID
-XFF.PlayerGetUnitName = UnitName
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo
@@ -73,7 +69,6 @@ XFF.ClientGetAddonCount = C_AddOns.GetNumAddOns
 XFF.ClientGetAddonInfo = C_AddOns.GetAddOnInfo
 XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
 XFF.ClientGetAddonState = C_AddOns.GetAddOnEnableState
-XFF.ClientRequestMaps = C_MythicPlus.RequestMapInfo
 
 -- UI
 XFF.UIOptionsFrame = InterfaceOptionsFrame
