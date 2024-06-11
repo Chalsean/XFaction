@@ -1,10 +1,10 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'MythicKey'
 local GetKeyLevel = C_MythicPlus.GetOwnedKeystoneLevel
 local GetKeyMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID
 
-XFC.MythicKey = XFC.Object:newChildConstructor()
+XFC.MythicKey = Object:newChildConstructor()
 
 --#region Constructors
 function XFC.MythicKey:new()
@@ -15,16 +15,18 @@ function XFC.MythicKey:new()
 end
 --#endregion
 
---#region Methods
+--#region Print
 function XFC.MythicKey:Print()
     self:ParentPrint()
     if(self:HasDungeon()) then self:GetDungeon():Print() end
 end
+--#endregion
 
+--#region Accessors
 function XFC.MythicKey:Refresh()
     local level = GetKeyLevel()
     if(level ~= nil) then
-        self:ID(level)
+        self:SetID(level)
     end
     
     local mapID = GetKeyMapID()
@@ -49,7 +51,7 @@ function XFC.MythicKey:SetDungeon(inDungeon)
 end
 
 function XFC.MythicKey:Serialize()
-    return self:HasDungeon() and self:GetDungeon():Key() .. ';' .. self:ID() or nil
+    return self:HasDungeon() and self:GetDungeon():GetKey() .. ';' .. self:GetID() or nil
 end
 
 function XFC.MythicKey:Deserialize(data)
@@ -57,6 +59,6 @@ function XFC.MythicKey:Deserialize(data)
     if(XFO.Dungeons:Contains(tonumber(key[1]))) then
         self:SetDungeon(XFO.Dungeons:Get(tonumber(key[1])))
     end
-    self:ID(key[2])
+    self:SetID(key[2])
 end
 --#endregion

@@ -1,9 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'LinkCollection'
 local ServerTime = GetServerTime
 
-LinkCollection = XFC.Factory:newChildConstructor()
+LinkCollection = Factory:newChildConstructor()
 
 --#region Constructors
 function LinkCollection:new()
@@ -20,22 +19,22 @@ end
 --#region Hash
 function LinkCollection:Add(inLink)
     assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
-	if(not self:Contains(inLink:Key())) then
+	if(not self:Contains(inLink:GetKey())) then
 		self.parent.Add(self, inLink)
 		inLink:GetFromNode():IncrementLinkCount()
 		inLink:GetToNode():IncrementLinkCount()
-		XF:Info(ObjectName, 'Added link from [%s] to [%s]', inLink:GetFromNode():Name(), inLink:GetToNode():Name())
+		XF:Info(ObjectName, 'Added link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		XF.DataText.Links:RefreshBroker()
 	end
 end
 
 function LinkCollection:Remove(inLink)
     assert(type(inLink) == 'table' and inLink.__name == 'Link', 'argument must be Link object')
-	if(self:Contains(inLink:Key())) then
-		self.parent.Remove(self, inLink:Key())
+	if(self:Contains(inLink:GetKey())) then
+		self.parent.Remove(self, inLink:GetKey())
 		inLink:GetFromNode():DecrementLinkCount()
 		inLink:GetToNode():DecrementLinkCount()
-		XF:Info(ObjectName, 'Removed link from [%s] to [%s]', inLink:GetFromNode():Name(), inLink:GetToNode():Name())
+		XF:Info(ObjectName, 'Removed link from [%s] to [%s]', inLink:GetFromNode():GetName(), inLink:GetToNode():GetName())
 		self:Push(inLink)
 		XF.DataText.Links:RefreshBroker()
 	end
@@ -60,10 +59,10 @@ function LinkCollection:ProcessMessage(inMessage)
 	-- Remove stale links and update datetimes
 	for _, link in self:Iterator() do
 		-- Consider that we may have gotten link information from the other node
-		if(link:GetFromNode():Name() == sourceKey or link:GetToNode():Name() == sourceKey) then
-			if(not link:IsMyLink() and linkKeys[link:Key()] == nil) then
+		if(link:GetFromNode():GetName() == sourceKey or link:GetToNode():GetName() == sourceKey) then
+			if(not link:IsMyLink() and linkKeys[link:GetKey()] == nil) then
 				self:Remove(link)
-				XF:Debug(ObjectName, 'Removed link due to node broadcast [%s]', link:Key())
+				XF:Debug(ObjectName, 'Removed link due to node broadcast [%s]', link:GetKey())
 			else
 				-- Update datetime for janitor process
 				link:SetTimeStamp(ServerTime())
@@ -84,9 +83,9 @@ function LinkCollection:SetLinkFromString(inLinkString)
 		return nil
 	end
 
-	local key = XF:GetLinkKey(fromNode:Name(), toNode:Name())
+	local key = XF:GetLinkKey(fromNode:GetName(), toNode:GetName())
 	if(self:Contains(key)) then
-		return self:Get(key), fromNode:Name()
+		return self:Get(key), fromNode:GetName()
 	end
 
 	local link = self:Pop()
@@ -97,7 +96,7 @@ function LinkCollection:SetLinkFromString(inLinkString)
 	fromNode:IncrementLinkCount()
 	toNode:IncrementLinkCount()
 
-	return key, fromNode:Name()
+	return key, fromNode:GetName()
 end
 --#endregion
 

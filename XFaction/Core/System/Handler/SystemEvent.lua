@@ -1,8 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'SystemEvent'
 
-SystemEvent = XFC.Object:newChildConstructor()
+SystemEvent = Object:newChildConstructor()
 
 --#region Constructors
 function SystemEvent:new()
@@ -54,7 +54,7 @@ function SystemEvent:CallbackLogout()
                 message:SetMainName(XF.Player.Unit:GetMainName())
             end
             message:SetGuild(XF.Player.Guild)
-            message:SetUnitName(XF.Player.Unit:Name())
+            message:SetUnitName(XF.Player.Unit:GetName())
             message:SetData(' ')
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout sending message'
             XF.Mailbox.Chat:Send(message)
@@ -69,7 +69,7 @@ end
 
 function SystemEvent:CallbackReloadUI()
     try(function ()        
-        XFO.Confederate:Backup()
+        XF.Confederate:Backup()
         XF.Friends:Backup()
         XF.Links:Backup()
         XFO.Orders:Backup()
@@ -85,8 +85,8 @@ function SystemEvent:CallbackReloadUI()
 end
 
 function SystemEvent:CallbackLogin()
-    if(XFO.Channels:HasLocalChannel()) then
-        XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
+    if(XF.Channels:HasLocalChannel()) then
+        XF.Channels:SetLast(XF.Channels:GetLocalChannel():GetKey())
     end
 end
 --#endregion

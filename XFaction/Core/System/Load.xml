@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
-    <Include file='Abstract\Load.xml'/>
+    <Include file='Base\Load.xml'/>
     <Include file='Client\Load.xml'/>
     <Include file='Handler\Load.xml'/>
     <Include file='Media\Load.xml'/>

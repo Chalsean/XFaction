@@ -1,47 +1,50 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'TeamCollection'
 
-XFC.TeamCollection = XFC.ObjectCollection:newChildConstructor()
+TeamCollection = ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function XFC.TeamCollection:new()
-	local object = XFC.TeamCollection.parent.new(self)
+function TeamCollection:new()
+	local object = TeamCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
+--#endregion
 
-function XFC.TeamCollection:Initialize()
+--#region Initializers
+function TeamCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self:Add('?', 'Unknown')
+		for initials, name in pairs (XF.Settings.Confederate.DefaultTeams) do
+			self:Add(initials, name)
+		end
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Methods
-function XFC.TeamCollection:Deserialize(inString)
+--#region DataSet
+function TeamCollection:SetObjectFromString(inString)
 	assert(type(inString) == 'string')
-	local initials, name = inString:match('XFt:(%a-):(%a+)')
-	if(initials ~= nil and name ~= nil) then
-		self:Add(initials, name)
+	local teamInitial, teamName = inString:match('XFt:(%a-):(%a+)')
+	if(teamInitial ~= nil and teamName ~= nil) then
+		self:Add(teamInitial, teamName)
 	end
 end
+--#endregion
 
-function XFC.TeamCollection:Add(inTeam, inName)
-	assert(type(inTeam) == 'table' and inTeam.__name == 'Team' or type(inTeam) == 'string')
-	assert(type(inName) == 'string' or inName == nil)
-    if(type(inTeam) == 'table') then
-        self.parent.Add(self, inTeam)
-    elseif(not self:Contains(inTeam)) then
-		local team = XFC.Team:new()
+--#region Hash
+function TeamCollection:Add(inTeamInitials, inTeamName)
+	assert(type(inTeamInitials) == 'string')
+	assert(type(inTeamName) == 'string')
+	if(not self:Contains(inTeamInitials)) then
+		local team = Team:new()
 		team:Initialize()
-		team:Name(inName)
-		team:Initials(inTeam)
-		team:Key(inTeam)
+		team:SetName(inTeamName)
+		team:SetInitials(inTeamInitials)
+		team:SetKey(inTeamInitials)
 		self.parent.Add(self, team)
-		XF:Info(ObjectName, 'Initialized team [%s:%s]', team:Initials(), team:Name())
+		XF:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
 	end
 end
 --#endregion

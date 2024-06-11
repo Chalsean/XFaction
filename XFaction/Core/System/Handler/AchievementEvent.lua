@@ -1,9 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'AchievementEvent'
 local GetAchievementInfo = GetAchievementInfo
 
-AchievementEvent = XFC.Object:newChildConstructor()
+AchievementEvent = Object:newChildConstructor()
 
 --#region Constructors
 function AchievementEvent:new()
@@ -38,7 +37,7 @@ function AchievementEvent:CallbackAchievement(inID)
                 message:SetType(XF.Enum.Network.BROADCAST)
                 message:SetSubject(XF.Enum.Message.ACHIEVEMENT)
                 message:SetData(inID) -- Leave as ID to localize on receiving end
-                message:Name(XF.Player.Unit:Name())
+                message:SetName(XF.Player.Unit:GetName())
                 if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
                     message:SetMainName(XF.Player.Unit:GetMainName())
                 end

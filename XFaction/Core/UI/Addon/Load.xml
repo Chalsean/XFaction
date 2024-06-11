@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
     <Script file='Addon.lua'/>
     <Script file='ElvUI.lua'/>
+    <Script file='Kui.lua'/>
     <Script file='RaiderIO.lua'/>
     <Script file='RaiderIOCollection.lua'/>
     <Script file='WIM.lua'/>

@@ -1,24 +1,31 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Team'
 
-XFC.Team = XFC.Object:newChildConstructor()
+Team = Object:newChildConstructor()
 
 --#region Constructors
-function XFC.Team:new()
-    local object = XFC.Team.parent.new(self)
+function Team:new()
+    local object = Team.parent.new(self)
     object.__name = ObjectName
-	object.initials = nil
+    object.initials = nil
     return object
 end
 --#endregion
 
---#region Properties
-function XFC.Team:Initials(inInitials)
-	assert(type(inInitials) == 'string' or inInitials == nil, 'argument must be string or nil')
-	if(inInitials ~= nil) then
-		self.initials = inInitials
-	end
-	return self.initials
+--#region Print
+function Team:Print()
+    self:ParentPrint()
+    XF:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
+end
+--#endregion
+
+--#region Accessors
+function Team:GetInitials()
+    return self.initials
+end
+
+function Team:SetInitials(inInitials)
+    assert(type(inInitials) == 'string')
+    self.initials = inInitials
 end
 --#endregion

@@ -1,8 +1,7 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Friend'
 
-Friend = XFC.Object:newChildConstructor()
+Friend = Object:newChildConstructor()
 
 --#region Constructors
 function Friend:new()
@@ -111,7 +110,7 @@ function Friend:CreateLink()
         local link = nil
         try(function ()
             link = XF.Links:Pop()
-            local fromNode = XF.Nodes:Get(XF.Player.Unit:Name())
+            local fromNode = XF.Nodes:Get(XF.Player.Unit:GetName())
             if(fromNode == nil) then
                 fromNode = XF.Nodes:Pop()
                 fromNode:Initialize()
@@ -119,11 +118,11 @@ function Friend:CreateLink()
             end
             link:SetFromNode(fromNode)
 
-            local toNode = XF.Nodes:Get(self:Name())
+            local toNode = XF.Nodes:Get(self:GetName())
             if(toNode == nil) then
                 toNode = XF.Nodes:Pop()
-                toNode:Key(self:Name())
-                toNode:Name(self:Name())
+                toNode:SetKey(self:GetName())
+                toNode:SetName(self:GetName())
                 toNode:SetTarget(self:GetTarget())
                 XF.Nodes:Add(toNode)
             end
@@ -152,22 +151,22 @@ end
 function Friend:Ping()
     XF:Debug(ObjectName, 'Sending ping to [%s]', self:GetTag())
     XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, self:GetGameID())
-    XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
+    XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment() 
 end
 --#endregion
 
 --#region DataSet
 function Friend:SetFromAccountInfo(inAccountInfo)
-    self:Key(inAccountInfo.bnetAccountID)
-    self:ID(inAccountInfo.ID)
+    self:SetKey(inAccountInfo.bnetAccountID)
+    self:SetID(inAccountInfo.ID)
     self:SetAccountID(inAccountInfo.bnetAccountID)
     self:SetGameID(inAccountInfo.gameAccountInfo.gameAccountID)
     self:SetAccountName(inAccountInfo.accountName)
     self:SetTag(inAccountInfo.battleTag)
-    self:Name(inAccountInfo.gameAccountInfo.characterName)
+    self:SetName(inAccountInfo.gameAccountInfo.characterName)
 
-    local realm = XFO.Realms:Get(inAccountInfo.gameAccountInfo.realmID)
-    local faction = XFO.Factions:Get(inAccountInfo.gameAccountInfo.factionName)
+    local realm = XF.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
+    local faction = XF.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
     local target = XF.Targets:GetByRealmFaction(realm, faction)
     self:SetTarget(target)
 end

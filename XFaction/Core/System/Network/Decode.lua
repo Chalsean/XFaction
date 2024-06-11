@@ -10,7 +10,7 @@ local function DeserializeMessage(inObject, inCompressedData)
 	local messageData = unpickle(decompressed)
 	inObject:Initialize()
 
-	if(messageData.K ~= nil) then inObject:Key(messageData.K)	end
+	if(messageData.K ~= nil) then inObject:SetKey(messageData.K)	end
 	if(messageData.T ~= nil) then inObject:SetTo(messageData.T)	end
 	if(messageData.F ~= nil) then inObject:SetFrom(messageData.F)	end
 	if(messageData.S ~= nil) then inObject:SetSubject(messageData.S) end
@@ -20,11 +20,11 @@ local function DeserializeMessage(inObject, inCompressedData)
 	if(messageData.P ~= nil) then inObject:SetPacketNumber(messageData.P) end
 	if(messageData.Q ~= nil) then inObject:SetTotalPackets(messageData.Q) end
 	if(messageData.V ~= nil) then 
-		local version = XFO.Versions:Get(messageData.V)
+		local version = XF.Versions:Get(messageData.V)
 		if(version == nil) then
-			version = XFC.Version:new()
-			version:Key(messageData.V)
-			XFO.Versions:Add(version)
+			version = Version:new()
+			version:SetKey(messageData.V)
+			XF.Versions:Add(version)
 		end
 		inObject:SetVersion(version)
 	end
@@ -32,15 +32,18 @@ local function DeserializeMessage(inObject, inCompressedData)
 	if(messageData.M ~= nil) then inObject:SetMainName(messageData.M) end
 	if(messageData.U ~= nil) then inObject:SetUnitName(messageData.U) end
 	if(messageData.N ~= nil) then 
-		inObject:Name(messageData.N) 
+		inObject:SetName(messageData.N) 
 	elseif(messageData.U ~= nil) then
-		inObject:Name(inObject:GetUnitName())
+		inObject:SetName(inObject:GetUnitName())
 	end
-	if(messageData.H ~= nil and XFO.Guilds:Contains(messageData.H)) then
-		inObject:SetGuild(XFO.Guilds:Get(messageData.H))
+	if(messageData.H ~= nil and XF.Guilds:Contains(messageData.H)) then
+		inObject:SetGuild(XF.Guilds:Get(messageData.H))
+	elseif(messageData.R ~= nil and messageData.G ~= nil) then
+		-- Remove this deprecated logic after everyone on 4.4
+		inObject:SetGuild(XF.Guilds:GetByRealmGuildName(XF.Realms:GetByID(messageData.R), messageData.G))
 	end		
 
-	if(messageData.W ~= nil) then inObject:SetFaction(XFO.Factions:Get(messageData.W)) end
+	if(messageData.W ~= nil) then inObject:SetFaction(XF.Factions:Get(messageData.W)) end
 
 	-- Leave any UnitData serialized for now
 	inObject:SetData(messageData.D)
@@ -49,25 +52,28 @@ end
 
 function XF:DeserializeUnitData(inData)
 	local deserializedData = unpickle(inData)
-	local unit = XFO.Confederate:Pop()
+	local unit = XF.Confederate:Pop()
 	unit:IsRunningAddon(true)
-	unit:SetRace(XFO.Races:Get(deserializedData.A))
+	unit:SetRace(XF.Races:Get(deserializedData.A))
 	if(deserializedData.B ~= nil) then unit:SetAchievementPoints(deserializedData.B) end
-	if(deserializedData.C ~= nil) then unit:ID(tonumber(deserializedData.C)) end
+	if(deserializedData.C ~= nil) then unit:SetID(tonumber(deserializedData.C)) end
 	if(deserializedData.E ~= nil) then 
 		unit:SetPresence(tonumber(deserializedData.E)) 
 	else
 		unit:SetPresence(Enum.ClubMemberPresence.Online)
 	end
-	unit:SetFaction(XFO.Factions:Get(deserializedData.F))
+	unit:SetFaction(XF.Factions:Get(deserializedData.F))
 	unit:SetGUID(deserializedData.K)
-	unit:Key(deserializedData.K)
-	unit:SetClass(XFO.Classes:Get(deserializedData.O))
+	unit:SetKey(deserializedData.K)
+	unit:SetClass(XF.Classes:Get(deserializedData.O))
 	local unitNameParts = string.Split(deserializedData.U, '-')
-	unit:Name(unitNameParts[1])
+	unit:SetName(unitNameParts[1])
 	unit:SetUnitName(deserializedData.U)
-	if(deserializedData.H ~= nil and XFO.Guilds:Contains(deserializedData.H)) then
-		unit:SetGuild(XFO.Guilds:Get(deserializedData.H))
+	if(deserializedData.H ~= nil and XF.Guilds:Contains(deserializedData.H)) then
+		unit:SetGuild(XF.Guilds:Get(deserializedData.H))
+	else
+		-- Remove this deprecated logic after everyone on 4.4
+		unit:SetGuild(XF.Guilds:GetByRealmGuildName(XF.Realms:GetByID(deserializedData.R), deserializedData.G))
 	end
 	if(deserializedData.I ~= nil) then unit:SetItemLevel(deserializedData.I) end
 	unit:SetRank(deserializedData.J)
@@ -80,35 +86,35 @@ function XF:DeserializeUnitData(inData)
 	unit:SetNote(deserializedData.N)	
 	unit:IsOnline(true)
 	if(deserializedData.P1 ~= nil) then
-		unit:SetProfession1(XFO.Professions:Get(tonumber(deserializedData.P1)))
+		unit:SetProfession1(XF.Professions:Get(deserializedData.P1))
 	end
 	if(deserializedData.P2 ~= nil) then
-		unit:SetProfession2(XFO.Professions:Get(tonumber(deserializedData.P2)))
+		unit:SetProfession2(XF.Professions:Get(deserializedData.P2))
 	end
 	unit:IsRunningAddon(true)
 	unit:SetTimeStamp(ServerTime())
 	if(deserializedData.V ~= nil) then
-		unit:SetSpec(XFO.Specs:Get(deserializedData.V))
+		unit:SetSpec(XF.Specs:Get(deserializedData.V))
 	end
 
-	if(deserializedData.D ~= nil and XFO.Zones:Contains(tonumber(deserializedData.D))) then
-		unit:SetZone(XFO.Zones:Get(tonumber(deserializedData.D)))
+	if(deserializedData.D ~= nil and XF.Zones:ContainsByID(tonumber(deserializedData.D))) then
+		unit:SetZone(XF.Zones:GetByID(tonumber(deserializedData.D)))
 	elseif(deserializedData.Z == nil) then
-		unit:SetZone(XFO.Zones:Get('?'))
+		unit:SetZone(XF.Zones:Get('?'))
 	else
-		if(not XFO.Zones:Contains(deserializedData.Z)) then
-			XFO.Zones:Add(deserializedData.Z)
+		if(not XF.Zones:Contains(deserializedData.Z)) then
+			XF.Zones:AddZone(deserializedData.Z)
 		end
-		unit:SetZone(XFO.Zones:Get(deserializedData.Z))
+		unit:SetZone(XF.Zones:Get(deserializedData.Z))
 	end
 
 	if(deserializedData.Y ~= nil) then unit:SetPvPString(deserializedData.Y) end
 	if(deserializedData.X ~= nil) then 
-		local version = XFO.Versions:Get(deserializedData.X)
+		local version = XF.Versions:Get(deserializedData.X)
 		if(version == nil) then
-			version = XFC.Version:new()
-			version:Key(deserializedData.X)
-			XFO.Versions:Add(version)
+			version = Version:new()
+			version:SetKey(deserializedData.X)
+			XF.Versions:Add(version)
 		end
 		unit:SetVersion(version) 
 	end

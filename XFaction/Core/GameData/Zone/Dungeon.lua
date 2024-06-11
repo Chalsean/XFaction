@@ -1,7 +1,7 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
+local XFC, XFO = XF.Class, XF.Object
 
-XFC.Dungeon = XFC.Object:newChildConstructor()
+XFC.Dungeon = Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Dungeon:new()

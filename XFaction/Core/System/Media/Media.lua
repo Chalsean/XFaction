@@ -1,8 +1,7 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Media'
 
-Media = XFC.Object:newChildConstructor()
+Media = Object:newChildConstructor()
 
 --#region Constructors
 function Media:new()

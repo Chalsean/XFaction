@@ -1,10 +1,9 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RaiderIOCollection'
 
 local RaiderIO = nil
 
-RaiderIOCollection = XFC.Factory:newChildConstructor()
+RaiderIOCollection = Factory:newChildConstructor()
 
 --#region Constructors
 function RaiderIOCollection:new()
@@ -33,10 +32,10 @@ end
 function RaiderIOCollection:Get(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
     if(self:IsInitialized()) then
-        if(not self:Contains(inUnit:Key())) then
+        if(not self:Contains(inUnit:GetKey())) then
             self:AddUnit(inUnit)
         end
-        return self.parent.Get(self, inUnit:Key())
+        return self.parent.Get(self, inUnit:GetKey())
     end
 end
 
@@ -45,12 +44,12 @@ function RaiderIOCollection:AddUnit(inUnit)
     try(function ()
         local raiderIO = self:Pop()
         raiderIO:Initialize()
-        raiderIO:Key(inUnit:Key())
-        raiderIO:Name(inUnit:GetUnitName())
+        raiderIO:SetKey(inUnit:GetKey())
+        raiderIO:SetName(inUnit:GetUnitName())
 
-        local profile = RaiderIO.GetProfile(inUnit:GetMainName(), inUnit:GetGuild():Realm():Name())
+        local profile = RaiderIO.GetProfile(inUnit:GetMainName(), inUnit:GetGuild():GetRealm():GetName())
         if(profile == nil) then
-            profile = RaiderIO.GetProfile(inUnit:Name(), inUnit:GetGuild():Realm():Name())
+            profile = RaiderIO.GetProfile(inUnit:GetName(), inUnit:GetGuild():GetRealm():GetName())
         end
         
         -- Raid
@@ -78,8 +77,8 @@ end
 
 function RaiderIOCollection:Remove(inRaiderIO)
     assert(type(inRaiderIO) == 'table' and inRaiderIO.__name ~= nil and inRaiderIO.__name == 'RaiderIO', 'argument must be RaiderIO object')
-    if(self:Contains(inRaiderIO:Key())) then
-        self.parent.Remove(self, inRaiderIO:Key())
+    if(self:Contains(inRaiderIO:GetKey())) then
+        self.parent.Remove(self, inRaiderIO:GetKey())
         self:Push(inRaiderIO)
     end
 end

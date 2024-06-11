@@ -1,11 +1,10 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Timer'
 local NewTicker = C_Timer.NewTicker
 local NewTimer = C_Timer.NewTimer
 local Now = GetServerTime
 
-Timer = XFC.Object:newChildConstructor()
+Timer = Object:newChildConstructor()
 
 --#region Constructors
 function Timer:new()
@@ -148,10 +147,10 @@ function Timer:Start()
             self.handle = NewTicker(self:GetDelta(), 
                 function (...)
                     if(self:HasTimeToLive() and self:GetStartTime() + self:GetTimeToLive() < Now()) then
-                        XF:Debug(ObjectName, 'Timer will stop due to time limit [' .. tostring(self:GetTimeToLive()) .. '] being reached: ' .. self:Key())
+                        XF:Debug(ObjectName, 'Timer will stop due to time limit [' .. tostring(self:GetTimeToLive()) .. '] being reached: ' .. self:GetKey())
                         self:Stop()
                     elseif(self:HasMaxAttempts() and self:GetMaxAttempts() < self:GetAttempt()) then
-                        XF:Debug(ObjectName, 'Timer will stop due to attempt limit [' .. tostring(self:GetMaxAttempts()) .. '] being reached: ' .. self:Key())
+                        XF:Debug(ObjectName, 'Timer will stop due to attempt limit [' .. tostring(self:GetMaxAttempts()) .. '] being reached: ' .. self:GetKey())
                         self:Stop()
                     elseif(callback(...)) then
                         self:Stop()
@@ -168,7 +167,7 @@ function Timer:Start()
         end
         self:SetStartTime(Now())        
         self:IsEnabled(true)
-        XF:Debug(ObjectName, 'Started timer [%s] for [%d] seconds', self:Name(), self:GetDelta())
+        XF:Debug(ObjectName, 'Started timer [%s] for [%d] seconds', self:GetName(), self:GetDelta())
     end
 end
 
@@ -178,7 +177,7 @@ function Timer:Stop()
             self.handle:Cancel()
         end
         self:IsEnabled(false)
-        XF:Debug(ObjectName, 'Stopped timer [%s]', self:Name())
+        XF:Debug(ObjectName, 'Stopped timer [%s]', self:GetName())
     end
 end
 --#endregion

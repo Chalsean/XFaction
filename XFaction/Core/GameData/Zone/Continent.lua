@@ -1,19 +1,20 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Continent'
 
-XFC.Continent = XFC.Object:newChildConstructor()
+Continent = Object:newChildConstructor()
 
 --#region Constructors
-function XFC.Continent:new()
-    local object = XFC.Continent.parent.new(self)
+function Continent:new()
+    local object = Continent.parent.new(self)
     object.__name = ObjectName
     object.IDs = nil
     object.localeName = nil
     return object
 end
+--#endregion
 
-function XFC.Continent:Initialize()
+--#region Initializers
+function Continent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 		self.IDs = {}
@@ -22,37 +23,45 @@ function XFC.Continent:Initialize()
 end
 --#endregion
 
---#region Properties
-function XFC.Continent:ID(inID)
-    assert(type(inID) == 'number' or inID == nil)
-    if(inID == nil) then
-        if(#self.IDs > 0) then
-            return self.IDs[1]
-        end
-        return nil
-    end
+--#region Print
+function Continent:Print()
+    self:ParentPrint()
+    XF:Debug(ObjectName, '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
+    XF:Debug(ObjectName, '  IDs: ')
+    XF:DataDumper(ObjectName, self.IDs)
+end
+--#endregion
+
+--#region Array
+function Continent:HasID(inID)
+    assert(type(inID) == 'number')
     for _, ID in ipairs(self.IDs) do
         if(ID == inID) then
             return true
         end
     end
-    self.IDs[#self.IDs + 1] = inID
+    return false
 end
 
-function XFC.Continent:LocaleName(inName)
-    assert(type(inName) == 'string' or inName == nil)
-    if(inName ~= nil) then
-        self.localeName = inName
+function Continent:GetID()
+    if(#self.IDs > 0) then
+        return self.IDs[1]
     end
-    return self.localeName
+end
+
+function Continent:AddID(inID)
+    assert(type(inID) == 'number')
+    self.IDs[#self.IDs + 1] = inID
 end
 --#endregion
 
---#region Methods
-function XFC.Continent:Print()
-    self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  localeName (' .. type(self.localeName) .. '): ' .. tostring(self.localeName))
-    XF:Debug(self:ObjectName(), '  IDs: ')
-    XF:DataDumper(self:ObjectName(), self.IDs)
+--#region Accessors
+function Continent:GetLocaleName()
+    return self.localeName or self:GetName()
+end
+
+function Continent:SetLocaleName(inName)
+    assert(type(inName) == 'string')
+    self.localeName = inName
 end
 --#endregion

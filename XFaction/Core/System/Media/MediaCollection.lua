@@ -1,9 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MediaCollection'
 local MediaPath = 'Interface/Addons/XFaction/Core/System/Media/'
 
-MediaCollection = XFC.ObjectCollection:newChildConstructor()
+MediaCollection = ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function MediaCollection:new()
@@ -19,8 +18,8 @@ function MediaCollection:Add(inName, inType)
 	assert(type(inType) == 'string')
 	local media = Media:new()
 	media:Initialize()
-	media:Key(inName)
-	media:Name(inName)
+	media:SetKey(inName)
+	media:SetName(inName)
 	media:SetType(inType)
 	media:SetPath(MediaPath .. inType .. '/' .. inName .. '.blp')
 	self.parent.Add(self, media)

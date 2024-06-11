@@ -1,8 +1,7 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'SystemFrame'
 
-SystemFrame = XFC.Object:newChildConstructor()
+SystemFrame = Object:newChildConstructor()
 
 --#region Constructors
 function SystemFrame:new()
@@ -48,9 +47,9 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     local text = XF.Settings.Frames.Chat.Prepend
     
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Faction) then  
-        text = text .. format('%s ', format(XF.Icons.String, inFaction:IconID()))
+        text = text .. format('%s ', format(XF.Icons.String, inFaction:GetIconID()))
     elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Faction) then
-        text = text .. format('%s ', format(XF.Icons.String, inFaction:IconID()))
+        text = text .. format('%s ', format(XF.Icons.String, inFaction:GetIconID()))
     end
   
     if(inType == XF.Enum.Message.LOGOUT) then
@@ -58,7 +57,7 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     elseif(inFaction:Equals(XF.Player.Faction)) then
         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
     else
-        local friend = XF.Friends:GetByRealmUnitName(inGuild:Realm(), inName)
+        local friend = XF.Friends:GetByRealmUnitName(inGuild:GetRealm(), inName)
         if(friend ~= nil) then
             text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
         else
@@ -74,9 +73,9 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     end
 
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Guild) then  
-        text = text .. '<' .. inGuild:Initials() .. '> '
+        text = text .. '<' .. inGuild:GetInitials() .. '> '
     elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Guild) then
-        text = text .. '<' .. inGuild:Initials() .. '> '
+        text = text .. '<' .. inGuild:GetInitials() .. '> '
     end
     
     if(inType == XF.Enum.Message.LOGOUT) then
@@ -100,19 +99,19 @@ function SystemFrame:DisplayLoginMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')    
     local unitData = inMessage:GetData()
-    self:Display(inMessage:GetSubject(), unitData:Name(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), nil, unitData:GetFaction())
+    self:Display(inMessage:GetSubject(), unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), nil, unitData:GetFaction())
 end
 
 function SystemFrame:DisplayLogoutMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    self:Display(inMessage:GetSubject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), nil, inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():Faction())
+    self:Display(inMessage:GetSubject(), inMessage:GetName(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), nil, inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
 end
 
 function SystemFrame:DisplayOrder(inOrder)
     if(not XF.Config.Chat.Crafting.Enable) then return end    
     assert(type(inOrder) == 'table' and inOrder.__name ~= nil and inOrder.__name == 'Order', 'argument must be Order type object')
     local customer = inOrder:GetCustomerUnit()
-    self:Display(XF.Enum.Message.ORDER, customer:Name(), customer:GetUnitName(), customer:GetMainName(), customer:GetGuild(), inOrder, customer:GetFaction())
+    self:Display(XF.Enum.Message.ORDER, customer:GetName(), customer:GetUnitName(), customer:GetMainName(), customer:GetGuild(), inOrder, customer:GetFaction())
 end
 --#endregion

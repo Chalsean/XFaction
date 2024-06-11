@@ -1,10 +1,9 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'FriendCollection'
 local GetFriendCount = BNGetNumFriends
 local GetAccountInfo = C_BattleNet.GetFriendAccountInfo
 
-FriendCollection = XFC.Factory:newChildConstructor()
+FriendCollection = Factory:newChildConstructor()
 
 --#region Constructors
 function FriendCollection:new()
@@ -22,22 +21,25 @@ end
 function FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		self:CheckFriends()
-		XF.Events:Add({
-            name = 'Friend', 
-            event = 'BN_FRIEND_INFO_CHANGED', 
-            callback = XF.Friends.CheckFriends, 
-            instance = true,
-            groupDelta = XF.Settings.Network.BNet.FriendTimer
-        })
-		self:IsInitialized(true)
+		try(function ()
+			for i = 1, GetFriendCount() do
+				self:CheckFriend(i)
+			end
+			if(XF.Cache.UIReload) then
+				self:Restore()
+			end
+			self:IsInitialized(true)
+		end).
+		catch(function (inErrorMessage)
+			XF:Warn(ObjectName, inErrorMessage)
+		end)
 	end
 end
 --#endregion
 
 --#region Hash
 function FriendCollection:HasFriends()
-    return self:Count() > 0
+    return self:GetCount() > 0
 end
 
 function FriendCollection:ContainsByGameID(inGameID)
@@ -52,17 +54,17 @@ end
 
 function FriendCollection:Remove(inFriend)
 	assert(type(inFriend) == 'table' and inFriend.__name == 'Friend', 'argument must be Friend object')
-	if(self:Contains(inFriend:Key())) then
+	if(self:Contains(inFriend:GetKey())) then
 		try(function ()
-			if(XF.Nodes:Contains(inFriend:Name())) then
-				XF.Nodes:Remove(XF.Nodes:Get(inFriend:Name()))
+			if(XF.Nodes:Contains(inFriend:GetName())) then
+				XF.Nodes:Remove(XF.Nodes:Get(inFriend:GetName()))
 			end
 		end).
 		catch(function (inErrorMessage)
 			XF:Warn(ObjectName, inErrorMessage)
 		end).
 		finally(function ()
-			self.parent.Remove(self, inFriend:Key())
+			self.parent.Remove(self, inFriend:GetKey())
 			self:Push(inFriend)
 		end)
 	end
@@ -83,7 +85,7 @@ function FriendCollection:GetByRealmUnitName(inRealm, inName)
 	assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
 	assert(type(inName) == 'string')
 	for _, friend in self:Iterator() do
-		if(inName == friend:Name() and inRealm:Equals(friend:GetTarget():GetRealm())) then
+		if(inName == friend:GetName() and inRealm:Equals(friend:GetTarget():GetRealm())) then
 			return friend
 		end
 	 end
@@ -97,12 +99,12 @@ local function CanLink(inAccountInfo)
 	   inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
 
 		-- If player is in Torghast, don't link
-		local realm = XFO.Realms:Get(inAccountInfo.gameAccountInfo.realmID)
-		if(realm == nil or realm:ID() == 0) then return false end
+		local realm = XF.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
+		if(realm == nil or realm:GetID() == 0) then return false end
 
 		-- We don't want to link to neutral faction toons
 		if(inAccountInfo.gameAccountInfo.factionName == 'Neutral') then return false end
-		local faction = XFO.Factions:Get(inAccountInfo.gameAccountInfo.factionName)
+		local faction = XF.Factions:GetByName(inAccountInfo.gameAccountInfo.factionName)
 
 		XF:Trace(ObjectName, 'Checking friend for linkability [%s] GUID [%s] RealmID [%d] RealmName [%s]', inAccountInfo.battleTag, inAccountInfo.gameAccountInfo.playerGuid, inAccountInfo.gameAccountInfo.realmID, inAccountInfo.gameAccountInfo.realmName)
 
@@ -126,7 +128,7 @@ function FriendCollection:CheckFriend(inKey)
 		if(self:Contains(accountInfo.bnetAccountID)) then
 			if(not canLink) then
 				local friend = XF.Friends:Get(accountInfo.bnetAccountID)
-				XF:Info(ObjectName, 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:ID(), friend:GetGameID())
+				XF:Info(ObjectName, 'Friend went offline or to unsupported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
 				self:Remove(friend)
 				return true
 			end
@@ -144,7 +146,7 @@ function FriendCollection:CheckFriend(inKey)
 				self:Push(friend)
 				error(inErrorMessage)
 			end)
-			XF:Info(ObjectName, 'Friend logged into supported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:ID(), friend:GetGameID())
+			XF:Info(ObjectName, 'Friend logged into supported guild [%s:%d:%d:%d]', friend:GetTag(), friend:GetAccountID(), friend:GetID(), friend:GetGameID())
 			-- Ping them to see if they're running the addon
 			if(XF.Initialized) then 
 				friend:Ping() 
@@ -157,14 +159,13 @@ function FriendCollection:CheckFriend(inKey)
 end
 
 function FriendCollection:CheckFriends()
-	local self = XF.Friends
 	try(function ()
 		for i = 1, GetFriendCount() do
 			self:CheckFriend(i)
 		end
 	end).
-	catch(function (err)
-		XF:Warn(self:ObjectName(), err)
+	catch(function (inErrorMessage)
+		XF:Warn(ObjectName, inErrorMessage)
 	end)
 end
 --#endregion
@@ -175,7 +176,7 @@ function FriendCollection:Backup()
 		if(self:IsInitialized()) then
 			for _, friend in self:Iterator() do
 				if(friend:IsRunningAddon()) then
-					XF.Cache.Backup.Friends[#XF.Cache.Backup.Friends + 1] = friend:Key()
+					XF.Cache.Backup.Friends[#XF.Cache.Backup.Friends + 1] = friend:GetKey()
 				end
 			end
 		end

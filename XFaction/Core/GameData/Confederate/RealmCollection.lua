@@ -1,14 +1,7 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RealmCollection'
 
-XFC.RealmCollection = XFC.ObjectCollection:newChildConstructor()
-
 --#region Realm list
--- Places that Blizzard API considers a realm
-local DefaultRealms = {
-	[0] = 'Torghast',
-}
 -- This data originally came from LibRealmInfo, it seems no longer supported as the data is quite stale and the library had bugs nobody was fixing
 -- There is a blizz web api that provides this data
 local RealmData = {
@@ -677,9 +670,6 @@ local RealmData = {
 	[4758]="Judgement,PvP,enUS,EU",
 	[4759]="Celebras,RP,deDE,EU",
 	[4763]="Heartstriker,PvP,deDE,EU",
-	-- Classic
-	[5099]="Skull Rock,Hardcore,enUS,US,PST",
-	[5816]="Crusader Strike,Seasonal,enUS,US,PST",
 }
 	
 local ConnectionData = {
@@ -826,16 +816,21 @@ local ConnectionData = {
 }
 --#endregion
 
+RealmCollection = ObjectCollection:newChildConstructor()
+
 --#region Constructors
-function XFC.RealmCollection:new()
-	local object = XFC.RealmCollection.parent.new(self)
+function RealmCollection:new()
+	local object = RealmCollection.parent.new(self)
 	object.__name = 'RealmCollection'
 	object.realmsByID = nil
 	object.cacheXref = nil
     return object
 end
+--#endregion
 
-function XFC.RealmCollection:Initialize()
+--#region Initializers
+-- Realm information comes from disk, so no need to stick in cache
+function RealmCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.realmsByID = {}
@@ -843,33 +838,33 @@ function XFC.RealmCollection:Initialize()
 		-- Setup all realms in the region
 		for id, data in pairs(RealmData) do
 			local realmData = string.Split(data, ',')
-			if(XFO.Regions:Current():Name() == realmData[4]) then
-				local realm = XFC.Realm:new(); realm:Initialize()
-				realm:Key(realmData[1])
-				realm:Name(realmData[1])
-				realm:ID(tonumber(id))
+			if(XF.Regions:GetCurrent():GetName() == realmData[4]) then
+				local realm = Realm:new(); realm:Initialize()
+				realm:SetKey(realmData[1])
+				realm:SetName(realmData[1])
+				realm:SetID(tonumber(id))
 				self:Add(realm)
 				
-				if(realm:Name() == XFF.RealmGetName()) then
+				if(realm:GetName() == GetRealmName()) then
 					XF.Player.Realm = realm
-					XF:Info(self:ObjectName(), 'Initialized player realm [%d:%s]', realm:ID(), realm:Name())
+					XF:Info(ObjectName, 'Initialized player realm [%d:%s]', realm:GetID(), realm:GetName())
 				else
-					XF:Trace(self:ObjectName(), 'Initialized realm [%d:%s]', realm:ID(), realm:Name())
+					XF:Trace(ObjectName, 'Initialized realm [%d:%s]', realm:GetID(), realm:GetName())
 				end
 			end
 		end
 
 		-- Sanity check
 		if(XF.Player.Realm == nil) then
-			throw(format('Unable to identify player realm'))
+			error(format('Unable to identify player realm'))
 		end
 
 		-- Setup default realms (Torghast)
-		for realmID, realmName in pairs (DefaultRealms) do
-			local realm = XFC.Realm:new(); realm:Initialize()
-			realm:Key(realmName)
-			realm:Name(realmName)
-			realm:ID(realmID)
+		for realmID, realmName in pairs (XF.Settings.Confederate.DefaultRealms) do
+			local realm = Realm:new(); realm:Initialize()
+			realm:SetKey(realmName)
+			realm:SetName(realmName)
+			realm:SetID(realmID)
 			self:Add(realm)
 		end
 
@@ -877,36 +872,35 @@ function XFC.RealmCollection:Initialize()
 		for _, connections in ipairs (ConnectionData) do
 			local realms = string.Split(connections, ',')
 			for _, id1 in ipairs (realms) do
-				local realm1 = self:Get(tonumber(id1))
+				local realm1 = self:GetByID(tonumber(id1))
 				if(realm1 ~= nil) then
 					for _, id2 in ipairs (realms) do
-						local realm2 = self:Get(tonumber(id2))
+						local realm2 = self:GetByID(tonumber(id2))
 						if(realm2 ~= nil and not realm1:Equals(realm2)) then
 							realm1:AddConnected(realm2)
 							realm2:AddConnected(realm1)
-							XF:Trace(self:ObjectName(), 'Initialized realm connection [%d:%d]', realm1:ID(), realm2:ID())
+							XF:Trace(ObjectName, 'Initialized realm connection [%d:%d]', realm1:GetID(), realm2:GetID())
 						end
 					end
 				end
 			end
-		end
+		end		
+
+		XF.Player.Realm:Print()
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Methods
-function XFC.RealmCollection:Add(inRealm)
+--#region Hash
+function RealmCollection:Add(inRealm)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-	self.realmsByID[inRealm:ID()] = inRealm
+	self.realmsByID[inRealm:GetID()] = inRealm
 	self.parent.Add(self, inRealm)
 end
 
-function XFC.RealmCollection:Get(inKey)
-	assert(type(inKey) == 'number' or type(inKey) == 'string', 'argument must be number or string')
-	if(type(inKey) == 'number') then
-		return self.realmsByID[inKey]
-	end
-	return self.parent.Get(self, inKey)
+function RealmCollection:GetByID(inID)
+	assert(type(inID) == 'number')
+	return self.realmsByID[inID]
 end
 --#endregion

@@ -1,9 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTGuild'
 local CombatLockdown = InCombatLockdown
 
-DTGuild = XFC.Object:newChildConstructor()
+DTGuild = Object:newChildConstructor()
 local LDB_ANCHOR
 
 --#region Constructors
@@ -78,7 +77,7 @@ function DTGuild:RefreshBroker()
 		if(XF.Config.DataText.Guild.Label) then
 			text = XF.Lib.Locale['GUILD'] .. ': '
 		end
-		text = format('%s|cff3CE13F%d', text, XFO.Confederate:OnlineCount())
+		text = format('%s|cff3CE13F%d', text, XF.Confederate:GetOnlineCount())
 		XF.DataText.Guild:GetBroker().text = text
 	end
 end
@@ -105,28 +104,28 @@ end
 
 local function PreSort()
 	local list = {}
-	for _, unit in XFO.Confederate:Iterator() do
+	for _, unit in XF.Confederate:Iterator() do
 		if(unit:IsOnline()) then
 			local unitData = {}
 
 			unitData.Level = unit:GetLevel()
-			unitData.Realm = unit:GetGuild():Realm():Name()
-			unitData.Guild = unit:GetGuild():Name()		
-			unitData.Name = unit:Name()
+			unitData.Realm = unit:GetGuild():GetRealm():GetName()
+			unitData.Guild = unit:GetGuild():GetName()		
+			unitData.Name = unit:GetName()
 			unitData.UnitName = unit:GetUnitName()
 			unitData.Note = unit:GetNote()
 			unitData.GUID = unit:GetGUID()
 			unitData.Achievement = unit:GetAchievementPoints()
 			unitData.Rank = unit:GetRank()
 			unitData.ItemLevel = unit:GetItemLevel()	
-			unitData.Race = unit:GetRace():Name()
+			unitData.Race = unit:GetRace():GetName()
 			if(unit:HasTeam()) then 
-				unitData.Team = unit:GetTeam():Name() 
+				unitData.Team = unit:GetTeam():GetName() 
 			else
 				unitData.Team = 'Unknown'
 			end
-			unitData.Class = unit:GetClass():Hex()
-			unitData.Faction = unit:GetRace():Faction():IconID()
+			unitData.Class = unit:GetClass():GetHex()
+			unitData.Faction = unit:GetFaction():GetIconID()
 			unitData.PvP = unit:GetPvP()
 
 			if(unit:HasRaiderIO()) then
@@ -135,35 +134,35 @@ local function PreSort()
 			end
 
 			if(unit:HasVersion()) then
-				unitData.Version = unit:GetVersion():Key()
+				unitData.Version = unit:GetVersion():GetKey()
 			else
 				unitData.Version = '0.0.0'
 			end
 
 			if(unit:IsAlt() and unit:HasMainName() and XF.Config.DataText.Guild.Main) then
-				unitData.Name = unit:Name() .. ' (' .. unit:GetMainName() .. ')'
+				unitData.Name = unit:GetName() .. ' (' .. unit:GetMainName() .. ')'
 			end
 
 			if(unit:HasSpec()) then
-				unitData.Spec = unit:GetSpec():IconID()
+				unitData.Spec = unit:GetSpec():GetIconID()
 			end
 
 			if(unit:HasProfession1()) then
-				unitData.Profession1 = unit:GetProfession1():IconID()
+				unitData.Profession1 = unit:GetProfession1():GetIconID()
 			end
 
 			if(unit:HasProfession2()) then
-				unitData.Profession2 = unit:GetProfession2():IconID()
+				unitData.Profession2 = unit:GetProfession2():GetIconID()
 			end
 
 			if(unit:HasZone()) then
-				unitData.Zone = unit:GetZone():LocaleName()
+				unitData.Zone = unit:GetZone():GetLocaleName()
 			else
 				unitData.Zone = unit:GetZoneName()
 			end
 
 			if(unit:HasMythicKey() and unit:GetMythicKey():HasDungeon()) then
-				unitData.MythicKey = unit:GetMythicKey():GetDungeon():Name() .. ' +' .. unit:GetMythicKey():ID()
+				unitData.MythicKey = unit:GetMythicKey():GetDungeon():GetName() .. ' +' .. unit:GetMythicKey():GetID()
 			end
 
 			list[#list + 1] = unitData
@@ -187,7 +186,7 @@ end
 
 --#region OnEnter
 local function LineClick(_, inUnitGUID, inMouseButton)
-	local unit = XFO.Confederate:Get(inUnitGUID)
+	local unit = XF.Confederate:Get(inUnitGUID)
 	local link = unit:GetLink()
 	if(link == nil) then return end
 
@@ -196,7 +195,7 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
 		C_PartyInfo.RequestInviteFromUnit(unit:GetUnitName())
  	elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
-		SetItemRef(link, unit:Name(), inMouseButton)
+		SetItemRef(link, unit:GetName(), inMouseButton)
 	end
 end
 
@@ -249,13 +248,13 @@ function DTGuild:OnEnter(this)
 	local line = self.tooltip:AddLine()
 	
 	if(XF.Config.DataText.Guild.GuildName and XF.Cache.DTGuildTotalEnabled > 4) then
-		local guildName = XF.Player.Guild:Name()
-		guildName = guildName .. ' <' .. XF.Player.Guild:Initials() .. '>'
+		local guildName = XF.Player.Guild:GetName()
+		guildName = guildName .. ' <' .. XF.Player.Guild:GetInitials() .. '>'
 		self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_GUILD'], guildName), self.headerFont, 'LEFT', 4)
 	end
 
 	if(XF.Config.DataText.Guild.Confederate and XF.Cache.DTGuildTotalEnabled > 8) then
-		self.tooltip:SetCell(line, 6, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self.headerFont, 'LEFT', -1)	
+		self.tooltip:SetCell(line, 6, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XF.Confederate:GetName()), self.headerFont, 'LEFT', -1)	
 	end
 
 	if(XF.Config.DataText.Guild.GuildName or XF.Config.DataText.Guild.Confederate or XF.Config.DataText.Guild.MOTD) then
@@ -342,7 +341,7 @@ function DTGuild:OnEnter(this)
 						cellValue = format('%s', format(XF.Icons.String, unitData[columnName]))
 					end
 				elseif(columnName == 'Name') then
-					cellValue = format('|cff%s%s|r', unitData.Class, unitData.Name)
+					cellValue = format('|c%s%s|r', unitData.Class, unitData.Name)
 				elseif(unitData[columnName] ~= nil) then
 					cellValue = format('|cffffffff%s|r', unitData[columnName])
 				end

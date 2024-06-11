@@ -1,10 +1,9 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Link'
 
 local ServerTime = GetServerTime
 
-Link = XFC.Object:newChildConstructor()
+Link = Object:newChildConstructor()
 
 --#region Constructors
 function Link:new()
@@ -30,7 +29,7 @@ function Link:Initialize()
         self:ParentInitialize()
         self:SetTimeStamp(ServerTime())
         if(self:HasFromNode() and self:HasToNode()) then
-            self:Key(XF:GetLinkKey(self:GetFromNode():Name(), self:GetToNode():Name()))
+            self:SetKey(XF:GetLinkKey(self:GetFromNode():GetName(), self:GetToNode():GetName()))
         end
         self:IsInitialized(true)
     end
@@ -112,8 +111,8 @@ function Link:SetObjectFromString(inLinkString)
 
     local toNode = XF.Nodes:Pop()
     toNode:SetObjectFromString(_Nodes[2])
-    if(XF.Nodes:Contains(toNode:Key())) then
-        toNode = XF.Nodes:Get(toNode:Key())
+    if(XF.Nodes:Contains(toNode:GetKey())) then
+        toNode = XF.Nodes:Get(toNode:GetKey())
     else
         XF.Nodes:Add(toNode)
     end

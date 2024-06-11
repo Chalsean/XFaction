@@ -1,8 +1,7 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'HookCollection'
 
-HookCollection = XFC.ObjectCollection:newChildConstructor()
+HookCollection = ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function HookCollection:new()
@@ -23,7 +22,7 @@ function HookCollection:Add(inArgs)
 
     local hook = Hook:new()
     hook:Initialize()
-    hook:Key(inArgs.name)
+    hook:SetKey(inArgs.name)
     hook:SetOriginal(inArgs.original)
     hook:SetCallback(inArgs.callback)
     hook:IsPreHook(inArgs.pre)

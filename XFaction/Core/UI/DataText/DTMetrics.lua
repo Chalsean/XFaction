@@ -1,9 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTMetrics'
 local CombatLockdown = InCombatLockdown
 
-DTMetrics = XFC.Object:newChildConstructor()
+DTMetrics = Object:newChildConstructor()
 	
 --#region Constructors
 function DTMetrics:new()
@@ -74,25 +73,25 @@ function DTMetrics:RefreshBroker()
 		local text = ''
 		local delimiter = false
 		if(XF.Config.DataText.Metric.Total) then
-			text = text .. format('|cffffffff%d|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):Count())
+			text = text .. format('|cffffffff%d|r', XF.Metrics:Get(XF.Enum.Metric.Messages):GetCount())
 			delimiter = true
 		end
 
 		if(XF.Config.DataText.Metric.Average) then
 			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffffffff%.2f|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):GetAverage(XF.Config.DataText.Metric.Rate))
+			text = text .. format('|cffffffff%.2f|r', XF.Metrics:Get(XF.Enum.Metric.Messages):GetAverage(XF.Config.DataText.Metric.Rate))
 			delimiter = true
 		end
 
 		if(XF.Config.DataText.Metric.Error) then
 			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):Count())
+			text = text .. format('|cffFF4700%d|r', XF.Metrics:Get(XF.Enum.Metric.Error):GetCount())
 			delimiter = true
 		end
 
 		if(XF.Config.DataText.Metric.Warning) then
 			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):Count())
+			text = text .. format('|cffffff00%d|r', XF.Metrics:Get(XF.Enum.Metric.Warning):GetCount())
 			delimiter = true
 		end
 		self.ldbObject.text = text
@@ -123,9 +122,9 @@ function DTMetrics:OnEnter(this)
 
 	--#region Header
 	local line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self.headerFont, 'LEFT', 3)
+	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XF.Confederate:GetName()), self.headerFont, 'LEFT', 3)
 	line = self.tooltip:AddLine()
-	local calendar = XFO.Metrics:StartCalendar()
+	local calendar = XF.Metrics:GetStartCalendar()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self.headerFont, 'LEFT', 3)
 
 	line = self.tooltip:AddLine()
@@ -145,9 +144,9 @@ function DTMetrics:OnEnter(this)
 
 	--#region Populate Table
 	if(XF.Initialized) then
-		for _, metric in XFO.Metrics:Iterator() do
-			self.tooltip:SetCell(line, 1, metric:Name(), self.regularFont, 'LEFT')
-			self.tooltip:SetCell(line, 2, metric:Count(), self.regularFont, 'CENTER')
+		for _, metric in XF.Metrics:Iterator() do
+			self.tooltip:SetCell(line, 1, metric:GetName(), self.regularFont, 'LEFT')
+			self.tooltip:SetCell(line, 2, metric:GetCount(), self.regularFont, 'CENTER')
 			self.tooltip:SetCell(line, 3, format("%.2f", metric:GetAverage(XF.Config.DataText.Metric.Rate)), self.regularFont, 'RIGHT')
 			line = self.tooltip:AddLine()
 		end

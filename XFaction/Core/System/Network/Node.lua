@@ -1,8 +1,7 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Node'
 
-Node = XFC.Object:newChildConstructor()
+Node = Object:newChildConstructor()
 
 --#region Constructors
 function Node:new()
@@ -24,8 +23,8 @@ end
 function Node:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self:Key(XF.Player.Unit:Name())
-        self:Name(XF.Player.Unit:Name())
+        self:SetKey(XF.Player.Unit:GetName())
+        self:SetName(XF.Player.Unit:GetName())
         self:SetTarget(XF.Player.Target)
         self:IsInitialized(true)
     end
@@ -42,7 +41,7 @@ end
 
 --#region Accessors
 function Node:IsMyNode()
-    return self:Name() == XF.Player.Unit:Name()
+    return self:GetName() == XF.Player.Unit:GetName()
 end
 
 function Node:HasTarget()
@@ -59,7 +58,7 @@ function Node:SetTarget(inTarget)
 end
 
 function Node:GetString()
-    return self:Name() .. ':' .. self:GetTarget():GetRealm():ID() .. ':' .. self:GetTarget():GetFaction():Key()
+    return self:GetName() .. ':' .. self:GetTarget():GetRealm():GetID() .. ':' .. self:GetTarget():GetFaction():GetKey()
 end
 
 function Node:GetLinkCount()

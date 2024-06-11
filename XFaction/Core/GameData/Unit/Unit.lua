@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Unit'
 local GetMemberInfo = C_Club.GetMemberInfo
 local GetMemberInfoForSelf = C_Club.GetMemberInfoForSelf
@@ -11,7 +11,7 @@ local GetSpecID = GetSpecializationInfo
 local GetPvPRating = GetPersonalRatedInfo
 local GetPlayerBNetInfo = BNGetInfo
 
-Unit = XFC.Object:newChildConstructor()
+Unit = Object:newChildConstructor()
 
 --#region Constructors
 function Unit:new()
@@ -93,9 +93,9 @@ function Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number' or inMemberID == nil)
     local unitData
     if(inMemberID ~= nil) then
-        unitData = GetMemberInfo(XF.Player.Guild:ID(), inMemberID)
+        unitData = GetMemberInfo(XF.Player.Guild:GetID(), inMemberID)
     else
-        unitData = GetMemberInfoForSelf(XF.Player.Guild:ID())
+        unitData = GetMemberInfoForSelf(XF.Player.Guild:GetID())
     end
 
     -- Failure conditions:
@@ -108,16 +108,16 @@ function Unit:Initialize(inMemberID)
     end
 
     self:SetGUID(unitData.guid)
-    self:Key(self:GetGUID())
+    self:SetKey(self:GetGUID())
     self:SetPresence(unitData.presence)    
-    self:ID(unitData.memberId)
-    self:Name(unitData.name)
-    self:SetUnitName(unitData.name .. '-' .. XF.Player.Guild:Realm():APIName())
+    self:SetID(unitData.memberId)
+    self:SetName(unitData.name)
+    self:SetUnitName(unitData.name .. '-' .. XF.Player.Guild:GetRealm():GetAPIName())
 	self:SetLevel(unitData.level)	
 	self:SetGuild(XF.Player.Guild)
     self:SetTimeStamp(ServerTime())
-    self:SetClass(XFO.Classes:Get(unitData.classID))
-    self:SetRace(XFO.Races:Get(unitData.race))
+    self:SetClass(XF.Classes:Get(unitData.classID))
+    self:SetRace(XF.Races:Get(unitData.race))
     self:SetRank(unitData.guildRank)
     self:SetNote(unitData.memberNote or '?')
     self:IsPlayer(unitData.isSelf)
@@ -138,28 +138,28 @@ function Unit:Initialize(inMemberID)
     if(self:IsPlayer()) then
         self:SetFaction(XF.Player.Faction)
     elseif(unitData.faction == Enum.PvPFaction.Alliance) then
-        self:SetFaction(XFO.Factions:Get(unitData.faction))
+        self:SetFaction(XF.Factions:GetByName('Alliance'))
     elseif(unitData.faction == Enum.PvPFaction.Horde) then
-        self:SetFaction(XFO.Factions:Get('Horde'))
+        self:SetFaction(XF.Factions:GetByName('Horde'))
     else
-        self:SetFaction(XFO.Factions:Get('Neutral'))
+        self:SetFaction(XF.Factions:GetByName('Neutral'))
     end
 
-    if(unitData.zone and XFO.Zones:Contains(unitData.zone)) then
-        self:SetZone(XFO.Zones:Get(unitData.zone))
+    if(unitData.zone and XF.Zones:Contains(unitData.zone)) then
+        self:SetZone(XF.Zones:Get(unitData.zone))
     elseif(unitData.zone and strlen(unitData.zone)) then
-        XFO.Zones:Add(unitData.zone)
-        self:SetZone(XFO.Zones:Get(unitData.zone))
+        XF.Zones:AddZone(unitData.zone)
+        self:SetZone(XF.Zones:Get(unitData.zone))
     else
-        self:SetZone(XFO.Zones:Get('?'))
+        self:SetZone(XF.Zones:Get('?'))
     end
 
     if(unitData.profession1ID ~= nil) then
-        self:SetProfession1(XFO.Professions:Get(unitData.profession1ID))
+        self:SetProfession1(XF.Professions:Get(unitData.profession1ID))
     end
 
     if(unitData.profession2ID ~= nil) then
-        self:SetProfession2(XFO.Professions:Get(unitData.profession2ID))
+        self:SetProfession2(XF.Professions:Get(unitData.profession2ID))
     end
 
     local raiderIO = XF.Addons.RaiderIO:Get(self)
@@ -193,8 +193,8 @@ function Unit:Initialize(inMemberID)
             local specGroupID = GetSpecGroupID()
             if(specGroupID ~= nil) then
     	        local specID = GetSpecID(specGroupID)
-                if(specID ~= nil and XFO.Specs:Contains(specID)) then
-                    self:SetSpec(XFO.Specs:Get(specID))
+                if(specID ~= nil and XF.Specs:Contains(specID)) then
+                    self:SetSpec(XF.Specs:Get(specID))
                     break
                 end
             end
@@ -320,8 +320,8 @@ function Unit:GetNote()
 end
 
 function Unit:SetMainTeam(inGuildInitials, inTeamInitial)
-    if(inTeamInitial ~= nil and XFO.Teams:Contains(inTeamInitial)) then
-        self:SetTeam(XFO.Teams:Get(inTeamInitial))
+    if(inTeamInitial ~= nil and XF.Teams:Contains(inTeamInitial)) then
+        self:SetTeam(XF.Teams:Get(inTeamInitial))
     end    
     local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
     if(mainName ~= nil) then
@@ -338,18 +338,18 @@ function Unit:SetNote(inNote)
 
         -- Team tag
         local _, _, teamInitial = string.find(self.note, '%[XFt:(%a-)%]')
-        if(teamInitial ~= nil and XFO.Teams:Contains(teamInitial)) then
-            self:SetTeam(XFO.Teams:Get(teamInitial))
+        if(teamInitial ~= nil and XF.Teams:Contains(teamInitial)) then
+            self:SetTeam(XF.Teams:Get(teamInitial))
         else
             local _, _, teamInitial = string.find(self.note, '%[(%a-)%]')
-            if(teamInitial ~= nil and XFO.Teams:Contains(teamInitial)) then
-                self:SetTeam(XFO.Teams:Get(teamInitial))
+            if(teamInitial ~= nil and XF.Teams:Contains(teamInitial)) then
+                self:SetTeam(XF.Teams:Get(teamInitial))
             else
                 local _, _, teamInitial, guildInitials = string.find(self.note, '%[(%a-)-(%a+)')
-                if(teamInitial ~= nil and XFO.Teams:Contains(teamInitial)) then
-                    self:SetTeam(XFO.Teams:Get(teamInitial))
+                if(teamInitial ~= nil and XF.Teams:Contains(teamInitial)) then
+                    self:SetTeam(XF.Teams:Get(teamInitial))
                 end
-                if(guildInitials ~= nil and XFO.Guilds:Contains(guildInitials) and not self:GetGuild():Equals(XFO.Guilds:Get(guildInitials))) then
+                if(guildInitials ~= nil and XF.Guilds:Contains(guildInitials) and not self:GetGuild():Equals(XF.Guilds:Get(guildInitials))) then
                     self:IsAlt(true)
                     local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
                     if(mainName ~= nil) then           
@@ -372,7 +372,7 @@ function Unit:SetNote(inNote)
     end).
     finally(function()
         if(not self:HasTeam()) then
-            self:SetTeam(XFO.Teams:Get('?'))
+            self:SetTeam(XF.Teams:Get('?'))
         end
     end)
 end
@@ -514,7 +514,7 @@ function Unit:SetSpec(inSpec)
 end
 
 function Unit:HasProfession1()
-    return self.profession1 ~= nil
+    return self.profession1 ~= nil and self.profession1:GetKey() ~= nil
 end
 
 function Unit:GetProfession1()
@@ -527,7 +527,7 @@ function Unit:SetProfession1(inProfession)
 end
 
 function Unit:HasProfession2()
-    return self.profession2 ~= nil
+    return self.profession2 ~= nil and self.profession2:GetKey() ~= nil
 end
 
 function Unit:GetProfession2()
@@ -625,9 +625,9 @@ function Unit:GetLink()
         return format('player:%s', self:GetUnitName())
     end
 
-    local friend = XF.Friends:GetByRealmUnitName(self:GetGuild():Realm(), self:Name())
+    local friend = XF.Friends:GetByRealmUnitName(self:GetGuild():GetRealm(), self:GetName())
     if(friend ~= nil) then
-        return format('BNplayer:%s:%d:0:WHISPER:%s', friend:GetAccountName(), friend:GetAccountID(), friend:Name())
+        return format('BNplayer:%s:%d:0:WHISPER:%s', friend:GetAccountName(), friend:GetAccountID(), friend:GetName())
     end
 
     return format('player:%s', self:GetUnitName())
@@ -676,7 +676,7 @@ function Unit:Broadcast(inSubject)
         message:Initialize()
         message:SetFrom(self:GetGUID())
         message:SetGuild(self:GetGuild())
-        message:SetUnitName(self:Name())
+        message:SetUnitName(self:GetName())
         message:SetType(XF.Enum.Network.BROADCAST)
         message:SetSubject(inSubject)
         message:SetData(self)
@@ -694,10 +694,10 @@ function Unit:Equals(inUnit)
     if(inUnit == nil) then return false end
     if(type(inUnit) ~= 'table' or inUnit.__name == nil or inUnit.__name ~= 'Unit') then return false end
 
-    if(self:Key() ~= inUnit:Key()) then return false end
+    if(self:GetKey() ~= inUnit:GetKey()) then return false end
     if(self:GetGUID() ~= inUnit:GetGUID()) then return false end
     if(self:GetPresence() ~= inUnit:GetPresence()) then return false end
-    if(self:ID() ~= inUnit:ID()) then return false end
+    if(self:GetID() ~= inUnit:GetID()) then return false end
     if(self:GetLevel() ~= inUnit:GetLevel()) then return false end
     if(self:GetZone() ~= inUnit:GetZone()) then return false end
     if(self:GetNote() ~= inUnit:GetNote()) then return false end

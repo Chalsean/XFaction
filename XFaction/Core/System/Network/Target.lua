@@ -1,10 +1,9 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Target'
 
 -- A target is a collection of connected realms + faction
 -- As long as someone on the target receives, they rebroadcast to local channel
-Target = XFC.Object:newChildConstructor()
+Target = Object:newChildConstructor()
 
 --#region Constructors
 function Target:new()

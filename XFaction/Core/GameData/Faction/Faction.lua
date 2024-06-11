@@ -1,12 +1,11 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Faction'
 
-XFC.Faction = XFC.Object:newChildConstructor()
+Faction = Object:newChildConstructor()
 
 --#region Constructors
-function XFC.Faction:new()
-    local object = XFC.Faction.parent.new(self)
+function Faction:new()
+    local object = Faction.parent.new(self)
     object.__name = ObjectName
     object.iconID = nil
     object.language = nil
@@ -14,40 +13,54 @@ function XFC.Faction:new()
 end
 --#endregion
 
---#region Properties
-function XFC.Faction:IconID(inIconID)
-    assert(type(inIconID) == 'number' or inIconID == nil, 'argument must be number or nil')
-    if(inIconID ~= nil) then
-        self.iconID = inIconID
+--#region Initializers
+function Faction:Initialize()
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
+        if(self:GetName() ~= nil) then
+            if(self.name == 'Horde') then
+                self:SetIconID(XF.Icons.Horde)
+                self:SetLanguage('Orcish')
+                self:SetID('H')
+            elseif(self:GetName() == 'Alliance') then
+                self:SetIconID(XF.Icons.Alliance)
+                self:SetLanguage('Common')
+                self:SetID('A')
+            else
+                self:SetIconID(XF.Icons.Neutral)
+                self:SetLanguage('Common')
+                self:SetID('N')
+            end
+        end
+        self:IsInitialized(true)
     end
-    return self.iconID
-end
-
-function XFC.Faction:Language(inLanguage)
-    assert(type(inLanguage) == 'string' or inLanguage == nil, 'argument must be string or nil')
-    if(inLanguage ~= nil) then
-        self.language = inLanguage
-    end
-    return self.language
-end
-
-function XFC.Faction:IsAlliance()
-    return self:ID() == 'A'
-end
-
-function XFC.Faction:IsHorde()
-    return self:ID() == 'H'
-end
-
-function XFC.Faction:IsNeutral()
-    return self:ID() == 'N'
 end
 --#endregion
 
---#region Methods
-function XFC.Faction:Print()
+--#region Print
+function Faction:Print()
     self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
-    XF:Debug(self:ObjectName(), '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
+    XF:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+    XF:Debug(ObjectName, '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
+end
+--#endregion
+
+--#region Accessors
+function Faction:GetIconID()
+    return self.iconID
+end
+
+function Faction:SetIconID(inIconID)
+    assert(type(inIconID) == 'number')
+    self.iconID = inIconID
+end
+
+function Faction:GetLanguage()
+    return self.language
+end
+
+function Faction:SetLanguage(inLanguage)
+    assert(type(inLanguage) == 'string')
+    self.language = inLanguage
 end
 --#endregion

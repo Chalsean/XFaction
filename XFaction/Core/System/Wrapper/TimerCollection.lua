@@ -1,9 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'TimerCollection'
 local ServerTime = GetServerTime
 
-TimerCollection = XFC.ObjectCollection:newChildConstructor()
+TimerCollection = ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function TimerCollection:new()
@@ -27,8 +26,8 @@ function TimerCollection:Add(inArgs)
 
     local timer = Timer:new()
     timer:Initialize()
-    timer:Key(inArgs.name)
-    timer:Name(timer:Key())
+    timer:SetKey(inArgs.name)
+    timer:SetName(timer:GetKey())
     timer:SetDelta(inArgs.delta)
     timer:SetCallback(inArgs.callback)
     timer:IsRepeat(inArgs.repeater)

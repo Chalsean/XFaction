@@ -1,69 +1,76 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'VersionCollection'
 
-XFC.VersionCollection = XFC.ObjectCollection:newChildConstructor()
+VersionCollection = ObjectCollection:newChildConstructor()
 
 --#region Contructors
-function XFC.VersionCollection:new()
-    local object = XFC.VersionCollection.parent.new(self)
+function VersionCollection:new()
+    local object = VersionCollection.parent.new(self)
 	object.__name = ObjectName
 	object.currentVersion = nil
 	object.defaultVersion = nil
     return object
 end
+--#endregion
 
-function XFC.VersionCollection:Initialize()
+--#region Initializers
+function VersionCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-		self:Add(XF.Version)
-		self:Current(self:Get(XF.Version))
+        local currentVersion = Version:new()
+        currentVersion:SetKey(XF.Version)
+        self:Add(currentVersion)   
+        self:SetCurrent(currentVersion)
 
-		self:Add('0.0.0')
-		self:Default(self:Get('0.0.0'))
+		local defaultVersion = Version:new()
+        defaultVersion:SetKey('0.0.0')
+        self:Add(defaultVersion)
+		self:SetDefault(defaultVersion)
 
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Properties
-function XFC.VersionCollection:Current(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name == 'Version' or inVersion == nil)
-	if(inVersion ~= nil) then
-		self.currentVersion = inVersion
-	end
-	return self.currentVersion
-end
-
-function XFC.VersionCollection:Default(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name == 'Version' or inVersion == nil)
-	if(inVersion ~= nil) then
-		self.defaultVersion = inVersion
-	end
-	return self.defaultVersion
-end
---#endregion
-
---#region Methods
-function XFC.VersionCollection:SortedIterator()
+--#region Iterators
+function VersionCollection:SortedIterator()
 	return PairsByKeys(self.objects, function(a, b) return self:Get(a):IsNewer(self:Get(b), true) end)
 end
 
-function XFC.VersionCollection:ReverseSortedIterator()
+function VersionCollection:ReverseSortedIterator()
 	return PairsByKeys(self.objects, function(a, b) return not self:Get(a):IsNewer(self:Get(b), true) end)
 end
+--#endregion
 
-function XFC.VersionCollection:Add(inVersion)
-	assert(type(inVersion) == 'table' and inVersion.__name == 'Version' or type(inVersion) == 'string')
-	if(type(inVersion) == 'table') then
-		self.parent.Add(self, inVersion)
-	elseif(not self:Contains(inKey)) then
-		local version = XFC.Version:new()
+--#region Hash
+function VersionCollection:AddVersion(inKey)
+	assert(type(inKey) == 'string')
+	if(not self:Contains(inKey)) then
+		local version = Version:new()
 		version:Initialize()
-		version:Key(inVersion)
+		version:SetKey(inKey)
 		self.parent.Add(self, version)
 	end
+end
+--#endregion
+
+--#region Accessors
+function VersionCollection:SetCurrent(inVersion)
+    assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')
+	self.currentVersion = inVersion
+end
+
+function VersionCollection:GetCurrent()
+	return self.currentVersion
+end
+
+function VersionCollection:SetDefault(inVersion)
+    assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')
+	self.defaultVersion = inVersion
+end
+
+function VersionCollection:GetDefault()
+	return self.defaultVersion
 end
 --#endregion

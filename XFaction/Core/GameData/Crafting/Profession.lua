@@ -1,31 +1,31 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Profession'
 
-XFC.Profession = XFC.Object:newChildConstructor()
+Profession = Object:newChildConstructor()
 
 --#region Constructors
-function XFC.Profession:new()
-    local object = XFC.Profession.parent.new(self)
+function Profession:new()
+    local object = Profession.parent.new(self)
     object.__name = ObjectName
     object.iconID = nil
     return object
 end
 --#endregion
 
---#region Properties
-function XFC.Profession:IconID(inIconID)
-    assert(type(inIconID) == 'number' or inIconID == nil)
-    if(inIconID ~= nil) then
-        self.iconID = inIconID
-    end
-    return self.iconID
+--#region Print
+function Profession:Print()
+    self:ParentPrint()
+    XF:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
 end
 --#endregion
 
---#region Methods
-function XFC.Profession:Print()
-    self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+--#region Accessors
+function Profession:GetIconID()
+    return self.iconID
+end
+
+function Profession:SetIconID(inIconID)
+    assert(type(inIconID) == 'number')
+    self.iconID = inIconID
 end
 --#endregion

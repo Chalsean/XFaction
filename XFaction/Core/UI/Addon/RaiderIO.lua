@@ -1,8 +1,7 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RaiderIO'
 
-XFRaiderIO = XFC.Object:newChildConstructor()
+XFRaiderIO = Object:newChildConstructor()
 
 --#region Constructors
 function XFRaiderIO:new()
@@ -62,8 +61,8 @@ end
 function XFRaiderIO:Equals(inObject)
     if(inObject == nil) then return false end
     if(type(inObject) ~= 'table' or inObject.__name == nil) then return false end
-    if(self:ObjectName() ~= inObject:ObjectName()) then return false end
-    if(self:Key() ~= inObject:Key()) then return false end
+    if(self:GetObjectName() ~= inObject:GetObjectName()) then return false end
+    if(self:GetKey() ~= inObject:GetKey()) then return false end
     if(self:GetRaid() ~= inObject:GetRaid()) then return false end
     if(self:GetDungeon() ~= inObject:GetDungeon()) then return false end
     return true
