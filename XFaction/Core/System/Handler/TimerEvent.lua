@@ -97,7 +97,7 @@ function TimerEvent:CallbackLoginGuild()
 				-- Some of this data (spec) is like guild where its not available for a time after initial login
 				-- Seems to align with guild data becoming available
 				XF.Races:Initialize()
-				XF.Classes:Initialize()
+				XFO.Classes:Initialize()
 				XF.Specs:Initialize()		    
 				XF.Professions:Initialize()
 

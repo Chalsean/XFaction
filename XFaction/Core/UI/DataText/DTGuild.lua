@@ -124,7 +124,7 @@ local function PreSort()
 			else
 				unitData.Team = 'Unknown'
 			end
-			unitData.Class = unit:GetClass():GetHex()
+			unitData.Class = unit:GetClass():Hex()
 			unitData.Faction = unit:GetFaction():GetIconID()
 			unitData.PvP = unit:GetPvP()
 
@@ -341,7 +341,7 @@ function DTGuild:OnEnter(this)
 						cellValue = format('%s', format(XF.Icons.String, unitData[columnName]))
 					end
 				elseif(columnName == 'Name') then
-					cellValue = format('|c%s%s|r', unitData.Class, unitData.Name)
+					cellValue = format('|cff%s%s|r', unitData.Class, unitData.Name)
 				elseif(unitData[columnName] ~= nil) then
 					cellValue = format('|cffffffff%s|r', unitData[columnName])
 				end

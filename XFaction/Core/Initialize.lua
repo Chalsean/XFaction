@@ -58,7 +58,7 @@ function XF:CoreInit()
 	XF.Mailbox.Chat = Chat:new()
 	
 	-- Unit
-	XF.Classes = ClassCollection:new()
+	XFO.Classes = XFC.ClassCollection:new(); XFO.Classes:Initialize()
 	XF.Continents = ContinentCollection:new(); XF.Continents:Initialize()
 	XF.Professions = ProfessionCollection:new()
 	XF.Races = RaceCollection:new()
