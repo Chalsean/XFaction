@@ -77,7 +77,7 @@ local function Keybinding_OnKeyDown(frame, key)
 		self.waitingForKey = nil
 
 		if not self.disabled then
-			self:SetKey(keyPressed)
+			self:Key(keyPressed)
 			self:Fire("OnKeyChanged", keyPressed)
 		end
 	end
@@ -113,7 +113,7 @@ local methods = {
 	["OnAcquire"] = function(self)
 		self:SetWidth(200)
 		self:SetLabel("")
-		self:SetKey("")
+		self:Key("")
 		self.waitingForKey = nil
 		self.msgframe:Hide()
 		self:SetDisabled(false)
@@ -134,7 +134,7 @@ local methods = {
 		end
 	end,
 
-	["SetKey"] = function(self, key)
+	["Key"] = function(self, key)
 		if (key or "") == "" then
 			self.button:SetText(NOT_BOUND)
 			self.button:SetNormalFontObject("GameFontNormal")

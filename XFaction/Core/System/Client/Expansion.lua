@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Expansion'
 
-Expansion = Object:newChildConstructor()
+Expansion = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Expansion:new()
@@ -32,7 +33,7 @@ function Expansion:SetIconID(inIconID)
 end
 
 function Expansion:IsRetail()
-    return WOW_PROJECT_MAINLINE == self:GetID()
+    return WOW_PROJECT_MAINLINE == self:ID()
 end
 
 function Expansion:HasVersion()

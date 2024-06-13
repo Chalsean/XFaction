@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RealmCollection'
 
 --#region Realm list
@@ -816,7 +817,7 @@ local ConnectionData = {
 }
 --#endregion
 
-RealmCollection = ObjectCollection:newChildConstructor()
+RealmCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function RealmCollection:new()
@@ -838,18 +839,18 @@ function RealmCollection:Initialize()
 		-- Setup all realms in the region
 		for id, data in pairs(RealmData) do
 			local realmData = string.Split(data, ',')
-			if(XF.Regions:GetCurrent():GetName() == realmData[4]) then
+			if(XF.Regions:GetCurrent():Name() == realmData[4]) then
 				local realm = Realm:new(); realm:Initialize()
-				realm:SetKey(realmData[1])
-				realm:SetName(realmData[1])
-				realm:SetID(tonumber(id))
+				realm:Key(realmData[1])
+				realm:Name(realmData[1])
+				realm:ID(tonumber(id))
 				self:Add(realm)
 				
-				if(realm:GetName() == GetRealmName()) then
+				if(realm:Name() == GetRealmName()) then
 					XF.Player.Realm = realm
-					XF:Info(ObjectName, 'Initialized player realm [%d:%s]', realm:GetID(), realm:GetName())
+					XF:Info(ObjectName, 'Initialized player realm [%d:%s]', realm:ID(), realm:Name())
 				else
-					XF:Trace(ObjectName, 'Initialized realm [%d:%s]', realm:GetID(), realm:GetName())
+					XF:Trace(ObjectName, 'Initialized realm [%d:%s]', realm:ID(), realm:Name())
 				end
 			end
 		end
@@ -862,9 +863,9 @@ function RealmCollection:Initialize()
 		-- Setup default realms (Torghast)
 		for realmID, realmName in pairs (XF.Settings.Confederate.DefaultRealms) do
 			local realm = Realm:new(); realm:Initialize()
-			realm:SetKey(realmName)
-			realm:SetName(realmName)
-			realm:SetID(realmID)
+			realm:Key(realmName)
+			realm:Name(realmName)
+			realm:ID(realmID)
 			self:Add(realm)
 		end
 
@@ -879,7 +880,7 @@ function RealmCollection:Initialize()
 						if(realm2 ~= nil and not realm1:Equals(realm2)) then
 							realm1:AddConnected(realm2)
 							realm2:AddConnected(realm1)
-							XF:Trace(ObjectName, 'Initialized realm connection [%d:%d]', realm1:GetID(), realm2:GetID())
+							XF:Trace(ObjectName, 'Initialized realm connection [%d:%d]', realm1:ID(), realm2:ID())
 						end
 					end
 				end
@@ -895,7 +896,7 @@ end
 --#region Hash
 function RealmCollection:Add(inRealm)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-	self.realmsByID[inRealm:GetID()] = inRealm
+	self.realmsByID[inRealm:ID()] = inRealm
 	self.parent.Add(self, inRealm)
 end
 

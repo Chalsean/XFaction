@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Chat'
 
 Chat = Mailbox:newChildConstructor()
@@ -15,7 +16,7 @@ end
 function Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Enum.Tag.LOCAL = XF.Confederate:GetKey() .. 'XF'						
+        XF.Enum.Tag.LOCAL = XF.Confederate:Key() .. 'XF'						
         XF.Events:Add({name = 'ChatMsg', 
                         event = 'CHAT_MSG_ADDON', 
                         callback = XF.Mailbox.Chat.ChatReceive, 
@@ -53,21 +54,21 @@ function Chat:Send(inMessage)
 
     --#region Chat channel messaging for BROADCAST/LOCAL types
     local messageData = XF:EncodeChatMessage(inMessage, true)
-    local packets = self:SegmentMessage(messageData, inMessage:GetKey(), XF.Settings.Network.Chat.PacketSize)
-    self:Add(inMessage:GetKey())
+    local packets = self:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
+    self:Add(inMessage:Key())
 
     -- If only guild on target, broadcast to GUILD
     local channelName, channelID
     -- Otherwise broadcast to custom channel
     if(XF.Channels:HasLocalChannel()) then
         channelName = 'CHANNEL'
-        channelID = XF.Channels:GetLocalChannel():GetID()
+        channelID = XF.Channels:GetLocalChannel():ID()
     else
         channelName = 'GUILD'
         channelID = nil
     end
     for index, packet in ipairs (packets) do
-        XF:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:GetKey(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
+        XF:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
         XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
         XF.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end

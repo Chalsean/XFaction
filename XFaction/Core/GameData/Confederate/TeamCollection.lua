@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'TeamCollection'
 
-TeamCollection = ObjectCollection:newChildConstructor()
+TeamCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function TeamCollection:new()
@@ -40,11 +41,11 @@ function TeamCollection:Add(inTeamInitials, inTeamName)
 	if(not self:Contains(inTeamInitials)) then
 		local team = Team:new()
 		team:Initialize()
-		team:SetName(inTeamName)
+		team:Name(inTeamName)
 		team:SetInitials(inTeamInitials)
-		team:SetKey(inTeamInitials)
+		team:Key(inTeamInitials)
 		self.parent.Add(self, team)
-		XF:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:GetName())
+		XF:Info(ObjectName, 'Initialized team [%s:%s]', team:GetInitials(), team:Name())
 	end
 end
 --#endregion

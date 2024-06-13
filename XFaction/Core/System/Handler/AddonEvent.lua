@@ -1,9 +1,10 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'AddonEvent'
 local IsAddOnLoaded = IsAddOnLoaded
 local GetAddOnEnableState = GetAddOnEnableState
 
-AddonEvent = Object:newChildConstructor()
+AddonEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function AddonEvent:new()

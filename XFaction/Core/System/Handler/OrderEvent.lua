@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'OrderEvent'
 local QueryMyOrdersFromServer = C_CraftingOrders.ListMyOrders
 local GetMyOrdersFromServer = C_CraftingOrders.GetMyOrders
@@ -7,7 +7,7 @@ local GetRecipe = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility
 local GetProfessionForSkill = C_TradeSkillUI.GetProfessionNameForSkillLineAbility
 local CreateCallback = C_FunctionContainers.CreateCallback
 
-XFC.OrderEvent = Object:newChildConstructor()
+XFC.OrderEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.OrderEvent:new()
@@ -84,10 +84,10 @@ function GetMyOrders()
     for _, myOrder in ipairs(myOrders) do
         local order = XFO.Orders:Pop()
         try(function ()
-            order:SetKey(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
-            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:GetKey())) then
+            order:Key(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
+            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:Key())) then
                 order:SetType(myOrder.orderType)
-                order:SetID(myOrder.orderID)
+                order:ID(myOrder.orderID)
                 order:SetCustomerUnit(XF.Player.Unit)
                 if(myOrder.crafterGuid ~= nil) then
                     order:SetCrafterGUID(myOrder.crafterGuid)
@@ -96,7 +96,7 @@ function GetMyOrders()
 
                 local professionName = GetProfessionForSkill(myOrder.skillLineAbilityID)
                 if(professionName ~= nil and type(professionName) == 'string') then
-                    local profession = XF.Professions:GetByName(professionName)
+                    local profession = XFO.Professions:GetByName(professionName)
                     if(profession ~= nil) then
                         order:SetProfession(profession)
                     end
@@ -139,7 +139,7 @@ function XFC.OrderEvent:CallbackCraftOrder(inEvent)
         QueryMyOrders()
     end).
     catch(function (inErrorMessage)
-        XF:Warn(self:GetObjectName(), inErrorMessage)
+        XF:Warn(self:ObjectName(), inErrorMessage)
     end)
 end
 

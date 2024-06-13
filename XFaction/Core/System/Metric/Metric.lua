@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Metric'
 
-Metric = Object:newChildConstructor()
+Metric = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Metric:new()
@@ -22,24 +23,24 @@ end
 --#region Accessors
 function Metric:Increment()
     self.count = self.count + 1
-    if(self:GetName() == XF.Enum.Metric.Messages or
-       self:GetName() == XF.Enum.Metric.Error or
-       self:GetName() == XF.Enum.Metric.Warning) then
+    if(self:Name() == XF.Enum.Metric.Messages or
+       self:Name() == XF.Enum.Metric.Error or
+       self:Name() == XF.Enum.Metric.Warning) then
         XF.DataText.Metrics:RefreshBroker()
     end
 end
 
-function Metric:GetCount()
+function Metric:Count()
     return self.count
 end
 
 function Metric:GetAverage(inPer)
-    if(self:GetCount() == 0) then return 0 end
+    if(self:Count() == 0) then return 0 end
     assert(type(inPer) == 'number' or inPer == nil, 'argument must be number or nil')
     local delta = GetServerTime() - XF.Start
     if(inPer ~= nil) then
         delta = delta / inPer
     end
-    return self:GetCount() / delta
+    return self:Count() / delta
 end
 --#endregion

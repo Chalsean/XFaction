@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Encode'
 local Deflate = XF.Lib.Deflate
 
@@ -9,13 +10,13 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	local messageData = {}
 
 	messageData.M = inMessage:GetMainName()
-	messageData.N = inMessage:GetName()
+	messageData.N = inMessage:Name()
 	messageData.U = inMessage:GetUnitName()
 	if(inMessage:HasGuild()) then
-		messageData.H = inMessage:GetGuild():GetKey()
+		messageData.H = inMessage:GetGuild():Key()
 		-- Remove G/R once everyone is on 4.4 build
-		messageData.G = inMessage:GetGuild():GetName()
-		messageData.R = inMessage:GetGuild():GetRealm():GetID()
+		messageData.G = inMessage:GetGuild():Name()
+		messageData.R = inMessage:GetGuild():GetRealm():ID()
 	end
 
 	if(inMessage:HasUnitData() and inEncodeUnitData) then
@@ -24,7 +25,7 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 		messageData.D = inMessage:GetData()
 	end
 
-	messageData.K = inMessage:GetKey()
+	messageData.K = inMessage:Key()
 	messageData.T = inMessage:GetTo()
 	messageData.F = inMessage:GetFrom()	
 	messageData.S = inMessage:GetSubject()
@@ -33,8 +34,8 @@ local function SerializeMessage(inMessage, inEncodeUnitData)
 	messageData.A = inMessage:GetRemainingTargets()
 	messageData.P = inMessage:GetPacketNumber()
 	messageData.Q = inMessage:GetTotalPackets()
-	messageData.V = inMessage:GetVersion():GetKey()
-	messageData.W = inMessage:GetFaction():GetKey()
+	messageData.V = inMessage:GetVersion():Key()
+	messageData.W = inMessage:GetFaction():Key()
 
 	return pickle(messageData)
 end
@@ -42,33 +43,33 @@ end
 function XF:SerializeUnitData(inUnitData)
 	local messageData = {}
 
-	messageData.A = inUnitData:GetRace():GetKey()
+	messageData.A = inUnitData:GetRace():Key()
 	messageData.B = inUnitData:GetAchievementPoints()
-	messageData.C = inUnitData:GetID()
+	messageData.C = inUnitData:ID()
 	messageData.E = inUnitData:GetPresence()
-	messageData.F = inUnitData:GetFaction():GetKey()	
-	messageData.H = inUnitData:GetGuild():GetKey()
+	messageData.F = inUnitData:GetFaction():Key()	
+	messageData.H = inUnitData:GetGuild():Key()
 	-- Remove G/R after everyone on 4.4
-	messageData.G = inUnitData:GetGuild():GetName()
-	messageData.R = inUnitData:GetGuild():GetRealm():GetID()
+	messageData.G = inUnitData:GetGuild():Name()
+	messageData.R = inUnitData:GetGuild():GetRealm():ID()
 	messageData.K = inUnitData:GetGUID()
 	messageData.I = inUnitData:GetItemLevel()
 	messageData.J = inUnitData:GetRank()
 	messageData.L = inUnitData:GetLevel()
 	messageData.M = inUnitData:HasMythicKey() and inUnitData:GetMythicKey():Serialize() or nil
 	messageData.N = inUnitData:GetNote()
-	messageData.O = inUnitData:GetClass():GetKey()
-	messageData.P1 = inUnitData:HasProfession1() and inUnitData:GetProfession1():GetKey() or nil
-	messageData.P2 = inUnitData:HasProfession2() and inUnitData:GetProfession2():GetKey() or nil
+	messageData.O = inUnitData:GetClass():Key()
+	messageData.P1 = inUnitData:HasProfession1() and inUnitData:GetProfession1():Key() or nil
+	messageData.P2 = inUnitData:HasProfession2() and inUnitData:GetProfession2():Key() or nil
 	messageData.U = inUnitData:GetUnitName()
-	messageData.V = inUnitData:HasSpec() and inUnitData:GetSpec():GetKey() or nil
-	messageData.X = inUnitData:GetVersion():GetKey()
+	messageData.V = inUnitData:HasSpec() and inUnitData:GetSpec():Key() or nil
+	messageData.X = inUnitData:GetVersion():Key()
 	messageData.Y = inUnitData:GetPvP()
 
 	if(inUnitData:GetZone():HasID()) then
-		messageData.D = inUnitData:GetZone():GetID()
+		messageData.D = inUnitData:GetZone():ID()
 	else
-		messageData.Z = inUnitData:GetZone():GetName()
+		messageData.Z = inUnitData:GetZone():Name()
 	end
 
 	return pickle(messageData)

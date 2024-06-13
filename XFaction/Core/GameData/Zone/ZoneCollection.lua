@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ZoneCollection'
 
-ZoneCollection = ObjectCollection:newChildConstructor()
+ZoneCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function ZoneCollection:new()
@@ -33,28 +34,28 @@ function ZoneCollection:Initialize()
 						if(not XF.Continents:Contains(zoneName)) then
 							local continent = Continent:new()
 							continent:Initialize()
-							continent:SetKey(zoneName)
+							continent:Key(zoneName)
 							continent:AddID(zoneID)
-							continent:SetName(zoneName)
-							if(zoneLocale[continent:GetName()]) then
-								continent:SetLocaleName(zoneLocale[continent:GetName()])
+							continent:Name(zoneName)
+							if(zoneLocale[continent:Name()]) then
+								continent:SetLocaleName(zoneLocale[continent:Name()])
 							end
 							XF.Continents:Add(continent)
-							XF:Info(ObjectName, 'Initialized continent [%s]', continent:GetName())
-							alreadyAdded[continent:GetName()] = true
+							XF:Info(ObjectName, 'Initialized continent [%s]', continent:Name())
+							alreadyAdded[continent:Name()] = true
 						end
 
 					elseif(not self:Contains(zoneName)) then
 						local zone = Zone:new()
 						zone:Initialize()
-						zone:SetKey(zoneName)
+						zone:Key(zoneName)
 						zone:AddID(zoneID)
-						zone:SetName(zoneName)
-						if(zoneLocale[zone:GetName()]) then
-							zone:SetLocaleName(zoneLocale[zone:GetName()])
+						zone:Name(zoneName)
+						if(zoneLocale[zone:Name()]) then
+							zone:SetLocaleName(zoneLocale[zone:Name()])
 						end
 						self:Add(zone)
-						alreadyAdded[zone:GetName()] = true
+						alreadyAdded[zone:Name()] = true
 					end
 				elseif(XF.Continents:Contains(zoneName)) then
 					XF.Continents:Get(zoneName):AddID(zoneID)
@@ -65,7 +66,7 @@ function ZoneCollection:Initialize()
 		end
 
 		for _, zone in self:Iterator() do
-			local continentID = lib:GetContinentMapID(zone:GetID())
+			local continentID = lib:GetContinentMapID(zone:ID())
 			if(continentID) then
 				local continent = XF.Continents:GetByID(tonumber(continentID))
 				if(continent) then
@@ -104,10 +105,10 @@ function ZoneCollection:AddZone(inZoneName)
 	if(not self:Contains(inZoneName)) then
 		local zone = Zone:new()
 		zone:Initialize()
-		zone:SetKey(inZoneName)
-		zone:SetName(inZoneName)
+		zone:Key(inZoneName)
+		zone:Name(inZoneName)
 		self:Add(zone)
-		XF:Info(ObjectName, 'Initialized zone [%s]', zone:GetName())
+		XF:Info(ObjectName, 'Initialized zone [%s]', zone:Name())
 	end
 end
 --#endregion

@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ExpansionCollection'
 
-ExpansionCollection = ObjectCollection:newChildConstructor()
+ExpansionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function ExpansionCollection:new()
@@ -19,21 +20,21 @@ function ExpansionCollection:Initialize()
 
         for _, expansionID in ipairs(XF.Settings.Expansions) do
             local expansion = Expansion:new()
-            expansion:SetKey(expansionID)
-            expansion:SetID(expansionID)
+            expansion:Key(expansionID)
+            expansion:ID(expansionID)
             if(expansionID == WOW_PROJECT_MAINLINE) then
-                expansion:SetName('Retail')
+                expansion:Name('Retail')
             elseif(expansionID == WOW_PROJECT_CLASSIC) then
-                expansion:SetName('Classic')
+                expansion:Name('Classic')
             end
             self:Add(expansion)
-            XF:Info(ObjectName, 'Initialized expansion [%s:%s]', expansion:GetKey(), expansion:GetName())
+            XF:Info(ObjectName, 'Initialized expansion [%s:%s]', expansion:Key(), expansion:Name())
 
             if(WOW_PROJECT_ID == expansionID) then
                 self:SetCurrent(expansion)
                 local wowVersion = GetBuildInfo()
                 local version = Version:new()
-                version:SetKey(wowVersion)
+                version:Key(wowVersion)
                 expansion:SetVersion(version)
             end
         end       

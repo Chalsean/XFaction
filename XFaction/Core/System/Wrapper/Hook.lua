@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Hook'
 
-Hook = Object:newChildConstructor()
+Hook = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Hook:new()
@@ -98,7 +99,7 @@ function Hook:Start()
             hooksecurefunc(_G, self:GetOriginal(), callback)
         end
         self:IsEnabled(true)
-        XF:Debug(ObjectName, 'Started hook [%s]', self:GetKey())
+        XF:Debug(ObjectName, 'Started hook [%s]', self:Key())
     end
 end
 
@@ -106,7 +107,7 @@ function Hook:Stop()
     if(self:HasOriginal() and self:IsEnabled()) then
         _G[self:GetOriginal()] = self:GetOriginalFunction()
         self:IsEnabled(false)
-        XF:Debug(ObjectName, 'Stopped hook [%s]', self:GetKey())
+        XF:Debug(ObjectName, 'Stopped hook [%s]', self:Key())
     end
 end
 --#endregion

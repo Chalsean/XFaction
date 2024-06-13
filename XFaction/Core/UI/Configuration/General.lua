@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Config.General'
 local RealmXref = {}
 local Initialized = false
@@ -56,18 +56,18 @@ function XF:SetupRealms()
 		Compress = true,
 	}
 	
-	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XF.Regions:GetCurrent():GetName())
+	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XF.Regions:GetCurrent():Name())
 	for _, realm in XF.Realms:SortedIterator() do
 		table.insert(XF.Cache.Setup.Realms, {
-			id = realm:GetID(),
-			name = realm:GetName(),
+			id = realm:ID(),
+			name = realm:Name(),
 			connections = {},
 			enabled = realm:IsTargeted() or realm:IsCurrent(),
 		})
-		RealmXref[realm:GetName()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
-		RealmXref[realm:GetID()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
+		RealmXref[realm:Name()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
+		RealmXref[realm:ID()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
 		for _, connectedRealm in realm:ConnectedIterator() do
-			table.insert(XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms].connections, connectedRealm:GetName())
+			table.insert(XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms].connections, connectedRealm:Name())
 		end
 	end
 
@@ -120,21 +120,21 @@ function XF:SetupMenus()
 
 		--#region Confederate Menu
 		XF.Cache.Setup.Confederate.Initials = XF.Confederate:GetInitials()
-		XF.Cache.Setup.Confederate.Name = XF.Confederate:GetName()
+		XF.Cache.Setup.Confederate.Name = XF.Confederate:Name()
 		XF.Cache.Setup.Confederate.ChannelName = XF.Cache.Channel.Name
 		XF.Cache.Setup.Confederate.Password = XF.Cache.Channel.Password
 		--#endregion
 
 		--#region Guild Menu
-		if(XF.Guilds:GetCount() > 0) then
+		if(XF.Guilds:Count() > 0) then
 			for _, guild in XF.Guilds:SortedIterator() do
 				table.insert(XF.Cache.Setup.Guilds, {
-					realm = tostring(guild:GetRealm():GetID()),
-					faction = guild:GetFaction():GetID(),
+					realm = tostring(guild:GetRealm():ID()),
+					faction = guild:GetFaction():ID(),
 					initials = guild:GetInitials(),
-					name = guild:GetName(),
+					name = guild:Name(),
 				})
-				XF.Cache.Setup.GuildsRealms[tostring(guild:GetRealm():GetID())] = guild:GetRealm():GetName()
+				XF.Cache.Setup.GuildsRealms[tostring(guild:GetRealm():ID())] = guild:GetRealm():Name()
 			end
 		end
 
@@ -202,12 +202,12 @@ function XF:SetupMenus()
 		--#endregion
 
 		--#region Team Menu
-		if(XF.Teams:GetCount() > 0) then
+		if(XF.Teams:Count() > 0) then
 			for _, team in XF.Teams:SortedIterator() do
 				if(team:GetInitials() ~= '?') then
 					table.insert(XF.Cache.Setup.Teams, {
 						initials = team:GetInitials(),
-						name = team:GetName(),
+						name = team:Name(),
 					})
 				end
 			end
@@ -325,7 +325,7 @@ XF.Options = {
 				},
 				Bar = {
 					order = 2,
-					name = format("|cffffffff%s|r", type(XF.Version) == 'string' and XF.Version or XF.Version:GetKey()),
+					name = format("|cffffffff%s|r", type(XF.Version) == 'string' and XF.Version or XF.Version:Key()),
 					type = 'header'
 				},
 				About = {
@@ -801,7 +801,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['FACTION'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Factions:Print() end,
+									func = function(info) XFO.Factions:Print() end,
 								},
 								Friend = {
 									order = 14,
@@ -857,14 +857,14 @@ XF.Options = {
 									type = 'execute',
 									name = 	XF.Lib.Locale['PROFESSION'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Professions:Print() end,
+									func = function(info) XFO.Professions:Print() end,
 								},
 								Race = {
 									order = 22,
 									type = 'execute',
 									name = XF.Lib.Locale['RACE'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Races:Print() end,
+									func = function(info) XFO.Races:Print() end,
 								},
 								RaiderIO = {
 									order = 23,
@@ -885,7 +885,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['SPEC'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Specs:Print() end,
+									func = function(info) XFO.Specs:Print() end,
 								},
 								Target = {
 									order = 26,
@@ -979,17 +979,17 @@ function XF:ConfigInitialize()
 					}
 				end
 				patchOrder = patchOrder + 1
-				XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:GetKey()] = {
+				XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:Key()] = {
 					order = patchOrder,
 					type = 'group',
-					name = version:GetKey(),
+					name = version:Key(),
 					desc = 'Major: ' .. version:GetMajor() .. '\nMinor: ' .. version:GetMinor() .. '\nPatch: ' .. version:GetPatch(),
-					args = XF.ChangeLog[version:GetKey()],
+					args = XF.ChangeLog[version:Key()],
 				}
 				if(version:IsAlpha()) then
-					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:GetKey()].name = version:GetKey() .. ' |cffFF4700Alpha|r'
+					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:Key()].name = version:Key() .. ' |cffFF4700Alpha|r'
 				elseif(version:IsBeta()) then
-					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:GetKey()].name = version:GetKey() .. ' |cffFF7C0ABeta|r'
+					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:Key()].name = version:Key() .. ' |cffFF7C0ABeta|r'
 				end
 			end
 		end
@@ -997,14 +997,14 @@ function XF:ConfigInitialize()
 		-- One time install logic
 		local version = Version:new()
 		if(XF.Config.InstallVersion ~= nil) then
-			version:SetKey(XF.Config.InstallVersion)
+			version:Key(XF.Config.InstallVersion)
 		else
-			version:SetKey('0.0.0')
+			version:Key('0.0.0')
 		end
 		if(version:IsNewer(XF.Version, true)) then
 			XF:Info(ObjectName, 'Performing new install')	
 			XF:Install()
-			XF.Config.InstallVersion = XF.Version:GetKey()
+			XF.Config.InstallVersion = XF.Version:Key()
 		end
 	end).
 	catch(function (inErrorMessage)

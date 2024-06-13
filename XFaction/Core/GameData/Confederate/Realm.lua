@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Realm'
 
-Realm = Object:newChildConstructor()
+Realm = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Realm:new()
@@ -32,7 +33,7 @@ function Realm:Print()
     XF:Debug(ObjectName, '  isTargeted (' .. type(self.isTargeted) .. '): ' .. tostring(self.isTargeted))
     XF:Debug(ObjectName, '  connectedRealmCount (' .. type(self.connectedRealmCount) .. '): ' .. tostring(self.connectedRealmCount))
     for _, realm in pairs (self.connectedRealms) do
-        XF:Debug(ObjectName, '* connectedRealm [%d]', realm:GetID())
+        XF:Debug(ObjectName, '* connectedRealm [%d]', realm:ID())
     end
 end
 --#endregion
@@ -50,8 +51,8 @@ end
 
 function Realm:AddConnected(inRealm)
     assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-    if(self.connectedRealms[inRealm:GetID()] == nil) then
-        self.connectedRealms[inRealm:GetID()] = inRealm
+    if(self.connectedRealms[inRealm:ID()] == nil) then
+        self.connectedRealms[inRealm:ID()] = inRealm
         self.connectedRealmCount = self.connectedRealmCount + 1
     end
 end
@@ -88,7 +89,7 @@ function Realm:IsTargeted(inBoolean)
 end
 
 function Realm:IsCurrent()
-    return self:GetID() == GetRealmID()
+    return self:ID() == GetRealmID()
 end
 --#endregion
 
@@ -96,11 +97,11 @@ end
 function Realm:Equals(inRealm)
     if(inRealm == nil) then return false end
     if(type(inRealm) ~= 'table' or inRealm.__name == nil) then return false end
-    if(self:GetObjectName() ~= inRealm:GetObjectName()) then return false end
-    if(self:GetKey() == inRealm:GetKey()) then return true end
+    if(self:ObjectName() ~= inRealm:ObjectName()) then return false end
+    if(self:Key() == inRealm:Key()) then return true end
     -- Consider connected realms equal
     for _, connectedRealm in self:ConnectedIterator() do
-        if(connectedRealm:GetKey() == inRealm:GetKey()) then return true end
+        if(connectedRealm:Key() == inRealm:Key()) then return true end
     end
     return false
 end

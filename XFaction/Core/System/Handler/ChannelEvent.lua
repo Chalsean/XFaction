@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ChannelEvent'
 
-ChannelEvent = Object:newChildConstructor()
+ChannelEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function ChannelEvent:new()
@@ -47,13 +48,13 @@ function ChannelEvent:CallbackUpdateColor(inChannel, inR, inG, inB)
 			local channelID = tonumber(inChannel:match("(%d+)$"))
 			local channel = XF.Channels:GetByID(channelID)
 			if(channel ~= nil) then
-				if(XF.Config.Channels[channel:GetName()] == nil) then
-					XF.Config.Channels[channel:GetName()] = {}
+				if(XF.Config.Channels[channel:Name()] == nil) then
+					XF.Config.Channels[channel:Name()] = {}
 				end
-				XF.Config.Channels[channel:GetName()].R = inR
-				XF.Config.Channels[channel:GetName()].G = inG
-				XF.Config.Channels[channel:GetName()].B = inB
-				XF:Trace(ObjectName, 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, channel:GetName())
+				XF.Config.Channels[channel:Name()].R = inR
+				XF.Config.Channels[channel:Name()].G = inG
+				XF.Config.Channels[channel:Name()].B = inB
+				XF:Trace(ObjectName, 'Captured new RGB [%f:%f:%f] for channel [%s]', inR, inG, inB, channel:Name())
 			end
 		end
 	end).

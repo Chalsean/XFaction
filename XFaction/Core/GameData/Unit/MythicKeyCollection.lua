@@ -1,8 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MythicKeyCollection'
 
-XFC.MythicKeyCollection = ObjectCollection:newChildConstructor()
+XFC.MythicKeyCollection = XFC.ObjectCollection:newChildConstructor()
 
 -- Additional logic exists in Mainline branch
 

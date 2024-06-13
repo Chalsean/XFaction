@@ -1,9 +1,10 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Target'
 
 -- A target is a collection of connected realms + faction
 -- As long as someone on the target receives, they rebroadcast to local channel
-Target = Object:newChildConstructor()
+Target = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Target:new()
@@ -11,7 +12,7 @@ function Target:new()
     object.__name = ObjectName
     object.realm = nil
     object.faction = nil
-    object.targetCount = 1
+    object.tarCount = 1
     return object
 end
 --#endregion
@@ -19,7 +20,7 @@ end
 --#region Print
 function Target:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
+    XF:Debug(ObjectName, '  tarCount (' .. type(self.tarCount) .. '): ' .. tostring(self.tarCount))
     if(self:HasRealm()) then self:GetRealm():Print() end
     if(self:HasFaction()) then self:GetFaction():Print() end
 end
@@ -57,11 +58,11 @@ function Target:IsMyTarget()
     return XF.Player.Target:Equals(self)
 end
 
-function Target:GetTargetCount()
-    return self.targetCount
+function Target:GetTarCount()
+    return self.tarCount
 end
 
-function Target:IncrementTargetCount()
-    self.targetCount = self.targetCount + 1
+function Target:IncrementTarCount()
+    self.tarCount = self.tarCount + 1
 end
 --#endregion

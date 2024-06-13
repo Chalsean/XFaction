@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ElvUI'
 
 XFElvUI = Addon:newChildConstructor()
@@ -32,7 +33,7 @@ function XFElvUI:AddTags()
         try(function ()
             -- The guild check is not correct, could have sharded in a guild of same name from another realm
             if(XF.Initialized and (XF.Confederate:Contains(guid) or XF.Guilds:ContainsName(guildName))) then
-                guildName = XF.Confederate:GetName()
+                guildName = XF.Confederate:Name()
             end
         end)
         return guildName
@@ -44,7 +45,7 @@ function XFElvUI:AddTags()
         local guildName = GetGuildInfo(inNameplate)
         try(function ()
             if(XF.Initialized and (XF.Confederate:Contains(guid) or XF.Guilds:ContainsName(guildName))) then
-                guildName = XF.Confederate:GetKey()
+                guildName = XF.Confederate:Key()
             end
         end)
         if(guildName ~= nil) then
@@ -106,7 +107,7 @@ function XFElvUI:AddTags()
         try(function ()
             local guid = UnitGUID(inNameplate)
             if(XF.Initialized and XF.Confederate:Contains(guid)) then
-                team = XF.Confederate:Get(guid):GetTeam():GetName()
+                team = XF.Confederate:Get(guid):GetTeam():Name()
             end
         end)
         return team

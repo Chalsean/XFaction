@@ -17,12 +17,12 @@ function XF:CoreInit()
 	-- Log XFaction version
 	XF.Versions = VersionCollection:new(); XF.Versions:Initialize()
 	XF.Version = XF.Versions:GetCurrent()
-	XF:Info(ObjectName, 'XFaction version [%s]', XF.Version:GetKey())
+	XF:Info(ObjectName, 'XFaction version [%s]', XF.Version:Key())
 	
 	-- Confederate
 	XF.Regions = RegionCollection:new(); XF.Regions:Initialize()
 	XF.Confederate = Confederate:new()
-	XF.Factions = FactionCollection:new(); XF.Factions:Initialize()
+	XFO.Factions = XFC.FactionCollection:new(); XFO.Factions:Initialize()
 	XF.Guilds = GuildCollection:new()
 	XF.Realms = RealmCollection:new(); XF.Realms:Initialize()
 	XF.Targets = TargetCollection:new()
@@ -58,15 +58,17 @@ function XF:CoreInit()
 	XF.Mailbox.Chat = Chat:new()
 	
 	-- Unit
+	XFO.Races = XFC.RaceCollection:new(); XFO.Races:Initialize()
 	XFO.Classes = XFC.ClassCollection:new(); XFO.Classes:Initialize()
+	XFO.Specs = XFC.SpecCollection:new(); XFO.Specs:Initialize()	
+	XFO.Professions = XFC.ProfessionCollection:new(); XFO.Professions:Initialize()
+	
 	XF.Continents = ContinentCollection:new(); XF.Continents:Initialize()
-	XF.Professions = ProfessionCollection:new()
-	XF.Races = RaceCollection:new()
-	XF.Specs = SpecCollection:new()
 	XF.Zones = ZoneCollection:new(); XF.Zones:Initialize()	
 	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
+	
 	XF.Player.GUID = UnitGUID('player')
-	XF.Player.Faction = XF.Factions:GetByName(UnitFactionGroup('player'))
+	XF.Player.Faction = XFO.Factions:Get(UnitFactionGroup('player'))
 	
 	-- Wrappers	
 	XF.Hooks = HookCollection:new(); XF.Hooks:Initialize()
@@ -85,7 +87,7 @@ function XF:CoreInit()
 
 		XF.Expansions = ExpansionCollection:new(); XF.Expansions:Initialize()
 		XF.WoW = XF.Expansions:GetCurrent()
-		XF:Info(ObjectName, 'WoW client version [%s:%s]', XF.WoW:GetName(), XF.WoW:GetVersion():GetKey())
+		XF:Info(ObjectName, 'WoW client version [%s:%s]', XF.WoW:Name(), XF.WoW:GetVersion():Key())
 	end).
 	catch(function (inErrorMessage)
 		XF:Warn(ObjectName, inErrorMessage)

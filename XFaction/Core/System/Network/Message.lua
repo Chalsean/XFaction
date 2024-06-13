@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Message'
 local ServerTime = GetServerTime
 
-Message = Object:newChildConstructor()
+Message = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Message:new()
@@ -14,7 +15,7 @@ function Message:new()
     object.subject = nil
     object.epochTime = nil
     object.targets = nil
-    object.targetCount = 0
+    object.tarCount = 0
     object.unitData = nil
     object.data = nil
     object.initialized = false
@@ -52,7 +53,7 @@ function Message:Deconstructor()
     self.subject = nil
     self.epochTime = nil
     self.targets = nil
-    self.targetCount = 0
+    self.tarCount = 0
     self.unitData = nil
     self.data = nil
     self.packetNumber = 1
@@ -78,7 +79,7 @@ function Message:Print()
     XF:Debug(ObjectName, '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XF:Debug(ObjectName, '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
     XF:Debug(ObjectName, '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
-    XF:Debug(ObjectName, '  targetCount (' .. type(self.targetCount) .. '): ' .. tostring(self.targetCount))
+    XF:Debug(ObjectName, '  tarCount (' .. type(self.tarCount) .. '): ' .. tostring(self.tarCount))
     if(self:HasVersion()) then self:GetVersion():Print() end
 end
 --#endregion
@@ -237,22 +238,22 @@ end
 --#region Target
 function Message:ContainsTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    return self.targets[inTarget:GetKey()] ~= nil
+    return self.targets[inTarget:Key()] ~= nil
 end
 
 function Message:AddTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
     if(not self:ContainsTarget(inTarget)) then
-        self.targetCount = self.targetCount + 1
+        self.tarCount = self.tarCount + 1
     end
-    self.targets[inTarget:GetKey()] = inTarget
+    self.targets[inTarget:Key()] = inTarget
 end
 
 function Message:RemoveTarget(inTarget)
     assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
     if(self:ContainsTarget(inTarget)) then
-        self.targets[inTarget:GetKey()] = nil
-        self.targetCount = self.targetCount - 1
+        self.targets[inTarget:Key()] = nil
+        self.tarCount = self.tarCount - 1
     end
 end
 
@@ -265,7 +266,7 @@ function Message:SetAllTargets()
 end
 
 function Message:HasTargets()
-    return self.targetCount > 0
+    return self.tarCount > 0
 end
 
 function Message:GetTargets()
@@ -273,21 +274,21 @@ function Message:GetTargets()
     return {}
 end
 
-function Message:GetTargetCount()
-    return self.targetCount
+function Message:GetTarCount()
+    return self.tarCount
 end
 
 function Message:GetRemainingTargets()
     local targetsString = ''
     for _, target in pairs (self:GetTargets()) do
-        targetsString = targetsString .. '|' .. target:GetKey()
+        targetsString = targetsString .. '|' .. target:Key()
     end
     return targetsString
 end
 
 function Message:SetRemainingTargets(inTargetString)
     wipe(self.targets)
-    self.targetCount = 0
+    self.tarCount = 0
     local targets = string.Split(inTargetString, '|')
     for _, key in pairs (targets) do
         if(key ~= nil and XF.Targets:Contains(key)) then

@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Version'
 local Split = string.Split
 
-Version = Object:newChildConstructor()
+Version = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Version:new()
@@ -27,18 +28,21 @@ end
 --#endregion
 
 --#region Accessors
-function Version:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self.key = inKey
+function Version:Key(inKey)
+    assert(type(inKey) == 'string' or inKey == nil)
+    if(inKey ~= nil) then
+        self.key = inKey
 
-    local parts = Split(inKey, '.')
-    self:SetMajor(tonumber(parts[1]))
-    self:SetMinor(tonumber(parts[2]))
-    if(#parts == 3) then
-        self:SetPatch(tonumber(parts[3]))
-    else
-        self:SetPatch(0)
+        local parts = Split(inKey, '.')
+        self:SetMajor(tonumber(parts[1]))
+        self:SetMinor(tonumber(parts[2]))
+        if(#parts == 3) then
+            self:SetPatch(tonumber(parts[3]))
+        else
+            self:SetPatch(0)
+        end
     end
+    return self.key
 end
 
 function Version:GetMajor()

@@ -27,21 +27,21 @@ XFF.GuildGetStreams = C_Club.GetStreams
 XFF.GuildGetMember = C_Club.GetMemberInfo
 XFF.GuildGetMyself = C_Club.GetMemberInfoForSelf
 XFF.GuildGetPermissions = C_GuildInfo.GuildControlGetRankFlags
-XFF.GuildGetID = C_Club.GetGuildClubId
+XFF.GuildID = C_Club.GetGuildClubId
 XFF.GuildFrame = ToggleGuildFrame
 XFF.GuildGetMOTD = GetGuildRosterMOTD
 
 -- Realm
 XFF.RealmGetAPIName = GetNormalizedRealmName
-XFF.RealmGetID = GetRealmID
-XFF.RealmGetName = GetRealmName
+XFF.RealmID = GetRealmID
+XFF.RealmName = GetRealmName
 
 -- Region
 XFF.RegionGetCurrent = GetCurrentRegion
 
 -- Spec
 XFF.SpecGetGroupID = GetSpecialization
-XFF.SpecGetID = GetSpecializationInfo
+XFF.SpecID = GetSpecializationInfo
 
 -- Player
 XFF.PlayerGetIlvl = GetAverageItemLevel

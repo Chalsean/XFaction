@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Event'
 
-Event = Object:newChildConstructor()
+Event = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Event:new()
@@ -69,14 +70,14 @@ end
 function Event:Start()
     if(not self:IsEnabled()) then
         self:IsEnabled(true)
-        XF:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:GetKey(), self:GetName())
+        XF:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:Key(), self:Name())
     end
 end
 
 function Event:Stop()
     if(self:IsEnabled()) then
         self:IsEnabled(false)
-        XF:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:GetKey(), self:GetName())
+        XF:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:Key(), self:Name())
     end
 end
 --#endregion

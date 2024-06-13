@@ -1,9 +1,9 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Mailbox'
 local ServerTime = GetServerTime
 
-Mailbox = Factory:newChildConstructor()
+Mailbox = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function Mailbox:new()
@@ -189,14 +189,14 @@ function Mailbox:Process(inMessage, inMessageTag)
         end
     end
 
-    self:Add(inMessage:GetKey())
+    self:Add(inMessage:Key())
     inMessage:Print()
 
     --#region Forwarding
     -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
     if(inMessage:HasTargets() and inMessageTag == XF.Enum.Tag.LOCAL) then
         -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
-        local nodeCount = XF.Nodes:GetTargetCount(XF.Player.Target)
+        local nodeCount = XF.Nodes:GetTarCount(XF.Player.Target)
         if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
             local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
             if(math.random(1, 100) <= percentage) then
@@ -273,7 +273,7 @@ function Mailbox:Process(inMessage, inMessageTag)
         try(function ()
             order = XFO.Orders:Pop()
             order:Decode(inMessage:GetData())
-            if(not XFO.Orders:Contains(order:GetKey())) then
+            if(not XFO.Orders:Contains(order:Key())) then
                 XFO.Orders:Add(order)
                 order:Display()
             else
@@ -291,7 +291,7 @@ function Mailbox:Process(inMessage, inMessageTag)
     if(inMessage:HasUnitData()) then
         local unitData = inMessage:GetData()
         if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and 
-          (not XF.Confederate:Contains(unitData:GetKey()) or XF.Confederate:Get(unitData:GetKey()):IsOffline())) then
+          (not XF.Confederate:Contains(unitData:Key()) or XF.Confederate:Get(unitData:Key()):IsOffline())) then
             XF.Frames.System:DisplayLoginMessage(inMessage)
         end
         XF.Confederate:Add(unitData)

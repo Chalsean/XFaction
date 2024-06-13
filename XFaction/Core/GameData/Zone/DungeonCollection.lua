@@ -1,5 +1,6 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
+local ObjectName = 'DungeonCollection'
 
 --#region Abbreviated Names
 local NameData = {
@@ -22,12 +23,12 @@ local NameData = {
 }
 --#endregion
 
-XFC.DungeonCollection = ObjectCollection:newChildConstructor()
+XFC.DungeonCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.DungeonCollection:new()
     local object = XFC.DungeonCollection.parent.new(self)
-	object.__name = 'DungeonCollection'
+	object.__name = ObjectName
     return object
 end
 --#endregion
@@ -40,11 +41,11 @@ function XFC.DungeonCollection:Initialize()
         for id, name in pairs (NameData) do
             local dungeon = XFC.Dungeon:new()
             dungeon:Initialize()
-            dungeon:SetKey(id)
-            dungeon:SetID(id)
-            dungeon:SetName(name)
+            dungeon:Key(id)
+            dungeon:ID(id)
+            dungeon:Name(name)
             self:Add(dungeon)
-            XF:Info(self:GetObjectName(), "Initialized dungeon [%d:%s]", dungeon:GetID(), dungeon:GetName())
+            XF:Info(self:ObjectName(), "Initialized dungeon [%d:%s]", dungeon:ID(), dungeon:Name())
         end
 
 		self:IsInitialized(true)

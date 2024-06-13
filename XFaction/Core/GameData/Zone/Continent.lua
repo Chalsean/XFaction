@@ -1,7 +1,8 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Continent'
 
-Continent = Object:newChildConstructor()
+Continent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function Continent:new()
@@ -43,7 +44,7 @@ function Continent:HasID(inID)
     return false
 end
 
-function Continent:GetID()
+function Continent:ID()
     if(#self.IDs > 0) then
         return self.IDs[1]
     end
@@ -57,7 +58,7 @@ end
 
 --#region Accessors
 function Continent:GetLocaleName()
-    return self.localeName or self:GetName()
+    return self.localeName or self:Name()
 end
 
 function Continent:SetLocaleName(inName)

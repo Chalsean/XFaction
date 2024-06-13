@@ -1,8 +1,9 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local LogCategory = 'Config'
 
 --#region DTGuild
-local function GetKeysSortedByValue(tbl, sortFunction)
+local function KeysSortedByValue(tbl, sortFunction)
 	local keys = {}
 	for key in pairs(tbl) do
 		if(XF.Config.DataText.Guild.Enable[key]) then
@@ -18,7 +19,7 @@ local function GetKeysSortedByValue(tbl, sortFunction)
 end
 
 function XF:SortGuildColumns()
-	local order = GetKeysSortedByValue(XF.Config.DataText.Guild.Order, function(a, b) return a < b end)
+	local order = KeysSortedByValue(XF.Config.DataText.Guild.Order, function(a, b) return a < b end)
 	for i = 1, #order do
 		local key = order[i]
 		XF.Config.DataText.Guild.Order[key] = i

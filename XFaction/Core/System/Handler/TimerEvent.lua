@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'TimerEvent'
 local ServerTime = GetServerTime
 local GuildRosterEvent = C_GuildInfo.GuildRoster
@@ -7,7 +7,7 @@ local InGuild = IsInGuild
 local GetGuildClubId = C_Club.GetGuildClubId
 local RequestMapsFromServer = C_MythicPlus.RequestMapInfo
 
-TimerEvent = Object:newChildConstructor()
+TimerEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function TimerEvent:new()
@@ -94,13 +94,6 @@ function TimerEvent:CallbackLoginGuild()
 				XF.Frames.Chat:Initialize()
 				XF.Frames.System:Initialize()
 
-				-- Some of this data (spec) is like guild where its not available for a time after initial login
-				-- Seems to align with guild data becoming available
-				XF.Races:Initialize()
-				XFO.Classes:Initialize()
-				XF.Specs:Initialize()		    
-				XF.Professions:Initialize()
-
 				-- Start network
 				XF.Channels:Initialize()
 				XF.Handlers.ChannelEvent:Initialize()
@@ -145,7 +138,7 @@ function TimerEvent:CallbackLoginPlayer()
 			if(not XF.Channels:UseGuild()) then
 				XF.Channels:Sync()
 				if(XF.Channels:HasLocalChannel()) then
-					XF.Channels:SetLast(XF.Channels:GetLocalChannel():GetKey())
+					XF.Channels:SetLast(XF.Channels:GetLocalChannel():Key())
 				end
 			end
 			
@@ -230,7 +223,7 @@ function TimerEvent:CallbackHeartbeat()
 	try(function ()
 		if(XF.Initialized and XF.Player.LastBroadcast < ServerTime() - XF.Settings.Player.Heartbeat) then
 			XF:Debug(ObjectName, 'Sending heartbeat')
-			XF.Player.Unit:Initialize(XF.Player.Unit:GetID())
+			XF.Player.Unit:Initialize(XF.Player.Unit:ID())
 			XF.Player.Unit:Broadcast()
 		end
 	end).
@@ -289,7 +282,7 @@ function TimerEvent:CallbackChannelSync()
 	try(function ()
 		XF.Channels:Sync()
 		if(XF.Channels:HasLocalChannel()) then
-			XF.Channels:SetLast(XF.Channels:GetLocalChannel():GetKey())
+			XF.Channels:SetLast(XF.Channels:GetLocalChannel():Key())
 		end
 	end).
 	catch(function (inErrorMessage)

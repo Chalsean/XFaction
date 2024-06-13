@@ -1381,7 +1381,7 @@ local function FeedOptions(appName, options,container,rootframe,path,group,inlin
 				elseif v.type == "keybinding" then
 					control = CreateControl(v.dialogControl or v.control, "Keybinding")
 					control:SetLabel(name)
-					control:SetKey(GetOptionsMemberValue("get",v, options, path, appName))
+					control:Key(GetOptionsMemberValue("get",v, options, path, appName))
 					control:SetCallback("OnKeyChanged",ActivateControl)
 
 				elseif v.type == "header" then

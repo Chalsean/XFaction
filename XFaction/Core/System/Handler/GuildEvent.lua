@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'GuildEvent'
 local GetClubMembers = C_Club.GetClubMembers
 local GetGuildRoster = C_GuildInfo.GuildRoster
@@ -6,7 +7,7 @@ local GetGuildClubId = C_Club.GetGuildClubId
 local GetPermissions = C_GuildInfo.GuildControlGetRankFlags
 local ServerTime = GetServerTime
 
-GuildEvent = Object:newChildConstructor()
+GuildEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function GuildEvent:new()
@@ -38,24 +39,24 @@ end
 function GuildEvent:CallbackRosterUpdate()
     local self = XF.Handlers.GuildEvent
     XF:Trace(ObjectName, 'Scanning local guild roster')
-    for _, memberID in pairs (GetClubMembers(XF.Player.Guild:GetID(), XF.Player.Guild:GetStreamID())) do
+    for _, memberID in pairs (GetClubMembers(XF.Player.Guild:ID(), XF.Player.Guild:GetStreamID())) do
         local unitData = XF.Confederate:Pop()
         try(function ()
             unitData:Initialize(memberID)
             if(unitData:IsInitialized()) then
-                if(XF.Confederate:Contains(unitData:GetKey())) then
-                    local oldData = XF.Confederate:Get(unitData:GetKey())
+                if(XF.Confederate:Contains(unitData:Key())) then
+                    local oldData = XF.Confederate:Get(unitData:Key())
                     if(oldData:IsOnline() and unitData:IsOffline()) then
                         XF:Info(ObjectName, 'Guild member logout via scan: %s', unitData:GetUnitName())
                         if(XF.Config.Chat.Login.Enable) then
-                            XF.Frames.System:Display(XF.Enum.Message.LOGOUT, oldData:GetName(), oldData:GetUnitName(), oldData:GetMainName(), oldData:GetGuild(), nil, oldData:GetFaction())
+                            XF.Frames.System:Display(XF.Enum.Message.LOGOUT, oldData:Name(), oldData:GetUnitName(), oldData:GetMainName(), oldData:GetGuild(), nil, oldData:GetFaction())
                         end
                         XF.Confederate:Add(unitData)
                     elseif(unitData:IsOnline()) then
                         if(oldData:IsOffline()) then
                             XF:Info(ObjectName, 'Guild member login via scan: %s', unitData:GetUnitName())
                             if(XF.Config.Chat.Login.Enable) then
-                                XF.Frames.System:Display(XF.Enum.Message.LOGIN, unitData:GetName(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), nil, unitData:GetFaction())
+                                XF.Frames.System:Display(XF.Enum.Message.LOGIN, unitData:Name(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), nil, unitData:GetFaction())
                             end
                             XF.Confederate:Add(unitData)
                         elseif(not oldData:IsRunningAddon()) then
