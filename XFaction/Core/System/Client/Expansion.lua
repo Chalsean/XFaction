@@ -1,12 +1,12 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Expansion'
 
-Expansion = XFC.Object:newChildConstructor()
+XFC.Expansion = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Expansion:new()
-    local object = Expansion.parent.new(self)
+function XFC.Expansion:new()
+    local object = XFC.Expansion.parent.new(self)
     object.__name = ObjectName
     object.iconID = nil
     object.version = nil
@@ -14,38 +14,36 @@ function Expansion:new()
 end
 --#endregion
 
---#region Print
-function Expansion:Print()
-    self:ParentPrint()
-    XF:Debug(ObjectName, '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
-    if(self:HasVersion()) then self:GetVersion():Print() end
-end
---#endregion
-
---#region Accessors
-function Expansion:GetIconID()
+--#region Properties
+function XFC.Expansion:IconID(inIconID)
+    assert(type(inIconID) == 'number' or inIconID == nil)
+    if(inIconID ~= nil) then
+        self.iconID = inIconID
+    end
     return self.iconID
 end
 
-function Expansion:SetIconID(inIconID)
-    assert(type(inIconID) == 'number')
-    self.iconID = inIconID
+function XFC.Expansion:Version(inVersion)
+    assert(type(inVersion) == 'table' and inVersion.__name == 'Version' or inVersion == nil)
+    if(inVersion ~= nil) then
+	    self.version = inVersion
+    end
+    return self.version
 end
 
-function Expansion:IsRetail()
+function XFC.Expansion:IsRetail()
     return WOW_PROJECT_MAINLINE == self:ID()
 end
+--#endregion
 
-function Expansion:HasVersion()
-	return self.version ~= nil
+--#region Methods
+function XFC.Expansion:Print()
+    self:ParentPrint()
+    XF:Debug(self:GetObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
+    if(self:HasVersion()) then self:Version():Print() end
 end
 
-function Expansion:SetVersion(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')
-	self.version = inVersion
-end
-
-function Expansion:GetVersion()
-	return self.version
+function XFC.Expansion:HasVersion()
+    return self.version ~= nil
 end
 --#endregion

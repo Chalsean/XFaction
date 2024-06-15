@@ -74,9 +74,9 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     end
 
     if(inType == XF.Enum.Message.LOGIN and XF.Config.Chat.Login.Guild) then  
-        text = text .. '<' .. inGuild:GetInitials() .. '> '
+        text = text .. '<' .. inGuild:Initials() .. '> '
     elseif(inType == XF.Enum.Message.ORDER and XF.Config.Chat.Crafting.Guild) then
-        text = text .. '<' .. inGuild:GetInitials() .. '> '
+        text = text .. '<' .. inGuild:Initials() .. '> '
     end
     
     if(inType == XF.Enum.Message.LOGOUT) then

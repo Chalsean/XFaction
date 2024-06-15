@@ -131,7 +131,7 @@ function DTLinks:OnEnter(this)
 
 	--#region Header
 	local line = self.tooltip:AddLine()
-	local guildName = XF.Confederate:Name()
+	local guildName = XFO.Confederate:Name()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], guildName), self.headerFont, 'LEFT', tarCount)
 	line = self.tooltip:AddLine()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XF.Links:Count()), self.headerFont, 'LEFT', tarCount)

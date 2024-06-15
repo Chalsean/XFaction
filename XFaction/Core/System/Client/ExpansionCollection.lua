@@ -2,24 +2,23 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ExpansionCollection'
 
-ExpansionCollection = XFC.ObjectCollection:newChildConstructor()
+XFC.ExpansionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function ExpansionCollection:new()
-    local object = ExpansionCollection.parent.new(self)
+function XFC.ExpansionCollection:new()
+    local object = XFC.ExpansionCollection.parent.new(self)
 	object.__name = ObjectName
     object.currentExpansion = nil
     return object
 end
---#endregion
 
---#region Initializers
-function ExpansionCollection:Initialize()
+function XFC.ExpansionCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 
         for _, expansionID in ipairs(XF.Settings.Expansions) do
-            local expansion = Expansion:new()
+            local expansion = XFC.Expansion:new()
+            expansion:Initialize()
             expansion:Key(expansionID)
             expansion:ID(expansionID)
             if(expansionID == WOW_PROJECT_MAINLINE) then
@@ -28,14 +27,15 @@ function ExpansionCollection:Initialize()
                 expansion:Name('Classic')
             end
             self:Add(expansion)
-            XF:Info(ObjectName, 'Initialized expansion [%s:%s]', expansion:Key(), expansion:Name())
+            XF:Info(self:ObjectName(), 'Initialized expansion [%s:%s]', expansion:Key(), expansion:Name())
 
             if(WOW_PROJECT_ID == expansionID) then
-                self:SetCurrent(expansion)
-                local wowVersion = GetBuildInfo()
-                local version = Version:new()
+                self:Current(expansion)
+                local wowVersion = XFF.ClientGetVersion()
+                local version = XFC.Version:new()
+                version:Initialize()
                 version:Key(wowVersion)
-                expansion:SetVersion(version)
+                expansion:Version(version)
             end
         end       
 
@@ -44,13 +44,12 @@ function ExpansionCollection:Initialize()
 end
 --#endregion
 
---#region Accessors
-function ExpansionCollection:SetCurrent(inExpansion)
-    assert(type(inExpansion) == 'table' and inExpansion.__name == 'Expansion', 'argument must be Expansion object')
-	self.currentExpansion = inExpansion
-end
-
-function ExpansionCollection:GetCurrent()
-	return self.currentExpansion
+--#region Properties
+function XFC.ExpansionCollection:Current(inExpansion)
+    assert(type(inExpansion) == 'table' and inExpansion.__name == 'Expansion' or inExpansion == nil)
+    if(inExpansion ~= nil) then
+	    self.currentExpansion = inExpansion
+    end
+    return self.currentExpansion
 end
 --#endregion

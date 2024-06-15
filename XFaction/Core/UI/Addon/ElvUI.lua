@@ -32,8 +32,8 @@ function XFElvUI:AddTags()
         local guildName = GetGuildInfo(inNameplate)
         try(function ()
             -- The guild check is not correct, could have sharded in a guild of same name from another realm
-            if(XF.Initialized and (XF.Confederate:Contains(guid) or XF.Guilds:ContainsName(guildName))) then
-                guildName = XF.Confederate:Name()
+            if(XF.Initialized and (XFO.Confederate:Contains(guid) or XFO.Guilds:ContainsName(guildName))) then
+                guildName = XFO.Confederate:Name()
             end
         end)
         return guildName
@@ -44,8 +44,8 @@ function XFElvUI:AddTags()
         local guid = UnitGUID(inNameplate)
         local guildName = GetGuildInfo(inNameplate)
         try(function ()
-            if(XF.Initialized and (XF.Confederate:Contains(guid) or XF.Guilds:ContainsName(guildName))) then
-                guildName = XF.Confederate:Key()
+            if(XF.Initialized and (XFO.Confederate:Contains(guid) or XFO.Guilds:ContainsName(guildName))) then
+                guildName = XFO.Confederate:Key()
             end
         end)
         if(guildName ~= nil) then
@@ -58,10 +58,10 @@ function XFElvUI:AddTags()
         local guid = UnitGUID(inNameplate)
         local guildName = GetGuildInfo(inNameplate)
         try(function ()
-            if(XF.Initialized and XF.Confederate:Contains(guid)) then
-                guildName = XF.Confederate:Get(guid):GetGuild():GetInitials()
-            elseif(XF.Initialized and XF.Guilds:ContainsName(guildName)) then
-                guildName = XF.Guilds:GetByName(guildName):GetInitials()
+            if(XF.Initialized and XFO.Confederate:Contains(guid)) then
+                guildName = XFO.Confederate:Get(guid):GetGuild():GetInitials()
+            elseif(XF.Initialized and XFO.Guilds:ContainsName(guildName)) then
+                guildName = XFO.Guilds:GetByName(guildName):GetInitials()
             end
         end)
         if(guildName ~= nil) then
@@ -74,8 +74,8 @@ function XFElvUI:AddTags()
         local guid = UnitGUID(inNameplate)
         local unitName = UnitName(inNameplate)
         try(function ()
-            if(XF.Initialized and XF.Confederate:Contains(guid)) then
-                local unitData = XF.Confederate:Get(guid)
+            if(XF.Initialized and XFO.Confederate:Contains(guid)) then
+                local unitData = XFO.Confederate:Get(guid)
                 if(unitData:HasMainName()) then
                     unitName = unitData:GetMainName()
                 end
@@ -90,8 +90,8 @@ function XFElvUI:AddTags()
         try(function ()
             if(XF.Initialized) then
                 local guid = UnitGUID(inNameplate)
-                if(XF.Confederate:Contains(guid)) then
-                    local unitData = XF.Confederate:Get(guid)
+                if(XFO.Confederate:Contains(guid)) then
+                    local unitData = XFO.Confederate:Get(guid)
                     if(unitData:HasMainName()) then
                         main = '(' .. unitData:GetMainName() .. ')'
                     end
@@ -106,8 +106,8 @@ function XFElvUI:AddTags()
         local team = ''
         try(function ()
             local guid = UnitGUID(inNameplate)
-            if(XF.Initialized and XF.Confederate:Contains(guid)) then
-                team = XF.Confederate:Get(guid):GetTeam():Name()
+            if(XF.Initialized and XFO.Confederate:Contains(guid)) then
+                team = XFO.Confederate:Get(guid):GetTeam():Name()
             end
         end)
         return team
@@ -119,7 +119,7 @@ function XFElvUI:AddTags()
         try(function ()
             local guid = UnitGUID(inNameplate)
             local guildName = GetGuildInfo(inNameplate)
-            if(XF.Initialized and (XF.Confederate:Contains(guid) or XF.Guilds:ContainsName(guildName))) then
+            if(XF.Initialized and (XFO.Confederate:Contains(guid) or XFO.Guilds:ContainsName(guildName))) then
                 icon = XF.Media:Get(XF.Icons.Guild):GetTexture()
             end
         end)

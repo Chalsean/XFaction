@@ -1,13 +1,12 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Confederate'
-local GuildRosterEvent = C_GuildInfo.GuildRoster
 
-Confederate = XFC.Factory:newChildConstructor()
+XFC.Confederate = XFC.Factory:newChildConstructor()
 
 --#region Constructors
-function Confederate:new()
-    local object = Confederate.parent.new(self)
+function XFC.Confederate:new()
+    local object = XFC.Confederate.parent.new(self)
 	object.__name = ObjectName
     object.onlineCount = 0
 	object.countByTarget = {}
@@ -16,18 +15,16 @@ function Confederate:new()
     return object
 end
 
-function Confederate:NewObject()
-    return Unit:new()
+function XFC.Confederate:NewObject()
+    return XFC.Unit:new()
 end
---#endregion
 
---#region Initializers
-function Confederate:Initialize()
+function XFC.Confederate:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         -- If this is a reload, restore non-local guild members
         try(function ()
-            self:CanModifyGuildInfo(CanEditGuildInfo())
+            self:CanModifyGuildInfo(XFF.GuildEditPermission())
         end).
         catch(function (inErrorMessage)
             XF:Warn(ObjectName, inErrorMessage)
@@ -42,9 +39,25 @@ function Confederate:Initialize()
 end
 --#endregion
 
---#region Hash
-function Confederate:Add(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit', 'argument must be Unit object')
+--#region Properties
+function XFC.Confederate:CanModifyGuildInfo(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
+    if(inBoolean ~= nil) then
+        self.modifyGuildInfo = inBoolean
+--    elseif(not self:IsInitialized()) then
+--        self:Initialize()
+    end
+    return self.modifyGuildInfo
+end
+
+function XFC.Confederate:OnlineCount()
+    return self.onlineCount
+end
+--#endregion
+
+--#region Methods
+function XFC.Confederate:Add(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     
     if(self:Contains(inUnit:Key())) then
         local oldData = self:Get(inUnit:Key())
@@ -72,7 +85,7 @@ function Confederate:Add(inUnit)
     end
 end
 
-function Confederate:Remove(inKey)
+function XFC.Confederate:Remove(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
         local unit = self:Get(inKey)
@@ -92,7 +105,7 @@ function Confederate:Remove(inKey)
     end
 end
 
-function Confederate:RemoveAll()
+function XFC.Confederate:RemoveAll()
     try(function ()
         if(self:IsInitialized()) then
             for _, unit in self:Iterator() do
@@ -100,14 +113,12 @@ function Confederate:RemoveAll()
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Error(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Error(ObjectName, err)
     end)
 end
---#endregion
 
---#region Accessors
-function Confederate:GetUnitByName(inName)
+function XFC.Confederate:GetUnitByName(inName)
     assert(type(inName) == 'string')
     for _, unit in self:Iterator() do
         if(unit:Name() == inName) then
@@ -116,32 +127,18 @@ function Confederate:GetUnitByName(inName)
     end
 end
 
-function Confederate:CountByTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
+function XFC.Confederate:CountByTarget(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target')
     return self.countByTarget[inTarget:Key()] or 0
 end
 
-function Confederate:CanModifyGuildInfo(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.modifyGuildInfo = inBoolean
-    elseif(not self:IsInitialized()) then
-        self:Initialize()
-    end
-    return self.modifyGuildInfo
-end
 
-function Confederate:GetInitials()
+
+function XFC.Confederate:GetInitials()
     return self:Key()
 end
 
-function Confederate:GetOnlineCount()
-    return self.onlineCount
-end
---#endregion
-
---#region Janitorial
-function Confederate:Backup()
+function XFC.Confederate:Backup()
     try(function ()
         if(self:IsInitialized()) then
             for unitKey, unit in self:Iterator() do
@@ -153,12 +150,12 @@ function Confederate:Backup()
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create confederate backup before reload: ' .. inErrorMessage
+    catch(function (err)
+        XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create confederate backup before reload: ' .. err
     end)
 end
 
-function Confederate:Restore()
+function XFC.Confederate:Restore()
     if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
     for _, data in pairs (XF.Cache.Backup.Confederate) do
         try(function ()
@@ -166,14 +163,14 @@ function Confederate:Restore()
             self:Add(unitData)
             XF:Info(ObjectName, '  Restored %s unit information from backup', unitData:GetUnitName())
         end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+        catch(function (err)
+            XF:Warn(ObjectName, err)
         end)
     end
     XF.Cache.Backup.Confederate = {}
 end
 
-function Confederate:OfflineUnit(inKey)
+function XFC.Confederate:OfflineUnit(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
         self:Get(inKey):SetPresence(Enum.ClubMemberPresence.Offline)
@@ -181,7 +178,7 @@ function Confederate:OfflineUnit(inKey)
     end
 end
 
-function Confederate:OfflineUnits(inEpochTime)
+function XFC.Confederate:OfflineUnits(inEpochTime)
     assert(type(inEpochTime) == 'number')
     for _, unit in self:Iterator() do
         if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < inEpochTime) then

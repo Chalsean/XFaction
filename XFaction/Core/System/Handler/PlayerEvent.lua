@@ -63,10 +63,10 @@ function PlayerEvent:CallbackZoneChanged()
         try(function ()
             local zoneName = GetRealZoneText()
             if(zoneName ~= nil and zoneName ~= XF.Player.Unit:GetZone():Name()) then
-                if(not XF.Zones:Contains(zoneName)) then
-                    XF.Zones:AddZone(zoneName)
+                if(not XFO.Zones:Contains(zoneName)) then
+                    XFO.Zones:Add(zoneName)
                 end
-                XF.Player.Unit:SetZone(XF.Zones:Get(zoneName))
+                XF.Player.Unit:SetZone(XFO.Zones:Get(zoneName))
             end
         end).
         catch(function (inErrorMessage)

@@ -30,9 +30,10 @@ XFF.GuildGetPermissions = C_GuildInfo.GuildControlGetRankFlags
 XFF.GuildID = C_Club.GetGuildClubId
 XFF.GuildFrame = ToggleGuildFrame
 XFF.GuildGetMOTD = GetGuildRosterMOTD
+XFF.GuildEditPermission = CanEditGuildInfo
 
 -- Realm
-XFF.RealmGetAPIName = GetNormalizedRealmName
+XFF.RealmAPIName = GetNormalizedRealmName
 XFF.RealmID = GetRealmID
 XFF.RealmName = GetRealmName
 

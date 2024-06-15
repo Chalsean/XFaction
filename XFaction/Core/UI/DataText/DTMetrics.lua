@@ -123,7 +123,7 @@ function DTMetrics:OnEnter(this)
 
 	--#region Header
 	local line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XF.Confederate:Name()), self.headerFont, 'LEFT', 3)
+	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self.headerFont, 'LEFT', 3)
 	line = self.tooltip:AddLine()
 	local calendar = XF.Metrics:GetStartCalendar()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self.headerFont, 'LEFT', 3)

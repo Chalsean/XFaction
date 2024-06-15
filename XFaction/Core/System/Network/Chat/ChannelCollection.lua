@@ -112,13 +112,13 @@ function ChannelCollection:UnitLeftChannel(_, _, _, _, _, _, _, _, channelName, 
 	local self = XF.Channels
 	if(self:HasLocalChannel()) then
 		local channel = self:GetLocalChannel()
-		if(channel:Key() == channelName and XF.Confederate:Contains(guid)) then
-			local unit = XF.Confederate:Get(guid)
+		if(channel:Key() == channelName and XFO.Confederate:Contains(guid)) then
+			local unit = XFO.Confederate:Get(guid)
 			if(unit:IsOnline() and not XF.Player.Guild:Equals(unit:GetGuild())) then
 				XF:Info(ObjectName, 'Guild member logout via event: ' .. unit:GetUnitName())
 				XF.Frames.System:Display(XF.Enum.Message.LOGOUT, unit:Name(), unit:GetUnitName(), unit:GetMainName(), unit:GetGuild(), nil, unit:GetFaction())
-				XF.Confederate:Remove(unit:Key())
-				XF.Confederate:Push(unit)
+				XFO.Confederate:Remove(unit:Key())
+				XFO.Confederate:Push(unit)
 				XF.DataText.Guild:RefreshBroker()
 			end
 		end

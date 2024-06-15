@@ -100,7 +100,7 @@ local function CanLink(inAccountInfo)
 	   inAccountInfo.gameAccountInfo.clientProgram == 'WoW') then
 
 		-- If player is in Torghast, don't link
-		local realm = XF.Realms:GetByID(inAccountInfo.gameAccountInfo.realmID)
+		local realm = XFO.Realms:Get(inAccountInfo.gameAccountInfo.realmID)
 		if(realm == nil or realm:ID() == 0) then return false end
 
 		-- We don't want to link to neutral faction toons

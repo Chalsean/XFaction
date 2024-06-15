@@ -12,28 +12,28 @@ function XF.Addons.Kui:OnShow(f)
         if(XF.Initialized and XF.Config.Addons.Kui.Enable and UnitIsPlayer(f.unit)) then
             if(XF.Config.Addons.Kui.MainName) then
                 local guid = UnitGUID(f.unit)
-                if(guid and XF.Confederate:Contains(guid)) then
-                    local unit = XF.Confederate:Get(guid)
+                if(guid and XFO.Confederate:Contains(guid)) then
+                    local unit = XFO.Confederate:Get(guid)
                     if(unit:HasMainName()) then
                         f.state.name = f.state.name .. ' (' .. unit:GetMainName() .. ')'
                     end
                 end
             end
 
-            if(f.state.guild_text and XF.Guilds:ContainsName(f.state.guild_text)) then
+            if(f.state.guild_text and XFO.Guilds:ContainsName(f.state.guild_text)) then
                 if(XF.Config.Addons.Kui.Icon) then
                     f.state.name = XF.Media:Get(XF.Icons.Guild):GetTexture() .. f.state.name
                 end
                 if(XF.Config.Addons.Kui.GuildName == 'GuildInitials') then
-                    f.state.guild_text = XF.Guilds:GetByName(f.state.guild_text):GetInitials()
+                    f.state.guild_text = XFO.Guilds:GetByName(f.state.guild_text):GetInitials()
                 elseif(XF.Config.Addons.Kui.GuildName == 'Confederate') then
-                    f.state.guild_text = XF.Confederate:Name()
+                    f.state.guild_text = XFO.Confederate:Name()
                 elseif(XF.Config.Addons.Kui.GuildName == 'ConfederateInitials') then
-                    f.state.guild_text = XF.Confederate:Key()
+                    f.state.guild_text = XFO.Confederate:Key()
                 elseif(XF.Config.Addons.Kui.GuildName == 'Team') then  
                     local guid = UnitGUID(f.unit)              
-                    if(XF.Confederate:Contains(guid)) then
-                        f.state.guild_text = XF.Confederate:Get(guid):GetTeam():Name()
+                    if(XFO.Confederate:Contains(guid)) then
+                        f.state.guild_text = XFO.Confederate:Get(guid):GetTeam():Name()
                     else
                         f.state.guild_text = 'Unknown'
                     end
