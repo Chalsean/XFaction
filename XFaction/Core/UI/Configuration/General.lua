@@ -966,7 +966,7 @@ function XF:ConfigInitialize()
 		local patchOrder = 0
 		for _, version in XFO.Versions:ReverseSortedIterator() do
 			if(version:IsInChangeLog()) then
-				local minorVersion = version:GetMajor() .. '.' .. version:GetMinor()
+				local minorVersion = version:Major() .. '.' .. version:Minor()
 				if(XF.Options.args.General.args.ChangeLog.args[minorVersion] == nil) then
 					minorOrder = minorOrder + 1
 					patchOrder = 0
@@ -983,7 +983,7 @@ function XF:ConfigInitialize()
 					order = patchOrder,
 					type = 'group',
 					name = version:Key(),
-					desc = 'Major: ' .. version:GetMajor() .. '\nMinor: ' .. version:GetMinor() .. '\nPatch: ' .. version:GetPatch(),
+					desc = 'Major: ' .. version:Major() .. '\nMinor: ' .. version:Minor() .. '\nPatch: ' .. version:Patch(),
 					args = XF.ChangeLog[version:Key()],
 				}
 				if(version:IsAlpha()) then
@@ -995,7 +995,7 @@ function XF:ConfigInitialize()
 		end
 
 		-- One time install logic
-		local version = Version:new()
+		local version = XFC.Version:new()
 		if(XF.Config.InstallVersion ~= nil) then
 			version:Key(XF.Config.InstallVersion)
 		else

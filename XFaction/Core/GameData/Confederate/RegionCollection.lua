@@ -11,7 +11,8 @@ local RegionData =
 	'KR', 
 	'EU', -- includes russia
 	'TW', 
-	'CN'
+	'CN',
+	'72'
 }
 --#endregion
 
@@ -34,7 +35,7 @@ function XFC.RegionCollection:Initialize()
 			region:ID(id)
 			region:Name(name)		
 
-			if(region:IsCurrent()) then
+			if(region:Name() == '72') then
 				self:Current(region)
 				XF:Info(self:ObjectName(), 'Initialized player region [%d:%s]', region:ID(), region:Name())
 			end

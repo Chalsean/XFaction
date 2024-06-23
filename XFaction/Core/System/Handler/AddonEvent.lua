@@ -25,13 +25,13 @@ function AddonEvent:Initialize()
                         instance = true,
                         start = true})
         -- In case they already loaded
-        if(IsAddOnLoaded('ElvUI')) then
+        if(XFF.ClientIsAddonLoaded('ElvUI')) then
             self:CallbackAddonLoaded('ElvUI')
         end
-        if(IsAddOnLoaded('WIM')) then
+        if(XFF.ClientIsAddonLoaded('WIM')) then
             self:CallbackAddonLoaded('WIM')
         end
-        if(IsAddOnLoaded('RaiderIO')) then
+        if(XFF.ClientIsAddonLoaded('RaiderIO')) then
             self:CallbackAddonLoaded('RaiderIO')
         end
 		self:IsInitialized(true)
@@ -87,7 +87,7 @@ end
 --#region Callbacks
 function AddonEvent:CallbackAddonLoaded(inAddonName)
     try(function ()
-        if(GetAddOnEnableState(nil, inAddonName) > 0) then
+        if(XFF.ClientAddonState(inAddonName) > 0) then
             if(inAddonName == XF.Name and not XF.Handlers.AddonEvent:IsLoaded()) then
                 XF:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()

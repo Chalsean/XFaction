@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'CoreInit'
 
 -- Initialize anything not dependent upon guild information
@@ -60,15 +60,16 @@ function XF:CoreInit()
 	-- Unit
 	XFO.Races = XFC.RaceCollection:new(); XFO.Races:Initialize()
 	XFO.Classes = XFC.ClassCollection:new(); XFO.Classes:Initialize()
-	XFO.Specs = XFC.SpecCollection:new(); XFO.Specs:Initialize()	
+	XFO.Specs = XFC.SpecCollection:new(); XFO.Specs:Initialize()
+	XFO.Heros = XFC.HeroCollection:new(); XFO.Heros:Initialize()
 	XFO.Professions = XFC.ProfessionCollection:new(); XFO.Professions:Initialize()
 	
 	XFO.Continents = XFC.ContinentCollection:new(); XFO.Continents:Initialize()
 	XFO.Zones = XFC.ZoneCollection:new(); XFO.Zones:Initialize()	
 	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
 	
-	XF.Player.GUID = UnitGUID('player')
-	XF.Player.Faction = XFO.Factions:Get(UnitFactionGroup('player'))
+	XF.Player.GUID = XFF.PlayerGUID('player')
+	XF.Player.Faction = XFO.Factions:Get(XFF.PlayerFaction('player'))
 	
 	-- Wrappers	
 	XF.Hooks = HookCollection:new(); XF.Hooks:Initialize()
@@ -78,7 +79,7 @@ function XF:CoreInit()
 
 	-- These will execute "in-parallel" with remainder of setup as they are not time critical nor is anything dependent upon them
 	try(function ()		
-		XF.Player.InInstance = IsInInstance()
+		XF.Player.InInstance = XFF.PlayerIsInInstance()
 		
 		XF.DataText.Guild:Initialize()
 		XF.DataText.Links:Initialize()

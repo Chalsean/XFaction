@@ -3345,7 +3345,7 @@ function Tourist:GetLevel(zone)
 			-- by assuming the player is at the min level required for the BG.
 			playerLvl = lows[zone]
 		end
-
+		MAX_PLAYER_LEVEL = 90
 		-- Find the most suitable bracket. Shadowlands assumption: still 5-level brackets
 		if playerLvl >= MAX_PLAYER_LEVEL then
 			return MAX_PLAYER_LEVEL, MAX_PLAYER_LEVEL, nil

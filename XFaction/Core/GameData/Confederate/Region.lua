@@ -16,7 +16,7 @@ end
 --#region Properties
 function XFC.Region:IsCurrent()
     if(self.current == nil) then
-        self.current = self:ID() == XFF.RegionGetCurrent()
+        self.current = self:ID() == XFF.RegionCurrent()
     end
     return self.current
 end

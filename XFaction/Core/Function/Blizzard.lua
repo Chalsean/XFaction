@@ -38,7 +38,7 @@ XFF.RealmID = GetRealmID
 XFF.RealmName = GetRealmName
 
 -- Region
-XFF.RegionGetCurrent = GetCurrentRegion
+XFF.RegionCurrent = GetCurrentRegion
 
 -- Spec
 XFF.SpecGetGroupID = GetSpecialization
@@ -48,10 +48,11 @@ XFF.SpecID = GetSpecializationInfo
 XFF.PlayerGetIlvl = GetAverageItemLevel
 XFF.PlayerGetAchievement = GetAchievementInfo
 XFF.PlayerGetAchievementLink = GetAchievementLink
-XFF.PlayerGetGUID = UnitGUID
+XFF.PlayerGUID = UnitGUID
 XFF.PlayerIsInGuild = IsInGuild
 XFF.PlayerIsInCombat = InCombatLockdown
-XFF.PlayerGetFaction = UnitFactionGroup
+XFF.PlayerIsInInstance = IsInInstance
+XFF.PlayerFaction = UnitFactionGroup
 XFF.PlayerGetPvPRating = GetPersonalRatedInfo
 XFF.PlayerGetGuild = GetGuildInfo
 
@@ -65,7 +66,7 @@ XFF.ClientGetVersion = GetBuildInfo
 XFF.ClientGetAddonCount = C_AddOns.GetNumAddOns
 XFF.ClientGetAddonInfo = C_AddOns.GetAddOnInfo
 XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
-XFF.ClientGetAddonState = C_AddOns.GetAddOnEnableState
+XFF.ClientAddonState = C_AddOns.GetAddOnEnableState
 
 -- UI
 XFF.UIOptionsFrame = InterfaceOptionsFrame

@@ -12,6 +12,7 @@ local DefaultRealms = {
 -- This data originally came from LibRealmInfo, it seems no longer supported as the data is quite stale and the library had bugs nobody was fixing
 -- There is a blizz web api that provides this data
 local RealmData = {
+	[4184]="These Go To Eleven,Beta,enUS,72,PST",
 	[1]="Lightbringer,PvE,enUS,US,PST",
 	[2]="Cenarius,PvE,enUS,US,PST",
 	[3]="Uther,PvE,enUS,US,CST",
