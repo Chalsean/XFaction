@@ -22,20 +22,7 @@ end
 function TimerEvent:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
-		XF.Timers:Add({name = 'LoginGuild', 
-						delta = 1, 
-						callback = XF.Handlers.TimerEvent.CallbackLoginGuild, 
-						repeater = true, 
-						instance = true,
-						ttl = XF.Settings.LocalGuild.LoginTTL,
-						start = true})
-		XF.Timers:Add({name = 'LoginPlayer', 
-						delta = 1, 
-						callback = XF.Handlers.TimerEvent.CallbackLoginPlayer, 
-						repeater = true, 
-						instance = true,
-						maxAttempts = XF.Settings.Player.Retry})
+		
 		XF.Timers:Add({name = 'Heartbeat', 
 						delta = XF.Settings.Player.Heartbeat, 
 						callback = XF.Handlers.TimerEvent.CallbackHeartbeat, 
@@ -71,122 +58,9 @@ end
 --#endregion
 
 --#region Callbacks
---#region Login Callbacks
-function TimerEvent:CallbackLoginGuild()
-	try(function ()
-		-- For a time Blizz API says player is not in guild, even if they are
-		-- Its not clear what event fires (if any) when this data is available, hence the poller
-		if(InGuild()) then
-			-- Even though it says were in guild, theres a brief time where the following calls fails, hence the sanity check
-			local guildID = GetGuildClubId()
-			if(guildID ~= nil) then
-				-- Now that guild info is available we can finish setup
-				XF:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
-				XF.Timers:Remove('LoginGuild')
-
-				-- Confederate setup via guild info
-				XFO.Guilds:Initialize(guildID)
-				XFO.Confederate:Initialize()
-				XFO.Guilds:SetPlayerGuild()
-				XF.Targets:Initialize()	
-
-				-- Frame inits were waiting on Confederate init
-				XF.Frames.Chat:Initialize()
-				XF.Frames.System:Initialize()
-
-				-- Start network
-				XF.Channels:Initialize()
-				XF.Handlers.ChannelEvent:Initialize()
-				XF.Mailbox.Chat:Initialize()
-				XF.Nodes:Initialize()
-				XF.Links:Initialize()
-				XF.Friends:Initialize()				
-				XF.Mailbox.BNet:Initialize()
-
-				if(XF.Cache.UIReload) then
-					XFO.Confederate:Restore()					
-				end
-
-				XF.Timers:Get('LoginPlayer'):Start()
-			end
-		end
-	end).
-	catch(function (inErrorMessage)
-		XF:Error(ObjectName, inErrorMessage)
-	end).
-	finally(function ()			
-		XF:SetupMenus()
-	end)
-end
 
 function TimerEvent:CallbackLoginPlayer()
-	try(function ()
-		-- Far as can tell does not fire event, so call and pray it loads before we query for the data
-		RequestMapsFromServer()
-
-		-- Need the player data to continue setup
-		local unitData = XFO.Confederate:Pop()
-		unitData:Initialize()
-		if(unitData:IsInitialized()) then
-			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
-			XF.Timers:Remove('LoginPlayer')
-
-			XFO.Confederate:Add(unitData)
-			XF.Player.Unit:Print()
-
-			-- By this point all the channels should have been joined
-			if(not XF.Channels:UseGuild()) then
-				XF.Channels:Sync()
-				if(XF.Channels:HasLocalChannel()) then
-					XF.Channels:SetLast(XF.Channels:GetLocalChannel():Key())
-				end
-			end
-			
-			-- If reload, restore backup information
-			if(XF.Cache.UIReload) then
-				XF.Friends:Restore()
-				XF.Links:Restore()
-				XFO.Orders:Restore()
-				XF.Cache.UIReload = false
-				XF.Player.Unit:Broadcast(XF.Enum.Message.DATA)
-			-- Otherwise send login message
-			else
-				XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
-			end			
-
-			-- Start all hooks, timers and events
-			XF.Handlers.SystemEvent:Initialize()
-			XF.Hooks:Start()
-			XF.Timers:Start()
-			XF.Events:Start()				
-			XF.Initialized = true
-
-			-- Finish DT init
-			XF.DataText.Guild:PostInitialize()
-			XF.DataText.Links:PostInitialize()
-			XF.DataText.Metrics:PostInitialize()
-			--XF.DataText.Orders:PostInitialize()
-
-			-- For support reasons, it helps to know what addons are being used
-			for i = 1, GetNumAddOns() do
-				local name, _, _, enabled = GetAddOnInfo(i)
-				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
-			end
-
-			XF.Timers:Add({name = 'LoginChannelSync',
-						    delta = XF.Settings.Network.Channel.LoginChannelSyncTimer, 
-						    callback = XF.Handlers.TimerEvent.CallbackChannelSync,
-						    repeater = true,
-							maxAttempts = XF.Settings.Network.Channel.LoginChannelSyncAttempts,
-						    instance = true,
-						    start = true})
-		else
-			XFO.Confederate:Push(unitData)
-		end
-	end).
-	catch(function (inErrorMessage)
-		XF:Error(ObjectName, inErrorMessage)
-	end)
+	
 end
 --#endregion
 
@@ -275,18 +149,6 @@ function TimerEvent:CallbackStaleLinks()
 	end).
 	finally(function ()
 		XF.Timers:Get('StaleLinks'):SetLastRan(ServerTime())
-	end)
-end
-
-function TimerEvent:CallbackChannelSync()
-	try(function ()
-		XF.Channels:Sync()
-		if(XF.Channels:HasLocalChannel()) then
-			XF.Channels:SetLast(XF.Channels:GetLocalChannel():Key())
-		end
-	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
 	end)
 end
 --#endregion

@@ -62,9 +62,9 @@ XFF.BNetGetFriendCount = BNGetNumFriends
 XFF.BNetGetFriendInfo = C_BattleNet.GetFriendAccountInfo
 
 -- Client
-XFF.ClientGetVersion = GetBuildInfo
-XFF.ClientGetAddonCount = C_AddOns.GetNumAddOns
-XFF.ClientGetAddonInfo = C_AddOns.GetAddOnInfo
+XFF.ClientVersion = GetBuildInfo
+XFF.ClientAddonCount = C_AddOns.GetNumAddOns
+XFF.ClientAddonInfo = C_AddOns.GetAddOnInfo
 XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
 XFF.ClientAddonState = C_AddOns.GetAddOnEnableState
 

@@ -110,7 +110,7 @@ local function PreSort()
 			local unitData = {}
 
 			unitData.Level = unit:GetLevel()
-			unitData.Realm = unit:GetGuild():GetRealm():Name()
+			unitData.Realm = unit:GetGuild():Realm():Name()
 			unitData.Guild = unit:GetGuild():Name()		
 			unitData.Name = unit:Name()
 			unitData.UnitName = unit:GetUnitName()
@@ -157,7 +157,7 @@ local function PreSort()
 			end
 
 			if(unit:HasZone()) then
-				unitData.Zone = unit:GetZone():GetLocaleName()
+				unitData.Zone = unit:GetZone():LocaleName()
 			else
 				unitData.Zone = unit:GetZoneName()
 			end

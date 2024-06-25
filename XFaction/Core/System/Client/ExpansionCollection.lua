@@ -31,7 +31,7 @@ function XFC.ExpansionCollection:Initialize()
 
             if(WOW_PROJECT_ID == expansionID) then
                 self:Current(expansion)
-                local wowVersion = XFF.ClientGetVersion()
+                local wowVersion = XFF.ClientVersion()
                 local version = XFC.Version:new()
                 version:Initialize()
                 version:Key(wowVersion)

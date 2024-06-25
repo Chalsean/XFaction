@@ -128,6 +128,7 @@ end
 
 --#region DataSet
 function ChannelCollection:Sync()
+	local self = XF.Channels
 	try(function ()
 		XF.Channels:RemoveAll()
 		XF.Channels:VoidLocalChannel()
@@ -145,6 +146,10 @@ function ChannelCollection:Sync()
 			if(channel:Name() == XF.Cache.Channel.Name) then
 				self:SetLocalChannel(channel)
 			end
+		end
+
+		if(self:HasLocalChannel()) then
+			self:SetLast(self:GetLocalChannel():Key())
 		end
 	end).
 	catch(function (inErrorMessage)

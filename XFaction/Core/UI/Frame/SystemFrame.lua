@@ -58,7 +58,7 @@ function SystemFrame:Display(inType, inName, inUnitName, inMainName, inGuild, in
     elseif(inFaction:Equals(XF.Player.Faction)) then
         text = text .. format('|Hplayer:%s|h[%s]|h', inUnitName, inName) .. ' '
     else
-        local friend = XF.Friends:GetByRealmUnitName(inGuild:GetRealm(), inName)
+        local friend = XF.Friends:GetByRealmUnitName(inGuild:Realm(), inName)
         if(friend ~= nil) then
             text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:GetTag(), inName) .. ' '
         else

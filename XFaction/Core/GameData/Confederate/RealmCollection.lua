@@ -862,7 +862,7 @@ function XFC.RealmCollection:Initialize()
 
 		-- Sanity check
 		if(XF.Player.Realm == nil) then
-			throw(format('Unable to identify player realm'))
+			error('Unable to identify player realm')
 		end
 
 		-- Setup default realms (Torghast)
