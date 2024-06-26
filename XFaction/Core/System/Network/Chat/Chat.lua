@@ -60,9 +60,9 @@ function Chat:Send(inMessage)
     -- If only guild on target, broadcast to GUILD
     local channelName, channelID
     -- Otherwise broadcast to custom channel
-    if(XF.Channels:HasLocalChannel()) then
+    if(XFO.Channels:HasLocalChannel()) then
         channelName = 'CHANNEL'
-        channelID = XF.Channels:GetLocalChannel():ID()
+        channelID = XFO.Channels:LocalChannel():ID()
     else
         channelName = 'GUILD'
         channelID = nil

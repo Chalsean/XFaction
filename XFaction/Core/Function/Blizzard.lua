@@ -11,10 +11,10 @@ XFF.TimerStart = C_Timer.NewTicker
 
 -- Chat / Channel
 XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter
-XFF.ChatSetChannelColor = ChangeChatColor
+XFF.ChatChannelColor = ChangeChatColor
 XFF.ChatSwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
-XFF.ChatGetChannels = GetChannelList
-XFF.ChatGetChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
+XFF.ChatChannels = GetChannelList
+XFF.ChatChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
 XFF.ChatJoinChannel = JoinChannelByName
 XFF.ChatGetWindow = GetChatWindowMessages
 XFF.ChatHandler = ChatFrame_MessageEventHandler

@@ -766,7 +766,7 @@ XF.Options = {
 									name = XF.Lib.Locale['CHANNEL'],
 									type = 'execute',
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function() XF.Channels:Print() end,
+									func = function() XFO.Channels:Print() end,
 								},
 								Class = {
 									order = 3,

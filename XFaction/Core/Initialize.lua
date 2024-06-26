@@ -41,7 +41,6 @@ function XF:CoreInit()
 	-- Declare handlers but not listening yet
 	XF.Handlers.AchievementEvent = AchievementEvent:new(); XF.Handlers.AchievementEvent:Initialize()
 	XF.Handlers.BNetEvent = BNetEvent:new(); XF.Handlers.BNetEvent:Initialize()
-	XF.Handlers.ChannelEvent = ChannelEvent:new()
 	XF.Handlers.ChatEvent = ChatEvent:new(); XF.Handlers.ChatEvent:Initialize()
 	XF.Handlers.GuildEvent = GuildEvent:new(); XF.Handlers.GuildEvent:Initialize()
 	XF.Handlers.OrderEvent = XFC.OrderEvent:new(); XF.Handlers.OrderEvent:Initialize()
@@ -50,7 +49,7 @@ function XF:CoreInit()
 	XF.Handlers.TimerEvent = TimerEvent:new()
 
 	-- Network
-	XF.Channels = ChannelCollection:new()
+	XFO.Channels = XFC.ChannelCollection:new()
 	XF.Friends = FriendCollection:new()
 	XF.Links = LinkCollection:new()
 	XF.Nodes = NodeCollection:new()
@@ -129,8 +128,7 @@ function XF:CallbackLoginGuild()
 				XF.Frames.System:Initialize()
 
 				-- Start network
-				XF.Channels:Initialize()
-				XF.Handlers.ChannelEvent:Initialize()
+				XFO.Channels:Initialize()
 				XF.Mailbox.Chat:Initialize()
 				XF.Nodes:Initialize()
 				XF.Links:Initialize()
@@ -177,12 +175,12 @@ function XF:CallbackLoginPlayer()
 			XF.Player.Unit:Print()
 
 			-- By this point all the channels should have been joined
-			if(not XF.Channels:UseGuild()) then
-				XF.Channels:Sync()
-				if(XF.Channels:HasLocalChannel()) then
-					XF.Channels:SetLast(XF.Channels:GetLocalChannel():Key())
-				end
-			end
+			-- if(not XFO.Channels:UseGuild()) then
+			-- 	XFO.Channels:Sync()
+			-- 	if(XFO.Channels:HasLocalChannel()) then
+			-- 		XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
+			-- 	end
+			-- end
 			
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
@@ -217,7 +215,7 @@ function XF:CallbackLoginPlayer()
 			XF.Timers:Add({
 				name = 'LoginChannelSync',
 				delta = XF.Settings.Network.Channel.LoginChannelSyncTimer, 
-				callback = XF.Channels.Sync,
+				callback = XFO.Channels.CallbackSync,
 				repeater = true,
 				maxAttempts = XF.Settings.Network.Channel.LoginChannelSyncAttempts,
 				instance = true,

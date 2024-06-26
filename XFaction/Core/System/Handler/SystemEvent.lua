@@ -85,8 +85,8 @@ function SystemEvent:CallbackReloadUI()
 end
 
 function SystemEvent:CallbackLogin()
-    if(XF.Channels:HasLocalChannel()) then
-        XF.Channels:SetLast(XF.Channels:GetLocalChannel():Key())
+    if(XFO.Channels:HasLocalChannel()) then
+        XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
     end
 end
 --#endregion
