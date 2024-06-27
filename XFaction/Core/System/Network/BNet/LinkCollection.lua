@@ -117,15 +117,15 @@ function LinkCollection:Broadcast()
 
 	local message = nil
 	try(function ()
-		message = XF.Mailbox.Chat:Pop()
+		message = XFO.Mailbox:Pop()
 		message:Initialize()
 		message:SetType(XF.Enum.Network.BROADCAST)
 		message:SetSubject(XF.Enum.Message.LINK)
 		message:SetData(linksString)
-		XF.Mailbox.Chat:Send(message)  
+		XFO.Chat:Send(message)  
 	end).
 	finally(function ()
-		XF.Mailbox.Chat:Push(message)
+		XFO.Mailbox:Push(message)
 	end)
 end
 --#endregion

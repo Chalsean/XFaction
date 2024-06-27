@@ -6,6 +6,7 @@ local ObjectName = 'CoreInit'
 function XF:CoreInit()
 	-- Get cache/configs asap	
 	XF.Events = EventCollection:new(); XF.Events:Initialize()
+	XF.Timers = TimerCollection:new(); XF.Timers:Initialize()
 	XF.Media = MediaCollection:new(); XF.Media:Initialize()
 
 	-- External addon handling
@@ -40,8 +41,6 @@ function XF:CoreInit()
 
 	-- Declare handlers but not listening yet
 	XF.Handlers.AchievementEvent = AchievementEvent:new(); XF.Handlers.AchievementEvent:Initialize()
-	XF.Handlers.BNetEvent = BNetEvent:new(); XF.Handlers.BNetEvent:Initialize()
-	XF.Handlers.ChatEvent = ChatEvent:new(); XF.Handlers.ChatEvent:Initialize()
 	XF.Handlers.GuildEvent = GuildEvent:new(); XF.Handlers.GuildEvent:Initialize()
 	XF.Handlers.OrderEvent = XFC.OrderEvent:new(); XF.Handlers.OrderEvent:Initialize()
 	XF.Handlers.PlayerEvent = PlayerEvent:new(); XF.Handlers.PlayerEvent:Initialize()
@@ -53,8 +52,10 @@ function XF:CoreInit()
 	XF.Friends = FriendCollection:new()
 	XF.Links = LinkCollection:new()
 	XF.Nodes = NodeCollection:new()
-	XF.Mailbox.BNet = BNet:new()
-	XF.Mailbox.Chat = Chat:new()
+	XFO.Mailbox = XFC.Mailbox:new(); XFO.Mailbox:Initialize()
+	XFO.PostOffice = XFC.PostOffice:new(); XFO.PostOffice:Initialize()
+	XFO.BNet = XFC.BNet:new()
+	XFO.Chat = XFC.Chat:new()
 	
 	-- Unit
 	XFO.Races = XFC.RaceCollection:new(); XFO.Races:Initialize()
@@ -73,7 +74,6 @@ function XF:CoreInit()
 	-- Wrappers	
 	XF.Hooks = HookCollection:new(); XF.Hooks:Initialize()
 	XF.Metrics = MetricCollection:new(); XF.Metrics:Initialize()	
-	XF.Timers = TimerCollection:new(); XF.Timers:Initialize()
 	XF.Handlers.TimerEvent:Initialize()
 
 	-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
@@ -129,11 +129,11 @@ function XF:CallbackLoginGuild()
 
 				-- Start network
 				XFO.Channels:Initialize()
-				XF.Mailbox.Chat:Initialize()
+				XFO.Chat:Initialize()
 				XF.Nodes:Initialize()
 				XF.Links:Initialize()
 				XF.Friends:Initialize()				
-				XF.Mailbox.BNet:Initialize()
+				XFO.BNet:Initialize()
 
 				if(XF.Cache.UIReload) then
 					XFO.Confederate:Restore()					

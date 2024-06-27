@@ -2,9 +2,9 @@ local XF, G = unpack(select(2, ...))
 local XFF = XF.Function
 
 -- Time
-XFF.TimeGetCurrent = GetServerTime
-XFF.TimeGetLocal = C_DateAndTime.GetServerTimeLocal
-XFF.TimeGetCalendar = C_DateAndTime.GetCurrentCalendarTime
+XFF.TimeCurrent = GetServerTime
+XFF.TimeLocal = C_DateAndTime.GetServerTimeLocal
+XFF.TimeCalendar = C_DateAndTime.GetCurrentCalendarTime
 
 -- Timer
 XFF.TimerStart = C_Timer.NewTicker

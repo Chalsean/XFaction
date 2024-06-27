@@ -82,7 +82,7 @@ end
 
 function XFC.Factory:Pop()
     assert(type(inKey) == 'string' or inKey == nil, 'argument must be string or nil value')
-    local currentTime = XFF.TimeGetCurrent()
+    local currentTime = XFF.TimeCurrent()
     for _, object in self:CheckedInIterator() do
         object:FactoryTime(currentTime)
         self.checkedIn[object:FactoryKey()] = nil
@@ -108,7 +108,7 @@ function XFC.Factory:Push(inObject)
         self.checkedOut[inObject:FactoryKey()] = nil
         self.checkedOutCount = self.checkedOutCount - 1
         inObject:Deconstructor()
-        inObject:FactoryTime(XFF.TimeGetCurrent())
+        inObject:FactoryTime(XFF.TimeCurrent())
         self.checkedIn[inObject:FactoryKey()] = inObject
         self.checkedInCount = self.checkedInCount + 1         
     end

@@ -128,7 +128,7 @@ function XFC.ZoneCollection:CallbackZoneChanged()
 	local self = XFO.Zones
     if(XF.Initialized) then 
         try(function ()
-            local zoneName = XFF.ZoneGetCurrent()
+            local zoneName = XFF.ZoneCurrent()
             if(zoneName ~= nil and zoneName ~= XF.Player.Unit:GetZone():Name()) then
                 if(not self:Contains(zoneName)) then
                     self:Add(zoneName)

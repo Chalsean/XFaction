@@ -672,7 +672,7 @@ function XFC.Unit:Broadcast(inSubject)
     end
     local message = nil
     try(function ()
-        message = XF.Mailbox.Chat:Pop()
+        message = XFO.Mailbox:Pop()
         message:Initialize()
         message:SetFrom(self:GetGUID())
         message:SetGuild(self:GetGuild())
@@ -680,10 +680,10 @@ function XFC.Unit:Broadcast(inSubject)
         message:SetType(XF.Enum.Network.BROADCAST)
         message:SetSubject(inSubject)
         message:SetData(self)
-        XF.Mailbox.Chat:Send(message)
+        XFO.Chat:Send(message)
     end).
     finally(function ()
-        XF.Mailbox.Chat:Push(message)
+        XFO.Mailbox:Push(message)
     end)
 end
 --#endregion

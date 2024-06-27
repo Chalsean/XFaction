@@ -160,6 +160,7 @@ function FriendCollection:CheckFriend(inKey)
 end
 
 function FriendCollection:CheckFriends()
+	local self = XF.Friends
 	try(function ()
 		for i = 1, GetFriendCount() do
 			self:CheckFriend(i)

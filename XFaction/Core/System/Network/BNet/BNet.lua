@@ -1,36 +1,44 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'BNet'
-local ServerTime = GetServerTime
 
-BNet = Mailbox:newChildConstructor()
+XFC.BNet = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function BNet:new()
-    local object = BNet.parent.new(self)
+function XFC.BNet:new()
+    local object = XFC.BNet.parent.new(self)
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function BNet:Initialize()
+function XFC.BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         XF.Enum.Tag.BNET = XFO.Confederate:Key() .. 'BNET'
-        XF.Events:Add({name = 'BNetMessage', 
-                        event = 'BN_CHAT_MSG_ADDON', 
-                        callback = XF.Mailbox.BNet.BNetReceive, 
-                        instance = true})
+
+        XF.Events:Add({
+            name = 'BNetMessage', 
+            event = 'BN_CHAT_MSG_ADDON', 
+            callback = XFO.BNet.CallbackReceive, 
+            instance = true
+        })
+        XF.Events:Add({
+            name = 'Friend', 
+            event = 'BN_FRIEND_INFO_CHANGED', 
+            callback = XF.Friends.CheckFriends, 
+            instance = true,
+            groupDelta = XF.Settings.Network.BNet.FriendTimer
+        })
+
         self:IsInitialized(true)
     end
     return self:IsInitialized()
 end
 --#endregion
 
---#region Send
-function BNet:Send(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+--#region Methods
+function XFC.BNet:Send(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     -- Before we do work, lets make sure there are targets and we can message those targets
     local links = {}
@@ -50,7 +58,7 @@ function BNet:Send(inMessage)
             local randomNumber = math.random(1, friendCount)
             links[#links + 1] = friends[randomNumber]
         else
-            XF:Debug(ObjectName, 'Unable to identify friends on target [%s:%s]', target:GetRealm():Name(), target:GetFaction():Name())
+            XF:Debug(self:ObjectName(), 'Unable to identify friends on target [%s:%s]', target:GetRealm():Name(), target:GetFaction():Name())
         end
     end
 
@@ -61,33 +69,32 @@ function BNet:Send(inMessage)
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
     local messageData = XF:EncodeBNetMessage(inMessage, true)
-    local packets = self:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
-    self:Add(inMessage:Key())
+    local packets = XFO.PostOffice:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
+    XFO.Mailbox:Add(inMessage:Key())
 
     -- Make sure all packets go to each target
     for _, friend in pairs (links) do
         try(function ()
             for index, packet in ipairs (packets) do
-                XF:Debug(ObjectName, 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:Name(), friend:GetGameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
+                XF:Debug(self:ObjectName(), 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:Name(), friend:GetGameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 XF.Lib.BCTL:BNSendGameData('NORMAL', XF.Enum.Tag.BNET, packet, _, friend:GetGameID())
                 XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(friend:GetTarget())
         end).
-        catch(function (inErrorMessage)
-            XF:Warn(ObjectName, inErrorMessage)
+        catch(function (err)
+            XF:Warn(self:ObjectName(), err)
         end)
     end
 end
---#endregion
 
---#region Receive
-function BNet:DecodeMessage(inEncodedMessage)
+function XFC.BNet:DecodeMessage(inEncodedMessage)
     return XF:DecodeBNetMessage(inEncodedMessage)
 end
 
-function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function XFC.BNet:CallbackReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+    local self = XFO.BNet
     try(function ()
         -- People can only whisper you if friend, so if you got a whisper you need to check friends cache
         if(not XF.Friends:ContainsByGameID(tonumber(inSender))) then
@@ -101,15 +108,15 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
                 friend:IsRunningAddon(true)
                 friend:CreateLink()
                 if(inEncodedMessage:sub(1, 4) == 'PING') then
-                    XF:Debug(ObjectName, 'Received ping from [%s]', friend:GetTag())
+                    XF:Debug(self:ObjectName(), 'Received ping from [%s]', friend:GetTag())
                 elseif(inEncodedMessage:sub(1,7) == 'RE:PING') then
-                    XF:Debug(ObjectName, '[%s] Responded to ping', friend:GetTag())
+                    XF:Debug(self:ObjectName(), '[%s] Responded to ping', friend:GetTag())
                 end
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
     end)
 
     try(function ()
@@ -117,11 +124,11 @@ function BNet:BNetReceive(inMessageTag, inEncodedMessage, inDistribution, inSend
             XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'RE:PING', _, inSender)
             XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
         elseif(inEncodedMessage:sub(1,7) ~= 'RE:PING') then
-            XF.Mailbox.BNet:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    
+            XFO.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    
         end        
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 --#endregion

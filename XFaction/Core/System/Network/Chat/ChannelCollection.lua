@@ -22,8 +22,8 @@ function XFC.ChannelCollection:Initialize()
 				XFF.ChatJoinChannel(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
 				XF:Info(self:ObjectName(), 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 			end).
-			catch(function (inErrorMessage)
-				XF:Error(ObjectName, inErrorMessage)
+			catch(function (err)
+				XF:Error(self:ObjectName(), err)
 			end)
 		end
 

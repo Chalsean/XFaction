@@ -129,10 +129,10 @@ end
 
 function XF:DecodeChatMessage(inEncodedMessage)
 	local decoded = Deflate:DecodeForWoWAddonChannel(inEncodedMessage)
-	return DeserializeMessage(XF.Mailbox.Chat:Pop(), decoded)
+	return DeserializeMessage(XFO.Mailbox:Pop(), decoded)
 end
 
 function XF:DecodeBNetMessage(inEncodedMessage)
 	local decoded = Deflate:DecodeForPrint(inEncodedMessage)
-	return DeserializeMessage(XF.Mailbox.BNet:Pop(), decoded)
+	return DeserializeMessage(XFO.Mailbox:Pop(), decoded)
 end

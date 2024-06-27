@@ -33,10 +33,6 @@ function TimerEvent:Initialize()
 						callback = XF.Handlers.TimerEvent.CallbackLinks, 
 						repeater = true, 
 						instance = true})		    		    
-		XF.Timers:Add({name = 'Mailbox', 
-						delta = XF.Settings.Network.Mailbox.Scan, 
-						callback = XF.Handlers.TimerEvent.CallbackMailboxTimer, 
-						repeater = true})
 		XF.Timers:Add({name = 'Ping', 
 						delta = XF.Settings.Network.BNet.Ping.Timer, 
 						callback = XF.Handlers.TimerEvent.CallbackPingFriends, 
@@ -57,28 +53,7 @@ function TimerEvent:Initialize()
 end
 --#endregion
 
---#region Callbacks
-
-function TimerEvent:CallbackLoginPlayer()
-	
-end
---#endregion
-
 --#region Janitorial Callbacks
--- Cleanup mailbox
-function TimerEvent:CallbackMailboxTimer()
-	try(function ()
-		XF.Mailbox.Chat:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
-		XF.Mailbox.BNet:Purge(ServerTime() - XF.Settings.Network.Mailbox.Stale)
-	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
-	end).
-	finally(function ()
-		XF.Timers:Get('Mailbox'):SetLastRan(ServerTime())
-	end)
-end
-
 -- If you haven't heard from a unit in X minutes, set them to offline
 function TimerEvent:CallbackOffline()
 	try(function ()

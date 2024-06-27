@@ -2,25 +2,35 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Chat'
 
-Chat = Mailbox:newChildConstructor()
+XFC.Chat = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Chat:new()
-    local object = Chat.parent.new(self)
+function XFC.Chat:new()
+    local object = XFC.Chat.parent.new(self)
     object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function Chat:Initialize()
+function XFC.Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Enum.Tag.LOCAL = XFO.Confederate:Key() .. 'XF'						
-        XF.Events:Add({name = 'ChatMsg', 
-                        event = 'CHAT_MSG_ADDON', 
-                        callback = XF.Mailbox.Chat.ChatReceive, 
-                        instance = true})
+        XF.Enum.Tag.LOCAL = XFO.Confederate:Key() .. 'XF'	
+
+        -- This is the event that fires when someone posts a message
+        XF.Events:Add({
+            name = 'ChatMsg', 
+            event = 'CHAT_MSG_ADDON', 
+            callback = XFO.Chat.CallbackReceive, 
+            instance = true
+        })
+        -- This is the event that fires when you post a guild message
+        XF.Events:Add({
+            name = 'GuildChat', 
+            event = 'CHAT_MSG_GUILD', 
+            callback = XFO.Chat.CallbackGuildMessage,
+            instance = true
+        })
+
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -28,16 +38,16 @@ end
 --#endregion
 
 --#region Send
-function Chat:Send(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), "argument must be Message type object")
+function XFC.Chat:Send(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Settings.System.Roster and inMessage:GetSubject() == XF.Enum.Message.DATA) then return end
 
-    XF:Debug(ObjectName, 'Attempting to send message')
+    XF:Debug(self:ObjectName(), 'Attempting to send message')
     inMessage:Print()
 
     --#region BNet messaging for BNET/BROADCAST types
     if(inMessage:GetType() == XF.Enum.Network.BROADCAST or inMessage:GetType() == XF.Enum.Network.BNET) then
-        XF.Mailbox.BNet:Send(inMessage)
+        XFO.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
         if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XF.Enum.Network.BNET) then
             inMessage:SetType(XF.Enum.Network.BROADCAST)
@@ -46,7 +56,7 @@ function Chat:Send(inMessage)
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
         elseif(not inMessage:HasTargets() and inMessage:GetType() == XF.Enum.Network.BROADCAST) then
-            XF:Debug(ObjectName, "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
+            XF:Debug(self:ObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
             inMessage:SetType(XF.Enum.Network.LOCAL)        
         end
     end
@@ -54,8 +64,8 @@ function Chat:Send(inMessage)
 
     --#region Chat channel messaging for BROADCAST/LOCAL types
     local messageData = XF:EncodeChatMessage(inMessage, true)
-    local packets = self:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
-    self:Add(inMessage:Key())
+    local packets = XFO.PostOffice:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
+    XFO.Mailbox:Add(inMessage:Key())
 
     -- If only guild on target, broadcast to GUILD
     local channelName, channelID
@@ -68,25 +78,55 @@ function Chat:Send(inMessage)
         channelID = nil
     end
     for index, packet in ipairs (packets) do
-        XF:Debug(ObjectName, 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
+        XF:Debug(self:ObjectName(), 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
         XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
         XF.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
     --#endregion
 end
---#endregion
 
---#region Receive
-function Chat:DecodeMessage(inEncodedMessage)
+function XFC.Chat:DecodeMessage(inEncodedMessage)
     return XF:DecodeChatMessage(inEncodedMessage)
 end
 
-function Chat:ChatReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+function XFC.Chat:CallbackReceive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+    local self = XFO.Chat
     try(function ()
-        XF.Mailbox.Chat:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
+        XFO.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+    end)
+end
+
+function XFC.Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, inTarName, inFlags, _, inChannelID, _, _, inLineID, inSenderGUID)
+    local self = XFO.Chat
+    try(function ()
+        -- If you are the sender, broadcast to other realms/factions
+        if(XF.Player.GUID == inSenderGUID and XF.Player.Unit:CanGuildSpeak()) then
+            local message = nil
+            try(function ()
+                message = XFO.Mailbox:Pop()
+                message:Initialize()
+                message:SetFrom(XF.Player.Unit:GetGUID())
+                message:SetType(XF.Enum.Network.BROADCAST)
+                message:SetSubject(XF.Enum.Message.GCHAT)
+                message:Name(XF.Player.Unit:Name())
+                message:SetUnitName(XF.Player.Unit:GetUnitName())
+                message:SetGuild(XF.Player.Guild)
+                if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
+                    message:SetMainName(XF.Player.Unit:GetMainName())
+                end
+                message:SetData(inText)
+                self:Send(message, true)
+            end).
+            finally(function ()
+                XFO.Mailbox:Push(message)
+            end)
+        end
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 --#endregion
