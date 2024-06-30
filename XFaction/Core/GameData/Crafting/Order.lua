@@ -83,11 +83,11 @@ function XFC.Order:IsMyOrder()
     return XF.Player.Unit:Equals(self:GetCustomerUnit())
 end
 
-function XFC.Order:GetType()
+function XFC.Order:Type()
     return self.type
 end
 
-function XFC.Order:SetType(inType)
+function XFC.Order:Type(inType)
     assert(type(inType) == 'number')
     self.type = inType
 end
@@ -146,13 +146,13 @@ end
 function XFC.Order:Encode(inBackup)
     assert(inBackup == nil or type(inBackup) == 'boolean', 'argument must be nil or boolean')
     local data = {}
-    data.C = XF:SerializeUnitData(self:GetCustomerUnit())
+    data.C = self:GetCustomerUnit():Serialize()
     data.K = self:Key()
     data.O = self:ID()
     data.P = self:GetProfession():Key()
     data.Q = self:GetQuality()
     data.R = self:GetRecipeID()
-    data.T = self:GetType()
+    data.T = self:Type()
     data.U = self:GetCrafterGUID()
     return data
 end
@@ -161,7 +161,7 @@ function XFC.Order:Decode(inData)
     assert(type(inData) == 'table')
     self:Key(inData.K)
     self:ID(inData.O)
-    self:SetType(inData.T)
+    self:Type(inData.T)
     self:SetCustomerUnit(XF:DeserializeUnitData(inData.C))    
     self:SetProfession(XFO.Professions:Get(inData.P))
     if(inData.Q ~= nil) then
@@ -179,12 +179,12 @@ function XFC.Order:Broadcast()
     try(function ()
         message = XF.Mailbox.Chat:Pop()
         message:Initialize()
-        message:SetFrom(XF.Player.Unit:GetGUID())
+        message:From(XF.Player.Unit:GetGUID())
         message:SetGuild(XF.Player.Guild)
         message:SetUnitName(XF.Player.Unit:GetUnitName())
-        message:SetType(XF.Enum.Network.BROADCAST)
-        message:SetSubject(XF.Enum.Message.ORDER)
-        message:SetData(self:Encode())
+        message:Type(XF.Enum.Network.BROADCAST)
+        message:Subject(XF.Enum.Message.ORDER)
+        message:Data(self:Encode())
         XF.Mailbox.Chat:Send(message)
     end).
     catch(function(err)

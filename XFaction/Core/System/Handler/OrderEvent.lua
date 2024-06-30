@@ -86,7 +86,7 @@ function GetMyOrders()
         try(function ()
             order:Key(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
             if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:Key())) then
-                order:SetType(myOrder.orderType)
+                order:Type(myOrder.orderType)
                 order:ID(myOrder.orderID)
                 order:SetCustomerUnit(XF.Player.Unit)
                 if(myOrder.crafterGuid ~= nil) then

@@ -144,8 +144,7 @@ function XFC.Confederate:Backup()
             for unitKey, unit in self:Iterator() do
                 if(unit:IsRunningAddon() and not unit:IsPlayer()) then
                     XF.Cache.Backup.Confederate[unitKey] = {}
-                    local serializedData = XF:SerializeUnitData(unit)
-                    XF.Cache.Backup.Confederate[unitKey] = serializedData
+                    XF.Cache.Backup.Confederate[unitKey] = unit:Serialize()
                 end
             end
         end
@@ -181,7 +180,7 @@ end
 function XFC.Confederate:OfflineUnits(inEpochTime)
     assert(type(inEpochTime) == 'number')
     for _, unit in self:Iterator() do
-        if(not unit:IsPlayer() and unit:IsOnline() and unit:GetTimeStamp() < inEpochTime) then
+        if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < inEpochTime) then
             if(XF.Player.Guild:Equals(unit:GetGuild())) then
                 self:OfflineUnit(unit:Key())
             else

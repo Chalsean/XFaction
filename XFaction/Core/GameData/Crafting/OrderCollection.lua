@@ -47,4 +47,24 @@ function XFC.OrderCollection:Restore()
     end
     XF.Cache.Backup.Orders = {}
 end
+
+function XFC.OrderCollection:ProcessMessage(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+
+    local order = nil
+    try(function ()
+        order = self:Pop()
+        order:Decode(inMessage:Data())
+        if(not self:Contains(order:Key())) then
+            self:Add(order)
+            order:Display()
+        else
+            self:Push(order)
+        end
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+        self:Push(order)
+    end)
+end
 --#endregion

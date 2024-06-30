@@ -71,7 +71,7 @@ Methods
 -------------------------------------------------------------------------------]]
 local methods = {
 	["OnAcquire"] = function(self)
-		self:SetType()
+		self:Type()
 		self:SetValue(false)
 		self:SetTriState(nil)
 		-- height is calculated from the width and required space for the description
@@ -143,7 +143,7 @@ local methods = {
 		self:SetValue(self:GetValue())
 	end,
 
-	["SetType"] = function(self, type)
+	["Type"] = function(self, type)
 		local checkbg = self.checkbg
 		local check = self.check
 		local highlight = self.highlight

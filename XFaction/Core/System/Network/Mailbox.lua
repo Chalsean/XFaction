@@ -12,7 +12,7 @@ function XFC.Mailbox:new()
 end
 
 function XFC.Mailbox:NewObject()
-	return Message:new()
+	return XFC.Message:new()
 end
 
 function XFC.Mailbox:Initialize()
@@ -40,7 +40,8 @@ function XFC.Mailbox:Add(inKey)
 end
 
 function XFC.Mailbox:Process(inMessage, inMessageTag)
-    assert(type(inMessage) == 'table' and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+    assert(type(inMessageTag) == 'string')
 
     try(function()
         -- Is a newer version available?
@@ -51,8 +52,8 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
 
         -- Deserialize unit data
         if(inMessage:HasUnitData()) then
-            local unitData = XF:DeserializeUnitData(inMessage:GetData())
-            inMessage:SetData(unitData)
+            local unitData = XF:DeserializeUnitData(inMessage:Data())
+            inMessage:Data(unitData)
             if(not unitData:HasVersion()) then
                 unitData:SetVersion(inMessage:GetVersion())
             end
@@ -60,106 +61,56 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
 
         self:Add(inMessage:Key())
         inMessage:Print()
+        self:Forward(inMessage)
 
-        --#region Forwarding
-        -- If there are still BNet targets remaining and came locally, forward to your own BNet targets
-        if(inMessage:HasTargets() and inMessageTag == XF.Enum.Tag.LOCAL) then
-            -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
-            local nodeCount = XF.Nodes:GetTarCount(XF.Player.Target)
-            if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
-                local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
-                if(math.random(1, 100) <= percentage) then
-                    XF:Debug(self:ObjectName(), 'Randomly selected, forwarding message')
-                    inMessage:SetType(XF.Enum.Network.BNET)
-                    XF.Mailbox.BNet:Send(inMessage)
-                else
-                    XF:Debug(self:ObjectName(), 'Not randomly selected, will not forward mesesage')
-                end
-            else
-                XF:Debug(self:ObjectName(), 'Node count under threshold, forwarding message')
-                inMessage:SetType(XF.Enum.Network.BNET)
-                XF.Mailbox.BNet:Send(inMessage)
-            end
-
-        -- If there are still BNet targets remaining and came via BNet, broadcast
-        elseif(inMessageTag == XF.Enum.Tag.BNET) then
-            if(inMessage:HasTargets()) then
-                inMessage:SetType(XF.Enum.Network.BROADCAST)
-            else
-                inMessage:SetType(XF.Enum.Network.LOCAL)
-            end
-            XF.Mailbox.Chat:Send(inMessage)
-        end
-        --#endregion
-
-        --#region Process message
         -- Process GCHAT message
-        if(inMessage:GetSubject() == XF.Enum.Message.GCHAT) then
-            if(XF.Player.Unit:CanGuildListen() and not XF.Player.Guild:Equals(inMessage:GetGuild())) then
-                XF.Frames.Chat:DisplayGuildChat(inMessage)
-            end
+        if(inMessage:Subject() == XF.Enum.Message.GCHAT) then
+            XFO.ChatFrame:DisplayGuildChat(inMessage)
             return
         end
 
         -- Process ACHIEVEMENT message
-        if(inMessage:GetSubject() == XF.Enum.Message.ACHIEVEMENT) then
-            -- Local guild achievements should already be displayed by WoW client
-            if(not XF.Player.Guild:Equals(inMessage:GetGuild())) then
-                XF.Frames.Chat:DisplayAchievement(inMessage)
-            end
+        if(inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
+            XFO.ChatFrame:DisplayAchievement(inMessage)
             return
         end
 
         -- Process LINK message
-        if(inMessage:GetSubject() == XF.Enum.Message.LINK) then
+        if(inMessage:Subject() == XF.Enum.Message.LINK) then
             XF.Links:ProcessMessage(inMessage)
             return
         end
 
         -- Process LOGOUT message
-        if(inMessage:GetSubject() == XF.Enum.Message.LOGOUT) then
+        if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
             if(XF.Player.Guild:Equals(inMessage:GetGuild())) then
                 -- In case we get a message before scan
-                if(not XFO.Confederate:Contains(inMessage:GetFrom())) then
+                if(not XFO.Confederate:Contains(inMessage:From())) then
                     XF.Frames.System:DisplayLogoutMessage(inMessage)
                 else
-                    if(XFO.Confederate:Get(inMessage:GetFrom()):IsOnline()) then
+                    if(XFO.Confederate:Get(inMessage:From()):IsOnline()) then
                         XF.Frames.System:DisplayLogoutMessage(inMessage)
                     end
-                    XFO.Confederate:OfflineUnit(inMessage:GetFrom())
+                    XFO.Confederate:OfflineUnit(inMessage:From())
                 end
             else
                 XF.Frames.System:DisplayLogoutMessage(inMessage)
-                XFO.Confederate:Remove(inMessage:GetFrom())
+                XFO.Confederate:Remove(inMessage:From())
             end
             XF.DataText.Guild:RefreshBroker()
             return
         end
 
         -- Process ORDER message
-        if(inMessage:GetSubject() == XF.Enum.Message.ORDER) then
-            local order = nil
-            try(function ()
-                order = XFO.Orders:Pop()
-                order:Decode(inMessage:GetData())
-                if(not XFO.Orders:Contains(order:Key())) then
-                    XFO.Orders:Add(order)
-                    order:Display()
-                else
-                    XFO.Orders:Push(order)
-                end
-            end).
-            catch(function (inErrorMessage)
-                XF:Warn(ObjectName, inErrorMessage)
-                XFO.Orders:Push(order)
-            end)
+        if(inMessage:Subject() == XF.Enum.Message.ORDER) then
+            XFO.Orders:ProcessMessage(inMessage)
             return
         end
 
         -- Process DATA/LOGIN message
         if(inMessage:HasUnitData()) then
-            local unitData = inMessage:GetData()
-            if(inMessage:GetSubject() == XF.Enum.Message.LOGIN and 
+            local unitData = inMessage:Data()
+            if(inMessage:Subject() == XF.Enum.Message.LOGIN and 
             (not XFO.Confederate:Contains(unitData:Key()) or XFO.Confederate:Get(unitData:Key()):IsOffline())) then
                 XF.Frames.System:DisplayLoginMessage(inMessage)
             end
@@ -167,11 +118,42 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
             XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unitData:GetUnitName())
             XF.DataText.Guild:RefreshBroker()
         end
-        --#endregion
     end).
     finally(function()
         self:Push(inMessage)
     end)
+end
+
+function XFC.Mailbox:Forward(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+
+    if(inMessage:HasTargets() and inMessageTag == XF.Enum.Tag.LOCAL) then
+        -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
+        local nodeCount = XF.Nodes:GetTarCount(XF.Player.Target)
+        if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
+            local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
+            if(math.random(1, 100) <= percentage) then
+                XF:Debug(self:ObjectName(), 'Randomly selected, forwarding message')
+                inMessage:Type(XF.Enum.Network.BNET)
+                XFO.BNet:Send(inMessage)
+            else
+                XF:Debug(self:ObjectName(), 'Not randomly selected, will not forward mesesage')
+            end
+        else
+            XF:Debug(self:ObjectName(), 'Node count under threshold, forwarding message')
+            inMessage:Type(XF.Enum.Network.BNET)
+            XFO.BNet:Send(inMessage)
+        end
+
+    -- If there are still BNet targets remaining and came via BNet, broadcast
+    elseif(inMessageTag == XF.Enum.Tag.BNET) then
+        if(inMessage:HasTargets()) then
+            inMessage:Type(XF.Enum.Network.BROADCAST)
+        else
+            inMessage:Type(XF.Enum.Network.LOCAL)
+        end
+        XFO.Chat:Send(inMessage)
+    end
 end
 
 function XFC.Mailbox:CallbackJanitor()

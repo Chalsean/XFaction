@@ -40,31 +40,31 @@ end
 --#region Send
 function XFC.Chat:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    if(not XF.Settings.System.Roster and inMessage:GetSubject() == XF.Enum.Message.DATA) then return end
+    if(not XF.Settings.System.Roster and inMessage:Subject() == XF.Enum.Message.DATA) then return end
 
     XF:Debug(self:ObjectName(), 'Attempting to send message')
     inMessage:Print()
 
     --#region BNet messaging for BNET/BROADCAST types
-    if(inMessage:GetType() == XF.Enum.Network.BROADCAST or inMessage:GetType() == XF.Enum.Network.BNET) then
+    if(inMessage:Type() == XF.Enum.Network.BROADCAST or inMessage:Type() == XF.Enum.Network.BNET) then
         XFO.BNet:Send(inMessage)
         -- Failed to bnet to all targets, broadcast to leverage others links
-        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:GetType() == XF.Enum.Network.BNET) then
-            inMessage:SetType(XF.Enum.Network.BROADCAST)
+        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:Type() == XF.Enum.Network.BNET) then
+            inMessage:Type(XF.Enum.Network.BROADCAST)
         -- Successfully bnet to all targets and only were supposed to bnet, were done
-        elseif(inMessage:GetType() == XF.Enum.Network.BNET) then
+        elseif(inMessage:Type() == XF.Enum.Network.BNET) then
             return
         -- Successfully bnet to all targets and was broadcast, switch to local only
-        elseif(not inMessage:HasTargets() and inMessage:GetType() == XF.Enum.Network.BROADCAST) then
+        elseif(not inMessage:HasTargets() and inMessage:Type() == XF.Enum.Network.BROADCAST) then
             XF:Debug(self:ObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
-            inMessage:SetType(XF.Enum.Network.LOCAL)        
+            inMessage:Type(XF.Enum.Network.LOCAL)        
         end
     end
     --#endregion
 
     --#region Chat channel messaging for BROADCAST/LOCAL types
-    local messageData = XF:EncodeChatMessage(inMessage, true)
-    local packets = XFO.PostOffice:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
+    local data = inMessage:Serialize()
+    local packets = XFO.PostOffice:SegmentMessage(data, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
     XFO.Mailbox:Add(inMessage:Key())
 
     -- If only guild on target, broadcast to GUILD
@@ -83,6 +83,13 @@ function XFC.Chat:Send(inMessage)
         XF.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
     --#endregion
+end
+
+function XFC.Chat:EncodeMessage(inMessage)
+	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+	local serialized = SerializeMessage(inMessage, inEncodeUnitData)
+	local compressed = Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
+	return Deflate:EncodeForWoWAddonChannel(compressed)
 end
 
 function XFC.Chat:DecodeMessage(inEncodedMessage)
@@ -108,16 +115,16 @@ function XFC.Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, 
             try(function ()
                 message = XFO.Mailbox:Pop()
                 message:Initialize()
-                message:SetFrom(XF.Player.Unit:GetGUID())
-                message:SetType(XF.Enum.Network.BROADCAST)
-                message:SetSubject(XF.Enum.Message.GCHAT)
+                message:From(XF.Player.Unit:GetGUID())
+                message:Type(XF.Enum.Network.BROADCAST)
+                message:Subject(XF.Enum.Message.GCHAT)
                 message:Name(XF.Player.Unit:Name())
                 message:SetUnitName(XF.Player.Unit:GetUnitName())
                 message:SetGuild(XF.Player.Guild)
                 if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
                     message:SetMainName(XF.Player.Unit:GetMainName())
                 end
-                message:SetData(inText)
+                message:Data(inText)
                 self:Send(message, true)
             end).
             finally(function ()

@@ -11,14 +11,13 @@ local function DeserializeMessage(inObject, inCompressedData)
 	inObject:Initialize()
 
 	if(messageData.K ~= nil) then inObject:Key(messageData.K)	end
-	if(messageData.T ~= nil) then inObject:SetTo(messageData.T)	end
-	if(messageData.F ~= nil) then inObject:SetFrom(messageData.F)	end
-	if(messageData.S ~= nil) then inObject:SetSubject(messageData.S) end
-	if(messageData.Y ~= nil) then inObject:SetType(messageData.Y) end	
-	if(messageData.I ~= nil) then inObject:SetTimeStamp(messageData.I) end	
+	if(messageData.F ~= nil) then inObject:From(messageData.F)	end
+	if(messageData.S ~= nil) then inObject:Subject(messageData.S) end
+	if(messageData.Y ~= nil) then inObject:Type(messageData.Y) end	
+	if(messageData.I ~= nil) then inObject:TimeStamp(messageData.I) end	
 	if(messageData.A ~= nil) then inObject:SetRemainingTargets(messageData.A) end
-	if(messageData.P ~= nil) then inObject:SetPacketNumber(messageData.P) end
-	if(messageData.Q ~= nil) then inObject:SetTotalPackets(messageData.Q) end
+	if(messageData.P ~= nil) then inObject:PacketNumber(messageData.P) end
+	if(messageData.Q ~= nil) then inObject:TotalPackets(messageData.Q) end
 	if(messageData.V ~= nil) then 
 		local version = XFO.Versions:Get(messageData.V)
 		if(version == nil) then
@@ -46,7 +45,7 @@ local function DeserializeMessage(inObject, inCompressedData)
 	if(messageData.W ~= nil) then inObject:SetFaction(XFO.Factions:Get(messageData.W)) end
 
 	-- Leave any UnitData serialized for now
-	inObject:SetData(messageData.D)
+	inObject:Data(messageData.D)
 	return inObject
 end
 
@@ -92,7 +91,7 @@ function XF:DeserializeUnitData(inData)
 		unit:SetProfession2(XFO.Professions:Get(deserializedData.P2))
 	end
 	unit:IsRunningAddon(true)
-	unit:SetTimeStamp(ServerTime())
+	unit:TimeStamp(ServerTime())
 	if(deserializedData.V ~= nil) then
 		unit:SetSpec(XFO.Specs:Get(deserializedData.V))
 	end

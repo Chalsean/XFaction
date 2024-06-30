@@ -47,7 +47,7 @@ XFF.SpecID = GetSpecializationInfo
 -- Player
 XFF.PlayerGetIlvl = GetAverageItemLevel
 XFF.PlayerGetAchievement = GetAchievementInfo
-XFF.PlayerGetAchievementLink = GetAchievementLink
+XFF.PlayerAchievementLink = GetAchievementLink
 XFF.PlayerGUID = UnitGUID
 XFF.PlayerIsInGuild = IsInGuild
 XFF.PlayerIsInCombat = InCombatLockdown
@@ -55,6 +55,7 @@ XFF.PlayerIsInInstance = IsInInstance
 XFF.PlayerFaction = UnitFactionGroup
 XFF.PlayerGetPvPRating = GetPersonalRatedInfo
 XFF.PlayerGetGuild = GetGuildInfo
+XFF.PlayerZone = GetZoneText
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo

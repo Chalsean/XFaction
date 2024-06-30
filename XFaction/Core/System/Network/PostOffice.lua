@@ -104,7 +104,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
     if(self:HasAllPackets(messageKey, totalPackets)) then
         XF:Debug(self:ObjectName(), 'Received all packets for message [%s]', messageKey)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-        XFO.Mailbox:Process(inMessageTag == XF.Enum.Tag.BNET and XF:DecodeBNetMessage(encodedMessage) or XF:DecodeChatMessage(encodedMessage))
+        XFO.Mailbox:Process(inMessageTag == XF.Enum.Tag.BNET and XF:DecodeBNetMessage(encodedMessage) or XF:DecodeChatMessage(encodedMessage), inMessageTag)
     end
 end
 --#endregion

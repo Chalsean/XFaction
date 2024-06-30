@@ -48,14 +48,14 @@ function SystemEvent:CallbackLogout()
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout started'
             message = XF.Mailbox.Chat:Pop()
             message:Initialize()
-            message:SetType(XF.Enum.Network.BROADCAST)
-            message:SetSubject(XF.Enum.Message.LOGOUT)
+            message:Type(XF.Enum.Network.BROADCAST)
+            message:Subject(XF.Enum.Message.LOGOUT)
             if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
                 message:SetMainName(XF.Player.Unit:GetMainName())
             end
             message:SetGuild(XF.Player.Guild)
             message:SetUnitName(XF.Player.Unit:Name())
-            message:SetData(' ')
+            message:Data(' ')
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout sending message'
             XF.Mailbox.Chat:Send(message)
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout message sent'

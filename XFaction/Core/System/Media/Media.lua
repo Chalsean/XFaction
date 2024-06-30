@@ -23,11 +23,11 @@ end
 --#endregion
 
 --#region Accessors
-function Media:GetType()
+function Media:Type()
     return self.type
 end
 
-function Media:SetType(inType)
+function Media:Type(inType)
     assert(type(inType) == 'string')
     self.type = inType
 end

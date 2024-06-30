@@ -21,7 +21,7 @@ function MediaCollection:Add(inName, inType)
 	media:Initialize()
 	media:Key(inName)
 	media:Name(inName)
-	media:SetType(inType)
+	media:Type(inType)
 	media:SetPath(MediaPath .. inType .. '/' .. inName .. '.blp')
 	self.parent.Add(self, media)
 end

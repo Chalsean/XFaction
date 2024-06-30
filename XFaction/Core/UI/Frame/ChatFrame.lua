@@ -2,31 +2,29 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'ChatFrame'
 
-ChatFrame = XFC.Object:newChildConstructor()
+XFC.ChatFrame = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function ChatFrame:new()
-    local object = ChatFrame.parent.new(self)
+function XFC.ChatFrame:new()
+    local object = XFC.ChatFrame.parent.new(self)
     object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function ChatFrame:Initialize()
+function XFC.ChatFrame:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', XF.Frames.Chat.ChatFilter)
-        XF:Info(ObjectName, 'Created CHAT_MSG_GUILD event filter')
-        ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XF.Frames.Chat.AchievementFilter)
-        XF:Info(ObjectName, 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
+        XFF.ChatFrameFilter('CHAT_MSG_GUILD', XFO.ChatFrame.ChatFilter)
+        XF:Info(self:ObjectName(), 'Created CHAT_MSG_GUILD event filter')
+        XFF.ChatFrameFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFO.ChatFrame.AchievementFilter)
+        XF:Info(self:ObjectName(), 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 --#endregion
 
---#region Callbacks
+--#region Methods
 local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
     local configNode = inEvent == 'CHAT_MSG_GUILD' and 'GChat' or 'Achievement'
     local event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
@@ -63,7 +61,7 @@ local function ModifyPlayerChat(inEvent, inMessage, inUnitData)
     return text
 end
 
-function ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+function XFC.ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
     if(not XF.Config.Chat.GChat.Enable) then
         return true
     elseif(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
@@ -77,7 +75,7 @@ function ChatFrame:ChatFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, 
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
 
-function ChatFrame:AchievementFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+function XFC.ChatFrame:AchievementFilter(inEvent, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
     if(not XF.Config.Chat.Achievement.Enable) then
         return true
     elseif(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
@@ -87,10 +85,8 @@ function ChatFrame:AchievementFilter(inEvent, inMessage, arg3, arg4, arg5, arg6,
     end
     return false, inMessage, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
---#endregion
 
---#region Display
-function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFrom, inData, inFaction)
+function XFC.ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFrom, inData, inFaction)
     assert(type(inName) == 'string')
     assert(type(inUnitName) == 'string')
     assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
@@ -106,7 +102,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
     for i = 1, NUM_CHAT_WINDOWS do
-        frameTable = { GetChatWindowMessages(i) }
+        frameTable = { XFF.ChatGetWindow(i) }
         local v
         for _, frameName in ipairs(frameTable) do
             if frameName == inType then
@@ -142,7 +138,7 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
                     end
 
                     if(inType == 'GUILD_ACHIEVEMENT') then
-                        text = text .. XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(GetAchievementLink(inData), "(Player.-:.-:.-:.-:.-:)"  , inFrom .. ':1:' .. date("%m:%d:%y:") ) .. '!'
+                        text = text .. XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(XFF.PlayerAchievementLink(inData), "(Player.-:.-:.-:.-:.-:)"  , inFrom .. ':1:' .. date("%m:%d:%y:") ) .. '!'
                     else
                         text = text .. inData
                     end
@@ -178,15 +174,18 @@ function ChatFrame:Display(inType, inName, inUnitName, inMainName, inGuild, inFr
     end
 end
 
-function ChatFrame:DisplayGuildChat(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+function XFC.ChatFrame:DisplayGuildChat(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Config.Chat.GChat.Enable) then return end
-    self:Display(inMessage:GetSubject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
+    if(not XF.Player.Unit:CanGuildListen()) then return end
+    if(XF.Player.Guild:Equals(inMessage:GetGuild())) then return end
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:From(), inMessage:Data(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
 end
 
-function ChatFrame:DisplayAchievement(inMessage)
-    assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
+function XFC.ChatFrame:DisplayAchievement(inMessage)
+    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Config.Chat.Achievement.Enable) then return end
-    self:Display(inMessage:GetSubject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:GetFrom(), inMessage:GetData(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
+    if(XF.Player.Guild:Equals(inMessage:GetGuild())) then return end
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:From(), inMessage:Data(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
 end
 --#endregion

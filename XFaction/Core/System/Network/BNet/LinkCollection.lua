@@ -46,7 +46,7 @@ end
 -- A link message is a reset of the links for that node
 function LinkCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name ~= nil and inMessage.__name == 'Message', 'argument must be Message object')
-	local linkStrings = string.Split(inMessage:GetData(), '|')
+	local linkStrings = string.Split(inMessage:Data(), '|')
 	local linkKeys = {}
 	local sourceKey = nil	
 	-- Add new links
@@ -66,7 +66,7 @@ function LinkCollection:ProcessMessage(inMessage)
 				XF:Debug(ObjectName, 'Removed link due to node broadcast [%s]', link:Key())
 			else
 				-- Update datetime for janitor process
-				link:SetTimeStamp(ServerTime())
+				link:TimeStamp(ServerTime())
 			end
 		end
 	end
@@ -119,9 +119,9 @@ function LinkCollection:Broadcast()
 	try(function ()
 		message = XFO.Mailbox:Pop()
 		message:Initialize()
-		message:SetType(XF.Enum.Network.BROADCAST)
-		message:SetSubject(XF.Enum.Message.LINK)
-		message:SetData(linksString)
+		message:Type(XF.Enum.Network.BROADCAST)
+		message:Subject(XF.Enum.Message.LINK)
+		message:Data(linksString)
 		XFO.Chat:Send(message)  
 	end).
 	finally(function ()
@@ -164,7 +164,7 @@ end
 function LinkCollection:Purge(inEpochTime)
 	assert(type(inEpochTime) == 'number')
 	for _, link in self:Iterator() do
-		if(not link:IsMyLink() and link:GetTimeStamp() < inEpochTime) then
+		if(not link:IsMyLink() and link:TimeStamp() < inEpochTime) then
 			XF:Debug(ObjectName, 'Removing stale link')
 			self:Remove(link)
 		end

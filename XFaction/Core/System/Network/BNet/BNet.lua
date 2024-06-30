@@ -47,7 +47,7 @@ function XFC.BNet:Send(inMessage)
         for _, friend in XF.Friends:Iterator() do
             if(target:Equals(friend:GetTarget()) and
               -- At the time of login you may not have heard back on pings yet, so just broadcast
-              (friend:IsRunningAddon() or inMessage:GetSubject() == XF.Enum.Message.LOGIN)) then
+              (friend:IsRunningAddon() or inMessage:Subject() == XF.Enum.Message.LOGIN)) then
                 friends[#friends + 1] = friend
             end
         end
@@ -68,8 +68,8 @@ function XFC.BNet:Send(inMessage)
 
     -- Now that we know we need to send a BNet whisper, time to split the message into packets
     -- Split once and then message all the targets
-    local messageData = XF:EncodeBNetMessage(inMessage, true)
-    local packets = XFO.PostOffice:SegmentMessage(messageData, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
+    local data = inMessage:Serialize(XF.Enum.Tag.BNET)
+    local packets = XFO.PostOffice:SegmentMessage(data, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
     XFO.Mailbox:Add(inMessage:Key())
 
     -- Make sure all packets go to each target

@@ -28,7 +28,7 @@ end
 function Link:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self:SetTimeStamp(ServerTime())
+        self:TimeStamp(ServerTime())
         if(self:HasFromNode() and self:HasToNode()) then
             self:Key(XF:GetLinkKey(self:GetFromNode():Name(), self:GetToNode():Name()))
         end
@@ -88,13 +88,12 @@ function Link:SetToNode(inNode)
     self.toNode = inNode
 end
 
-function Link:GetTimeStamp()
+function Link:TimeStamp(inEpochTime)
+    assert(type(inEpochTime) == 'number' or inEpochTime == nil)
+    if(inEpochTime ~= nil) then
+        self.epochTime = inEpochTime
+    end
     return self.epochTime
-end
-
-function Link:SetTimeStamp(inEpochTime)
-    assert(type(inEpochTime) == 'number')
-    self.epochTime = inEpochTime
 end
 --#endregion
 

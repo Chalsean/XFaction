@@ -35,9 +35,9 @@ function AchievementEvent:CallbackAchievement(inID)
             try(function ()
                 message = XF.Mailbox.Chat:Pop()
                 message:Initialize()
-                message:SetType(XF.Enum.Network.BROADCAST)
-                message:SetSubject(XF.Enum.Message.ACHIEVEMENT)
-                message:SetData(inID) -- Leave as ID to localize on receiving end
+                message:Type(XF.Enum.Network.BROADCAST)
+                message:Subject(XF.Enum.Message.ACHIEVEMENT)
+                message:Data(inID) -- Leave as ID to localize on receiving end
                 message:Name(XF.Player.Unit:Name())
                 if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
                     message:SetMainName(XF.Player.Unit:GetMainName())

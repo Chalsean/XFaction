@@ -1249,7 +1249,7 @@ local function FeedOptions(appName, options,container,rootframe,path,group,inlin
 							radio:SetUserData("value", value)
 							radio:SetUserData("text", text)
 							radio:SetDisabled(disabled)
-							radio:SetType("radio")
+							radio:Type("radio")
 							radio:SetValue(optionValue == value)
 							radio:SetCallback("OnValueChanged", ActivateMultiControl)
 							InjectInfo(radio, options, v, path, rootframe, appName)

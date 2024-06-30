@@ -36,7 +36,7 @@ function XF:CoreInit()
 	XF.DataText.Metrics = DTMetrics:new()
 
 	-- Frames
-	XF.Frames.Chat = ChatFrame:new()
+	XFO.ChatFrame = XFC.ChatFrame:new()
 	XF.Frames.System = SystemFrame:new()
 
 	-- Declare handlers but not listening yet
@@ -124,7 +124,7 @@ function XF:CallbackLoginGuild()
 				XF.Targets:Initialize()	
 
 				-- Frame inits were waiting on Confederate init
-				XF.Frames.Chat:Initialize()
+				XFO.ChatFrame:Initialize()
 				XF.Frames.System:Initialize()
 
 				-- Start network

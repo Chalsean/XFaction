@@ -115,7 +115,7 @@ function XFC.Unit:Initialize(inMemberID)
     self:SetUnitName(unitData.name .. '-' .. XF.Player.Realm:APIName())
 	self:SetLevel(unitData.level)	
 	self:SetGuild(XF.Player.Guild)
-    self:SetTimeStamp(ServerTime())
+    self:TimeStamp(ServerTime())
     self:SetClass(XFO.Classes:Get(unitData.classID))
     self:SetRace(XFO.Races:Get(unitData.race))
     self:SetRank(unitData.guildRank)
@@ -478,13 +478,12 @@ function XFC.Unit:SetRace(inRace)
     self.race = inRace
 end
 
-function XFC.Unit:GetTimeStamp()
+function XFC.Unit:TimeStamp(inEpochTime)
+    assert(type(inEpochTime) == 'number' or inEpochTime == nil)
+    if(inEpochTime ~= nil) then
+        self.timeStamp = inEpochTime
+    end
     return self.timeStamp
-end
-
-function XFC.Unit:SetTimeStamp(inTimeStamp)
-    assert(type(inTimeStamp) == 'number')
-    self.timeStamp = inTimeStamp
 end
 
 function XFC.Unit:HasClass()
@@ -667,28 +666,61 @@ function XFC.Unit:Broadcast(inSubject)
             XF:Debug(ObjectName, 'Not sending broadcast, its been too recent')
             return 
         end
-        self:SetTimeStamp(epoch)
-        XF.Player.LastBroadcast = self:GetTimeStamp()
+        self:TimeStamp(epoch)
+        XF.Player.LastBroadcast = self:TimeStamp()
     end
     local message = nil
     try(function ()
         message = XFO.Mailbox:Pop()
         message:Initialize()
-        message:SetFrom(self:GetGUID())
+        message:From(self:GetGUID())
         message:SetGuild(self:GetGuild())
         message:SetUnitName(self:Name())
-        message:SetType(XF.Enum.Network.BROADCAST)
-        message:SetSubject(inSubject)
-        message:SetData(self)
+        message:Type(XF.Enum.Network.BROADCAST)
+        message:Subject(inSubject)
+        message:Data(self)
         XFO.Chat:Send(message)
     end).
     finally(function ()
         XFO.Mailbox:Push(message)
     end)
 end
---#endregion
 
---#region Operators
+function XFC.Unit:Serialize()
+    local data = {}
+
+	data.A = self:GetRace():Key()
+	data.B = self:GetAchievementPoints()
+	data.C = self:ID()
+	data.E = self:GetPresence()
+	data.F = self:GetFaction():Key()	
+	data.H = self:GetGuild():Key()
+	-- Remove G/R after everyone on 4.4
+	data.G = self:GetGuild():Name()
+	data.R = self:GetGuild():Realm():ID()
+	data.K = self:GetGUID()
+	data.I = self:GetItemLevel()
+	data.J = self:GetRank()
+	data.L = self:GetLevel()
+	data.M = self:HasMythicKey() and self:GetMythicKey():Serialize() or nil
+	data.N = self:GetNote()
+	data.O = self:GetClass():Key()
+	data.P1 = self:HasProfession1() and self:GetProfession1():Key() or nil
+	data.P2 = self:HasProfession2() and self:GetProfession2():Key() or nil
+	data.U = self:GetUnitName()
+	data.V = self:HasSpec() and self:GetSpec():Key() or nil
+	data.X = self:GetVersion():Key()
+	data.Y = self:GetPvP()
+
+	if(self:GetZone():HasID()) then
+		data.D = self:GetZone():ID()
+	else
+		data.Z = self:GetZone():Name()
+	end
+
+	return pickle(data)
+end
+
 -- Usually a key check is enough for equality check, but use case is to detect any data differences
 function XFC.Unit:Equals(inUnit)
     if(inUnit == nil) then return false end
