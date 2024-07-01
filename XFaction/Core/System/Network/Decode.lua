@@ -61,10 +61,9 @@ function XF:DeserializeUnitData(inData)
 	else
 		unit:Presence(Enum.ClubMemberPresence.Online)
 	end
-	unit:SetFaction(XFO.Factions:Get(deserializedData.F))
 	unit:GUID(deserializedData.K)
 	unit:Key(deserializedData.K)
-	unit:SetClass(XFO.Classes:Get(deserializedData.O))
+	unit:Class(XFO.Classes:Get(deserializedData.O))
 	local unitNameParts = string.Split(deserializedData.U, '-')
 	unit:Name(unitNameParts[1])
 	unit:UnitName(deserializedData.U)

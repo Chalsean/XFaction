@@ -103,7 +103,7 @@ function XFC.Unit:Initialize(inMemberID)
 	self:Level(unitData.level)	
 	self:SetGuild(XF.Player.Guild)
     self:TimeStamp(XFF.TimeCurrent())
-    self:SetClass(XFO.Classes:Get(unitData.classID))
+    self:Class(XFO.Classes:Get(unitData.classID))
     self:Race(XFO.Races:Get(unitData.race))
     self:Rank(unitData.guildRank)
     self:SetNote(unitData.memberNote or '?')
@@ -120,16 +120,6 @@ function XFC.Unit:Initialize(inMemberID)
         lastLogin = lastLogin + unitData.lastOnlineDay
     end
     self:SetLastLogin(lastLogin)
-
-    if(self:IsPlayer()) then
-        self:SetFaction(XF.Player.Faction)
-    elseif(unitData.faction == Enum.PvPFaction.Alliance) then
-        self:SetFaction(XFO.Factions:Get('Alliance'))
-    elseif(unitData.faction == Enum.PvPFaction.Horde) then
-        self:SetFaction(XFO.Factions:Get('Horde'))
-    else
-        self:SetFaction(XFO.Factions:Get('Neutral'))
-    end
 
     if(unitData.zone and XFO.Zones:Contains(unitData.zone)) then
         self:Zone(XFO.Zones:Get(unitData.zone))
@@ -285,6 +275,22 @@ function XFC.Unit:Race(inRace)
     end
     return self.race
 end
+
+function XFC.Unit:Class(inClass)
+    assert(type(inClass) == 'table' and inClass.__name == 'Class' or inClass == nil)
+    if(self.class ~= nil) then
+        self.class = inClass
+    end
+    return self.class
+end
+
+function XFC.Unit:Spec(inSpec)
+    assert(type(inSpec) == 'table' and inSpec.__name == 'Spec' or inSpec == nil)
+    if(inSpec ~= nil) then
+        self.spec = inSpec
+    end
+    return self.spec
+end
 --#endregion
 
 --#region Methods
@@ -314,7 +320,7 @@ function XFC.Unit:Print()
     if(self:HasGuild()) then self.guild:Print() end
     if(self:HasTeam()) then self.team:Print() end
     if(self:HasRace()) then self:Race():Print() end
-    if(self:HasClass()) then self.class:Print() end
+    if(self:HasClass()) then self:Class():Print() end
     if(self:HasSpec()) then self.spec:Print() end
     if(self:HasProfession1()) then self.profession1:Print() end
     if(self:HasProfession2()) then self.profession2:Print() end  
@@ -343,6 +349,16 @@ end
 function XFC.Unit:HasRace()
     return self.race ~= nil
 end
+
+function XFC.Unit:HasClass()
+    return self.class ~= nil
+end
+
+function XFC.Unit:HasSpec()
+    return self.spec ~= nil
+end
+
+
 
 
 
@@ -409,17 +425,6 @@ function XFC.Unit:SetNote(inNote)
     end)
 end
 
-function XFC.Unit:GetFaction()
-    return self.faction
-end
-
-function XFC.Unit:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be a Faction object')
-    self.faction = inFaction
-end
-
-
-
 function XFC.Unit:GetPvP()
     return self.pvp
 end
@@ -467,22 +472,6 @@ end
 
 
 
-function XFC.Unit:HasClass()
-    return self.class ~= nil
-end
-
-function XFC.Unit:GetClass()
-    return self.class
-end
-
-function XFC.Unit:SetClass(inClass)
-    assert(type(inClass) == 'table' and inClass.__name == 'Class', 'argument must be Class object')
-    self.class = inClass
-end
-
-function XFC.Unit:HasSpec()
-    return self.spec ~= nil
-end
 
 function XFC.Unit:GetSpec()
     return self.spec
@@ -597,11 +586,11 @@ function XFC.Unit:SetItemLevel(inItemLevel)
 end
 
 function XFC.Unit:IsSameFaction()
-    return XF.Player.Faction:Equals(self:GetFaction())
+    return XF.Player.Faction:Equals(self:Faction())
 end
 
 function XFC.Unit:GetLink()
-    if(XF.Player.Faction:Equals(self:GetFaction())) then
+    if(self:IsSameFaction()) then
         return format('player:%s', self:UnitName())
     end
 
@@ -674,7 +663,7 @@ function XFC.Unit:Serialize()
 	data.B = self:GetAchievementPoints()
 	data.C = self:ID()
 	data.E = self:Presence()
-	data.F = self:GetFaction():Key()	
+	data.F = self:Faction():Key() -- TODO: remove before prod release
 	data.H = self:GetGuild():Key()
 	-- Remove G/R after everyone on 4.4
 	data.G = self:GetGuild():Name()
@@ -685,7 +674,7 @@ function XFC.Unit:Serialize()
 	data.L = self:Level()
 	data.M = self:HasMythicKey() and self:GetMythicKey():Serialize() or nil
 	data.N = self:GetNote()
-	data.O = self:GetClass():Key()
+	data.O = self:Class():Key()
 	data.P1 = self:HasProfession1() and self:GetProfession1():Key() or nil
 	data.P2 = self:HasProfession2() and self:GetProfession2():Key() or nil
 	data.U = self:UnitName()

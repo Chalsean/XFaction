@@ -49,14 +49,14 @@ function GuildEvent:CallbackRosterUpdate()
                     if(oldData:IsOnline() and unitData:IsOffline()) then
                         XF:Info(ObjectName, 'Guild member logout via scan: %s', unitData:UnitName())
                         if(XF.Config.Chat.Login.Enable) then
-                            XF.Frames.System:Display(XF.Enum.Message.LOGOUT, oldData:Name(), oldData:UnitName(), oldData:GetMainName(), oldData:GetGuild(), nil, oldData:GetFaction())
+                            XF.Frames.System:Display(XF.Enum.Message.LOGOUT, oldData:Name(), oldData:UnitName(), oldData:GetMainName(), oldData:GetGuild(), nil, oldData:Race():Faction())
                         end
                         XFO.Confederate:Add(unitData)
                     elseif(unitData:IsOnline()) then
                         if(oldData:IsOffline()) then
                             XF:Info(ObjectName, 'Guild member login via scan: %s', unitData:UnitName())
                             if(XF.Config.Chat.Login.Enable) then
-                                XF.Frames.System:Display(XF.Enum.Message.LOGIN, unitData:Name(), unitData:UnitName(), unitData:GetMainName(), unitData:GetGuild(), nil, unitData:GetFaction())
+                                XF.Frames.System:Display(XF.Enum.Message.LOGIN, unitData:Name(), unitData:UnitName(), unitData:GetMainName(), unitData:GetGuild(), nil, unitData:Race():Faction())
                             end
                             XFO.Confederate:Add(unitData)
                         elseif(not oldData:IsRunningAddon()) then
