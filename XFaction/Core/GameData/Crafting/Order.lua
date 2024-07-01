@@ -120,7 +120,7 @@ function XFC.Order:SetCrafterGUID(inGUID)
 end
 
 function XFC.Order:IsPlayerCrafter()
-    return XF.Player.Unit:GetGUID() == self.crafterGUID
+    return XF.Player.Unit:GUID() == self.crafterGUID
 end
 
 function XFC.Order:GetCrafterName()
@@ -179,9 +179,9 @@ function XFC.Order:Broadcast()
     try(function ()
         message = XF.Mailbox.Chat:Pop()
         message:Initialize()
-        message:From(XF.Player.Unit:GetGUID())
+        message:From(XF.Player.Unit:GUID())
         message:SetGuild(XF.Player.Guild)
-        message:SetUnitName(XF.Player.Unit:GetUnitName())
+        message:UnitName(XF.Player.Unit:UnitName())
         message:Type(XF.Enum.Network.BROADCAST)
         message:Subject(XF.Enum.Message.ORDER)
         message:Data(self:Encode())

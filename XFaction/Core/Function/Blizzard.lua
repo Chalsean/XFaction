@@ -24,9 +24,9 @@ XFF.GuildGetMembers = C_Club.GetClubMembers
 XFF.GuildQueryServer = C_GuildInfo.GuildRoster
 XFF.GuildGetInfo = C_Club.GetClubInfo
 XFF.GuildGetStreams = C_Club.GetStreams
-XFF.GuildGetMember = C_Club.GetMemberInfo
-XFF.GuildGetMyself = C_Club.GetMemberInfoForSelf
-XFF.GuildGetPermissions = C_GuildInfo.GuildControlGetRankFlags
+XFF.GuildMemberInfo = C_Club.GetMemberInfo
+XFF.GuildMyInfo = C_Club.GetMemberInfoForSelf
+XFF.GuildMyPermissions = C_GuildInfo.GuildControlGetRankFlags
 XFF.GuildID = C_Club.GetGuildClubId
 XFF.GuildFrame = ToggleGuildFrame
 XFF.GuildGetMOTD = GetGuildRosterMOTD
@@ -41,11 +41,11 @@ XFF.RealmName = GetRealmName
 XFF.RegionCurrent = GetCurrentRegion
 
 -- Spec
-XFF.SpecGetGroupID = GetSpecialization
+XFF.SpecGroupID = GetSpecialization
 XFF.SpecID = GetSpecializationInfo
 
 -- Player
-XFF.PlayerGetIlvl = GetAverageItemLevel
+XFF.PlayerIlvl = GetAverageItemLevel
 XFF.PlayerGetAchievement = GetAchievementInfo
 XFF.PlayerAchievementLink = GetAchievementLink
 XFF.PlayerGUID = UnitGUID
@@ -53,7 +53,7 @@ XFF.PlayerIsInGuild = IsInGuild
 XFF.PlayerIsInCombat = InCombatLockdown
 XFF.PlayerIsInInstance = IsInInstance
 XFF.PlayerFaction = UnitFactionGroup
-XFF.PlayerGetPvPRating = GetPersonalRatedInfo
+XFF.PlayerPvPRating = GetPersonalRatedInfo
 XFF.PlayerGetGuild = GetGuildInfo
 XFF.PlayerZone = GetZoneText
 

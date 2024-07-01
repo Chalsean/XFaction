@@ -42,7 +42,7 @@ function AchievementEvent:CallbackAchievement(inID)
                 if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
                     message:SetMainName(XF.Player.Unit:GetMainName())
                 end
-                message:SetUnitName(XF.Player.Unit:GetUnitName())
+                message:UnitName(XF.Player.Unit:UnitName())
                 message:SetGuild(XF.Player.Guild)
                 XF.Mailbox.Chat:Send(message)
             end).

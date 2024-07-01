@@ -100,19 +100,19 @@ function SystemFrame:DisplayLoginMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')    
     local unitData = inMessage:Data()
-    self:Display(inMessage:Subject(), unitData:Name(), unitData:GetUnitName(), unitData:GetMainName(), unitData:GetGuild(), nil, unitData:GetFaction())
+    self:Display(inMessage:Subject(), unitData:Name(), unitData:UnitName(), unitData:GetMainName(), unitData:GetGuild(), nil, unitData:GetFaction())
 end
 
 function SystemFrame:DisplayLogoutMessage(inMessage)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inMessage) == 'table' and inMessage.__name ~= nil and string.find(inMessage.__name, 'Message'), 'argument must be Message type object')
-    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), nil, inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:GetMainName(), inMessage:GetGuild(), nil, inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
 end
 
 function SystemFrame:DisplayOrder(inOrder)
     if(not XF.Config.Chat.Crafting.Enable) then return end    
     assert(type(inOrder) == 'table' and inOrder.__name ~= nil and inOrder.__name == 'Order', 'argument must be Order type object')
     local customer = inOrder:GetCustomerUnit()
-    self:Display(XF.Enum.Message.ORDER, customer:Name(), customer:GetUnitName(), customer:GetMainName(), customer:GetGuild(), inOrder, customer:GetFaction())
+    self:Display(XF.Enum.Message.ORDER, customer:Name(), customer:UnitName(), customer:GetMainName(), customer:GetGuild(), inOrder, customer:GetFaction())
 end
 --#endregion

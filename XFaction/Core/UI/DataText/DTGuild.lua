@@ -109,17 +109,17 @@ local function PreSort()
 		if(unit:IsOnline()) then
 			local unitData = {}
 
-			unitData.Level = unit:GetLevel()
+			unitData.Level = unit:Level()
 			unitData.Realm = unit:GetGuild():Realm():Name()
 			unitData.Guild = unit:GetGuild():Name()		
 			unitData.Name = unit:Name()
-			unitData.UnitName = unit:GetUnitName()
+			unitData.UnitName = unit:UnitName()
 			unitData.Note = unit:GetNote()
-			unitData.GUID = unit:GetGUID()
+			unitData.GUID = unit:GUID()
 			unitData.Achievement = unit:GetAchievementPoints()
-			unitData.Rank = unit:GetRank()
+			unitData.Rank = unit:Rank()
 			unitData.ItemLevel = unit:GetItemLevel()	
-			unitData.Race = unit:GetRace():Name()
+			unitData.Race = unit:Race():Name()
 			if(unit:HasTeam()) then 
 				unitData.Team = unit:GetTeam():Name() 
 			else
@@ -156,11 +156,7 @@ local function PreSort()
 				unitData.Profession2 = unit:GetProfession2():IconID()
 			end
 
-			if(unit:HasZone()) then
-				unitData.Zone = unit:GetZone():LocaleName()
-			else
-				unitData.Zone = unit:GetZoneName()
-			end
+			unitData.Zone = unit:HasZone() and unit:Zone():LocaleName() or nil
 
 			if(unit:HasMythicKey() and unit:GetMythicKey():HasDungeon()) then
 				unitData.MythicKey = unit:GetMythicKey():GetDungeon():Name() .. ' +' .. unit:GetMythicKey():ID()
@@ -192,9 +188,9 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 	if(link == nil) then return end
 
 	if(inMouseButton == 'RightButton' and IsShiftKeyDown()) then
- 		C_PartyInfo.InviteUnit(unit:GetUnitName())
+ 		C_PartyInfo.InviteUnit(unit:UnitName())
 	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
-		C_PartyInfo.RequestInviteFromUnit(unit:GetUnitName())
+		C_PartyInfo.RequestInviteFromUnit(unit:UnitName())
  	elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
 		SetItemRef(link, unit:Name(), inMouseButton)
 	end

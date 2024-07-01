@@ -160,7 +160,7 @@ function XFC.Confederate:Restore()
         try(function ()
             local unitData = XF:DeserializeUnitData(data)
             self:Add(unitData)
-            XF:Info(ObjectName, '  Restored %s unit information from backup', unitData:GetUnitName())
+            XF:Info(ObjectName, '  Restored %s unit information from backup', unitData:UnitName())
         end).
         catch(function (err)
             XF:Warn(ObjectName, err)
@@ -172,7 +172,7 @@ end
 function XFC.Confederate:OfflineUnit(inKey)
     assert(type(inKey) == 'string')
     if(self:Contains(inKey)) then
-        self:Get(inKey):SetPresence(Enum.ClubMemberPresence.Offline)
+        self:Get(inKey):Presence(Enum.ClubMemberPresence.Offline)
         self.onlineCount = self.onlineCount - 1
     end
 end

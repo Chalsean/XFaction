@@ -115,11 +115,11 @@ function XFC.Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, 
             try(function ()
                 message = XFO.Mailbox:Pop()
                 message:Initialize()
-                message:From(XF.Player.Unit:GetGUID())
+                message:From(XF.Player.Unit:GUID())
                 message:Type(XF.Enum.Network.BROADCAST)
                 message:Subject(XF.Enum.Message.GCHAT)
                 message:Name(XF.Player.Unit:Name())
-                message:SetUnitName(XF.Player.Unit:GetUnitName())
+                message:UnitName(XF.Player.Unit:UnitName())
                 message:SetGuild(XF.Player.Guild)
                 if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
                     message:SetMainName(XF.Player.Unit:GetMainName())

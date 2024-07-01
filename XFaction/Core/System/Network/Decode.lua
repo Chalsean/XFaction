@@ -29,11 +29,11 @@ local function DeserializeMessage(inObject, inCompressedData)
 	end
 
 	if(messageData.M ~= nil) then inObject:SetMainName(messageData.M) end
-	if(messageData.U ~= nil) then inObject:SetUnitName(messageData.U) end
+	if(messageData.U ~= nil) then inObject:UnitName(messageData.U) end
 	if(messageData.N ~= nil) then 
 		inObject:Name(messageData.N) 
 	elseif(messageData.U ~= nil) then
-		inObject:Name(inObject:GetUnitName())
+		inObject:Name(inObject:UnitName())
 	end
 	if(messageData.H ~= nil and XFO.Guilds:Contains(messageData.H)) then
 		inObject:SetGuild(XFO.Guilds:Get(messageData.H))
@@ -53,21 +53,21 @@ function XF:DeserializeUnitData(inData)
 	local deserializedData = unpickle(inData)
 	local unit = XFO.Confederate:Pop()
 	unit:IsRunningAddon(true)
-	unit:SetRace(XFO.Races:Get(deserializedData.A))
+	unit:Race(XFO.Races:Get(deserializedData.A))
 	if(deserializedData.B ~= nil) then unit:SetAchievementPoints(deserializedData.B) end
 	if(deserializedData.C ~= nil) then unit:ID(tonumber(deserializedData.C)) end
 	if(deserializedData.E ~= nil) then 
-		unit:SetPresence(tonumber(deserializedData.E)) 
+		unit:Presence(tonumber(deserializedData.E)) 
 	else
-		unit:SetPresence(Enum.ClubMemberPresence.Online)
+		unit:Presence(Enum.ClubMemberPresence.Online)
 	end
 	unit:SetFaction(XFO.Factions:Get(deserializedData.F))
-	unit:SetGUID(deserializedData.K)
+	unit:GUID(deserializedData.K)
 	unit:Key(deserializedData.K)
 	unit:SetClass(XFO.Classes:Get(deserializedData.O))
 	local unitNameParts = string.Split(deserializedData.U, '-')
 	unit:Name(unitNameParts[1])
-	unit:SetUnitName(deserializedData.U)
+	unit:UnitName(deserializedData.U)
 	if(deserializedData.H ~= nil and XFO.Guilds:Contains(deserializedData.H)) then
 		unit:SetGuild(XFO.Guilds:Get(deserializedData.H))
 	else
@@ -75,8 +75,8 @@ function XF:DeserializeUnitData(inData)
 		unit:SetGuild(XFO.Guilds:GetByRealmGuildName(XFO.Realms:GetByID(deserializedData.R), deserializedData.G))
 	end
 	if(deserializedData.I ~= nil) then unit:SetItemLevel(deserializedData.I) end
-	unit:SetRank(deserializedData.J)
-	unit:SetLevel(deserializedData.L)
+	unit:Rank(deserializedData.J)
+	unit:Level(deserializedData.L)
 	if(deserializedData.M ~= nil) then
 		local key = XFC.MythicKey:new(); key:Initialize()
 		key:Deserialize(deserializedData.M)
@@ -97,14 +97,14 @@ function XF:DeserializeUnitData(inData)
 	end
 
 	if(deserializedData.D ~= nil and XFO.Zones:Contains(tonumber(deserializedData.D))) then
-		unit:SetZone(XFO.Zones:Get(tonumber(deserializedData.D)))
+		unit:Zone(XFO.Zones:Get(tonumber(deserializedData.D)))
 	elseif(deserializedData.Z == nil) then
-		unit:SetZone(XFO.Zones:Get('?'))
+		unit:Zone(XFO.Zones:Get('?'))
 	else
 		if(not XFO.Zones:Contains(deserializedData.Z)) then
 			XFO.Zones:Add(deserializedData.Z)
 		end
-		unit:SetZone(XFO.Zones:Get(deserializedData.Z))
+		unit:Zone(XFO.Zones:Get(deserializedData.Z))
 	end
 
 	if(deserializedData.Y ~= nil) then unit:SetPvPString(deserializedData.Y) end

@@ -115,7 +115,7 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
                 XF.Frames.System:DisplayLoginMessage(inMessage)
             end
             XFO.Confederate:Add(unitData)
-            XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unitData:GetUnitName())
+            XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unitData:UnitName())
             XF.DataText.Guild:RefreshBroker()
         end
     end).

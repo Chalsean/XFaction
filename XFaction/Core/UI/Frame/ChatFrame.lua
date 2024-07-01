@@ -179,13 +179,13 @@ function XFC.ChatFrame:DisplayGuildChat(inMessage)
     if(not XF.Config.Chat.GChat.Enable) then return end
     if(not XF.Player.Unit:CanGuildListen()) then return end
     if(XF.Player.Guild:Equals(inMessage:GetGuild())) then return end
-    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:From(), inMessage:Data(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:From(), inMessage:Data(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
 end
 
 function XFC.ChatFrame:DisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Config.Chat.Achievement.Enable) then return end
     if(XF.Player.Guild:Equals(inMessage:GetGuild())) then return end
-    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:GetUnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:From(), inMessage:Data(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
+    self:Display(inMessage:Subject(), inMessage:Name(), inMessage:UnitName(), inMessage:GetMainName(), inMessage:GetGuild(), inMessage:From(), inMessage:Data(), inMessage:HasFaction() and inMessage:GetFaction() or inMessage:GetGuild():GetFaction())
 end
 --#endregion

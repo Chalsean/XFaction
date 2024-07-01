@@ -35,7 +35,7 @@ function SystemEvent:Initialize()
                         callback = XF.Handlers.SystemEvent.CallbackLogin, 
                         instance = true})
 		self:IsInitialized(true)
-        XF.Config.Logout[#XF.Config.Logout + 1] = XF.Player.Unit:GetUnitName()
+        XF.Config.Logout[#XF.Config.Logout + 1] = XF.Player.Unit:UnitName()
 	end
 end
 --#endregion
@@ -54,7 +54,7 @@ function SystemEvent:CallbackLogout()
                 message:SetMainName(XF.Player.Unit:GetMainName())
             end
             message:SetGuild(XF.Player.Guild)
-            message:SetUnitName(XF.Player.Unit:Name())
+            message:UnitName(XF.Player.Unit:Name())
             message:Data(' ')
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout sending message'
             XF.Mailbox.Chat:Send(message)

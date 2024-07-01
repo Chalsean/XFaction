@@ -31,7 +31,7 @@ function XFC.Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
         self.targets = {}
-        self:From(XF.Player.Unit:GetGUID())
+        self:From(XF.Player.GUID)
         self:TimeStamp(XFF.TimeCurrent())
         self:SetAllTargets()
         self:SetVersion(XF.Version)
@@ -160,14 +160,12 @@ function XFC.Message:SetVersion(inVersion)
 end
 
 
-
-function XFC.Message:GetUnitName()
+function XFC.Message:UnitName(inUnitName)
+    assert(type(inUnitName) == 'string' or inUnitName == nil)
+    if(inUnitName ~= nil) then
+        self.unitName = inUnitName
+    end
     return self.unitName
-end
-
-function XFC.Message:SetUnitName(inUnitName)
-    assert(type(inUnitName) == 'string')
-    self.unitName = inUnitName
 end
 
 function XFC.Message:HasMainName()
@@ -275,7 +273,7 @@ end
 
 function XFC.Message:Encode(inTag)
     assert(type(inTag) == 'string' or inTag == nil)
-    local serialized = self:SerializeMessage()
+    local serialized = self:Serialize()
 	local compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
     return inTag == XF.Enum.Tag.BNET and XF.Lib.Deflate:EncodeForPrint(compressed) or XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
 end
@@ -285,7 +283,7 @@ function XFC.Message:Serialize()
 
 	data.M = self:GetMainName()
 	data.N = self:Name()
-	data.U = self:GetUnitName()
+	data.U = self:UnitName()
 	if(self:HasGuild()) then
 		data.H = self:GetGuild():Key()
 		-- Remove G/R once everyone is on 4.4 build
@@ -293,12 +291,7 @@ function XFC.Message:Serialize()
 		data.R = self:GetGuild():Realm():ID()
 	end
 
-	if(self:HasUnitData() and inEncodeUnitData) then
-		data.D = self:Data():Serialize()
-	else
-		data.D = self:Data()
-	end
-
+    data.D = self:HasUnitData() and self:Data():Serialize() or self:Data()
 	data.K = self:Key()
 	data.F = self:From()	
 	data.S = self:Subject()
