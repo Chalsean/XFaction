@@ -2,67 +2,52 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Target'
 
--- A target is a collection of connected realms + faction
--- As long as someone on the target receives, they rebroadcast to local channel
-Target = XFC.Object:newChildConstructor()
+XFC.Target = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Target:new()
-    local object = Target.parent.new(self)
+function XFC.Target:new()
+    local object = XFC.Target.parent.new(self)
     object.__name = ObjectName
-    object.realm = nil
-    object.faction = nil
-    object.tarCount = 1
+    object.guild = nil
     return object
 end
 --#endregion
 
---#region Print
-function Target:Print()
-    self:ParentPrint()
-    XF:Debug(ObjectName, '  tarCount (' .. type(self.tarCount) .. '): ' .. tostring(self.tarCount))
-    if(self:HasRealm()) then self:GetRealm():Print() end
-    if(self:HasFaction()) then self:GetFaction():Print() end
+--#region Properties
+function XFC.Target:Guild(inGuild)
+    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild' or inGuild == nil)
+    if(inGuild ~= nil) then
+        self.guild = inGuild
+    end
+    return self.guild
 end
 --#endregion
 
---#region Accessors
-function Target:HasRealm()
-    return self.realm ~= nil
+--#region Methods
+function XFC.Target:Print()
+    self:ParentPrint()
+    if(self:HasGuild()) then self:Guild():Print() end
 end
 
-function Target:GetRealm()
-    return self.realm
+function XFC.Target:HasGuild()
+    return self.guild ~= nil
 end
 
-function Target:SetRealm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
-    self.realm = inRealm
-end
-
-function Target:HasFaction()
-    return self.faction ~= nil
-end
-
-
-function Target:GetFaction()
-    return self.faction
-end
-
-function Target:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
-    self.faction = inFaction
-end
-
-function Target:IsMyTarget()
+function XFC.Target:IsMyTarget()
     return XF.Player.Target:Equals(self)
 end
 
-function Target:GetTarCount()
-    return self.tarCount
+function XFC.Target:Serialize()
+    return self:Key()
 end
 
-function Target:IncrementTarCount()
-    self.tarCount = self.tarCount + 1
+function XFC.Target:Deserialize(inSerial)
+    assert(type(inSerial) == 'string')
+    if(XFO.Guilds:Contains(inSerial)) then
+        local guild = XFO.Guilds:Get(inSerial)
+        self:Guild(guild)
+        self:Key(guild:Key())
+        self:Name(guild:Name())
+    end
 end
 --#endregion

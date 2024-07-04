@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Message'
 
-XFC.Message = XFC.Object:newChildConstructor()
+XFC.Message = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.Message:new()
@@ -12,30 +12,26 @@ function XFC.Message:new()
     object.type = nil
     object.subject = nil
     object.epochTime = nil
-    object.targets = nil
-    object.tarCount = 0
-    object.unitData = nil
     object.data = nil
     object.initialized = false
     object.packetNumber = 1
     object.totalPackets = 1
-    object.version = nil
-    object.unitName = nil
-    object.mainName = nil
-    object.guild = nil
-    object.faction = nil
+    object.links = nil
     return object
 end
 
 function XFC.Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self.targets = {}
-        self:From(XF.Player.GUID)
+        self:From(XF.Player.Unit)
         self:TimeStamp(XFF.TimeCurrent())
-        self:SetAllTargets()
-        self:SetVersion(XF.Version)
-        self:SetFaction(XF.Player.Faction)
+
+        for _, target in XFO.Targets:Iterator() do
+            if(not target:Equals(XF.Player.Target)) then
+                self:Add(target)
+            end
+        end
+
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -47,24 +43,16 @@ function XFC.Message:Deconstructor()
     self.type = nil
     self.subject = nil
     self.epochTime = nil
-    self.targets = nil
-    self.tarCount = 0
-    self.unitData = nil
     self.data = nil
     self.packetNumber = 1
     self.totalPackets = 1
-    self.version = nil
-    self.unitName = nil
-    self.mainName = nil
-    self.guild = nil
-    self.faction = nil
-    self:Initialize()
+    self.links = nil
 end
 --#endregion
 
 --#region Properties
 function XFC.Message:From(inFrom)
-    assert(type(inFrom) == 'string' or inFrom == nil)
+    assert(type(inFrom) == 'table' and inFrom.__name == 'Unit' or inFrom == nil)
     if(inFrom ~= nil) then
         self.from = inFrom
     end
@@ -117,158 +105,33 @@ function XFC.Message:TotalPackets(inTotalPackets)
     end
     return self.totalPackets
 end
+
+function XFC.Message:Links(inSerialized)
+    assert(type(inSerialized) == 'string' or inSerialized == nil)
+    if(inSerialized ~= nil) then
+        self.links = inSerialized
+    end
+    return self.links
+end
 --#endregion
 
 --#region Methods
 function XFC.Message:Print()
     self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
     XF:Debug(self:ObjectName(), '  packetNumber (' .. type(self.packetNumber) .. '): ' .. tostring(self.packetNumber))
     XF:Debug(self:ObjectName(), '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
     XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:ObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
-    XF:Debug(self:ObjectName(), '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
-    XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
-    XF:Debug(self:ObjectName(), '  tarCount (' .. type(self.tarCount) .. '): ' .. tostring(self.tarCount))
-    if(self:HasVersion()) then self:GetVersion():Print() end
+    XF:Debug(self:ObjectName(), '  links (' .. type(self.links) .. '): ' .. tostring(self.links))
 end
 
 function XFC.Message:IsMyMessage()
-    return XF.Player.GUID == self:From()
-end
---#endregion
-
-
-
-function XFC.Message:HasUnitData()
-    return self:Subject() == XF.Enum.Message.DATA or 
-           self:Subject() == XF.Enum.Message.LOGIN
-end
-
-function XFC.Message:HasVersion()
-    return self.version ~= nil
-end
-
-function XFC.Message:GetVersion()
-    return self.version
-end
-
-function XFC.Message:SetVersion(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name == 'Version', 'argument must be Version object')
-    self.version = inVersion
-end
-
-
-function XFC.Message:UnitName(inUnitName)
-    assert(type(inUnitName) == 'string' or inUnitName == nil)
-    if(inUnitName ~= nil) then
-        self.unitName = inUnitName
-    end
-    return self.unitName
-end
-
-function XFC.Message:HasMainName()
-    return self.mainName ~= nil
-end
-
-function XFC.Message:GetMainName()
-    return self.mainName
-end
-
-function XFC.Message:SetMainName(inMainName)
-    assert(type(inMainName) == 'string')
-    self.mainName = inMainName
-end
-
-function XFC.Message:HasGuild()
-    return self.guild ~= nil
-end
-
-function XFC.Message:GetGuild()
-    return self.guild
-end
-
-function XFC.Message:SetGuild(inGuild)
-    assert(type(inGuild) == 'table' and inGuild.__name == 'Guild', 'argument must be Guild object')
-    self.guild = inGuild
-end
-
-function XFC.Message:HasFaction()
-    return self.faction ~= nil
-end
-
-function XFC.Message:GetFaction()
-    return self.faction
-end
-
-function XFC.Message:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
-    self.faction = inFaction
-end
-
-function XFC.Message:ContainsTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    return self.targets[inTarget:Key()] ~= nil
-end
-
-function XFC.Message:AddTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    if(not self:ContainsTarget(inTarget)) then
-        self.tarCount = self.tarCount + 1
-    end
-    self.targets[inTarget:Key()] = inTarget
-end
-
-function XFC.Message:RemoveTarget(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target', 'argument must be Target object')
-    if(self:ContainsTarget(inTarget)) then
-        self.targets[inTarget:Key()] = nil
-        self.tarCount = self.tarCount - 1
-    end
-end
-
-function XFC.Message:SetAllTargets()
-    for _, target in XF.Targets:Iterator() do
-        if(not target:Equals(XF.Player.Target)) then
-            self:AddTarget(target)
-        end
-    end
+    return XF.Player.GUID == self:From():GUID()
 end
 
 function XFC.Message:HasTargets()
-    return self.tarCount > 0
-end
-
-function XFC.Message:GetTargets()
-    if(self:HasTargets()) then return self.targets end
-    return {}
-end
-
-function XFC.Message:GetTarCount()
-    return self.tarCount
-end
-
-function XFC.Message:GetRemainingTargets()
-    local targetsString = ''
-    for _, target in pairs (self:GetTargets()) do
-        targetsString = targetsString .. '|' .. target:Key()
-    end
-    return targetsString
-end
-
-function XFC.Message:SetRemainingTargets(inTargetString)
-    wipe(self.targets)
-    self.tarCount = 0
-    local targets = string.Split(inTargetString, '|')
-    for _, key in pairs (targets) do
-        if(key ~= nil and XF.Targets:Contains(key)) then
-            local target = XF.Targets:Get(key)
-            if(not XF.Player.Target:Equals(target)) then
-                self:AddTarget(target)
-            end
-        end
-    end
+    return self:Count() > 0
 end
 
 function XFC.Message:Encode(inTag)
@@ -281,28 +144,66 @@ end
 function XFC.Message:Serialize()
     local data = {}
 
-	data.M = self:GetMainName()
-	data.N = self:Name()
-	data.U = self:UnitName()
-	if(self:HasGuild()) then
-		data.H = self:GetGuild():Key()
-		-- Remove G/R once everyone is on 4.4 build
-		data.G = self:GetGuild():Name()
-		data.R = self:GetGuild():Realm():ID()
-	end
-
-    data.D = self:HasUnitData() and self:Data():Serialize() or self:Data()
+    data.D = self:Data()	
+	data.F = self:From():Serialize()	
 	data.K = self:Key()
-	data.F = self:From()	
-	data.S = self:Subject()
-	data.Y = self:Type()
-	data.I = self:TimeStamp()
-	data.A = self:GetRemainingTargets()
-	data.P = self:PacketNumber()
-	data.Q = self:TotalPackets()
-	data.V = self:GetVersion():Key()
-	data.W = self:GetFaction():Key()
+    data.L = self:Links()
+	data.N = self:PacketNumber()
+	data.P = self:TotalPackets()
+    data.S = self:Subject()
+    data.T = self:TimeStamp()
+    data.Y = self:Type()
+
+    local targets = ''
+    for _, target in self:Iterator() do
+        targets = targets .. ';' .. target:Serialize()
+    end
+    if(string.len(targets) > 0) then
+        data.R = targets
+    end
 
 	return pickle(data)
+end
+
+function XFC.Message:Decode(inEncoded, inTag)
+    assert(type(inEncoded) == 'string')
+    assert(type(inTag) == 'string' or inTag == nil)
+
+    local decoded = XF.Enum.Tag.BNET and XF.Lib.Deflate:DecodeForPrint(inEncoded) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inEncoded)
+    local decompressed = XF.Lib.Deflate:DecompressDeflate(decoded)
+    self:Deserialize(decompressed)
+end
+
+function XFC.Message:Deserialize(inSerial)
+    assert(type(inSerial) == 'string')
+    local data = unpickle(inSerial)
+
+    self:Data(data.D)
+    self:Key(data.K)
+    self:Links(data.L)
+    self:PacketNumber(data.N)
+    self:TotalPackets(data.P)
+    self:Subject(data.S)
+    self:TimeStamp(data.T)
+    self:Type(data.Y)
+    
+    local unit = nil
+    try(function()
+        unit = XFO.Confederate:Pop()
+        unit:Deserialize(data.F)
+        XFO:Confederate:Add(unit)
+        self:From(unit)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+        XFO.Confederate:Push(unit)
+    end)
+
+    if(data.R ~= nil) then
+        local targets = string.Split(data.R, ';')
+        for _, target in ipairs(targets) do
+            self:Add(XFO.Targets:Get(target))
+        end
+    end
 end
 --#endregion
