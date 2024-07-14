@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'HeroCollection'
 
 XFC.HeroCollection = XFC.ObjectCollection:newChildConstructor()
@@ -7,8 +7,45 @@ XFC.HeroCollection = XFC.ObjectCollection:newChildConstructor()
 --#region Hero List
 local HeroData =
 {
-	-- [SpecID] = "EnglishName,IconID,ClassID"
---	[1473] = "Augmentation,5198700,13",
+	[18] = "Voidweaver,26682,5,447444",
+	[19] = "Archon,27430,5,453109",
+	[20] = "Oracle,26934,5,428924",
+	[21] = "Druid of the Claw,26675,11",
+	[22] = "Wildstalker,26677,11",
+	[23] = "Keeper of the Grove,26686,11",
+	[24] = "Elune's Chosen,26685,11",
+	[31] = "San'layn,26673,6",
+	[32] = "Rider of the Apocalypse,27222,6",
+	[33] = "Deathbringer,26672,6",
+	[34] = "Fel-Scarred,27066,12",
+	[35] = "Aldrachi Reaver,27132,12",
+	[36] = "Scalecommander,27067,13",
+	[37] = "Flameshaper,27223,13",
+	[38] = "Chronowarden,26678,13",
+	[39] = "Sunfury,27133,8",
+	[40] = "Spellslinger,27429,8",
+	[41] = "Frostfire,27017,8",
+	[42] = "Sentinel,27529,3",
+	[43] = "Pack Leader,27068,3",
+	[44] = "Dark Ranger,26679,3",
+	[45] = "Shado-Pan,27070,10",
+	[46] = "Master of Harmony,12063,10",
+	[47] = "Conduit of the Celestials,27069,10",
+	[48] = "Templar,26681,2",
+	[49] = "Lightsmith,26680,2",
+	[50] = "Herald of the Sun,26702,2",
+	[51] = "Trickster,27018,4",
+	[52] = "Fatebound,27433,4",
+	[53] = "Deathstalker,27432,4",
+	[54] = "Totemic,26703,7",
+	[55] = "Stormbringer,26683,7",
+	[56] = "Farseer,27019,7",
+	[57] = "Soul Harvester,27530,9",
+	[58] = "Hellcaller,12068,9",
+	[59] = "Diabolist,26935,9",
+	[60] = "Slayer,26704,1",
+	[61] = "Mountain Thane,26684,1",
+	[62] = "Colossus,26765,1",
 }
 --#endregion
 
@@ -32,14 +69,15 @@ function XFC.HeroCollection:Initialize()
 			hero:Name(heroData[1])
 			hero:IconID(tonumber(heroData[2]))
 			hero:Class(XFO.Classes:Get(tonumber(heroData[3])))
+			hero:SpellID(tonumber(heroData[4]))
 			self:Add(hero)
-			XF:Info(self:ObjectName(), 'Initialized hero [%d:%s:%s]', hero:ID(), hero:Name(), hero:Class():Name())
+			XF:Info(self:ObjectName(), 'Initialized hero [%d:%s]', hero:ID(), hero:Name())
 		end
 
 		XF.Events:Add({
-			name = 'Spec', 
-			event = 'ACTIVE_TALENT_GROUP_CHANGED', 
-			callback = XFO.Specs.CallbackSpecChanged, 
+			name = 'Hero', 
+			event = 'SPELLS_CHANGED', 
+			callback = XFO.Heros.CallbackHeroChanged, 
 			instance = true
 		})
 
@@ -49,19 +87,14 @@ end
 --#endregion
 
 --#region Methods
-function XFC.HeroCollection:GetInitialClassSpec(inClassID)
-	assert(type(inClassID) == 'number')
-	for _, spec in self:Iterator() do
-		if(spec:Class():ID() == inClassID and spec:Name() == 'Initial') then
-			return spec
-		end
-	end
-end
-
-function XFC.HeroCollection:CallbackSpecChanged()
+function XFC.HeroCollection:CallbackHeroChanged(inID)
+	local self = XFO.Heros
 	try(function ()
-        XF.Player.Unit:Initialize(XF.Player.Unit:ID())
-        XF.Player.Unit:Broadcast()
+		for _, hero in self:Iterator() do
+			if(XFF.PlayerSpellKnown(hero:SpellID())) then
+				hero:Print()
+			end
+		end
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)

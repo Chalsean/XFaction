@@ -10,6 +10,7 @@ function XFC.Hero:new()
     object.__name = ObjectName
     object.iconID = nil
     object.class = nil
+    object.spellID = nil
     return object
 end
 --#endregion
@@ -29,6 +30,14 @@ function XFC.Hero:Class(inClass)
         self.class = inClass
     end
     return self.class
+end
+
+function XFC.Hero:SpellID(inSpellID)
+    assert(type(inSpellID) == 'number' or inSpellID == nil)
+    if(inSpellID ~= nil) then
+        self.spellID = inSpellID
+    end
+    return self.spellID
 end
 --#endregion
 

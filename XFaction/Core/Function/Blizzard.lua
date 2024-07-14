@@ -56,6 +56,7 @@ XFF.PlayerFaction = UnitFactionGroup
 XFF.PlayerPvPRating = GetPersonalRatedInfo
 XFF.PlayerGetGuild = GetGuildInfo
 XFF.PlayerZone = GetZoneText
+XFF.PlayerSpellKnown = IsPlayerSpell
 
 -- BNet
 XFF.BNetGetPlayerInfo = BNGetInfo
