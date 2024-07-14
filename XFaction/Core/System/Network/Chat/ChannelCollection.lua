@@ -27,11 +27,11 @@ function XFC.ChannelCollection:Initialize()
 			end)
 		end
 
-		if(XF.Player.Target:GetTarCount() > 1) then
-			self:UseGuild(false)
-			--JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
-			--XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
-		end
+		-- if(XF.Player.Target:GetTarCount() > 1) then
+		-- 	self:UseGuild(false)
+		-- 	--JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
+		-- 	--XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
+		-- end
 
 		XF.Events:Add({
 			name = 'ChannelLeft', 

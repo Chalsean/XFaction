@@ -68,15 +68,15 @@ function SystemEvent:CallbackLogout()
 end
 
 function SystemEvent:CallbackReloadUI()
-    try(function ()        
+    try(function ()
         XFO.Confederate:Backup()
         XF.Friends:Backup()
-        XF.Links:Backup()
+        XFO.Links:Backup()
         XFO.Orders:Backup()
     end).
-    catch(function (inErrorMessage)
-        XF:Error(ObjectName, inErrorMessage)
-        XF.Config.Errors[#XF.Config.Errors + 1] = 'Failed to perform backups: ' .. inErrorMessage
+    catch(function (err)
+        XF:Error(ObjectName, err)
+        XF.Config.Logout[#XF.Config.Errors + 1] = 'Failed to perform backups: ' .. err
     end).
     finally(function ()
         XF.Cache.UIReload = true

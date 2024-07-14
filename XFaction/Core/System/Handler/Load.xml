@@ -1,9 +1,13 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">   
     <Script file='AchievementEvent.lua'/>
     <Script file='AddonEvent.lua'/>
+    <!--
     <Script file='GuildEvent.lua'/>
-    <Script file='OrderEvent.lua'/>
-    <Script file='PlayerEvent.lua'/>
-    <Script file='SystemEvent.lua'/>
     <Script file='TimerEvent.lua'/>
+    <Script file='PlayerEvent.lua'/>
+    -->
+    <Script file='OrderEvent.lua'/>
+    
+    <Script file='SystemEvent.lua'/>
+    
 </Ui>

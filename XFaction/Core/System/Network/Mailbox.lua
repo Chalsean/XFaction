@@ -44,60 +44,22 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
     assert(type(inMessageTag) == 'string')
 
     try(function()
-        -- Is a newer version available?
-        if(not XF.Cache.NewVersionNotify and XF.Version:IsNewer(inMessage:GetVersion())) then
-            print(format(XF.Lib.Locale['NEW_VERSION'], XF.Title))
-            XF.Cache.NewVersionNotify = true
-        end
-
-        -- Deserialize unit data
-        if(inMessage:HasUnitData()) then
-            local unitData = XF:DeserializeUnitData(inMessage:Data())
-            inMessage:Data(unitData)
-            if(not unitData:HasVersion()) then
-                unitData:SetVersion(inMessage:GetVersion())
-            end
-        end
 
         self:Add(inMessage:Key())
         inMessage:Print()
         self:Forward(inMessage)
 
-        -- Process GCHAT message
-        if(inMessage:Subject() == XF.Enum.Message.GCHAT) then
-            XFO.ChatFrame:DisplayGuildChat(inMessage)
+        -- Every message contains unit and link information, except LOGOUT
+        XFO.Confederate:ProcessMessage(inMessage)
+        XFO.Links:ProcessMessage(inMessage)
+
+        if(inMessage:Subject() == XF.Enum.Message.LOGIN or inMessage:Subject() == XF.Enum.Message.LOGOUT or inMessage:Subject() == XF.Enum.Message.DATA) then
             return
         end
 
-        -- Process ACHIEVEMENT message
-        if(inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
-            XFO.ChatFrame:DisplayAchievement(inMessage)
-            return
-        end
-
-        -- Process LINK message
-        if(inMessage:Subject() == XF.Enum.Message.LINK) then
-            XF.Links:ProcessMessage(inMessage)
-            return
-        end
-
-        -- Process LOGOUT message
-        if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
-            if(XF.Player.Guild:Equals(inMessage:GetGuild())) then
-                -- In case we get a message before scan
-                if(not XFO.Confederate:Contains(inMessage:From())) then
-                    XF.Frames.System:DisplayLogoutMessage(inMessage)
-                else
-                    if(XFO.Confederate:Get(inMessage:From()):IsOnline()) then
-                        XF.Frames.System:DisplayLogoutMessage(inMessage)
-                    end
-                    XFO.Confederate:OfflineUnit(inMessage:From())
-                end
-            else
-                XF.Frames.System:DisplayLogoutMessage(inMessage)
-                XFO.Confederate:Remove(inMessage:From())
-            end
-            XF.DataText.Guild:RefreshBroker()
+        -- Process GCHAT/ACHIEVEMENT message
+        if(inMessage:Subject() == XF.Enum.Message.GCHAT or inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
+            XFO.ChatFrame:ProcessMessage(inMessage)
             return
         end
 
@@ -105,18 +67,6 @@ function XFC.Mailbox:Process(inMessage, inMessageTag)
         if(inMessage:Subject() == XF.Enum.Message.ORDER) then
             XFO.Orders:ProcessMessage(inMessage)
             return
-        end
-
-        -- Process DATA/LOGIN message
-        if(inMessage:HasUnitData()) then
-            local unitData = inMessage:Data()
-            if(inMessage:Subject() == XF.Enum.Message.LOGIN and 
-            (not XFO.Confederate:Contains(unitData:Key()) or XFO.Confederate:Get(unitData:Key()):IsOffline())) then
-                XF.Frames.System:DisplayLoginMessage(inMessage)
-            end
-            XFO.Confederate:Add(unitData)
-            XF:Info(self:ObjectName(), 'Updated unit [%s] information based on message received', unitData:UnitName())
-            XF.DataText.Guild:RefreshBroker()
         end
     end).
     finally(function()
@@ -165,5 +115,60 @@ function XFC.Mailbox:CallbackJanitor()
 			self:Remove(key)
 		end
 	end
+end
+
+-- Do not initiliaze message as we do not need unit/link data
+-- Since we are logging out, dont care about memory leak
+function XFC.Mailbox:SendLogoutMessage()
+    local message = self:Pop()
+    message:From(XF.Player.GUID)
+    message:TimeStamp(XFF.TimeCurrent())
+    message:Type(XF.Enum.Network.BROADCAST)
+    message:Subject(XF.Enum.Message.LOGOUT)
+
+    for _, target in XFO.Targets:Iterator() do
+        if(not target:Equals(XF.Player.Target)) then
+            message:Add(target)
+        end
+    end
+    
+    XFO.Chat:Send(message)
+end
+
+local function SendMessage(inSubject, inData)
+
+    XF.Player.LastBroadcast = XFF.TimeCurrent()
+
+    local message = nil
+    try(function ()
+        message = self:Pop()
+        message:Initialize()
+        message:Subject(inSubject)
+        message:Data(inData)
+        XFO.Chat:Send(message)
+    end).
+    finally(function ()
+        self:Push(message)
+    end)
+end
+
+function XFC.Mailbox:SendLoginMessage()
+    SendMessage(XF.Enum.Message.LOGIN)
+end
+
+function XFC.Mailbox:SendDataMessage()
+    SendMessage(XF.Enum.Message.DATA)
+end
+
+function XFC.Mailbox:SendGuildChatMessage(inData)
+    SendMessage(XF.Enum.Message.DATA, inData)
+end
+
+function XFC.Mailbox:SendAchievementMessage(inData)
+    SendMessage(XF.Enum.Message.ACHIEVEMENT, inData)
+end
+
+function XFC.Mailbox:SendOrderMessage(inData)
+    SendMessage(XF.Enum.Message.ORDER, inData)
 end
 --#endregion

@@ -109,8 +109,8 @@ local function CanLink(inAccountInfo)
 
 		XF:Trace(ObjectName, 'Checking friend for linkability [%s] GUID [%s] RealmID [%d] RealmName [%s]', inAccountInfo.battleTag, inAccountInfo.gameAccountInfo.playerGuid, inAccountInfo.gameAccountInfo.realmID, inAccountInfo.gameAccountInfo.realmName)
 
-		local target = XF.Targets:GetByRealmFaction(realm, faction)
-		if(target ~= nil and not target:IsMyTarget()) then return true, target end
+		-- local target = XFO.Targets:GetByRealmFaction(realm, faction)
+		-- if(target ~= nil and not target:IsMyTarget()) then return true, target end
 	end
 	return false
 end

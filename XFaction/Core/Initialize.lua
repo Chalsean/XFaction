@@ -26,7 +26,7 @@ function XF:CoreInit()
 	XFO.Factions = XFC.FactionCollection:new(); XFO.Factions:Initialize()
 	XFO.Guilds = XFC.GuildCollection:new()
 	XFO.Realms = XFC.RealmCollection:new(); XFO.Realms:Initialize()
-	XFO.Targets = TargetCollection:new()
+	XFO.Targets = XFC.TargetCollection:new()
 	XFO.Teams = XFC.TeamCollection:new(); XFO.Teams:Initialize()
 	XFO.Orders = XFC.OrderCollection:new(); XFO.Orders:Initialize()
 
@@ -37,15 +37,12 @@ function XF:CoreInit()
 
 	-- Frames
 	XFO.ChatFrame = XFC.ChatFrame:new()
-	XF.Frames.System = SystemFrame:new()
+	XFO.SystemFrame = XFC.SystemFrame:new()
 
 	-- Declare handlers but not listening yet
 	XF.Handlers.AchievementEvent = AchievementEvent:new(); XF.Handlers.AchievementEvent:Initialize()
-	XF.Handlers.GuildEvent = GuildEvent:new(); XF.Handlers.GuildEvent:Initialize()
 	XF.Handlers.OrderEvent = XFC.OrderEvent:new(); XF.Handlers.OrderEvent:Initialize()
-	XF.Handlers.PlayerEvent = PlayerEvent:new(); XF.Handlers.PlayerEvent:Initialize()
 	XF.Handlers.SystemEvent = SystemEvent:new()
-	XF.Handlers.TimerEvent = TimerEvent:new()
 
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
@@ -72,8 +69,7 @@ function XF:CoreInit()
 	
 	-- Wrappers	
 	XF.Hooks = HookCollection:new(); XF.Hooks:Initialize()
-	XF.Metrics = MetricCollection:new(); XF.Metrics:Initialize()	
-	XF.Handlers.TimerEvent:Initialize()
+	XF.Metrics = MetricCollection:new(); XF.Metrics:Initialize()
 
 	-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
 	XF.Timers:Add({
@@ -123,7 +119,7 @@ function XF:CallbackLoginGuild()
 
 				-- Frame inits were waiting on Confederate init
 				XFO.ChatFrame:Initialize()
-				XF.Frames.System:Initialize()
+				XFO.SystemFrame:Initialize()
 
 				-- Start network
 				XFO.Channels:Initialize()
@@ -184,10 +180,10 @@ function XF:CallbackLoginPlayer()
 				XFO.Links:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
-				XF.Player.Unit:Broadcast(XF.Enum.Message.DATA)
+				--XF.Player.Unit:Broadcast(XF.Enum.Message.DATA)
 			-- Otherwise send login message
 			else
-				XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
+				--XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
 			end			
 
 			-- Start all hooks, timers and events

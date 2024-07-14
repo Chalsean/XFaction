@@ -131,4 +131,28 @@ function XFC.Factory:Purge(inPurgeTime)
         end
     end
 end
+
+-- Factories are mutable collections, so may or may not contain the object
+function XFC.Factory:Deserialize(inSerial)
+    if(inSerial == nil) then return nil end
+
+    local object = nil
+    try(function()
+        object = self:Pop()
+        object:Deserialize(inSerial)
+        if(self:Contains(object:Key())) then
+            local key = object:Key()
+            self:Push(object)
+            object = self:Get(key)
+        else
+            self:Add(object)
+        end
+    end).
+    catch(function(err)
+        self:Push(object)
+        error(err)
+    end)
+    return object
+end
+
 --#endregion

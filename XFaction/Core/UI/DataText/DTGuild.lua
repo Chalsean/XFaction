@@ -110,56 +110,47 @@ local function PreSort()
 			local unitData = {}
 
 			unitData.Level = unit:Level()
-			unitData.Realm = unit:GetGuild():Realm():Name()
-			unitData.Guild = unit:GetGuild():Name()		
+			unitData.Realm = unit:Realm():Name()
+			unitData.Guild = unit:Guild():Name()		
 			unitData.Name = unit:Name()
 			unitData.UnitName = unit:UnitName()
-			unitData.Note = unit:GetNote()
+			unitData.Note = unit:Note()
 			unitData.GUID = unit:GUID()
-			unitData.Achievement = unit:GetAchievementPoints()
+			unitData.Achievement = unit:AchievementPoints()
 			unitData.Rank = unit:Rank()
-			unitData.ItemLevel = unit:GetItemLevel()	
+			unitData.ItemLevel = unit:ItemLevel()	
 			unitData.Race = unit:Race():Name()
-			if(unit:HasTeam()) then 
-				unitData.Team = unit:GetTeam():Name() 
-			else
-				unitData.Team = 'Unknown'
-			end
+			unitData.Team = unit:HasTeam() and unit:Team():Name() or 'Unknown'
 			unitData.Class = unit:Class():Hex()
-			unitData.Faction = unit:Race():Faction():IconID()
-			unitData.PvP = unit:GetPvP()
+			unitData.Faction = unit:Faction():IconID()
+			unitData.PvP = unit:PvP()
+			unitData.Version = unit:HasVersion() and unit:Version():Key() or '0.0.0'
 
 			if(unit:HasRaiderIO()) then
-				unitData.Raid = unit:GetRaiderIO():GetRaid()
-				unitData.Dungeon = unit:GetRaiderIO():GetDungeon()			
+				unitData.Raid = unit:RaiderIO():GetRaid()
+				unitData.Dungeon = unit:RaiderIO():GetDungeon()			
 			end
 
-			if(unit:HasVersion()) then
-				unitData.Version = unit:GetVersion():Key()
-			else
-				unitData.Version = '0.0.0'
-			end
-
-			if(unit:IsAlt() and unit:HasMainName() and XF.Config.DataText.Guild.Main) then
-				unitData.Name = unit:Name() .. ' (' .. unit:GetMainName() .. ')'
+			if(unit:IsAlt() and XF.Config.DataText.Guild.Main) then
+				unitData.Name = unit:Name() .. ' (' .. unit:MainName() .. ')'
 			end
 
 			if(unit:HasSpec()) then
-				unitData.Spec = unit:GetSpec():IconID()
+				unitData.Spec = unit:Spec():IconID()
 			end
 
 			if(unit:HasProfession1()) then
-				unitData.Profession1 = unit:GetProfession1():IconID()
+				unitData.Profession1 = unit:Profession1():IconID()
 			end
 
 			if(unit:HasProfession2()) then
-				unitData.Profession2 = unit:GetProfession2():IconID()
+				unitData.Profession2 = unit:Profession2():IconID()
 			end
 
-			unitData.Zone = unit:HasZone() and unit:Zone():LocaleName() or nil
+			unitData.Zone = unit:HasZone() and unit:Zone():Name() or nil
 
-			if(unit:HasMythicKey() and unit:GetMythicKey():HasDungeon()) then
-				unitData.MythicKey = unit:GetMythicKey():GetDungeon():Name() .. ' +' .. unit:GetMythicKey():ID()
+			if(unit:HasMythicKey() and unit:MythicKey():HasDungeon()) then
+				unitData.MythicKey = unit:MythicKey():Dungeon():Name() .. ' +' .. unit:MythicKey():ID()
 			end
 
 			list[#list + 1] = unitData

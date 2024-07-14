@@ -78,7 +78,7 @@ function DTLinks:RefreshBroker()
 	local allianceCount = 0
 	local hordeCount = 0
 
-	for _, link in XF.Links:Iterator() do
+	for _, link in XFO.Links:Iterator() do
 		if(names[link:GetFromNode():Name()] == nil) then
 			if(link:GetFromNode():GetTarget():GetFaction():IsAlliance()) then
 				allianceCount = allianceCount + 1
@@ -98,9 +98,9 @@ function DTLinks:RefreshBroker()
 	end
 
 	if(XF.Config.DataText.Link.Faction) then
-		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XF.Links:Count(), allianceCount, hordeCount)
+		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XFO.Links:Count(), allianceCount, hordeCount)
 	else
-		text = format('%s|cffffffff%d|r', text, XF.Links:Count())
+		text = format('%s|cffffffff%d|r', text, XFO.Links:Count())
 	end
 	XF.DataText.Links:GetBroker().text = text
 end
@@ -112,7 +112,7 @@ function DTLinks:OnEnter(this)
 	if(CombatLockdown()) then return end
 
 	--#region Configure Tooltip
-	local tarCount = XF.Targets:Count() + 1
+	local tarCount = XFO.Targets:Count() + 1
 	
 	if XF.Lib.QT:IsAcquired(ObjectName) then
 		self.tooltip = XF.Lib.QT:Acquire(ObjectName)		
@@ -134,7 +134,7 @@ function DTLinks:OnEnter(this)
 	local guildName = XFO.Confederate:Name()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], guildName), self.headerFont, 'LEFT', tarCount)
 	line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XF.Links:Count()), self.headerFont, 'LEFT', tarCount)
+	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XFO.Links:Count()), self.headerFont, 'LEFT', tarCount)
 
 	line = self.tooltip:AddLine()
 	line = self.tooltip:AddLine()
@@ -144,7 +144,7 @@ function DTLinks:OnEnter(this)
 	--#region Column Headers
 	local targetColumn = {}
 	local i = 1
-	for _, target in XF.Targets:Iterator() do
+	for _, target in XFO.Targets:Iterator() do
 		local tarName = format('%s%s', format(XF.Icons.String, target:GetFaction():IconID()), target:GetRealm():Name())
 		self.tooltip:SetCell(line, i, tarName)
 		targetColumn[target:Key()] = i
@@ -158,7 +158,7 @@ function DTLinks:OnEnter(this)
 
 	--#region Populate Table
 	if(XF.Initialized) then
-		for _, link in XF.Links:Iterator() do
+		for _, link in XFO.Links:Iterator() do
 			local fromName = format('|cffffffff%s|r', link:GetFromNode():Name())
 			if(link:IsMyLink() and link:GetFromNode():IsMyNode()) then
 				fromName = format('|cffffff00%s|r', link:GetFromNode():Name())

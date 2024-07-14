@@ -9,22 +9,25 @@ function XFC.Message:new()
     local object = XFC.Message.parent.new(self)
     object.__name = ObjectName
     object.from = nil
+    object.fromUnit = nil
     object.type = nil
     object.subject = nil
     object.epochTime = nil
     object.data = nil
     object.initialized = false
-    object.packetNumber = 1
     object.totalPackets = 1
-    object.links = nil
+    object.links = nil    
     return object
 end
 
 function XFC.Message:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        self:From(XF.Player.Unit)
+        self:From(XF.Player.GUID)
+        self:FromUnit(XF.Player.Unit)
         self:TimeStamp(XFF.TimeCurrent())
+        self:Type(XF.Enum.Network.BROADCAST)
+        self:Links(XFO.Links:Serialize(true))
 
         for _, target in XFO.Targets:Iterator() do
             if(not target:Equals(XF.Player.Target)) then
@@ -40,23 +43,31 @@ end
 function XFC.Message:Deconstructor()
     self:ParentDeconstructor()
     self.from = nil
+    self.fromUnit = nil
     self.type = nil
     self.subject = nil
     self.epochTime = nil
     self.data = nil
-    self.packetNumber = 1
     self.totalPackets = 1
-    self.links = nil
+    self.links = nil    
 end
 --#endregion
 
 --#region Properties
 function XFC.Message:From(inFrom)
-    assert(type(inFrom) == 'table' and inFrom.__name == 'Unit' or inFrom == nil)
+    assert(type(inFrom) == 'string' or inFrom == nil)
     if(inFrom ~= nil) then
         self.from = inFrom
     end
     return self.from
+end
+
+function XFC.Message:FromUnit(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil)
+    if(inUnit ~= nil) then
+        self.fromUnit = inUnit
+    end
+    return self.fromUnit
 end
 
 function XFC.Message:Type(inType)
@@ -90,14 +101,6 @@ function XFC.Message:Data(inData)
     return self.data
 end
 
-function XFC.Message:PacketNumber(inPacketNumber)
-    assert(type(inPacketNumber) == 'number' or inPacketNumber == nil)
-    if(self.packetNumber ~= nil) then
-        self.packetNumber = inPacketNumber
-    end
-    return self.packetNumber
-end
-
 function XFC.Message:TotalPackets(inTotalPackets)
     assert(type(inTotalPackets) == 'number' or inTotalPackets == nil)
     if(inTotalPackets ~= nil) then
@@ -118,7 +121,6 @@ end
 --#region Methods
 function XFC.Message:Print()
     self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  packetNumber (' .. type(self.packetNumber) .. '): ' .. tostring(self.packetNumber))
     XF:Debug(self:ObjectName(), '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
     XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
@@ -134,6 +136,14 @@ function XFC.Message:HasTargets()
     return self:Count() > 0
 end
 
+function XFC.Message:HasFromUnit()
+    return self:FromUnit() ~= nil
+end
+
+function XFC.Message:HasLinks()
+    return self:Links() ~= nil and string.len(self:Links()) > 0
+end
+
 function XFC.Message:Encode(inTag)
     assert(type(inTag) == 'string' or inTag == nil)
     local serialized = self:Serialize()
@@ -145,13 +155,13 @@ function XFC.Message:Serialize()
     local data = {}
 
     data.D = self:Data()	
-	data.F = self:From():Serialize()	
+	data.F = self:From()
 	data.K = self:Key()
     data.L = self:Links()
-	data.N = self:PacketNumber()
 	data.P = self:TotalPackets()
     data.S = self:Subject()
     data.T = self:TimeStamp()
+    data.U = self:HasFromUnit() and self:FromUnit():Serialize() or nil
     data.Y = self:Type()
 
     local targets = ''
@@ -179,31 +189,20 @@ function XFC.Message:Deserialize(inSerial)
     local data = unpickle(inSerial)
 
     self:Data(data.D)
+    self:From(data.F)
+    -- self:FromUnit(XFO.Confederate:Deserialize(data.U))
     self:Key(data.K)
-    self:Links(data.L)
-    self:PacketNumber(data.N)
+    -- self:Links(data.L)
     self:TotalPackets(data.P)
     self:Subject(data.S)
     self:TimeStamp(data.T)
     self:Type(data.Y)
     
-    local unit = nil
-    try(function()
-        unit = XFO.Confederate:Pop()
-        unit:Deserialize(data.F)
-        XFO:Confederate:Add(unit)
-        self:From(unit)
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-        XFO.Confederate:Push(unit)
-    end)
-
-    if(data.R ~= nil) then
-        local targets = string.Split(data.R, ';')
-        for _, target in ipairs(targets) do
-            self:Add(XFO.Targets:Get(target))
-        end
-    end
+    -- if(data.R ~= nil) then
+    --     local targets = string.Split(data.R, ';')
+    --     for _, target in ipairs(targets) do
+    --         self:Add(XFO.Targets:Get(target))
+    --     end
+    -- end
 end
 --#endregion

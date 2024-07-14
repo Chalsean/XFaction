@@ -892,7 +892,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['TARGET'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Targets:Print() end,
+									func = function(info) XFO.Targets:Print() end,
 								},
 								Team = {
 									order = 27,

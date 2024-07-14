@@ -20,10 +20,10 @@ XFF.ChatGetWindow = GetChatWindowMessages
 XFF.ChatHandler = ChatFrame_MessageEventHandler
 
 -- Guild
-XFF.GuildGetMembers = C_Club.GetClubMembers
+XFF.GuildMembers = C_Club.GetClubMembers
 XFF.GuildQueryServer = C_GuildInfo.GuildRoster
-XFF.GuildGetInfo = C_Club.GetClubInfo
-XFF.GuildGetStreams = C_Club.GetStreams
+XFF.GuildInfo = C_Club.GetClubInfo
+XFF.GuildStreams = C_Club.GetStreams
 XFF.GuildMemberInfo = C_Club.GetMemberInfo
 XFF.GuildMyInfo = C_Club.GetMemberInfoForSelf
 XFF.GuildMyPermissions = C_GuildInfo.GuildControlGetRankFlags

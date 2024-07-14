@@ -73,7 +73,7 @@ end
 
 function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XF:Debug(self:ObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
+    XF:Trace(self:ObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
 
     -- If not a message from this addon, ignore
     if(not self:IsAddonTag(inMessageTag)) then
@@ -104,7 +104,18 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
     if(self:HasAllPackets(messageKey, totalPackets)) then
         XF:Debug(self:ObjectName(), 'Received all packets for message [%s]', messageKey)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-        XFO.Mailbox:Process(inMessageTag == XF.Enum.Tag.BNET and XF:DecodeBNetMessage(encodedMessage) or XF:DecodeChatMessage(encodedMessage), inMessageTag)
+
+        local message = XFO.Mailbox:Pop()
+        try(function()
+            message:Decode(encodedMessage, inMessageTag)
+            --XFO.Mailbox:Process(message)
+        end).
+        catch(function(err)
+            XF:Warn(self:ObjectName(), err)
+        end).
+        finally(function()
+            XFO.Mailbox:Push(message)
+        end)
     end
 end
 --#endregion
