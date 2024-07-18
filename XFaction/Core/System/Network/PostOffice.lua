@@ -56,8 +56,7 @@ function XFC.PostOffice:RebuildMessage(inKey)
     for _, packet in PairsByKeys(self.objects[inKey]) do
         message = message .. packet
     end
-    self:Remove(inKey)
-	return message
+    return message
 end
 
 function XFC.PostOffice:IsAddonTag(inTag)
@@ -107,8 +106,10 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
 
         local message = XFO.Mailbox:Pop()
         try(function()
-            message:Decode(encodedMessage, inMessageTag)
-            --XFO.Mailbox:Process(message)
+            message:Decode(encodedMessage, inMessageTag)            
+            message:Print()
+            XFO.Mailbox:Process(message)
+            self:Remove(messageKey)
         end).
         catch(function(err)
             XF:Warn(self:ObjectName(), err)

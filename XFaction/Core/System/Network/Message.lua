@@ -188,6 +188,8 @@ function XFC.Message:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
 
+    self:ParentInitialize()
+
     self:Data(data.D)
     self:From(data.F)
     -- self:FromUnit(XFO.Confederate:Deserialize(data.U))

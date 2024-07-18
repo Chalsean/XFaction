@@ -134,7 +134,7 @@ function XFC.ZoneCollection:CallbackZoneChanged()
                     self:Add(zoneName)
                 end
                 XF.Player.Unit:Zone(self:Get(zoneName))
-				XF.Player.Unit:Broadcast()
+				--XF.Player.Unit:Broadcast()
             end
         end).
         catch(function (err)

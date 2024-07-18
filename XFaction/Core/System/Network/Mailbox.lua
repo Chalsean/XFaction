@@ -39,35 +39,33 @@ function XFC.Mailbox:Add(inKey)
 	end
 end
 
-function XFC.Mailbox:Process(inMessage, inMessageTag)
+function XFC.Mailbox:Process(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    assert(type(inMessageTag) == 'string')
 
     try(function()
 
         self:Add(inMessage:Key())
-        inMessage:Print()
-        self:Forward(inMessage)
+        -- self:Forward(inMessage)
 
-        -- Every message contains unit and link information, except LOGOUT
-        XFO.Confederate:ProcessMessage(inMessage)
-        XFO.Links:ProcessMessage(inMessage)
+        -- -- Every message contains unit and link information, except LOGOUT
+        -- XFO.Confederate:ProcessMessage(inMessage)
+        -- XFO.Links:ProcessMessage(inMessage)
 
-        if(inMessage:Subject() == XF.Enum.Message.LOGIN or inMessage:Subject() == XF.Enum.Message.LOGOUT or inMessage:Subject() == XF.Enum.Message.DATA) then
-            return
-        end
+        -- if(inMessage:Subject() == XF.Enum.Message.LOGIN or inMessage:Subject() == XF.Enum.Message.LOGOUT or inMessage:Subject() == XF.Enum.Message.DATA) then
+        --     return
+        -- end
 
-        -- Process GCHAT/ACHIEVEMENT message
-        if(inMessage:Subject() == XF.Enum.Message.GCHAT or inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
-            XFO.ChatFrame:ProcessMessage(inMessage)
-            return
-        end
+        -- -- Process GCHAT/ACHIEVEMENT message
+        -- if(inMessage:Subject() == XF.Enum.Message.GCHAT or inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
+        --     XFO.ChatFrame:ProcessMessage(inMessage)
+        --     return
+        -- end
 
-        -- Process ORDER message
-        if(inMessage:Subject() == XF.Enum.Message.ORDER) then
-            XFO.Orders:ProcessMessage(inMessage)
-            return
-        end
+        -- -- Process ORDER message
+        -- if(inMessage:Subject() == XF.Enum.Message.ORDER) then
+        --     XFO.Orders:ProcessMessage(inMessage)
+        --     return
+        -- end
     end).
     finally(function()
         self:Push(inMessage)

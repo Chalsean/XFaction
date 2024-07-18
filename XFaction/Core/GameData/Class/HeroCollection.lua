@@ -91,7 +91,7 @@ function XFC.HeroCollection:CallbackHeroChanged(inID)
 	local self = XFO.Heros
 	try(function ()
 		for _, hero in self:Iterator() do
-			if(XFF.PlayerSpellKnown(hero:SpellID())) then
+			if(hero:Class():Equals(XF.Player.Unit:Class()) and XFF.PlayerSpellKnown(hero:SpellID())) then
 				hero:Print()
 			end
 		end
