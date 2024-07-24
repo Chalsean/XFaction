@@ -3347,7 +3347,7 @@ function Tourist:GetLevel(zone)
 		end
 
 		-- Find the most suitable bracket. Shadowlands assumption: still 5-level brackets
-		if playerLvl >= MAX_PLAYER_LEVEL then
+		if playerLvl >= 80 then
 			return MAX_PLAYER_LEVEL, MAX_PLAYER_LEVEL, nil
 		elseif playerLvl >= 65 then
 			return 65, 69, nil
