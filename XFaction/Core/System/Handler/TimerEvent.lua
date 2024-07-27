@@ -27,22 +27,8 @@ function TimerEvent:Initialize()
 						delta = XF.Settings.Player.Heartbeat, 
 						callback = XF.Handlers.TimerEvent.CallbackHeartbeat, 
 						repeater = true, 
-						instance = true})
-		XF.Timers:Add({name = 'Links', 
-						delta = XF.Settings.Network.BNet.Link.Broadcast, 
-						callback = XF.Handlers.TimerEvent.CallbackLinks, 
-						repeater = true, 
-						instance = true})		    		    
-		XF.Timers:Add({name = 'Ping', 
-						delta = XF.Settings.Network.BNet.Ping.Timer, 
-						callback = XF.Handlers.TimerEvent.CallbackPingFriends, 
-						repeater = true, 
-						instance = true})
-		XF.Timers:Add({name = 'StaleLinks', 
-						delta = XF.Settings.Network.BNet.Link.Scan, 
-						callback = XF.Handlers.TimerEvent.CallbackStaleLinks, 
-						repeater = true, 
-						instance = true})
+						instance = true})    		    
+		
 		XF.Timers:Add({name = 'Offline', 
 						delta = XF.Settings.Confederate.UnitScan, 
 						callback = XF.Handlers.TimerEvent.CallbackOffline, 
@@ -81,49 +67,6 @@ function TimerEvent:CallbackHeartbeat()
 	end).
 	finally(function ()
 		XF.Timers:Get('Heartbeat'):SetLastRan(ServerTime())
-	end)
-end
-
--- Periodically ping friends to see who is running addon
-function TimerEvent:CallbackPingFriends()
-    try(function()
-	    for _, friend in XF.Friends:Iterator() do
-			if(not friend:IsRunningAddon()) then
-				friend:Ping()
-			end
-	    end
-	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
-	end).
-	finally(function ()
-		XF.Timers:Get('Ping'):SetLastRan(ServerTime())
-	end)
-end
-
--- Periodically broadcast your links
-function TimerEvent:CallbackLinks()
-	try(function ()
-    	XF.Links:Broadcast()
-	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
-	end).
-	finally(function ()
-		XF.Timers:Get('Links'):SetLastRan(ServerTime())
-	end)
-end
-
--- Periodically purge stale links
-function TimerEvent:CallbackStaleLinks()
-	try(function ()
-		XF.Links:Purge(ServerTime() - XF.Settings.Network.BNet.Link.Stale)
-	end).
-	catch(function (inErrorMessage)
-		XF:Warn(ObjectName, inErrorMessage)
-	end).
-	finally(function ()
-		XF.Timers:Get('StaleLinks'):SetLastRan(ServerTime())
 	end)
 end
 --#endregion

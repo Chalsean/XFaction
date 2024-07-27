@@ -30,6 +30,14 @@ function XFC.BNet:Initialize()
             groupDelta = XF.Settings.Network.BNet.FriendTimer
         })
 
+        XF.Timers:Add({
+            name = 'Ping', 
+            delta = XF.Settings.Network.BNet.Ping.Timer, 
+            callback = XFO.BNet.CallbackPingFriends, 
+            repeater = true, 
+            instance = true
+        })
+
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -130,5 +138,15 @@ function XFC.BNet:CallbackReceive(inMessageTag, inEncodedMessage, inDistribution
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
     end)
+end
+
+function XFC.BNet:CallbackPingFriends()
+    for _, friend in XFO.Friends() do
+        if(not friend:IsLinked() and friend:CanLink()) then
+            XF:Debug(self:ObjectName(), 'Sending ping to [%s]', friend:Tag())
+            XF.Lib.BCTL:BNSendGameData('ALERT', XF.Enum.Tag.BNET, 'PING', _, friend:GameID())
+            XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
+        end
+    end
 end
 --#endregion
