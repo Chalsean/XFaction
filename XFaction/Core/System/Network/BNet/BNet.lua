@@ -14,7 +14,6 @@ end
 function XFC.BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Enum.Tag.BNET = XFO.Confederate:Key() .. 'BNET'
 
         XF.Events:Add({
             name = 'BNetMessage', 

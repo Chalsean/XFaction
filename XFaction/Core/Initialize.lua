@@ -46,7 +46,7 @@ function XF:CoreInit()
 
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
-	XF.Friends = FriendCollection:new()
+	XFO.Friends = XFC.FriendCollection:new(); XFO.Friends:Initialize()
 	XFO.Links = XFC.LinkCollection:new(); XFO.Links:Initialize()
 	XFO.Mailbox = XFC.Mailbox:new(); XFO.Mailbox:Initialize()
 	XFO.PostOffice = XFC.PostOffice:new(); XFO.PostOffice:Initialize()
@@ -124,7 +124,7 @@ function XF:CallbackLoginGuild()
 				-- Start network
 				XFO.Channels:Initialize()
 				XFO.Chat:Initialize()
-				XF.Friends:Initialize()				
+				XFO.Friends:Initialize()				
 				XFO.BNet:Initialize()
 
 				if(XF.Cache.UIReload) then
@@ -176,7 +176,7 @@ function XF:CallbackLoginPlayer()
 			
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
-				XF.Friends:Restore()
+				XFO.Friends:Restore()
 				XFO.Links:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false

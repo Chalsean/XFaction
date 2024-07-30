@@ -59,9 +59,9 @@ XFF.PlayerZone = GetZoneText
 XFF.PlayerSpellKnown = IsPlayerSpell
 
 -- BNet
-XFF.BNetGetPlayerInfo = BNGetInfo
-XFF.BNetGetFriendCount = BNGetNumFriends
-XFF.BNetGetFriendInfo = C_BattleNet.GetFriendAccountInfo
+XFF.BNetPlayerInfo = BNGetInfo
+XFF.BNetFriendCount = BNGetNumFriends
+XFF.BNetFriendInfo = C_BattleNet.GetFriendAccountInfo
 
 -- Client
 XFF.ClientVersion = GetBuildInfo

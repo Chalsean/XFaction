@@ -155,4 +155,13 @@ function XFC.Factory:Deserialize(inSerial)
     return object
 end
 
+function XFC.Factory:Replace(inObject)
+    if(self:Contains(inObject:Key())) then
+        local old = self:Get(inObject:Key())
+        self:Add(inObject)
+        self:Push(old)
+    else
+        self:Add(inObject)
+    end
+end
 --#endregion

@@ -13,13 +13,9 @@ function XFC.Friend:new()
     object.gameID = nil     -- This is the game ID you use to send whispers
     object.accountName = nil
     object.tag = nil
-    object.target = nil
-    object.canLink = false
     object.isLinked = false
     object.guid = nil
-    object.realm = nil
-    object.faction = nil
-    object.target = nil
+    object.isTrueFriend = false
 
     return object
 end
@@ -27,17 +23,30 @@ end
 function XFC.Friend:Deconstructor()
     self:ParentDeconstructor()
     self.accountID = nil  
-    self.gameID = nil     
-    self.accountName = nil
+    self.gameID = nil
     self.tag = nil
-    self.target = nil
-    self.canLink = false
-    self.isLinked = false
+    self.isLinked = false    
     self.guid = nil
-    self.realm = nil
-    self.faction = nil
-    self.target = nil
-    self:Initialize()
+    self.isTrueFriend = false
+end
+
+function XFC.Friend:Initialize(inID)
+    assert(type(inID) == 'number')
+    if(not self:IsInitialized()) then
+        self:ParentInitialize()
+
+        local accountInfo = XFF.BNetFriendInfo(inID)
+        self:Key(accountInfo.bnetAccountID)
+        self:ID(inID) -- Query ID, this can change between logins, thus why its not key
+        self:Name(accountInfo.accountName)
+        self:AccountID(accountInfo.bnetAccountID)
+        self:GameID(accountInfo.gameAccountInfo.gameAccountID)        
+        self:Tag(accountInfo.battleTag)
+        self:GUID(accountInfo.playerGuid)
+        self:IsTrueFriend(accountInfo.isFriend)
+
+        self:IsInitialized(true)
+    end
 end
 --#endregion
 
@@ -58,14 +67,6 @@ function XFC.Friend:GameID(inGameID)
     return self.gameID
 end
 
-function XFC.Friend:AccountName(inName)
-    assert(type(inName) == 'string' or inName == nil)
-    if(inName ~= nil) then
-        self.accountName = inName
-    end
-    return self.accountName
-end
-
 function XFC.Friend:Tag(inTag)
     assert(type(inTag) == 'string' or inTag == nil)
     if(inTag ~= nil) then
@@ -82,36 +83,20 @@ function XFC.Friend:GUID(inGUID)
     return self.guid
 end
 
-function XFC.Friend:Realm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm' or inRealm == nil)
-    if(inRealm ~= nil) then
-        self.realm = inRealm
-    end
-    return self.realm
-end
-
-function XFC.Friend:Faction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil)
-    if(inFaction ~= nil) then
-        self.faction = inFaction
-    end
-    return self.faction
-end
-
-function XFC.Friend:Target(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target' or inTarget == nil)
-    if(inTarget ~= nil) then
-        self.target = inTarget
-    end
-    return self.target
-end
-
 function XFC.Friend:IsLinked(inBoolean)
     assert(type(inBoolean) == 'boolean' or inBoolean == nil)
     if(inBoolean ~= nil) then
         self.isLinked = inBoolean
     end
     return self.isLinked
+end
+
+function XFC.Friend:IsTrueFriend(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
+    if(inBoolean ~= nil) then
+        self.isTrueFriend = inBoolean
+    end
+    return self.isTrueFriend
 end
 --#endregion
 
@@ -122,34 +107,27 @@ function XFC.Friend:Print()
     XF:Debug(self:ObjectName(), '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
     XF:Debug(self:ObjectName(), '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
     XF:Debug(self:ObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
-    XF:Debug(self:ObjectName(), '  canLink (' .. type(self.canLink) .. '): ' .. tostring(self.canLink))
+    XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
     XF:Debug(self:ObjectName(), '  isLinked (' .. type(self.isLinked) .. '): ' .. tostring(self.isLinked))
-    if(self:HasTarget()) then self:Target():Print() end
-    if(self:HasRealm()) then self:Realm():Print() end
-    if(self:HasFaction()) then self:Faction():Print() end
+    XF:Debug(self:ObjectName(), '  isTrueFriend (' .. type(self.isTrueFriend) .. '): ' .. tostring(self.isTrueFriend))
 end
 
-function XFC.Friend:HasRealm()
-    return self.realm ~= nil
+function XFC.Friend:HasUnit()
+    return XFO.Confederate:Contains(self:GUID())
 end
 
-function XFC.Friend:HasFaction()
-    return self.faction ~= nil
+function XFC.Friend:Unit()
+    return XFO.Confederate:Get(self:GUID())
 end
 
-function XFC.Friend:HasTarget()
-    return self.target ~= nil
-end
+function XFC.Friend:CanLink(inBoolean)
+    if(not self:IsTrueFriend()) then return false end
+    if(not self:HasUnit()) then return false end
 
-function XFC.Friend:SetFromAccountInfo(inAccountInfo)
-    self:Key(inAccountInfo.bnetAccountID)
-    self:ID(inAccountInfo.ID)
-    self:AccountID(inAccountInfo.bnetAccountID)
-    self:GameID(inAccountInfo.gameAccountInfo.gameAccountID)
-    self:AccountName(inAccountInfo.accountName)
-    self:Tag(inAccountInfo.battleTag)
-    self:Name(inAccountInfo.gameAccountInfo.characterName)
-    self:Realm(XFO.Realms:Get(inAccountInfo.gameAccountInfo.realmID))
-    self:Faction(XFO.Factions:Get(inAccountInfo.gameAccountInfo.factionName))
+    local unit = self:Unit()
+    if(unit:IsSameGuild()) then return false end -- GUILD channel will handle this
+    if(unit:IsSameRealm() and unit:IsSameFaction()) then return false end -- Chat channel will handle this
+    
+    return true
 end
 --#endregion

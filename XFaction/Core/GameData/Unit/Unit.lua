@@ -600,6 +600,10 @@ function XFC.Unit:HasTarget()
     return self.target ~= nil
 end
 
+function XFC.Unit:IsSameRealm()
+    return XF.Player.Realm:Equals(self:Realm())
+end
+
 function XFC.Unit:IsSameFaction()
     return XF.Player.Faction:Equals(self:Faction())
 end

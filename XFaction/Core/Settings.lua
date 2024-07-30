@@ -88,16 +88,8 @@ XF.Enum = {
 		ACHIEVEMENT = '5',
 		LINK = '6',
 		ORDER = '7',
-	},
-	Network = {
-		BROADCAST = '1', -- BNet + Local Channel
-		WHISPER = '2',   -- Whisper only
-		LOCAL = '3',     -- Local Channel only
-		BNET = '4',      -- BNet only
-	},
-	Tag = {
-		LOCAL = '',
-		BNET = '',
+		PING = '8',
+		ACK = '9'
 	},
 	Metric = {
 		Messages = XF.Lib.Locale['DTMETRICS_MESSAGES'],
@@ -155,13 +147,7 @@ XF.Settings = {
 			FriendTimer = 2,
 			PacketSize = 425,	
 			Ping = {
-				Timer = 60,         -- Seconds between pinging friends
-			},
-			Link = {
-				Broadcast = 60 * 2, -- Seconds between broadcasting links
-				Scan = 60 * 3,      -- Seconds between link scans for stale links
-				Stale = 60 * 10,    -- Seconds until considering a link stale
-				PercentStart = 10,  -- Number of links across confederate before random selection kicks in
+				Timer = 60 * 2,     -- Seconds between pinging friends
 			},
 		},
 		Mailbox = {

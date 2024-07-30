@@ -14,7 +14,6 @@ end
 function XFC.Chat:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Enum.Tag.LOCAL = XFO.Confederate:Key() .. 'XF'	
 
         -- This is the event that fires when someone posts a message
         XF.Events:Add({
