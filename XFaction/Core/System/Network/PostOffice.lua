@@ -60,14 +60,7 @@ function XFC.PostOffice:RebuildMessage(inKey)
 end
 
 function XFC.PostOffice:IsAddonTag(inTag)
-	local addonTag = false
-    for _, tag in pairs (XF.Enum.Tag) do
-        if(inTag == tag) then
-            addonTag = true
-            break
-        end
-    end
-	return addonTag
+	return string.StartsWith(inTag, XFO.Tags:Prefix())
 end
 
 function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)

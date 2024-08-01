@@ -45,20 +45,20 @@ function XFC.Chat:Send(inMessage)
     inMessage:Print()
 
     --#region BNet messaging for BNET/BROADCAST types
-    if(inMessage:Type() == XF.Enum.Network.BROADCAST or inMessage:Type() == XF.Enum.Network.BNET) then
-        XFO.BNet:Send(inMessage)
-        -- Failed to bnet to all targets, broadcast to leverage others links
-        if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:Type() == XF.Enum.Network.BNET) then
-            inMessage:Type(XF.Enum.Network.BROADCAST)
-        -- Successfully bnet to all targets and only were supposed to bnet, were done
-        elseif(inMessage:Type() == XF.Enum.Network.BNET) then
-            return
-        -- Successfully bnet to all targets and was broadcast, switch to local only
-        elseif(not inMessage:HasTargets() and inMessage:Type() == XF.Enum.Network.BROADCAST) then
-            XF:Debug(self:ObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
-            inMessage:Type(XF.Enum.Network.LOCAL)        
-        end
-    end
+    -- if(inMessage:Type() == XF.Enum.Network.BROADCAST or inMessage:Type() == XF.Enum.Network.BNET) then
+    --     XFO.BNet:Send(inMessage)
+    --     -- Failed to bnet to all targets, broadcast to leverage others links
+    --     if(inMessage:HasTargets() and inMessage:IsMyMessage() and inMessage:Type() == XF.Enum.Network.BNET) then
+    --         inMessage:Type(XF.Enum.Network.BROADCAST)
+    --     -- Successfully bnet to all targets and only were supposed to bnet, were done
+    --     elseif(inMessage:Type() == XF.Enum.Network.BNET) then
+    --         return
+    --     -- Successfully bnet to all targets and was broadcast, switch to local only
+    --     elseif(not inMessage:HasTargets() and inMessage:Type() == XF.Enum.Network.BROADCAST) then
+    --         XF:Debug(self:ObjectName(), "Successfully sent to all BNet targets, switching to local broadcast so others know not to BNet")
+    --         inMessage:Type(XF.Enum.Network.LOCAL)        
+    --     end
+    -- end
     --#endregion
 
     --#region Chat channel messaging for BROADCAST/LOCAL types
@@ -78,7 +78,7 @@ function XFC.Chat:Send(inMessage)
     end
     for index, packet in ipairs (packets) do
         XF:Debug(self:ObjectName(), 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), channelName, XF.Enum.Tag.LOCAL, strlen(packet))
-        XF.Lib.BCTL:SendAddonMessage('NORMAL', XF.Enum.Tag.LOCAL, packet, channelName, channelID)
+        XF.Lib.BCTL:SendAddonMessage('NORMAL', XFO.Tags:GetRandomTag(), packet, channelName, channelID)
         XF.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
     --#endregion
@@ -115,7 +115,6 @@ function XFC.Chat:CallbackGuildMessage(inText, inSenderName, inLanguageName, _, 
                 message = XFO.Mailbox:Pop()
                 message:Initialize()
                 message:From(XF.Player.Unit:GUID())
-                message:Type(XF.Enum.Network.BROADCAST)
                 message:Subject(XF.Enum.Message.GCHAT)
                 message:Name(XF.Player.Unit:Name())
                 message:UnitName(XF.Player.Unit:UnitName())

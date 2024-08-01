@@ -52,6 +52,7 @@ function XF:CoreInit()
 	XFO.PostOffice = XFC.PostOffice:new(); XFO.PostOffice:Initialize()
 	XFO.BNet = XFC.BNet:new()
 	XFO.Chat = XFC.Chat:new()
+	XFO.Tags = XFC.TagCollection:new()
 	
 	-- Unit
 	XFO.Races = XFC.RaceCollection:new(); XFO.Races:Initialize()
@@ -122,6 +123,7 @@ function XF:CallbackLoginGuild()
 				XFO.SystemFrame:Initialize()
 
 				-- Start network
+				XFO.Tags:Initialize()
 				XFO.Channels:Initialize()
 				XFO.Chat:Initialize()
 				XFO.Friends:Initialize()				

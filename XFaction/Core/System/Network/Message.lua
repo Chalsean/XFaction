@@ -10,7 +10,6 @@ function XFC.Message:new()
     object.__name = ObjectName
     object.from = nil
     object.fromUnit = nil
-    object.type = nil
     object.subject = nil
     object.epochTime = nil
     object.data = nil
@@ -26,7 +25,6 @@ function XFC.Message:Initialize()
         self:From(XF.Player.GUID)
         self:FromUnit(XF.Player.Unit)
         self:TimeStamp(XFF.TimeCurrent())
-        self:Type(XF.Enum.Network.BROADCAST)
         self:Links(XFO.Links:Serialize(true))
 
         for _, target in XFO.Targets:Iterator() do
@@ -44,7 +42,6 @@ function XFC.Message:Deconstructor()
     self:ParentDeconstructor()
     self.from = nil
     self.fromUnit = nil
-    self.type = nil
     self.subject = nil
     self.epochTime = nil
     self.data = nil
@@ -68,14 +65,6 @@ function XFC.Message:FromUnit(inUnit)
         self.fromUnit = inUnit
     end
     return self.fromUnit
-end
-
-function XFC.Message:Type(inType)
-    assert(type(inType) == 'string' or inType == nil)
-    if(inType ~= nil) then
-        self.type = inType
-    end
-    return self.type
 end
 
 function XFC.Message:Subject(inSubject)
@@ -122,7 +111,6 @@ end
 function XFC.Message:Print()
     self:ParentPrint()
     XF:Debug(self:ObjectName(), '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
-    XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:ObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XF:Debug(self:ObjectName(), '  links (' .. type(self.links) .. '): ' .. tostring(self.links))
@@ -162,7 +150,6 @@ function XFC.Message:Serialize()
     data.S = self:Subject()
     data.T = self:TimeStamp()
     data.U = self:HasFromUnit() and self:FromUnit():Serialize() or nil
-    data.Y = self:Type()
 
     local targets = ''
     for _, target in self:Iterator() do
@@ -198,7 +185,6 @@ function XFC.Message:Deserialize(inSerial)
     self:TotalPackets(data.P)
     self:Subject(data.S)
     self:TimeStamp(data.T)
-    self:Type(data.Y)
     
     -- if(data.R ~= nil) then
     --     local targets = string.Split(data.R, ';')

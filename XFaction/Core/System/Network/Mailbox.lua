@@ -75,33 +75,33 @@ end
 function XFC.Mailbox:Forward(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
-    if(inMessage:HasTargets() and inMessageTag == XF.Enum.Tag.LOCAL) then
-        -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
-        local nodeCount = XF.Nodes:GetTarCount(XF.Player.Target)
-        if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
-            local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
-            if(math.random(1, 100) <= percentage) then
-                XF:Debug(self:ObjectName(), 'Randomly selected, forwarding message')
-                inMessage:Type(XF.Enum.Network.BNET)
-                XFO.BNet:Send(inMessage)
-            else
-                XF:Debug(self:ObjectName(), 'Not randomly selected, will not forward mesesage')
-            end
-        else
-            XF:Debug(self:ObjectName(), 'Node count under threshold, forwarding message')
-            inMessage:Type(XF.Enum.Network.BNET)
-            XFO.BNet:Send(inMessage)
-        end
+    -- if(inMessage:HasTargets() and inMessageTag == XF.Enum.Tag.LOCAL) then
+    --     -- If there are too many active nodes in the confederate faction, lets try to reduce unwanted traffic by playing a percentage game
+    --     local nodeCount = XF.Nodes:GetTarCount(XF.Player.Target)
+    --     if(nodeCount > XF.Settings.Network.BNet.Link.PercentStart) then
+    --         local percentage = (XF.Settings.Network.BNet.Link.PercentStart / nodeCount) * 100
+    --         if(math.random(1, 100) <= percentage) then
+    --             XF:Debug(self:ObjectName(), 'Randomly selected, forwarding message')
+    --             inMessage:Type(XF.Enum.Network.BNET)
+    --             XFO.BNet:Send(inMessage)
+    --         else
+    --             XF:Debug(self:ObjectName(), 'Not randomly selected, will not forward mesesage')
+    --         end
+    --     else
+    --         XF:Debug(self:ObjectName(), 'Node count under threshold, forwarding message')
+    --         inMessage:Type(XF.Enum.Network.BNET)
+    --         XFO.BNet:Send(inMessage)
+    --     end
 
-    -- If there are still BNet targets remaining and came via BNet, broadcast
-    elseif(inMessageTag == XF.Enum.Tag.BNET) then
-        if(inMessage:HasTargets()) then
-            inMessage:Type(XF.Enum.Network.BROADCAST)
-        else
-            inMessage:Type(XF.Enum.Network.LOCAL)
-        end
-        XFO.Chat:Send(inMessage)
-    end
+    -- -- If there are still BNet targets remaining and came via BNet, broadcast
+    -- elseif(inMessageTag == XF.Enum.Tag.BNET) then
+    --     if(inMessage:HasTargets()) then
+    --         inMessage:Type(XF.Enum.Network.BROADCAST)
+    --     else
+    --         inMessage:Type(XF.Enum.Network.LOCAL)
+    --     end
+    --     XFO.Chat:Send(inMessage)
+    -- end
 end
 
 function XFC.Mailbox:CallbackJanitor()
@@ -121,7 +121,6 @@ function XFC.Mailbox:SendLogoutMessage()
     local message = self:Pop()
     message:From(XF.Player.GUID)
     message:TimeStamp(XFF.TimeCurrent())
-    message:Type(XF.Enum.Network.BROADCAST)
     message:Subject(XF.Enum.Message.LOGOUT)
 
     for _, target in XFO.Targets:Iterator() do

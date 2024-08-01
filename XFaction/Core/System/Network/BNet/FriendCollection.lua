@@ -14,6 +14,22 @@ end
 function XFC.FriendCollection:NewObject()
 	return XFC.Friend:new()
 end
+
+function XFC.FriendCollection:Initialize()
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
+
+		XF.Events:Add({
+            name = 'Friend', 
+            event = 'BN_FRIEND_INFO_CHANGED', 
+            callback = XFO.Friends.RefreshFriends, 
+            instance = true,
+            groupDelta = XF.Settings.Network.BNet.FriendTimer
+        })
+
+		self:IsInitialized(true)
+	end
+end
 --#endregion
 
 --#region Methods
@@ -22,7 +38,7 @@ function XFC.FriendCollection:HasFriends()
 end
 
 function XFC.FriendCollection:RefreshFriends()
-	
+	local self = XFO.Friends
 	for i = 1, XFF.BNetFriendCount() do
 		local friend = nil
 		try(function()
@@ -72,5 +88,14 @@ function XFC.FriendCollection:Restore()
 		end)
 	end
 	XF.Cache.Backup.Friends = {}
+end
+
+function XFC.FriendCollection:GetByGUID(inGUID)
+	assert(type(inGUID) == 'string')
+	for _, friend in self:Iterator() do
+		if(friend:GUID() == inGUID) then
+			return friend
+		end
+	end
 end
 --#endregion

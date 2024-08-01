@@ -615,9 +615,9 @@ end
 function XFC.Unit:GetLink()
 
     if(not self:IsSameFaction()) then
-        local friend = XF.Friends:GetByRealmUnitName(self:Realm(), self:Name())
+        local friend = XFO.Friends:GetByGUID(self:GUID())
         if(friend ~= nil) then
-            return format('|HBNplayer:%s:%d:0:WHISPER:%s|h[%s]|h', friend:GetAccountName(), friend:GetAccountID(), friend:Name(), self:Name())
+            return format('|HBNplayer:%s:%d:0:WHISPER:%s|h[%s]|h', friend:Name(), friend:AccountID(), friend:Name(), self:Name())
         end
     end
 

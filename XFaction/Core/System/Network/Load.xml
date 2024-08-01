@@ -2,6 +2,8 @@
     <Script file='Mailbox.lua'/>
     <Script file='PostOffice.lua'/>
     <Script file='Message.lua'/>
+    <Script file='Tag.lua'/>
+    <Script file='TagCollection.lua'/>
     <Script file='Target.lua'/>
     <Script file='TargetCollection.lua'/>
     <Include file='BNet\Load.xml'/>
