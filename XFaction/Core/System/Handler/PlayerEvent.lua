@@ -18,25 +18,25 @@ function PlayerEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        XF.Events:Add({name = 'Mythic', 
+        XFO.Events:Add({name = 'Mythic', 
                         event = 'CHALLENGE_MODE_COMPLETED', 
                         callback = XF.Handlers.PlayerEvent.CallbackPlayerChanged, 
                         instance = true})
-        XF.Events:Add({name = 'Spec', 
+        XFO.Events:Add({name = 'Spec', 
                         event = 'ACTIVE_TALENT_GROUP_CHANGED', 
                         callback = XF.Handlers.PlayerEvent.CallbackPlayerChanged, 
                         instance = true})        
-        XF.Events:Add({name = 'Instance', 
+        XFO.Events:Add({name = 'Instance', 
                         event = 'PLAYER_ENTERING_WORLD', 
                         callback = XF.Handlers.PlayerEvent.CallbackInstance, 
                         instance = true})
-        XF.Events:Add({name = 'Level', 
+        XFO.Events:Add({name = 'Level', 
                         event = 'PLAYER_LEVEL_CHANGED', 
                         callback = XF.Handlers.PlayerEvent.CallbackPlayerChanged})
-        XF.Events:Add({name = 'Profession', 
+        XFO.Events:Add({name = 'Profession', 
                         event = 'SKILL_LINES_CHANGED', 
                         callback = XF.Handlers.PlayerEvent.CallbackSkillChanged})
-        XF.Events:Add({name = 'Zone', 
+        XFO.Events:Add({name = 'Zone', 
                         event = 'ZONE_CHANGED_NEW_AREA', 
                         callback = XF.Handlers.PlayerEvent.CallbackZoneChanged})
 
@@ -111,14 +111,14 @@ function PlayerEvent:CallbackInstance()
         if(inInstance and not XF.Player.InInstance) then
             XF:Debug(ObjectName, 'Entering instance, disabling some event listeners and timers')
             XF.Player.InInstance = true
-            XF.Events:EnterInstance()
+            XFO.Events:EnterInstance()
             XF.Timers:EnterInstance()
 
         -- Just leaving instance or UI reload
         elseif(not inInstance and XF.Player.InInstance) then
             XF:Debug(ObjectName, 'Leaving instance, enabling some event listeners and timers')
             XF.Player.InInstance = false
-            XF.Events:LeaveInstance()
+            XFO.Events:LeaveInstance()
             XF.Timers:LeaveInstance()            
         end
     end).

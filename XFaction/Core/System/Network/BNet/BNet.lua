@@ -15,7 +15,7 @@ function XFC.BNet:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'BNetMessage', 
             event = 'BN_CHAT_MSG_ADDON', 
             callback = XFO.BNet.CallbackReceive, 

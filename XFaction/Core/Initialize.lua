@@ -5,7 +5,7 @@ local ObjectName = 'CoreInit'
 -- Initialize anything not dependent upon guild information
 function XF:CoreInit()
 	-- Get cache/configs asap	
-	XF.Events = EventCollection:new(); XF.Events:Initialize()
+	XFO.Events = XFC.EventCollection:new(); XFO.Events:Initialize()
 	XF.Timers = TimerCollection:new(); XF.Timers:Initialize()
 	XF.Media = MediaCollection:new(); XF.Media:Initialize()
 
@@ -192,7 +192,7 @@ function XF:CallbackLoginPlayer()
 			XF.Handlers.SystemEvent:Initialize()
 			XF.Hooks:Start()
 			XF.Timers:Start()
-			XF.Events:Start()				
+			XFO.Events:Start()				
 			XF.Initialized = true
 
 			-- Finish DT init
@@ -225,7 +225,7 @@ function XF:CallbackLoginPlayer()
 end
 
 function XF:Stop()
-	if(XF.Events) then XF.Events:Stop() end
+	if(XFO.Events) then XFO.Events:Stop() end
 	if(XF.Hooks) then XF.Hooks:Stop() end
 	if(XF.Timers) then XF.Timers:Stop() end
 end

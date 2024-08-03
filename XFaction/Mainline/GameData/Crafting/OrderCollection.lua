@@ -6,14 +6,14 @@ local ObjectName = 'OrderCollection'
 function XFC.OrderCollection:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'CraftOrder', 
             event = 'CRAFTINGORDERS_ORDER_PLACEMENT_RESPONSE', 
             callback = XFO.Orders.CraftOrder, 
             instance = false,
             start = true
         })
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'CanRequestOrders', 
             event = 'CRAFTINGORDERS_CAN_REQUEST', 
             callback = XFO.Orders.RequestOrders, 
@@ -122,7 +122,7 @@ function XFC.OrderCollection:RequestOrders()
     local self = XFO.Orders
     try(function ()        
         QueryMyOrders()
-        XF.Events:Remove('CanRequestOrders')
+        XFO.Events:Remove('CanRequestOrders')
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)

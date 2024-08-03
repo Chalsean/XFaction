@@ -19,7 +19,7 @@ function XFC.FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-		XF.Events:Add({
+		XFO.Events:Add({
             name = 'Friend', 
             event = 'BN_FRIEND_INFO_CHANGED', 
             callback = XFO.Friends.RefreshFriends, 

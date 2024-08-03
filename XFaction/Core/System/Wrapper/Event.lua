@@ -2,11 +2,11 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Event'
 
-Event = XFC.Object:newChildConstructor()
+XFC.Event = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Event:new()
-    local object = Event.parent.new(self)
+function XFC.Event:new()
+    local object = XFC.Event.parent.new(self)
     object.__name = ObjectName
     object.callback = nil
     object.isEnabled = false
@@ -16,27 +16,16 @@ function Event:new()
 end
 --#endregion
 
---#region Print
-function Event:Print()
-    self:ParentPrint()
-    XF:Debug(ObjectName, '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
-    XF:Debug(ObjectName, '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
-    XF:Debug(ObjectName, '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-    XF:Debug(ObjectName, '  groupDelta (' .. type(self.groupDelta) .. '): ' .. tostring(self.groupDelta))
-end
---#endregion
-
---#region Accessors
-function Event:GetCallback()
+--#region Properties
+function XFC.Event:Callback(inCallback)
+    assert(type(inCallback) == 'function' or inCallback == nil)
+    if(inCallback ~= nil) then
+        self.callback = inCallback
+    end
     return self.callback
 end
 
-function Event:SetCallback(inCallback)
-    assert(type(inCallback) == 'function')
-    self.callback = inCallback
-end
-
-function Event:IsEnabled(inBoolean)
+function XFC.Event:IsEnabled(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
         self.isEnabled = inBoolean
@@ -44,7 +33,7 @@ function Event:IsEnabled(inBoolean)
 	return self.isEnabled
 end
 
-function Event:IsInstance(inBoolean)
+function XFC.Event:IsInstance(inBoolean)
     assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
     if(inBoolean ~= nil) then
         self.inInstance = inBoolean
@@ -52,32 +41,39 @@ function Event:IsInstance(inBoolean)
 	return self.inInstance
 end
 
-function Event:IsGroup()
+function XFC.Event:IsGroup()
     return self.groupDelta > 0
 end
 
-function Event:GetGroupDelta()
+function XFC.Event:GroupDelta(inGroupDelta)
+    assert(type(inGroupDelta) == 'number' or inGroupDelta == nil)
+    if(inGroupDelta ~= nil) then
+        self.groupDelta = inGroupDelta
+    end
     return self.groupDelta
-end
-
-function Event:SetGroupDelta(inGroupDelta)
-    assert(type(inGroupDelta) == 'number')
-    self.groupDelta = inGroupDelta
 end
 --#endregion
 
---#region Start/Stop
-function Event:Start()
+--#region Methods
+function XFC.Event:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
+    XF:Debug(self:ObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
+    XF:Debug(self:ObjectName(), '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
+    XF:Debug(self:ObjectName(), '  groupDelta (' .. type(self.groupDelta) .. '): ' .. tostring(self.groupDelta))
+end
+
+function XFC.Event:Start()
     if(not self:IsEnabled()) then
         self:IsEnabled(true)
-        XF:Debug(ObjectName, 'Started event listener [%s] for [%s]', self:Key(), self:Name())
+        XF:Debug(self:ObjectName(), 'Started event listener [%s] for [%s]', self:Key(), self:Name())
     end
 end
 
-function Event:Stop()
+function XFC.Event:Stop()
     if(self:IsEnabled()) then
         self:IsEnabled(false)
-        XF:Debug(ObjectName, 'Stopped event listener [%s] for [%s]', self:Key(), self:Name())
+        XF:Debug(self:ObjectName(), 'Stopped event listener [%s] for [%s]', self:Key(), self:Name())
     end
 end
 --#endregion

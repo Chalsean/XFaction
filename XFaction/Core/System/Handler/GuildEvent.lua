@@ -22,7 +22,7 @@ function GuildEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
         -- This is the local guild roster scan for those not running the addon
-        XF.Events:Add({name = 'Roster', 
+        XFO.Events:Add({name = 'Roster', 
                         event = 'GUILD_ROSTER_UPDATE', 
                         callback = XF.Handlers.GuildEvent.CallbackRosterUpdate, 
                         instance = true,

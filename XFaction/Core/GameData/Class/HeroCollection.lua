@@ -74,7 +74,7 @@ function XFC.HeroCollection:Initialize()
 			XF:Info(self:ObjectName(), 'Initialized hero [%d:%s]', hero:ID(), hero:Name())
 		end
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'Hero', 
 			event = 'SPELLS_CHANGED', 
 			callback = XFO.Heros.CallbackHeroChanged, 

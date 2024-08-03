@@ -17,7 +17,7 @@ end
 function AchievementEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Events:Add({name = 'Achievement', 
+        XFO.Events:Add({name = 'Achievement', 
                         event = 'ACHIEVEMENT_EARNED', 
                         callback = XF.Handlers.AchievementEvent.CallbackAchievement, 
                         instance = true})

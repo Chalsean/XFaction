@@ -87,7 +87,7 @@ function XFC.SpecCollection:Initialize()
 			XF:Info(self:ObjectName(), 'Initialized spec [%d:%s:%s]', spec:ID(), spec:Name(), spec:Class():Name())
 		end
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'Spec', 
 			event = 'ACTIVE_TALENT_GROUP_CHANGED', 
 			callback = XFO.Specs.CallbackSpecChanged, 

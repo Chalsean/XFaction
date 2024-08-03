@@ -19,7 +19,7 @@ end
 function AddonEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Events:Add({name = 'AddonEvent', 
+        XFO.Events:Add({name = 'AddonEvent', 
                         event = 'ADDON_LOADED', 
                         callback = XF.Handlers.AddonEvent.CallbackAddonLoaded, 
                         instance = true,

@@ -22,7 +22,7 @@ function XFC.Confederate:Initialize()
         self:Name(XF.Cache.Confederate.Name)
         self:Key(XF.Cache.Confederate.Key)
 
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'Roster', 
             event = 'GUILD_ROSTER_UPDATE', 
             callback = XFO.Confederate.CallbackLocalGuild, 
@@ -33,7 +33,7 @@ function XFC.Confederate:Initialize()
         XFF.GuildQueryServer()
 
         -- This here because there isnt a good place for it
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'Level', 
             event = 'PLAYER_LEVEL_CHANGED', 
             callback = XFO.Confederate.CallbackPlayerChanged

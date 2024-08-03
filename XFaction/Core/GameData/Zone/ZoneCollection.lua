@@ -75,7 +75,7 @@ function XFC.ZoneCollection:Initialize()
 
 		self:Add('?')
 
-		XF.Events:Add({
+		XFO.Events:Add({
 			name = 'Zone',
 			event = 'ZONE_CHANGED_NEW_AREA', 
 			callback = XFO.Zones.CallbackZoneChanged

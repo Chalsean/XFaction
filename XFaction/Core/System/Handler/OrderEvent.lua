@@ -23,13 +23,13 @@ function XFC.OrderEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        XF.Events:Add({name = 'CraftOrder', 
+        XFO.Events:Add({name = 'CraftOrder', 
                         event = 'CRAFTINGORDERS_ORDER_PLACEMENT_RESPONSE', 
                         callback = XF.Handlers.OrderEvent.CallbackCraftOrder, 
                         instance = false,
                         start = true})
 
-        XF.Events:Add({name = 'CanRequestOrders', 
+        XFO.Events:Add({name = 'CanRequestOrders', 
                         event = 'CRAFTINGORDERS_CAN_REQUEST', 
                         callback = XF.Handlers.OrderEvent.CallbackCanRequestOrders, 
                         instance = false,
@@ -147,7 +147,7 @@ function XFC.OrderEvent:CallbackCanRequestOrders(inEvent)
     local self = XF.Handlers.OrderEvent
     try(function ()        
         QueryMyOrders()
-        XF.Events:Remove('CanRequestOrders')
+        XFO.Events:Remove('CanRequestOrders')
     end).
     catch(function (inErrorMessage)
         XF:Warn(ObjectName, inErrorMessage)

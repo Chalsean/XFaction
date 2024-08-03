@@ -16,14 +16,14 @@ function XFC.Chat:Initialize()
         self:ParentInitialize()
 
         -- This is the event that fires when someone posts a message
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'ChatMsg', 
             event = 'CHAT_MSG_ADDON', 
             callback = XFO.Chat.CallbackReceive, 
             instance = true
         })
         -- This is the event that fires when you post a guild message
-        XF.Events:Add({
+        XFO.Events:Add({
             name = 'GuildChat', 
             event = 'CHAT_MSG_GUILD', 
             callback = XFO.Chat.CallbackGuildMessage,
