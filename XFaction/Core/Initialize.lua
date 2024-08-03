@@ -69,7 +69,7 @@ function XF:CoreInit()
 	XF.Player.Faction = XFO.Factions:Get(XFF.PlayerFaction('player'))
 	
 	-- Wrappers	
-	XF.Hooks = HookCollection:new(); XF.Hooks:Initialize()
+	XFO.Hooks = XFC.HookCollection:new(); XFO.Hooks:Initialize()
 	XF.Metrics = MetricCollection:new(); XF.Metrics:Initialize()
 
 	-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
@@ -190,7 +190,7 @@ function XF:CallbackLoginPlayer()
 
 			-- Start all hooks, timers and events
 			XF.Handlers.SystemEvent:Initialize()
-			XF.Hooks:Start()
+			XFO.Hooks:Start()
 			XF.Timers:Start()
 			XFO.Events:Start()				
 			XF.Initialized = true
@@ -226,6 +226,6 @@ end
 
 function XF:Stop()
 	if(XFO.Events) then XFO.Events:Stop() end
-	if(XF.Hooks) then XF.Hooks:Stop() end
+	if(XFO.Hooks) then XFO.Hooks:Stop() end
 	if(XF.Timers) then XF.Timers:Stop() end
 end

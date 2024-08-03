@@ -21,7 +21,7 @@ function SystemEvent:Initialize()
             XF:Debug(ObjectName, '* Previous Logout: %s', message)
         end
         XF.Config.Logout = {}
-        XF.Hooks:Add({name = 'ReloadUI', 
+        XFO.Hooks:Add({name = 'ReloadUI', 
                        original = 'ReloadUI', 
                        callback = XF.Handlers.SystemEvent.CallbackReloadUI,
                        pre = true})
