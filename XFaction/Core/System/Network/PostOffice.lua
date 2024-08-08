@@ -95,11 +95,15 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
     self:Add(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
         XF:Debug(self:ObjectName(), 'Received all packets for message [%s]', messageKey)
+        XFO.Mailbox:Add(messageKey)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
 
         local message = XFO.Mailbox:Pop()
         try(function()
-            message:Decode(encodedMessage, inMessageTag)            
+            message:Decode(encodedMessage, inMessageTag)
+            if(inDistribution == 'GUILD') then
+                message:Remove(XF.Player.Target:Key())
+            end
             message:Print()
             XFO.Mailbox:Process(message)
             self:Remove(messageKey)

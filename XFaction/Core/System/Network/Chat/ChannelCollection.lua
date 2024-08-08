@@ -9,29 +9,16 @@ function XFC.ChannelCollection:new()
     local object = XFC.ChannelCollection.parent.new(self)
 	object.__name = ObjectName
 	object.localChannel = nil
-	object.useGuild = false
+	object.guildChannel = nil
     return object
 end
 
 function XFC.ChannelCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		-- Remove this block after everyone on 4.4, its for backwards compat while guild members are a mix of 4.4 and pre-4.4
-		if(XF.Cache.Channel.Name ~= nil and XF.Cache.Channel.Password ~= nil) then
-			try(function ()
-				XFF.ChatJoinChannel(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
-				XF:Info(self:ObjectName(), 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
-			end).
-			catch(function (err)
-				XF:Error(self:ObjectName(), err)
-			end)
-		end
 
-		-- if(XF.Player.Target:GetTarCount() > 1) then
-		-- 	self:UseGuild(false)
-		-- 	--JoinChannelByName(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
-		-- 	--XF:Info(ObjectName, 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
-		-- end
+        XFF.ChatJoinChannel(XF.Cache.Channel.Name, XF.Cache.Channel.Password)
+        XF:Info(self:ObjectName(), 'Joined confederate channel [%s]', XF.Cache.Channel.Name)
 
 		XFO.Events:Add({
 			name = 'ChannelLeft', 
@@ -53,6 +40,12 @@ function XFC.ChannelCollection:Initialize()
 			instance = true
 		})
 
+        local channel = XFC.Channel:new()
+        channel:Initialize()
+        channel:Key('GUILD')
+        channel:Name('GUILD')
+        self:GuildChannel(channel)
+
 		self:IsInitialized(true)
 	end
 end
@@ -67,12 +60,12 @@ function XFC.ChannelCollection:LocalChannel(inChannel)
 	return self.localChannel
 end
 
-function XFC.ChannelCollection:UseGuild(inBoolean)
-	assert(type(inBoolean) == 'boolean' or inBoolean == nil)
-	if(inBoolean ~= nil) then
-		self.useGuild = inBoolean
+function XFC.ChannelCollection:GuildChannel(inChannel)
+    assert(type(inChannel) == 'table' and inChannel.__name == 'Channel' or inChannel == nil)
+	if(inChannel ~= nil) then
+		self.guildChannel = inChannel
 	end
-	return self.useGuild
+	return self.guildChannel
 end
 --#endregion
 

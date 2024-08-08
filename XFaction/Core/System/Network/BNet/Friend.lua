@@ -16,6 +16,8 @@ function XFC.Friend:new()
     object.isLinked = false
     object.guid = nil
     object.isTrueFriend = false
+    object.realm = nil
+    object.faction = nil
 
     return object
 end
@@ -28,6 +30,8 @@ function XFC.Friend:Deconstructor()
     self.isLinked = false    
     self.guid = nil
     self.isTrueFriend = false
+    self.realm = nil
+    self.faction = nil
 end
 
 function XFC.Friend:Initialize(inID)
@@ -98,6 +102,22 @@ function XFC.Friend:IsTrueFriend(inBoolean)
     end
     return self.isTrueFriend
 end
+
+function XFC.Friend:Realm(inRealm)
+    assert(type(inRealm) == 'Realm' or inRealm == nil)
+    if(inRealm ~= nil) then
+        self.realm = inRealm
+    end
+    return self.realm
+end
+
+function XFC.Friend:Faction(inFaction)
+    assert(type(inFaction) == 'Faction' or inFaction == nil)
+    if(inFaction ~= nil) then
+        self.faction = inFaction
+    end
+    return self.faction
+end
 --#endregion
 
 --#region Methods
@@ -110,6 +130,16 @@ function XFC.Friend:Print()
     XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
     XF:Debug(self:ObjectName(), '  isLinked (' .. type(self.isLinked) .. '): ' .. tostring(self.isLinked))
     XF:Debug(self:ObjectName(), '  isTrueFriend (' .. type(self.isTrueFriend) .. '): ' .. tostring(self.isTrueFriend))
+    if(self:HasRealm()) then self:Realm():Print() end
+    if(self:HasFaction()) then self:Faction():Print() end
+end
+
+function XFC.Friend:HasRealm()
+    return self:Realm() ~= nil
+end
+
+function XFC.Friend:HasFaction()
+    return self:Faction() ~= nil
 end
 
 function XFC.Friend:HasUnit()
@@ -122,12 +152,8 @@ end
 
 function XFC.Friend:CanLink(inBoolean)
     if(not self:IsTrueFriend()) then return false end
-    if(not self:HasUnit()) then return false end
-
-    local unit = self:Unit()
-    if(unit:IsSameGuild()) then return false end -- GUILD channel will handle this
-    if(unit:IsSameRealm() and unit:IsSameFaction()) then return false end -- Chat channel will handle this
-    
+    if(self:HasFaction() and self:Faction():Equals(XF.Player.Faction)) then return false end -- Whispers will handle this    
+    if(self:HasUnit() and self:Unit():IsSameGuild()) then return false end -- GUILD channel will handle this    
     return true
 end
 --#endregion
