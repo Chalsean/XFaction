@@ -23,13 +23,13 @@ function TimerEvent:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		
-		XF.Timers:Add({name = 'Heartbeat', 
+		XFO.Timers:Add({name = 'Heartbeat', 
 						delta = XF.Settings.Player.Heartbeat, 
 						callback = XF.Handlers.TimerEvent.CallbackHeartbeat, 
 						repeater = true, 
 						instance = true})    		    
 		
-		XF.Timers:Add({name = 'Offline', 
+		XFO.Timers:Add({name = 'Offline', 
 						delta = XF.Settings.Confederate.UnitScan, 
 						callback = XF.Handlers.TimerEvent.CallbackOffline, 
 						repeater = true, 
@@ -49,7 +49,7 @@ function TimerEvent:CallbackOffline()
 		XF:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		XF.Timers:Get('Offline'):SetLastRan(ServerTime())
+		XFO.Timers:Get('Offline'):SetLastRan(ServerTime())
 	end)
 end
 
@@ -66,7 +66,7 @@ function TimerEvent:CallbackHeartbeat()
 		XF:Warn(ObjectName, inErrorMessage)
 	end).
 	finally(function ()
-		XF.Timers:Get('Heartbeat'):SetLastRan(ServerTime())
+		XFO.Timers:Get('Heartbeat'):SetLastRan(ServerTime())
 	end)
 end
 --#endregion

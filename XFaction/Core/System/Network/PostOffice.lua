@@ -73,11 +73,11 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
     end
 
     if(inMessageTag == XF.Enum.Tag.LOCAL) then
-        XF.Metrics:Get(XF.Enum.Metric.ChannelReceive):Increment()
-        XF.Metrics:Get(XF.Enum.Metric.Messages):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.ChannelReceive):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.Messages):Increment()
     else
-        XF.Metrics:Get(XF.Enum.Metric.BNetReceive):Increment()
-        XF.Metrics:Get(XF.Enum.Metric.Messages):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.BNetReceive):Increment()
+        XFO.Metrics:Get(XF.Enum.Metric.Messages):Increment()
     end
 
     -- Ensure this message has not already been processed

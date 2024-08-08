@@ -910,4 +910,13 @@ function XFC.RealmCollection:Get(inKey)
 	end
 	return self.parent.Get(self, inKey)
 end
+
+function XFC.RealmCollection:GetByAPIName(inName)
+	assert(type(inName) == 'string')
+	for _, realm in self:Iterator() do
+		if(realm:APIName() == inName) then
+			return realm
+		end
+	end
+end
 --#endregion

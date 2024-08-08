@@ -16,7 +16,7 @@ end
 function XFElvUI:Initialize()
     if(not self:IsInitialized() and XF.Config ~= nil and ElvUI ~= nil) then
         self:ParentInitialize()
-        XF.Media:Add(XF.Icons.Guild, 'Icon')
+        XFO.Media:Add(XF.Icons.Guild, 'Icon')
         XF.Addons.ElvUI:SetAPI(ElvUI[1])        
         XF.Addons.ElvUI:AddTags()
         XF.Addons.ElvUI:IsLoaded(true)
@@ -120,7 +120,7 @@ function XFElvUI:AddTags()
             local guid = UnitGUID(inNameplate)
             local guildName = GetGuildInfo(inNameplate)
             if(XF.Initialized and (XFO.Confederate:Contains(guid) or XFO.Guilds:ContainsName(guildName))) then
-                icon = XF.Media:Get(XF.Icons.Guild):GetTexture()
+                icon = XFO.Media:Get(XF.Icons.Guild):GetTexture()
             end
         end)
         return icon

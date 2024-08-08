@@ -7,7 +7,8 @@ XFF.TimeLocal = C_DateAndTime.GetServerTimeLocal
 XFF.TimeCalendar = C_DateAndTime.GetCurrentCalendarTime
 
 -- Timer
-XFF.TimerStart = C_Timer.NewTicker
+XFF.TimerStart = C_Timer.NewTimer
+XFF.RepeatTimerStart = C_Timer.NewTicker
 
 -- Chat / Channel
 XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter

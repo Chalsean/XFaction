@@ -6,8 +6,8 @@ local ObjectName = 'CoreInit'
 function XF:CoreInit()
 	-- Get cache/configs asap	
 	XFO.Events = XFC.EventCollection:new(); XFO.Events:Initialize()
-	XF.Timers = TimerCollection:new(); XF.Timers:Initialize()
-	XF.Media = MediaCollection:new(); XF.Media:Initialize()
+	XFO.Timers = XFC.TimerCollection:new(); XFO.Timers:Initialize()
+	XFO.Media = XFC.MediaCollection:new(); XFO.Media:Initialize()
 
 	-- External addon handling
 	XF.Addons.ElvUI = XFElvUI:new()
@@ -70,10 +70,10 @@ function XF:CoreInit()
 	
 	-- Wrappers	
 	XFO.Hooks = XFC.HookCollection:new(); XFO.Hooks:Initialize()
-	XF.Metrics = MetricCollection:new(); XF.Metrics:Initialize()
+	XFO.Metrics = XFC.MetricCollection:new(); XFO.Metrics:Initialize()
 
 	-- WoW Lua does not have a sleep function, so leverage timers for retry mechanics
-	XF.Timers:Add({
+	XFO.Timers:Add({
 		name = 'LoginGuild', 
 		delta = 1, 
 		callback = XF.CallbackLoginGuild, 
@@ -110,7 +110,7 @@ function XF:CallbackLoginGuild()
 			if(guildID ~= nil) then
 				-- Now that guild info is available we can finish setup
 				XF:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
-				XF.Timers:Remove('LoginGuild')
+				XFO.Timers:Remove('LoginGuild')
 
 				-- Confederate setup via guild info
 				XFO.Guilds:Initialize(guildID)
@@ -133,7 +133,7 @@ function XF:CallbackLoginGuild()
 					XFO.Confederate:Restore()					
 				end
 
-				XF.Timers:Add({
+				XFO.Timers:Add({
 					name = 'LoginPlayer', 
 					delta = 1, 
 					callback = XF.CallbackLoginPlayer, 
@@ -163,7 +163,7 @@ function XF:CallbackLoginPlayer()
 		unitData:Initialize()
 		if(unitData:IsInitialized()) then
 			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
-			XF.Timers:Remove('LoginPlayer')
+			XFO.Timers:Remove('LoginPlayer')
 
 			XFO.Confederate:Add(unitData)
 			XF.Player.Unit:Print()
@@ -191,7 +191,7 @@ function XF:CallbackLoginPlayer()
 			-- Start all hooks, timers and events
 			XF.Handlers.SystemEvent:Initialize()
 			XFO.Hooks:Start()
-			XF.Timers:Start()
+			XFO.Timers:Start()
 			XFO.Events:Start()				
 			XF.Initialized = true
 
@@ -206,7 +206,7 @@ function XF:CallbackLoginPlayer()
 				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
 
-			XF.Timers:Add({
+			XFO.Timers:Add({
 				name = 'LoginChannelSync',
 				delta = XF.Settings.Network.Channel.LoginChannelSyncTimer, 
 				callback = XFO.Channels.CallbackSync,
@@ -227,5 +227,5 @@ end
 function XF:Stop()
 	if(XFO.Events) then XFO.Events:Stop() end
 	if(XFO.Hooks) then XFO.Hooks:Stop() end
-	if(XF.Timers) then XF.Timers:Stop() end
+	if(XFO.Timers) then XFO.Timers:Stop() end
 end

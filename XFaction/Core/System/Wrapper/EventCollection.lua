@@ -21,20 +21,20 @@ function XFC.EventCollection:Initialize()
             -- Still actively listen for all events but only do something if enabled
             for _, event in XFO.Events:Iterator() do
                 if(event:Name() == inEvent and event:IsEnabled()) then
-                    XF:Trace(self:ObjectName(), 'Event fired: %s', event:Name())
+                    XF:Trace(ObjectName, 'Event fired: %s', event:Name())
                     if(event:IsGroup()) then
-                        if(XF.Timers:Contains(event:Key())) then
-                            XF.Timers:Get(event:Key()):Start()
+                        if(XFO.Timers:Contains(event:Key())) then
+                            XFO.Timers:Get(event:Key()):Start()
                         else
-                            XF.Timers:Add({name = event:Key(),
-                                            delta = event:GetGroupDelta(),
-                                            callback = event:GetCallback(),
+                            XFO.Timers:Add({name = event:Key(),
+                                            delta = event:GroupDelta(),
+                                            callback = event:Callback(),
                                             repeater = false,
                                             instance = event:IsInstance(),
                                             start = true})
                         end
                     else
-                        local _Function = event:GetCallback()
+                        local _Function = event:Callback()
                         _Function(self, ...)
                     end
                 end

@@ -22,7 +22,7 @@ function XFC.BNet:Initialize()
             instance = true
         })        
 
-        XF.Timers:Add({
+        XFO.Timers:Add({
             name = 'Ping', 
             delta = XF.Settings.Network.BNet.Ping.Timer, 
             callback = XFO.BNet.CallbackPingFriends, 
@@ -79,7 +79,7 @@ function XFC.BNet:Send(inMessage)
                 XF:Debug(self:ObjectName(), 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:Name(), friend:GetGameID(), index, #packets, XF.Enum.Tag.BNET, strlen(packet))
                 -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
                 XF.Lib.BCTL:BNSendGameData('NORMAL', XFO.Tags:GetRandomTag(), packet, _, friend:GetGameID())
-                XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
+                XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
             end
             inMessage:RemoveTarget(friend:GetTarget())
         end).
@@ -122,7 +122,7 @@ function XFC.BNet:CallbackReceive(inMessageTag, inEncodedMessage, inDistribution
     try(function ()
         if(inEncodedMessage:sub(1, 4) == 'PING') then
             XF.Lib.BCTL:BNSendGameData('ALERT', XFO.Tags:GetRandomTag(), 'RE:PING', _, inSender)
-            XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
+            XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
         elseif(inEncodedMessage:sub(1,7) ~= 'RE:PING') then
             XFO.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)    
         end        
@@ -139,7 +139,7 @@ function XFC.BNet:CallbackPingFriends()
             if(not friend:IsLinked() and friend:CanLink()) then
                 XF:Debug(self:ObjectName(), 'Sending ping to [%s]', friend:Tag())
                 XF.Lib.BCTL:BNSendGameData('ALERT', XFO.Tags:GetRandomTag(), 'PING', _, friend:GameID())
-                XF.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
+                XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
             end
         end
     end).

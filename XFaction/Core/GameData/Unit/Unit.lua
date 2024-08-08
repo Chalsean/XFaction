@@ -100,11 +100,22 @@ function XFC.Unit:Initialize(inMemberID)
     self:Key(unitData.guid)
     self:Presence(unitData.presence)    
     self:ID(unitData.memberId)
-    self:Name(unitData.name)
-    self:UnitName(unitData.name .. '-' .. XF.Player.Realm:APIName())
+
+    -- If local realm, its just the name. If non-local realm, its the full unitname
+    local name = string.Split(unitData.name, '-')
+    if(#name == 2) then
+        self:Name(name[1])
+        self:UnitName(unitData.name)
+        self:Realm(XFO.Realms:GetByAPIName(name[2]))
+    else
+        self:Name(unitData.name)
+        self:UnitName(unitData.name .. '-' .. XF.Player.Realm:APIName())
+        self:Realm(XF.Player.Realm)
+    end
+    
 	self:Level(unitData.level)	
 	self:Guild(XF.Player.Guild)
-    self:Realm(XF.Player.Realm)
+    
     self:Target(XF.Player.Target)
     self:TimeStamp(XFF.TimeCurrent())
     self:Class(XFO.Classes:Get(unitData.classID))

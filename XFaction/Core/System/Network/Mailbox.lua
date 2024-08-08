@@ -19,7 +19,7 @@ function XFC.Mailbox:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        XF.Timers:Add({
+        XFO.Timers:Add({
             name = 'Mailbox', 
             delta = XF.Settings.Network.Mailbox.Scan, 
             callback = XFO.Mailbox.CallbackJanitor, 

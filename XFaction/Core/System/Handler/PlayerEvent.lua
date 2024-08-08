@@ -112,14 +112,14 @@ function PlayerEvent:CallbackInstance()
             XF:Debug(ObjectName, 'Entering instance, disabling some event listeners and timers')
             XF.Player.InInstance = true
             XFO.Events:EnterInstance()
-            XF.Timers:EnterInstance()
+            XFO.Timers:EnterInstance()
 
         -- Just leaving instance or UI reload
         elseif(not inInstance and XF.Player.InInstance) then
             XF:Debug(ObjectName, 'Leaving instance, enabling some event listeners and timers')
             XF.Player.InInstance = false
             XFO.Events:LeaveInstance()
-            XF.Timers:LeaveInstance()            
+            XFO.Timers:LeaveInstance()            
         end
     end).
     catch(function (inErrorMessage)

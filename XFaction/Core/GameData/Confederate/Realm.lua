@@ -28,10 +28,7 @@ end
 
 --#region Properties
 function XFC.Realm:APIName()
-    if(self.apiName == nil) then 
-        self.apiName = XFF.RealmAPIName() 
-    end
-    return self.apiName
+    return string.gsub(self:Name(), "%s+", "")
 end
 
 function XFC.Realm:IsTargeted(inBoolean)
