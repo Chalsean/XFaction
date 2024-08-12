@@ -10,10 +10,10 @@ function XF:CoreInit()
 	XFO.Media = XFC.MediaCollection:new(); XFO.Media:Initialize()
 
 	-- External addon handling
-	XF.Addons.ElvUI = XFElvUI:new()
-	XF.Addons.RaiderIO = RaiderIOCollection:new()
-	XF.Addons.WIM = XFWIM:new()
-	XF.Handlers.AddonEvent = AddonEvent:new(); XF.Handlers.AddonEvent:Initialize()
+	XFO.ElvUI = XFC.ElvUI:new()
+	XFO.RaiderIO = XFC.RaiderIOCollection:new()
+	XFO.WIM = XFC.WIM:new()
+	XFO.AddonEvent = XFC.AddonEvent:new(); XFO.AddonEvent:Initialize()
 
 	-- Log XFaction version
 	XFO.Versions = XFC.VersionCollection:new(); XFO.Versions:Initialize()
@@ -40,9 +40,7 @@ function XF:CoreInit()
 	XFO.SystemFrame = XFC.SystemFrame:new()
 
 	-- Declare handlers but not listening yet
-	XF.Handlers.AchievementEvent = AchievementEvent:new(); XF.Handlers.AchievementEvent:Initialize()
-	XF.Handlers.OrderEvent = XFC.OrderEvent:new(); XF.Handlers.OrderEvent:Initialize()
-	XF.Handlers.SystemEvent = SystemEvent:new()
+	XFO.SystemEvent = XFC.SystemEvent:new()
 
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
@@ -168,28 +166,20 @@ function XF:CallbackLoginPlayer()
 			XFO.Confederate:Add(unitData)
 			XF.Player.Unit:Print()
 
-			-- By this point all the channels should have been joined
-			-- if(not XFO.Channels:UseGuild()) then
-			-- 	XFO.Channels:Sync()
-			-- 	if(XFO.Channels:HasLocalChannel()) then
-			-- 		XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
-			-- 	end
-			-- end
-			
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
 				XFO.Friends:Restore()
 				XFO.Links:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
-				--XF.Player.Unit:Broadcast(XF.Enum.Message.DATA)
+                XFO.Mailbox:SendDataMessage()
 			-- Otherwise send login message
 			else
-				--XF.Player.Unit:Broadcast(XF.Enum.Message.LOGIN)
+                XFO.Mailbox:SendLoginMessage()
 			end			
 
 			-- Start all hooks, timers and events
-			XF.Handlers.SystemEvent:Initialize()
+			XFO.SystemEvent:Initialize()
 			XFO.Hooks:Start()
 			XFO.Timers:Start()
 			XFO.Events:Start()				

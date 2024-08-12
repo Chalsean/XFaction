@@ -126,8 +126,8 @@ local function DisplayGuildChat(inUnit, inText)
                         text = format('|cff%s%s|r', hex, text)
                     end
 
-                    if(XF.Addons.WIM:IsLoaded() and XF.Addons.WIM:GetAPI().modules.GuildChat.enabled) then
-                        XF.Addons.WIM:GetAPI():CHAT_MSG_GUILD(text, inUnit:UnitName(), XF.Player.Faction():Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
+                    if(XFO.WIM:IsLoaded() and XFO.WIM:API().modules.GuildChat.enabled) then
+                        XFO.WIM:API():CHAT_MSG_GUILD(text, inUnit:UnitName(), XF.Player.Faction():Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
                     else
                         text = XF.Settings.Frames.Chat.Prepend .. text
                         XFF.ChatHandler(_G[frame], 'CHAT_MSG_GUILD', text, inUnit:UnitName(), XF.Player.Faction:Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())

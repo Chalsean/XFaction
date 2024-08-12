@@ -30,6 +30,13 @@ function XFC.Chat:Initialize()
             instance = true
         })
 
+        XFO.Events:Add({
+            name = 'Achievement', 
+            event = 'ACHIEVEMENT_EARNED', 
+            callback = XFO.Chat.CallbackAchievement, 
+            instance = true
+        })
+
         self:IsInitialized(true)
     end
     return self:IsInitialized()
@@ -101,5 +108,18 @@ function XFC.Chat:CallbackGuildMessage(inText, _, _, _, _, _, _, _, _, _, _, inS
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
     end)
+end
+
+function XFC.Chat:CallbackAchievement(inID)
+    local self = XFO.Chat
+    try(function ()
+        local _, name, _, _, _, _, _, _, _, _, _, isGuild = XFF.PlayerAchievement(inID)
+        if(not isGuild and string.find(name, XF.Lib.Locale['EXPLORE']) == nil) then
+            XFO.Mailbox:SendAchievementMessage(inID)
+        end
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+    end)    
 end
 --#endregion
