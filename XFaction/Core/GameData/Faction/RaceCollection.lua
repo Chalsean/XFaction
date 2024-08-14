@@ -34,6 +34,8 @@ local RaceData =
 	[37] = "Mechagnome,Alliance",
 	[52] = "Dracthyr,Alliance",
 	[70] = "Dracthyr,Horde",
+    [84] = "Earthen,Horde",
+    [85] = "Earthen,Alliance",
 }
 --#endregion
 
