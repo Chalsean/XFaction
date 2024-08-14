@@ -34,14 +34,12 @@ function XFC.RegionCollection:Initialize()
 			region:ID(id)
 			region:Name(name)
 			self:Add(region)
-			XF:Info(self:ObjectName(), 'Initialized region: [%d:%s]', region:ID(), region:Name())	
+			XF:Info(self:ObjectName(), 'Initialized region: [%d:%s]', region:ID(), region:Name())
 
 			if(region:ID() == XFF:RegionCurrent()) then
 				self:Current(region)
 				XF:Info(self:ObjectName(), 'Player region [%d:%s]', region:ID(), region:Name())
-			end
-
-			
+			end			
 		end
 		self:IsInitialized(true)
 	end
@@ -50,7 +48,7 @@ end
 
 --#region Properties
 function XFC.RegionCollection:Current(inRegion)
-	assert(type(inRegion) == 'table' and inRegion.__name == 'Region' or inRegion == nil, 'argument must be Region object or nil')
+	assert(type(inRegion) == 'table' and inRegion.__name == 'Region' or inRegion == nil)
 	if(inRegion ~= nil) then
 		self.current = inRegion
 	end

@@ -10,15 +10,14 @@ function XFC.Guild:new()
     object.__name = ObjectName
     object.initials = nil
     object.streamID = nil  -- Only the player's guild will have a StreamerID (this is gchat)
-    object.realm = nil
-    object.faction = nil
+    object.region = nil
     return object
 end
 --#endregion
 
 --#region Properties
 function XFC.Guild:Initials(inInitials)
-    assert(type(inInitials) == 'string' or inInitials == nil, 'argument must be string or nil')
+    assert(type(inInitials) == 'string' or inInitials == nil)
     if(inInitials ~= nil) then
         self.initials = inInitials
     end
@@ -26,28 +25,19 @@ function XFC.Guild:Initials(inInitials)
 end
 
 function XFC.Guild:StreamID(inStreamID)
-    assert(type(inStreamID) == 'number' or inStreamID == nil, 'argument must be number or nil')
+    assert(type(inStreamID) == 'number' or inStreamID == nil)
     if(inStreamID ~= nil) then
         self.streamID = inStreamID
     end
     return self.streamID
 end
 
-function XFC.Guild:Realm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm' or inRealm == nil, 'argument must be Realm object or nil')
-    if(inRealm ~= nil) then
-        self.realm = inRealm
+function XFC.Guild:Region(inRegion)
+    assert(type(inRegion) == 'table' and inRegion.__name == 'Region' or inRegion == nil)
+    if(inRegion ~= nil) then
+        self.region = inRegion
     end
-    return self.realm
-end
-
--- TODO: retail guilds no longer have faction iso
-function XFC.Guild:Faction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil, 'argument must be Faction object or nil')
-    if(inFaction ~= nil) then
-        self.faction = inFaction
-    end
-    return self.faction
+    return self.region
 end
 --#endregion
 
@@ -56,7 +46,11 @@ function XFC.Guild:Print()
     self:ParentPrint()
     XF:Debug(self:ObjectName(), '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
     XF:Debug(self:ObjectName(), '  streamID (' .. type(self.streamID) .. '): ' .. tostring(self.streamID))
-    if(self:Realm() ~= nil) then self:Realm():Print() end
+    if(self:HasRegion()) then self:Region():Print() end
+end
+
+function XFC.Guild:HasRegion()
+    return self:Region() ~= nil
 end
 
 function XFC.Guild:PrintAudit()
@@ -73,16 +67,14 @@ end
 function XFC.Guild:Deserialize(inString)
 	assert(type(inString) == 'string')
 
-	local realmNumber, factionID, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
-	local realm = XFO.Realms:Get(tonumber(realmNumber))
-    local faction = XFO.Factions:Get(factionID)
+	local regionID, guildKey, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
+	local region = XFO.Regions:Get(tonumber(regionID))
 	
 	self:Initialize()
-	self:Key(guildInitials)
+	self:Key(guildKey)
     self:Initials(guildInitials)
 	self:Name(guildName)
-	self:Realm(realm)
-    self:Faction(faction)
-    XF:Info(self:ObjectName(), 'Initialized guild [%s:%s:%s]', self:Key(), self:Name(), self:Realm():Name())
+	self:Region(region)
+    XF:Info(self:ObjectName(), 'Initialized guild [%s:%s:%s]', self:Key(), self:Name(), self:Region():Name())
 end
 --#endregion
