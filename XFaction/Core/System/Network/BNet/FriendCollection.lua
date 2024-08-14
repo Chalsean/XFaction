@@ -27,6 +27,14 @@ function XFC.FriendCollection:Initialize()
             groupDelta = XF.Settings.Network.BNet.FriendTimer
         })
 
+        XFO.Timers:Add({
+            name = 'Ping', 
+            delta = XF.Settings.Network.BNet.Ping.Timer, 
+            callback = XFO.Friends.CallbackPing, 
+            repeater = true, 
+            instance = true
+        })
+
 		self:IsInitialized(true)
 	end
 end
@@ -97,5 +105,40 @@ function XFC.FriendCollection:GetByGUID(inGUID)
 			return friend
 		end
 	end
+end
+
+function XFC.FriendCollection:IsLinked(inGUID)
+    local friend = self:GetByGUID(inGUID)
+    if(friend ~= nil) then
+        friend:IsLinked(true)
+    end
+end
+
+function XFC.FriendCollection:GetByTarget(inTarget)
+	assert(type(inTarget) == 'table' and inTarget.__name == 'Target')
+
+    local keys = {}
+	for _, friend in self:Iterator() do
+        if(friend:IsLinked() and friend:Target():Equals(inTarget)) then
+            table.insert(keys, friend:Key())
+        end
+	end
+
+    if(#keys == 0) then return end
+    return self:Get(keys[math.random(#keys)])
+end
+
+function XFC.FriendCollection:CallbackPing()
+    local self = XFO.Friends
+    try(function()
+        for _, friend in self:Iterator() do
+            if(not friend:IsLinked() and friend:CanLink()) then
+                XFO.Mailbox:SendPingMessage(friend)
+            end
+        end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 --#endregion

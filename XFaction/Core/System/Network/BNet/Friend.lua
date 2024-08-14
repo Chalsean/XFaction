@@ -164,8 +164,9 @@ end
 
 function XFC.Friend:CanLink(inBoolean)
     if(not self:IsOnline() or not self:IsTrueFriend()) then return false end
-    if(self:HasFaction() and self:Faction():Equals(XF.Player.Faction)) then return false end -- Whispers will handle this    
-    if(self:HasUnit() and self:Unit():IsSameGuild()) then return false end -- GUILD channel will handle this    
+    if(self:HasRealm() and self:Realm():Equals(XF.Player.Realm) and self:HasFaction() and self:Faction():Equals(XF.Player.Faction)) then return false end
+    --if(self:HasFaction() and self:Faction():Equals(XF.Player.Faction)) then return false end -- Whispers will handle this    
+    if(self:HasUnit() and self:Unit():IsSameGuild()) then return false end -- GUILD channel will handle this
     return true
 end
 --#endregion

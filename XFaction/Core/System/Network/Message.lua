@@ -15,7 +15,8 @@ function XFC.Message:new()
     object.data = nil
     object.initialized = false
     object.totalPackets = 1
-    object.links = nil    
+    object.links = nil
+    object.priority = nil
     return object
 end
 
@@ -25,6 +26,7 @@ function XFC.Message:Initialize()
         self:From(XF.Player.GUID)
         self:FromUnit(XF.Player.Unit)
         self:TimeStamp(XFF.TimeCurrent())
+        self:Priority(XF.Enum.Priority.Low)
         --self:Links(XFO.Links:Serialize(true))
 
         for _, target in XFO.Targets:Iterator() do
@@ -46,7 +48,8 @@ function XFC.Message:Deconstructor()
     self.epochTime = nil
     self.data = nil
     self.totalPackets = 1
-    self.links = nil    
+    self.links = nil
+    self.priority = nil
 end
 --#endregion
 
@@ -105,6 +108,14 @@ function XFC.Message:Links(inSerialized)
     end
     return self.links
 end
+
+function XFC.Message:Priority(inPriority)
+    assert(type(inPriority) == 'number' or inPriority == nil)
+    if(inPriority ~= nil) then
+        self.priority = inPriority
+    end
+    return self.priority
+end
 --#endregion
 
 --#region Methods
@@ -114,6 +125,7 @@ function XFC.Message:Print()
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:ObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XF:Debug(self:ObjectName(), '  links (' .. type(self.links) .. '): ' .. tostring(self.links))
+    XF:Debug(self:ObjectName(), '  priority (' .. type(self.priority) .. '): ' .. tostring(self.priority))
 end
 
 function XFC.Message:IsMyMessage()
@@ -132,11 +144,11 @@ function XFC.Message:HasLinks()
     return self:Links() ~= nil and string.len(self:Links()) > 0
 end
 
-function XFC.Message:Encode(inTag)
-    assert(type(inTag) == 'string' or inTag == nil)
+function XFC.Message:Encode(inBNet)
+    assert(type(inBNet) == 'boolean' or inBNet == nil)
     local serialized = self:Serialize()
 	local compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
-    return inTag == XF.Enum.Tag.BNET and XF.Lib.Deflate:EncodeForPrint(compressed) or XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
+    return inBNet and XF.Lib.Deflate:EncodeForPrint(compressed) or XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
 end
 
 function XFC.Message:Serialize()
@@ -147,6 +159,7 @@ function XFC.Message:Serialize()
 	data.K = self:Key()
     data.L = self:Links()
 	data.P = self:TotalPackets()
+    data.Q = self:Priority()
     data.S = self:Subject()
     data.T = self:TimeStamp()
     data.U = self:HasFromUnit() and self:FromUnit():Serialize() or nil
@@ -162,11 +175,11 @@ function XFC.Message:Serialize()
 	return pickle(data)
 end
 
-function XFC.Message:Decode(inEncoded, inTag)
+function XFC.Message:Decode(inEncoded, inBNet)
     assert(type(inEncoded) == 'string')
-    assert(type(inTag) == 'string' or inTag == nil)
+    assert(type(inBNet) == 'boolean' or inBNet == nil)
 
-    local decoded = XF.Enum.Tag.BNET and XF.Lib.Deflate:DecodeForPrint(inEncoded) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inEncoded)
+    local decoded = inBNet and XF.Lib.Deflate:DecodeForPrint(inEncoded) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inEncoded)
     local decompressed = XF.Lib.Deflate:DecompressDeflate(decoded)
     self:Deserialize(decompressed)
 end
@@ -185,12 +198,57 @@ function XFC.Message:Deserialize(inSerial)
     self:TotalPackets(data.P)
     self:Subject(data.S)
     self:TimeStamp(data.T)
+    self:Priority(data.Q)
     
-    -- if(data.R ~= nil) then
-    --     local targets = string.Split(data.R, ';')
-    --     for _, target in ipairs(targets) do
-    --         self:Add(XFO.Targets:Get(target))
-    --     end
-    -- end
+    if(data.R ~= nil) then
+        local targets = string.Split(data.R, ';')
+        for _, target in ipairs(targets) do
+            self:Add(XFO.Targets:Deserialize(target))
+        end
+    end
+end
+
+function XFC.Message:IsPingMessage()
+    return self:Subject() == XF.Enum.Message.PING
+end
+
+function XFC.Message:IsAckMessage()
+    return self:Subject() == XF.Enum.Message.ACK
+end
+
+function XFC.Message:IsLoginMessage()
+    return self:Subject() == XF.Enum.Message.LOGIN
+end
+
+function XFC.Message:IsLogoutMessage()
+    return self:Subject() == XF.Enum.Message.LOGOUT
+end
+
+function XFC.Message:IsDataMessage()
+    return self:Subject() == XF.Enum.Message.DATA
+end
+
+function XFC.Message:IsGuildChatMessage()
+    return self:Subject() == XF.Enum.Message.GCHAT
+end
+
+function XFC.Message:IsAchievementMessage()
+    return self:Subject() == XF.Enum.Message.ACHIEVEMENT
+end
+
+function XFC.Message:IsOrderMessage()
+    return self:Subject() == XF.Enum.Message.ORDER
+end
+
+function XFC.Message:IsHighPriority()
+    return self:Priority() == XF.Enum.Priority.High
+end
+
+function XFC.Message:IsMediumPriority()
+    return self:Priority() == XF.Enum.Priority.Medium
+end
+
+function XFC.Message:IsLowPriority()
+    return self:Priority() == XF.Enum.Priority.Low
 end
 --#endregion

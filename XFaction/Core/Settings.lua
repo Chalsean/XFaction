@@ -100,6 +100,12 @@ XF.Enum = {
 		Error = XF.Lib.Locale['DTMETRICS_ERROR'],
 		Warning = XF.Lib.Locale['DTMETRICS_WARNING'],
 	},
+    Protocol = {
+        Unknown = 1,
+        BNet = 2,
+        Chat = 3,
+        Whisper = 4
+    }
 }
 
 XF.Settings = {

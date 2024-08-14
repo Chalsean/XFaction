@@ -49,20 +49,29 @@ function XFC.Mailbox:Process(inMessage)
 
         -- Every message contains unit and link information, except LOGOUT
         XFO.Confederate:ProcessMessage(inMessage)
-        XFO.Links:ProcessMessage(inMessage)
+        --XFO.Links:ProcessMessage(inMessage)
 
-        if(inMessage:Subject() == XF.Enum.Message.LOGIN or inMessage:Subject() == XF.Enum.Message.LOGOUT or inMessage:Subject() == XF.Enum.Message.DATA) then
+        if(inMessage:IsLoginMessage() or inMessage:IsLogoutMessage() or inMessage:IsDataMessage()) then
             return
         end
 
-        -- Process GCHAT/ACHIEVEMENT message
-        if(inMessage:Subject() == XF.Enum.Message.GCHAT or inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
+        if(inMessage:IsPingMessage()) then
+            XFO.Mailbox:SendAckMessage(inMessage)
+            XFO.Friends:IsLinked(inMessage:From())
+            return
+        end
+
+        if(inMessage:IsAckMessage()) then
+            XFO.Friends:IsLinked(inMessage:From())
+            return
+        end
+
+        if(inMessage:IsGuildChatMessage() or inMessage:IsAchievementMessage()) then
             XFO.ChatFrame:ProcessMessage(inMessage)
             return
         end
 
-        -- Process ORDER message
-        if(inMessage:Subject() == XF.Enum.Message.ORDER) then
+        if(inMessage:IsOrderMessage()) then
             XFO.Orders:ProcessMessage(inMessage)
             return
         end        
@@ -88,12 +97,12 @@ local function GetFactionRecipient(inTarget)
 
     local keys = {}
     for _, unit in XFO.Confederate:Iterator() do
-        if(unit:Target():Equals(inTarget)) then
+        if(unit:IsRunningAddon() and unit:Target():Equals(inTarget)) then
             -- Same realm/faction means chat channel broadcast
             if(unit:IsSameFaction() and unit:IsSameRealm()) then
                 return unit
-            elseif(unit:IsSameFaction()) then
-                table.insert(keys, unit:Key())
+            --elseif(unit:IsSameFaction()) then
+            --    table.insert(keys, unit:Key())
             end
         end
     end
@@ -130,11 +139,10 @@ function XFC.Mailbox:Send(inMessage)
             end
         else
             -- Whisper friends of opposite faction
-            -- local friend = XFO.Friends:GetByTarget(target)
-            -- if(friend ~= nil) then
-            --     XFO.BNet:Whisper(inMessage, friend)
-            --     inMessage:Remove(target:Key())
-            -- end
+            local friend = XFO.Friends:GetByTarget(target)
+            if(friend ~= nil) then
+                XFO.BNet:Whisper(inMessage, friend)
+            end
         end
     end
 end
@@ -146,6 +154,7 @@ function XFC.Mailbox:SendLogoutMessage()
     message:From(XF.Player.GUID)
     message:TimeStamp(XFF.TimeCurrent())
     message:Subject(XF.Enum.Message.LOGOUT)
+    message:Priority(XF.Enum.Priority.High)
 
     for _, target in XFO.Targets:Iterator() do
         if(not target:Equals(XF.Player.Target)) then
@@ -156,7 +165,7 @@ function XFC.Mailbox:SendLogoutMessage()
     self:Send(message)
 end
 
-local function SendMessage(inSubject, inData)
+local function SendMessage(inSubject, inPriority, inData)
     local self = XFO.Mailbox
     XF.Player.LastBroadcast = XFF.TimeCurrent()
 
@@ -165,6 +174,7 @@ local function SendMessage(inSubject, inData)
         message = self:Pop()
         message:Initialize()
         message:Subject(inSubject)
+        message:Priority(inPriority)
         message:Data(inData)
         self:Send(message)
     end).
@@ -174,22 +184,59 @@ local function SendMessage(inSubject, inData)
 end
 
 function XFC.Mailbox:SendLoginMessage()
-    SendMessage(XF.Enum.Message.LOGIN)
+    SendMessage(XF.Enum.Message.LOGIN, XF.Enum.Priority.Medium)
 end
 
 function XFC.Mailbox:SendDataMessage()
-    SendMessage(XF.Enum.Message.DATA)
+    SendMessage(XF.Enum.Message.DATA, XF.Enum.Priority.Low)
+    end)
 end
 
 function XFC.Mailbox:SendGuildChatMessage(inData)
-    SendMessage(XF.Enum.Message.GCHAT, inData)
+    SendMessage(XF.Enum.Message.GCHAT, XF.Enum.Priority.High, inData)
 end
 
 function XFC.Mailbox:SendAchievementMessage(inData)
-    SendMessage(XF.Enum.Message.ACHIEVEMENT, inData)
+    SendMessage(XF.Enum.Message.ACHIEVEMENT, XF.Enum.Priority.Medium, inData)
 end
 
 function XFC.Mailbox:SendOrderMessage(inData)
-    SendMessage(XF.Enum.Message.ORDER, inData)
+    SendMessage(XF.Enum.Message.ORDER, XF.Enum.Priority.Medium, inData)
+end
+
+function XFC.Mailbox:SendPingMessage(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
+
+    XF:Debug(self:ObjectName(), 'Sending ping to [%s]', inFriend:Tag())
+
+    local message = nil
+    try(function ()
+        message = self:Pop()
+        message:Initialize()
+        message:Subject(XF.Enum.Message.PING)
+        message:Priority(XF.Enum.Priority.Low)
+        XFO.BNet:Whisper(inFriend, message)
+    end).
+    finally(function ()
+        self:Push(message)
+    end)
+end
+
+function XFC.Mailbox:SendAckMessage(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
+
+    XF:Debug(self:ObjectName(), 'Sending ack to [%s]', inFriend:Tag())
+
+    local message = nil
+    try(function ()
+        message = self:Pop()
+        message:Initialize()
+        message:Subject(XF.Enum.Message.ACK)
+        message:Priority(XF.Enum.Priority.Low)
+        XFO.BNet:Whisper(inFriend, message)
+    end).
+    finally(function ()
+        self:Push(message)
+    end)
 end
 --#endregion
