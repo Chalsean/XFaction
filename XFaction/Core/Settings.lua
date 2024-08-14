@@ -119,12 +119,6 @@ XF.Settings = {
 	Confederate = {
 		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
 		UnitScan = 60,         -- Seconds between offline checks
-		DefaultTeams = {
-			['?'] = 'Unknown',
-		},
-		DefaultRealms = {
-			[0] = 'Torghast',
-		}
 	},
 	LocalGuild = {
 		ScanTimer = 5,           -- Seconds between local guild scans
@@ -166,9 +160,6 @@ XF.Settings = {
 	Factories = {
 		Scan = 60 * 7,
 		Purge = 60 * 30,
-	},
-	Race = {
-		Total = 100,
 	},
 	Setup = {
 		MaxTeams = 30,
