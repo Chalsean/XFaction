@@ -55,7 +55,7 @@ function XFC.Addon:Print()
 	XF:Debug(self:ObjectName(), '  isLoaded (' .. type(self.isLoaded) .. '): ' .. tostring(self.isLoaded))
 end
 
-function Addon:HasAPI()
+function XFC.Addon:HasAPI()
     return self:API() ~= nil
 end
 --#endregion

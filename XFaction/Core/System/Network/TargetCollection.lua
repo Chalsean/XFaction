@@ -21,6 +21,9 @@ function XFC.TargetCollection:Initialize()
 			target:Name(guild:Name())
 			self:Add(target)
 			XF:Info(self:ObjectName(), 'Initializing target [%s]', target:Key())
+			if(target:Guild():Equals(XF.Player.Guild)) then
+				XF.Player.Target = target
+			end
 		end
 		self:IsInitialized(true)
 	end

@@ -1,4 +1,5 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local FormatSet = false
 local VerbosityLabel = {'ERR~', 'WARN~', 'OK~', '', ''}
 

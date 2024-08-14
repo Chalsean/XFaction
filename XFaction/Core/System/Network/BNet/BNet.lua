@@ -48,9 +48,9 @@ function XFC.BNet:Whisper(inMessage, inFriend)
 
     try(function ()
         for index, packet in ipairs (packets) do
-            XF:Debug(self:ObjectName(), 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', friend:Name(), friend:GameID(), index, #packets, tag, strlen(packet))
+            XF:Debug(self:ObjectName(), 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', inFriend:Name(), inFriend:GameID(), index, #packets, tag, strlen(packet))
             -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
-            XF.Lib.BCTL:BNSendGameData('NORMAL', tag, packet, _, friend:GameID())
+            XF.Lib.BCTL:BNSendGameData('NORMAL', tag, packet, _, inFriend:GameID())
             XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
         end
     end).
@@ -71,8 +71,8 @@ end
 
 function XFC.BNet:PingFriend(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
-    XF:Debug(self:ObjectName(), 'Sending ping to [%s]', friend:Tag())
-    XF.Lib.BCTL:BNSendGameData('ALERT', XFO.Tags:GetRandomTag(), 'PING', _, friend:GameID())
+    XF:Debug(self:ObjectName(), 'Sending ping to [%s]', inFriend:Tag())
+    XF.Lib.BCTL:BNSendGameData('ALERT', XFO.Tags:GetRandomTag(), 'PING', _, inFriend:GameID())
     XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
 end
 

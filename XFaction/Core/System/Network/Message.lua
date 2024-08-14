@@ -25,7 +25,7 @@ function XFC.Message:Initialize()
         self:From(XF.Player.GUID)
         self:FromUnit(XF.Player.Unit)
         self:TimeStamp(XFF.TimeCurrent())
-        self:Links(XFO.Links:Serialize(true))
+        --self:Links(XFO.Links:Serialize(true))
 
         for _, target in XFO.Targets:Iterator() do
             if(not target:Equals(XF.Player.Target)) then

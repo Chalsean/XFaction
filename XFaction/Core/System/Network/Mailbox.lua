@@ -130,11 +130,11 @@ function XFC.Mailbox:Send(inMessage)
             end
         else
             -- Whisper friends of opposite faction
-            local friend = XFO.Friends:GetByTarget(target)
-            if(friend ~= nil) then
-                XFO.BNet:Whisper(inMessage, friend)
-                inMessage:Remove(target:Key())
-            end
+            -- local friend = XFO.Friends:GetByTarget(target)
+            -- if(friend ~= nil) then
+            --     XFO.BNet:Whisper(inMessage, friend)
+            --     inMessage:Remove(target:Key())
+            -- end
         end
     end
 end
@@ -157,7 +157,7 @@ function XFC.Mailbox:SendLogoutMessage()
 end
 
 local function SendMessage(inSubject, inData)
-
+    local self = XFO.Mailbox
     XF.Player.LastBroadcast = XFF.TimeCurrent()
 
     local message = nil

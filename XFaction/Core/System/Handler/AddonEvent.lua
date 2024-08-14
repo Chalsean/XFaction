@@ -55,7 +55,7 @@ local function InitializeCache()
     XF.Cache = _G.XFCacheDB
     
     if(XF.Cache.UIReload == nil or not XF.Cache.UIReload) then
-        XF:Info(self:ObjectName(), 'Initializing cache')
+        XF:Info(ObjectName, 'Initializing cache')
         XF.Cache = {
             Channel = {},
             Confederate = {},
@@ -67,7 +67,7 @@ local function InitializeCache()
     elseif(XF.Cache.Errors ~= nil) then
         -- Log any reloadui errors encountered
         for _, _ErrorText in ipairs(XF.Cache.Errors) do
-            XF:Warn(self:ObjectName(), _ErrorText)
+            XF:Warn(ObjectName, _ErrorText)
         end
         XF.Cache.Errors = {}
     else
