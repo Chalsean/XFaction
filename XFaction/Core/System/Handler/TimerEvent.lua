@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'TimerEvent'
 local ServerTime = GetServerTime
 local GuildRosterEvent = C_GuildInfo.GuildRoster
@@ -175,8 +175,8 @@ function TimerEvent:CallbackLoginPlayer()
 			--XF.DataText.Orders:PostInitialize()
 
 			-- For support reasons, it helps to know what addons are being used
-			for i = 1, GetNumAddOns() do
-				local name, _, _, enabled = GetAddOnInfo(i)
+			for i = 1, XFF.ClientGetAddonCount() do
+				local name, _, _, enabled = XFF.ClientGetAddonInfo(i)
 				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end
 
