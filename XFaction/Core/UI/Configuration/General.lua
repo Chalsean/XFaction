@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Config.General'
-local RealmXref = {}
 local Initialized = false
 
 --#region Popup Window
@@ -44,71 +43,6 @@ StaticPopupDialogs["LINKS"] = {
 }
 --#endregion
 
---#region Initialization
-function XF:SetupRealms()
-
-	XF.Cache.Setup = {
-		Confederate = {},
-		Realms = {},
-		Teams = {},
-		Guilds = {},
-		GuildsRealms = {},
-		Compress = true,
-	}
-	
-	XF.Options.args.General.args.Setup.args.Realms.args.Bar.name = format("|cffffffff%s %s|r", XF.Lib.Locale['REGION'], XFO.Regions:Current():Name())
-	for _, realm in XFO.Realms:SortedIterator() do
-		table.insert(XF.Cache.Setup.Realms, {
-			id = realm:ID(),
-			name = realm:Name(),
-			connections = {},
-			enabled = realm:IsTargeted() or realm:IsCurrent(),
-		})
-		RealmXref[realm:Name()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
-		RealmXref[realm:ID()] = XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms]
-		for _, connectedRealm in realm:ConnectedIterator() do
-			table.insert(XF.Cache.Setup.Realms[#XF.Cache.Setup.Realms].connections, connectedRealm:Name())
-		end
-	end
-
-	for i, realm in ipairs(XF.Cache.Setup.Realms) do
-		XF.Options.args.General.args.Setup.args.Realms.args[tostring(i + 2)] = {
-			type = 'toggle',
-			order = i + 2,
-            name = realm.name,
-			desc = '',
-            get = function(info) return XF.Cache.Setup.Realms[i].enabled end,
-            set = function(info, value)
-				XF.Cache.Setup.Realms[i].enabled = value
-				if(XF.Cache.Setup.Realms[i].enabled) then
-					XF.Cache.Setup.GuildsRealms[tostring(realm.id)] = realm.name
-				else
-					XF.Cache.Setup.GuildsRealms[tostring(realm.id)] = nil
-				end
-				for _, connectedRealm in ipairs(XF.Cache.Setup.Realms[i].connections) do
-					connectedRealm = RealmXref[connectedRealm]
-					connectedRealm.enabled = value
-					if(connectedRealm.enabled) then
-						XF.Cache.Setup.GuildsRealms[tostring(connectedRealm.id)] = connectedRealm.name
-					else
-						XF.Cache.Setup.GuildsRealms[tostring(connectedRealm.id)] = nil
-					end
-				end
-			end
-		}
-		for j, connectedRealm in ipairs(XF.Cache.Setup.Realms[i].connections) do
-			connectedRealm = RealmXref[connectedRealm]
-			XF.Options.args.General.args.Setup.args.Realms.args[tostring(i + 2)].desc = 
-			XF.Options.args.General.args.Setup.args.Realms.args[tostring(i + 2)].desc .. 
-			XF.Lib.Locale['SETUP_REALMS_CONNECTED'] .. connectedRealm.name
-			if(j ~= #XF.Cache.Setup.Realms[i].connections) then 
-				XF.Options.args.General.args.Setup.args.Realms.args[tostring(i + 2)].desc = 
-				XF.Options.args.General.args.Setup.args.Realms.args[tostring(i + 2)].desc .. '\n'
-			end
-		end
-	end
-end
-
 function XF:SetupMenus()
 	
 	if(not Initialized) then
@@ -126,23 +60,22 @@ function XF:SetupMenus()
 		--#endregion
 
 		--#region Guild Menu
-		if(XFO.Guilds:Count() > 0) then
+--		if(XFO.Guilds:Count() > 0) then
 			for _, guild in XFO.Guilds:SortedIterator() do
 				table.insert(XF.Cache.Setup.Guilds, {
-					realm = tostring(guild:Realm():ID()),
-					faction = guild:Faction():ID(),
+					region = guild:Region():Name(),
+					id = tostring(guild:ID()),
 					initials = guild:Initials(),
 					name = guild:Name(),
 				})
-				XF.Cache.Setup.GuildsRealms[tostring(guild:Realm():ID())] = guild:Realm():Name()
 			end
-		end
+--		end
 
 		local i = #XF.Cache.Setup.Guilds
 		while i < XF.Settings.Setup.MaxGuilds do
 			table.insert(XF.Cache.Setup.Guilds, {
-				realm = nil,
-				faction = nil,
+				region = nil,
+				id = nil,
 				initials = nil,
 				name = nil,
 			})
@@ -153,23 +86,32 @@ function XF:SetupMenus()
 			XF.Options.args.General.args.Setup.args.Guilds.args[tostring(4 * i)] = {
 				type = 'select',
 				order = 4 * i,
-				name = XF.Lib.Locale['FACTION'],
+				name = XF.Lib.Locale['REGION'],
 				width = 'half',
 				values = {
-					A = XF.Lib.Locale['ALLIANCE'],
-					H = XF.Lib.Locale['HORDE'],
+					US = XF.Lib.Locale['US'],
+					KR = XF.Lib.Locale['KR'],
+					EU = XF.Lib.Locale['EU'],
+					TW = XF.Lib.Locale['TW'],
+					CN = XF.Lib.Locale['CN'],
 				},
-				get = function(info) return XF.Cache.Setup.Guilds[i].faction end,
-				set = function(info, value) XF.Cache.Setup.Guilds[i].faction = value end,
+				get = function(info) return XF.Cache.Setup.Guilds[i].region end,
+				set = function(info, value) XF.Cache.Setup.Guilds[i].region = value end,
 			}
 			XF.Options.args.General.args.Setup.args.Guilds.args[tostring(4 * i + 1)] = {
-				type = 'select',
+				type = 'input',
 				order = 4 * i + 1,
-				name = XF.Lib.Locale['REALM'],
-				values = XF.Cache.Setup.GuildsRealms,
-				get = function(info) return XF.Cache.Setup.Guilds[i].realm end,
-				set = function(info, value) XF.Cache.Setup.Guilds[i].realm = value	end,
-			}		
+				name = XF.Lib.Locale['ID'],
+				width = 'fill',
+				get = function(info) return XF.Cache.Setup.Guilds[i].id end,
+				set = function(info, value)
+					if(string.len(value) > 0) then 
+						XF.Cache.Setup.Guilds[i].id = value
+					else
+						XF.Cache.Setup.Guilds[i].id = nil
+					end
+				end,
+			}
 			XF.Options.args.General.args.Setup.args.Guilds.args[tostring(4 * i + 2)] = {
 				type = 'input',
 				order = 4 * i + 2,
@@ -257,40 +199,13 @@ function XF:SetupMenus()
 	end
 end
 
-local function IsMultipleOnTarget()
-	local targets = {}
-	for i, guild in ipairs(XF.Cache.Setup.Guilds) do
-		if(guild.initials ~= nil and guild.name ~= nil and guild.realm ~= nil and guild.faction ~= nil) then
-			local target = guild.realm .. guild.faction
-			if(targets[target]) then
-				return true
-			else
-				targets[target] = true
-			end
-			if(RealmXref[tonumber(guild.realm)] ~= nil) then				
-				for j, connection in ipairs(RealmXref[tonumber(guild.realm)].connections) do
-					local target = RealmXref[connection].id .. guild.faction
-					if(targets[target]) then
-						return true
-					else
-						targets[target] = true
-					end
-				end
-			end			
-		end
-	end
-	return false
-end
-
 local function GenerateConfig()
 	local config = 'XFn:' .. XF.Cache.Setup.Confederate.Name .. ':' .. XF.Cache.Setup.Confederate.Initials .. '\n' 
-	--if(IsMultipleOnTarget()) then
-		config = config .. 'XFc:' .. XF.Cache.Setup.Confederate.ChannelName .. ':' .. XF.Cache.Setup.Confederate.Password .. '\n'
-	--end
+	config = config .. 'XFc:' .. XF.Cache.Setup.Confederate.ChannelName .. ':' .. XF.Cache.Setup.Confederate.Password .. '\n'
 
 	for i, guild in ipairs(XF.Cache.Setup.Guilds) do
 		if(guild.initials ~= nil and string.len(guild.initials) and guild.name ~= nil and string.len(guild.name)) then
-			config = config .. 'XFg:' .. guild.realm .. ':' .. guild.faction .. ':' .. guild.name .. ':' .. guild.initials .. '\n'
+			config = config .. 'XFg:' .. guild.region .. ':' .. guild.id .. ':' .. guild.name .. ':' .. guild.initials .. '\n'
 		end
 	end
 	for i, team in ipairs(XF.Cache.Setup.Teams) do
@@ -473,34 +388,8 @@ XF.Options = {
 								},
 							}
 						},						
-						Realms = {
-							order = 2,
-							type = 'group',
-							name = XF.Lib.Locale['REALMS'],
-							args = {
-								Header = {
-									order = 1,
-									type = 'group',
-									name = XF.Lib.Locale['INSTRUCTIONS'],
-									inline = true,
-									args = {
-										Description = {
-											order = 1,
-											type = 'description',
-											fontSize = 'medium',
-											name = XF.Lib.Locale['SETUP_REALMS_INSTRUCTIONS'],
-										},
-									}
-								},
-								Bar = {
-									order = 2,
-									name = '',
-									type = 'header'
-								},
-							},
-						},
 						Guilds = {
-							order = 3,
+							order = 2,
 							type = 'group',
 							name = XF.Lib.Locale['GUILDS'],
 							args = {
@@ -521,7 +410,7 @@ XF.Options = {
 							},
 						},
 						Teams = {
-							order = 4,
+							order = 3,
 							type = 'group',
 							name = XF.Lib.Locale['TEAMS'],
 							args = {
@@ -542,7 +431,7 @@ XF.Options = {
 							},
 						},
 						Confederate = {
-							order = 5,
+							order = 4,
 							type = 'group',
 							name = XF.Lib.Locale['CONFEDERATE'],
 							args = {
@@ -585,7 +474,6 @@ XF.Options = {
 									name = XF.Lib.Locale['CHANNEL_NAME'],
 									get = function(info) return XF.Cache.Setup.Confederate.ChannelName end,
 									set = function(info, value) XF.Cache.Setup.Confederate.ChannelName = value end,
-									--hidden = function () return not IsMultipleOnTarget() end,
 								},
 								Password = {
 									order = 6,
@@ -593,12 +481,11 @@ XF.Options = {
 									name = XF.Lib.Locale['CHANNEL_PASSWORD'],
 									get = function(info) return XF.Cache.Setup.Confederate.Password end,
 									set = function(info, value) XF.Cache.Setup.Confederate.Password = value end,
-									--hidden = function () return not IsMultipleOnTarget() end,
 								},
 							}
 						},
 						Generate = {
-							order = 6,
+							order = 5,
 							type = 'group',
 							name = 'Generate',
 							args = {
@@ -669,7 +556,7 @@ XF.Options = {
 									order = 2,
 									type = 'execute',
 									name = XF.Lib.Locale['DISCORD'],
-									func = function() StaticPopup_Show("LINKS", nil, nil, 'https://discord.gg/eternalkingdom') end,
+									func = function() StaticPopup_Show("LINKS", nil, nil, 'https://discord.gg/PaNZ8TmM3Z') end,
 								},
 								Git = {
 									order = 3,
@@ -689,7 +576,7 @@ XF.Options = {
 									order = 1,
 									type = 'description',
 									fontSize = 'medium',
-									name = 'Chalsean (US-Proudmoore)',
+									name = 'Chals (US-Proudmoore)',
 								},
 							}
 						},		
@@ -953,7 +840,14 @@ function XF:ConfigInitialize()
 	XF.ConfigDB.RegisterCallback(XF, 'OnProfileCopied', 'InitProfile')
 	XF.ConfigDB.RegisterCallback(XF, 'OnProfileReset', 'InitProfile')
 
-	XF:SetupRealms()
+	XF.Cache.Setup = {
+		Confederate = {},
+		Realms = {},
+		Teams = {},
+		Guilds = {},
+		GuildsRealms = {},
+		Compress = true,
+	}
 
 	--#region Changelog
 	try(function ()

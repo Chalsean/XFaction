@@ -188,8 +188,7 @@ function XFC.Mailbox:SendLoginMessage()
 end
 
 function XFC.Mailbox:SendDataMessage()
-    SendMessage(XF.Enum.Message.DATA, XF.Enum.Priority.Low)
-    end)
+    SendMessage(XF.Enum.Message.DATA, XF.Enum.Priority.Low) 
 end
 
 function XFC.Mailbox:SendGuildChatMessage(inData)

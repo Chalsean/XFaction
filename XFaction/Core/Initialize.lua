@@ -113,7 +113,6 @@ function XF:CallbackLoginGuild()
 				-- Confederate setup via guild info
 				XFO.Guilds:Initialize(guildID)
 				XFO.Confederate:Initialize()
-				XFO.Guilds:SetPlayerGuild()
 				XFO.Targets:Initialize()	
 
 				-- Frame inits were waiting on Confederate init

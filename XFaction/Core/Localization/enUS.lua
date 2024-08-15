@@ -17,6 +17,7 @@ L['GUILD_NAME'] = 'Guild Name'
 L['TEAM'] = 'Team'
 L['RANK'] = 'Rank'
 L['ZONE'] = 'Zone'
+L['ID'] = 'ID'
 L['NOTE'] = 'Note'
 L['CLASS'] = 'Class'
 L['CONFEDERATE'] = 'Confederate'
@@ -106,6 +107,11 @@ L['METRICS'] = 'Metrics'
 L['CRAFTING'] = 'Crafting'
 L['ITEM'] = 'Item'
 L['AUDIT'] = 'Audit'
+L['US'] = 'US'
+L['KR'] = 'KR'
+L['EU'] = 'EU'
+L['TW'] = 'TW'
+L['CN'] = 'CN'
 --=========================================================================
 -- General (tab) Specific
 --=========================================================================
@@ -305,35 +311,6 @@ L['DTLINKS_DESCRIPTION'] = 'Links data broker displays all active BNet links the
 -- Header
 L['DTLINKS_HEADER_LINKS'] = 'Active BNet Links: |cffffffff%d|r'
 -------------------------
--- DTOrders (X)
--------------------------
--- Broker name
-L['DTORDERS_NAME'] = 'Orders (X)'
-L['DTORDERS_DESCRIPTION'] = 'Guild data broker displays complete confederate roster.'
--- Config
-L['DTORDERS_BROKER_HEADER'] = 'Broker Settings'
-L['DTORDERS_SELECT_COLUMN'] = 'Select Column'
-L['DTORDERS_SELECT_COLUMN_TOOLTIP'] = 'Select column from list to make adjustments to'
-L['DTORDERS_CONFIG_SORT'] = 'Default Sort Column'
-L['DTORDERS_CONFIG_HEADER'] = 'Header Settings'
-L['DTORDERS_CONFIG_SIZE'] = 'Window Size'
-L['DTORDERS_CONFIG_CONFEDERATE_TOOLTIP'] = 'Show name of the confederate'
-L['DTORDERS_CONFIG_CONFEDERATE_DISABLED'] = 'Must have at least five columns enabled'
-L['DTORDERS_CONFIG_GUILD_TOOLTIP'] = 'Show name of the current guild'
-L['DTORDERS_CONFIG_MOTD_TOOLTIP'] = 'Show guild message-of-the-day'
-L['DTORDERS_CONFIG_COLUMN_HEADER'] = 'Column Settings'
-L['DTORDERS_CONFIG_COLUMN_GUILD_TOOLTIP'] = 'Show customer guild name'
-L['DTORDERS_CONFIG_COLUMN_GUILD_ORDER_TOOLTIP'] = 'Column number the guild name will be displayed in'
-L['DTORDERS_CONFIG_COLUMN_GUILD_ALIGNMENT_TOOLTIP'] = 'Guild name text justification'
-L['DTORDERS_CONFIG_COLUMN_CUSTOMER_TOOLTIP'] = 'Show customer name'
-L['DTORDERS_CONFIG_COLUMN_CUSTOMER_ORDER_TOOLTIP'] = 'Column number the customer name will be displayed in'
-L['DTORDERS_CONFIG_COLUMN_CUSTOMER_ALIGNMENT_TOOLTIP'] = 'Customer name text justification'
-L['DTORDERS_CONFIG_COLUMN_PROFESSION_TOOLTIP'] = 'Show player profession icons'
-L['DTORDERS_CONFIG_COLUMN_PROFESSION_ORDER_TOOLTIP'] = 'Column number the profession icons will be displayed in'
-L['DTORDERS_CONFIG_COLUMN_PROFESSION_ALIGNMENT_TOOLTIP'] = 'Profession icons alignment within the column'
-L['DTORDERS_CONFIG_SORT_TOOLTIP'] = 'Select the default sort column'
-L['DTORDERS_CONFIG_SIZE_TOOLTIP'] = 'Select the maximum height of the window before it starts scrolling'
--------------------------
 -- DTMetrics
 -------------------------
 L['DTMETRICS_NAME'] = 'Metrics (X)'
@@ -385,8 +362,6 @@ L['DEBUG_LOG_INSTANCE_TOOLTIP'] = 'Unchecked means it will disable logging while
 --=========================================================================
 L['SETUP_HOW_TO_INSTRUCTIONS'] = 'To setup XFaction for your guilds, you will need to have permission to edit the guild info for all of them.\n\nClick on the other tabs in this Setup menu, progressing from left to right, filling out all required information. The Teams tab is the only optional tab.\n\nAfter completing all the tabs, the last step is to have users BNet friend each other. This establishes the communication bridge between the factions. For more detailed explanation, please see the Support category.'
 L['SETUP_CONFEDERATE_INSTRUCTIONS'] = 'All fields on this page are required for proper setup.\n\nA collection of guilds is known as a confederate. Example, Eternal Kingdom (EK) confederate comprises seven different guilds. Enter what you want your confederate to be known as below.\n\nIf you have more than 1 guild per faction/realm combination, the addon will use a local channel to communicate between confederate addon users of the same faction/realm. The channel name must be unique for your realms, otherwise people outside your guild may listen to your traffic.'
-L['SETUP_REALMS_INSTRUCTIONS'] = 'Select the realms where your guilds are located. This step is required for proper setup.\n\nIf another realm enables based on your selection, that is expected behaviour for connected realms.'
-L['SETUP_REALMS_CONNECTED'] = 'Connected Realm: '
 L['SETUP_TEAMS_INSTRUCTIONS'] = 'Teams setup is not required for all guilds, only if you have multiple raid teams and wish to associate raid members to their teams in guild chat or Guild (X) datatext.\n\nNote the primary key is the team initials, so they need to be unique within your confederate. It is okay to leave some entries blank if you do not have enough teams to fill.\n\nWhen filling out player notes, use the tag [XFt:<Initials>] to associate that player to their raid team.'
 L['SETUP_GUILDS_INSTRUCTIONS'] = 'Input all the guilds you wish to link together. This step is required for proper setup.\n\nNote the primary key is the guild initials, so they need to be unique within your confederate. For any guild on connected realms, you only need to input that specific guild once on one of the connected realms. It is okay to leave some entries blank if you do not have enough guilds to fill.'
 L['SETUP_CHARACTERS'] = ' characters'

@@ -163,7 +163,7 @@ end
 function XFC.Confederate:CallbackLocalGuild()
     local self = XFO.Confederate
     XF:Trace(self:ObjectName(), 'Scanning local guild roster')
-    for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID(), XF.Player.Guild:StreamID())) do
+    for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID())) do
         local unit = self:Pop()
         try(function ()
             unit:Initialize(memberID)

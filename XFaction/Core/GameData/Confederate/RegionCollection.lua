@@ -47,6 +47,18 @@ end
 --#endregion
 
 --#region Properties
+function XFC.RegionCollection:Get(inKey)
+	assert(type(inKey) == 'number' or type(inKey) == 'string')
+	if(type(inKey) == 'string') then
+		for _, region in self:Iterator() do
+			if(region:Name() == inKey) then
+				return region
+			end
+		end
+	end
+	return self.parent.Get(self, inKey)
+end
+
 function XFC.RegionCollection:Current(inRegion)
 	assert(type(inRegion) == 'table' and inRegion.__name == 'Region' or inRegion == nil)
 	if(inRegion ~= nil) then
