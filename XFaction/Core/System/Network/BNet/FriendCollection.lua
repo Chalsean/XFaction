@@ -86,7 +86,7 @@ function XFC.FriendCollection:Restore()
 	for _, key in pairs (XF.Cache.Backup.Friends) do
 		try(function ()
 			if(self:Contains(key)) then
-				local friend = XFO.Friends:Get(key)
+				local friend = self:Get(key)
 				friend:IsLinked(friend:CanLink()) -- They may have logged out during reload, thus why setting it to CanLink
 				XF:Info(self:ObjectName(), '  Restored %s friend information from backup', friend:Tag())
 			end
@@ -112,20 +112,6 @@ function XFC.FriendCollection:IsLinked(inGUID)
     if(friend ~= nil) then
         friend:IsLinked(true)
     end
-end
-
-function XFC.FriendCollection:GetByTarget(inTarget)
-	assert(type(inTarget) == 'table' and inTarget.__name == 'Target')
-
-    local keys = {}
-	for _, friend in self:Iterator() do
-        if(friend:IsLinked() and friend:Target():Equals(inTarget)) then
-            table.insert(keys, friend:Key())
-        end
-	end
-
-    if(#keys == 0) then return end
-    return self:Get(keys[math.random(#keys)])
 end
 
 function XFC.FriendCollection:CallbackPing()

@@ -51,6 +51,8 @@ function XFC.Friend:Initialize(inID)
         self:GUID(accountInfo.playerGuid)
         self:IsTrueFriend(accountInfo.isFriend)
         self:IsOnline(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW')
+        self:Realm(XFO.Realms(tonumber(accountInfo.gameAccountInfo.realmID)))
+        self:Faction(XFO.Factions:Get(accountInfo.gameAccountInfo.factionName))
 
         self:IsInitialized(true)
     end
@@ -154,6 +156,18 @@ function XFC.Friend:HasFaction()
     return self:Faction() ~= nil
 end
 
+function XFC.Friend:IsSameRealm()
+    return self:HasRealm() and self:Realm():Equals(XF.Player.Realm)
+end
+
+function XFC.Friend:IsSameFaction()
+    return self:HasFaction() and self:Faction():Equals(XF.Player.Faction)
+end
+
+function XFC.Friend:IsSameGuild()
+    return self:HasUnit() and self:Unit():IsSameGuild()
+end
+
 function XFC.Friend:HasUnit()
     return XFO.Confederate:Contains(self:GUID())
 end
@@ -164,9 +178,8 @@ end
 
 function XFC.Friend:CanLink(inBoolean)
     if(not self:IsOnline() or not self:IsTrueFriend()) then return false end
-    if(self:HasRealm() and self:Realm():Equals(XF.Player.Realm) and self:HasFaction() and self:Faction():Equals(XF.Player.Faction)) then return false end
-    --if(self:HasFaction() and self:Faction():Equals(XF.Player.Faction)) then return false end -- Whispers will handle this    
-    if(self:HasUnit() and self:Unit():IsSameGuild()) then return false end -- GUILD channel will handle this
+    if(self:IsSameRealm() and self:IsSameFaction()) then return false end
+    if(self:IsSameGuild()) then return false end -- GUILD channel will handle this
     return true
 end
 --#endregion
