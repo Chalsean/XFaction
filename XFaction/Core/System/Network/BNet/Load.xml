@@ -2,6 +2,4 @@
     <Script file='BNet.lua'/>
     <Script file='Friend.lua'/>
     <Script file='FriendCollection.lua'/>
-    <Script file='Link.lua'/>
-    <Script file='LinkCollection.lua'/>    
 </Ui>

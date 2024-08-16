@@ -15,7 +15,6 @@ function XFC.Message:new()
     object.data = nil
     object.initialized = false
     object.totalPackets = 1
-    object.links = nil
     object.priority = nil
     return object
 end
@@ -27,7 +26,6 @@ function XFC.Message:Initialize()
         self:FromUnit(XF.Player.Unit)
         self:TimeStamp(XFF.TimeCurrent())
         self:Priority(XF.Enum.Priority.Low)
-        --self:Links(XFO.Links:Serialize(true))
 
         for _, target in XFO.Targets:Iterator() do
             if(not target:Equals(XF.Player.Target)) then
@@ -48,7 +46,6 @@ function XFC.Message:Deconstructor()
     self.epochTime = nil
     self.data = nil
     self.totalPackets = 1
-    self.links = nil
     self.priority = nil
 end
 --#endregion
@@ -101,14 +98,6 @@ function XFC.Message:TotalPackets(inTotalPackets)
     return self.totalPackets
 end
 
-function XFC.Message:Links(inSerialized)
-    assert(type(inSerialized) == 'string' or inSerialized == nil)
-    if(inSerialized ~= nil) then
-        self.links = inSerialized
-    end
-    return self.links
-end
-
 function XFC.Message:Priority(inPriority)
     assert(type(inPriority) == 'number' or inPriority == nil)
     if(inPriority ~= nil) then
@@ -121,15 +110,15 @@ end
 --#region Methods
 function XFC.Message:Print()
     self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
     XF:Debug(self:ObjectName(), '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:ObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
-    XF:Debug(self:ObjectName(), '  links (' .. type(self.links) .. '): ' .. tostring(self.links))
     XF:Debug(self:ObjectName(), '  priority (' .. type(self.priority) .. '): ' .. tostring(self.priority))
 end
 
 function XFC.Message:IsMyMessage()
-    return XF.Player.GUID == self:From():GUID()
+    return self:From() == XF.Player.GUID
 end
 
 function XFC.Message:HasTargets()
@@ -138,10 +127,6 @@ end
 
 function XFC.Message:HasFromUnit()
     return self:FromUnit() ~= nil
-end
-
-function XFC.Message:HasLinks()
-    return self:Links() ~= nil and string.len(self:Links()) > 0
 end
 
 function XFC.Message:Encode(inBNet)
@@ -157,7 +142,6 @@ function XFC.Message:Serialize()
     data.D = self:Data()	
 	data.F = self:From()
 	data.K = self:Key()
-    data.L = self:Links()
 	data.P = self:TotalPackets()
     data.Q = self:Priority()
     data.S = self:Subject()
@@ -192,9 +176,8 @@ function XFC.Message:Deserialize(inSerial)
 
     self:Data(data.D)
     self:From(data.F)
-    -- self:FromUnit(XFO.Confederate:Deserialize(data.U))
+    self:FromUnit(XFO.Confederate:Deserialize(data.U))
     self:Key(data.K)
-    -- self:Links(data.L)
     self:TotalPackets(data.P)
     self:Subject(data.S)
     self:TimeStamp(data.T)
