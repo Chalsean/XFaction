@@ -59,7 +59,7 @@ function XFC.VersionCollection:Add(inVersion)
 	assert(type(inVersion) == 'table' and inVersion.__name == 'Version' or type(inVersion) == 'string')
 	if(type(inVersion) == 'table') then
 		self.parent.Add(self, inVersion)
-	elseif(not self:Contains(inKey)) then
+	elseif(not self:Contains(inVersion)) then
 		local version = XFC.Version:new()
 		version:Initialize()
 		version:Key(inVersion)

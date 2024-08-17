@@ -49,12 +49,13 @@ function XFC.PostOffice:HasAllPackets(inKey, inTotalPackets)
     return #self.objects[inKey] == inTotalPackets
 end
 
-function XFC.PostOffice:RebuildMessage(inKey)
+function XFC.PostOffice:RebuildMessage(inKey, inTotalPackets)
     assert(type(inKey) == 'string')
     local message = ''
     -- Stitch the data back together again
-    for _, packet in PairsByKeys(self.objects[inKey]) do
-        message = message .. packet
+    for i = 1, inTotalPackets do
+--    for _, packet in PairsByKeys(self.objects[inKey]) do
+        message = message .. self.objects[inKey][i]
     end
     return message
 end
@@ -65,7 +66,7 @@ end
 
 function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XF:Trace(self:ObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
+    XF:Debug(self:ObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
 
     -- If not a message from this addon, ignore
     if(not self:IsAddonTag(inMessageTag)) then

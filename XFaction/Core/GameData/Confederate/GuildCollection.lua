@@ -45,12 +45,12 @@ function XFC.GuildCollection:Add(inGuild)
 	self.names[inGuild:Name()] = inGuild
 end
 
-function XFC.GuildCollection:Get(inGuildName)
-	assert(type(inGuildName) == 'string')
-	if(self.names[inGuildName] ~= nil) then
-		return self.names[inGuildName]
+function XFC.GuildCollection:Get(inGuildID)
+	assert(type(inGuildID) == 'string' or type(inGuildID) == 'number')
+	if(type(inGuildID) == 'string') then
+		return self.names[inGuildID]
 	end	
-	return self.parent.Get(self, inGuildName)
+	return self.parent.Get(self, inGuildID)
 end
 
 function XFC.GuildCollection:Deserialize()

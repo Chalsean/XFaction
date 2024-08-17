@@ -218,9 +218,9 @@ end
 
 function XFC.Confederate:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    if(inMessage:Subject() == XF.Enum.Message.LOGOUT) then
+    if(inMessage:IsLogoutMessage()) then
         self:Logout(inMessage:FromUnit())
-    elseif(inMessage:Subject() == XF.Enum.Message.LOGIN) then
+    elseif(inMessage:IsLoginMessage()) then
         self:Login(inMessage:FromUnit())
     else
         self:Add(inMessage:FromUnit())

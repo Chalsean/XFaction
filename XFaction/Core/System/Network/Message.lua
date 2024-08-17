@@ -172,6 +172,8 @@ function XFC.Message:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
 
+    XF:DataDumper(self:ObjectName(), data)
+
     self:ParentInitialize()
 
     self:Data(data.D)
@@ -186,7 +188,7 @@ function XFC.Message:Deserialize(inSerial)
     if(data.R ~= nil) then
         local targets = string.Split(data.R, ';')
         for _, target in ipairs(targets) do
-            self:Add(XFO.Targets:Deserialize(target))
+            self:Add(XFO.Targets:Get(tonumber(target)))
         end
     end
 end

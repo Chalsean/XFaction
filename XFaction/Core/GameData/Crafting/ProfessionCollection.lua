@@ -58,7 +58,8 @@ end
 
 --#region Methods
 function XFC.ProfessionCollection:Get(inKey)
-	assert(type(inKey) == 'string' or type(inKey) == 'number')
+	assert(type(inKey) == 'string' or type(inKey) == 'number' or inKey == nil)
+	if(inKey == nil) then return nil end
 	if(type(inKey) == 'string') then
 		for _, profession in self:Iterator() do
 			if(profession:Name() == inKey) then

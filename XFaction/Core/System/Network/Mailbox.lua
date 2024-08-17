@@ -45,7 +45,9 @@ function XFC.Mailbox:Process(inMessage)
     try(function()
 
         -- Forward message to any remaining targets
-        XFO.PostOffice:Send(inMessage)
+        --XFO.PostOffice:Send(inMessage)
+
+        inMessage:FromUnit():Print()
 
         -- Every message contains unit and link information, except LOGOUT
         XFO.Confederate:ProcessMessage(inMessage)

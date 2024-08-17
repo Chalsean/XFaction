@@ -26,6 +26,7 @@ function XFC.TagCollection:Initialize()
 			local tag = XFC.Tag:new(); tag:Initialize()
 			tag:Key(i)
 			tag:Name(self:Prefix() .. tostring(i))
+			C_ChatInfo.RegisterAddonMessagePrefix(tag:Name())
 			self:Add(tag)
 		end
 

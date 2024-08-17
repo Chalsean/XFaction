@@ -48,33 +48,14 @@ function XFC.Chat:Broadcast(inMessage, inChannel)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     assert(type(inChannel) == 'table' and inChannel.__name == 'Channel')
 
-    local data = inMessage:Serialize()
+    local data = inMessage:Encode()
     local packets = XFO.PostOffice:SegmentMessage(data, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
     local tag = XFO.Tags:GetRandomTag()
     local priority = (inMessage:IsHighPriority() and 'ALERT') or (inMessage:IsMediumPriority() and 'NORMAL') or 'BULK'
 
     for index, packet in ipairs (packets) do
-        XF:Debug(self:ObjectName(), 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), inChannel:Name(), tag, strlen(packet))
+        XF:Debug(self:ObjectName(), 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d] with priority [%s]', index, #packets, inMessage:Key(), inChannel:Name(), tag, strlen(packet), priority)
         XF.Lib.BCTL:SendAddonMessage(priority, tag, packet, inChannel:Name(), inChannel:ID())
-        XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
-    end
-end
-
-function XFC.Chat:Whisper(inMessage, inUnit)
-    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
-
-    XF:Debug(self:ObjectName(), 'Attempting to whisper message')
-    inMessage:Print()
-
-    local data = inMessage:Serialize()
-    local packets = XFO.PostOffice:SegmentMessage(data, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
-    local tag = XFO.Tags:GetRandomTag()
-    local priority = (inMessage:IsHighPriority() and 'ALERT') or (inMessage:IsMediumPriority() and 'NORMAL') or 'BULK'
-
-    for index, packet in ipairs (packets) do
-        XF:Debug(self:ObjectName(), 'Sending packet [%d:%d:%s] via whisper to [%s] with tag [%s] of length [%d]', index, #packets, inMessage:Key(), inUnit:UnitName(), tag, strlen(packet))
-        XF.Lib.BCTL:SendAddonMessage(priority, tag, packet, 'WHISPER', inUnit:UnitName())
         XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
 end

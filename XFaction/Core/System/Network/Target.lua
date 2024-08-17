@@ -87,7 +87,7 @@ end
 
 function XFC.Target:CalcChatOnline(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
-    if(inUnit:IsPlayer()) then return end
+    if(inUnit:IsPlayer() or not inUnit:IsRunningAddon()) then return end
     if(not inUnit:IsSameFaction() or not inUnit:IsSameRealm()) then return end
 
     if(inUnit:IsOnline()) then

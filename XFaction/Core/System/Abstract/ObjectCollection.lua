@@ -87,12 +87,13 @@ function XFC.ObjectCollection:Contains(inKey)
 end
 
 function XFC.ObjectCollection:Get(inKey)
-    assert(type(inKey) == 'string' or type(inKey) == 'number', 'Collection key must be string or number')
+    assert(type(inKey) == 'string' or type(inKey) == 'number' or inKey == nil)
+    if(inKey == nil) then return nil end
 	return self.objects[inKey]
 end
 
 function XFC.ObjectCollection:Add(inObject)
-    assert(type(inObject) == 'table' and inObject.__name ~= nil, 'argument must be an object')
+    assert(type(inObject) == 'table' and inObject.__name ~= nil)
 	if(not self:Contains(inObject:Key())) then
 		self.objectCount = self.objectCount + 1
 	end

@@ -700,30 +700,40 @@ function XFC.Unit:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
 
+    XF:DataDumper(self:ObjectName(), data)
+
 	self:AchievementPoints(data.A)    
     self:Class(XFO.Classes:Get(tonumber(data.C)))
     self:Race(XFO.Races:Get(tonumber(data.F)))
     self:Guild(XFO.Guilds:Get(tonumber(data.G)))
-    self:Hero(XFO.Heroes:Get(tonumber(data.H)))
+    self:Hero(XFO.Heros:Get(tonumber(data.H)))
 	self:ItemLevel(data.I)
 	self:Rank(data.J)
     self:GUID(data.K)
     self:Key(data.K)
 	self:Level(data.L)
-    self:MythicKey(XFO.Keys:Deserialize(data.M))
+    --self:MythicKey(XFO.Keys:Deserialize(data.M))
 	self:Note(data.N)
 	self:Presence(data.O)
     self:PvP(data.P)	
     self:Realm(XFO.Realms:Get(tonumber(data.R)))
     self:Spec(XFO.Specs:Get(tonumber(data.S)))
-    self:Target(XFO.Targets:Get(data.T))	
-	self:Version(XFO.Versions:Deserialize(data.V))
-    self:Profession1(XFO.Professions:Deserialize(data.X))
-    self:Profession2(XFO.Professions:Deserialize(data.Y))
-    self:Zone(XFO.Zones:Deserialize(data.Z))
+    self:Target(XFO.Targets:Get(tonumber(data.T)))
+    self:Profession1(XFO.Professions:Get(tonumber(data.X)))
+    self:Profession2(XFO.Professions:Get(tonumber(data.Y)))
     
     self:Name(data.U)
     self:UnitName(self:Name() .. '-' .. self:Realm():APIName())
+
+    if(not XFO.Versions:Contains(data.V)) then
+        XFO.Versions:Add(data.V)
+    end
+    self:Version(XFO.Versions:Get(data.V))
+
+    if(not XFO.Zones:Contains(data.Z)) then
+        XFO.Zones:Add(data.Z)
+    end
+    self:Zone(XFO.Zones:Get(data.Z))
 
     self:TimeStamp(XFF.TimeCurrent())
 end
