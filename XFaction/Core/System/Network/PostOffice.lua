@@ -60,16 +60,12 @@ function XFC.PostOffice:RebuildMessage(inKey, inTotalPackets)
     return message
 end
 
-function XFC.PostOffice:IsAddonTag(inTag)
-	return string.StartsWith(inTag, XFO.Tags:Prefix())
-end
-
 function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
     XF:Debug(self:ObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
 
     -- If not a message from this addon, ignore
-    if(not self:IsAddonTag(inMessageTag)) then
+    if(not XFO.Tags:Contains(inTag)) then
         return
     end
 

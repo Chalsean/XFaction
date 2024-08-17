@@ -45,4 +45,8 @@ function XFC.Channel:SetColor()
         XF:Debug(self:ObjectName(), 'Set channel [%s] RGB [%f:%f:%f]', self:Name(), color.R, color.G, color.B)
     end
 end
+
+function XFC.Channel:IsGuild()
+    return self:Name() == 'GUILD'
+end
 --#endregion

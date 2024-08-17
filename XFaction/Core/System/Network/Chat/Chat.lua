@@ -55,7 +55,7 @@ function XFC.Chat:Broadcast(inMessage, inChannel)
 
     for index, packet in ipairs (packets) do
         XF:Debug(self:ObjectName(), 'Sending packet [%d:%d:%s] on channel [%s] with tag [%s] of length [%d] with priority [%s]', index, #packets, inMessage:Key(), inChannel:Name(), tag, strlen(packet), priority)
-        XF.Lib.BCTL:SendAddonMessage(priority, tag, packet, inChannel:Name(), inChannel:ID())
+        XF.Lib.BCTL:SendAddonMessage(priority, tag, packet, inChannel:IsGuild() and 'GUILD' or 'CHANNEL', inChannel:ID())
         XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Increment()
     end
 end
