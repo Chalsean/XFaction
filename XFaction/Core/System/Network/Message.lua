@@ -172,19 +172,27 @@ function XFC.Message:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
 
-    XF:DataDumper(self:ObjectName(), data)
-
     self:ParentInitialize()
 
     self:Data(data.D)
     self:From(data.F)
-    self:FromUnit(XFO.Confederate:Deserialize(data.U))
     self:Key(data.K)
     self:TotalPackets(data.P)
     self:Subject(data.S)
     self:TimeStamp(data.T)
     self:Priority(data.Q)
-    
+
+    local unit = nil
+    try(function()
+        unit = XFO.Confederate:Pop()
+        unit:Deserialize(data.U)
+        self:FromUnit(unit)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+        XFO.Confederate:Push(unit)        
+    end)
+
     if(data.R ~= nil) then
         local targets = string.Split(data.R, ';')
         for _, target in ipairs(targets) do

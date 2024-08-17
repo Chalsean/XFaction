@@ -809,8 +809,15 @@ XF.Options = {
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
 									func = function(info) XFO.Timers:Print() end,
 								},
-								Zone = {
+								Version = {
 									order = 25,
+									type = 'execute',
+									name = XF.Lib.Locale['VERSION'],
+									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
+									func = function(info) XFO.Versions:Print() end,
+								},
+								Zone = {
+									order = 26,
 									type = 'execute',
 									name = XF.Lib.Locale['ZONE'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,

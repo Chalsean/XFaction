@@ -160,8 +160,10 @@ function XFC.Factory:Replace(inObject)
         local old = self:Get(inObject:Key())
         self:Add(inObject)
         self:Push(old)
+        return true
     else
         self:Add(inObject)
+        return false
     end
 end
 --#endregion

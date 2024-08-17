@@ -66,30 +66,13 @@ end
 --#region Methods
 function XFC.Confederate:Add(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
-    
+
     if(self:Contains(inUnit:Key())) then
         local oldData = self:Get(inUnit:Key())
         self.objects[inUnit:Key()] = inUnit
-        if(oldData:IsOffline() and inUnit:IsOnline()) then
-            self:OnlineCount(1)
-            if(inUnit:HasTarget()) then
-                inUnit:Target():CalcChatOnline(inUnit)
-            end
-        elseif(oldData:IsOnline() and inUnit:IsOffline()) then
-            self:OnlineCount(-1)
-            if(oldData:HasTarget()) then
-                oldData:Target():CalcChatOnline(inUnit)
-            end
-        end
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
-        if(inUnit:IsOnline()) then
-            self:OnlineCount(1)
-            if(inUnit:HasTarget()) then
-                inUnit:Target():CalcChatOnline(inUnit)
-            end
-        end
     end
     
     if(inUnit:IsPlayer()) then

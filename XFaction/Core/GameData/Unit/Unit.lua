@@ -557,13 +557,13 @@ function XFC.Unit:Print()
     if(self:HasRace()) then self:Race():Print() end
     if(self:HasClass()) then self:Class():Print() end
     if(self:HasSpec()) then self:Spec():Print() end
-    if(self:HasHero()) then self:Hero():Print() end
-    if(self:HasProfession1()) then self:Profession1():Print() end
-    if(self:HasProfession2()) then self:Profession2():Print() end  
-    if(self:HasRaiderIO()) then self:RaiderIO():Print() end
-    if(self:HasMythicKey()) then self:MythicKey():Print() end
-    if(self:HasZone()) then self:Zone():Print() end
-    if(self:HasTarget()) then self:Target():Print() end
+    -- if(self:HasHero()) then self:Hero():Print() end
+    -- if(self:HasProfession1()) then self:Profession1():Print() end
+    -- if(self:HasProfession2()) then self:Profession2():Print() end  
+    -- if(self:HasRaiderIO()) then self:RaiderIO():Print() end
+    -- if(self:HasMythicKey()) then self:MythicKey():Print() end
+    -- if(self:HasZone()) then self:Zone():Print() end
+    -- if(self:HasTarget()) then self:Target():Print() end
 end
 
 function XFC.Unit:IsPlayer()
@@ -617,7 +617,7 @@ function XFC.Unit:HasProfession2()
 end
 
 function XFC.Unit:HasVersion()
-    return self.version ~= nil
+    return self:Version() ~= nil
 end
 
 function XFC.Unit:HasTeam()
@@ -698,10 +698,9 @@ end
 
 function XFC.Unit:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
-    local data = unpickle(inSerial)
+    local data = unpickle(inSerial)    
 
-    XF:DataDumper(self:ObjectName(), data)
-
+    self:IsRunningAddon(true)
 	self:AchievementPoints(data.A)    
     self:Class(XFO.Classes:Get(tonumber(data.C)))
     self:Race(XFO.Races:Get(tonumber(data.F)))
