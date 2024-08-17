@@ -48,9 +48,6 @@ function XFC.Chat:Broadcast(inMessage, inChannel)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     assert(type(inChannel) == 'table' and inChannel.__name == 'Channel')
 
-    XF:Debug(self:ObjectName(), 'Attempting to send message')
-    inMessage:Print()
-
     local data = inMessage:Serialize()
     local packets = XFO.PostOffice:SegmentMessage(data, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
     local tag = XFO.Tags:GetRandomTag()

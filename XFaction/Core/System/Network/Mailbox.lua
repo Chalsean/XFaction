@@ -49,7 +49,6 @@ function XFC.Mailbox:Process(inMessage)
 
         -- Every message contains unit and link information, except LOGOUT
         XFO.Confederate:ProcessMessage(inMessage)
-        --XFO.Links:ProcessMessage(inMessage)
 
         if(inMessage:IsLoginMessage() or inMessage:IsLogoutMessage() or inMessage:IsDataMessage()) then
             return
@@ -92,59 +91,53 @@ function XFC.Mailbox:CallbackJanitor()
 	end
 end
 
-local function GetFactionRecipient(inTarget)
-    assert(type(inTarget) == 'table' and inTarget.__name == 'Target')
-
-    local keys = {}
-    for _, unit in XFO.Confederate:Iterator() do
-        if(unit:IsRunningAddon() and unit:Target():Equals(inTarget)) then
-            -- Same realm/faction means chat channel broadcast
-            if(unit:IsSameFaction() and unit:IsSameRealm()) then
-                return unit
-            --elseif(unit:IsSameFaction()) then
-            --    table.insert(keys, unit:Key())
-            end
-        end
-    end
-
-    if(#keys == 0) then return end
-    -- Randomly select someone to whisper
-    return XFO.Confederate:Get(keys[math.random(#keys)])
-end
-
 function XFC.Mailbox:Send(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     self:Add(inMessage:Key())
+    inMessage:Print()
+
+    local guildBroadcast = false
+    local chatBroadcast = false
 
     -- Send message to GUILD channel
     if(inMessage:Contains(XF.Player.Target:Key())) then
-        XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
+        guildBroadcast = true
+--        XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
         inMessage:Remove(XF.Player.Target:Key())
     end
 
-    local hasBroadcast = false    
     for _, target in inMessage:Iterator() do
-        local recipient = GetFactionRecipient(target)
-        if(recipient ~= nil) then
-            -- Send message to addon channel
-            if(recipient:IsSameRealm() and recipient:IsSameFaction()) then
-                if(not hasBroadcast) then
-                    XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
-                    hasBroadcast = true
-                end
-            -- Whisper players of same faction
-            elseif(recipient:IsSameFaction()) then
-                XFO.Chat:Whisper(inMessage, recipient)
-            end
-        else
-            -- Whisper friends of opposite faction
-            local friend = XFO.Friends:GetByTarget(target)
-            if(friend ~= nil) then
-                XFO.BNet:Whisper(inMessage, friend)
-            end
+        if(target:UseChatProtocol()) then
+            chatBroadcast = true
+            inMessage:Remove(target:Key())
         end
+        -- if(recipient ~= nil) then
+        --     -- Send message to addon channel
+        --     if(recipient:IsSameRealm() and recipient:IsSameFaction()) then
+        --         if(not hasBroadcast) then
+        --             XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
+        --             hasBroadcast = true
+        --         end
+        --     -- Whisper players of same faction
+        --     elseif(recipient:IsSameFaction()) then
+        --         XFO.Chat:Whisper(inMessage, recipient)
+        --     end
+        -- else
+            -- Whisper friends of opposite faction
+            -- local friend = XFO.Friends:GetByTarget(target)
+            -- if(friend ~= nil) then
+            --     XFO.BNet:Whisper(inMessage, friend)
+            -- end
+        -- end
     end
+
+    --if(guildBroadcast) then
+        XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
+    --end
+    --if(chatBroadcast) then
+        XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
+    --end
 end
 
 -- Do not initiliaze message as we do not need unit/link data

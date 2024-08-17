@@ -3,11 +3,11 @@ local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTLinks'
 local CombatLockdown = InCombatLockdown
 
-DTLinks = XFC.Object:newChildConstructor()
+XFC.DTLinks = XFC.Object:newChildConstructor()
 	
 --#region Constructors
-function DTLinks:new()
-	local object = DTGuild.parent.new(self)
+function XFC.DTLinks:new()
+	local object = XFC.DTLinks.parent.new(self)
     object.__name = ObjectName
     object.headerFont = nil
 	object.regularFont = nil
@@ -19,14 +19,14 @@ end
 --#endregion
 
 --#region Initializers
-function DTLinks:Initialize()
+function XFC.DTLinks:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.ldbObject = XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTLINKS_NAME'], {
 			type = 'data source',
 			label = XF.Lib.Locale['DTLINKS_NAME'],
-		    OnEnter = function(this) XF.DataText.Links:OnEnter(this) end,
-			OnLeave = function(this) XF.DataText.Links:OnLeave(this) end,
+		    OnEnter = function(this) XFO.DTLinks:OnEnter(this) end,
+			OnLeave = function(this) XFO.DTLinks:OnLeave(this) end,
 		})
 		self.headerFont = CreateFont('headerFont')
 		self.headerFont:SetTextColor(0.4,0.78,1)
@@ -37,15 +37,15 @@ function DTLinks:Initialize()
 	return self:IsInitialized()
 end
 
-function DTLinks:PostInitialize()
-	XF.DataText.Links:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Links:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Links:RefreshBroker()
+function XFC.DTLinks:PostInitialize()
+	XFO.DTLinks:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XFO.DTLinks:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XFO.DTLinks:RefreshBroker()
 end
 --#endregion
 
 --#region Print
-function DTLinks:Print()
+function XFC.DTLinks:Print()
 	self:ParentPrint()
 	XF:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
 	XF:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
@@ -56,58 +56,31 @@ end
 --#endregion
 
 --#region Accessors
-function DTLinks:GetBroker()
+function XFC.DTLinks:GetBroker()
 	return self.ldbObject
 end
 
-function DTLinks:GetHeaderFont()
+function XFC.DTLinks:GetHeaderFont()
 	return self.headerFont
 end
 
-function DTLinks:GetRegularFont()
+function XFC.DTLinks:GetRegularFont()
 	return self.regularFont
 end
 
-function DTLinks:RefreshBroker()
+function XFC.DTLinks:RefreshBroker()
 	local text = ''
 	if(XF.Config.DataText.Link.Label) then
 		text = XF.Lib.Locale['LINKS'] .. ': '
 	end
 
-	local names = {}
-	local allianceCount = 0
-	local hordeCount = 0
-
-	for _, link in XFO.Links:Iterator() do
-		if(names[link:GetFromNode():Name()] == nil) then
-			if(link:GetFromNode():GetTarget():GetFaction():IsAlliance()) then
-				allianceCount = allianceCount + 1
-			else
-				hordeCount = hordeCount + 1
-			end
-			names[link:GetFromNode():Name()] = true
-		end
-		if(names[link:GetToNode():Name()] == nil) then
-			if(link:GetToNode():GetTarget():GetFaction():IsAlliance()) then
-				allianceCount = allianceCount + 1
-			else
-				hordeCount = hordeCount + 1
-			end
-			names[link:GetToNode():Name()] = true
-		end
-	end
-
-	if(XF.Config.DataText.Link.Faction) then
-		text = format('%s|cffffffff%d|r \(|cff00FAF6%d|r\|||cffFF4700%d|r\)', text, XFO.Links:Count(), allianceCount, hordeCount)
-	else
-		text = format('%s|cffffffff%d|r', text, XFO.Links:Count())
-	end
-	XF.DataText.Links:GetBroker().text = text
+	text = format('%s|cffffffff%d|r', text, XF.Player.Target:ChatOnlineCount())
+	XFO.DTLinks:GetBroker().text = text
 end
 --#endregion
 
 --#region OnEnter
-function DTLinks:OnEnter(this)
+function XFC.DTLinks:OnEnter(this)
 	if(not XF.Initialized) then return end
 	if(CombatLockdown()) then return end
 
@@ -121,7 +94,7 @@ function DTLinks:OnEnter(this)
 		self.tooltip:SetHeaderFont(self.headerFont)
 		self.tooltip:SetFont(self.regularFont)
 		self.tooltip:SmartAnchorTo(this)
-		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() DTLinks:OnLeave() end)
+		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTLinks:OnLeave() end)
 		self.tooltip:EnableMouse(true)
 		self.tooltip:SetClampedToScreen(false)
 	end
@@ -134,20 +107,24 @@ function DTLinks:OnEnter(this)
 	local guildName = XFO.Confederate:Name()
 	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], guildName), self.headerFont, 'LEFT', tarCount)
 	line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTLINKS_HEADER_LINKS'], XFO.Links:Count()), self.headerFont, 'LEFT', tarCount)
-
-	line = self.tooltip:AddLine()
-	line = self.tooltip:AddLine()
 	line = self.tooltip:AddHeader()
 	--#endregion
 
 	--#region Column Headers
-	local targetColumn = {}
-	local i = 1
+	local columns = {}
 	for _, target in XFO.Targets:Iterator() do
-		local tarName = format('%s%s', format(XF.Icons.String, target:GetFaction():IconID()), target:GetRealm():Name())
-		self.tooltip:SetCell(line, i, tarName)
-		targetColumn[target:Key()] = i
+		table.insert(columns, target:Guild():Initials())
+	end
+	sort(columns, function(a, b) return a < b end)
+
+	local targetColumn = {
+		Player = 1
+	}
+	self.tooltip:SetCell(line, 1, XF.Lib.Locale['PLAYER'])
+	local i = 2
+	for _, column in ipairs(columns) do
+		self.tooltip:SetCell(line, i, column)
+		targetColumn[column] = i
 		i = i + 1
 	end
 
@@ -158,31 +135,56 @@ function DTLinks:OnEnter(this)
 
 	--#region Populate Table
 	if(XF.Initialized) then
-		for _, link in XFO.Links:Iterator() do
-			local fromName = format('|cffffffff%s|r', link:GetFromNode():Name())
-			if(link:IsMyLink() and link:GetFromNode():IsMyNode()) then
-				fromName = format('|cffffff00%s|r', link:GetFromNode():Name())
+		-- Player first
+		self.tooltip:SetCell(line, 1, XF.Player.Unit:UnitName(), self.regularFont)
+		for _, target in XFO.Targets:Iterator() do
+			if(target:IsMyTarget()) then
+				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', XFO.Confederate:OnlineCount()), self.regularFont, 'CENTER')
+			elseif(target:ChatOnlineCount() > 0) then
+				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', XF.Player.Faction:GetHex(), target:ChatOnlineCount()), self.regularFont, 'CENTER')
+			elseif(target:BNetOnlineCount() > 0) then
+				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', target:BNetOnlineCount()), self.regularFont, 'CENTER')
+			else
+				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self.regularFont, 'CENTER')
 			end
-
-			local toName = format('|cffffffff%s|r', link:GetToNode():Name())
-			if(link:IsMyLink() and link:GetToNode():IsMyNode()) then
-				toName = format('|cffffff00%s|r', link:GetToNode():Name())
-			end
-
-			self.tooltip:SetCell(line, targetColumn[link:GetFromNode():GetTarget():Key()], fromName, self.regularFont)
-			self.tooltip:SetCell(line, targetColumn[link:GetToNode():GetTarget():Key()], toName, self.regularFont)
-			
-			line = self.tooltip:AddLine()
 		end
+
+		line = self.tooltip:AddLine()
+		self.tooltip:AddSeparator()
+		line = self.tooltip:AddLine()
+
+		local names = {}
+		for _, unit in XFO.Confederate:Iterator() do
+			if(not unit:IsPlayer() and unit:IsOnline()) then
+				names[unit:UnitName()] = unit:Key()
+			end
+		end
+
+		for unitName, guid in PairsByKeys(names) do
+			line = self.tooltip:AddLine()
+			self.tooltip:SetCell(line, 1, unitName, self.regularFont)
+			local unit = XFO.Confederate:Get(guid)
+			for _, target in XFO.Targets:Iterator() do
+				if(unit:TargetChatCount(target:Key()) > 0) then
+					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', unit:Faction():GetHex(), unit:TargetChatCount(target:Key())), self.regularFont, 'CENTER')
+				elseif(unit:TargetBNetCount(target:Key()) > 0) then
+					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', unit:TargetBNetCount(target:Key())), self.regularFont, 'CENTER')
+				else
+					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self.regularFont, 'CENTER')
+				end
+			end
+		end
+		line = self.tooltip:AddLine()
 	end
 	--#endregion
 
+	self.tooltip:UpdateScrolling(XF.Config.DataText.Guild.Size)
 	self.tooltip:Show()
 end
 --#endregion
 
 --#region OnLeave
-function DTLinks:OnLeave()
+function XFC.DTLinks:OnLeave()
 	if self.tooltip and MouseIsOver(self.tooltip) then
         return
     else

@@ -50,4 +50,8 @@ function XFC.Faction:Print()
     XF:Debug(self:ObjectName(), '  iconID (' .. type(self.iconID) .. '): ' .. tostring(self.iconID))
     XF:Debug(self:ObjectName(), '  language (' .. type(self.language) .. '): ' .. tostring(self.language))
 end
+
+function XFC.Faction:GetHex()
+    return self:IsHorde() and 'E0000D' or '378DEF'
+end
 --#endregion

@@ -40,6 +40,7 @@ function XFC.Unit:new()
     object.mythicKey = nil
     object.realm = nil
     object.target = nil
+    object.targetCounts = nil
 
     return object
 end
@@ -76,6 +77,7 @@ function XFC.Unit:Deconstructor()
     self.mythicKey = nil
     self.realm = nil
     self.target = nil
+    self.targetCounts = nil
 end
 
 function XFC.Unit:Initialize(inMemberID)
@@ -117,6 +119,14 @@ function XFC.Unit:Initialize(inMemberID)
 	self:Guild(XF.Player.Guild)
     
     self:Target(XF.Player.Target)
+    self.targetCounts = {}
+    for _, target in XFO.Targets:Iterator() do
+        self.targetCounts[target:ID()] = {
+            chat = 0,
+            bnet = 0
+        }
+    end
+
     self:TimeStamp(XFF.TimeCurrent())
     self:Class(XFO.Classes:Get(unitData.classID))
     self:Race(XFO.Races:Get(unitData.race))
@@ -503,6 +513,24 @@ function XFC.Unit:LastLogin(inDays)
     end
     return self.lastLogin
 end
+
+function XFC.Unit:TargetChatCount(inTargetKey, inCount)
+    assert(type(inTargetKey) == 'number')
+    assert(type(inCount) == 'number' or inCount == nil)
+    if(inCount ~= nil) then
+        self.targetCounts[inTargetKey].chat = inCount
+    end
+    return self.targetCounts[inTargetKey].chat
+end
+
+function XFC.Unit:TargetBNetCount(inTargetKey, inCount)
+    assert(type(inTargetKey) == 'number')
+    assert(type(inCount) == 'number' or inCount == nil)
+    if(inCount ~= nil) then
+        self.targetCounts[inTargetKey].bnet = inCount
+    end
+    return self.targetCounts[inTargetKey].bnet
+end
 --#endregion
 
 --#region Methods
@@ -535,6 +563,7 @@ function XFC.Unit:Print()
     if(self:HasRaiderIO()) then self:RaiderIO():Print() end
     if(self:HasMythicKey()) then self:MythicKey():Print() end
     if(self:HasZone()) then self:Zone():Print() end
+    if(self:HasTarget()) then self:Target():Print() end
 end
 
 function XFC.Unit:IsPlayer()
@@ -635,6 +664,10 @@ function XFC.Unit:GetLink()
     return format('|Hplayer:%s|h[%s]|h', self:UnitName(), self:Name())
 end
 
+function XFC.Unit:GetColoredName()
+    return format('|cff%s%s|r', self:Class():Hex(), self:Name())
+end
+
 function XFC.Unit:Serialize()
     local data = {}
 
@@ -668,10 +701,10 @@ function XFC.Unit:Deserialize(inSerial)
     local data = unpickle(inSerial)
 
 	self:AchievementPoints(data.A)    
-    self:Class(XFO.Classes:Deserialize(data.C))
-    self:Race(XFO.Races:Deserialize(data.F))
-    self:Guild(XFO.Guilds:Deserialize(data.G))
-    self:Hero(XFO.Heroes:Deserialize(data.H))
+    self:Class(XFO.Classes:Get(tonumber(data.C)))
+    self:Race(XFO.Races:Get(tonumber(data.F)))
+    self:Guild(XFO.Guilds:Get(tonumber(data.G)))
+    self:Hero(XFO.Heroes:Get(tonumber(data.H)))
 	self:ItemLevel(data.I)
 	self:Rank(data.J)
     self:GUID(data.K)
@@ -681,9 +714,9 @@ function XFC.Unit:Deserialize(inSerial)
 	self:Note(data.N)
 	self:Presence(data.O)
     self:PvP(data.P)	
-    self:Realm(XFO.Realms:Deserialize(data.R))
-    self:Spec(XFO.Specs:Deserialize(data.S))
-    self:Target(XFO.Targets:Deserialize(data.T))	
+    self:Realm(XFO.Realms:Get(tonumber(data.R)))
+    self:Spec(XFO.Specs:Get(tonumber(data.S)))
+    self:Target(XFO.Targets:Get(data.T))	
 	self:Version(XFO.Versions:Deserialize(data.V))
     self:Profession1(XFO.Professions:Deserialize(data.X))
     self:Profession2(XFO.Professions:Deserialize(data.Y))

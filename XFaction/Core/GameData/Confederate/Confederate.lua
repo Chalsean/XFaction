@@ -29,14 +29,20 @@ function XFC.Confederate:Initialize()
             instance = true,
             groupDelta = XF.Settings.LocalGuild.ScanTimer
         })
-        -- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
-        XFF.GuildQueryServer()
-
+        
         -- This here because there isnt a good place for it
         XFO.Events:Add({
             name = 'Level', 
             event = 'PLAYER_LEVEL_CHANGED', 
             callback = XFO.Confederate.CallbackPlayerChanged
+        })
+
+        XFO.Timers:Add({
+            name = 'Heartbeat', 
+            delta = XF.Settings.Player.Heartbeat, 
+            callback = XFO.Confederate.CallbackHeartbeat, 
+            repeater = true, 
+            instance = true
         })
 
         XF:Info(self:ObjectName(), 'Initialized confederate %s <%s>', self:Name(), self:Key())
@@ -66,14 +72,23 @@ function XFC.Confederate:Add(inUnit)
         self.objects[inUnit:Key()] = inUnit
         if(oldData:IsOffline() and inUnit:IsOnline()) then
             self:OnlineCount(1)
+            if(inUnit:HasTarget()) then
+                inUnit:Target():CalcChatOnline(inUnit)
+            end
         elseif(oldData:IsOnline() and inUnit:IsOffline()) then
             self:OnlineCount(-1)
+            if(oldData:HasTarget()) then
+                oldData:Target():CalcChatOnline(inUnit)
+            end
         end
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
         if(inUnit:IsOnline()) then
             self:OnlineCount(1)
+            if(inUnit:HasTarget()) then
+                inUnit:Target():CalcChatOnline(inUnit)
+            end
         end
     end
     
@@ -89,6 +104,9 @@ function XFC.Confederate:Remove(inKey)
         self.parent.Remove(self, inKey)
         if(unit:IsOnline()) then
             self:OnlineCount(-1)
+            if(unit:IsSameFaction() and unit:IsSameRealm() and unit:HasTarget()) then
+                unit:Target():ChatOnlineCount(1)
+            end
         end
         self:Push(unit)
     end
@@ -150,7 +168,6 @@ function XFC.Confederate:Logout(inUnit)
     
     XF:Info(self:ObjectName(), 'Guild member logout: %s', inUnit:UnitName())
     XFO.SystemFrame:DisplayLogout(inUnit:Name())
-    XFO.Links:Unlink(inUnit:Key())
 
     if(inUnit:IsSameGuild()) then
         self:Add(inUnit)
@@ -214,6 +231,16 @@ function XFC.Confederate:CallbackPlayerChanged(inEvent)
     local self = XFO.Confederate
     try(function ()
         XF.Player.Unit:Initialize(XF.Player.Unit:ID())
+        XFO.Mailbox:SendDataMessage()
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+    end)
+end
+
+function XFC.Confederate:CallbackHeartbeat() 
+    local self = XFO.Confederate
+    try(function ()
         XFO.Mailbox:SendDataMessage()
     end).
     catch(function (err)

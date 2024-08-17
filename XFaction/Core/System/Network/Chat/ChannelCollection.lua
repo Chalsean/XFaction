@@ -46,6 +46,8 @@ function XFC.ChannelCollection:Initialize()
         channel:Name('GUILD')
         self:GuildChannel(channel)
 
+		self:CallbackSync()
+
 		self:IsInitialized(true)
 	end
 end
@@ -85,7 +87,7 @@ end
 
 function XFC.ChannelCollection:Print()
 	self:ParentPrint()
-	XF:Debug(self:ObjectName(), '  useGuild (' .. type(self.useGuild) .. '): ' .. tostring(self.useGuild))
+	XF:Debug(self:ObjectName(), '  guildChannel (' .. type(self.guildChannel) .. ')')
 	XF:Debug(self:ObjectName(), '  localChannel (' .. type(self.localChannel) .. ')')
 	if(self:HasLocalChannel()) then self:LocalChannel():Print() end
 end

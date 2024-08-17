@@ -131,6 +131,10 @@ function XFC.Object:ParentPrint()
     XF:Debug(self:ObjectName(), '  initialized (' .. type(self.initialized) .. '): ' .. tostring(self.initialized))
 end
 
+function XFC.Object:Serialize()
+    return self:Key()
+end
+
 function XFC.Object:Equals(inObject)
     if(inObject == nil) then return false end
     if(type(inObject) ~= 'table' or inObject.__name == nil) then return false end

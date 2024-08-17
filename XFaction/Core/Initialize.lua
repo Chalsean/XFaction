@@ -32,7 +32,7 @@ function XF:CoreInit()
 
 	-- DataText
 	XF.DataText.Guild = DTGuild:new()
-	XF.DataText.Links = DTLinks:new()
+	XFO.DTLinks = XFC.DTLinks:new()
 	XF.DataText.Metrics = DTMetrics:new()
 
 	-- Frames
@@ -45,7 +45,6 @@ function XF:CoreInit()
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
 	XFO.Friends = XFC.FriendCollection:new(); XFO.Friends:Initialize()
-	XFO.Links = XFC.LinkCollection:new(); XFO.Links:Initialize()
 	XFO.Mailbox = XFC.Mailbox:new(); XFO.Mailbox:Initialize()
 	XFO.PostOffice = XFC.PostOffice:new(); XFO.PostOffice:Initialize()
 	XFO.BNet = XFC.BNet:new()
@@ -86,7 +85,7 @@ function XF:CoreInit()
 		XF.Player.InInstance = XFF.PlayerIsInInstance()
 		
 		XF.DataText.Guild:Initialize()
-		XF.DataText.Links:Initialize()
+		XFO.DTLinks:Initialize()
 		XF.DataText.Metrics:Initialize()
 
 		XFO.Expansions = XFC.ExpansionCollection:new(); XFO.Expansions:Initialize()
@@ -165,10 +164,12 @@ function XF:CallbackLoginPlayer()
 			XFO.Confederate:Add(unitData)
 			XF.Player.Unit:Print()
 
+			-- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
+			XFF.GuildQueryServer()
+
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
 				XFO.Friends:Restore()
-				XFO.Links:Restore()
 				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
                 XFO.Mailbox:SendDataMessage()
@@ -186,7 +187,7 @@ function XF:CallbackLoginPlayer()
 
 			-- Finish DT init
 			XF.DataText.Guild:PostInitialize()
-			XF.DataText.Links:PostInitialize()
+			XFO.DTLinks:PostInitialize()
 			XF.DataText.Metrics:PostInitialize()
 
 			-- For support reasons, it helps to know what addons are being used

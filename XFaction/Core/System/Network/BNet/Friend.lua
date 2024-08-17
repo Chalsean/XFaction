@@ -45,14 +45,16 @@ function XFC.Friend:Initialize(inID)
         self:Key(accountInfo.bnetAccountID)
         self:ID(inID) -- Query ID, this can change between logins, thus why its not key
         self:Name(accountInfo.accountName)
-        self:AccountID(accountInfo.bnetAccountID)
-        self:GameID(accountInfo.gameAccountInfo.gameAccountID)        
+        self:AccountID(accountInfo.bnetAccountID)                
         self:Tag(accountInfo.battleTag)
         self:GUID(accountInfo.playerGuid)
         self:IsTrueFriend(accountInfo.isFriend)
-        self:IsOnline(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW')
-        self:Realm(XFO.Realms(tonumber(accountInfo.gameAccountInfo.realmID)))
-        self:Faction(XFO.Factions:Get(accountInfo.gameAccountInfo.factionName))
+
+        if(self:IsOnline(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW')) then
+            self:GameID(accountInfo.gameAccountInfo.gameAccountID)
+            self:Realm(XFO.Realms:Get(tonumber(accountInfo.gameAccountInfo.realmID)))
+            self:Faction(XFO.Factions:Get(accountInfo.gameAccountInfo.factionName))
+        end
 
         self:IsInitialized(true)
     end
@@ -117,7 +119,7 @@ function XFC.Friend:IsOnline(inBoolean)
 end
 
 function XFC.Friend:Realm(inRealm)
-    assert(type(inRealm) == 'Realm' or inRealm == nil)
+    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm' or inRealm == nil)
     if(inRealm ~= nil) then
         self.realm = inRealm
     end
@@ -125,7 +127,7 @@ function XFC.Friend:Realm(inRealm)
 end
 
 function XFC.Friend:Faction(inFaction)
-    assert(type(inFaction) == 'Faction' or inFaction == nil)
+    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction' or inFaction == nil)
     if(inFaction ~= nil) then
         self.faction = inFaction
     end

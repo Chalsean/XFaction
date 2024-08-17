@@ -898,13 +898,13 @@ end
 
 --#region Methods
 function XFC.RealmCollection:Add(inRealm)
-	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
+	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm')
 	self.realmsByID[inRealm:ID()] = inRealm
 	self.parent.Add(self, inRealm)
 end
 
 function XFC.RealmCollection:Get(inKey)
-	assert(type(inKey) == 'number' or type(inKey) == 'string', 'argument must be number or string')
+	assert(type(inKey) == 'number' or type(inKey) == 'string')
 	if(type(inKey) == 'number') then
 		return self.realmsByID[inKey]
 	end
