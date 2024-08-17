@@ -47,7 +47,7 @@ function XFC.Mailbox:Process(inMessage)
         -- Forward message to any remaining targets
         --XFO.PostOffice:Send(inMessage)
 
-        inMessage:FromUnit():Print()
+        --inMessage:FromUnit():Print()
 
         --XFO.Targets:ProcessMessage(inMessage)
         XFO.Confederate:ProcessMessage(inMessage)
@@ -57,8 +57,10 @@ function XFC.Mailbox:Process(inMessage)
         end
 
         if(inMessage:IsPingMessage()) then
-            XFO.Mailbox:SendAckMessage(inMessage)
-            XFO.Friends:IsLinked(inMessage:From())
+            local friend = XFO.Friends:IsLinked(inMessage:From())
+            if(friend ~= nil) then
+                XFO.Mailbox:SendAckMessage(friend)
+            end
             return
         end
 
@@ -188,6 +190,7 @@ function XFC.Mailbox:SendPingMessage(inFriend)
     try(function ()
         message = self:Pop()
         message:Initialize()
+        message:RemoveAll()
         message:Subject(XF.Enum.Message.PING)
         message:Priority(XF.Enum.Priority.Low)
         XFO.BNet:Whisper(message, inFriend)
@@ -206,6 +209,7 @@ function XFC.Mailbox:SendAckMessage(inFriend)
     try(function ()
         message = self:Pop()
         message:Initialize()
+        message:RemoveAll()
         message:Subject(XF.Enum.Message.ACK)
         message:Priority(XF.Enum.Priority.Low)
         XFO.BNet:Whisper(message, inFriend)

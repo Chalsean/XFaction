@@ -62,7 +62,7 @@ end
 
 function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XF:Debug(self:ObjectName(), 'Received [%s] packet from [%s] for tag [%s]', inDistribution, inSender, inMessageTag)
+    XF:Trace(self:ObjectName(), 'Received [%s] packet from [%s] for tag [%s]', inDistribution, inSender, inMessageTag)
 
     -- If not a message from this addon, ignore
     if(not XFO.Tags:Contains(inMessageTag)) then
@@ -100,7 +100,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             if(inDistribution == 'GUILD') then
                 message:Remove(XF.Player.Target:Key())
             end
-            message:Print()
+            --message:Print()
             XFO.Mailbox:Process(message)
             XFO.Mailbox:Add(messageKey)
             self:Remove(messageKey)

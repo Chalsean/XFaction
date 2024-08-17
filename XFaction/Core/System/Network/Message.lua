@@ -109,12 +109,20 @@ end
 
 --#region Methods
 function XFC.Message:Print()
-    self:ParentPrint()
+    XF:DoubleLine(self:ObjectName())
+    XF:Debug(self:ObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
     XF:Debug(self:ObjectName(), '  from (' .. type(self.from) .. '): ' .. tostring(self.from))
     XF:Debug(self:ObjectName(), '  totalPackets (' .. type(self.totalPackets) .. '): ' .. tostring(self.totalPackets))
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:ObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XF:Debug(self:ObjectName(), '  priority (' .. type(self.priority) .. '): ' .. tostring(self.priority))
+    XF:Debug(self:ObjectName(), '  data (' .. type(self.data) .. '): ' .. tostring(self.data))
+    local targets = ''
+    for _, target in self:Iterator() do
+        targets = targets .. target:Guild():Initials() .. ';'
+    end
+    XF:Debug(self:ObjectName(), '  remaining targets: ' .. targets)
+    XF:SingleLine(self:ObjectName())
 end
 
 function XFC.Message:IsMyMessage()

@@ -708,8 +708,6 @@ function XFC.Unit:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
 
-    XF:DataDumper(self:ObjectName(), data)
-
     self:IsRunningAddon(true)
 	self:AchievementPoints(data.A)    
     self:Class(XFO.Classes:Get(tonumber(data.C)))

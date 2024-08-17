@@ -112,11 +112,13 @@ function XFC.FriendCollection:IsLinked(inGUID)
     if(friend ~= nil) then
         friend:IsLinked(true)
     end
+	return friend
 end
 
 function XFC.FriendCollection:CallbackPing()
     local self = XFO.Friends
     try(function()
+		self:RefreshFriends()
         for _, friend in self:Iterator() do
             if(not friend:IsLinked() and friend:CanLink()) then
                 XFO.Mailbox:SendPingMessage(friend)

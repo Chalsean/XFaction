@@ -46,12 +46,12 @@ function XFC.Friend:Initialize(inID)
         self:ID(inID) -- Query ID, this can change between logins, thus why its not key
         self:Name(accountInfo.accountName)
         self:AccountID(accountInfo.bnetAccountID)                
-        self:Tag(accountInfo.battleTag)
-        self:GUID(accountInfo.playerGuid)
+        self:Tag(accountInfo.battleTag)        
         self:IsTrueFriend(accountInfo.isFriend)
 
         if(self:IsOnline(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW')) then
             self:GameID(accountInfo.gameAccountInfo.gameAccountID)
+            self:GUID(accountInfo.gameAccountInfo.playerGuid)
             self:Realm(XFO.Realms:Get(tonumber(accountInfo.gameAccountInfo.realmID)))
             self:Faction(XFO.Factions:Get(accountInfo.gameAccountInfo.factionName))
         end
@@ -138,9 +138,7 @@ end
 --#region Methods
 function XFC.Friend:Print()
     self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
     XF:Debug(self:ObjectName(), '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
-    XF:Debug(self:ObjectName(), '  accountName (' .. type(self.accountName) .. '): ' .. tostring(self.accountName))
     XF:Debug(self:ObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
     XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
     XF:Debug(self:ObjectName(), '  isLinked (' .. type(self.isLinked) .. '): ' .. tostring(self.isLinked))
