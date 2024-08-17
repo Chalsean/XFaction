@@ -47,25 +47,14 @@ function XFC.Mailbox:Process(inMessage)
         -- Forward message to any remaining targets
         --XFO.PostOffice:Send(inMessage)
 
-        --inMessage:FromUnit():Print()
-
-        --XFO.Targets:ProcessMessage(inMessage)
         XFO.Confederate:ProcessMessage(inMessage)
 
         if(inMessage:IsLoginMessage() or inMessage:IsLogoutMessage() or inMessage:IsDataMessage()) then
             return
         end
 
-        if(inMessage:IsPingMessage()) then
-            local friend = XFO.Friends:IsLinked(inMessage:From())
-            if(friend ~= nil) then
-                XFO.Mailbox:SendAckMessage(friend)
-            end
-            return
-        end
-
-        if(inMessage:IsAckMessage()) then
-            XFO.Friends:IsLinked(inMessage:From())
+        if(inMessage:IsPingMessage() or inMessage:IsAckMessage()) then
+            XFO.Friends:ProcessMessage(inMessage)            
             return
         end
 
@@ -113,16 +102,41 @@ function XFC.Mailbox:Send(inMessage)
     for _, target in inMessage:Iterator() do
         if(target:UseChatProtocol()) then
             chatBroadcast = true
-            inMessage:Remove(target:Key())
+            if(target:ChatCount() > 1) then
+                inMessage:Remove(target:Key())
+            end
         end
     end
 
-    --if(guildBroadcast) then
+    if(guildBroadcast) then
         XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
-    --end
-    --if(chatBroadcast) then
+    end
+    if(chatBroadcast) then
         XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
-    --end
+    end
+
+    -- If there are any targets remaining, switch to BNet
+    if(inMessage:Count() > 0 and XFO.Friends:HasFriendsOnline()) then
+        -- Build xref list of friend to target
+        local recipients = {}
+        for _, friend in XFO.Friends:Iterator() do
+            if(friend:HasTarget()) then
+                if(recipients[friend:Target():Key()] == nil) then
+                    recipients[friend:Target():Key()] = {}
+                end
+                table.insert(recipients[friend:Target():Key()], friend:Key())
+            end
+        end
+
+        -- Randomly select friend to BNet whisper
+        for _, target in inMessage:Iterator() do
+            if(recipients[target:Key()] ~= nil) then
+                local randomKey = recipients[target:Key()][math.random(1, #recipients[target:Key()])]
+                local friend = XFO.Friends:Get(randomKey)
+                XFO.BNet:Whisper(inMessage, friend)
+            end
+        end
+    end
 end
 
 -- Do not initiliaze message as we do not need unit/link data

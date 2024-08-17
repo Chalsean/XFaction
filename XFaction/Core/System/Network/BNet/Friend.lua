@@ -19,6 +19,7 @@ function XFC.Friend:new()
     object.isOnline = false
     object.realm = nil
     object.faction = nil
+    object.target = nil
 
     return object
 end
@@ -34,6 +35,7 @@ function XFC.Friend:Deconstructor()
     self.isOnline = false
     self.realm = nil
     self.faction = nil
+    self.target = nil
 end
 
 function XFC.Friend:Initialize(inID)
@@ -133,6 +135,14 @@ function XFC.Friend:Faction(inFaction)
     end
     return self.faction
 end
+
+function XFC.Friend:Target(inTarget)
+    assert(type(inTarget) == 'table' and inTarget.__name == 'Target' or inTarget == nil)
+    if(inTarget ~= nil) then
+        self.target = inTarget
+    end
+    return self.target
+end
 --#endregion
 
 --#region Methods
@@ -146,6 +156,7 @@ function XFC.Friend:Print()
     XF:Debug(self:ObjectName(), '  isOnline (' .. type(self.isOnline) .. '): ' .. tostring(self.isOnline))
     if(self:HasRealm()) then self:Realm():Print() end
     if(self:HasFaction()) then self:Faction():Print() end
+    if(self:HasTarget()) then self:Target():Print() end
 end
 
 function XFC.Friend:HasRealm()
@@ -156,6 +167,10 @@ function XFC.Friend:HasFaction()
     return self:Faction() ~= nil
 end
 
+function XFC.Friend:HasTarget()
+    return self:Target() ~= nil
+end
+
 function XFC.Friend:IsSameRealm()
     return self:HasRealm() and self:Realm():Equals(XF.Player.Realm)
 end
@@ -164,8 +179,8 @@ function XFC.Friend:IsSameFaction()
     return self:HasFaction() and self:Faction():Equals(XF.Player.Faction)
 end
 
-function XFC.Friend:IsSameGuild()
-    return self:HasUnit() and self:Unit():IsSameGuild()
+function XFC.Friend:IsSameTarget()
+    return self:HasTarget() and self:Target():IsMyTarget()
 end
 
 function XFC.Friend:HasUnit()
@@ -178,8 +193,8 @@ end
 
 function XFC.Friend:CanLink(inBoolean)
     if(not self:IsOnline() or not self:IsTrueFriend()) then return false end
-    if(self:IsSameRealm() and self:IsSameFaction()) then return false end
-    if(self:IsSameGuild()) then return false end -- GUILD channel will handle this
+    if(self:IsSameRealm() and self:IsSameFaction()) then return false end -- addon channel will handle this
+    if(self:IsSameTarget()) then return false end -- GUILD channel will handle this
     return true
 end
 --#endregion

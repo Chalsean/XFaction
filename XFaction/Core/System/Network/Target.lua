@@ -12,6 +12,7 @@ function XFC.Target:new()
     object.chatRecipients = nil
     object.chatCount = 0
     object.bnetRecipients = nil
+    object.bnetCount = 0
     return object
 end
 
@@ -41,6 +42,14 @@ function XFC.Target:ChatCount(inCount)
     end
     return self.chatCount
 end
+
+function XFC.Target:BNetCount(inCount)
+    assert(type(inCount) == 'number' or inCount == nil)
+    if(inCount ~= nil) then
+        self.bnetCount = self.bnetCount + inCount
+    end
+    return self.bnetCount
+end
 --#endregion
 
 --#region Methods
@@ -48,6 +57,7 @@ function XFC.Target:Print()
     self:ParentPrint()
     if(self:HasGuild()) then self:Guild():Print() end
     XF:DataDumper(self:ObjectName(), self.chatRecipients)
+    XF:DataDumper(self:ObjectName(), self.bnetRecipients)
 end
 
 function XFC.Target:HasGuild()
@@ -88,5 +98,20 @@ end
 
 function XFC.Target:UseChatProtocol()
     return self:ChatCount() > 0
+end
+
+function XFC.Target:BNetRecipient(inFriendKey)
+    assert(type(inFriendKey) == 'number')
+    if(self.bnetRecipients[inFriendKey] == nil) then
+        self:BNetCount(1)
+        self.bnetRecipients[inFriendKey] = true
+    else
+        self:BNetCount(-1)
+        self.bnetRecipients[inFriendKey] = nil
+    end
+end
+
+function XFC.Target:UseBNetProtocol()
+    return self:BNetCount() > 0
 end
 --#endregion

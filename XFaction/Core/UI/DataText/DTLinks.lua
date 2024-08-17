@@ -142,8 +142,8 @@ function XFC.DTLinks:OnEnter(this)
 				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', target:ChatCount()), self.regularFont, 'CENTER')
 			elseif(target:ChatCount() > 0) then
 				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', XF.Player.Faction:GetHex(), target:ChatCount()), self.regularFont, 'CENTER')
-			-- elseif(target:BNetOnlineCount() > 0) then
-			-- 	self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', target:BNetOnlineCount()), self.regularFont, 'CENTER')
+			elseif(target:BNetCount() > 0) then
+			 	self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', target:BNetCount()), self.regularFont, 'CENTER')
 			else
 				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self.regularFont, 'CENTER')
 			end

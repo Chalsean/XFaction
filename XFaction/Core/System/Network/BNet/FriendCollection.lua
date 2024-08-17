@@ -19,13 +19,13 @@ function XFC.FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-		XFO.Events:Add({
-            name = 'Friend', 
-            event = 'BN_FRIEND_INFO_CHANGED', 
-            callback = XFO.Friends.RefreshFriends, 
-            instance = true,
-            groupDelta = XF.Settings.Network.BNet.FriendTimer
-        })
+		-- XFO.Events:Add({
+        --     name = 'Friend', 
+        --     event = 'BN_FRIEND_INFO_CHANGED', 
+        --     callback = XFO.Friends.RefreshFriends, 
+        --     instance = true,
+        --     groupDelta = XF.Settings.Network.BNet.FriendTimer
+        -- })
 
         XFO.Timers:Add({
             name = 'Ping', 
@@ -45,6 +45,10 @@ function XFC.FriendCollection:HasFriends()
     return self:Count() > 0
 end
 
+function XFC.FriendCollection:HasFriendsOnline()
+	return self:Count() > 0
+end
+
 function XFC.FriendCollection:RefreshFriends()
 	local self = XFO.Friends
 	for i = 1, XFF.BNetFriendCount() do
@@ -54,7 +58,19 @@ function XFC.FriendCollection:RefreshFriends()
 			friend:Initialize(i)
 			
 			if(self:Contains(friend:Key())) then
-				friend:IsLinked(friend:CanLink() and self:Get(friend:Key()):IsLinked())
+				local old = self:Get(friend:Key())
+				if(old:IsLinked()) then
+					if(friend:CanLink()) then
+						friend:IsLinked(true)
+						friend:Target(old:Target())
+					else
+						friend:IsLinked(false)
+						old:Target():BNetRecipient(old:Key())
+						if(old:HasUnit()) then
+							XFO.Confederate:Logout(old:Unit())
+						end
+					end
+				end
 			end
 
 			self:Replace(friend)
@@ -128,5 +144,22 @@ function XFC.FriendCollection:CallbackPing()
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
     end)
+end
+
+function XFC.FriendCollection:ProcessMessage(inMessage)
+	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+
+	local friend = XFO.Friends:IsLinked(inMessage:From())
+	if(friend ~= nil) then		
+		friend:Target(inMessage:FromUnit():Target())
+		friend:Target():BNetRecipient(friend:Key())
+
+		if(inMessage:IsPingMessage()) then
+			XF:Debug(self:ObjectName(), 'Received ping message from [%s]', friend:Tag())
+			XFO.Mailbox:SendAckMessage(friend)
+		else
+			XF:Debug(self:ObjectName(), 'Received ack message from [%s]', friend:Tag())
+		end
+	end
 end
 --#endregion
