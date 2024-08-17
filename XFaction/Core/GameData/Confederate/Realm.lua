@@ -105,4 +105,8 @@ function XFC.Realm:Equals(inRealm)
     end
     return false
 end
+
+function XFC.Realm:Serialize()
+    return self:ID()
+end
 --#endregion
