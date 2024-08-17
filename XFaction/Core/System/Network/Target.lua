@@ -9,17 +9,17 @@ function XFC.Target:new()
     local object = XFC.Target.parent.new(self)
     object.__name = ObjectName
     object.guild = nil
-    object.chatOnlineCount = 0
-    object.bnetOnlineCount = 0
+    object.chatRecipients = nil
+    object.chatCount = 0
+    object.bnetRecipients = nil
     return object
 end
 
 function XFC.Target:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
-        if(self:IsMyTarget()) then
-            self:ChatOnlineCount(-1)
-        end
+        self.chatRecipients = {}
+        self.bnetRecipients = {}
         self:IsInitialized(true)
     end
 end
@@ -34,29 +34,20 @@ function XFC.Target:Guild(inGuild)
     return self.guild
 end
 
-function XFC.Target:ChatOnlineCount(inCount)
+function XFC.Target:ChatCount(inCount)
     assert(type(inCount) == 'number' or inCount == nil)
     if(inCount ~= nil) then
-        self.chatOnlineCount = self.chatOnlineCount + inCount
+        self.chatCount = self.chatCount + inCount
     end
-    return self.chatOnlineCount
-end
-
-function XFC.Target:BNetOnlineCount(inCount)
-    assert(type(inCount) == 'number' or inCount == nil)
-    if(inCount ~= nil) then
-        self.bnetOnlineCount = self.bnetOnlineCount + inCount
-    end
-    return self.bnetOnlineCount
+    return self.chatCount
 end
 --#endregion
 
 --#region Methods
 function XFC.Target:Print()
     self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  chatOnlineCount (' .. type(self.chatOnlineCount) .. '): ' .. tostring(self.chatOnlineCount))
-    XF:Debug(self:ObjectName(), '  bnetOnlineCount (' .. type(self.bnetOnlineCount) .. '): ' .. tostring(self.bnetOnlineCount))
     if(self:HasGuild()) then self:Guild():Print() end
+    XF:DataDumper(self:ObjectName(), self.chatRecipients)
 end
 
 function XFC.Target:HasGuild()
@@ -81,21 +72,21 @@ function XFC.Target:Deserialize(inSerial)
     end
 end
 
-function XFC.Target:UseChatProtocol()
-    return self:ChatOnlineCount() > 1
+function XFC.Target:ChatRecipient(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    if(inUnit:IsPlayer()) then return end
+    if(inUnit:CanChat()) then
+        if(self.chatRecipients[inUnit:Key()] == nil) then
+            self:ChatCount(1)
+            self.chatRecipients[inUnit:Key()] = true
+        end
+    elseif(self.chatRecipients[inUnit:Key()] ~= nil) then
+        self:ChatCount(-1)
+        self.chatRecipients[inUnit:Key()] = nil
+    end
 end
 
-function XFC.Target:CalcChatOnline(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
-    if(inUnit:IsPlayer() or not inUnit:IsRunningAddon()) then return end
-    if(not inUnit:IsSameFaction() or not inUnit:IsSameRealm()) then return end
-
-    if(inUnit:IsOnline()) then
-        self:ChatOnlineCount(1)
-    else
-        self:ChatOnlineCount(-1)
-    end
-
-    XFO.DTLinks:RefreshBroker()
+function XFC.Target:UseChatProtocol()
+    return self:ChatCount() > 0
 end
 --#endregion

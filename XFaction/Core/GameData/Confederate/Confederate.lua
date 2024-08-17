@@ -69,15 +69,24 @@ function XFC.Confederate:Add(inUnit)
 
     if(self:Contains(inUnit:Key())) then
         local oldData = self:Get(inUnit:Key())
-        self.objects[inUnit:Key()] = inUnit
+        self.objects[inUnit:Key()] = inUnit   
+        if(oldData:IsOffline() and inUnit:IsOnline()) then
+            self:OnlineCount(1)
+        elseif(oldData:IsOnline() and inUnit:IsOffline()) then
+            self:OnlineCount(-1)
+        end
         self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
+        if(inUnit:IsOnline()) then
+            self:OnlineCount(1)
+        end
     end
     
     if(inUnit:IsPlayer()) then
         XF.Player.Unit = inUnit
     end
+    inUnit:Target():ChatRecipient(inUnit)
 end
 
 function XFC.Confederate:Remove(inKey)
@@ -87,10 +96,8 @@ function XFC.Confederate:Remove(inKey)
         self.parent.Remove(self, inKey)
         if(unit:IsOnline()) then
             self:OnlineCount(-1)
-            if(unit:IsSameFaction() and unit:IsSameRealm() and unit:HasTarget()) then
-                unit:Target():ChatOnlineCount(1)
-            end
         end
+        unit:Target():ChatRecipient(unit)
         self:Push(unit)
     end
 end
@@ -201,10 +208,14 @@ end
 
 function XFC.Confederate:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+
     if(inMessage:IsLogoutMessage()) then
         self:Logout(inMessage:FromUnit())
-    elseif(inMessage:IsLoginMessage()) then
-        self:Login(inMessage:FromUnit())
+        return
+    end
+
+    if(inMessage:IsLoginMessage()) then
+        self:Login(inMessage:FromUnit())        
     else
         self:Add(inMessage:FromUnit())
     end

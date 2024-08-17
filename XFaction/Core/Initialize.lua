@@ -125,9 +125,9 @@ function XF:CallbackLoginGuild()
 				XFO.Friends:Initialize()				
 				XFO.BNet:Initialize()
 
-				if(XF.Cache.UIReload) then
-					XFO.Confederate:Restore()					
-				end
+				-- if(XF.Cache.UIReload) then
+				-- 	XFO.Confederate:Restore()					
+				-- end
 
 				XFO.Timers:Add({
 					name = 'LoginPlayer', 

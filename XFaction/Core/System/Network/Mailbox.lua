@@ -49,7 +49,7 @@ function XFC.Mailbox:Process(inMessage)
 
         inMessage:FromUnit():Print()
 
-        -- Every message contains unit and link information, except LOGOUT
+        --XFO.Targets:ProcessMessage(inMessage)
         XFO.Confederate:ProcessMessage(inMessage)
 
         if(inMessage:IsLoginMessage() or inMessage:IsLogoutMessage() or inMessage:IsDataMessage()) then

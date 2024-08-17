@@ -652,6 +652,14 @@ function XFC.Unit:IsSameGuild()
     return XF.Player.Guild:Equals(self:Guild())
 end
 
+function XFC.Unit:CanChat()
+    return self:IsOnline() and 
+           self:IsRunningAddon() and 
+           (
+                self:Target():IsMyTarget() or (self:IsSameFaction() and self:IsSameRealm())
+           )
+end
+
 function XFC.Unit:GetLink()
 
     if(not self:IsSameFaction()) then
@@ -698,7 +706,9 @@ end
 
 function XFC.Unit:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
-    local data = unpickle(inSerial)    
+    local data = unpickle(inSerial)
+
+    XF:DataDumper(self:ObjectName(), data)
 
     self:IsRunningAddon(true)
 	self:AchievementPoints(data.A)    

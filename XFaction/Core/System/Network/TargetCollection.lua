@@ -16,6 +16,7 @@ function XFC.TargetCollection:Initialize()
 		self:ParentInitialize()
 		for _, guild in XFO.Guilds:Iterator() do
 			local target = XFC.Target:new()
+			target:Initialize()
 			target:Guild(guild)
 			target:Key(guild:Key())
 			target:ID(guild:Key())
@@ -29,5 +30,12 @@ function XFC.TargetCollection:Initialize()
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
+end
+--#endregion
+
+--#region Methods
+function XFC.TargetCollection:ProcessMessage(inMessage)
+	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+	inMessage:FromUnit():Target():ChatRecipient(inMessage:FromUnit())
 end
 --#endregion

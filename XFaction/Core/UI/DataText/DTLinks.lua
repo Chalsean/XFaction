@@ -74,7 +74,7 @@ function XFC.DTLinks:RefreshBroker()
 		text = XF.Lib.Locale['LINKS'] .. ': '
 	end
 
-	text = format('%s|cffffffff%d|r', text, XF.Player.Target:ChatOnlineCount())
+	--text = format('%s|cffffffff%d|r', text, XF.Player.Target:ChatOnlineCount())
 	XFO.DTLinks:GetBroker().text = text
 end
 --#endregion
@@ -139,11 +139,11 @@ function XFC.DTLinks:OnEnter(this)
 		self.tooltip:SetCell(line, 1, XF.Player.Unit:UnitName(), self.regularFont)
 		for _, target in XFO.Targets:Iterator() do
 			if(target:IsMyTarget()) then
-				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', XFO.Confederate:OnlineCount()), self.regularFont, 'CENTER')
-			elseif(target:ChatOnlineCount() > 0) then
-				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', XF.Player.Faction:GetHex(), target:ChatOnlineCount()), self.regularFont, 'CENTER')
-			elseif(target:BNetOnlineCount() > 0) then
-				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', target:BNetOnlineCount()), self.regularFont, 'CENTER')
+				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', target:ChatCount()), self.regularFont, 'CENTER')
+			elseif(target:ChatCount() > 0) then
+				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', XF.Player.Faction:GetHex(), target:ChatCount()), self.regularFont, 'CENTER')
+			-- elseif(target:BNetOnlineCount() > 0) then
+			-- 	self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', target:BNetOnlineCount()), self.regularFont, 'CENTER')
 			else
 				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self.regularFont, 'CENTER')
 			end
@@ -160,20 +160,20 @@ function XFC.DTLinks:OnEnter(this)
 			end
 		end
 
-		for unitName, guid in PairsByKeys(names) do
-			line = self.tooltip:AddLine()
-			self.tooltip:SetCell(line, 1, unitName, self.regularFont)
-			local unit = XFO.Confederate:Get(guid)
-			for _, target in XFO.Targets:Iterator() do
-				if(unit:TargetChatCount(target:Key()) > 0) then
-					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', unit:Faction():GetHex(), unit:TargetChatCount(target:Key())), self.regularFont, 'CENTER')
-				elseif(unit:TargetBNetCount(target:Key()) > 0) then
-					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', unit:TargetBNetCount(target:Key())), self.regularFont, 'CENTER')
-				else
-					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self.regularFont, 'CENTER')
-				end
-			end
-		end
+		-- for unitName, guid in PairsByKeys(names) do
+		-- 	line = self.tooltip:AddLine()
+		-- 	self.tooltip:SetCell(line, 1, unitName, self.regularFont)
+		-- 	local unit = XFO.Confederate:Get(guid)
+		-- 	for _, target in XFO.Targets:Iterator() do
+		-- 		if(unit:TargetChatCount(target:Key()) > 0) then
+		-- 			self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', unit:Faction():GetHex(), unit:TargetChatCount(target:Key())), self.regularFont, 'CENTER')
+		-- 		elseif(unit:TargetBNetCount(target:Key()) > 0) then
+		-- 			self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', unit:TargetBNetCount(target:Key())), self.regularFont, 'CENTER')
+		-- 		else
+		-- 			self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self.regularFont, 'CENTER')
+		-- 		end
+		-- 	end
+		-- end
 		line = self.tooltip:AddLine()
 	end
 	--#endregion
