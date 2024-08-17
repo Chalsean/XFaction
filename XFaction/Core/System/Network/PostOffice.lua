@@ -62,10 +62,10 @@ end
 
 function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XF:Debug(self:ObjectName(), 'Received %s packet from %s for tag %s', inDistribution, inSender, inMessageTag)
+    XF:Debug(self:ObjectName(), 'Received [%s] packet from [%s] for tag [%s]', inDistribution, inSender, inMessageTag)
 
     -- If not a message from this addon, ignore
-    if(not XFO.Tags:Contains(inTag)) then
+    if(not XFO.Tags:Contains(inMessageTag)) then
         return
     end
 
