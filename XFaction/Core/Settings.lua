@@ -147,7 +147,7 @@ XF.Settings = {
 			FriendTimer = 2,
 			PacketSize = 425,	
 			Ping = {
-				Timer = 60 * 2,     -- Seconds between pinging friends
+				Timer = 60 * 1,     -- Seconds between pinging friends
 			},
 		},
 		Mailbox = {

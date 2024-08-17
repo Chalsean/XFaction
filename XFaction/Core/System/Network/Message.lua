@@ -28,9 +28,7 @@ function XFC.Message:Initialize()
         self:Priority(XF.Enum.Priority.Low)
 
         for _, target in XFO.Targets:Iterator() do
-            if(not target:Equals(XF.Player.Target)) then
-                self:Add(target)
-            end
+            self:Add(target)
         end
 
         self:IsInitialized(true)

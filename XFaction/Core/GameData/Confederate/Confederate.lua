@@ -86,7 +86,9 @@ function XFC.Confederate:Add(inUnit)
     if(inUnit:IsPlayer()) then
         XF.Player.Unit = inUnit
     end
-    inUnit:Target():ChatRecipient(inUnit)
+    if(inUnit:HasTarget()) then
+        inUnit:Target():ChatRecipient(inUnit)
+    end
 end
 
 function XFC.Confederate:Remove(inKey)
@@ -163,6 +165,7 @@ function XFC.Confederate:Logout(inUnit)
         self:Add(inUnit)
     else
         self:Remove(inUnit:Key())
+        self:Push(inUnit)
     end
 end
 

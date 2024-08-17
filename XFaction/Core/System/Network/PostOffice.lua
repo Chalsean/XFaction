@@ -102,6 +102,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             end
             --message:Print()
             XFO.Mailbox:Process(message)
+            XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)
             XFO.Mailbox:Add(messageKey)
             self:Remove(messageKey)
         end).

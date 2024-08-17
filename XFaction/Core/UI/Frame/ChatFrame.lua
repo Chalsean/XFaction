@@ -175,10 +175,10 @@ function XFC.ChatFrame:ProcessMessage(inMessage)
     if(not XF.Player.Unit:CanGuildListen()) then return end
     if(inMessage:FromUnit():IsSameGuild()) then return end
 
-    if(inMessage:Subject() == XF.Enum.Message.GCHAT) then
+    if(inMessage:IsGuildChatMessage()) then
         if(not XF.Config.Chat.GChat.Enable) then return end
         DisplayGuildChat(inMessage:FromUnit(), inMessage:Data())
-    elseif(inMessage:Subject() == XF.Enum.Message.ACHIEVEMENT) then
+    elseif(inMessage:IsAchievementMessage()) then
         if(not XF.Config.Chat.Achievement.Enable) then return end
         DisplayAchievement(inMessage:FromUnit(), inMessage:Data())
     end

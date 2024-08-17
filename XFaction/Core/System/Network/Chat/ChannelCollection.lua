@@ -123,14 +123,7 @@ function XFC.ChannelCollection:CallbackUnitLeftChannel(_, _, _, _, _, _, _, _, c
 		if(self:HasLocalChannel()) then
 			local channel = self:LocalChannel()
 			if(channel:Key() == channelName and XFO.Confederate:Contains(guid)) then
-				local unit = XFO.Confederate:Get(guid)
-				if(unit:IsOnline() and not unit:IsSameGuild()) then
-					XF:Info(self:ObjectName(), 'Guild member logout via event: ' .. unit:UnitName())
-					XFO.SystemFrame:Display(XF.Enum.Message.LOGOUT, unit:Name())
-					XFO.Confederate:Remove(unit:Key())
-					XFO.Confederate:Push(unit)
-					XF.DataText.Guild:RefreshBroker()
-				end
+				XFO.Confederate:Logout(guid)
 			end
 		end	
 	end).

@@ -22,7 +22,7 @@ function XFC.FriendCollection:Initialize()
 		-- XFO.Events:Add({
         --     name = 'Friend', 
         --     event = 'BN_FRIEND_INFO_CHANGED', 
-        --     callback = XFO.Friends.RefreshFriends, 
+        --     callback = XFO.Friends.CallbackPing, 
         --     instance = true,
         --     groupDelta = XF.Settings.Network.BNet.FriendTimer
         -- })

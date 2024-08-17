@@ -42,35 +42,29 @@ end
 function XFC.Mailbox:Process(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
-    try(function()
+    -- Forward message to any remaining targets
+    self:Send(inMessage)
 
-        -- Forward message to any remaining targets
-        --XFO.PostOffice:Send(inMessage)
+    XFO.Confederate:ProcessMessage(inMessage)
 
-        XFO.Confederate:ProcessMessage(inMessage)
+    if(inMessage:IsLoginMessage() or inMessage:IsLogoutMessage() or inMessage:IsDataMessage()) then
+        return
+    end
 
-        if(inMessage:IsLoginMessage() or inMessage:IsLogoutMessage() or inMessage:IsDataMessage()) then
-            return
-        end
+    if(inMessage:IsPingMessage() or inMessage:IsAckMessage()) then
+        XFO.Friends:ProcessMessage(inMessage)            
+        return
+    end
 
-        if(inMessage:IsPingMessage() or inMessage:IsAckMessage()) then
-            XFO.Friends:ProcessMessage(inMessage)            
-            return
-        end
+    if(inMessage:IsGuildChatMessage() or inMessage:IsAchievementMessage()) then
+        XFO.ChatFrame:ProcessMessage(inMessage)
+        return
+    end
 
-        if(inMessage:IsGuildChatMessage() or inMessage:IsAchievementMessage()) then
-            XFO.ChatFrame:ProcessMessage(inMessage)
-            return
-        end
-
-        if(inMessage:IsOrderMessage()) then
-            XFO.Orders:ProcessMessage(inMessage)
-            return
-        end        
-    end).
-    finally(function()
-        self:Push(inMessage)
-    end)
+    if(inMessage:IsOrderMessage()) then
+        XFO.Orders:ProcessMessage(inMessage)
+        return
+    end        
 end
 
 function XFC.Mailbox:CallbackJanitor()
@@ -90,23 +84,27 @@ function XFC.Mailbox:Send(inMessage)
     self:Add(inMessage:Key())
     inMessage:Print()
 
-    local guildBroadcast = false
-    local chatBroadcast = false
+    local guildBroadcast = inMessage:IsMyMessage() and inMessage:IsLoginMessage() or false
+    local chatBroadcast = inMessage:IsMyMessage() and inMessage:IsLoginMessage() or false
+    local removedTargets = ''
 
     -- Send message to GUILD channel
     if(inMessage:Contains(XF.Player.Target:Key())) then
         guildBroadcast = true
         inMessage:Remove(XF.Player.Target:Key())
+        removedTargets = XF.Player.Guild:Initials()
     end
-
+    
     for _, target in inMessage:Iterator() do
         if(target:UseChatProtocol()) then
             chatBroadcast = true
             if(target:ChatCount() > 1) then
                 inMessage:Remove(target:Key())
+                removedTargets = removedTargets .. target:Guild():Initials() .. ';'
             end
         end
     end
+    XF:Debug(self:ObjectName(), 'Targets removed from message [%s]: %s', inMessage:Key(), removedTargets)
 
     if(guildBroadcast) then
         XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())

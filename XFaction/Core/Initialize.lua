@@ -168,15 +168,17 @@ function XF:CallbackLoginPlayer()
 			XFF.GuildQueryServer()
 
 			-- If reload, restore backup information
-			if(XF.Cache.UIReload) then
-				XFO.Friends:Restore()
-				XFO.Orders:Restore()
-				XF.Cache.UIReload = false
-                XFO.Mailbox:SendDataMessage()
+			-- if(XF.Cache.UIReload) then
+			-- 	XFO.Friends:Restore()
+			-- 	XFO.Orders:Restore()
+			-- 	XF.Cache.UIReload = false
+            --     XFO.Mailbox:SendDataMessage()
 			-- Otherwise send login message
-			else
+			-- else
                 XFO.Mailbox:SendLoginMessage()
-			end			
+			-- end
+			
+			XFO.Friends:CallbackPing()
 
 			-- Start all hooks, timers and events
 			XFO.SystemEvent:Initialize()
