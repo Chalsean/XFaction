@@ -103,7 +103,6 @@ function XFC.Mailbox:Send(inMessage)
     -- Send message to GUILD channel
     if(inMessage:Contains(XF.Player.Target:Key())) then
         guildBroadcast = true
---        XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
         inMessage:Remove(XF.Player.Target:Key())
     end
 
@@ -112,24 +111,6 @@ function XFC.Mailbox:Send(inMessage)
             chatBroadcast = true
             inMessage:Remove(target:Key())
         end
-        -- if(recipient ~= nil) then
-        --     -- Send message to addon channel
-        --     if(recipient:IsSameRealm() and recipient:IsSameFaction()) then
-        --         if(not hasBroadcast) then
-        --             XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
-        --             hasBroadcast = true
-        --         end
-        --     -- Whisper players of same faction
-        --     elseif(recipient:IsSameFaction()) then
-        --         XFO.Chat:Whisper(inMessage, recipient)
-        --     end
-        -- else
-            -- Whisper friends of opposite faction
-            -- local friend = XFO.Friends:GetByTarget(target)
-            -- if(friend ~= nil) then
-            --     XFO.BNet:Whisper(inMessage, friend)
-            -- end
-        -- end
     end
 
     --if(guildBroadcast) then
@@ -207,7 +188,7 @@ function XFC.Mailbox:SendPingMessage(inFriend)
         message:Initialize()
         message:Subject(XF.Enum.Message.PING)
         message:Priority(XF.Enum.Priority.Low)
-        XFO.BNet:Whisper(inFriend, message)
+        XFO.BNet:Whisper(message, inFriend)
     end).
     finally(function ()
         self:Push(message)
@@ -225,7 +206,7 @@ function XFC.Mailbox:SendAckMessage(inFriend)
         message:Initialize()
         message:Subject(XF.Enum.Message.ACK)
         message:Priority(XF.Enum.Priority.Low)
-        XFO.BNet:Whisper(inFriend, message)
+        XFO.BNet:Whisper(message, inFriend)
     end).
     finally(function ()
         self:Push(message)
