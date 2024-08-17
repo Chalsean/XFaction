@@ -212,7 +212,7 @@ function XFC.Order:Display()
         end
 
         if(display) then
-            XF.Frames.System:DisplayOrder(self)
+            XFO.SystemFrame:DisplayOrder(self)
         end
     end).
     catch(function(err)
