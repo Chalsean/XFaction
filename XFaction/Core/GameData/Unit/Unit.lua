@@ -41,6 +41,7 @@ function XFC.Unit:new()
     object.realm = nil
     object.target = nil
     object.friend = nil
+    object.targetCounts = nil
 
     return object
 end
@@ -78,6 +79,7 @@ function XFC.Unit:Deconstructor()
     self.realm = nil
     self.target = nil
     self.friend = nil
+    self.targetCounts = nil
 end
 
 function XFC.Unit:Initialize(inMemberID)
@@ -125,6 +127,15 @@ function XFC.Unit:Initialize(inMemberID)
     self:Rank(unitData.guildRank)
     self:Note(unitData.memberNote or '?')
     self:AchievementPoints(unitData.achievementPoints or 0)
+
+    self.targetCounts = {}
+    for _, target in XFO.Targets:Iterator() do
+        self.targetCounts[target:Key()] = {
+            guild = 0,
+            channel = 0,
+            bnet = 0
+        }
+    end
 
     local lastLogin = 0
     if(unitData.lastOnlineYear ~= nil) then
@@ -514,13 +525,22 @@ function XFC.Unit:LastLogin(inDays)
     return self.lastLogin
 end
 
-function XFC.Unit:TargetChatCount(inTargetKey, inCount)
+function XFC.Unit:TargetGuildCount(inTargetKey, inCount)
     assert(type(inTargetKey) == 'number')
     assert(type(inCount) == 'number' or inCount == nil)
     if(inCount ~= nil) then
-        self.targetCounts[inTargetKey].chat = inCount
+        self.targetCounts[inTargetKey].guild = inCount
     end
-    return self.targetCounts[inTargetKey].chat
+    return self.targetCounts[inTargetKey].guild
+end
+
+function XFC.Unit:TargetChannelCount(inTargetKey, inCount)
+    assert(type(inTargetKey) == 'number')
+    assert(type(inCount) == 'number' or inCount == nil)
+    if(inCount ~= nil) then
+        self.targetCounts[inTargetKey].channel = inCount
+    end
+    return self.targetCounts[inTargetKey].channel
 end
 
 function XFC.Unit:TargetBNetCount(inTargetKey, inCount)
@@ -714,12 +734,37 @@ function XFC.Unit:Serialize()
 	data.Y = self:HasProfession2() and self:Profession2():Serialize() or nil
     data.Z = self:Zone():Serialize()
 
+    local counts = ''
+    if(self:IsPlayer()) then
+        for _, target in XFO.Targets:Iterator() do
+            local guild = target:IsMyTarget() and target:Count() or 0
+            local channel = not target:IsMyTarget() and target:Count() or 0
+            counts = counts .. target:Key() .. ':' .. guild .. ':' .. channel .. ':' .. '0;'
+        end
+    else        
+        for key, data in pairs(self.targetCounts) do
+            counts = counts .. key .. ':' .. data.guild .. ':' .. data.channel .. ':' .. data.bnet .. ';'
+        end        
+    end
+    if(string.len(counts) > 0) then
+        data.W = counts
+    end
+
 	return pickle(data)
 end
 
 function XFC.Unit:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
+
+    self.targetCounts = {}
+    for _, target in XFO.Targets:Iterator() do
+        self.targetCounts[target:Key()] = {
+            guild = 0,
+            channel = 0,
+            bnet = 0
+        }
+    end
 
     self:IsRunningAddon(true)
 	self:AchievementPoints(data.A)    
@@ -754,6 +799,16 @@ function XFC.Unit:Deserialize(inSerial)
         XFO.Zones:Add(data.Z)
     end
     self:Zone(XFO.Zones:Get(data.Z))
+
+    if(data.W ~= nil) then
+        local targets = string.Split(';', data.W)
+        for _, target in ipairs(targets) do
+            local counts = string.Split(':', target)
+            self:TargetGuildCount(counts[1], tonumber(counts[2]))
+            self:TargetChannelCount(counts[1], tonumber(counts[3]))
+            self:TargetBNetCount(counts[1], tonumber(counts[4]))
+        end
+    end
 
     self:TimeStamp(XFF.TimeCurrent())
 end
