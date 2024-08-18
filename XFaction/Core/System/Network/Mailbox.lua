@@ -71,8 +71,8 @@ function XFC.Mailbox:Send(inMessage)
     self:Add(inMessage:Key())
     inMessage:Print()
 
-    local guildBroadcast = inMessage:IsMyMessage() and inMessage:IsLoginMessage() or false
-    local chatBroadcast = inMessage:IsMyMessage() and inMessage:IsLoginMessage() or false
+    local guildBroadcast = inMessage:IsMyMessage()
+    local chatBroadcast = inMessage:IsMyMessage()
     local removedTargets = ''
 
     -- Identify targets player will cover and remove from message

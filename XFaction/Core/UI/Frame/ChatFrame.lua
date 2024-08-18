@@ -116,7 +116,7 @@ local function DisplayGuildChat(inUnit, inText)
         frameTable = { XFF.ChatGetWindow(i) }
         local v
         for _, frameName in ipairs(frameTable) do
-            if frameName == inType then
+            if frameName == 'GUILD' then
                 local frame = 'ChatFrame' .. i
                 if _G[frame] then
 
@@ -150,7 +150,7 @@ local function DisplayAchievement(inUnit, inID)
         frameTable = { XFF.ChatGetWindow(i) }
         local v
         for _, frameName in ipairs(frameTable) do
-            if frameName == inType then
+            if frameName == 'GUILD_ACHIEVEMENT' then
                 local frame = 'ChatFrame' .. i
                 if _G[frame] then
 
