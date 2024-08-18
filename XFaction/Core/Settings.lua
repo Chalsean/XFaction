@@ -86,10 +86,8 @@ XF.Enum = {
 		LOGOUT = '3',
 		LOGIN = '4',
 		ACHIEVEMENT = '5',
-		LINK = '6',
-		ORDER = '7',
-		PING = '8',
-		ACK = '9'
+		ORDER = '6',
+		ACK = '7'
 	},
 	Metric = {
 		Messages = XF.Lib.Locale['DTMETRICS_MESSAGES'],

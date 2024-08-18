@@ -51,11 +51,6 @@ function XFC.Mailbox:Process(inMessage)
         return
     end
 
-    if(inMessage:IsPingMessage() or inMessage:IsAckMessage()) then
-        XFO.Friends:ProcessMessage(inMessage)            
-        return
-    end
-
     if(inMessage:IsGuildChatMessage() or inMessage:IsAchievementMessage()) then
         XFO.ChatFrame:ProcessMessage(inMessage)
         return
@@ -88,7 +83,8 @@ function XFC.Mailbox:Send(inMessage)
     local chatBroadcast = inMessage:IsMyMessage() and inMessage:IsLoginMessage() or false
     local removedTargets = ''
 
-    -- Send message to GUILD channel
+    -- Identify targets player will cover and remove from message
+    -- so the next recipient knows they dont need to consider those targets
     if(inMessage:Contains(XF.Player.Target:Key())) then
         guildBroadcast = true
         inMessage:Remove(XF.Player.Target:Key())
@@ -98,6 +94,7 @@ function XFC.Mailbox:Send(inMessage)
     for _, target in inMessage:Iterator() do
         if(target:UseChatProtocol()) then
             chatBroadcast = true
+            -- Only remove target if theres redundancy
             if(target:ChatCount() > 1) then
                 inMessage:Remove(target:Key())
                 removedTargets = removedTargets .. target:Guild():Initials() .. ';'
@@ -106,31 +103,29 @@ function XFC.Mailbox:Send(inMessage)
     end
     XF:Debug(self:ObjectName(), 'Targets removed from message [%s]: %s', inMessage:Key(), removedTargets)
 
+    -- Leverage messages as a ping but dont send double to them
+    local whispered = {}
+    if(inMessage:IsMyMessage()) then
+        for _, friend in XFO.Friends:Iterator() do
+            if(friend:CanLink() and not friend:IsLinked()) then
+                XFO.BNet:Whisper(inMessage, friend)
+                whispered[friend:Key()] = true
+            end
+        end
+    end
+
     if(guildBroadcast) then
         XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
     end
     if(chatBroadcast) then
         XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
-    end
+    end    
 
-    -- If there are any targets remaining, switch to BNet
-    if(inMessage:Count() > 0 and XFO.Friends:HasFriendsOnline()) then
-        -- Build xref list of friend to target
-        local recipients = {}
-        for _, friend in XFO.Friends:Iterator() do
-            if(friend:HasTarget()) then
-                if(recipients[friend:Target():Key()] == nil) then
-                    recipients[friend:Target():Key()] = {}
-                end
-                table.insert(recipients[friend:Target():Key()], friend:Key())
-            end
-        end
-
-        -- Randomly select friend to BNet whisper
+    -- Forwarding message, if remaining targets, switch to BNet
+    if(inMessage:Count() > 0 and XFO.Friends:HasLinkedFriends()) then
         for _, target in inMessage:Iterator() do
-            if(recipients[target:Key()] ~= nil) then
-                local randomKey = recipients[target:Key()][math.random(1, #recipients[target:Key()])]
-                local friend = XFO.Friends:Get(randomKey)
+            local friend = XFO.Friends:GetRandomRecipient(target)
+            if(friend ~= nil and whispered[friend:Key()] == nil) then
                 XFO.BNet:Whisper(inMessage, friend)
             end
         end
@@ -191,25 +186,6 @@ end
 
 function XFC.Mailbox:SendOrderMessage(inData)
     SendMessage(XF.Enum.Message.ORDER, XF.Enum.Priority.Medium, inData)
-end
-
-function XFC.Mailbox:SendPingMessage(inFriend)
-    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
-
-    XF:Debug(self:ObjectName(), 'Sending ping to [%s]', inFriend:Tag())
-
-    local message = nil
-    try(function ()
-        message = self:Pop()
-        message:Initialize()
-        message:RemoveAll()
-        message:Subject(XF.Enum.Message.PING)
-        message:Priority(XF.Enum.Priority.Low)
-        XFO.BNet:Whisper(message, inFriend)
-    end).
-    finally(function ()
-        self:Push(message)
-    end)
 end
 
 function XFC.Mailbox:SendAckMessage(inFriend)

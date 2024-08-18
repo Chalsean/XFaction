@@ -663,7 +663,7 @@ end
 function XFC.Unit:GetLink()
 
     if(not self:IsSameFaction()) then
-        local friend = XFO.Friends:GetByGUID(self:GUID())
+        local friend = XFO.Friends:Get(self:GUID())
         if(friend ~= nil) then
             return format('|HBNplayer:%s:%d:0:WHISPER:%s|h[%s]|h', friend:Name(), friend:AccountID(), friend:Name(), self:Name())
         end

@@ -44,7 +44,7 @@ function XF:CoreInit()
 
 	-- Network
 	XFO.Channels = XFC.ChannelCollection:new()
-	XFO.Friends = XFC.FriendCollection:new(); XFO.Friends:Initialize()
+	XFO.Friends = XFC.FriendCollection:new()
 	XFO.Mailbox = XFC.Mailbox:new(); XFO.Mailbox:Initialize()
 	XFO.PostOffice = XFC.PostOffice:new(); XFO.PostOffice:Initialize()
 	XFO.BNet = XFC.BNet:new()
@@ -121,10 +121,9 @@ function XF:CallbackLoginGuild()
 				-- Start network
 				XFO.Tags:Initialize()
 				XFO.Channels:Initialize()
-				XFO.Chat:Initialize()
-				XFO.Friends:Initialize()				
+				XFO.Chat:Initialize()							
 				XFO.BNet:Initialize()
-
+				
 				-- if(XF.Cache.UIReload) then
 				-- 	XFO.Confederate:Restore()					
 				-- end
@@ -166,6 +165,7 @@ function XF:CallbackLoginPlayer()
 
 			-- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
 			XFF.GuildQueryServer()
+			XFO.Friends:Initialize()
 
 			-- If reload, restore backup information
 			-- if(XF.Cache.UIReload) then
@@ -178,7 +178,7 @@ function XF:CallbackLoginPlayer()
                 XFO.Mailbox:SendLoginMessage()
 			-- end
 			
-			XFO.Friends:CallbackPing()
+			--XFO.Friends:CallbackPing()			
 
 			-- Start all hooks, timers and events
 			XFO.SystemEvent:Initialize()

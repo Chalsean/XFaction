@@ -39,7 +39,7 @@ function XFC.Target:ChatCount(inCount)
     assert(type(inCount) == 'number' or inCount == nil)
     if(inCount ~= nil) then
         self.chatCount = self.chatCount + inCount
-    end
+    end    
     return self.chatCount
 end
 
@@ -94,6 +94,7 @@ function XFC.Target:ChatRecipient(inUnit)
         self:ChatCount(-1)
         self.chatRecipients[inUnit:Key()] = nil
     end
+    XFO.DTLinks:RefreshBroker()
 end
 
 function XFC.Target:UseChatProtocol()
@@ -109,6 +110,7 @@ function XFC.Target:BNetRecipient(inFriendKey)
         self:BNetCount(-1)
         self.bnetRecipients[inFriendKey] = nil
     end
+    XFO.DTLinks:RefreshBroker()
 end
 
 function XFC.Target:UseBNetProtocol()

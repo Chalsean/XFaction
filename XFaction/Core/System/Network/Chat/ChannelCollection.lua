@@ -117,15 +117,19 @@ function XFC.ChannelCollection:SetLast(inKey)
 	end
 end
 
-function XFC.ChannelCollection:CallbackUnitLeftChannel(_, _, _, _, _, _, _, _, channelName, _, _, guid)
+function XFC.ChannelCollection:CallbackUnitLeftChannel(_, name, _, _, _, _, _, _, channelName, _, _, guid)
 	local self = XFO.Channels
 	try(function()
 		if(self:HasLocalChannel()) then
 			local channel = self:LocalChannel()
-			if(channel:Key() == channelName and XFO.Confederate:Contains(guid)) then
-				XFO.Confederate:Logout(guid)
+			if(channel:Key() == channelName) then
+			 	if(XFO.Confederate:Contains(guid)) then
+					XFO.Confederate:Logout(guid)
+				else
+					XFO.SystemFrame:DisplayLogout(name)
+				end
 			end
-		end	
+		end
 	end).
 	catch(function(err)
 		XF:Warn(self:ObjectName(), err)

@@ -74,7 +74,20 @@ function XFC.DTLinks:RefreshBroker()
 		text = XF.Lib.Locale['LINKS'] .. ': '
 	end
 
-	--text = format('%s|cffffffff%d|r', text, XF.Player.Target:ChatOnlineCount())
+	local guild = 0
+	local chat = 0
+	local bnet = 0
+
+	for _, target in XFO.Targets:Iterator() do
+		if(target:IsMyTarget()) then 
+			guild = target:ChatCount()
+		else
+			chat = chat + target:ChatCount()
+		end
+		bnet = bnet + target:BNetCount()
+	end
+
+	text = format('|cff3CE13F%d|r|cffFFFFFF - |r|cff%s%d|r|cffFFFFFF - |r|cffFFF468%d|r', guild, XF.Player.Faction:GetHex(), chat, bnet)
 	XFO.DTLinks:GetBroker().text = text
 end
 --#endregion
