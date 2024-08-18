@@ -123,10 +123,9 @@ function XFC.ChannelCollection:CallbackUnitLeftChannel(_, name, _, _, _, _, _, _
 		if(self:HasLocalChannel()) then
 			local channel = self:LocalChannel()
 			if(channel:Key() == channelName) then
+				XF:Debug(self:ObjectName(), 'Detected channel logout: %s', name)
 			 	if(XFO.Confederate:Contains(guid)) then
 					XFO.Confederate:Logout(guid)
-				else
-					XFO.SystemFrame:DisplayLogout(name)
 				end
 			end
 		end

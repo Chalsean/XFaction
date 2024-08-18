@@ -159,7 +159,7 @@ function XFC.Confederate:Logout(inUnit)
     end
     
     XF:Info(self:ObjectName(), 'Guild member logout: %s', inUnit:UnitName())
-    XFO.SystemFrame:DisplayLogout(inUnit:Name())
+    XFO.SystemFrame:DisplayLogout(inUnit:UnitName())
 
     if(inUnit:IsSameGuild()) then
         self:Add(inUnit)
@@ -181,6 +181,7 @@ function XFC.Confederate:CallbackLocalGuild()
                 if(self:Contains(unit:Key())) then
                     local oldData = self:Get(unit:Key())
                     if(oldData:IsOnline() and unit:IsOffline()) then
+                        XF:Debug(self:ObjectName(), 'Detected guild logout: %s', oldData:UnitName())
                         self:Logout(unit)
                     elseif(unit:IsOnline()) then
                         if(oldData:IsOffline()) then
@@ -213,6 +214,7 @@ function XFC.Confederate:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     if(inMessage:IsLogoutMessage()) then
+        XF:Debug(self:ObjectName(), 'Detected message logout: %s', inMessage:FromUnit():UnitName())
         self:Logout(inMessage:FromUnit())
         return
     end
