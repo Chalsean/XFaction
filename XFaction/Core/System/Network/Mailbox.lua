@@ -58,6 +58,7 @@ function XFC.Mailbox:Process(inMessage)
     elseif(inMessage:IsChannelProtocol()) then
         inMessage:FromUnit():Target():Add(inMessage:FromUnit())
     end
+    XFO.DTLinks:RefreshBroker()
 end
 
 function XFC.Mailbox:CallbackJanitor()

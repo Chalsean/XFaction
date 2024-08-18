@@ -132,8 +132,6 @@ function XFC.FriendCollection:ProcessMessage(inMessage)
 		XFO.Confederate:Get(friend:GUID()):Friend(friend)
 	end
 
-	XFO.DTLinks:RefreshBroker()
-	
 	if(inMessage:IsAckMessage()) then
 		XF:Debug(self:ObjectName(), 'Received ack message from [%s]', friend:Tag())
 	else

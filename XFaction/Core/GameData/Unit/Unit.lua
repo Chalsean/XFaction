@@ -577,13 +577,14 @@ function XFC.Unit:Print()
     if(self:HasRace()) then self:Race():Print() end
     if(self:HasClass()) then self:Class():Print() end
     if(self:HasSpec()) then self:Spec():Print() end
-    -- if(self:HasHero()) then self:Hero():Print() end
-    -- if(self:HasProfession1()) then self:Profession1():Print() end
-    -- if(self:HasProfession2()) then self:Profession2():Print() end  
-    -- if(self:HasRaiderIO()) then self:RaiderIO():Print() end
-    -- if(self:HasMythicKey()) then self:MythicKey():Print() end
-    -- if(self:HasZone()) then self:Zone():Print() end
-    -- if(self:HasTarget()) then self:Target():Print() end
+    if(self:HasHero()) then self:Hero():Print() end
+    if(self:HasProfession1()) then self:Profession1():Print() end
+    if(self:HasProfession2()) then self:Profession2():Print() end  
+    if(self:HasRaiderIO()) then self:RaiderIO():Print() end
+    if(self:HasMythicKey()) then self:MythicKey():Print() end
+    if(self:HasZone()) then self:Zone():Print() end
+    if(self:HasTarget()) then self:Target():Print() end
+    if(self:IsFriend()) then self:Friend():Print() end
 end
 
 function XFC.Unit:IsPlayer()
@@ -750,6 +751,8 @@ function XFC.Unit:Serialize()
         data.W = counts
     end
 
+    XF:DataDumper(self:ObjectName(), data)
+
 	return pickle(data)
 end
 
@@ -765,6 +768,8 @@ function XFC.Unit:Deserialize(inSerial)
             bnet = 0
         }
     end
+
+    XF:DataDumper(self:ObjectName(), data)
 
     self:IsRunningAddon(true)
 	self:AchievementPoints(data.A)    
@@ -801,12 +806,12 @@ function XFC.Unit:Deserialize(inSerial)
     self:Zone(XFO.Zones:Get(data.Z))
 
     if(data.W ~= nil) then
-        local targets = string.Split(';', data.W)
+        local targets = string.Split(data.W, ';')
         for _, target in ipairs(targets) do
-            local counts = string.Split(':', target)
-            self:TargetGuildCount(counts[1], tonumber(counts[2]))
-            self:TargetChannelCount(counts[1], tonumber(counts[3]))
-            self:TargetBNetCount(counts[1], tonumber(counts[4]))
+            local counts = string.Split(target, ':')
+            self:TargetGuildCount(tonumber(counts[1]), tonumber(counts[2]))
+            self:TargetChannelCount(tonumber(counts[1]), tonumber(counts[3]))
+            self:TargetBNetCount(tonumber(counts[1]), tonumber(counts[4]))
         end
     end
 

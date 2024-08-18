@@ -36,6 +36,12 @@ function XFC.ObjectCollection:ParentInitialize()
     self:Key(math.GenerateUID())
     self.objects = {}
 end
+
+function XFC.ObjectCollection:ParentDeconstructor()
+    self.objects = nil
+    self.objectCount = 0
+    self.cached = false
+end
 --#endregion
 
 --#region Properties

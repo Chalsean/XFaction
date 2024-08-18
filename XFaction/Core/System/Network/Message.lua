@@ -126,6 +126,7 @@ function XFC.Message:Print()
     XF:Debug(self:ObjectName(), '  priority (' .. type(self.priority) .. '): ' .. tostring(self.priority))
     XF:Debug(self:ObjectName(), '  protocol (' .. type(self.protocol) .. '): ' .. tostring(self.protocol))
     XF:Debug(self:ObjectName(), '  data (' .. type(self.data) .. '): ' .. tostring(self.data))
+    XF:Debug(self:ObjectName(), '  target count: ' .. tostring(self:Count()))
     local targets = ''
     for _, target in self:Iterator() do
         targets = targets .. target:Guild():Initials() .. ';'
