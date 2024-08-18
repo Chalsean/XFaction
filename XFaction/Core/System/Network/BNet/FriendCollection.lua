@@ -143,13 +143,13 @@ function XFC.FriendCollection:CallbackFriendChanged(inID)
 		friend:Initialize(inID)
 		if(self:Contains(friend:Key())) then
 			local oldFriend = self:Get(friend:Key())
-			if(oldFriend:IsOnline() and not friend:IsOnline()) then
-				self:Replace(friend)
+			if(oldFriend:IsOnline() and not friend:IsOnline()) then				
 				if(XFO.Confederate:Contains(oldFriend:GUID())) then
 					XFO.Confederate:Logout(oldFriend:GUID())
 				else
 					XFO.SystemFrame:DisplayLogout(oldFriend:Name())
 				end
+				self:Replace(friend)
 				return
 			end
 		end
@@ -161,13 +161,13 @@ function XFC.FriendCollection:CallbackFriendChanged(inID)
 	end)
 end
 
-function XFC.FriendCollection:ProcessMessage(inMessage)
+function XFC.FriendCollection:ProcessMessage(inMessage, inSenderID)
 	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
 	local friend = self:Get(inMessage:From())
 	if(friend == nil) then
 		friend = self:Pop()
-		friend:Initialize(i)
+		friend:Initialize(inSenderID)
 		friend:Target(inMessage:FromUnit():Target())
 		friend:IsLinked(true)
 		self:Add(friend)

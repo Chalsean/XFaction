@@ -100,7 +100,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             message:Decode(encodedMessage, isBNet)
             XFO.Mailbox:Process(message)
             if(isBNet) then
-                XFO.Friends:ProcessMessage(message)
+                XFO.Friends:ProcessMessage(message, inSender)
             end
 
             XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)
