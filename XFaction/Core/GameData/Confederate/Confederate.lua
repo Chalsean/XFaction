@@ -86,9 +86,6 @@ function XFC.Confederate:Add(inUnit)
     if(inUnit:IsPlayer()) then
         XF.Player.Unit = inUnit
     end
-    if(inUnit:HasTarget()) then
-        inUnit:Target():ChatRecipient(inUnit)
-    end
 end
 
 function XFC.Confederate:Remove(inKey)
@@ -160,6 +157,7 @@ function XFC.Confederate:Logout(inUnit)
     
     XF:Info(self:ObjectName(), 'Guild member logout: %s', inUnit:UnitName())
     XFO.SystemFrame:DisplayLogout(inUnit:UnitName())
+    inUnit:Target():Remove(inUnit)
 
     if(inUnit:IsSameGuild()) then
         self:Add(inUnit)

@@ -51,10 +51,12 @@ function XFC.Mailbox:Process(inMessage)
         XFO.ChatFrame:ProcessMessage(inMessage)
     elseif(inMessage:IsOrderMessage()) then
         XFO.Orders:ProcessMessage(inMessage)
-    end  
+    end
     
     if(inMessage:IsBNetProtocol()) then
         XFO.Friends:ProcessMessage(inMessage)
+    elseif(inMessage:IsChannelProtocol()) then
+        inMessage:FromUnit():Target():Add(inMessage:FromUnit())
     end
 end
 
@@ -95,7 +97,7 @@ function XFC.Mailbox:Send(inMessage)
 
             local coverage = {}
             for _, target in inMessage:Iterator() do
-                coverage[target:Key()] = target:ChatCount()
+                coverage[target:Key()] = target:Count()
             end
 
             -- Leverage BNet to cover remaining targets
