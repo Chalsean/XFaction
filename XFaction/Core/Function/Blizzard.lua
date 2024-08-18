@@ -90,3 +90,6 @@ XFF.PartyRequestInvite = C_PartyInfo.RequestInviteFromUnit
 
 -- Crafting
 XFF.CraftingGetItem = C_TooltipInfo.GetRecipeResultItem
+
+-- M+
+XFF.RequestMapsFromServer = C_MythicPlus.RequestMapInfo

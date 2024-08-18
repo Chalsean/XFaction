@@ -740,7 +740,7 @@ function XFC.Unit:Serialize()
         for _, target in XFO.Targets:Iterator() do
             local guild = target:IsMyTarget() and target:Count() or 0
             local channel = not target:IsMyTarget() and target:Count() or 0
-            counts = counts .. target:Key() .. ':' .. guild .. ':' .. channel .. ':' .. '0;'
+            counts = counts .. target:Key() .. ':' .. guild .. ':' .. channel .. ':' .. target:LinkCount() .. ';'
         end
     else        
         for key, data in pairs(self.targetCounts) do

@@ -124,9 +124,9 @@ function XF:CallbackLoginGuild()
 				XFO.Chat:Initialize()							
 				XFO.BNet:Initialize()
 				
-				-- if(XF.Cache.UIReload) then
-				-- 	XFO.Confederate:Restore()					
-				-- end
+				if(XF.Cache.UIReload) then
+					XFO.Confederate:Restore()					
+				end
 
 				XFO.Timers:Add({
 					name = 'LoginPlayer', 
@@ -148,7 +148,7 @@ end
 function XF:CallbackLoginPlayer()
 	try(function ()
 		-- Far as can tell does not fire event, so call and pray it loads before we query for the data
-		-- TODO move to mainline: RequestMapsFromServer()
+		XFF.RequestMapsFromServer()
 
 		-- Need the player data to continue setup
 		local unitData = XFO.Confederate:Pop()
@@ -165,17 +165,15 @@ function XF:CallbackLoginPlayer()
 			XFO.Friends:Initialize()
 
 			-- If reload, restore backup information
-			-- if(XF.Cache.UIReload) then
-			-- 	XFO.Orders:Restore()
-			-- 	XF.Cache.UIReload = false
-            --     XFO.Mailbox:SendDataMessage()
+			if(XF.Cache.UIReload) then
+				XFO.Orders:Restore()
+				XF.Cache.UIReload = false
+                XFO.Mailbox:SendDataMessage()
 			-- Otherwise send login message
-			-- else
+			else
                 XFO.Mailbox:SendLoginMessage()
-			-- end
+			end
 			
-			--XFO.Friends:CallbackPing()			
-
 			-- Start all hooks, timers and events
 			XFO.SystemEvent:Initialize()
 			XFO.Hooks:Start()
