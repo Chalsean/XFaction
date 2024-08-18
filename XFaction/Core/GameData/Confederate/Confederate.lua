@@ -96,7 +96,7 @@ function XFC.Confederate:Remove(inKey)
         if(unit:IsOnline()) then
             self:OnlineCount(-1)
         end
-        unit:Target():ChatRecipient(unit)
+        unit:Target():Remove(inKey)
         self:Push(unit)
     end
 end
