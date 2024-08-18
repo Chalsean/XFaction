@@ -16,6 +16,7 @@ function XFC.Message:new()
     object.initialized = false
     object.totalPackets = 1
     object.priority = nil
+    object.protocol = XF.Enum.Protocol.Unknown
     return object
 end
 
@@ -45,6 +46,7 @@ function XFC.Message:Deconstructor()
     self.data = nil
     self.totalPackets = 1
     self.priority = nil
+    self.protocol = XF.Enum.Protocol.Unknown
 end
 --#endregion
 
@@ -103,6 +105,14 @@ function XFC.Message:Priority(inPriority)
     end
     return self.priority
 end
+
+function XFC.Message:Protocol(inProtocol)
+    assert(type(inProtocol) == 'number' or inProtocol == nil)
+    if(inProtocol ~= nil) then
+        self.protocol = inProtocol
+    end
+    return self.protocol
+end
 --#endregion
 
 --#region Methods
@@ -114,6 +124,7 @@ function XFC.Message:Print()
     XF:Debug(self:ObjectName(), '  subject (' .. type(self.subject) .. '): ' .. tostring(self.subject))
     XF:Debug(self:ObjectName(), '  epochTime (' .. type(self.epochTime) .. '): ' .. tostring(self.epochTime))
     XF:Debug(self:ObjectName(), '  priority (' .. type(self.priority) .. '): ' .. tostring(self.priority))
+    XF:Debug(self:ObjectName(), '  protocol (' .. type(self.protocol) .. '): ' .. tostring(self.protocol))
     XF:Debug(self:ObjectName(), '  data (' .. type(self.data) .. '): ' .. tostring(self.data))
     local targets = ''
     for _, target in self:Iterator() do
@@ -165,13 +176,14 @@ function XFC.Message:Serialize()
 	return pickle(data)
 end
 
-function XFC.Message:Decode(inEncoded, inBNet)
+function XFC.Message:Decode(inEncoded, inProtocol)
     assert(type(inEncoded) == 'string')
-    assert(type(inBNet) == 'boolean' or inBNet == nil)
+    assert(type(inProtocol) == 'number')
 
-    local decoded = inBNet and XF.Lib.Deflate:DecodeForPrint(inEncoded) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inEncoded)
+    local decoded = inProtocol == XF.Enum.Protocol.BNet and XF.Lib.Deflate:DecodeForPrint(inEncoded) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inEncoded)
     local decompressed = XF.Lib.Deflate:DecompressDeflate(decoded)
     self:Deserialize(decompressed)
+    self:Protocol(inProtocol)
 end
 
 function XFC.Message:Deserialize(inSerial)
@@ -245,5 +257,17 @@ end
 
 function XFC.Message:IsLowPriority()
     return self:Priority() == XF.Enum.Priority.Low
+end
+
+function XFC.Message:IsBNetProtocol()
+    return self:Protocol() == XF.Enum.Protocol.BNet
+end
+
+function XFC.Message:IsChannelProtocol()
+    return self:Protocol() == XF.Enum.Protocol.Channel
+end
+
+function XFC.Message:IsGuildProtocol()
+    return self:Protocol() == XF.Enum.Protocol.Guild
 end
 --#endregion

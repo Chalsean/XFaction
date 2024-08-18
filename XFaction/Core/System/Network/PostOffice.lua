@@ -62,19 +62,24 @@ end
 
 function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XF:Debug(self:ObjectName(), 'Received [%s] packet from [%s] for tag [%s]', inDistribution, inSender, inMessageTag)
+    XF:Trace(self:ObjectName(), 'Received [%s] packet from [%s] for tag [%s]', inDistribution, inSender, inMessageTag)
 
     -- If not a message from this addon, ignore
     if(not XFO.Tags:Contains(inMessageTag)) then
         return
     end
 
+    local protocol = XF.Enum.Protocol.Unknown
+
     if(inDistribution == 'WHISPER') then
         XFO.Metrics:Get(XF.Enum.Metric.BNetReceive):Count(1)
+        protocol = XF.Enum.Protocol.BNet
     elseif(inDistribution == 'GUILD') then
         XFO.Metrics:Get(XF.Enum.Metric.GuildReceive):Count(1)
+        protocol = XF.Enum.Protocol.Guild
     elseif(inDistribution == 'CHANNEL') then
         XFO.Metrics:Get(XF.Enum.Metric.ChannelReceive):Count(1)
+        protocol = XF.Enum.Protocol.Channel
     end
 
     -- Ensure this message has not already been processed
@@ -93,16 +98,11 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
     if(self:HasAllPackets(messageKey, totalPackets)) then
         XF:Debug(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-        local isBNet = inDistribution == 'WHISPER'
 
         local message = XFO.Mailbox:Pop()
         try(function()
-            message:Decode(encodedMessage, isBNet)
+            message:Decode(encodedMessage, protocol)
             XFO.Mailbox:Process(message)
-            if(isBNet) then
-                XFO.Friends:ProcessMessage(message)
-            end
-
             XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)
             XFO.Mailbox:Add(messageKey)
             self:Remove(messageKey)

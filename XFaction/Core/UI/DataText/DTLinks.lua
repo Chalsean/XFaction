@@ -78,14 +78,14 @@ function XFC.DTLinks:RefreshBroker()
 	local chat = 0
 	local bnet = 0
 
-	for _, target in XFO.Targets:Iterator() do
-		if(target:IsMyTarget()) then 
-			guild = target:ChatCount()
-		else
-			chat = chat + target:ChatCount()
-		end
-		bnet = bnet + XFO.Friends:LinkCountByTarget(target)
-	end
+	-- for _, target in XFO.Targets:Iterator() do
+	-- 	if(target:IsMyTarget()) then 
+	-- 		guild = target:ChatCount()
+	-- 	else
+	-- 		chat = chat + target:ChatCount()
+	-- 	end
+	-- 	bnet = bnet + XFO.Friends:LinkCountByTarget(target)
+	-- end
 
 	text = format('|cff3CE13F%d|r|cffFFFFFF - |r|cff%s%d|r|cffFFFFFF - |r|cffFFF468%d|r', guild, XF.Player.Faction:GetHex(), chat, bnet)
 	XFO.DTLinks:GetBroker().text = text

@@ -51,7 +51,11 @@ function XFC.Mailbox:Process(inMessage)
         XFO.ChatFrame:ProcessMessage(inMessage)
     elseif(inMessage:IsOrderMessage()) then
         XFO.Orders:ProcessMessage(inMessage)
-    end        
+    end  
+    
+    if(inMessage:IsBNetProtocol()) then
+        XFO.Friends:ProcessMessage(inMessage)
+    end
 end
 
 function XFC.Mailbox:CallbackJanitor()
@@ -71,54 +75,38 @@ function XFC.Mailbox:Send(inMessage)
     self:Add(inMessage:Key())
     inMessage:Print()
 
-    local guildBroadcast = inMessage:IsMyMessage()
-    local chatBroadcast = inMessage:IsMyMessage()
-    local removedTargets = ''
-
-    -- Identify targets player will cover and remove from message
-    -- so the next recipient knows they dont need to consider those targets
-    if(inMessage:Contains(XF.Player.Target:Key())) then
-        guildBroadcast = true
-        inMessage:Remove(XF.Player.Target:Key())
-        removedTargets = XF.Player.Guild:Initials()
-    end
-    
-    for _, target in inMessage:Iterator() do
-        if(target:UseChatProtocol()) then
-            chatBroadcast = true
-            -- Only remove target if theres redundancy
-            if(target:ChatCount() > 1) then
-                inMessage:Remove(target:Key())
-                removedTargets = removedTargets .. target:Guild():Initials() .. ';'
-            end
-        end
-    end
-    XF:Debug(self:ObjectName(), 'Targets removed from message [%s]: %s', inMessage:Key(), removedTargets)
-
-    -- Leverage messages as a ping but dont send double to them
-    local whispered = {}
+    -- Own messages get shotgunned
     if(inMessage:IsMyMessage()) then
-        for _, friend in XFO.Friends:Iterator() do
-            if(friend:CanLink() and not friend:IsLinked()) then
-                XFO.BNet:Whisper(inMessage, friend)
-                whispered[friend:Key()] = true
-            end
-        end
-    end
-
-    if(guildBroadcast) then
+        inMessage:Remove(XF.Player.Target:Key())
         XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
-    end
-    if(chatBroadcast) then
         XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
-    end    
+        for _, friend in XFO.Friends:Iterator() do
+            XFO.BNet:Whisper(inMessage, friend)
+        end
+    -- Forwarding logic
+    else
+        if(inMessage:Contains(XF.Player.Target:Key())) then
+            inMessage:Remove(XF.Player.Target:Key())
+            XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
+        end
+        
+        if(inMessage:Count() > 0) then
+            XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
 
-    -- Forwarding message, if remaining targets, switch to BNet
-    if(inMessage:Count() > 0 and XFO.Friends:HasLinkedFriends()) then
-        for _, target in inMessage:Iterator() do
-            local friend = XFO.Friends:GetRandomRecipient(target)
-            if(friend ~= nil and whispered[friend:Key()] == nil) then
-                XFO.BNet:Whisper(inMessage, friend)
+            local coverage = {}
+            for _, target in inMessage:Iterator() do
+                coverage[target:Key()] = target:ChatCount()
+            end
+
+            -- Leverage BNet to cover remaining targets
+            for _, friend in XFO.Friends:RandomIterator() do
+                if(friend:HasUnit()) then
+                    local target = friend:Unit():Target()
+                    if(inMessage:Contains(target:Key()) and coverage[target:Key()] < 3) then
+                        XFO.BNet:Whisper(inMessage, friend)
+                        coverage[target:Key()] = coverage[target:Key()] + 1
+                    end
+                end
             end
         end
     end

@@ -40,7 +40,7 @@ function XFC.Unit:new()
     object.mythicKey = nil
     object.realm = nil
     object.target = nil
-    object.targetCounts = nil
+    object.friend = nil
 
     return object
 end
@@ -77,7 +77,7 @@ function XFC.Unit:Deconstructor()
     self.mythicKey = nil
     self.realm = nil
     self.target = nil
-    self.targetCounts = nil
+    self.friend = nil
 end
 
 function XFC.Unit:Initialize(inMemberID)
@@ -119,14 +119,6 @@ function XFC.Unit:Initialize(inMemberID)
 	self:Guild(XF.Player.Guild)
     
     self:Target(XF.Player.Target)
-    self.targetCounts = {}
-    for _, target in XFO.Targets:Iterator() do
-        self.targetCounts[target:ID()] = {
-            chat = 0,
-            bnet = 0
-        }
-    end
-
     self:TimeStamp(XFF.TimeCurrent())
     self:Class(XFO.Classes:Get(unitData.classID))
     self:Race(XFO.Races:Get(unitData.race))
@@ -428,6 +420,14 @@ function XFC.Unit:Target(inTarget)
     return self.target
 end
 
+function XFC.Unit:Friend(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend' or inFriend == nil)
+    if(inFriend ~= nil) then
+        self.friend = inFriend
+    end
+    return self.friend
+end
+
 function XFC.Unit:Note(inNote)
     assert(type(inNote) == 'string' or inNote == nil)
     if(inNote ~= nil) then
@@ -640,6 +640,10 @@ function XFC.Unit:HasTarget()
     return self.target ~= nil
 end
 
+function XFC.Unit:IsFriend()
+    return self:Friend() ~= nil
+end
+
 function XFC.Unit:IsSameRealm()
     return XF.Player.Realm:Equals(self:Realm())
 end
@@ -650,6 +654,10 @@ end
 
 function XFC.Unit:IsSameGuild()
     return XF.Player.Guild:Equals(self:Guild())
+end
+
+function XFC.Unit:IsSameTarget()
+    return XF.Player.Target:Equals(self:Target())
 end
 
 function XFC.Unit:CanChat()
@@ -670,6 +678,11 @@ function XFC.Unit:GetLink()
     end
 
     return format('|Hplayer:%s|h[%s]|h', self:UnitName(), self:Name())
+end
+
+function XFC.Unit:UnlinkFriend()
+    self.friend = nil
+    return not self:IsFriend()
 end
 
 function XFC.Unit:GetColoredName()

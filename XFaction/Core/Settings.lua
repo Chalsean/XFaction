@@ -102,8 +102,8 @@ XF.Enum = {
     Protocol = {
         Unknown = 1,
         BNet = 2,
-        Chat = 3,
-        Whisper = 4
+        Channel = 3,
+        Guild = 4
     }
 }
 

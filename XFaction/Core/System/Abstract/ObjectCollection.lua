@@ -62,6 +62,26 @@ end
 function XFC.ObjectCollection:ReverseSortedIterator()
 	return PairsByKeys(self.objects, function(a, b) return a > b end)
 end
+
+function XFC.ObjectCollection:RandomIterator()
+
+    local shuffled = {}
+    for key in pairs(self.objects) do
+	    local pos = math.random(1, #shuffled + 1)
+	    table.insert(shuffled, pos, key)
+    end
+
+    local i = 0
+	local iter = function ()   -- iterator function
+        i = i + 1
+	    if shuffled[i] == nil then
+            return nil
+	    else
+            return shuffled[i], self.objects[shuffled[i]]
+	    end
+	end
+	return iter
+end
 --#endregion
 
 --#region Methods
