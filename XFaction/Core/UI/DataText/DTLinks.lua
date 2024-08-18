@@ -84,7 +84,7 @@ function XFC.DTLinks:RefreshBroker()
 		else
 			chat = chat + target:ChatCount()
 		end
-		bnet = bnet + target:BNetCount()
+		bnet = bnet + XFO.Friends:LinkCountByTarget(target)
 	end
 
 	text = format('|cff3CE13F%d|r|cffFFFFFF - |r|cff%s%d|r|cffFFFFFF - |r|cffFFF468%d|r', guild, XF.Player.Faction:GetHex(), chat, bnet)
@@ -155,8 +155,8 @@ function XFC.DTLinks:OnEnter(this)
 				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', target:ChatCount()), self.regularFont, 'CENTER')
 			elseif(target:ChatCount() > 0) then
 				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', XF.Player.Faction:GetHex(), target:ChatCount()), self.regularFont, 'CENTER')
-			elseif(target:BNetCount() > 0) then
-			 	self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', target:BNetCount()), self.regularFont, 'CENTER')
+			elseif(XFO.Friends:LinkCountByTarget(target) > 0) then
+			 	self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', XFO.Friends:LinkCountByTarget(target)), self.regularFont, 'CENTER')
 			else
 				self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self.regularFont, 'CENTER')
 			end

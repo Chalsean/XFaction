@@ -47,18 +47,10 @@ function XFC.Mailbox:Process(inMessage)
 
     XFO.Confederate:ProcessMessage(inMessage)
 
-    if(inMessage:IsLoginMessage() or inMessage:IsLogoutMessage() or inMessage:IsDataMessage()) then
-        return
-    end
-
     if(inMessage:IsGuildChatMessage() or inMessage:IsAchievementMessage()) then
         XFO.ChatFrame:ProcessMessage(inMessage)
-        return
-    end
-
-    if(inMessage:IsOrderMessage()) then
+    elseif(inMessage:IsOrderMessage()) then
         XFO.Orders:ProcessMessage(inMessage)
-        return
     end        
 end
 
@@ -190,9 +182,6 @@ end
 
 function XFC.Mailbox:SendAckMessage(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
-
-    XF:Debug(self:ObjectName(), 'Sending ack to [%s]', inFriend:Tag())
-
     local message = nil
     try(function ()
         message = self:Pop()

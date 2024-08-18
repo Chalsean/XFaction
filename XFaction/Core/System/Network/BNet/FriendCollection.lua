@@ -11,6 +11,7 @@ function XFC.FriendCollection:new()
 	object.byGUID = nil
 	object.byGUIDCount = 0
 	object.byTarget = nil
+	object.byTargetCount = nil
 	return object
 end
 
@@ -24,8 +25,10 @@ function XFC.FriendCollection:Initialize()
 
 		self.byGUID = {}
 		self.byTarget = {}
+		self.byTargetCount = {}
 		for _, target in XFO.Targets:Iterator() do
 			self.byTarget[target:Key()] = {}
+			self.byTargetCount[target:Key()] = 0
 		end
 
 		for i = 1, XFF.BNetFriendCount() do
@@ -46,16 +49,7 @@ function XFC.FriendCollection:Initialize()
             event = 'BN_FRIEND_INFO_CHANGED', 
             callback = XFO.Friends.CallbackFriendChanged, 
             instance = true,
-            --groupDelta = XF.Settings.Network.BNet.FriendTimer
         })
-
-        -- XFO.Timers:Add({
-        --     name = 'Ping', 
-        --     delta = XF.Settings.Network.BNet.Ping.Timer, 
-        --     callback = XFO.Friends.CallbackPing, 
-        --     repeater = true, 
-        --     instance = true
-        -- })
 
 		self:IsInitialized(true)
 	end
@@ -66,28 +60,49 @@ end
 function XFC.FriendCollection:LinkCount()
 	return self.byGUIDCount
 end
+
+function XFC.FriendCollection:LinkCountByTarget(inTarget)
+	assert(type(inTarget) == 'table' and inTarget.__name == 'Target')
+	return self.byTargetCount[inTarget:Key()] or 0
+end
 --#endregion
 
 --#region Methods
+function XFC.FriendCollection:Print()
+	self:ParentPrint()
+	XF:DataDumper(self:ObjectName(), self.byTargetCount)
+end
+
 function XFC.FriendCollection:Add(inFriend)
 	assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
+
 	if(self:Contains(inFriend:Key())) then
 		local oldFriend = self:Get(inFriend:Key())
-		self.objects[inFriend:Key()] = inFriend
 
+		-- Works but lord is it messy
 		if(oldFriend:HasTarget() and not inFriend:HasTarget()) then
 			self.byTarget[oldFriend:Target():Key()][oldFriend:Key()] = nil
+			self.byTargetCount[oldFriend:Target():Key()] = self.byTargetCount[oldFriend:Target():Key()] - 1
+		elseif(not oldFriend:HasTarget() and inFriend:HasTarget()) then
+			self.byTarget[inFriend:Target():Key()][inFriend:Key()] = inFriend
+			self.byTargetCount[inFriend:Target():Key()] = self.byTargetCount[inFriend:Target():Key()] + 1
 		end
+
 		if(oldFriend:GUID() ~= nil and inFriend:GUID() == nil) then
 			self.byGUID[oldFriend:GUID()] = nil
 			self.byGUIDCount = self.byGUIDCount - 1
+		elseif(oldFriend:GUID() == nil and inFriend:GUID() ~= nil) then
+			self.byGUID[inFriend:GUID()] = inFriend
+			self.byGUIDCount = self.byGUIDCount + 1
 		end
 		
+		self.parent.Add(self, inFriend)
 		self:Push(oldFriend)
 	else
 		self.parent.Add(self, inFriend)
 		if(inFriend:HasTarget()) then
 			self.byTarget[inFriend:Target():Key()][inFriend:Key()] = inFriend
+			self.byTargetCount[inFriend:Target():Key()] = self.byTargetCount[inFriend:Target():Key()] + 1
 		end
 		if(inFriend:GUID() ~= nil) then
 			self.byGUID[inFriend:GUID()] = inFriend
@@ -121,75 +136,29 @@ function XFC.FriendCollection:CallbackFriendChanged(inID)
 	local self = XFO.Friends
 	if(inID == nil or inID == 0) then return end
 
+	-- Detect friend going offline
 	local friend = nil
 	try(function()
 		friend = self:Pop()
 		friend:Initialize(inID)
 		if(self:Contains(friend:Key())) then
 			local oldFriend = self:Get(friend:Key())
-			if(oldFriend:CanLink() and not friend:IsOnline()) then
+			if(oldFriend:IsOnline() and not friend:IsOnline()) then
+				self:Replace(friend)
 				if(XFO.Confederate:Contains(oldFriend:GUID())) then
 					XFO.Confederate:Logout(oldFriend:GUID())
 				else
 					XFO.SystemFrame:DisplayLogout(oldFriend:Name())
 				end
-			elseif(oldFriend:IsLinked() and friend:CanLink()) then
-				friend:IsLinked(true)
-				friend:Target(oldFriend:Target())
+				return
 			end
 		end
-		self:Add(friend)
+		self:Push(friend)
 	end).
 	catch(function(err)
 		XF:Warn(self:ObjectName(), err)
 		self:Push(friend)
 	end)
-end
-
-function XFC.FriendCollection:Backup()
-	try(function ()
-		if(self:IsInitialized()) then
-			for _, friend in self:Iterator() do
-				if(friend:IsLinked()) then
-					XF.Cache.Backup.Friends[#XF.Cache.Backup.Friends + 1] = friend:Key()
-				end
-			end
-		end
-	end).
-	catch(function (err)
-		XF.Cache.Errors[#XF.Cache.Errors + 1] = 'Failed to create friend backup before reload: ' .. err
-	end)
-end
-
-function XFC.FriendCollection:Restore()
-	if(XF.Cache.Backup.Friends == nil) then XF.Cache.Backup.Friends = {} end
-	for _, key in pairs (XF.Cache.Backup.Friends) do
-		try(function ()
-			if(self:Contains(key)) then
-				local friend = self:Get(key)
-				friend:IsLinked(friend:CanLink()) -- They may have logged out during reload, thus why setting it to CanLink
-				XF:Info(self:ObjectName(), '  Restored %s friend information from backup', friend:Tag())
-			end
-		end).
-		catch(function (err)
-			XF:Warn(self:ObjectName(), 'Failed to restore friend list: ' .. err)
-		end)
-	end
-	XF.Cache.Backup.Friends = {}
-end
-
-function XFC.FriendCollection:CallbackPing()
-    local self = XFO.Friends
-    try(function()
-        for _, friend in self:Iterator() do
-            if(not friend:IsLinked() and friend:CanLink() and friend:LastPinged() < XFF.TimeCurrent() - XF.Settings.Network.BNet.Ping.Timer) then
-                XFO.Mailbox:SendPingMessage(friend)
-            end
-        end
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-    end)
 end
 
 function XFC.FriendCollection:ProcessMessage(inMessage)
@@ -200,17 +169,22 @@ function XFC.FriendCollection:ProcessMessage(inMessage)
 		friend = self:Pop()
 		friend:Initialize(i)
 		friend:Target(inMessage:FromUnit():Target())
-		friend:Target():BNetRecipient(friend:Key())
 		friend:IsLinked(true)
 		self:Add(friend)
 	else
-		friend:Target(inMessage:FromUnit():Target())
-		friend:Target():BNetRecipient(friend:Key())
+		if(not friend:HasTarget()) then
+			self.byTarget[inMessage:FromUnit():Target():Key()][friend:Key()] = friend
+			self.byTargetCount[inMessage:FromUnit():Target():Key()] = self.byTargetCount[inMessage:FromUnit():Target():Key()] + 1
+			friend:Target(inMessage:FromUnit():Target())
+		end
+
 		if(not friend:IsLinked()) then
 			friend:IsLinked(true)
 		end
 	end
 
+	XFO.DTLinks:RefreshBroker()
+	
 	if(inMessage:IsAckMessage()) then
 		XF:Debug(self:ObjectName(), 'Received ack message from [%s]', friend:Tag())
 	else

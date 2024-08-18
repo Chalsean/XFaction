@@ -169,7 +169,6 @@ function XF:CallbackLoginPlayer()
 
 			-- If reload, restore backup information
 			-- if(XF.Cache.UIReload) then
-			-- 	XFO.Friends:Restore()
 			-- 	XFO.Orders:Restore()
 			-- 	XF.Cache.UIReload = false
             --     XFO.Mailbox:SendDataMessage()
