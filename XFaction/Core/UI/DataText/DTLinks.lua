@@ -184,7 +184,7 @@ function XFC.DTLinks:OnEnter(this)
 				elseif(unit:TargetBNetCount(target:Key()) > 0) then
 					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', unit:TargetBNetCount(target:Key())), self.regularFont, 'CENTER')
 				elseif(unit:Target():Equals(target)) then
-					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F0|r'), self.regularFont, 'CENTER')
+					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F			0|r'), self.regularFont, 'CENTER')
 				else
 					self.tooltip:SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self.regularFont, 'CENTER')
 				end

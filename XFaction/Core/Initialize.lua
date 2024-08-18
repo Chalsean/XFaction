@@ -142,9 +142,6 @@ function XF:CallbackLoginGuild()
 	end).
 	catch(function (err)
 		XF:Error(ObjectName, err)
-	end).
-	finally(function ()			
-		XF:SetupMenus()
 	end)
 end
 
@@ -212,6 +209,9 @@ function XF:CallbackLoginPlayer()
 	end).
 	catch(function (err)
 		XF:Error(ObjectName, err)
+	end).
+	finally(function ()			
+		XF:SetupMenus()
 	end)
 end
 

@@ -39,6 +39,8 @@ end
 
 function XFC.Message:Deconstructor()
     self:ParentDeconstructor()
+    self.objects = {}
+    self.objectCount = 0
     self.from = nil
     self.fromUnit = nil
     self.subject = nil

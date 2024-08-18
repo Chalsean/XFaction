@@ -60,7 +60,7 @@ function XF:SetupMenus()
 		--#endregion
 
 		--#region Guild Menu
---		if(XFO.Guilds:Count() > 0) then
+		if(XFO.Guilds:Count() > 0) then
 			for _, guild in XFO.Guilds:SortedIterator() do
 				table.insert(XF.Cache.Setup.Guilds, {
 					region = guild:Region():Name(),
@@ -69,7 +69,7 @@ function XF:SetupMenus()
 					name = guild:Name(),
 				})
 			end
---		end
+		end
 
 		local i = #XF.Cache.Setup.Guilds
 		while i < XF.Settings.Setup.MaxGuilds do

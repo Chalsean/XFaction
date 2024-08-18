@@ -751,8 +751,6 @@ function XFC.Unit:Serialize()
         data.W = counts
     end
 
-    XF:DataDumper(self:ObjectName(), data)
-
 	return pickle(data)
 end
 
@@ -768,8 +766,6 @@ function XFC.Unit:Deserialize(inSerial)
             bnet = 0
         }
     end
-
-    XF:DataDumper(self:ObjectName(), data)
 
     self:IsRunningAddon(true)
 	self:AchievementPoints(data.A)    
