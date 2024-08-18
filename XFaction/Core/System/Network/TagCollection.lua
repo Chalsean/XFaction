@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'TagCollection'
 
-local MaxTagCount = 10
+local MaxTagCount = 25
 
 -- Blizzards "addon too chatty" algorithm is based on message tags
 -- Therefore by randomizing the tags, it linearly grows the messaging ceiling
