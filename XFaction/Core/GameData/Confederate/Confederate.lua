@@ -157,7 +157,8 @@ function XFC.Confederate:Logout(inUnit)
     
     XF:Info(self:ObjectName(), 'Guild member logout: %s', inUnit:UnitName())
     XFO.SystemFrame:DisplayLogout(inUnit:UnitName())
-    inUnit:Target():Remove(inUnit)
+
+    inUnit:Target():Remove(inUnit:Key())
 
     if(inUnit:IsSameGuild()) then
         self:Add(inUnit)
