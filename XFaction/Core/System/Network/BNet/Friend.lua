@@ -39,26 +39,28 @@ function XFC.Friend:Deconstructor()
 end
 
 function XFC.Friend:Initialize(inID)
-    assert(type(inID) == 'number')
+    assert(type(inID) == 'number' or type(inID) == 'string')
     if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        local accountInfo = XFF.BNetFriendInfo(inID)
-        self:Key(accountInfo.bnetAccountID)
-        self:ID(inID) -- Query ID, this can change between logins, thus why its not key
-        self:Name(accountInfo.accountName)
-        self:AccountID(accountInfo.bnetAccountID)                
-        self:Tag(accountInfo.battleTag)        
-        self:IsTrueFriend(accountInfo.isFriend)
+        local accountInfo = type(inID) == 'number' and XFF.BNetFriendInfoByID(inID) or XFF.BNetFriendInfoByGUID(inID)
+        if(accountInfo ~= nil) then
+            self:Key(accountInfo.bnetAccountID)
+            self:ID(inID) -- Query ID, this can change between logins, thus why its not key
+            self:Name(accountInfo.accountName)
+            self:AccountID(accountInfo.bnetAccountID)                
+            self:Tag(accountInfo.battleTag)        
+            self:IsTrueFriend(accountInfo.isFriend)
 
-        if(self:IsOnline(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW')) then
-            self:GameID(accountInfo.gameAccountInfo.gameAccountID)
-            self:GUID(accountInfo.gameAccountInfo.playerGuid)
-            self:Realm(XFO.Realms:Get(tonumber(accountInfo.gameAccountInfo.realmID)))
-            self:Faction(XFO.Factions:Get(accountInfo.gameAccountInfo.factionName))
+            if(self:IsOnline(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW')) then
+                self:GameID(accountInfo.gameAccountInfo.gameAccountID)
+                self:GUID(accountInfo.gameAccountInfo.playerGuid)
+                self:Realm(XFO.Realms:Get(tonumber(accountInfo.gameAccountInfo.realmID)))
+                self:Faction(XFO.Factions:Get(accountInfo.gameAccountInfo.factionName))
+            end
+
+            self:IsInitialized(true)
         end
-
-        self:IsInitialized(true)
     end
 end
 --#endregion
@@ -148,6 +150,7 @@ end
 --#region Methods
 function XFC.Friend:Print()
     self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  accountID (' .. type(self.accountID) .. '): ' .. tostring(self.accountID))
     XF:Debug(self:ObjectName(), '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
     XF:Debug(self:ObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
     XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))

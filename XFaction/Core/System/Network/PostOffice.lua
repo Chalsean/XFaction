@@ -62,20 +62,20 @@ end
 
 function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, inSender)
 
-    XF:Trace(self:ObjectName(), 'Received [%s] packet from [%s] for tag [%s]', inDistribution, inSender, inMessageTag)
+    XF:Debug(self:ObjectName(), 'Received [%s] packet from [%s] for tag [%s]', inDistribution, inSender, inMessageTag)
 
     -- If not a message from this addon, ignore
     if(not XFO.Tags:Contains(inMessageTag)) then
         return
     end
 
-    -- if(inMessageTag == XF.Enum.Tag.LOCAL) then
-    --     XFO.Metrics:Get(XF.Enum.Metric.ChannelReceive):Increment()
-    --     XFO.Metrics:Get(XF.Enum.Metric.Messages):Increment()
-    -- else
-    --     XFO.Metrics:Get(XF.Enum.Metric.BNetReceive):Increment()
-    --     XFO.Metrics:Get(XF.Enum.Metric.Messages):Increment()
-    -- end
+    if(inDistribution == 'WHISPER') then
+        XFO.Metrics:Get(XF.Enum.Metric.BNetReceive):Count(1)
+    elseif(inDistribution == 'GUILD') then
+        XFO.Metrics:Get(XF.Enum.Metric.GuildReceive):Count(1)
+    elseif(inDistribution == 'CHANNEL') then
+        XFO.Metrics:Get(XF.Enum.Metric.ChannelReceive):Count(1)
+    end
 
     -- Ensure this message has not already been processed
     local packetNumber = tonumber(string.sub(inEncodedMessage, 1, 1))
@@ -91,7 +91,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
 
     self:Add(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
-        XF:Debug(self:ObjectName(), 'Received all packets for message [%s] via [%s]', messageKey, inDistribution)
+        XF:Debug(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
         local isBNet = inDistribution == 'WHISPER'
 
@@ -100,7 +100,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             message:Decode(encodedMessage, isBNet)
             XFO.Mailbox:Process(message)
             if(isBNet) then
-                XFO.Friends:ProcessMessage(message, inSender)
+                XFO.Friends:ProcessMessage(message)
             end
 
             XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)

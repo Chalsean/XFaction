@@ -63,7 +63,8 @@ XFF.PlayerSpellKnown = IsPlayerSpell
 -- BNet
 XFF.BNetPlayerInfo = BNGetInfo
 XFF.BNetFriendCount = BNGetNumFriends
-XFF.BNetFriendInfo = C_BattleNet.GetFriendAccountInfo
+XFF.BNetFriendInfoByID = C_BattleNet.GetFriendAccountInfo
+XFF.BNetFriendInfoByGUID = C_BattleNet.GetAccountInfoByGUID
 
 -- Client
 XFF.ClientVersion = GetBuildInfo

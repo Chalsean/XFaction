@@ -3,11 +3,11 @@ local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTMetrics'
 local CombatLockdown = InCombatLockdown
 
-DTMetrics = XFC.Object:newChildConstructor()
+XFC.DTMetrics = XFC.Object:newChildConstructor()
 	
 --#region Constructors
-function DTMetrics:new()
-	local object = DTGuild.parent.new(self)
+function XFC.DTMetrics:new()
+	local object = XFC.DTMetrics.parent.new(self)
     object.__name = ObjectName
 	object.headerFont = nil
 	object.regularFont = nil
@@ -19,14 +19,14 @@ end
 --#endregion
 
 --#region Initializers
-function DTMetrics:Initialize()
+function XFC.DTMetrics:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.ldbObject = XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTMETRICS_NAME'], {
 			type = 'data source',
 			label = XF.Lib.Locale['DTMETRICS_NAME'],
-		    OnEnter = function(this) XF.DataText.Metrics:OnEnter(this) end,
-			OnLeave = function(this) XF.DataText.Metrics:OnLeave(this) end,
+		    OnEnter = function(this) XFO.DTMetrics:OnEnter(this) end,
+			OnLeave = function(this) XFO.DTMetrics:OnLeave(this) end,
 		})
 		LDB_ANCHOR = self.ldbObject
 		self.headerFont = CreateFont('headerFont')
@@ -38,15 +38,15 @@ function DTMetrics:Initialize()
 	return self:IsInitialized()
 end
 
-function DTMetrics:PostInitialize()
-	XF.DataText.Metrics:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Metrics:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Metrics:RefreshBroker()
+function XFC.DTMetrics:PostInitialize()
+	XFO.DTMetrics:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XFO.DTMetrics:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	XFO.DTMetrics:RefreshBroker()
 end
 --#endregion
 
 --#region Print
-function DTMetrics:Print()
+function XFC.DTMetrics:Print()
 	self:ParentPrint()
 	XF:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
 	XF:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
@@ -57,51 +57,42 @@ end
 --#endregion
 
 --#region Broker
-function DTMetrics:GetBroker()
+function XFC.DTMetrics:GetBroker()
 	return self.ldbObject
 end
 
-function DTMetrics:GetHeaderFont()
+function XFC.DTMetrics:GetHeaderFont()
 	return self.headerFont
 end
 
-function DTMetrics:GetRegularFont()
+function XFC.DTMetrics:GetRegularFont()
 	return self.regularFont
 end
 
-function DTMetrics:RefreshBroker()
+function XFC.DTMetrics:RefreshBroker()
 	if(XF.Initialized and self:IsInitialized()) then
 		local text = ''
 		local delimiter = false
-		if(XF.Config.DataText.Metric.Total) then
-			text = text .. format('|cffffffff%d|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):Count())
-			delimiter = true
-		end
 
-		if(XF.Config.DataText.Metric.Average) then
-			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffffffff%.2f|r', XFO.Metrics:Get(XF.Enum.Metric.Messages):GetAverage(XF.Config.DataText.Metric.Rate))
-			delimiter = true
-		end
+		local sent = XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Count() + XFO.Metrics:Get(XF.Enum.Metric.GuildSend):Count() + XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Count()
+		local received = XFO.Metrics:Get(XF.Enum.Metric.BNetReceive):Count() + XFO.Metrics:Get(XF.Enum.Metric.GuildReceive):Count() + XFO.Metrics:Get(XF.Enum.Metric.ChannelReceive):Count()
 
-		if(XF.Config.DataText.Metric.Error) then
-			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):Count())
-			delimiter = true
-		end
+		local delta = (XFF.TimeCurrent() - XF.Start) / XF.Config.DataText.Metric.Rate
+		sent = sent / delta
+		received = received / delta
 
-		if(XF.Config.DataText.Metric.Warning) then
-			if(delimiter) then text = text .. ' : ' end
-			text = text .. format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):Count())
-			delimiter = true
-		end
+		local text = format('|cffffffff%d|r', sent) .. ' : ' ..
+					 format('|cffffffff%d|r', received) .. ' : ' ..
+					 format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):Count()) .. ' : ' ..
+					 format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):Count())
+
 		self.ldbObject.text = text
 	end
 end
 --#endregion
 
 --#region OnEnter
-function DTMetrics:OnEnter(this)
+function XFC.DTMetrics:OnEnter(this)
 	if(XF.Initialized == false) then return end
 	if(CombatLockdown()) then return end
 
@@ -113,7 +104,7 @@ function DTMetrics:OnEnter(this)
 		self.tooltip:SetHeaderFont(self.headerFont)
 		self.tooltip:SetFont(self.regularFont)
 		self.tooltip:SmartAnchorTo(this)
-		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() DTMetrics:OnLeave() end)
+		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTMetrics:OnLeave() end)
 		self.tooltip:EnableMouse(true)
 		self.tooltip:SetClampedToScreen(false)
 	end
@@ -145,7 +136,7 @@ function DTMetrics:OnEnter(this)
 
 	--#region Populate Table
 	if(XF.Initialized) then
-		for _, metric in XFO.Metrics:Iterator() do
+		for _, metric in XFO.Metrics:SortedIterator() do
 			self.tooltip:SetCell(line, 1, metric:Name(), self.regularFont, 'LEFT')
 			self.tooltip:SetCell(line, 2, metric:Count(), self.regularFont, 'CENTER')
 			self.tooltip:SetCell(line, 3, format("%.2f", metric:GetAverage(XF.Config.DataText.Metric.Rate)), self.regularFont, 'RIGHT')
@@ -159,7 +150,7 @@ end
 --#endregion
 
 --#region OnLeave
-function DTMetrics:OnLeave()
+function XFC.DTMetrics:OnLeave()
 	if self.tooltip and MouseIsOver(self.tooltip) then
         return
     else

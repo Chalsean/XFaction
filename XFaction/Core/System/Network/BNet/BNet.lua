@@ -43,7 +43,7 @@ function XFC.BNet:Whisper(inMessage, inFriend)
             XF:Debug(self:ObjectName(), 'Whispering BNet link [%s:%d] packet [%d:%d] with tag [%s] of length [%d]', inFriend:Name(), inFriend:GameID(), index, #packets, tag, strlen(packet))
             -- The whole point of packets is that this call will only let so many characters get sent and AceComm does not support BNet
             XF.Lib.BCTL:BNSendGameData(priority, tag, packet, _, inFriend:GameID())
-            XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Increment()
+            XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Count(1)
         end
     end).
     catch(function (err)

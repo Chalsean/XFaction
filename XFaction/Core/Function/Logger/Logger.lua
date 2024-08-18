@@ -29,7 +29,7 @@ function XF:Error(inSubCategory, ...)
 	Log(1, inSubCategory, ...)
 	Log(1, inSubCategory, debugstack())
 	if(XFO.Metrics ~= nil) then
-		XFO.Metrics:Get(XF.Enum.Metric.Error):Increment()
+		XFO.Metrics:Get(XF.Enum.Metric.Error):Count(1)
 	end
 end
 
@@ -37,7 +37,7 @@ function XF:Warn(inSubCategory, ...)
 	Log(2, inSubCategory, ...)
 	Log(2, inSubCategory, debugstack())
 	if(XFO.Metrics ~= nil) then
-		XFO.Metrics:Get(XF.Enum.Metric.Warning):Increment()
+		XFO.Metrics:Get(XF.Enum.Metric.Warning):Count(1)
 	end
 end
 

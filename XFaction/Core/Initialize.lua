@@ -33,7 +33,7 @@ function XF:CoreInit()
 	-- DataText
 	XF.DataText.Guild = DTGuild:new()
 	XFO.DTLinks = XFC.DTLinks:new()
-	XF.DataText.Metrics = DTMetrics:new()
+	XFO.DTMetrics = XFC.DTMetrics:new()
 
 	-- Frames
 	XFO.ChatFrame = XFC.ChatFrame:new()
@@ -86,7 +86,7 @@ function XF:CoreInit()
 		
 		XF.DataText.Guild:Initialize()
 		XFO.DTLinks:Initialize()
-		XF.DataText.Metrics:Initialize()
+		XFO.DTMetrics:Initialize()
 
 		XFO.Expansions = XFC.ExpansionCollection:new(); XFO.Expansions:Initialize()
 		XF.WoW = XFO.Expansions:Current()
@@ -189,7 +189,7 @@ function XF:CallbackLoginPlayer()
 			-- Finish DT init
 			XF.DataText.Guild:PostInitialize()
 			XFO.DTLinks:PostInitialize()
-			XF.DataText.Metrics:PostInitialize()
+			XFO.DTMetrics:PostInitialize()
 
 			-- For support reasons, it helps to know what addons are being used
 			for i = 1, XFF.ClientAddonCount() do

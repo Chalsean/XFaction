@@ -135,6 +135,7 @@ end
 function XFC.FriendCollection:CallbackFriendChanged(inID)
 	local self = XFO.Friends
 	if(inID == nil or inID == 0) then return end
+	XF:Debug(self:ObjectName(), 'Checking friend: %d', inID)
 
 	-- Detect friend going offline
 	local friend = nil
@@ -163,13 +164,13 @@ function XFC.FriendCollection:CallbackFriendChanged(inID)
 	end)
 end
 
-function XFC.FriendCollection:ProcessMessage(inMessage, inSenderID)
+function XFC.FriendCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
 	local friend = self:Get(inMessage:From())
 	if(friend == nil) then
 		friend = self:Pop()
-		friend:Initialize(inSenderID)
+		friend:Initialize(inMessage:From())
 		friend:Target(inMessage:FromUnit():Target())
 		friend:IsLinked(true)
 		self:Add(friend)

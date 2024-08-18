@@ -14,7 +14,12 @@ end
 --#endregion
 
 --#region Properties
-function XFC.Metric:Count()
+function XFC.Metric:Count(inCount)
+    assert(type(inCount) == 'number' or inCount == nil)
+    if(inCount ~= nil) then
+        self.count = self.count + inCount
+        XFO.DTMetrics:RefreshBroker()
+    end
     return self.count
 end
 --#endregion
@@ -23,15 +28,6 @@ end
 function XFC.Metric:Print()
     self:ParentPrint()
     XF:Debug(self:ObjectName(), '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
-end
-
-function XFC.Metric:Increment()
-    self.count = self.count + 1
-    if(self:Name() == XF.Enum.Metric.Messages or
-       self:Name() == XF.Enum.Metric.Error or
-       self:Name() == XF.Enum.Metric.Warning) then
-        XF.DataText.Metrics:RefreshBroker()
-    end
 end
 
 function XFC.Metric:GetAverage(inPer)

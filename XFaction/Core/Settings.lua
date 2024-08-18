@@ -90,13 +90,14 @@ XF.Enum = {
 		ACK = '7'
 	},
 	Metric = {
-		Messages = XF.Lib.Locale['DTMETRICS_MESSAGES'],
 		BNetSend = XF.Lib.Locale['DTMETRICS_BNET_SEND'],
 		BNetReceive = XF.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
 		ChannelSend = XF.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
 		ChannelReceive = XF.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
 		Error = XF.Lib.Locale['DTMETRICS_ERROR'],
 		Warning = XF.Lib.Locale['DTMETRICS_WARNING'],
+		GuildSend = XF.Lib.Locale['DTMETRICS_GUILD_SEND'],
+		GuildReceive = XF.Lib.Locale['DTMETRICS_GUILD_RECEIVE']
 	},
     Protocol = {
         Unknown = 1,

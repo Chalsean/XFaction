@@ -16,12 +16,14 @@ end
 function XFC.MetricCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, metricName in pairs (XF.Enum.Metric) do
+
+		for name, key in pairs(XF.Enum.Metric) do
 			local metric = XFC.Metric:new()
-			metric:Key(metricName)
-			metric:Name(metricName)
+			metric:Key(key)
+			metric:Name(name)
 			self:Add(metric)
 		end
+
 		self:StartCalendar(XFF.TimeCalendar())
 		self:StartTime(XFF.TimeLocal())
 		self:IsInitialized(true)
