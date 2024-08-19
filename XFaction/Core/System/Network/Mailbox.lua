@@ -94,7 +94,11 @@ function XFC.Mailbox:Send(inMessage)
         end
         
         if(inMessage:Count() > 0) then
-            XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
+
+            -- If you received the message via channel, theres no point in putting it back on it
+            if(not inMessage:IsChannelProtocol()) then
+                XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
+            end
 
             local coverage = {}
             for _, target in inMessage:Iterator() do
