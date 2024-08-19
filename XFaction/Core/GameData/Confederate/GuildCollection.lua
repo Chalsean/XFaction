@@ -89,28 +89,48 @@ function XFC.GuildCollection:Deserialize()
 
 
 	-- TESTING ONLY
+	-- local guild = XFC.Guild:new()
+	-- guild:Deserialize('XFg:US:2007621:Eternal Kingdom:EKA')
+	-- self:Add(guild)
+
+	-- local guild2 = XFC.Guild:new()
+	-- guild2:Deserialize('XFg:US:2200861:Alternal Kingdom Two:AK2')
+	-- self:Add(guild2)
+
+	-- local guild3 = XFC.Guild:new()
+	-- guild3:Deserialize('XFg:US:2074711:Alternal Kingdom:AK1')
+	-- self:Add(guild3)
+
+	-- local guild4 = XFC.Guild:new()
+	-- guild4:Deserialize('XFg:US:2130491:Alternal Kingdom Three:AK3')
+	-- self:Add(guild4)
+
+	-- local guild5 = XFC.Guild:new()
+	-- guild5:Deserialize('XFg:US:2086941:Endless Kingdom:ENK')
+	-- self:Add(guild5)
+
+	-- local guild6 = XFC.Guild:new()
+	-- guild6:Deserialize('XFg:US:397138861:Alternal Kingdom Four:AK4')
+	-- self:Add(guild6)
+
 	local guild = XFC.Guild:new()
-	guild:Deserialize('XFg:US:2007621:Eternal Kingdom:EKA')
+	guild:Deserialize('XFg:US:2012491:Zeroes to Heroes:ZtH')
 	self:Add(guild)
 
 	local guild2 = XFC.Guild:new()
-	guild2:Deserialize('XFg:US:2200861:Alternal Kingdom Two:AK2')
+	guild2:Deserialize('XFg:US:2012341:Death Jesters:DJ')
 	self:Add(guild2)
 
 	local guild3 = XFC.Guild:new()
-	guild3:Deserialize('XFg:US:2074711:Alternal Kingdom:AK1')
+	guild3:Deserialize('XFg:US:2021021:Mini Heroes:MH')
 	self:Add(guild3)
 
 	local guild4 = XFC.Guild:new()
-	guild4:Deserialize('XFg:US:2130491:Alternal Kingdom Three:AK3')
+	guild4:Deserialize('XFg:US:367901681:Zeroes to Heroes:ZtHI')
 	self:Add(guild4)
 
 	local guild5 = XFC.Guild:new()
-	guild5:Deserialize('XFg:US:2086941:Endless Kingdom:ENK')
+	guild5:Deserialize('XFg:US:2250631:Zeroes to Hordies:ZtHH')
 	self:Add(guild5)
-
-	local guild6 = XFC.Guild:new()
-	guild6:Deserialize('XFg:US:397138861:Alternal Kingdom Four:AK4')
-	self:Add(guild6)
 end
 --#endregion
