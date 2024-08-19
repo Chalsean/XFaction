@@ -169,6 +169,8 @@ function XFC.Confederate:Logout(inUnit)
         self:Remove(inUnit:Key())
         self:Push(inUnit)
     end
+
+    XFO.DTLinks:RefreshBroker()
 end
 
 -- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
@@ -216,8 +218,10 @@ function XFC.Confederate:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
     if(inMessage:IsLogoutMessage()) then
-        XF:Debug(self:ObjectName(), 'Detected message logout: %s', inMessage:FromUnit():UnitName())
-        self:Logout(inMessage:FromUnit())
+        if(not inMessage:FromUnit():IsSameGuild()) then
+            XF:Debug(self:ObjectName(), 'Detected message logout: %s', inMessage:FromUnit():UnitName())
+            self:Logout(inMessage:FromUnit())
+        end
         return
     end
 

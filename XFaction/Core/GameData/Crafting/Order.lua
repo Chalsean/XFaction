@@ -8,11 +8,9 @@ XFC.Order = XFC.Object:newChildConstructor()
 function XFC.Order:new()
     local object = XFC.Order.parent.new(self)
     object.__name = 'Order'
-    object.customerUnit = nil
+    object.customer = nil
     object.profession = nil
     object.type = 0
-    object.hasDisplayed = false
-    object.hasCommunicated = false
     object.state = 0
     object.recipeID = 0
     object.quality = nil
@@ -23,11 +21,9 @@ end
 
 function XFC.Order:Deconstructor()
     self:ParentDeconstructor()
-    self.customerUnit = nil
+    self.customer = nil
     self.profession = nil
     self.type = 0
-    self.hasDisplayed = false
-    self.hasCommunicated = false
     self.state = 0
     self.recipeID = 0
     self.quality = nil
@@ -36,7 +32,73 @@ function XFC.Order:Deconstructor()
 end
 --#endregion
 
---#region Print
+--#region Properties
+function XFC.Order:Customer(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or inUnit == nil)
+    if(inUnit ~= nil) then
+        self.customer = inUnit
+    end
+    return self.customer
+end
+
+function XFC.Order:Profession(inProfession)
+    assert(type(inProfession) == 'table' and inProfession.__name == 'Profession' or inProfession == nil)
+    if(inProfession ~= nil) then
+        self.profession = inProfession
+    end
+    return self.profession
+end
+
+function XFC.Order:Type(inType)
+    assert(type(inType) == 'number' or inType == nil)
+    if(inType ~= nil) then
+        self.type = inType
+    end
+    return self.type
+end
+
+function XFC.Order:RecipeID(inID)
+    assert(type(inID) == 'number' or inID == nil)
+    if(inID ~= nil) then
+        self.recipeID = inID
+    end
+    return self.recipeID
+end
+
+function XFC.Order:Quality(inQuality)
+    assert(type(inQuality) == 'number' or inQuality == nil)
+    if(inQuality ~= nil) then
+        self.quality = inQuality
+    end
+    return self.quality
+end
+
+function XFC.Order:CrafterGUID(inGUID)
+    assert(type(inGUID) == 'string' or inGUID == nil)
+    if(inGUID ~= nil) then
+        self.crafterGUID = inGUID
+    end
+    return self.crafterGUID
+end
+
+function XFC.Order:CrafterName(inName)
+    assert(type(inName) == 'string' or inName == nil)
+    if(inName ~= nil) then
+        self.crafterName = inName
+    end
+    return self.crafterName
+end
+
+function XFC.Order:State(inState)
+    assert(type(inState) == 'number' or inState == nil)
+    if(inState ~= nil) then
+        self.state = inState
+    end
+    return self.state
+end
+--#endregion
+
+--#region Methods
 function XFC.Order:Print()
     self:ParentPrint()
     XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
@@ -44,155 +106,50 @@ function XFC.Order:Print()
     XF:Debug(self:ObjectName(), '  quality (' .. type(self.quality) .. '): ' .. tostring(self.quality))
     XF:Debug(self:ObjectName(), '  crafterGUID (' .. type(self.crafterGUID) .. '): ' .. tostring(self.crafterGUID))
     XF:Debug(self:ObjectName(), '  crafterName (' .. type(self.crafterName) .. '): ' .. tostring(self.crafterName))
-    XF:Debug(self:ObjectName(), '  hasDisplayed (' .. type(self.hasDisplayed) .. '): ' .. tostring(self.hasDisplayed))
-    XF:Debug(self:ObjectName(), '  hasCommunicated (' .. type(self.hasCommunicated) .. '): ' .. tostring(self.hasCommunicated))
     XF:Debug(self:ObjectName(), '  state (' .. type(self.state) .. '): ' .. tostring(self.state))
-    if(self:HasCustomerUnit()) then self:GetCustomerUnit():Print() end
-    if(self:HasProfession()) then self:GetProfession():Print() end
-end
---#endregion
-
---#region Accessors
-function XFC.Order:HasCustomerUnit()
-    return self.customerUnit ~= nil
+    if(self:HasCustomer()) then self:Customer():Print() end
+    if(self:HasProfession()) then self:Profession():Print() end
 end
 
-function XFC.Order:GetCustomerUnit()
-    return self.customerUnit
-end
-
-function XFC.Order:SetCustomerUnit(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name ~= nil and inUnit.__name == 'Unit', 'argment must be Unit class')
-    self.customerUnit = inUnit
+function XFC.Order:HasCustomer()
+    return self:Customer() ~= nil
 end
 
 function XFC.Order:HasProfession()
-    return self.profession ~= nil
-end
-
-function XFC.Order:GetProfession()
-    return self.profession
-end
-
-function XFC.Order:SetProfession(inProfession)
-    assert(type(inProfession) == 'table' and inProfession.__name ~= nil and inProfession.__name == 'Profession', 'argument must be Profession object')
-    self.profession = inProfession
+    return self:Profession() ~= nil
 end
 
 function XFC.Order:IsMyOrder()
-    return XF.Player.Unit:Equals(self:GetCustomerUnit())
-end
-
-function XFC.Order:Type()
-    return self.type
-end
-
-function XFC.Order:Type(inType)
-    assert(type(inType) == 'number')
-    self.type = inType
-end
-
-function XFC.Order:GetRecipeID()
-    return self.recipeID
-end
-
-function XFC.Order:SetRecipeID(inID)
-    assert(type(inID) == 'number')
-    self.recipeID = inID
-end
-
-function XFC.Order:GetQuality()
-    return self.quality
-end
-
-function XFC.Order:SetQuality(inQuality)
-    assert(type(inQuality) == 'number')
-    self.quality = inQuality
-end
-
-function XFC.Order:GetCrafterGUID()
-    return self.crafterGUID
-end
-
-function XFC.Order:SetCrafterGUID(inGUID)
-    assert(type(inGUID) == 'string')
-    self.crafterGUID = inGUID
+    return self:HasCustomer() and self:Customer():IsPlayer()
 end
 
 function XFC.Order:IsPlayerCrafter()
-    return XF.Player.Unit:GUID() == self.crafterGUID
+    return self:GUID() == XF.Player.GUID
 end
 
-function XFC.Order:GetCrafterName()
-    return self.crafterName
-end
-
-function XFC.Order:SetCrafterName(inName)
-    assert(type(inName) == 'string')
-    self.crafterName = inName
-end
-
-function XFC.Order:GetState()
-    return self.state
-end
-
-function XFC.Order:SetState(inState)
-    assert(type(inState) == 'number')
-    self.state = inState
-end
---#endregion
-
---#region Networking
-function XFC.Order:Encode(inBackup)
-    assert(inBackup == nil or type(inBackup) == 'boolean', 'argument must be nil or boolean')
+function XFC.Order:Serialize()
     local data = {}
-    data.C = self:GetCustomerUnit():Serialize()
     data.K = self:Key()
     data.O = self:ID()
-    data.P = self:GetProfession():Key()
-    data.Q = self:GetQuality()
-    data.R = self:GetRecipeID()
+    data.P = self:Profession():Serialize()
+    data.Q = self:Quality()
+    data.R = self:RecipeID()
     data.T = self:Type()
-    data.U = self:GetCrafterGUID()
-    return data
+    data.U = self:CrafterGUID()
+    return pickle(data)
 end
 
-function XFC.Order:Decode(inData)
-    assert(type(inData) == 'table')
-    self:Key(inData.K)
-    self:ID(inData.O)
-    self:Type(inData.T)
-    self:SetCustomerUnit(XF:DeserializeUnitData(inData.C))    
-    self:SetProfession(XFO.Professions:Get(inData.P))
-    if(inData.Q ~= nil) then
-        self:SetQuality(inData.Q)
-    end
-    self:SetRecipeID(inData.R)
-    if(inData.U ~= nil) then
-        self:SetCrafterGUID(inData.U)
-    end
+function XFC.Order:Deserialize(inData)
+    assert(type(inData) == 'string')
+    local data = unpickle(inData)
+    self:Key(data.K)
+    self:ID(data.O)
+    self:Type(data.T)
+    self:Profession(XFO.Professions:Get(data.P))
+    self:Quality(data.Q)
+    self:RecipeID(data.R)
+    self:CrafterGUID(data.U)
     self:IsInitialized(true)
-end
-
-function XFC.Order:Broadcast()
-    local message = nil
-    try(function ()
-        message = XF.Mailbox.Chat:Pop()
-        message:Initialize()
-        message:From(XF.Player.Unit:GUID())
-        message:SetGuild(XF.Player.Guild)
-        message:UnitName(XF.Player.Unit:UnitName())
-        message:Type(XF.Enum.Network.BROADCAST)
-        message:Subject(XF.Enum.Message.ORDER)
-        message:Data(self:Encode())
-        XF.Mailbox.Chat:Send(message)
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-    end).
-    finally(function ()
-        XF.Mailbox.Chat:Push(message)
-    end)
 end
 
 function XFC.Order:Display()

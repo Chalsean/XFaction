@@ -9,14 +9,14 @@ function XFC.OrderCollection:Initialize()
         XFO.Events:Add({
             name = 'CraftOrder', 
             event = 'CRAFTINGORDERS_ORDER_PLACEMENT_RESPONSE', 
-            callback = XFO.Orders.CraftOrder, 
+            callback = XFO.Orders.CallbackCraftOrder, 
             instance = false,
             start = true
         })
         XFO.Events:Add({
             name = 'CanRequestOrders', 
             event = 'CRAFTINGORDERS_CAN_REQUEST', 
-            callback = XFO.Orders.RequestOrders, 
+            callback = XFO.Orders.CallbackRequestOrders, 
             instance = false,
             start = true
         })
@@ -49,18 +49,20 @@ function QueryMyOrders()
         -- You have to make a server request and provide a callback for when the server feels like handling your query
         XFF.CraftingQueryServer(request)
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(ObjectName, err)
     end)
 end
 
 function GetMyOrders()
+    local self = XFO.Orders
     local myOrders = XFF.CraftingGetOrders()
     for _, myOrder in ipairs(myOrders) do
-        local order = XFO.Orders:Pop()
+        local order = nil
         try(function ()
-            order:SetKey(XF.Player.Unit:GetUnitName() .. ':' .. myOrder.orderID)   
-            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not XFO.Orders:Contains(order:Key())) then
+            order = self:Pop()
+            order:Key(XF.Player.Unit:UnitName() .. ':' .. myOrder.orderID)   
+            if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not self:Contains(order:Key())) then
                 order:Type(myOrder.orderType)
                 order:ID(myOrder.orderID)
                 order:Customer(XF.Player.Unit)
@@ -71,7 +73,7 @@ function GetMyOrders()
 
                 local professionName = XFF.CraftingGetSkillProfession(myOrder.skillLineAbilityID)
                 if(professionName ~= nil and type(professionName) == 'string') then
-                    local profession = XF.Professions:Get(professionName)
+                    local profession = XFO.Professions:Get(professionName)
                     if(profession ~= nil) then
                         order:Profession(profession)
                     end
@@ -86,19 +88,19 @@ function GetMyOrders()
 
                 -- This function is executed upon query of the player's orders, therefore we know the player is always the customer for IsPersonal
                 if(order:IsGuild() or order:IsPersonal()) then
-                    XFO.Orders:Add(order)
+                    self:Add(order)
                     if(not self:IsFirstQuery()) then
-                        order:Display()
-                        order:Broadcast()
+                        XFO.SystemFrame:DisplayOrder(order)
+                        XFO.Mailbox:SendOrderMessage(order:Serialize())
                     end
                 end                
             else
-                XFO.Orders:Push(order)
+                self:Push(order)
             end
         end).
         catch(function (err)
             XF:Warn(ObjectName, err)
-            XFO.Orders:Push(order)
+            self:Push(order)
         end)
     end
 
@@ -108,7 +110,7 @@ function GetMyOrders()
     end
 end
 
-function XFC.OrderCollection:CraftOrder() 
+function XFC.OrderCollection:CallbackCraftOrder() 
     local self = XFO.Orders
     try(function ()
         QueryMyOrders()
@@ -118,7 +120,7 @@ function XFC.OrderCollection:CraftOrder()
     end)
 end
 
-function XFC.OrderCollection:RequestOrders() 
+function XFC.OrderCollection:CallbackRequestOrders() 
     local self = XFO.Orders
     try(function ()        
         QueryMyOrders()

@@ -77,29 +77,44 @@ function XFC.SystemFrame:DisplayOrder(inOrder)
     if(not XF.Config.Chat.Crafting.Enable) then return end
     assert(type(inOrder) == 'table' and inOrder.__name == 'Order')
 
-    local customer = inOrder:CustomerUnit()
-    local text = XF.Settings.Frames.Chat.Prepend
-        
-    if(XF.Config.Chat.Crafting.Faction) then
-        text = text .. format('%s ', format(XF.Icons.String, customer:Faction():IconID()))
-    end
-      
-    text = text .. customer:GetLink()
-        
-    if(XF.Config.Chat.Crafting.Main and customer:IsAlt()) then
-        text = text .. '(' .. customer:MainName() .. ') '
-    end
-    
-    if(XF.Config.Chat.Crafting.Guild) then
-        text = text .. '<' .. customer:Guild():Initials() .. '> '
-    end
-        
-    if(inOrder:IsGuild()) then
-        text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:GetLink())
-    else
-        text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:GetCrafterName(), inOrder:GetLink())
+    if(inOrder:IsGuild() and not XF.Config.Chat.Crafting.GuildOrder) then return end
+    if(inOrder:IsPersonal() and not XF.Config.Chat.Crafting.PersonalOrder) then return end
+    if(inOrder:IsPersonal() and not inOrder:IsMyOrder() and not inOrder:IsPlayerCrafter()) then return end
+
+    local display = false
+    if(not XF.Config.Chat.Crafting.Profession) then
+        display = true
+    elseif(inOrder:HasProfession() and inOrder:Profession():Equals(XF.Player.Unit:Profession1())) then
+        display = true
+    elseif(inOrder:HasProfession() and inOrder:Profession():Equals(XF.Player.Unit:Profession2())) then
+        display = true
     end
 
-    XFF.UISystemMessage(text)
+    if(display) then
+        local customer = inOrder:Customer()
+        local text = XF.Settings.Frames.Chat.Prepend
+            
+        if(XF.Config.Chat.Crafting.Faction) then
+            text = text .. format('%s ', format(XF.Icons.String, customer:Faction():IconID()))
+        end
+        
+        text = text .. customer:GetLink()
+            
+        if(XF.Config.Chat.Crafting.Main and customer:IsAlt()) then
+            text = text .. '(' .. customer:MainName() .. ') '
+        end
+        
+        if(XF.Config.Chat.Crafting.Guild) then
+            text = text .. '<' .. customer:Guild():Initials() .. '> '
+        end
+            
+        if(inOrder:IsGuild()) then
+            text = text .. format(XF.Lib.Locale['NEW_GUILD_CRAFTING_ORDER'], inOrder:GetLink())
+        else
+            text = text .. format(XF.Lib.Locale['NEW_PERSONAL_CRAFTING_ORDER'], inOrder:CrafterName(), inOrder:GetLink())
+        end
+
+        XFF.UISystemMessage(text)
+    end
 end
 --#endregion

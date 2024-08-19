@@ -55,6 +55,14 @@ local function GetMessagePrefix(inEvent, inUnit)
         text = text .. format('%s ', format(XF.Icons.String, inUnit:Faction():IconID()))
     end
 
+    if(inEvent == 'CHAT_MSG_GUILD_ACHIEVEMENT') then
+        if(inUnit:IsSameFaction()) then
+            text = text .. '%s '
+        else
+            text = text .. inUnit:GetLink()
+        end
+    end
+
     if(XF.Config.Chat[config].Main and inUnit:IsAlt()) then
         text = text .. '(' .. inUnit:MainName() .. ') '
     end
@@ -154,8 +162,7 @@ local function DisplayAchievement(inUnit, inID)
                 local frame = 'ChatFrame' .. i
                 if _G[frame] then
 
-                    local text = XF.Settings.Frames.Chat.Prepend
-                    text = text .. GetMessagePrefix('CHAT_MSG_GUILD_ACHIEVEMENT', inUnit)
+                    local text = GetMessagePrefix('CHAT_MSG_GUILD_ACHIEVEMENT', inUnit)
                     text = text .. XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(XFF.PlayerAchievementLink(inID), "(Player.-:.-:.-:.-:.-:)"  , inUnit:GUID() .. ':1:' .. date("%m:%d:%y:") ) .. '!'
                     local hex = GetChatHex('CHAT_MSG_GUILD_ACHIEVEMENT', inUnit:Faction())                   
                     if hex ~= nil then
