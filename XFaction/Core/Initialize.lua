@@ -166,7 +166,6 @@ function XF:CallbackLoginPlayer()
 
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
-				XFO.Orders:Restore()
 				XF.Cache.UIReload = false
                 XFO.Mailbox:SendDataMessage()
 			-- Otherwise send login message
