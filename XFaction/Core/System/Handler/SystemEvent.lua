@@ -69,7 +69,7 @@ function XFC.SystemEvent:CallbackReloadUI()
     end).
     catch(function (err)
         XF:Error(self:ObjectName(), err)
-        XF.Config.Logout[#XF.Config.Errors + 1] = 'Failed to perform backups: ' .. err
+        XF.Config.Logout[#XF.Config.Logout + 1] = 'Failed to perform backups: ' .. err
     end).
     finally(function ()
         XF.Cache.UIReload = true

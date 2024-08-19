@@ -88,7 +88,11 @@ function GetMyOrders()
 
                 -- This function is executed upon query of the player's orders, therefore we know the player is always the customer for IsPersonal
                 if(order:IsGuild() or order:IsPersonal()) then
+
+                    local item = XFF.CraftingGetItem(order:RecipeID(), nil, nil, nil, order:Quality())
+                    order:Link(item.hyperlink)
                     self:Add(order)
+                    
                     if(not self:IsFirstQuery()) then
                         XFO.SystemFrame:DisplayOrder(order)
                         XFO.Mailbox:SendOrderMessage(order:Serialize())

@@ -16,6 +16,7 @@ function XFC.Order:new()
     object.quality = nil
     object.crafterGUID = nil
     object.crafterName = nil
+    object.link = nil
     return object
 end
 
@@ -29,6 +30,7 @@ function XFC.Order:Deconstructor()
     self.quality = nil
     self.crafterGUID = nil
     self.crafterName = nil
+    self.link = nil
 end
 --#endregion
 
@@ -96,6 +98,14 @@ function XFC.Order:State(inState)
     end
     return self.state
 end
+
+function XFC.Order:Link(inLink)
+    assert(type(inLink) == 'string' or inLink == nil)
+    if(inLink ~= nil) then
+        self.link = inLink
+    end
+    return self.link
+end
 --#endregion
 
 --#region Methods
@@ -107,6 +117,7 @@ function XFC.Order:Print()
     XF:Debug(self:ObjectName(), '  crafterGUID (' .. type(self.crafterGUID) .. '): ' .. tostring(self.crafterGUID))
     XF:Debug(self:ObjectName(), '  crafterName (' .. type(self.crafterName) .. '): ' .. tostring(self.crafterName))
     XF:Debug(self:ObjectName(), '  state (' .. type(self.state) .. '): ' .. tostring(self.state))
+    XF:Debug(self:ObjectName(), '  link (' .. type(self.link) .. '): ' .. tostring(self.link))
     if(self:HasCustomer()) then self:Customer():Print() end
     if(self:HasProfession()) then self:Profession():Print() end
 end
@@ -136,6 +147,7 @@ function XFC.Order:Serialize()
     data.R = self:RecipeID()
     data.T = self:Type()
     data.U = self:CrafterGUID()
+    data.L = self:Link()
     return pickle(data)
 end
 
@@ -149,31 +161,7 @@ function XFC.Order:Deserialize(inData)
     self:Quality(data.Q)
     self:RecipeID(data.R)
     self:CrafterGUID(data.U)
+    self:Link(data.L)
     self:IsInitialized(true)
-end
-
-function XFC.Order:Display()
-    try(function()
-        if(not XF.Config.Chat.Crafting.Enable) then return end
-        if(self:IsGuild() and not XF.Config.Chat.Crafting.GuildOrder) then return end
-        if(self:IsPersonal() and not XF.Config.Chat.Crafting.PersonalOrder) then return end
-        if(self:IsPersonal() and not self:IsMyOrder() and not self:IsPlayerCrafter()) then return end
-
-        local display = false
-        if(not XF.Config.Chat.Crafting.Profession) then
-            display = true
-        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:GetProfession1())) then
-            display = true
-        elseif(self:HasProfession() and self:GetProfession():Equals(XF.Player.Unit:GetProfession2())) then
-            display = true
-        end
-
-        if(display) then
-            XFO.SystemFrame:DisplayOrder(self)
-        end
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-    end)
 end
 --#endregion
