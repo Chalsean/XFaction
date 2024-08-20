@@ -36,6 +36,7 @@ XF.Initialized = false
 XF.Player = {
 	LastBroadcast = 0,
 	InInstance = false
+	InGuild = false
 }
 --#endregion
 

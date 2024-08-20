@@ -102,6 +102,7 @@ function XF:CallbackLoginGuild()
 		-- For a time Blizz API says player is not in guild, even if they are
 		-- Its not clear what event fires (if any) when this data is available, hence the poller
 		if(XFF.PlayerIsInGuild()) then
+			XF.Player.InGuild = true
 			-- Even though it says were in guild, theres a brief time where the following calls fails, hence the sanity check
 			local guildID = XFF.GuildID()
 			if(guildID ~= nil) then

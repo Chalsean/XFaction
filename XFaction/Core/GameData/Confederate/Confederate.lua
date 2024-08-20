@@ -31,10 +31,16 @@ function XFC.Confederate:Initialize()
         })
         
         -- This here because there isnt a good place for it
+        -- Will move somewhere else in the future
         XFO.Events:Add({
             name = 'Level', 
             event = 'PLAYER_LEVEL_CHANGED', 
             callback = XFO.Confederate.CallbackPlayerChanged
+        })
+        XFO.Events:Add({
+            name = 'Guild',
+            event = 'PLAYER_GUILD_UPDATE',
+            callback = XFO.Confederate.CallbackGuildChanged
         })
 
         XFO.Timers:Add({
@@ -237,6 +243,37 @@ function XFC.Confederate:CallbackPlayerChanged(inEvent)
     try(function ()
         XF.Player.Unit:Initialize(XF.Player.Unit:ID())
         XFO.Mailbox:SendDataMessage()
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+    end)
+end
+
+function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID) 
+    local self = XFO.Confederate
+    XF:Debug(self:ObjectName(), 'Guild update event fired [%s]', inUnitID)
+    try(function ()
+        -- Player just joined a guild
+        if(XFF.PlayerIsInGuild()) then
+            XF:Debug(self:ObjectName(), 'Player is in a guild')
+            if(XFO.Timers:Contains('LoginGuild')) then
+                XFO.Timers:Get('LoginGuild'):Start()
+            else
+                XFO.Timers:Add({
+                    name = 'LoginGuild', 
+                    delta = 1, 
+                    callback = XF.CallbackLoginGuild, 
+                    repeater = true, 
+                    instance = true,
+                    ttl = XF.Settings.LocalGuild.LoginTTL,
+                    start = true
+                })
+            end
+        -- Player just left a guild
+        elseif(not XFF.PlayerIsInGuild()) then
+            XF:Debug(self:ObjectName(), 'Player is not in a guild')
+            XF:Stop()
+        end
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
