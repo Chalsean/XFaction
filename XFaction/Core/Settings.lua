@@ -144,7 +144,7 @@ XF.Settings = {
 		},
 		BNet = {
 			FriendTimer = 2,
-			PacketSize = 420,	
+			PacketSize = 380,	
 			Ping = {
 				Timer = 60 * 1,     -- Seconds between pinging friends
 			},
