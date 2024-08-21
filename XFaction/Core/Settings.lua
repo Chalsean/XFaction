@@ -100,7 +100,16 @@ XF.Enum = {
         BNet = 2,
         Channel = 3,
         Guild = 4
-    }
+    },
+	Location = {
+		Unknown = 0,
+		World = 1,
+		Continent = 2,
+		Zone = 3,
+		Dungeon = 4,
+		MicroDungeon = 5,
+		Orphan = 6
+	}
 }
 
 XF.Settings = {

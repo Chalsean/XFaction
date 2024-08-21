@@ -102,6 +102,11 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
         local message = XFO.Mailbox:Pop()
         try(function()
             message:Decode(encodedMessage, protocol)
+
+            if(not message:HasFromUnit() or not message:FromUnit():HasGuild()) then
+                error('Unable to parse message')
+            end
+
             XFO.Mailbox:Process(message)
             XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)
             XFO.Mailbox:Add(messageKey)

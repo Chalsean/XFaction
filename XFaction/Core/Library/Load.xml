@@ -16,7 +16,6 @@
     <!-- SharedMediaWidget dependent upon SharedMedia -->
     <Include file='LibSharedMedia-3.0\lib.xml'/>
     <Include file='AceGUI-3.0-SharedMediaWidgets\widget.xml'/>
-    <Include file='LibTourist-3.0\lib.xml'/>  
     <!-- Modified Ace libraries that fixes DF config interaction --> 
     <Include file='MSA-Ace-3.0\MSA-Ace-3.0.xml'/>
 </Ui>

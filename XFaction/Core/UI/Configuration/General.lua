@@ -810,12 +810,12 @@ XF.Options = {
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
 									func = function(info) XFO.Versions:Print() end,
 								},
-								Zone = {
+								Location = {
 									order = 26,
 									type = 'execute',
-									name = XF.Lib.Locale['ZONE'],
+									name = XF.Lib.Locale['LOCATION'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XFO.Zones:Print() end,
+									func = function(info) XFO.Locations:Print() end,
 								},
 							},
 						},

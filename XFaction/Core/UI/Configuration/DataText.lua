@@ -273,6 +273,7 @@ XF.Options.args.DataText = {
 						Level = XF.Lib.Locale['LEVEL'],            
 						Dungeon = XF.Lib.Locale['DUNGEON'],
 						Hero = XF.Lib.Locale['HERO'],
+						Location = XF.Lib.Locale['LOCATION'],
 						MythicKey = XF.Lib.Locale['MYTHICKEY'],
                         Name = XF.Lib.Locale['NAME'],
 						Note = 	XF.Lib.Locale['NOTE'],
@@ -284,8 +285,7 @@ XF.Options.args.DataText = {
 						Realm = XF.Lib.Locale['REALM'],
 						Spec = XF.Lib.Locale['SPEC'],
 						Team = XF.Lib.Locale['TEAM'],
-						Version = XF.Lib.Locale['VERSION'],
-						Zone = XF.Lib.Locale['ZONE'],
+						Version = XF.Lib.Locale['VERSION'],						
 					},
 					get = function(info) return XF.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XF.Config.DataText.Guild[ info[#info] ] = value end
@@ -989,43 +989,43 @@ XF.Options.args.DataText = {
 					get = function(info) return XF.Config.DataText.Guild.Alignment.Version end,
 					set = function(info, value) XF.Config.DataText.Guild.Alignment.Version = value; end
 				},
-				Zone = {
+				Location = {
 					order = 80,
 					type = 'toggle',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Zone' end,
+					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Location' end,
 					name = ENABLE,
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ZONE_TOOLTIP'],
+					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_LOCATION_TOOLTIP'],
 					get = function(info) return XF.Config.DataText.Guild.Enable[ info[#info] ] end,
 					set = function(info, value) 
 						XF.Config.DataText.Guild.Enable[ info[#info] ] = value
 						if(value) then GuildAddedMenuItem(info[#info]) else GuildRemovedMenuItem(info[#info]) end
 					end
 				},
-				ZoneOrder = {
+				LocationOrder = {
 					order = 81,
 					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Zone' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.Zone) end,
+					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Location' end,
+					disabled = function () return (not XF.Config.DataText.Guild.Enable.Location) end,
 					name = XF.Lib.Locale['ORDER'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ZONE_ORDER_TOOLTIP'],
+					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_LOCATION_ORDER_TOOLTIP'],
 					values = function () return GuildOrderMenu() end,
-					get = function(info) if(XF.Config.DataText.Guild.Enable.Zone) then return tostring(XF.Config.DataText.Guild.Order.Zone) end end,
-					set = function(info, value) GuildSelectedMenuItem('Zone', value) end
+					get = function(info) if(XF.Config.DataText.Guild.Enable.Location) then return tostring(XF.Config.DataText.Guild.Order.Location) end end,
+					set = function(info, value) GuildSelectedMenuItem('Location', value) end
 				},
-				ZoneAlignment = {
+				LocationAlignment = {
 					order = 82,
 					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Zone' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.Zone) end,
+					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Location' end,
+					disabled = function () return (not XF.Config.DataText.Guild.Enable.Location) end,
 					name = XF.Lib.Locale['ALIGNMENT'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ZONE_ALIGNMENT_TOOLTIP'],
+					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_LOCATION_ALIGNMENT_TOOLTIP'],
 					values = {
 						Center = XF.Lib.Locale['CENTER'],
 						Left = XF.Lib.Locale['LEFT'],
 						Right = XF.Lib.Locale['RIGHT'],
                     },
-					get = function(info) return XF.Config.DataText.Guild.Alignment.Zone end,
-					set = function(info, value) XF.Config.DataText.Guild.Alignment.Zone = value; end
+					get = function(info) return XF.Config.DataText.Guild.Alignment.Location end,
+					set = function(info, value) XF.Config.DataText.Guild.Alignment.Location = value; end
 				},		
 				MythicKey = {
 					order = 83,

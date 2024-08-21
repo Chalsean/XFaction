@@ -29,16 +29,16 @@ function XFC.MythicKeyCollection:GetMyKey()
     local level = XFF.MythicLevel()    
     local mapID = XFF.MythicMapID()
 
-    if(level ~= nil and mapID ~= nil and XFO.Dungeons:Contains(mapID)) then
-
-        local dungeon = XFO.Dungeons:Get(mapID)
-        local key = tostring(level) .. '.' .. tostring(dungeon:Key())
+    if(level ~= nil and mapID ~= nil) then
+        XFO.Locations:Add(mapID)
+        local location = XFO.Locations:Get(mapID)
+        local key = tostring(level) .. '.' .. tostring(location:Key())
         if(not self:Contains(key)) then
             local mkey = XFC.MythicKey:new()
             mkey:Initialize()
             mkey:Key(key)
             mkey:ID(level)
-            mkey:Dungeon(dungeon)
+            mkey:Location(location)
             self:Add(mkey)
         end
 

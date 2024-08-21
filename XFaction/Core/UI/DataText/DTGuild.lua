@@ -150,10 +150,10 @@ local function PreSort()
 				unitData.Profession2 = unit:Profession2():IconID()
 			end
 
-			unitData.Zone = unit:HasZone() and unit:Zone():Name() or nil
+			unitData.Location = unit:HasLocation() and unit:Location():Name() or nil
 
-			if(unit:HasMythicKey() and unit:MythicKey():HasDungeon()) then
-				unitData.MythicKey = unit:MythicKey():Dungeon():Name() .. ' +' .. unit:MythicKey():ID()
+			if(unit:HasMythicKey() and unit:MythicKey():HasLocation()) then
+				unitData.MythicKey = unit:MythicKey():Location():Name() .. ' +' .. unit:MythicKey():ID()
 			end
 
 			list[#list + 1] = unitData

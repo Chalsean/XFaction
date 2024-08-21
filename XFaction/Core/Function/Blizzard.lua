@@ -60,6 +60,8 @@ XFF.PlayerPvPRating = GetPersonalRatedInfo
 XFF.PlayerGuild = GetGuildInfo
 XFF.PlayerZone = GetZoneText
 XFF.PlayerSpellKnown = IsPlayerSpell
+XFF.PlayerLocationID = C_Map.GetBestMapForUnit
+XFF.LocationInfo = C_Map.GetMapInfo
 
 -- BNet
 XFF.BNetPlayerInfo = BNGetInfo

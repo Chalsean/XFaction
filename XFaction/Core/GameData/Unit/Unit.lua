@@ -17,7 +17,7 @@ function XFC.Unit:new()
     object.class = nil
     object.spec = nil
     object.hero = nil
-    object.zone = nil
+    object.location = nil
     object.note = nil
     object.presence = Enum.ClubMemberPresence.Unknown
     object.race = nil
@@ -55,7 +55,7 @@ function XFC.Unit:Deconstructor()
     self.class = nil
     self.spec = nil
     self.hero = nil
-    self.zone = nil
+    self.location = nil
     self.note = nil
     self.presence = Enum.ClubMemberPresence.Unknown
     self.race = nil
@@ -149,15 +149,6 @@ function XFC.Unit:Initialize(inMemberID)
     end
     self:LastLogin(lastLogin)
 
-    if(unitData.zone and XFO.Zones:Contains(unitData.zone)) then
-        self:Zone(XFO.Zones:Get(unitData.zone))
-    elseif(unitData.zone and strlen(unitData.zone)) then
-        XFO.Zones:Add(unitData.zone)
-        self:Zone(XFO.Zones:Get(unitData.zone))
-    else
-        self:Zone(XFO.Zones:Get('?'))
-    end
-
     if(unitData.profession1ID ~= nil) then
         self:Profession1(XFO.Professions:Get(unitData.profession1ID))
     end
@@ -174,6 +165,8 @@ function XFC.Unit:Initialize(inMemberID)
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
         self:Version(XF.Version)
+
+        self:Location(XFO.Locations:GetCurrentLocation())
 
         local mkey = XFO.Keys:GetMyKey()
         if(mkey ~= nil) then
@@ -222,6 +215,15 @@ function XFC.Unit:Initialize(inMemberID)
         if(highestRating > 0) then
             self:PvP(highestRating, highestIndex)
         end
+    else
+        if(unitData.zone ~= nil and strlen(unitData.zone) > 0) then
+            if(not XFO.Locations:Contains(unitData.zone)) then                
+                XFO.Locations:Add(unitData.zone)
+            end
+            self:Location(XFO.Locations:Get(unitData.zone))
+        else
+            self:Location(XFO.Locations:Get('?'))
+        end
     end
 
     self:IsInitialized(true)
@@ -261,12 +263,12 @@ function XFC.Unit:Level(inLevel)
     return self.level
 end
 
-function XFC.Unit:Zone(inZone)
-    assert(type(inZone) == 'table' and inZone.__name == 'Zone' or inZone == nil)
-    if(inZone ~= nil) then
-        self.zone = inZone
+function XFC.Unit:Location(inLocation)
+    assert(type(inLocation) == 'table' and inLocation.__name == 'Location' or inLocation == nil)
+    if(inLocation ~= nil) then
+        self.location = inLocation
     end
-    return self.zone
+    return self.location
 end
 
 function XFC.Unit:Presence(inPresence)
@@ -588,7 +590,7 @@ function XFC.Unit:Print()
     if(self:HasProfession2()) then self:Profession2():Print() end  
     if(self:HasRaiderIO()) then self:RaiderIO():Print() end
     if(self:HasMythicKey()) then self:MythicKey():Print() end
-    if(self:HasZone()) then self:Zone():Print() end
+    if(self:HasLocation()) then self:Location():Print() end
     if(self:HasTarget()) then self:Target():Print() end
     if(self:IsFriend()) then self:Friend():Print() end
 end
@@ -597,8 +599,8 @@ function XFC.Unit:IsPlayer()
     return self:GUID() == XF.Player.GUID
 end
 
-function XFC.Unit:HasZone()
-    return self.zone ~= nil
+function XFC.Unit:HasLocation()
+    return self:Location() ~= nil
 end
 
 function XFC.Unit:IsOnline()
@@ -739,7 +741,7 @@ function XFC.Unit:Serialize()
 	data.V = self:Version():Serialize()
 	data.X = self:HasProfession1() and self:Profession1():Serialize() or nil
 	data.Y = self:HasProfession2() and self:Profession2():Serialize() or nil
-    data.Z = self:Zone():Serialize()
+    data.Z = self:Location():Serialize()
 
     local counts = ''
     if(self:IsPlayer()) then
@@ -802,10 +804,12 @@ function XFC.Unit:Deserialize(inSerial)
     end
     self:Version(XFO.Versions:Get(data.V))
 
-    if(not XFO.Zones:Contains(data.Z)) then
-        XFO.Zones:Add(data.Z)
+    if(data.Z ~= nil) then
+        if(not XFO.Locations:Contains(data.Z)) then
+            XFO.Locations:Add(data.Z)
+        end
+        self:Location(XFO.Locations:Get(data.Z))
     end
-    self:Zone(XFO.Zones:Get(data.Z))
 
     if(data.W ~= nil) then
         local targets = string.Split(data.W, ';')
