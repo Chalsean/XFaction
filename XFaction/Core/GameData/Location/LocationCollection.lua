@@ -293,7 +293,7 @@ local _MapData = {
 	[290] = "Blackwing Lair;36;4",
 	[291] = "The Deadmines;52;4",
 	[292] = "The Deadmines;52;4",
-	[293] = "Grim Batol;241;4",
+	[293] = "Grim Batol;241;4;GB",
 	[294] = "The Bastion of Twilight;241;4",
 	[295] = "The Bastion of Twilight;241;4",
 	[296] = "The Bastion of Twilight;241;4",
@@ -997,7 +997,7 @@ local _MapData = {
 	[1159] = "Blackrock Depths;32;4",
 	[1160] = "Blackrock Depths;32;4",
 	[1161] = "Boralus;895;3",
-	[1162] = "Siege of Boralus;895;4",
+	[1162] = "Siege of Boralus;895;4;SB",
 	[1163] = "Dazar'alor;1165;5",
 	[1164] = "Dazar'alor;1165;5",
 	[1165] = "Dazar'alor;862;3",
@@ -1288,10 +1288,10 @@ local _MapData = {
 	[1663] = "Halls of Atonement;1525;4",
 	[1664] = "Halls of Atonement;1525;4",
 	[1665] = "Halls of Atonement;1525;4",
-	[1666] = "The Necrotic Wake;1533;4",
-	[1667] = "The Necrotic Wake;1533;4",
-	[1668] = "The Necrotic Wake;1533;4",
-	[1669] = "Mists of Tirna Scithe;1565;4",
+	[1666] = "The Necrotic Wake;1533;4;NW",
+	[1667] = "The Necrotic Wake;1533;4;NW",
+	[1668] = "The Necrotic Wake;1533;4;NW",
+	[1669] = "Mists of Tirna Scithe;1565;4;MTS",
 	[1670] = "Oribos;1550;4",
 	[1671] = "Oribos;1550;4",
 	[1672] = "Oribos;1550;4",
@@ -1689,10 +1689,10 @@ local _MapData = {
 	[2206] = "A.Z.E.R.O.T.H.;1462;4",
 	[2207] = "The Warlands;947;4",
 	[2211] = "Aberrus, the Shadowed Crucible;2133;6",
-	[2213] = "City of Threads;2255;3",
+	[2213] = "City of Threads;2255;3;CT",
 	[2214] = "The Ringing Deeps;2274;3",
 	[2215] = "Hallowfall;2274;3",
-	[2216] = "City of Threads - Lower;2255;3",
+	[2216] = "City of Threads - Lower;2255;3;CT",
 	[2220] = "The Nighthold;680;4",
 	[2221] = "The Nighthold;680;4",
 	[2228] = "The Black Empire;947;4",
@@ -1767,15 +1767,15 @@ local _MapData = {
 	[2330] = "Priory of the Sacred Flame;2215;6",
 	[2335] = "Cinderbrew Meadery;2248;4",
 	[2339] = "Dornogal;2248;3",
-	[2341] = "The Stonevault;2214;4",
+	[2341] = "The Stonevault;2214;4;SV",
 	[2343] = "City of Threads;2213;4",
 	[2344] = "City of Threads;2213;4",
 	[2345] = "Deephaul Ravine;2214;6",
 	[2347] = "The Spiral Weave;2255;4",
 	[2348] = "Zekvir's Lair;2255;4",
-	[2357] = "City of Echos;2255;4",
-	[2358] = "City of Echos;2255;4",
-	[2359] = "The Dawnbreaker;2215;4",
+	[2357] = "Ara-Kara, City of Echos;2255;4;AK",
+	[2358] = "Ara-Kara, City of Echos;2255;4;AK",
+	[2359] = "The Dawnbreaker;2215;4;DB",
 	[2367] = "Vault of Memory;2248;4",
 	[2368] = "Hall of Awakening;2248;4",
 }
@@ -1795,9 +1795,6 @@ function XFC.LocationCollection:Initialize()
 
 		for id, data in pairs (_MapData) do
 			local maps = string.Split(data, ';')
-			if(id == 401) then
-				XF:DataDumper(self:ObjectName(), maps)
-			end
 			local location = XFC.Location:new()
 			location:Initialize()
 			location:Key(maps[1])

@@ -62,6 +62,18 @@ XF.ChangeLog['5.0.2'] = {
                 fontSize = 'medium',
                 name = 'Moved all XFaction classes to own namespace to avoid collisions with other addons.',
             },
+            Realm = {
+                order = 10,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Refreshed the listing of known realms.',
+            },
+            Zone = {
+                order = 11,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Refreshed the listing of known zones/dungeons.',
+            },
         },
     },		
 }
