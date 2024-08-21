@@ -10,6 +10,7 @@ function XFC.Location:new()
     object.__name = ObjectName
     object.parentID = 0
     object.type = XF.Enum.Location.Unknown
+    object.nickname = nil
     return object
 end
 --#endregion
@@ -29,6 +30,27 @@ function XFC.Location:Type(inType)
         self.type = inType
     end
     return self.type
+end
+
+function XFC.Location:Nickname(inName)
+    assert(type(inName) == 'string' or inName == nil)
+    if(inName ~=  nil) then
+        self.nickname = inName
+    end
+    return self.nickname
+end
+--#endregion
+
+--#region Methods
+function XFC.Location:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  parentID (' .. type(self.parentID) .. '): ' .. tostring(self.parentID))
+    XF:Debug(self:ObjectName(), '  type (' .. type(self.type) .. '): ' .. tostring(self.type))
+    XF:Debug(self:ObjectName(), '  nickname (' .. type(self.nickname) .. '): ' .. tostring(self.nickname))
+end
+
+function XFC.Location:HasNickname()
+    return self:Nickname() ~= nil
 end
 
 function XFC.Location:Serialize()

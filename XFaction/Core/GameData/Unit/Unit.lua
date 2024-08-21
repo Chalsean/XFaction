@@ -581,7 +581,10 @@ function XFC.Unit:Print()
     XF:Debug(self:ObjectName(), '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
     if(self:HasVersion()) then self:Version():Print() end
     if(self:HasGuild()) then self:Guild():Print() end
+    if(self:HasRealm()) then self:Realm():Print() end
+    if(self:HasTarget()) then self:Target():Print() end
     if(self:HasTeam()) then self:Team():Print() end
+    if(self:HasLocation()) then self:Location():Print() end
     if(self:HasRace()) then self:Race():Print() end
     if(self:HasClass()) then self:Class():Print() end
     if(self:HasSpec()) then self:Spec():Print() end
@@ -590,8 +593,6 @@ function XFC.Unit:Print()
     if(self:HasProfession2()) then self:Profession2():Print() end  
     if(self:HasRaiderIO()) then self:RaiderIO():Print() end
     if(self:HasMythicKey()) then self:MythicKey():Print() end
-    if(self:HasLocation()) then self:Location():Print() end
-    if(self:HasTarget()) then self:Target():Print() end
     if(self:IsFriend()) then self:Friend():Print() end
 end
 

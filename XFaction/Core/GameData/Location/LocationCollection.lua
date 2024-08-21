@@ -400,7 +400,7 @@ local _MapData = {
 	[398] = "Well of Eternity;71;6",
 	[399] = "Hour of Twilight;71;4",
 	[400] = "Hour of Twilight;399;4",
-	[401] = "End Time;71;4",
+	[401] = "End Time;71;4;ET",
 	[402] = "End Time;401;4",
 	[403] = "End Time;401;4",
 	[404] = "End Time;401;4",
@@ -1795,6 +1795,9 @@ function XFC.LocationCollection:Initialize()
 
 		for id, data in pairs (_MapData) do
 			local maps = string.Split(data, ';')
+			if(id == 401) then
+				XF:DataDumper(self:ObjectName(), maps)
+			end
 			local location = XFC.Location:new()
 			location:Initialize()
 			location:Key(maps[1])
@@ -1802,6 +1805,9 @@ function XFC.LocationCollection:Initialize()
 			location:Name(maps[1])
 			location:ParentID(tonumber(maps[2]))
 			location:Type(tonumber(maps[3]))
+			if(#maps > 3) then
+				location:Nickname(maps[4])
+			end
 			self:Add(location)
 		end
 

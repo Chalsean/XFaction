@@ -153,7 +153,8 @@ local function PreSort()
 			unitData.Location = unit:HasLocation() and unit:Location():Name() or nil
 
 			if(unit:HasMythicKey() and unit:MythicKey():HasLocation()) then
-				unitData.MythicKey = unit:MythicKey():Location():Name() .. ' +' .. unit:MythicKey():ID()
+				local location = unit:MythicKey():Location():HasNickname() and unit:MythicKey():Location():Nickname() or unit:MythicKey():Location():Name()
+				unitData.MythicKey = location .. ' +' .. unit:MythicKey():ID()
 			end
 
 			list[#list + 1] = unitData

@@ -8,90 +8,57 @@ XFC.Realm = XFC.Object:newChildConstructor()
 function XFC.Realm:new()
     local object = XFC.Realm.parent.new(self)
     object.__name = ObjectName
-    object.connectedRealms = nil
-    object.connectedRealmCount = 0
-    object.apiName = nil
-    object.isTargeted = false
-    object.isCurrent = nil
-    object.guildCount = 0
+    object.parentID = 0
+    object.region = nil
+    object.expansion = nil
     return object
-end
-
-function XFC.Realm:Initialize()
-    if(not self:IsInitialized()) then
-        self:ParentInitialize()
-        self.connectedRealms = {}
-        self:IsInitialized(true)
-    end
 end
 --#endregion
 
 --#region Properties
-function XFC.Realm:APIName()
-    return string.gsub(self:Name(), "%s+", "")
+function XFC.Realm:ParentID(inParentID)
+    assert(type(inParentID) == 'number' or inParentID == nil)
+    if(inParentID ~= nil) then
+        self.parentID = inParentID
+    end
+    return self.parentID
 end
 
-function XFC.Realm:IsTargeted(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
-    if(inBoolean ~= nil) then
-        self.isTargeted = inBoolean
+function XFC.Realm:Region(inRegion)
+    assert(type(inRegion) == 'table' and inRegion.__name == 'Region' or inRegion == nil)
+    if(inRegion ~= nil) then
+        self.region = inRegion
     end
-    return self.isTargeted
+    return self.region
 end
 
-function XFC.Realm:IsCurrent()
-    if(self.isCurrent == nil) then 
-        self.isCurrent = self:ID() == XFF.RealmID()
+function XFC.Realm:Expansion(inExansion)
+    assert(type(inExansion) == 'table' and inExansion.__name == 'Expansion' or inExansion == nil)
+    if(inExansion ~= nil) then
+        self.expansion = inExansion
     end
-    return self.isCurrent
-end
-
-function XFC.Realm:GuildCount(inCount)
-    assert(type(inCount) == 'number' or inCount == nil, 'argument must be number or nil')
-    if(inCount ~= nil) then
-        self.guildCount = inCount
-    end
-    return self.guildCount
+    return self.expansion
 end
 --#endregion
 
 --#region Methods
 function XFC.Realm:Print()
     self:ParentPrint()
-    XF:Debug(self:ObjectName(), '  apiName (' .. type(self.apiName) .. '): ' .. tostring(self.apiName))
-    XF:Debug(self:ObjectName(), '  isTargeted (' .. type(self.isTargeted) .. '): ' .. tostring(self.isTargeted))
-    XF:Debug(self:ObjectName(), '  isCurrent (' .. type(self.isCurrent) .. '): ' .. tostring(self.isCurrent))
-    XF:Debug(self:ObjectName(), '  guildCount (' .. type(self.guildCount) .. '): ' .. tostring(self.guildCount))
-    XF:Debug(self:ObjectName(), '  connectedRealmCount (' .. type(self.connectedRealmCount) .. '): ' .. tostring(self.connectedRealmCount))
-    for _, realm in pairs (self.connectedRealms) do
-        XF:Debug(self:ObjectName(), '* connectedRealm [%d]', realm:ID())
-    end
+    XF:Debug(self:ObjectName(), '  parentID (' .. type(self.parentID) .. '): ' .. tostring(self.parentID))
+    if(self:HasRegion()) then self:Region():Print() end
+    if(self:HasExpansion()) then self:Expansion():Print() end
 end
 
-function XFC.Realm:ConnectedIterator()
-    return next, self.connectedRealms, nil
+function XFC.Realm:APIName()
+    return string.gsub(self:Name(), "%s+", "")
 end
 
-function XFC.Realm:HasConnections()
-    return self.connectedRealmCount > 1
+function XFC.Realm:HasRegion()
+    return self:Region() ~= nil
 end
 
-function XFC.Realm:AddConnected(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-    if(self.connectedRealms[inRealm:ID()] == nil) then
-        self.connectedRealms[inRealm:ID()] = inRealm
-        self.connectedRealmCount = self.connectedRealmCount + 1
-    end
-end
-
-function XFC.Realm:IsConnected(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm', 'argument must be Realm object')
-    for _, realm in pairs (self.connectedRealms) do
-        if(inRealm:Equals(realm)) then
-            return true
-        end
-    end
-    return false
+function XFC.Realm:HasExpansion()
+    return self:Expansion() ~= nil
 end
 
 function XFC.Realm:Equals(inRealm)
@@ -100,9 +67,7 @@ function XFC.Realm:Equals(inRealm)
     if(self:ObjectName() ~= inRealm:ObjectName()) then return false end
     if(self:Key() == inRealm:Key()) then return true end
     -- Consider connected realms equal
-    for _, connectedRealm in self:ConnectedIterator() do
-        if(connectedRealm:Key() == inRealm:Key()) then return true end
-    end
+    if(self:ParentID() == inRealm:ParentID()) then return true end
     return false
 end
 
