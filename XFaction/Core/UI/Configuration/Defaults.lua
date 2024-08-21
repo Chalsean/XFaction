@@ -85,12 +85,6 @@ XF.Defaults = {
                 TeamTag = '[xf:team]',
                 MemberIcon = '[xf:confederate:icon]',
             },
-            Kui = {
-                Enable = true,
-                Icon = true,
-                GuildName = 'Confederate',
-                Hide = false,
-            },
         },
         DataText = {
             Font = XF.Lib.LSM:GetDefault('font'),
