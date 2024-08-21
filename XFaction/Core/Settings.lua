@@ -24,11 +24,7 @@ XF.Addons = {
 	ElvUI = {},
 }
 XF.ChangeLog = {}
-XF.DataText = {}
-XF.Factories = {}
-XF.Frames = {}
 XF.Handlers = {}
-XF.Mailbox = {}
 XF.Options = {}
 
 XF.Initialized = false

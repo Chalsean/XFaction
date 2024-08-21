@@ -1,7 +1,6 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTMetrics'
-local CombatLockdown = InCombatLockdown
 
 XFC.DTMetrics = XFC.Object:newChildConstructor()
 	
@@ -11,64 +10,68 @@ function XFC.DTMetrics:new()
     object.__name = ObjectName
 	object.headerFont = nil
 	object.regularFont = nil
-	object.ldbObject = nil
+	object.broker = nil
 	object.tooltip = nil
-	object.count = 0    
     return object
 end
---#endregion
 
---#region Initializers
 function XFC.DTMetrics:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		self.ldbObject = XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTMETRICS_NAME'], {
+		self:Broker(XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTMETRICS_NAME'], {
 			type = 'data source',
 			label = XF.Lib.Locale['DTMETRICS_NAME'],
-		    OnEnter = function(this) XFO.DTMetrics:OnEnter(this) end,
-			OnLeave = function(this) XFO.DTMetrics:OnLeave(this) end,
-		})
-		LDB_ANCHOR = self.ldbObject
-		self.headerFont = CreateFont('headerFont')
-		self.headerFont:SetTextColor(0.4,0.78,1)
-		self.regularFont = CreateFont('regularFont')
-		self.regularFont:SetTextColor(255,255,255)
+		    OnEnter = function(this) XFO.DTMetrics:CallbackOnEnter(this) end,
+			OnLeave = function(this) XFO.DTMetrics:CallbackOnLeave(this) end,
+		}))
+		self:HeaderFont(XFF.UICreateFont('headerFont'))
+		self:HeaderFont():SetTextColor(0.4,0.78,1)
+		self:RegularFont(XFF.UICreateFont('regularFont'))
+		self:RegularFont():SetTextColor(255,255,255)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
 function XFC.DTMetrics:PostInitialize()
-	XFO.DTMetrics:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XFO.DTMetrics:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XFO.DTMetrics:RefreshBroker()
+	self:HeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	self:RegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	self:RefreshBroker()
 end
 --#endregion
 
---#region Print
-function XFC.DTMetrics:Print()
-	self:ParentPrint()
-	XF:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
-	XF:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
-	XF:Debug(ObjectName, '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
-	XF:Debug(ObjectName, '  ldbObject (' .. type(self.ldbObject) .. ')')
-	XF:Debug(ObjectName, '  tooltip (' .. type(tooltip) .. ')')
-end
---#endregion
-
---#region Broker
-function XFC.DTMetrics:GetBroker()
-	return self.ldbObject
+--#region Properties
+function XFC.DTMetrics:Broker(inBroker)
+	if(inBroker ~= nil) then
+		self.broker = inBroker
+	end
+	return self.broker
 end
 
-function XFC.DTMetrics:GetHeaderFont()
+function XFC.DTMetrics:HeaderFont(inFont)
+	if(inFont ~= nil) then
+		self.headerFont = inFont
+	end
 	return self.headerFont
 end
 
-function XFC.DTMetrics:GetRegularFont()
+function XFC.DTMetrics:RegularFont(inFont)
+	if(inFont ~= nil) then
+		self.regularFont = inFont
+	end
 	return self.regularFont
 end
 
+function XFC.DTMetrics:Tooltip(inTooltip)
+	local self = XFO.DTMetrics
+	if(inTooltip ~= nil) then
+		self.tooltip = inTooltip
+	end
+	return self.tooltip
+end
+--#region
+
+--#region Methods
 function XFC.DTMetrics:RefreshBroker()
 	if(XF.Initialized and self:IsInitialized()) then
 		local text = ''
@@ -86,75 +89,75 @@ function XFC.DTMetrics:RefreshBroker()
 					 format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):Count()) .. ' : ' ..
 					 format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):Count())
 
-		self.ldbObject.text = text
+		self:Broker().text = text
 	end
 end
---#endregion
 
---#region OnEnter
-function XFC.DTMetrics:OnEnter(this)
+function XFC.DTMetrics:CallbackOnEnter(this)
+	local self = XFO.DTMetrics
 	if(XF.Initialized == false) then return end
-	if(CombatLockdown()) then return end
+	if(XFF.PlayerIsInCombat()) then return end
 
 	--#region Configure Tooltip
-	if XF.Lib.QT:IsAcquired(ObjectName) then
-		self.tooltip = XF.Lib.QT:Acquire(ObjectName)		
+	if XF.Lib.QT:IsAcquired(self:ObjectName()) then
+		self:Tooltip(XF.Lib.QT:Acquire(self:ObjectName()))
 	else
-		self.tooltip = XF.Lib.QT:Acquire(ObjectName, 3)
-		self.tooltip:SetHeaderFont(self.headerFont)
-		self.tooltip:SetFont(self.regularFont)
-		self.tooltip:SmartAnchorTo(this)
-		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTMetrics:OnLeave() end)
-		self.tooltip:EnableMouse(true)
-		self.tooltip:SetClampedToScreen(false)
+		self:Tooltip(XF.Lib.QT:Acquire(self:ObjectName(), 3))
+		self:Tooltip():SetHeaderFont(self:HeaderFont())
+		self:Tooltip():SetFont(self:RegularFont())
+		self:Tooltip():SmartAnchorTo(this)
+		self:Tooltip():SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTMetrics:CallbackOnLeave() end)
+		self:Tooltip():EnableMouse(true)
+		self:Tooltip():SetClampedToScreen(false)
 	end
 
-	self.tooltip:Clear()
+	self:Tooltip():Clear()
 	--#endregion
 
 	--#region Header
-	local line = self.tooltip:AddLine()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self.headerFont, 'LEFT', 3)
-	line = self.tooltip:AddLine()
+	local line = self:Tooltip():AddLine()
+	self:Tooltip():SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self:HeaderFont(), 'LEFT', 3)
+	line = self:Tooltip():AddLine()
 	local calendar = XFO.Metrics:StartCalendar()
-	self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self.headerFont, 'LEFT', 3)
+	self:Tooltip():SetCell(line, 1, format(XF.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self:HeaderFont(), 'LEFT', 3)
 
-	line = self.tooltip:AddLine()
-	line = self.tooltip:AddLine()
-	line = self.tooltip:AddHeader()
+	line = self.Tooltip():AddLine()
+	line = self.Tooltip():AddLine()
+	line = self.Tooltip():AddHeader()
 	--#endregion
 
 	--#region Column Headers
-	self.tooltip:SetCell(line, 1, XF.Lib.Locale['DTMETRICS_HEADER_METRIC'], self.headerFont, 'LEFT')
-	self.tooltip:SetCell(line, 2, XF.Lib.Locale['DTMETRICS_HEADER_TOTAL'], self.headerFont, 'CENTER')
-	self.tooltip:SetCell(line, 3, XF.Lib.Locale['DTMETRICS_HEADER_AVERAGE'], self.headerFont, 'RIGHT')
+	self:Tooltip():SetCell(line, 1, XF.Lib.Locale['DTMETRICS_HEADER_METRIC'], self:HeaderFont(), 'LEFT')
+	self:Tooltip():SetCell(line, 2, XF.Lib.Locale['DTMETRICS_HEADER_TOTAL'], self:HeaderFont(), 'CENTER')
+	self:Tooltip():SetCell(line, 3, XF.Lib.Locale['DTMETRICS_HEADER_AVERAGE'], self:HeaderFont(), 'RIGHT')
 
-	line = self.tooltip:AddLine()
-	self.tooltip:AddSeparator()
-	line = self.tooltip:AddLine()
+	line = self:Tooltip():AddLine()
+	self:Tooltip():AddSeparator()
+	line = self:Tooltip():AddLine()
 	--#endregion
 
 	--#region Populate Table
 	if(XF.Initialized) then
 		for _, metric in XFO.Metrics:SortedIterator() do
-			self.tooltip:SetCell(line, 1, metric:Name(), self.regularFont, 'LEFT')
-			self.tooltip:SetCell(line, 2, metric:Count(), self.regularFont, 'CENTER')
-			self.tooltip:SetCell(line, 3, format("%.2f", metric:GetAverage(XF.Config.DataText.Metric.Rate)), self.regularFont, 'RIGHT')
-			line = self.tooltip:AddLine()
+			self:Tooltip():SetCell(line, 1, metric:Name(), self:RegularFont(), 'LEFT')
+			self:Tooltip():SetCell(line, 2, metric:Count(), self:RegularFont(), 'CENTER')
+			self:Tooltip():SetCell(line, 3, format("%.2f", metric:GetAverage(XF.Config.DataText.Metric.Rate)), self:RegularFont(), 'RIGHT')
+			line = self:Tooltip():AddLine()
 		end
 	end
 	--#endregion
 
-	self.tooltip:Show()
+	self.Tooltip():Show()
 end
 --#endregion
 
 --#region OnLeave
-function XFC.DTMetrics:OnLeave()
-	if self.tooltip and MouseIsOver(self.tooltip) then
+function XFC.DTMetrics:CallbackOnLeave()
+	local self = XFO.DTMetrics
+	if self:Tooltip() and XFF.UIIsMouseOver(self:Tooltip()) then
         return
     else
-        XF.Lib.QT:Release(self.tooltip)
+        XF.Lib.QT:Release(self:Tooltip())
         self.tooltip = nil
 	end
 end

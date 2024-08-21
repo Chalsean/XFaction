@@ -31,7 +31,7 @@ function XF:CoreInit()
 	XFO.Orders = XFC.OrderCollection:new(); XFO.Orders:Initialize()
 
 	-- DataText
-	XF.DataText.Guild = DTGuild:new()
+	XFO.DTGuild = XFC.DTGuild:new()
 	XFO.DTLinks = XFC.DTLinks:new()
 	XFO.DTMetrics = XFC.DTMetrics:new()
 
@@ -61,6 +61,7 @@ function XF:CoreInit()
 	XFO.Continents = XFC.ContinentCollection:new(); XFO.Continents:Initialize()
 	XFO.Zones = XFC.ZoneCollection:new(); XFO.Zones:Initialize()	
 	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
+	XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
 	
 	XF.Player.GUID = XFF.PlayerGUID('player')
 	XF.Player.Faction = XFO.Factions:Get(XFF.PlayerFaction('player'))
@@ -84,7 +85,7 @@ function XF:CoreInit()
 	try(function ()		
 		XF.Player.InInstance = XFF.PlayerIsInInstance()
 		
-		XF.DataText.Guild:Initialize()
+		XFO.DTGuild:Initialize()
 		XFO.DTLinks:Initialize()
 		XFO.DTMetrics:Initialize()
 
@@ -147,9 +148,7 @@ end
 
 function XF:CallbackLoginPlayer()
 	try(function ()
-		-- Far as can tell does not fire event, so call and pray it loads before we query for the data
-		XFF.RequestMapsFromServer()
-
+		
 		-- Need the player data to continue setup
 		local unitData = XFO.Confederate:Pop()
 		unitData:Initialize()
@@ -181,7 +180,7 @@ function XF:CallbackLoginPlayer()
 			XF.Initialized = true
 
 			-- Finish DT init
-			XF.DataText.Guild:PostInitialize()
+			XFO.DTGuild:PostInitialize()
 			XFO.DTLinks:PostInitialize()
 			XFO.DTMetrics:PostInitialize()
 

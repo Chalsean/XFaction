@@ -94,61 +94,61 @@ function XFC.GuildCollection:Deserialize()
 
 
 	-- TESTING ONLY
-	-- local guild = XFC.Guild:new()
-	-- guild:Deserialize('XFg:US:2007621:Eternal Kingdom:EKA')
-	-- self:Add(guild)
-
-	-- local guild2 = XFC.Guild:new()
-	-- guild2:Deserialize('XFg:US:2200861:Alternal Kingdom Two:AK2')
-	-- self:Add(guild2)
-
-	-- local guild3 = XFC.Guild:new()
-	-- guild3:Deserialize('XFg:US:2074711:Alternal Kingdom:AK1')
-	-- self:Add(guild3)
-
-	-- local guild4 = XFC.Guild:new()
-	-- guild4:Deserialize('XFg:US:2130491:Alternal Kingdom Three:AK3')
-	-- self:Add(guild4)
-
-	-- local guild5 = XFC.Guild:new()
-	-- guild5:Deserialize('XFg:US:2086941:Endless Kingdom:ENK')
-	-- self:Add(guild5)
-
-	-- local guild6 = XFC.Guild:new()
-	-- guild6:Deserialize('XFg:US:397138861:Alternal Kingdom Four:AK4')
-	-- self:Add(guild6)
-
 	local guild = XFC.Guild:new()
-	guild:Deserialize('XFg:US:2018241:Convert to Raid Nalak:Nal')
+	guild:Deserialize('XFg:US:2007621:Eternal Kingdom:EKA')
 	self:Add(guild)
 
 	local guild2 = XFC.Guild:new()
-	guild2:Deserialize('XFg:US:2027401:Convert to Raid Emeriss:Eme')
+	guild2:Deserialize('XFg:US:2200861:Alternal Kingdom Two:AK2')
 	self:Add(guild2)
 
 	local guild3 = XFC.Guild:new()
-	guild3:Deserialize('XFg:US:485344401:CTR Panda Express:Pan')
+	guild3:Deserialize('XFg:US:2074711:Alternal Kingdom:AK1')
 	self:Add(guild3)
 
 	local guild4 = XFC.Guild:new()
-	guild4:Deserialize('XFg:US:484461301:Hyjal Volunteer Alliance:HVFDA')
+	guild4:Deserialize('XFg:US:2130491:Alternal Kingdom Three:AK3')
 	self:Add(guild4)
 
 	local guild5 = XFC.Guild:new()
-	guild5:Deserialize('XFg:US:2065551:Convert to Raid Moonfang:Moo')
+	guild5:Deserialize('XFg:US:2086941:Endless Kingdom:ENK')
 	self:Add(guild5)
 
 	local guild6 = XFC.Guild:new()
-	guild6:Deserialize('XFg:US:397053241:Convert to Raid Zekhan:Zek')
+	guild6:Deserialize('XFg:US:397138861:Alternal Kingdom Four:AK4')
 	self:Add(guild6)
 
-	local guild7 = XFC.Guild:new()
-	guild7:Deserialize('XFg:US:2011811:Convert to Raid Ordos:Ord')
-	self:Add(guild7)
+	-- local guild = XFC.Guild:new()
+	-- guild:Deserialize('XFg:US:2018241:Convert to Raid Nalak:Nal')
+	-- self:Add(guild)
 
-	local guild8 = XFC.Guild:new()
-	guild8:Deserialize('XFg:US:2010261:Convert to Raid Sha:Sha')
-	self:Add(guild8)
+	-- local guild2 = XFC.Guild:new()
+	-- guild2:Deserialize('XFg:US:2027401:Convert to Raid Emeriss:Eme')
+	-- self:Add(guild2)
+
+	-- local guild3 = XFC.Guild:new()
+	-- guild3:Deserialize('XFg:US:485344401:CTR Panda Express:Pan')
+	-- self:Add(guild3)
+
+	-- local guild4 = XFC.Guild:new()
+	-- guild4:Deserialize('XFg:US:484461301:Hyjal Volunteer Alliance:HVFDA')
+	-- self:Add(guild4)
+
+	-- local guild5 = XFC.Guild:new()
+	-- guild5:Deserialize('XFg:US:2065551:Convert to Raid Moonfang:Moo')
+	-- self:Add(guild5)
+
+	-- local guild6 = XFC.Guild:new()
+	-- guild6:Deserialize('XFg:US:397053241:Convert to Raid Zekhan:Zek')
+	-- self:Add(guild6)
+
+	-- local guild7 = XFC.Guild:new()
+	-- guild7:Deserialize('XFg:US:2011811:Convert to Raid Ordos:Ord')
+	-- self:Add(guild7)
+
+	-- local guild8 = XFC.Guild:new()
+	-- guild8:Deserialize('XFg:US:2010261:Convert to Raid Sha:Sha')
+	-- self:Add(guild8)
 
 	
 end

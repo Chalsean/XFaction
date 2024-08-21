@@ -63,7 +63,7 @@ function XFC.Confederate:OnlineCount(inCount)
     assert(type(inCount) == 'number' or inCount == nil)
     if(inCount ~= nil) then
         self.onlineCount = self.onlineCount + inCount
-        XF.DataText.Guild:RefreshBroker()
+        XFO.DTGuild:RefreshBroker()
     end
     return self.onlineCount
 end

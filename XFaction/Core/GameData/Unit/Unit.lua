@@ -174,10 +174,11 @@ function XFC.Unit:Initialize(inMemberID)
     if(self:IsPlayer()) then
         self:IsRunningAddon(true)
         self:Version(XF.Version)
-        
-        -- if(XFO.Keys:HasMyKey()) then
-        --     self:MythicKey(XFO.Keys:MyKey())
-        -- end
+
+        local mkey = XFO.Keys:GetMyKey()
+        if(mkey ~= nil) then
+            self:MythicKey(mkey)
+        end
 
         local permissions = XFF.GuildMyPermissions(unitData.guildRankOrder)
         if(permissions ~= nil) then
@@ -201,7 +202,12 @@ function XFC.Unit:Initialize(inMemberID)
                     break
                 end
             end
-        end        
+        end      
+        
+        local id = XFF.SpecHeroID()
+		if(XFO.Heros:Contains(id)) then
+			self:Hero(XFO.Heros:Get(id))
+		end
 
         -- Highest PvP rating wins
         local highestRating = 0
@@ -778,7 +784,7 @@ function XFC.Unit:Deserialize(inSerial)
     self:GUID(data.K)
     self:Key(data.K)
 	self:Level(data.L)
-    --self:MythicKey(XFO.Keys:Deserialize(data.M))
+    self:MythicKey(XFO.Keys:Deserialize(data.M))
 	self:Note(data.N)
 	self:Presence(data.O)
     self:PvP(data.P)	

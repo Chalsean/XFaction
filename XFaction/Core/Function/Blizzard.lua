@@ -31,7 +31,7 @@ XFF.GuildMyInfo = C_Club.GetMemberInfoForSelf
 XFF.GuildMyPermissions = C_GuildInfo.GuildControlGetRankFlags
 XFF.GuildID = C_Club.GetGuildClubId
 XFF.GuildFrame = ToggleGuildFrame
-XFF.GuildGetMOTD = GetGuildRosterMOTD
+XFF.GuildMOTD = GetGuildRosterMOTD
 XFF.GuildEditPermission = CanEditGuildInfo
 
 -- Realm
@@ -45,6 +45,7 @@ XFF.RegionCurrent = GetCurrentRegion
 -- Spec
 XFF.SpecGroupID = GetSpecialization
 XFF.SpecID = GetSpecializationInfo
+XFF.SpecHeroID = C_ClassTalents.GetActiveHeroTalentSpec
 
 -- Player
 XFF.PlayerIlvl = GetAverageItemLevel
@@ -83,6 +84,8 @@ XFF.UIIsShiftDown = IsShiftKeyDown
 XFF.UIIsCtrlDown = IsControlKeyDown
 XFF.UISystemMessage = SendSystemMessage
 XFF.UISystemSound = PlaySound
+XFF.UICreateFont = CreateFont
+XFF.UIToggleGuild = ToggleGuildFrame()
 
 -- Party
 XFF.PartySendInvite = C_PartyInfo.InviteUnit
@@ -92,4 +95,6 @@ XFF.PartyRequestInvite = C_PartyInfo.RequestInviteFromUnit
 XFF.CraftingGetItem = C_TooltipInfo.GetRecipeResultItem
 
 -- M+
-XFF.RequestMapsFromServer = C_MythicPlus.RequestMapInfo
+XFF.MythicRequestMaps = C_MythicPlus.RequestMapInfo
+XFF.MythicLevel = C_MythicPlus.GetOwnedKeystoneLevel
+XFF.MythicMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID
