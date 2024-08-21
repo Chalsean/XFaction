@@ -29,6 +29,11 @@ function XFC.GuildCollection:Initialize(inGuildID)
 			end
 		end
 
+		-- Sanity check
+		if(XF.Player.Guild == nil) then
+			error('Unable to identify player guild: ' .. tostring(XFF.GuildID()))
+		end
+
 		self:IsInitialized(true)
 	end
 end
@@ -144,5 +149,7 @@ function XFC.GuildCollection:Deserialize()
 	local guild8 = XFC.Guild:new()
 	guild8:Deserialize('XFg:US:2010261:Convert to Raid Sha:Sha')
 	self:Add(guild8)
+
+	
 end
 --#endregion
