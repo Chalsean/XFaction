@@ -107,7 +107,7 @@ function XFC.Mailbox:Send(inMessage)
 
             -- Leverage BNet to cover remaining targets
             for _, friend in XFO.Friends:RandomIterator() do
-                if(friend:HasUnit()) then
+                if(friend:IsLinked() and friend:HasUnit()) then
                     local target = friend:Unit():Target()
                     if(inMessage:Contains(target:Key()) and coverage[target:Key()] < 3) then
                         XFO.BNet:Whisper(inMessage, friend)

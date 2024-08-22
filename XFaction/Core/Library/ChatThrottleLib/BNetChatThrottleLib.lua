@@ -308,35 +308,38 @@ end
 function BNetChatThrottleLib:Despool(Prio)
 	local ring = Prio.Ring
 	while ring.pos and Prio.avail > ring.pos[1].nSize do
-		local msg = table_remove(ring.pos, 1)
-		if not ring.pos[1] then  -- did we remove last msg in this pipe?
-			local pipe = Prio.Ring.pos
-			Prio.Ring:Remove(pipe)
-			Prio.ByName[pipe.name] = nil
-			DelPipe(pipe)
-		else
-			Prio.Ring.pos = Prio.Ring.pos.next
-		end
-		local didSend=false
-		local lowerDest = strlower(msg[3] or "")
-		if lowerDest == "raid" and not UnitInRaid("player") then
-			-- do nothing
-		elseif lowerDest == "party" and not UnitInParty("player") then
-			-- do nothing
-		else
-			Prio.avail = Prio.avail - msg.nSize
-			bMyTraffic = true
-			msg.f(unpack(msg, 1, msg.n))
-			bMyTraffic = false
-			Prio.nTotalSent = Prio.nTotalSent + msg.nSize
-			DelMsg(msg)
-			didSend = true
-		end
-		-- notify caller of delivery (even if we didn't send it)
-		if msg.callbackFn then
-			msg.callbackFn (msg.callbackArg, didSend)
-		end
-		-- USER CALLBACK MAY ERROR
+		try(function()
+			local msg = table_remove(ring.pos, 1)
+			if not ring.pos[1] then  -- did we remove last msg in this pipe?
+				local pipe = Prio.Ring.pos
+				Prio.Ring:Remove(pipe)
+				Prio.ByName[pipe.name] = nil
+				DelPipe(pipe)
+			else
+				Prio.Ring.pos = Prio.Ring.pos.next
+			end
+			local didSend=false
+			local lowerDest = strlower(msg[3] or "")
+			if lowerDest == "raid" and not UnitInRaid("player") then
+				-- do nothing
+			elseif lowerDest == "party" and not UnitInParty("player") then
+				-- do nothing
+			else
+				Prio.avail = Prio.avail - msg.nSize
+				bMyTraffic = true
+				msg.f(unpack(msg, 1, msg.n))
+				bMyTraffic = false
+				Prio.nTotalSent = Prio.nTotalSent + msg.nSize
+				DelMsg(msg)
+				didSend = true
+			end
+			-- notify caller of delivery (even if we didn't send it)
+			if msg.callbackFn then
+				msg.callbackFn (msg.callbackArg, didSend)
+			end
+			-- USER CALLBACK MAY ERROR
+		end).
+		catch(function() end)
 	end
 end
 

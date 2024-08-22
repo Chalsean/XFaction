@@ -96,6 +96,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
 
     self:Add(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
+        XFO.Mailbox:Add(messageKey)
         XF:Debug(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
 
@@ -111,8 +112,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             end
 
             XFO.Mailbox:Process(message)
-            XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)
-            XFO.Mailbox:Add(messageKey)
+            XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)            
             self:Remove(messageKey)
         end).
         catch(function(err)

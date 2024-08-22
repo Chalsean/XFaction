@@ -212,8 +212,6 @@ function XFC.Message:Decode(inEncoded, inProtocol)
     end
 
     if(decompressed == nil) then
-        XF:DataDumper(self:ObjectName(), inEncoded)
-        XF:DataDumper(self:ObjectName(), decoded)
         error('Failed to decompress message')
     end
 
@@ -223,19 +221,7 @@ end
 
 function XFC.Message:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
-    local data = nil
-    
-    for i = 1, XF.Settings.Network.CompressionRetry do
-        try(function()
-            data = unpickle(inSerial)            
-        end).
-        catch(function(err)
-            XF:Warn(self:ObjectName(), err)
-        end)
-        if(data ~= nil) then
-            break
-        end
-    end
+    local data = unpickle(inSerial)
 
     self:ParentInitialize()
 
