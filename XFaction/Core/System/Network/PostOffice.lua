@@ -116,7 +116,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             self:Remove(messageKey)
         end).
         catch(function(err)
-            XF:Warn(self:ObjectName(), err)
+            XF:Debug(self:ObjectName(), err)
         end).
         finally(function()
             XFO.Mailbox:Push(message)
