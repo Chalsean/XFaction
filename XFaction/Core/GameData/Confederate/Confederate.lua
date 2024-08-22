@@ -305,11 +305,16 @@ end
 
 function XFC.Confederate:CallbackDisconnected()
     local self = XFO.Confederate
-    local window = XFF.TimeCurrent() - XF.Settings.Confederate.UnitStale
-    for _, unit in self:Iterator() do
-        if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < window) then
-            self:OfflineUnit(unit:GetKey())
+    try(function()
+        local window = XFF.TimeCurrent() - XF.Settings.Confederate.UnitStale
+        for _, unit in self:Iterator() do
+            if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < window) then
+                self:OfflineUnit(unit)
+            end
         end
-    end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 --#endregion
