@@ -153,13 +153,19 @@ function XFC.Message:Encode(inBNet)
     assert(type(inBNet) == 'boolean' or inBNet == nil)
     local serialized = self:Serialize()
 	local compressed = nil 
-    for i = 1, 5 do
+    for i = 1, XF.Settings.Network.CompressionRetry do
         compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
         if(compressed ~= nil) then
             break
         end
     end
-    return inBNet and XF.Lib.Deflate:EncodeForPrint(compressed) or XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
+
+    for i = 1, XF.Settings.Network.CompressionRetry do
+        local encoded = inBNet and XF.Lib.Deflate:EncodeForPrint(compressed) or XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
+        if(encoded ~= nil) then
+            return encoded
+        end
+    end
 end
 
 function XFC.Message:Serialize()
@@ -189,9 +195,16 @@ function XFC.Message:Decode(inEncoded, inProtocol)
     assert(type(inEncoded) == 'string')
     assert(type(inProtocol) == 'number')
 
-    local decoded = inProtocol == XF.Enum.Protocol.BNet and XF.Lib.Deflate:DecodeForPrint(inEncoded) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inEncoded)
+    local decoded = nil
+    for i = 1, XF.Settings.Network.CompressionRetry do
+        decoded = inProtocol == XF.Enum.Protocol.BNet and XF.Lib.Deflate:DecodeForPrint(inEncoded) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inEncoded)
+        if(decoded ~= nil) then
+            break
+        end
+    end
+
     local decompressed = nil
-    for i = 1, 5 do
+    for i = 1, XF.Settings.Network.CompressionRetry do
         decompressed = XF.Lib.Deflate:DecompressDeflate(decoded)
         if(decompressed ~= nil) then
             break

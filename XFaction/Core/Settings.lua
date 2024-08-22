@@ -138,6 +138,7 @@ XF.Settings = {
 	Factions = {'Alliance', 'Horde', 'Neutral'},
 	Network = {
 		CompressionLevel = 9,
+		CompressionRetry = 5,
 		Channel = {
 			Total = 10,
 			NoticeTimer = 2,
