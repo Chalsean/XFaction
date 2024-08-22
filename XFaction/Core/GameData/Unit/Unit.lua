@@ -815,10 +815,12 @@ function XFC.Unit:Deserialize(inSerial)
     if(data.W ~= nil) then
         local targets = string.Split(data.W, ';')
         for _, target in ipairs(targets) do
-            local counts = string.Split(target, ':')
-            self:TargetGuildCount(tonumber(counts[1]), tonumber(counts[2]))
-            self:TargetChannelCount(tonumber(counts[1]), tonumber(counts[3]))
-            self:TargetBNetCount(tonumber(counts[1]), tonumber(counts[4]))
+            if(target ~= nil and string.len(target) > 0) then
+                local counts = string.Split(target, ':')
+                self:TargetGuildCount(tonumber(counts[1]), tonumber(counts[2]))
+                self:TargetChannelCount(tonumber(counts[1]), tonumber(counts[3]))
+                self:TargetBNetCount(tonumber(counts[1]), tonumber(counts[4]))
+            end
         end
     end
 

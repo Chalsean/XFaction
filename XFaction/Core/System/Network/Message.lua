@@ -217,7 +217,9 @@ function XFC.Message:Deserialize(inSerial)
     if(data.R ~= nil) then
         local targets = string.Split(data.R, ';')
         for _, target in ipairs(targets) do
-            self:Add(XFO.Targets:Get(tonumber(target)))
+            if(target ~= nil and string.len(target) > 0) then
+                self:Add(XFO.Targets:Get(tonumber(target)))
+            end
         end
     end
 end
