@@ -51,6 +51,14 @@ function XFC.Confederate:Initialize()
             instance = true
         })
 
+        XFO.Timers:Add({
+            name = 'Disconnected', 
+            delta = XF.Settings.Player.Heartbeat, 
+            callback = XFO.Confederate.CallbackDisconnected, 
+            repeater = true, 
+            instance = true
+        })
+
         XF:Info(self:ObjectName(), 'Initialized confederate %s <%s>', self:Name(), self:Key())
         self:IsInitialized(true)
 	end
@@ -75,7 +83,7 @@ function XFC.Confederate:Add(inUnit)
 
     if(self:Contains(inUnit:Key())) then
         local oldData = self:Get(inUnit:Key())
-        self.objects[inUnit:Key()] = inUnit   
+        self.parent.Add(self, inUnit)
         if(oldData:IsOffline() and inUnit:IsOnline()) then
             self:OnlineCount(1)
         elseif(oldData:IsOnline() and inUnit:IsOffline()) then
@@ -167,6 +175,11 @@ function XFC.Confederate:Logout(inUnit)
     XF:Info(self:ObjectName(), 'Guild member logout: %s', inUnit:UnitName())
     XFO.SystemFrame:DisplayLogout(inUnit:UnitName())
 
+    self:OfflineUnit(inUnit)
+end
+
+function XFC.Confederate:OfflineUnit(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     inUnit:Target():Remove(inUnit:Key())
 
     if(inUnit:IsSameGuild()) then
@@ -288,5 +301,15 @@ function XFC.Confederate:CallbackHeartbeat()
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
     end)
+end
+
+function XFC.Confederate:CallbackDisconnected()
+    local self = XFO.Confederate
+    local window = XFF.TimeCurrent() - XF.Settings.Confederate.UnitStale
+    for _, unit in self:Iterator() do
+        if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < window) then
+            self:OfflineUnit(unit:GetKey())
+        end
+    end
 end
 --#endregion

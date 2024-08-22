@@ -145,11 +145,11 @@ XF.Settings = {
 			LoginChannelSyncAttempts = 6,
 		},
 		Chat = {
-			PacketSize = 217,
+			PacketSize = 210,
 		},
 		BNet = {
 			FriendTimer = 2,
-			PacketSize = 380,	
+			PacketSize = 350,	
 			Ping = {
 				Timer = 60 * 1,     -- Seconds between pinging friends
 			},
