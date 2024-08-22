@@ -77,15 +77,15 @@ function XFC.DTMetrics:RefreshBroker()
 		local text = ''
 		local delimiter = false
 
-		local sent = XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Count() + XFO.Metrics:Get(XF.Enum.Metric.GuildSend):Count() + XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Count()
-		local received = XFO.Metrics:Get(XF.Enum.Metric.BNetReceive):Count() + XFO.Metrics:Get(XF.Enum.Metric.GuildReceive):Count() + XFO.Metrics:Get(XF.Enum.Metric.ChannelReceive):Count()
+		local bnet = XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Count()
+		local channel = XFO.Metrics:Get(XF.Enum.Metric.GuildSend):Count() + XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Count()
 
 		local delta = (XFF.TimeCurrent() - XF.Start) / XF.Config.DataText.Metric.Rate
-		sent = sent / delta
-		received = received / delta
+		bnet = bnet / delta
+		channel = channel / delta
 
-		local text = format('|cffffffff%d|r', sent) .. ' : ' ..
-					 format('|cffffffff%d|r', received) .. ' : ' ..
+		local text = format('|cffffffff%d|r', channel) .. ' : ' ..
+					 format('|cffffffff%d|r', bnet) .. ' : ' ..
 					 format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):Count()) .. ' : ' ..
 					 format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):Count())
 
