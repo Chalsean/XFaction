@@ -239,7 +239,8 @@ XF.Options.args.DataText = {
 						Achievement = XF.Lib.Locale['ACHIEVEMENT'],
 						Guild = XF.Lib.Locale['GUILD'],
 						ItemLevel = XF.Lib.Locale['ITEMLEVEL'],
-						Level = XF.Lib.Locale['LEVEL'],            
+						Level = XF.Lib.Locale['LEVEL'],       
+						Location = XF.Lib.Locale['LOCATION'],
 						Dungeon = XF.Lib.Locale['DUNGEON'],
 						MythicKey = XF.Lib.Locale['MYTHICKEY'],
                         Name = XF.Lib.Locale['NAME'],
@@ -250,7 +251,6 @@ XF.Options.args.DataText = {
 						Realm = XF.Lib.Locale['REALM'],
 						Team = XF.Lib.Locale['TEAM'],
 						Version = XF.Lib.Locale['VERSION'],
-						Zone = XF.Lib.Locale['ZONE'],
                     },
 					get = function(info) return XF.Config.DataText.Guild[ info[#info] ] end,
 					set = function(info, value) XF.Config.DataText.Guild[ info[#info] ] = value; end

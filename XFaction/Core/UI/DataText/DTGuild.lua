@@ -39,6 +39,7 @@ end
 function XFC.DTGuild:PostInitialize()
 	self:HeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
 	self:RegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	self:SortColumn(XF.Config.DataText.Guild.Sort)
 	self:RefreshBroker()
 end
 --#endregion
