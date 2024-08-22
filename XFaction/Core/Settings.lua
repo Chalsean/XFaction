@@ -24,11 +24,7 @@ XF.Addons = {
 	ElvUI = {},
 }
 XF.ChangeLog = {}
-XF.DataText = {}
-XF.Factories = {}
-XF.Frames = {}
 XF.Handlers = {}
-XF.Mailbox = {}
 XF.Options = {}
 
 XF.Initialized = false
@@ -86,28 +82,34 @@ XF.Enum = {
 		LOGOUT = '3',
 		LOGIN = '4',
 		ACHIEVEMENT = '5',
-		LINK = '6',
-		ORDER = '7',
-	},
-	Network = {
-		BROADCAST = '1', -- BNet + Local Channel
-		WHISPER = '2',   -- Whisper only
-		LOCAL = '3',     -- Local Channel only
-		BNET = '4',      -- BNet only
-	},
-	Tag = {
-		LOCAL = '',
-		BNET = '',
+		ORDER = '6',
+		ACK = '7'
 	},
 	Metric = {
-		Messages = XF.Lib.Locale['DTMETRICS_MESSAGES'],
 		BNetSend = XF.Lib.Locale['DTMETRICS_BNET_SEND'],
 		BNetReceive = XF.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
 		ChannelSend = XF.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
 		ChannelReceive = XF.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
 		Error = XF.Lib.Locale['DTMETRICS_ERROR'],
 		Warning = XF.Lib.Locale['DTMETRICS_WARNING'],
+		GuildSend = XF.Lib.Locale['DTMETRICS_GUILD_SEND'],
+		GuildReceive = XF.Lib.Locale['DTMETRICS_GUILD_RECEIVE']
 	},
+    Protocol = {
+        Unknown = 1,
+        BNet = 2,
+        Channel = 3,
+        Guild = 4
+    },
+	Location = {
+		Unknown = 0,
+		World = 1,
+		Continent = 2,
+		Zone = 3,
+		Dungeon = 4,
+		MicroDungeon = 5,
+		Orphan = 6
+	}
 }
 
 XF.Settings = {
@@ -127,12 +129,6 @@ XF.Settings = {
 	Confederate = {
 		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
 		UnitScan = 60,         -- Seconds between offline checks
-		DefaultTeams = {
-			['?'] = 'Unknown',
-		},
-		DefaultRealms = {
-			[0] = 'Torghast',
-		}
 	},
 	LocalGuild = {
 		ScanTimer = 5,           -- Seconds between local guild scans
@@ -142,6 +138,7 @@ XF.Settings = {
 	Factions = {'Alliance', 'Horde', 'Neutral'},
 	Network = {
 		CompressionLevel = 9,
+		CompressionRetry = 5,
 		Channel = {
 			Total = 10,
 			NoticeTimer = 2,
@@ -149,19 +146,13 @@ XF.Settings = {
 			LoginChannelSyncAttempts = 6,
 		},
 		Chat = {
-			PacketSize = 217,
+			PacketSize = 210,
 		},
 		BNet = {
 			FriendTimer = 2,
-			PacketSize = 425,	
+			PacketSize = 350,	
 			Ping = {
-				Timer = 60,         -- Seconds between pinging friends
-			},
-			Link = {
-				Broadcast = 60 * 2, -- Seconds between broadcasting links
-				Scan = 60 * 3,      -- Seconds between link scans for stale links
-				Stale = 60 * 10,    -- Seconds until considering a link stale
-				PercentStart = 10,  -- Number of links across confederate before random selection kicks in
+				Timer = 60 * 1,     -- Seconds between pinging friends
 			},
 		},
 		Mailbox = {
@@ -180,9 +171,6 @@ XF.Settings = {
 	Factories = {
 		Scan = 60 * 7,
 		Purge = 60 * 30,
-	},
-	Race = {
-		Total = 100,
 	},
 	Setup = {
 		MaxTeams = 30,

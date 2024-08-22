@@ -1,8 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MythicKeyCollection'
 
-XFC.MythicKeyCollection = ObjectCollection:newChildConstructor()
+XFC.MythicKeyCollection = XFC.ObjectCollection:newChildConstructor()
 
 -- Additional logic exists in Mainline branch
 
@@ -10,33 +10,24 @@ XFC.MythicKeyCollection = ObjectCollection:newChildConstructor()
 function XFC.MythicKeyCollection:new()
     local object = XFC.MythicKeyCollection.parent.new(self)
     object.__name = ObjectName
-    object.myKey = nil
     return object
 end
 --#endregion
 
---#region Properties
-function XFC.MythicKeyCollection:MyKey(inKey)
-    assert(type(inKey) == 'table' and inKey.__name == 'MythicKey' or inKey == nil)
-    if(inKey ~= nil) then
-        self.myKey = inKey
-    end
-    return self.myKey
-end
---#endregion
-
 --#region Methods
-function XFC.MythicKeyCollection:Add(inMythicKey)
-    assert(type(inMythicKey) == 'table' and inMythicKey.__name == 'MythicKey')
-    if(inMythicKey.IsMyKey()) then
-        self:MyKey(inMythicKey)
+function XFC.MythicKeyCollection:Deserialize(inKey)
+    if(inKey == nil) then return end
+    if(not self:Contains(inKey)) then
+        try(function()
+            local mkey = XFC.MythicKey:new()
+            mkey:Initialize()
+            mkey:Deserialize(inKey)
+            self:Add(mkey)
+        end).
+        catch(function(err)
+            XF:Warn(self:ObjectName(), err)
+        end)
     end
-    if(not self:Contains(inMythicKey:Key())) then
-        self.parent.Add(self, inMythicKey)
-    end
-end
-
-function XFC.MythicKeyCollection:HasMyKey()
-    return self.myKey ~= nil
+    return self:Get(inKey)
 end
 --#endregion

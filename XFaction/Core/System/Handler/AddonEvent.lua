@@ -2,26 +2,28 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'AddonEvent'
 
-AddonEvent = Object:newChildConstructor()
+XFC.AddonEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function AddonEvent:new()
-    local object = AddonEvent.parent.new(self)
+function XFC.AddonEvent:new()
+    local object = XFC.AddonEvent.parent.new(self)
     object.__name = ObjectName
     self.isLoaded = false
     return object
 end
---#endregion
 
---#region Initializers
-function AddonEvent:Initialize()
+function XFC.AddonEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()
-        XF.Events:Add({name = 'AddonEvent', 
-                        event = 'ADDON_LOADED', 
-                        callback = XF.Handlers.AddonEvent.CallbackAddonLoaded, 
-                        instance = true,
-                        start = true})
+
+        XFO.Events:Add({
+            name = 'AddonEvent', 
+            event = 'ADDON_LOADED', 
+            callback = XFO.AddonEvent.CallbackAddonLoaded, 
+            instance = true,
+            start = true
+        })
+
         -- In case they already loaded
         if(XFF.ClientIsAddonLoaded('ElvUI')) then
             self:CallbackAddonLoaded('ElvUI')
@@ -37,9 +39,9 @@ function AddonEvent:Initialize()
 end
 --#endregion
 
---#region Accessors
-function AddonEvent:IsLoaded(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil, 'argument must be boolean or nil')
+--#region Properties
+function XFC.AddonEvent:IsLoaded(inBoolean)
+    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
     if(inBoolean ~= nil) then
         self.isLoaded = inBoolean
     end
@@ -47,7 +49,7 @@ function AddonEvent:IsLoaded(inBoolean)
 end
 --#endregion
 
---#region Cache
+--#region Methods
 local function InitializeCache()
     if(_G.XFCacheDB == nil) then _G.XFCacheDB = {} end
     XF.Cache = _G.XFCacheDB
@@ -80,29 +82,28 @@ local function InitializeCache()
         }
     end
 end
---#endregion
 
---#region Callbacks
-function AddonEvent:CallbackAddonLoaded(inAddonName)
+function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
+    local self = XFO.AddonEvent
     try(function ()
-        if(XFF.ClientGetAddonState(inAddonName) > 0) then
-            if(inAddonName == XF.Name and not XF.Handlers.AddonEvent:IsLoaded()) then
-                XF:Info(ObjectName, 'Addon is loaded and enabled [%s]', inAddonName)
+        if(XFF.ClientAddonState(inAddonName) > 0) then
+            if(inAddonName == XF.Name and not self:IsLoaded()) then
+                XF:Info(self:ObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
                 XF:ConfigInitialize()
-                XF.Addons.ElvUI:Initialize()
-                XF.Handlers.AddonEvent:IsLoaded(true)
+                XFO.ElvUI:Initialize()
+                self:IsLoaded(true)
             elseif(inAddonName == 'ElvUI') then
-                XF.Addons.ElvUI:Initialize()
+                XFO.ElvUI:Initialize()
             elseif(inAddonName == 'WIM') then
-                XF.Addons.WIM:Initialize()
+                XFO.WIM:Initialize()
             elseif(inAddonName == 'RaiderIO') then
-                XF.Addons.RaiderIO:Initialize()
+                XFO.RaiderIO:Initialize()
             end
         end
     end).
-    catch(function (inErrorMessage)
-        XF:Warn(ObjectName, inErrorMessage)
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
     end)    
 end
 --#endregion

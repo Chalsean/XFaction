@@ -1,168 +1,161 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'DTGuild'
-local CombatLockdown = InCombatLockdown
 
-DTGuild = Object:newChildConstructor()
-local LDB_ANCHOR
+XFC.DTGuild = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function DTGuild:new()
-	local object = DTGuild.parent.new(self)
+function XFC.DTGuild:new()
+	local object = XFC.DTGuild.parent.new(self)
     object.__name = ObjectName
 	object.headerFont = nil
 	object.regularFont = nil
-	object.ldbObject = nil
+	object.broker = nil
 	object.tooltip = nil
 	object.isReverseSort = false
-	object.sortColumn = nil    
+	object.sortColumn = nil
     return object
 end
---#endregion
 
---#region Initializers
-function DTGuild:Initialize()
+function XFC.DTGuild:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		self.ldbObject = XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTGUILD_NAME'], {
+		self:Broker(XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTGUILD_NAME'], {
 			type = 'data source',
 			label = XF.Lib.Locale['DTGUILD_NAME'],
-		    OnEnter = function(this) XF.DataText.Guild:OnEnter(this) end,
-			OnLeave = function(this) XF.DataText.Guild:OnLeave(this) end,
-			OnClick = function(this, button) XF.DataText.Guild:OnClick(this, button) end,
-		})
-		LDB_ANCHOR = self.ldbObject
-		self.headerFont = CreateFont('headerFont')
-		self.headerFont:SetTextColor(0.4,0.78,1)
-		self.regularFont = CreateFont('regularFont')
-		self.regularFont:SetTextColor(255,255,255)
+		    OnEnter = function(this) XFO.DTGuild:CallbackOnEnter(this) end,
+			OnLeave = function(this) XFO.DTGuild:CallbackOnLeave(this) end,
+			OnClick = function(this, button) XFO.DTGuild:CallbackOnClick(this, button) end,
+		}))
+		self:HeaderFont(XFF.UICreateFont('headerFont'))
+		self:HeaderFont():SetTextColor(0.4,0.78,1)
+		self:RegularFont(XFF.UICreateFont('regularFont'))
+		self:RegularFont():SetTextColor(255,255,255)
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 
-function DTGuild:PostInitialize()
-	XF.DataText.Guild:GetHeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Guild:GetRegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
-	XF.DataText.Guild:RefreshBroker()
+function XFC.DTGuild:PostInitialize()
+	self:HeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	self:RegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	self:RefreshBroker()
 end
 --#endregion
 
---#region Print
-function DTGuild:Print()
-	self:ParentPrint()
-	XF:Debug(ObjectName, '  headerFont (' .. type(self.headerFont) .. '): ' .. tostring(self.headerFont))
-	XF:Debug(ObjectName, '  regularFont (' .. type(self.regularFont) .. '): ' .. tostring(self.regularFont))
-	XF:Debug(ObjectName, '  isReverseSort (' .. type(self.isReverseSort) .. '): ' .. tostring(self.isReverseSort))
-	XF:Debug(ObjectName, '  ldbObject (' .. type(self.ldbObject) .. ')')
-	XF:Debug(ObjectName, '  tooltip (' .. type(tooltip) .. ')')
-end
---#endregion
-
---#region Accessors
-function DTGuild:GetBroker()
-	return self.ldbObject
+--#region Properties
+function XFC.DTGuild:Broker(inBroker)
+	if(inBroker ~= nil) then
+		self.broker = inBroker
+	end
+	return self.broker
 end
 
-function DTGuild:GetHeaderFont()
+function XFC.DTGuild:HeaderFont(inFont)
+	if(inFont ~= nil) then
+		self.headerFont = inFont
+	end
 	return self.headerFont
 end
 
-function DTGuild:GetRegularFont()
+function XFC.DTGuild:RegularFont(inFont)
+	if(inFont ~= nil) then
+		self.regularFont = inFont
+	end
 	return self.regularFont
 end
 
-function DTGuild:RefreshBroker()
-	if(XF.Initialized) then
-		local text = ''  
-		if(XF.Config.DataText.Guild.Label) then
-			text = XF.Lib.Locale['GUILD'] .. ': '
-		end
-		text = format('%s|cff3CE13F%d', text, XF.Confederate:GetOnlineCount())
-		XF.DataText.Guild:GetBroker().text = text
+function XFC.DTGuild:Tooltip(inTooltip)
+	local self = XFO.DTGuild
+	if(inTooltip ~= nil) then
+		self.tooltip = inTooltip
 	end
+	return self.tooltip
 end
---#endregion
 
---#region Sorting
-function DTGuild:IsReverseSort(inBoolean)
-	assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+function XFC.DTGuild:IsReverseSort(inBoolean)
+	assert(type(inBoolean) == 'boolean' or inBoolean == nil)
 	if(inBoolean ~= nil) then
 		self.isReverseSort = inBoolean
 	end
 	return self.isReverseSort
 end
 
-function DTGuild:GetSort()
-	return self.sortColumn == nil and self:SetSort(XF.Config.DataText.Guild.Sort) or self.sortColumn
+function XFC.DTGuild:SortColumn(inColumn)
+	assert(type(inColumn) == 'string' or inColumn == nil)
+	if(inColumn ~= nil) then
+		self.sortColumn = inColumn
+	end
+	return self.sortColumn
 end
+--#endregion
 
-function DTGuild:SetSort(inColumnName)
-	assert(type(inColumnName) == 'string')
-	self.sortColumn = inColumnName
-	return self:GetSort()
+--#region Methods
+function XFC.DTGuild:RefreshBroker()
+	local self = XFO.DTGuild
+	if(XF.Initialized) then
+		local text = ''  
+		if(XF.Config.DataText.Guild.Label) then
+			text = XF.Lib.Locale['GUILD'] .. ': '
+		end
+		text = format('%s|cff3CE13F%d', text, XFO.Confederate:OnlineCount())
+		self:Broker().text = text
+	end
 end
 
 local function PreSort()
 	local list = {}
-	for _, unit in XF.Confederate:Iterator() do
+	for _, unit in XFO.Confederate:Iterator() do
 		if(unit:IsOnline()) then
 			local unitData = {}
 
-			unitData.Level = unit:GetLevel()
-			unitData.Realm = unit:GetGuild():GetRealm():GetName()
-			unitData.Guild = unit:GetGuild():GetName()		
-			unitData.Name = unit:GetName()
-			unitData.UnitName = unit:GetUnitName()
-			unitData.Note = unit:GetNote()
-			unitData.GUID = unit:GetGUID()
-			unitData.Achievement = unit:GetAchievementPoints()
-			unitData.Rank = unit:GetRank()
-			unitData.ItemLevel = unit:GetItemLevel()	
-			unitData.Race = unit:GetRace():GetName()
-			if(unit:HasTeam()) then 
-				unitData.Team = unit:GetTeam():GetName() 
-			else
-				unitData.Team = 'Unknown'
-			end
-			unitData.Class = unit:GetClass():GetHex()
-			unitData.Faction = unit:GetFaction():GetIconID()
-			unitData.PvP = unit:GetPvP()
+			unitData.Level = unit:Level()
+			unitData.Realm = unit:Realm():Name()
+			unitData.Guild = unit:Guild():Name()		
+			unitData.Name = unit:Name()
+			unitData.UnitName = unit:UnitName()
+			unitData.Note = unit:Note()
+			unitData.GUID = unit:GUID()
+			unitData.Achievement = unit:AchievementPoints()
+			unitData.Rank = unit:Rank()
+			unitData.ItemLevel = unit:ItemLevel()	
+			unitData.Race = unit:Race():Name()
+			unitData.Team = unit:HasTeam() and unit:Team():Name() or 'Unknown'
+			unitData.Class = unit:Class():Hex()
+			unitData.Faction = unit:Faction():IconID()
+			unitData.PvP = unit:PvP()
+			unitData.Version = unit:HasVersion() and unit:Version():Key() or '0.0.0'
 
 			if(unit:HasRaiderIO()) then
-				unitData.Raid = unit:GetRaiderIO():GetRaid()
-				unitData.Dungeon = unit:GetRaiderIO():GetDungeon()			
+				unitData.Raid = unit:RaiderIO():GetRaid()
+				unitData.Dungeon = unit:RaiderIO():GetDungeon()			
 			end
 
-			if(unit:HasVersion()) then
-				unitData.Version = unit:GetVersion():GetKey()
-			else
-				unitData.Version = '0.0.0'
-			end
-
-			if(unit:IsAlt() and unit:HasMainName() and XF.Config.DataText.Guild.Main) then
-				unitData.Name = unit:GetName() .. ' (' .. unit:GetMainName() .. ')'
+			if(unit:IsAlt() and XF.Config.DataText.Guild.Main) then
+				unitData.Name = unit:Name() .. ' (' .. unit:MainName() .. ')'
 			end
 
 			if(unit:HasSpec()) then
-				unitData.Spec = unit:GetSpec():GetIconID()
+				unitData.Spec = unit:Spec():IconID()
+			end
+
+			if(unit:HasHero()) then
+				unitData.Hero = unit:Hero():IconID()
 			end
 
 			if(unit:HasProfession1()) then
-				unitData.Profession1 = unit:GetProfession1():GetIconID()
+				unitData.Profession1 = unit:Profession1():IconID()
 			end
 
 			if(unit:HasProfession2()) then
-				unitData.Profession2 = unit:GetProfession2():GetIconID()
+				unitData.Profession2 = unit:Profession2():IconID()
 			end
 
-			if(unit:HasZone()) then
-				unitData.Zone = unit:GetZone():GetLocaleName()
-			else
-				unitData.Zone = unit:GetZoneName()
-			end
+			unitData.Location = unit:HasLocation() and unit:Location():Name() or nil
 
-			if(unit:HasMythicKey() and unit:GetMythicKey():HasDungeon()) then
-				unitData.MythicKey = unit:GetMythicKey():GetDungeon():GetName() .. ' +' .. unit:GetMythicKey():GetID()
+			if(unit:HasMythicKey() and unit:MythicKey():HasLocation()) then
+				local location = unit:MythicKey():Location():HasNickname() and unit:MythicKey():Location():Nickname() or unit:MythicKey():Location():Name()
+				unitData.MythicKey = location .. ' +' .. unit:MythicKey():ID()
 			end
 
 			list[#list + 1] = unitData
@@ -172,38 +165,39 @@ local function PreSort()
 end
 
 local function SetSortColumn(_, inColumnName)
-	if(XF.DataText.Guild:GetSort() == inColumnName and XF.DataText.Guild:IsReverseSort()) then
-		XF.DataText.Guild:IsReverseSort(false)
-	elseif(XF.DataText.Guild:GetSort() == inColumnName) then
-		XF.DataText.Guild:IsReverseSort(true)
+	local self = XFO.DTGuild
+	if(self:SortColumn() == inColumnName and self:IsReverseSort()) then
+		self:IsReverseSort(false)
+	elseif(self:SortColumn() == inColumnName) then
+		self:IsReverseSort(true)
 	else
-		XF.DataText.Guild:SetSort(inColumnName)
-		XF.DataText.Guild:IsReverseSort(false)
+		self:SortColumn(inColumnName)
+		self:IsReverseSort(false)
 	end
-	XF.DataText.Guild:OnEnter(LDB_ANCHOR)
+	self:CallbackOnEnter(self:Broker())
 end
---#endregion
 
---#region OnEnter
 local function LineClick(_, inUnitGUID, inMouseButton)
-	local unit = XF.Confederate:Get(inUnitGUID)
+	local unit = XFO.Confederate:Get(inUnitGUID)
 	local link = unit:GetLink()
 	if(link == nil) then return end
 
-	if(inMouseButton == 'RightButton' and IsShiftKeyDown()) then
- 		C_PartyInfo.InviteUnit(unit:GetUnitName())
-	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
-		C_PartyInfo.RequestInviteFromUnit(unit:GetUnitName())
+	if(inMouseButton == 'RightButton' and XFF.UIIsShiftDown()) then
+		XFF.PartySendInvite(unit:UnitName())
+	elseif(inMouseButton == 'RightButton' and XFF.UIIsCtrlDown()) then
+		XFF.PartyRequestInvite(unit:UnitName())
  	elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
-		SetItemRef(link, unit:GetName(), inMouseButton)
+		XFF.UICreateLink(link, unit:Name(), inMouseButton)
 	end
 end
 
-function DTGuild:OnEnter(this)
+function XFC.DTGuild:CallbackOnEnter(this)
+	local self = XFO.DTGuild
 	if(not XF.Initialized) then return end
-	if(CombatLockdown()) then return end
+	if(XFF.PlayerIsInCombat()) then return end
 
 	--#region Configure Tooltip
+	-- This is really old code but dont have the desire to refactor
 	local orderEnabled = {}
 	XF.Cache.DTGuildTotalEnabled = 0
 	XF.Cache.DTGuildTextEnabled = 0
@@ -215,7 +209,7 @@ function DTGuild:OnEnter(this)
 			orderEnabled[index] = {
 				ColumnName = column,
 				Alignment = string.upper(XF.Config.DataText.Guild.Alignment[column]),
-				Icon = (column == 'Spec' or column == 'Profession' or column == 'Faction'),
+				Icon = (column == 'Spec' or column == 'Profession' or column == 'Faction' or column == 'Hero'),
 			}
 			if(not orderEnabled[index].Icon) then
 				XF.Cache.DTGuildTextEnabled = XF.Cache.DTGuildTextEnabled + 1
@@ -223,48 +217,48 @@ function DTGuild:OnEnter(this)
 		end		
 	end
 	
-	if XF.Lib.QT:IsAcquired(ObjectName) then
-		self.tooltip = XF.Lib.QT:Acquire(ObjectName)		
+	if XF.Lib.QT:IsAcquired(self:ObjectName()) then
+		self:Tooltip(XF.Lib.QT:Acquire(self:ObjectName()))
 	else
-		self.tooltip = XF.Lib.QT:Acquire(ObjectName)
+		self:Tooltip(XF.Lib.QT:Acquire(self:ObjectName()))
 
 		for i = 1, XF.Cache.DTGuildTotalEnabled do
-			self.tooltip:AddColumn(orderEnabled[tostring(i)].Alignment)
+			self:Tooltip():AddColumn(orderEnabled[tostring(i)].Alignment)
 		end
 		
-		self.tooltip:SetHeaderFont(self.headerFont)
-		self.tooltip:SetFont(self.regularFont)
-		self.tooltip:SmartAnchorTo(this)
-		self.tooltip:SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() DTGuild:OnLeave() end)
-		self.tooltip:EnableMouse(true)
-		self.tooltip:SetClampedToScreen(false)
-		self.tooltip:SetFrameStrata('FULLSCREEN_DIALOG')
+		self:Tooltip():SetHeaderFont(self:HeaderFont())
+		self:Tooltip():SetFont(self:RegularFont())
+		self:Tooltip():SmartAnchorTo(this)
+		self:Tooltip():SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTGuild:CallbackOnLeave() end)
+		self:Tooltip():EnableMouse(true)
+		self:Tooltip():SetClampedToScreen(false)
+		self:Tooltip():SetFrameStrata('FULLSCREEN_DIALOG')
 	end
 
-	self.tooltip:Clear()
+	self:Tooltip():Clear()
 	--#endregion
 
 	--#region Header
-	local line = self.tooltip:AddLine()
+	local line = self:Tooltip():AddLine()
 	
 	if(XF.Config.DataText.Guild.GuildName and XF.Cache.DTGuildTotalEnabled > 4) then
-		local guildName = XF.Player.Guild:GetName()
-		guildName = guildName .. ' <' .. XF.Player.Guild:GetInitials() .. '>'
-		self.tooltip:SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_GUILD'], guildName), self.headerFont, 'LEFT', 4)
+		local guildName = XF.Player.Guild:Name()
+		guildName = guildName .. ' <' .. XF.Player.Guild:Initials() .. '>'
+		self:Tooltip():SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_GUILD'], guildName), self:HeaderFont(), 'LEFT', 4)
 	end
 
 	if(XF.Config.DataText.Guild.Confederate and XF.Cache.DTGuildTotalEnabled > 8) then
-		self.tooltip:SetCell(line, 6, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XF.Confederate:GetName()), self.headerFont, 'LEFT', -1)	
+		self:Tooltip():SetCell(line, 6, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self:HeaderFont(), 'LEFT', -1)	
 	end
 
 	if(XF.Config.DataText.Guild.GuildName or XF.Config.DataText.Guild.Confederate or XF.Config.DataText.Guild.MOTD) then
-		line = self.tooltip:AddLine()
-		self.tooltip:AddSeparator()
-		line = self.tooltip:AddLine()		
+		line = self:Tooltip():AddLine()
+		self:Tooltip():AddSeparator()
+		line = self:Tooltip():AddLine()		
 	end
 
 	if(XF.Config.DataText.Guild.MOTD and XF.Cache.DTGuildTotalEnabled > 8) then
-		local motd = GetGuildRosterMOTD()
+		local motd = XFF.GuildMOTD()
 		local lineWords = ''
 		local lineLength = XF.Cache.DTGuildTextEnabled * 15
 		if(motd ~= nil) then
@@ -273,31 +267,31 @@ function DTGuild:OnEnter(this)
 				if(strlen(lineWords .. ' ' .. word) < lineLength) then
 					lineWords = lineWords .. ' ' .. word
 				else
-					self.tooltip:SetCell(line, 1, format('|cffffffff%s|r', lineWords), self.regularFont, 'LEFT', -1)
-					line = self.tooltip:AddLine()
+					self:Tooltip():SetCell(line, 1, format('|cffffffff%s|r', lineWords), self:RegularFont(), 'LEFT', -1)
+					line = self.Tooltip():AddLine()
 					lineWords = ''				
 				end
 			end
 		end
 		if(strlen(lineWords) > 0) then
-			self.tooltip:SetCell(line, 1, format('|cffffffff%s|r', lineWords), self.regularFont, 'LEFT', -1)
-			line = self.tooltip:AddLine()
+			self:Tooltip():SetCell(line, 1, format('|cffffffff%s|r', lineWords), self:RegularFont(), 'LEFT', -1)
+			line = self:Tooltip():AddLine()
 		end
-		line = self.tooltip:AddLine()
+		line = self:Tooltip():AddLine()
 	end
-	line = self.tooltip:AddLine()	
-	line = self.tooltip:AddHeader()
+	line = self:Tooltip():AddLine()	
+	line = self:Tooltip():AddHeader()
 	--#endregion
 
 	--#region Column Headers
 	for i = 1, XF.Cache.DTGuildTotalEnabled do
 		local columnName = orderEnabled[tostring(i)].ColumnName
 		if(not orderEnabled[tostring(i)].Icon) then
-			line = self.tooltip:SetCell(line, i, XF.Lib.Locale[string.upper(columnName)], self.headerFont, 'CENTER')
+			line = self:Tooltip():SetCell(line, i, XF.Lib.Locale[string.upper(columnName)], self:HeaderFont(), 'CENTER')
 		end
-		self.tooltip:SetCellScript(line, i, 'OnMouseUp', SetSortColumn, columnName)
+		self:Tooltip():SetCellScript(line, i, 'OnMouseUp', SetSortColumn, columnName)
 	end
-	self.tooltip:AddSeparator()
+	self:Tooltip():AddSeparator()
 	--#endregion
 
 	--#region Populate Table
@@ -305,26 +299,26 @@ function DTGuild:OnEnter(this)
 
 		local list = PreSort()
 		sort(list, function(a, b) 
-			if(XF.DataText.Guild:IsReverseSort()) then
-				if(a[XF.DataText.Guild:GetSort()] == nil) then 
+			if(self:IsReverseSort()) then
+				if(a[self:SortColumn()] == nil) then 
 					return false
-				elseif(b[XF.DataText.Guild:GetSort()] == nil) then
+				elseif(b[self:SortColumn()] == nil) then
 					return true
 				else
-					return a[XF.DataText.Guild:GetSort()] > b[XF.DataText.Guild:GetSort()]
+					return a[self:SortColumn()] > b[self:SortColumn()]
 				end
 			else
-				if(b[XF.DataText.Guild:GetSort()] == nil) then
+				if(b[self:SortColumn()] == nil) then
 					return false
-				elseif(a[XF.DataText.Guild:GetSort()] == nil) then
+				elseif(a[self:SortColumn()] == nil) then
 					return true
 				else
-					return a[XF.DataText.Guild:GetSort()] < b[XF.DataText.Guild:GetSort()]
+					return a[self:SortColumn()] < b[self:SortColumn()]
 				end
 			end end)
 
 		for _, unitData in ipairs (list) do
-			line = self.tooltip:AddLine()
+			line = self:Tooltip():AddLine()
 
 			for i = 1, XF.Cache.DTGuildTotalEnabled do
 				local columnName = orderEnabled[tostring(i)].ColumnName
@@ -341,45 +335,42 @@ function DTGuild:OnEnter(this)
 						cellValue = format('%s', format(XF.Icons.String, unitData[columnName]))
 					end
 				elseif(columnName == 'Name') then
-					cellValue = format('|c%s%s|r', unitData.Class, unitData.Name)
+					cellValue = format('|cff%s%s|r', unitData.Class, unitData.Name)
 				elseif(unitData[columnName] ~= nil) then
 					cellValue = format('|cffffffff%s|r', unitData[columnName])
 				end
-				self.tooltip:SetCell(line, i, cellValue, self.regularFont)
+				self:Tooltip():SetCell(line, i, cellValue, self:RegularFont())
 			end
 
-			self.tooltip:SetLineScript(line, "OnMouseUp", LineClick, unitData.GUID)
+			self:Tooltip():SetLineScript(line, 'OnMouseUp', LineClick, unitData.GUID)
 		end
 	end
 	--#endregion
 
-	self.tooltip:UpdateScrolling(XF.Config.DataText.Guild.Size)
-	self.tooltip:Show()
+	self:Tooltip():UpdateScrolling(XF.Config.DataText.Guild.Size)
+	self:Tooltip():Show()
 end
---#endregion
 
---#region OnLeave
-function DTGuild:OnLeave()
-	if self.tooltip and MouseIsOver(self.tooltip) then
+function XFC.DTGuild:CallbackOnLeave()
+	local self = XFO.DTGuild
+	if self:Tooltip() and XFF.UIIsMouseOver(self:Tooltip()) then
 	    return
 	else
-        XF.Lib.QT:Release(self.tooltip)
+        XF.Lib.QT:Release(self:Tooltip())
         self.tooltip = nil
 	end
 end
---#endregion
 
---#region OnClick
-function DTGuild:OnClick(this, inButton)
-	if(InCombatLockdown()) then return end
+function XFC.DTGuild:CallbackOnClick(this, inButton)
+	if(XFF.PlayerIsInCombat()) then return end
 	if(inButton == 'LeftButton') then
-		ToggleGuildFrame()
+		XFF.UIToggleGuild()
 	elseif(inButton == 'RightButton') then
-		if not InterfaceOptionsFrame or not InterfaceOptionsFrame:IsShown() then
-			InterfaceOptionsFrame:Show()
-			InterfaceOptionsFrame_OpenToCategory(XF.Name)
+		if not XFF.UIOptionsFrame or not XFF.UIOptionsFrame:IsShown() then
+			XFF.UIOptionsFrame:Show()
+			XFF.UIOptionsFrameCategory(XF.Name)
 		else
-			InterfaceOptionsFrame:Hide()
+			XFF.UIOptionsFrame:Hide()
 		end
 	end
 end

@@ -2,69 +2,79 @@ local XF, G = unpack(select(2, ...))
 local XFF = XF.Function
 
 -- Time
-XFF.TimeGetCurrent = GetServerTime
-XFF.TimeGetLocal = C_DateAndTime.GetServerTimeLocal
-XFF.TimeGetCalendar = C_DateAndTime.GetCurrentCalendarTime
+XFF.TimeCurrent = GetServerTime
+XFF.TimeLocal = C_DateAndTime.GetServerTimeLocal
+XFF.TimeCalendar = C_DateAndTime.GetCurrentCalendarTime
 
 -- Timer
-XFF.TimerStart = C_Timer.NewTicker
+XFF.TimerStart = C_Timer.NewTimer
+XFF.RepeatTimerStart = C_Timer.NewTicker
 
 -- Chat / Channel
 XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter
-XFF.ChatSetChannelColor = ChangeChatColor
+XFF.ChatChannelColor = ChangeChatColor
 XFF.ChatSwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
-XFF.ChatGetChannels = GetChannelList
-XFF.ChatGetChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
+XFF.ChatChannels = GetChannelList
+XFF.ChatChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
 XFF.ChatJoinChannel = JoinChannelByName
 XFF.ChatGetWindow = GetChatWindowMessages
 XFF.ChatHandler = ChatFrame_MessageEventHandler
+XFF.ChatRegister = C_ChatInfo.RegisterAddonMessagePrefix
 
 -- Guild
-XFF.GuildGetMembers = C_Club.GetClubMembers
+XFF.GuildMembers = C_Club.GetClubMembers
 XFF.GuildQueryServer = C_GuildInfo.GuildRoster
-XFF.GuildGetInfo = C_Club.GetClubInfo
-XFF.GuildGetStreams = C_Club.GetStreams
-XFF.GuildGetMember = C_Club.GetMemberInfo
-XFF.GuildGetMyself = C_Club.GetMemberInfoForSelf
-XFF.GuildGetPermissions = C_GuildInfo.GuildControlGetRankFlags
-XFF.GuildGetID = C_Club.GetGuildClubId
+XFF.GuildInfo = C_Club.GetClubInfo
+XFF.GuildStreams = C_Club.GetStreams
+XFF.GuildMemberInfo = C_Club.GetMemberInfo
+XFF.GuildMyInfo = C_Club.GetMemberInfoForSelf
+XFF.GuildMyPermissions = C_GuildInfo.GuildControlGetRankFlags
+XFF.GuildID = C_Club.GetGuildClubId
 XFF.GuildFrame = ToggleGuildFrame
-XFF.GuildGetMOTD = GetGuildRosterMOTD
+XFF.GuildMOTD = GetGuildRosterMOTD
+XFF.GuildEditPermission = CanEditGuildInfo
 
 -- Realm
-XFF.RealmGetAPIName = GetNormalizedRealmName
-XFF.RealmGetID = GetRealmID
-XFF.RealmGetName = GetRealmName
+XFF.RealmAPIName = GetNormalizedRealmName
+XFF.RealmID = GetRealmID
+XFF.RealmName = GetRealmName
 
 -- Region
-XFF.RegionGetCurrent = GetCurrentRegion
+XFF.RegionCurrent = GetCurrentRegion
 
 -- Spec
-XFF.SpecGetGroupID = GetSpecialization
-XFF.SpecGetID = GetSpecializationInfo
+XFF.SpecGroupID = GetSpecialization
+XFF.SpecID = GetSpecializationInfo
+XFF.SpecHeroID = C_ClassTalents.GetActiveHeroTalentSpec
 
 -- Player
-XFF.PlayerGetIlvl = GetAverageItemLevel
-XFF.PlayerGetAchievement = GetAchievementInfo
-XFF.PlayerGetAchievementLink = GetAchievementLink
-XFF.PlayerGetGUID = UnitGUID
+XFF.PlayerIlvl = GetAverageItemLevel
+XFF.PlayerAchievement = GetAchievementInfo
+XFF.PlayerAchievementLink = GetAchievementLink
+XFF.PlayerGUID = UnitGUID
 XFF.PlayerIsInGuild = IsInGuild
 XFF.PlayerIsInCombat = InCombatLockdown
-XFF.PlayerGetFaction = UnitFactionGroup
-XFF.PlayerGetPvPRating = GetPersonalRatedInfo
-XFF.PlayerGetGuild = GetGuildInfo
+XFF.PlayerIsInInstance = IsInInstance
+XFF.PlayerFaction = UnitFactionGroup
+XFF.PlayerPvPRating = GetPersonalRatedInfo
+XFF.PlayerGuild = GetGuildInfo
+XFF.PlayerZone = GetZoneText
+XFF.PlayerSpellKnown = IsPlayerSpell
+XFF.PlayerLocationID = C_Map.GetBestMapForUnit
+XFF.LocationInfo = C_Map.GetMapInfo
 
 -- BNet
-XFF.BNetGetPlayerInfo = BNGetInfo
-XFF.BNetGetFriendCount = BNGetNumFriends
-XFF.BNetGetFriendInfo = C_BattleNet.GetFriendAccountInfo
+XFF.BNetPlayerInfo = BNGetInfo
+XFF.BNetFriendCount = BNGetNumFriends
+XFF.BNetFriendInfoByID = C_BattleNet.GetFriendAccountInfo
+XFF.BNetFriendInfoByGUID = C_BattleNet.GetAccountInfoByGUID
 
 -- Client
-XFF.ClientGetVersion = GetBuildInfo
-XFF.ClientGetAddonCount = C_AddOns.GetNumAddOns
-XFF.ClientGetAddonInfo = C_AddOns.GetAddOnInfo
+XFF.ClientVersion = GetBuildInfo
+XFF.ClientAddonCount = C_AddOns.GetNumAddOns
+XFF.ClientAddonInfo = C_AddOns.GetAddOnInfo
 XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
-XFF.ClientGetAddonState = C_AddOns.GetAddOnEnableState
+XFF.ClientAddonState = C_AddOns.GetAddOnEnableState
 
 -- UI
 XFF.UIOptionsFrame = InterfaceOptionsFrame
@@ -76,6 +86,8 @@ XFF.UIIsShiftDown = IsShiftKeyDown
 XFF.UIIsCtrlDown = IsControlKeyDown
 XFF.UISystemMessage = SendSystemMessage
 XFF.UISystemSound = PlaySound
+XFF.UICreateFont = CreateFont
+XFF.UIToggleGuild = ToggleGuildFrame()
 
 -- Party
 XFF.PartySendInvite = C_PartyInfo.InviteUnit
@@ -83,3 +95,8 @@ XFF.PartyRequestInvite = C_PartyInfo.RequestInviteFromUnit
 
 -- Crafting
 XFF.CraftingGetItem = C_TooltipInfo.GetRecipeResultItem
+
+-- M+
+XFF.MythicRequestMaps = C_MythicPlus.RequestMapInfo
+XFF.MythicLevel = C_MythicPlus.GetOwnedKeystoneLevel
+XFF.MythicMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID

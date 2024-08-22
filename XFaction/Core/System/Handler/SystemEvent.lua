@@ -1,82 +1,74 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'SystemEvent'
 
-SystemEvent = Object:newChildConstructor()
+XFC.SystemEvent = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function SystemEvent:new()
-    local object = SystemEvent.parent.new(self)
+function XFC.SystemEvent:new()
+    local object = XFC.SystemEvent.parent.new(self)
     object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function SystemEvent:Initialize()
+function XFC.SystemEvent:Initialize()
 	if(not self:IsInitialized()) then
         self:ParentInitialize()     
         -- Log any messages encountered during last logout
         for _, message in ipairs(XF.Config.Logout) do
-            XF:Debug(ObjectName, '* Previous Logout: %s', message)
+            XF:Debug(self:ObjectName(), '* Previous Logout: %s', message)
         end
         XF.Config.Logout = {}
-        XF.Hooks:Add({name = 'ReloadUI', 
-                       original = 'ReloadUI', 
-                       callback = XF.Handlers.SystemEvent.CallbackReloadUI,
-                       pre = true})
-        XF.Events:Add({name = 'Logout',
-                        event = 'PLAYER_LOGOUT',
-                        callback = XF.Handlers.SystemEvent.CallbackLogout,
-                        instance = true})
+
+        XFO.Hooks:Add({
+            name = 'ReloadUI', 
+            original = 'ReloadUI', 
+            callback = XFO.SystemEvent.CallbackReloadUI,
+            pre = true
+        })
+        XFO.Events:Add({
+            name = 'Logout',
+            event = 'PLAYER_LOGOUT',
+            callback = XFO.SystemEvent.CallbackLogout,
+            instance = true
+        })
         -- Not sure this is necessary but don't feel like taking the risk of removing it
-        XF.Events:Add({name = 'LoadScreen', 
-                        event = 'PLAYER_ENTERING_WORLD', 
-                        callback = XF.Handlers.SystemEvent.CallbackLogin, 
-                        instance = true})
+        XFO.Events:Add({
+            name = 'LoadScreen', 
+            event = 'PLAYER_ENTERING_WORLD', 
+            callback = XFO.SystemEvent.CallbackLogin, 
+            instance = true
+        })
+
 		self:IsInitialized(true)
-        XF.Config.Logout[#XF.Config.Logout + 1] = XF.Player.Unit:GetUnitName()
+        XF.Config.Logout[#XF.Config.Logout + 1] = XF.Player.Unit:UnitName()
 	end
 end
 --#endregion
 
---#region Callbacks
-function SystemEvent:CallbackLogout()
+--#region Methods
+function XFC.SystemEvent:CallbackLogout()
+    local self = XFO.SystemEvent
     if(not XF.Cache.UIReload) then
-        local message = nil
         try(function ()
-            XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout started'
-            message = XF.Mailbox.Chat:Pop()
-            message:Initialize()
-            message:SetType(XF.Enum.Network.BROADCAST)
-            message:SetSubject(XF.Enum.Message.LOGOUT)
-            if(XF.Player.Unit:IsAlt() and XF.Player.Unit:HasMainName()) then
-                message:SetMainName(XF.Player.Unit:GetMainName())
-            end
-            message:SetGuild(XF.Player.Guild)
-            message:SetUnitName(XF.Player.Unit:GetName())
-            message:SetData(' ')
-            XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout sending message'
-            XF.Mailbox.Chat:Send(message)
+            XFO.Mailbox:SendLogoutMessage()
             XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout message sent'
         end).
-        catch(function (inErrorMessage)
-            XF:Error(ObjectName, inErrorMessage)
-            XF.Config.Logout[#XF.Config.Logout + 1] = 'Failed to send logout message: ' .. inErrorMessage
+        catch(function (err)
+            XF:Error(self:ObjectName(), err)
+            XF.Config.Logout[#XF.Config.Logout + 1] = 'Failed to send logout message: ' .. err
         end)
     end
 end
 
-function SystemEvent:CallbackReloadUI()
-    try(function ()        
-        XF.Confederate:Backup()
-        XF.Friends:Backup()
-        XF.Links:Backup()
-        XFO.Orders:Backup()
+function XFC.SystemEvent:CallbackReloadUI()
+    local self = XFO.SystemEvent
+    try(function ()
+        XFO.Confederate:Backup()
     end).
-    catch(function (inErrorMessage)
-        XF:Error(ObjectName, inErrorMessage)
-        XF.Config.Errors[#XF.Config.Errors + 1] = 'Failed to perform backups: ' .. inErrorMessage
+    catch(function (err)
+        XF:Error(self:ObjectName(), err)
+        XF.Config.Logout[#XF.Config.Logout + 1] = 'Failed to perform backups: ' .. err
     end).
     finally(function ()
         XF.Cache.UIReload = true
@@ -84,9 +76,15 @@ function SystemEvent:CallbackReloadUI()
     end)
 end
 
-function SystemEvent:CallbackLogin()
-    if(XF.Channels:HasLocalChannel()) then
-        XF.Channels:SetLast(XF.Channels:GetLocalChannel():GetKey())
-    end
+function XFC.SystemEvent:CallbackLogin()
+    local self = XFO.SystemEvent
+    try(function()
+        if(XFO.Channels:HasLocalChannel()) then
+            XFO.Channels:SetLast(XFO.Channels:LocalChannel():Key())
+        end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 --#endregion

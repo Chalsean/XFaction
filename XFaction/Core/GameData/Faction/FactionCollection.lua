@@ -1,49 +1,61 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'FactionCollection'
 
-FactionCollection = ObjectCollection:newChildConstructor()
+XFC.FactionCollection = XFC.ObjectCollection:newChildConstructor()
+
+--#region Faction List
+local FactionData =
+{
+	'Alliance,Common,2565243', 
+	'Horde,Orcish,463451', 
+	'Neutral,Common,132311'
+}
+--#endregion
 
 --#region Constructors
-function FactionCollection:new()
-	local object = FactionCollection.parent.new(self)
+function XFC.FactionCollection:new()
+	local object = XFC.FactionCollection.parent.new(self)
 	object.__name = ObjectName
     return object
 end
---#endregion
 
---#region Initializers
-function FactionCollection:Initialize()
+function XFC.FactionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for i, factionName in pairs (XF.Settings.Factions) do
-			local faction = Faction:new()
-			faction:SetName(factionName)
+		for id, data in ipairs (FactionData) do
+			local factionData = string.Split(data, ',')
+			local faction = XFC.Faction:new()			
 			faction:Initialize()
-			faction:SetKey(i)
+			faction:Key(id)
+			faction:ID(id)
+			faction:Name(factionData[1])
+			faction:Language(factionData[2])
+			faction:IconID(tonumber(factionData[3]))
 			self:Add(faction)
-			XF:Info(ObjectName, 'Initialized faction [%d:%s]', faction:GetKey(), faction:GetName())
+			XF:Info(self:ObjectName(), 'Initialized faction [%d:%s]', faction:Key(), faction:Name())
 		end		
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Accessors
-function FactionCollection:GetByName(inName)
-	assert(type(inName) == 'string')
-	for _, faction in self:Iterator() do
-		if(faction:GetName() == inName) then
-			return faction
+--#region Methods
+function XFC.FactionCollection:Get(inKey)
+	assert(type(inKey) == 'string' or type(inKey) == 'number')
+	if(type(inKey) == 'string') then
+		if(inKey == 'A') then inKey = 'Alliance'
+		elseif(inKey == 'H') then inKey = 'Horde'
+		elseif(inKey == 'N') then inKey = 'Neutral' 
 		end
-	end
-end
 
-function FactionCollection:GetByID(inID)
-	assert(type(inID) == 'string')
-	for _, faction in self:Iterator() do
-		if(faction:GetID() == inID) then
-			return faction
+		for _, faction in self:Iterator() do
+			if(faction:Name() == inKey) then
+				return faction
+			end
 		end
+	else
+		return self.parent.Get(self, inKey)
 	end
 end
 --#endregion

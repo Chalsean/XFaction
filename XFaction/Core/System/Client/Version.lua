@@ -1,12 +1,13 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO = XF.Class, XF.Object
 local ObjectName = 'Version'
 local Split = string.Split
 
-Version = Object:newChildConstructor()
+XFC.Version = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Version:new()
-    local object = Version.parent.new(self)
+function XFC.Version:new()
+    local object = XFC.Version.parent.new(self)
     object.__name = ObjectName
     object.major = nil
     object.minor = nil
@@ -17,84 +18,84 @@ end
 --#endregion
 
 --#region Print
-function Version:Print()
+function XFC.Version:Print()
     self:ParentPrint()
-    XF:Debug(ObjectName, '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
-    XF:Debug(ObjectName, '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
-    XF:Debug(ObjectName, '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
-    XF:Debug(ObjectName, '  changeLog (' .. type(self.changeLog) .. '): ' .. tostring(self.changeLog))
+    XF:Debug(self:ObjectName(), '  major (' .. type(self.major) .. '): ' .. tostring(self.major))
+    XF:Debug(self:ObjectName(), '  minor (' .. type(self.minor) .. '): ' .. tostring(self.minor))
+    XF:Debug(self:ObjectName(), '  patch (' .. type(self.patch) .. '): ' .. tostring(self.patch))
+    XF:Debug(self:ObjectName(), '  changeLog (' .. type(self.changeLog) .. '): ' .. tostring(self.changeLog))
 end
 --#endregion
 
---#region Accessors
-function Version:SetKey(inKey)
-    assert(type(inKey) == 'string')
-    self.key = inKey
+--#region Properties
+function XFC.Version:Key(inKey)
+    assert(type(inKey) == 'string' or inKey == nil)
+    if(inKey ~= nil) then
+        self.key = inKey
 
-    local parts = Split(inKey, '.')
-    self:SetMajor(tonumber(parts[1]))
-    self:SetMinor(tonumber(parts[2]))
-    if(#parts == 3) then
-        self:SetPatch(tonumber(parts[3]))
-    else
-        self:SetPatch(0)
+        local parts = Split(inKey, '.')
+        self:Major(tonumber(parts[1]))
+        self:Minor(tonumber(parts[2]))
+        if(#parts == 3) then
+            self:Patch(tonumber(parts[3]))
+        else
+            self:Patch(0)
+        end
     end
+    return self.key
 end
 
-function Version:GetMajor()
+function XFC.Version:Major(inMajor)
+    assert(type(inMajor) == 'number' or inMajor == nil)
+    if(inMajor ~= nil) then
+        self.major = inMajor
+    end
     return self.major
 end
 
-function Version:SetMajor(inMajor)
-    assert(type(inMajor) == 'number')
-    self.major = inMajor
-end
-
-function Version:GetMinor()
+function XFC.Version:Minor(inMinor)
+    assert(type(inMinor) == 'number' or inMinor == nil)
+    if(inMinor ~= nil) then
+        self.minor = inMinor
+    end
     return self.minor
 end
 
-function Version:SetMinor(inMinor)
-    assert(type(inMinor) == 'number')
-    self.minor = inMinor
-end
-
-function Version:GetPatch()
+function XFC.Version:Patch(inPatch)
+    assert(type(inPatch) == 'number' or inPatch == nil)
+    if(inPatch ~= nil) then
+        self.patch = inPatch
+    end
     return self.patch
 end
 
-function Version:SetPatch(inPatch)
-    assert(type(inPatch) == 'number')
-    self.patch = inPatch
+function XFC.Version:IsAlpha()
+    return self:Patch() == 0
 end
 
-function Version:IsAlpha()
-    return self:GetPatch() == 0
+function XFC.Version:IsBeta()
+    return self:Patch() % 2 == 1
 end
 
-function Version:IsBeta()
-    return self:GetPatch() % 2 == 1
-end
-
-function Version:IsProduction()
+function XFC.Version:IsProduction()
     return not self:IsAlpha() and not self:IsBeta()
 end
 
-function Version:IsNewer(inVersion, inIncludeAllBuilds)
-    assert(type(inVersion) == 'table' and inVersion.__name == ObjectName, 'argument must be Version object')
+function XFC.Version:IsNewer(inVersion, inIncludeAllBuilds)
+    assert(type(inVersion) == 'table' and inVersion.__name == self:ObjectName())
     if(not inIncludeAllBuilds and (inVersion:IsAlpha() or inVersion:IsBeta())) then
         return false
     end
-    if(self:GetMajor() < inVersion:GetMajor() or 
-      (self:GetMajor() == inVersion:GetMajor() and self:GetMinor() < inVersion:GetMinor()) or
-      (self:GetMajor() == inVersion:GetMajor() and self:GetMinor() == inVersion:GetMinor() and self:GetPatch() < inVersion:GetPatch())) then
+    if(self:Major() < inVersion:Major() or 
+      (self:Major() == inVersion:Major() and self:Minor() < inVersion:Minor()) or
+      (self:Major() == inVersion:Major() and self:Minor() == inVersion:Minor() and self:Patch() < inVersion:Patch())) then
         return true
     end
     return false
 end
 
-function Version:IsInChangeLog(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument must be nil or boolean')
+function XFC.Version:IsInChangeLog(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean')
     if(inBoolean ~= nil) then
         self.changeLog = inBoolean
     end
@@ -102,11 +103,11 @@ function Version:IsInChangeLog(inBoolean)
 end
 --#endregion
 
---#region Operators
-function Version:Copy(inVersion)
-    assert(type(inVersion) == 'table' and inVersion.__name == ObjectName, 'argument must be Version object')
-    self:SetMajor(inVersion:GetMajor())
-    self:SetMinor(inVersion:GetMinor())
-    self:SetPatch(inVersion:GetPatch())
+--#region Methods
+function XFC.Version:Copy(inVersion)
+    assert(type(inVersion) == 'table' and inVersion.__name == self:ObjectName())
+    self:Major(inVersion:Major())
+    self:Minor(inVersion:Minor())
+    self:Patch(inVersion:Patch())
 end
 --#endregion

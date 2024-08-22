@@ -6,42 +6,56 @@ local ObjectName = 'MythicKeyCollection'
 function XFC.MythicKeyCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
+
+        -- Far as can tell does not fire event, so call and pray it loads before we query for the data
+		XFF.MythicRequestMaps()
+
         XFO.Events:Add({
             name = 'Mythic', 
             event = 'CHALLENGE_MODE_COMPLETED', 
-            callback = XFO.Keys.RefreshMyKey, 
+            callback = XFO.Keys.CallbackKeyChanged, 
             instance = true,
             start = true
         })
-        self:RefreshMyKey()
+        
         self:IsInitialized(true)
     end
 end
 --#endregion
 
 --#region Methods
-function XFC.MythicKeyCollection:RefreshMyKey()
-    local self = XFO.Keys
+function XFC.MythicKeyCollection:GetMyKey()
 
-    local level = XFF.MythicGetKeyLevel()    
-    local mapID = XFF.MythicGetKeyMapID()
+    local level = XFF.MythicLevel()    
+    local mapID = XFF.MythicMapID()
 
-    if(level ~= nil and mapID ~= nil and XFO.Dungeons:Contains(mapID)) then    
-        local key = nil
-        if(self:HasMyKey()) then
-            key = self:MyKey()
-        else
-            key = XFC.MythicKey:new()
-            key:Initialize()
-            key:IsMyKey(true)
+    if(level ~= nil and mapID ~= nil) then
+        local location = XFO.Locations:Get(mapID)
+        local key = tostring(level) .. '.' .. tostring(mapID)
+        if(not self:Contains(key)) then
+            local mkey = XFC.MythicKey:new()
+            mkey:Initialize()
+            mkey:Key(key)
+            mkey:ID(level)
+            mkey:Location(location)
+            self:Add(mkey)
         end
 
-        key:ID(level)
-        key:Dungeon(XFO.Dungeons:Get(mapID))
-        key:Key(key:ID() .. '.' .. key:Dungeon():Key())
-
-        self:Add(key)
-        XF.Player.Unit:MythicKey(key)
+        return self:Get(key)
     end
+end
+
+function XFC.MythicKeyCollection:CallbackKeyChanged()
+    local self = XFO.Keys
+
+    try(function()
+        local mkey = self:GetMyKey()
+        if(mkey ~= nil) then
+            XF.Player.Unit:MythicKey(mkey)
+        end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 --#endregion

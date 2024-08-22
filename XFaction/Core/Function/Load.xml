@@ -2,6 +2,7 @@
     <Script file='Font\RGBToHex.lua'/>
     <Script file='Math\UID.lua'/>
     <Script file='String\Split.lua'/>
+    <Script file='String\StartsWith.lua'/>
     <Script file='Table\PairsByKeys.lua'/>
     <Script file='Table\Pickle.lua'/>
     <Script file='Exception\try-catch-finally.lua'/>

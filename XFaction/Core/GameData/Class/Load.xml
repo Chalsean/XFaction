@@ -2,5 +2,7 @@
     <Script file='Spec.lua'/>    
     <Script file='SpecCollection.lua'/>    
     <Script file='Class.lua'/>    
-    <Script file='ClassCollection.lua'/>    
+    <Script file='ClassCollection.lua'/>   
+    <Script file='Hero.lua'/>    
+    <Script file='HeroCollection.lua'/>  
 </Ui>

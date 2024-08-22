@@ -1,53 +1,60 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RegionCollection'
-local Regions = {
+
+XFC.RegionCollection = XFC.ObjectCollection:newChildConstructor()
+
+--#region Region List
+local RegionData =
+{
 	'US', -- includes brazil, oceania
 	'KR', 
 	'EU', -- includes russia
 	'TW', 
 	'CN'
 }
-
-RegionCollection = ObjectCollection:newChildConstructor()
-
---#region Constructors
-function RegionCollection:new()
-	local object = RegionCollection.parent.new(self)
-	object.__name = 'RegionCollection'
-	object.current = nil
-    return object
-end
 --#endregion
 
---#region Initializers
--- Region information comes from disk, so no need to stick in cache
-function RegionCollection:Initialize()
+--#region Constructors
+function XFC.RegionCollection:new()
+	local object = XFC.RegionCollection.parent.new(self)
+	object.__name = 'RegionCollection'
+    return object
+end
+
+function XFC.RegionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for id, name in ipairs(Regions) do
-			local region = Region:new()
-			region:SetKey(id)
-			region:SetName(name)
-			self:Add(region)
+		for id, name in ipairs(RegionData) do
 
-			if(id == GetCurrentRegion()) then
-				region:IsCurrent(true)
-				self:SetCurrent(region)
-				XF:Info(ObjectName, 'Initialized player region [%d:%s]', region:GetKey(), region:GetName())
-			end
+			local region = XFC.Region:new()
+			region:Initialize()
+			region:Key(id)
+			region:ID(id)
+			region:Name(name)
+			self:Add(region)
+			XF:Info(self:ObjectName(), 'Initialized region: [%d:%s]', region:ID(), region:Name())
+
+			if(region:ID() == XFF:RegionCurrent()) then
+				XF.Player.Region = region
+				XF:Info(self:ObjectName(), 'Player region [%d:%s]', region:ID(), region:Name())
+			end			
 		end
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
---#region Accessors
-function RegionCollection:GetCurrent()
-	return self.current
-end
-
-function RegionCollection:SetCurrent(inRegion)
-	assert(type(inRegion) == 'table' and inRegion.__name ~= nil and inRegion.__name == 'Region', 'argument must be Region object')
-	self.current = inRegion
+--#region Properties
+function XFC.RegionCollection:Get(inKey)
+	assert(type(inKey) == 'number' or type(inKey) == 'string')
+	if(type(inKey) == 'string') then
+		for _, region in self:Iterator() do
+			if(region:Name() == inKey) then
+				return region
+			end
+		end
+	end
+	return self.parent.Get(self, inKey)
 end
 --#endregion

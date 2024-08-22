@@ -1,56 +1,59 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MetricCollection'
-local ServerTime = C_DateAndTime.GetServerTimeLocal
-local CalendarTime = C_DateAndTime.GetCurrentCalendarTime
 
-MetricCollection = ObjectCollection:newChildConstructor()
+XFC.MetricCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
-function MetricCollection:new()
-	local object = MetricCollection.parent.new(self)
+function XFC.MetricCollection:new()
+	local object = XFC.MetricCollection.parent.new(self)
     object.__name = ObjectName
     object.startTime = nil
 	object.startCalendar = nil
     return object
 end
---#endregion
 
---#region Initializers
-function MetricCollection:Initialize()
+function XFC.MetricCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
-		for _, metricName in pairs (XF.Enum.Metric) do
-			local metric = Metric:new()
-			metric:SetKey(metricName)
-			metric:SetName(metricName)
+
+		for name, key in pairs(XF.Enum.Metric) do
+			local metric = XFC.Metric:new()
+			metric:Key(key)
+			metric:Name(name)
 			self:Add(metric)
 		end
-		self:SetStartTime(ServerTime())
+
+		self:StartCalendar(XFF.TimeCalendar())
+		self:StartTime(XFF.TimeLocal())
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()
 end
 --#endregion
 
---#region Print
-function MetricCollection:Print()
-	self:ParentPrint()
-	XF:Debug(ObjectName, '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
+--#region Properties
+function XFC.MetricCollection:StartCalendar(inCalendar)
+	assert(type(inCalendar) == 'table' or inCalendar == nil)
+	if(inCalendar ~= nil) then
+		self.startCalendar = inCalendar
+	end
+	return self.startCalendar
+end
+
+function XFC.MetricCollection:StartTime(inEpochTime)
+	assert(type(inEpochTime) == 'number' or inEpochTime == nil)
+	if(inEpochTime ~= nil) then
+		self.startTime = inEpochTime
+	end
+	return self.startTime
 end
 --#endregion
 
---#region Accessors
-function MetricCollection:SetStartTime(inEpochTime)
-	assert(type(inEpochTime) == 'number')
-	self.startTime = inEpochTime
-	self.startCalendar = CalendarTime()
-end
-
-function MetricCollection:GetStartTime()
-	return self.startTime
-end
-
-function MetricCollection:GetStartCalendar()
-	return self.startCalendar
+--#region Methods
+function XFC.MetricCollection:Print()
+	self:ParentPrint()
+	XF:Debug(self:ObjectName(), '  startCalendar (' .. type(self.startCalendar) .. '): ' .. tostring(self.startCalendar))
+	XF:Debug(self:ObjectName(), '  startTime (' .. type(self.startTime) .. '): ' .. tostring(self.startTime))
 end
 --#endregion

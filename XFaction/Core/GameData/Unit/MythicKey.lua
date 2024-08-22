@@ -1,64 +1,43 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MythicKey'
-local GetKeyLevel = C_MythicPlus.GetOwnedKeystoneLevel
-local GetKeyMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID
 
-XFC.MythicKey = Object:newChildConstructor()
+XFC.MythicKey = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.MythicKey:new()
     local object = XFC.MythicKey.parent.new(self)
     object.__name = ObjectName
-    object.dungeon = nil
+    object.location = nil
     return object
 end
 --#endregion
 
---#region Print
-function XFC.MythicKey:Print()
-    self:ParentPrint()
-    if(self:HasDungeon()) then self:GetDungeon():Print() end
+--#region Properties
+function XFC.MythicKey:Location(inLocation)
+    assert(type(inLocation) == 'table' and inLocation.__name == 'Location' or inLocation == nil)
+    if(inLocation ~= nil) then
+        self.location = inLocation
+    end
+    return self.location
 end
 --#endregion
 
---#region Accessors
-function XFC.MythicKey:Refresh()
-    local level = GetKeyLevel()
-    if(level ~= nil) then
-        self:SetID(level)
-    end
-    
-    local mapID = GetKeyMapID()
-    if(mapID ~= nil) then
-        if(XFO.Dungeons:Contains(mapID)) then
-            self:SetDungeon(XFO.Dungeons:Get(mapID))
-        end        
-    end
+--#region Methods
+function XFC.MythicKey:Print()
+    self:ParentPrint()
+    if(self:HasLocation()) then self:Location():Print() end
 end
 
-function XFC.MythicKey:HasDungeon()
-    return self.dungeon ~= nil
-end
-
-function XFC.MythicKey:GetDungeon()
-    return self.dungeon
-end
-
-function XFC.MythicKey:SetDungeon(inDungeon)
-    assert(type(inDungeon) == 'table' and inDungeon.__name ~= nil and inDungeon.__name == 'Dungeon', 'argument must be Dungeon object')
-    self.dungeon = inDungeon
-end
-
-function XFC.MythicKey:Serialize()
-    return self:HasDungeon() and self:GetDungeon():GetKey() .. ';' .. self:GetID() or nil
+function XFC.MythicKey:HasLocation()
+    return self:Location() ~= nil
 end
 
 function XFC.MythicKey:Deserialize(data)
-    local key = string.Split(data, ';') 
-    if(XFO.Dungeons:Contains(tonumber(key[1]))) then
-        self:SetDungeon(XFO.Dungeons:Get(tonumber(key[1])))
+    local key = string.Split(data, '.') 
+    if(XFO.Locations:Contains(tonumber(key[1]))) then
+        self:Location(XFO.Locations:Get(tonumber(key[1])))
     end
-    self:SetID(key[2])
+    self:ID(key[2])
 end
 --#endregion

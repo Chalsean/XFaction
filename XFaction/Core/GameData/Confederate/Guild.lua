@@ -1,88 +1,71 @@
 local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Guild'
-local GetClubMembers = C_Club.GetClubMembers
 
-Guild = Object:newChildConstructor()
+XFC.Guild = XFC.Object:newChildConstructor()
 
 --#region Constructors
-function Guild:new()
-    local object = Guild.parent.new(self)
+function XFC.Guild:new()
+    local object = XFC.Guild.parent.new(self)
     object.__name = ObjectName
-    object.streamID = nil  -- Only the player's guild will have a StreamerID (this is gchat)
     object.initials = nil
-    object.faction = nil
-    object.realm = nil
+    object.region = nil
     return object
 end
 --#endregion
 
---#region Print
-function Guild:Print()
-    self:ParentPrint()
-    XF:Debug(ObjectName, '  streamID (' .. type(self.streamID) .. '): ' .. tostring(self.streamID))
-    XF:Debug(ObjectName, '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
-    if(self:HasFaction()) then self:GetFaction():Print() end
-    if(self:HasRealm()) then self:GetRealm():Print() end
-end
-
-function Guild:PrintAudit()
-    XF:Info('Audit', 'Name,Note,Rank,LastLoginDaysAgo')
-    for _, memberID in pairs (GetClubMembers(XF.Player.Guild:GetID(), XF.Player.Guild:GetStreamID())) do
-        local unit = Unit:new()
-        unit:Initialize(memberID)
-        if(unit:IsInitialized()) then
-            XF:Info('Audit', '%s,%s,%s,%d', unit:GetName(), unit:GetNote(), unit:GetRank(), unit:GetLastLogin())
-        end
+--#region Properties
+function XFC.Guild:Initials(inInitials)
+    assert(type(inInitials) == 'string' or inInitials == nil)
+    if(inInitials ~= nil) then
+        self.initials = inInitials
     end
-end
---#endregion
-
---#region Accessors
-function Guild:GetInitials()
     return self.initials
 end
 
-function Guild:SetInitials(inInitials)
-    assert(type(inInitials) == 'string')
-    self.initials = inInitials
+function XFC.Guild:Region(inRegion)
+    assert(type(inRegion) == 'table' and inRegion.__name == 'Region' or inRegion == nil)
+    if(inRegion ~= nil) then
+        self.region = inRegion
+    end
+    return self.region
+end
+--#endregion
+
+--#region Methods
+function XFC.Guild:Print()
+    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
+    if(self:HasRegion()) then self:Region():Print() end
 end
 
-function Guild:HasStreamID()
-    return self.streamID ~= nil
+function XFC.Guild:HasRegion()
+    return self:Region() ~= nil
 end
 
-function Guild:GetStreamID()
-    return self.streamID
+function XFC.Guild:PrintAudit()
+    XF:Info('Audit', 'Name,Note,Rank,LastLoginDaysAgo')
+    for _, memberID in pairs (XFF.GuildGetMembers(XF.Player.Guild:ID(), XF.Player.Guild:StreamID())) do
+        local unit = Unit:new()
+        unit:Initialize(memberID)
+        if(unit:IsInitialized()) then
+            XF:Info('Audit', '%s,%s,%s,%d', unit:Name(), unit:Note(), unit:Rank(), unit:LastLogin())
+        end
+    end
 end
 
-function Guild:SetStreamID(inStreamID)
-    assert(type(inStreamID) == 'number')
-    self.streamID = inStreamID
-end
+function XFC.Guild:Deserialize(inString)
+	assert(type(inString) == 'string')
 
-function Guild:HasFaction()
-    return self.faction ~= nil
-end
-
-function Guild:GetFaction()
-    return self.faction
-end
-
-function Guild:SetFaction(inFaction)
-    assert(type(inFaction) == 'table' and inFaction.__name == 'Faction', 'argument must be Faction object')
-    self.faction = inFaction
-end
-
-function Guild:HasRealm()
-    return self.realm ~= nil
-end
-
-function Guild:GetRealm()
-    return self.realm
-end
-
-function Guild:SetRealm(inRealm)
-    assert(type(inRealm) == 'table' and inRealm.__name == 'Realm', 'argument must be Realm object')
-    self.realm = inRealm
+	local regionName, guildID, guildName, guildInitials = inString:match('XFg:(.-):(.-):(.-):(.+)')
+	local region = XFO.Regions:Get(regionName)
+	
+	self:Initialize()
+	self:Key(tonumber(guildID))
+    self:ID(tonumber(guildID))
+    self:Initials(guildInitials)
+	self:Name(guildName)
+	self:Region(region)
+    XF:Info(self:ObjectName(), 'Initialized guild [%s:%s:%s]', self:Key(), self:Name(), self:Region():Name())
 end
 --#endregion
