@@ -168,7 +168,8 @@ local function DisplayAchievement(inUnit, inID)
                     if hex ~= nil then
                         text = format('|cff%s%s|r', hex, text)
                     end
-
+                    
+                    text = XF.Settings.Frames.Chat.Prepend .. text  
                     XFF.ChatHandler(_G[frame], 'CHAT_MSG_GUILD_ACHIEVEMENT', text, inUnit:UnitName(), XF.Player.Faction:Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
                 end                                   
                 break
