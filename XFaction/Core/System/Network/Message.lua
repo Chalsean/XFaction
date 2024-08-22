@@ -152,7 +152,13 @@ end
 function XFC.Message:Encode(inBNet)
     assert(type(inBNet) == 'boolean' or inBNet == nil)
     local serialized = self:Serialize()
-	local compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
+	local compressed = nil 
+    for i = 1, 5 do
+        compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
+        if(compressed ~= nil) then
+            break
+        end
+    end
     return inBNet and XF.Lib.Deflate:EncodeForPrint(compressed) or XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
 end
 
@@ -184,7 +190,14 @@ function XFC.Message:Decode(inEncoded, inProtocol)
     assert(type(inProtocol) == 'number')
 
     local decoded = inProtocol == XF.Enum.Protocol.BNet and XF.Lib.Deflate:DecodeForPrint(inEncoded) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inEncoded)
-    local decompressed = XF.Lib.Deflate:DecompressDeflate(decoded)
+    local decompressed = nil
+    for i = 1, 5 do
+        decompressed = XF.Lib.Deflate:DecompressDeflate(decoded)
+        if(decompressed ~= nil) then
+            break
+        end
+    end
+
     self:Deserialize(decompressed)
     self:Protocol(inProtocol)
 end
