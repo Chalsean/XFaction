@@ -87,7 +87,7 @@ XFF.UIIsCtrlDown = IsControlKeyDown
 XFF.UISystemMessage = SendSystemMessage
 XFF.UISystemSound = PlaySound
 XFF.UICreateFont = CreateFont
-XFF.UIToggleGuild = ToggleGuildFrame()
+XFF.UIToggleGuild = ToggleGuildFrame
 
 -- Party
 XFF.PartySendInvite = C_PartyInfo.InviteUnit
