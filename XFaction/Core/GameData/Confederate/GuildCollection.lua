@@ -58,6 +58,16 @@ function XFC.GuildCollection:Get(inGuildID)
 	return self.parent.Get(self, inGuildID)
 end
 
+function XFC.GuildCollection:ContainsInitials(inInitials)
+	assert(type(inInitials) == 'string')
+	for _, guild in self:Iterator() do
+		if(guild:Initials() == inInitials) then
+			return true
+		end
+	end
+	return false
+end
+
 function XFC.GuildCollection:Deserialize()
 	-- Parse out configuration from guild information so GMs have control
 	local xfData = ''

@@ -26,7 +26,6 @@ function XFC.Unit:new()
     object.profession2 = nil
     object.achievements = 0
     object.isRunningAddon = false
-    object.isAlt = false
     object.mainName = nil
     object.team = nil
     object.guild = nil
@@ -64,7 +63,6 @@ function XFC.Unit:Deconstructor()
     self.profession2 = nil
     self.achievements = 0
     self.isRunningAddon = false
-    self.isAlt = false
     self.mainName = nil
     self.team = nil
     self.guild = nil
@@ -384,11 +382,7 @@ function XFC.Unit:Version(inVersion)
 end
 
 function XFC.Unit:IsAlt(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
-    if(inBoolean ~= nil) then
-        self.isAlt = inBoolean
-    end
-    return self.isAlt
+    return self:MainName() ~= nil
 end
 
 function XFC.Unit:MainName(inMainName)
@@ -467,8 +461,7 @@ function XFC.Unit:Note(inNote)
                     if(teamInitial ~= nil and XFO.Teams:Contains(teamInitial)) then
                         self:Team(XFO.Teams:Get(teamInitial))
                     end
-                    if(guildInitials ~= nil and XFO.Guilds:Contains(guildInitials) and not self:Guild():Equals(XFO.Guilds:Get(guildInitials))) then
-                        self:IsAlt(true)
+                    if(guildInitials ~= nil and XFO.Guilds:ContainsInitials(guildInitials)) then
                         local _, _, mainName = string.find(self.note, '%s+([^%s%[%]]+)%s?')
                         if(mainName ~= nil) then           
                             self:MainName(mainName)
@@ -480,7 +473,6 @@ function XFC.Unit:Note(inNote)
             -- Alt tag
             local _, _, altName = string.find(self.note, '%[XFa:([^%s%[%]]-)%]')
             if(altName ~= nil) then
-                self:IsAlt(true)
                 self:MainName(altName)
             end
         end).
@@ -573,7 +565,6 @@ function XFC.Unit:Print()
     XF:Debug(self:ObjectName(), '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
     XF:Debug(self:ObjectName(), '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
     XF:Debug(self:ObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
-    XF:Debug(self:ObjectName(), '  isAlt (' .. type(self.isAlt) .. '): ' .. tostring(self.isAlt))
     XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
     XF:Debug(self:ObjectName(), '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
     XF:Debug(self:ObjectName(), '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
