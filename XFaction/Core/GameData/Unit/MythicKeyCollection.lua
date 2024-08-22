@@ -16,11 +16,17 @@ end
 
 --#region Methods
 function XFC.MythicKeyCollection:Deserialize(inKey)
+    if(inKey == nil) then return end
     if(not self:Contains(inKey)) then
-        local mkey = XFC.MythicKey:new()
-        mkey:Initialize()
-        mkey:Deserialize(inKey)
-        self:Add(mkey)
+        try(function()
+            local mkey = XFC.MythicKey:new()
+            mkey:Initialize()
+            mkey:Deserialize(inKey)
+            self:Add(mkey)
+        end).
+        catch(function(err)
+            XF:Warn(self:ObjectName(), err)
+        end)
     end
     return self:Get(inKey)
 end
