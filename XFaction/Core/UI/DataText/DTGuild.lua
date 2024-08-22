@@ -66,6 +66,7 @@ function XFC.DTGuild:RegularFont(inFont)
 end
 
 function XFC.DTGuild:Tooltip(inTooltip)
+	local self = XFO.DTGuild
 	if(inTooltip ~= nil) then
 		self.tooltip = inTooltip
 	end
