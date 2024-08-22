@@ -99,6 +99,9 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
         XF:Debug(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
 
+        local length = string.len(encodedMessage)
+        XF:Debug(self:ObjectName(), 'Message data length [%d]', length)
+
         local message = XFO.Mailbox:Pop()
         try(function()
             message:Decode(encodedMessage, protocol)
