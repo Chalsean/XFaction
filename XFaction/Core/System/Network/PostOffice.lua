@@ -96,23 +96,22 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
 
     self:Add(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
-        XFO.Mailbox:Add(messageKey)
-        XF:Trace(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
-        local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-
-        local length = string.len(encodedMessage)
-        XF:Trace(self:ObjectName(), 'Message data length [%d]', length)
-
         try(function()
-            local message = XFC.Message:new()
-            message:Decode(encodedMessage, protocol)
+            XFO.Mailbox:Add(messageKey)
+            XF:Trace(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
 
-            if(message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
-                XF:Trace(self:ObjectName(), 'Message is too old, wont process')
+            -- Logout messages are not encoded
+            if(string.sub(messageData, 1, 5) == 'LOGOUT') then
+                local guid = string.sub(messageData, 6, -1)
+                XFO.Confederate:Logout(guid)
                 return
             end
 
-            if(not message:HasFromUnit() or not message:FromUnit():HasGuild()) then
+            local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
+            local message = XFC.Message:new()
+            message:Decode(encodedMessage, protocol)
+
+            if(message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
                 XF:Trace(self:ObjectName(), 'Message is too old, wont process')
                 return
             end

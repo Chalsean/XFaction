@@ -60,4 +60,12 @@ function XFC.BNet:CallbackReceive(inMessageTag, inEncodedMessage, inDistribution
         XF:Warn(self:ObjectName(), err)
     end)
 end
+
+function XFC.BNet:SendLogoutMessage(inKey, inFriend)
+    assert(type(inKey) == 'string')
+    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
+    local tag = XFO.Tags:GetRandomTag()
+    local packet = '11' .. inKey .. 'LOGOUT' .. XF.Player.GUID
+    XF.Lib.BCTL:BNSendGameData('ALERT', tag, packet, _, inFriend:GameID())
+end
 --#endregion

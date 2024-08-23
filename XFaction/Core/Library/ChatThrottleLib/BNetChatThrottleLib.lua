@@ -345,6 +345,16 @@ function BNetChatThrottleLib:Despool(Prio)
 	end
 end
 
+function BNetChatThrottleLib:Purge()
+	for prioname, Prio in pairs(self.Prio) do
+		try(function()
+			local pipe = Prio.Ring.pos
+			Prio.Ring:Remove(pipe)
+			Prio.ByName[pipe.name] = nil
+			DelPipe(pipe)
+		end).catch(function() end)	
+	end
+end
 
 function BNetChatThrottleLib.OnEvent(this,event)
 	-- v11: We know that the rate limiter is touchy after login. Assume that it's touchy after zoning, too.

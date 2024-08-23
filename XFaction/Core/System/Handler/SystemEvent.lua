@@ -51,12 +51,14 @@ function XFC.SystemEvent:CallbackLogout()
     local self = XFO.SystemEvent
     if(not XF.Cache.UIReload) then
         try(function ()
+            XF:Stop()
+            XF.Lib.BCTL:Purge() -- Purge any pending messages
             XFO.Mailbox:SendLogoutMessage()
-            XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout message sent'
+            --XF.Config.Logout[#XF.Config.Logout + 1] = 'Logout message sent'
         end).
         catch(function (err)
-            XF:Error(self:ObjectName(), err)
-            XF.Config.Logout[#XF.Config.Logout + 1] = 'Failed to send logout message: ' .. err
+            --  XF:Error(self:ObjectName(), err)
+            --XF.Config.Logout[#XF.Config.Logout + 1] = 'Failed to send logout message: ' .. err
         end)
     end
 end

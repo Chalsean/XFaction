@@ -102,4 +102,12 @@ function XFC.Chat:CallbackAchievement(inID)
         XF:Warn(self:ObjectName(), err)
     end)    
 end
+
+function XFC.Chat:SendLogoutMessage(inKey, inChannel)
+    assert(type(inKey) == 'string')
+    assert(type(inChannel) == 'table' and inChannel.__name == 'Channel')
+    local tag = XFO.Tags:GetRandomTag()
+    local packet = '11' .. inKey .. 'LOGOUT' .. XF.Player.GUID
+    XF.Lib.BCTL:SendAddonMessage('ALERT', tag, packet, inChannel:IsGuild() and 'GUILD' or 'CHANNEL', inChannel:ID())
+end
 --#endregion

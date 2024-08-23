@@ -164,22 +164,18 @@ function XFC.Mailbox:Send(inMessage)
     end
 end
 
--- Do not initiliaze message as we do not need unit/link data
--- Since we are logging out, dont care about memory leak
 function XFC.Mailbox:SendLogoutMessage()
-    local message = XFC.Message:new()
-    message:From(XF.Player.GUID)
-    message:TimeStamp(XFF.TimeCurrent())
-    message:Subject(XF.Enum.Message.LOGOUT)
-    message:Priority(XF.Enum.Priority.High)
-
-    for _, target in XFO.Targets:Iterator() do
-        if(not target:Equals(XF.Player.Target)) then
-            message:Add(target)
+    try(function()
+        local key = math.GenerateUID()
+        XFO.Chat:SendLogoutMessage(key, XFO.Channels:GuildChannel())
+        XFO.Chat:SendLogoutMessage(key, XFO.Channels:LocalChannel())
+        for _, friend in XFO.Friends:Iterator() do
+            if(friend:IsLinked()) then
+                XFO.BNet:SendLogoutMessage(key, friend)
+            end
         end
-    end
-    
-    self:Send(message)
+    end).
+    catch(function() end)
 end
 
 local function SendMessage(inSubject, inPriority, inData)
