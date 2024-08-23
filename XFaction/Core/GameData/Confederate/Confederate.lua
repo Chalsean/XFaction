@@ -63,64 +63,16 @@ end
 --#endregion
 
 --#region Properties
-function XFC.Confederate:OnlineCount(inCount)
-    assert(type(inCount) == 'number' or inCount == nil)
-    if(inCount ~= nil) then
-        self.onlineCount = self.onlineCount + inCount
-        XFO.DTGuild:RefreshBroker()
+function XFC.Confederate:OnlineCount()
+    local count = 0
+    for _, guild in XFO.Guilds:Iterator() do
+        count = count + guild:Count()
     end
-    return self.onlineCount
+    return count
 end
 --#endregion
 
 --#region Methods
-function XFC.Confederate:Add(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
-
-    if(self:Contains(inUnit:Key())) then
-        local oldData = self:Get(inUnit:Key())
-        self.parent.Add(self, inUnit)
-        if(oldData:IsOffline() and inUnit:IsOnline()) then
-            self:OnlineCount(1)
-            if(inUnit:CanChat()) then
-                XFO.Channels:LocalChannel():Count(1)            
-            end
-        elseif(oldData:IsOnline() and inUnit:IsOffline()) then
-            self:OnlineCount(-1)
-            if(oldData:CanChat()) then
-                XFO.Channels:LocalChannel():Count(-1)
-            end
-        end
-    else
-        self.parent.Add(self, inUnit)
-        if(inUnit:IsOnline()) then
-            self:OnlineCount(1)
-            if(inUnit:CanChat()) then
-                XFO.Channels:LocalChannel():Count(1)
-            end
-        end
-    end
-
-    if(inUnit:IsPlayer()) then
-        XF.Player.Unit = inUnit
-    end
-end
-
-function XFC.Confederate:Remove(inKey)
-    assert(type(inKey) == 'string')
-    if(self:Contains(inKey)) then
-        local unit = self:Get(inKey)
-        self.parent.Remove(self, inKey)
-        if(unit:IsOnline()) then
-            self:OnlineCount(-1)
-            if(unit:CanChat()) then
-                XFO.Channels:LocalChannel():Count(-1)
-            end
-        end
-        unit:Target():Remove(inKey)
-    end
-end
-
 function XFC.Confederate:GetInitials()
     return self:Key()
 end
@@ -147,7 +99,7 @@ function XFC.Confederate:Restore()
         try(function ()
             local unit = XFC.Unit:new()
             unit:Deserialize(data)
-            self:Add(unit)
+            self:OnlineUnit(unit)
             XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
         end).
         catch(function (err)
@@ -163,7 +115,7 @@ function XFC.Confederate:Login(inUnit)
         XF:Info(self:ObjectName(), 'Guild member login: %s', inUnit:UnitName())
         XFO.SystemFrame:DisplayLogin(inUnit)
     end
-    self:Add(inUnit)
+    self:OnlineUnit(inUnit)
 end
 
 function XFC.Confederate:Logout(inUnit)
@@ -182,17 +134,53 @@ function XFC.Confederate:Logout(inUnit)
     self:OfflineUnit(inUnit)
 end
 
+function XFC.Confederate:OnlineUnit(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+
+    self:Add(inUnit)
+    if(inUnit:IsOnline()) then
+        inUnit:Guild():Add(inUnit)
+        XFO.DTGuild:RefreshBroker()
+    end    
+
+    if(inUnit:IsPlayer()) then
+        XF.Player.Unit = inUnit
+        return
+    end
+    
+    -- Target count == # of addon users outside the guild in the chat channel
+    if(inUnit:CanChat() and not inUnit:IsSameGuild()) then
+        inUnit:Target():Add(inUnit)
+    end
+
+    -- Guild channel count == # of addon users inside the guild
+    -- Local channel count == # of addon users both in guild and in chat channel
+    if(inUnit:IsOnline() and inUnit:IsRunningAddon() and inUnit:IsSameGuild()) then
+        XFO.Channels:GuildChannel():Add(inUnit)
+        if(inUnit:CanChat()) then
+            XFO.Channels:LocalChannel():Add(inUnit)
+        end            
+    end
+
+    XFO.DTLinks:RefreshBroker()   
+end
+
 function XFC.Confederate:OfflineUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
-    inUnit:Target():Remove(inUnit:Key())
 
+    inUnit:Guild():Remove(inUnit:Key())
     if(inUnit:IsSameGuild()) then
         self:Add(inUnit)
     else
         self:Remove(inUnit:Key())
     end
 
+    inUnit:Target():Remove(inUnit:Key())
+    XFO.Channels:LocalChannel():Remove(inUnit:Key())
+    XFO.Channels:GuildChannel():Remove(inUnit:Key())
+
     XFO.DTLinks:RefreshBroker()
+    XFO.DTGuild:RefreshBroker()
 end
 
 -- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
@@ -213,12 +201,12 @@ function XFC.Confederate:CallbackLocalGuild()
                         if(oldData:IsOffline()) then
                             self:Login(unit)
                         elseif(not oldData:IsRunningAddon()) then
-                            self:Add(unit)
+                            self:OnlineUnit(unit)
                         end
                     end
                 -- First time scan (i.e. login) do not notify
                 else
-                    self:Add(unit)
+                    self:OnlineUnit(unit)
                 end
             end
         end).
@@ -242,7 +230,7 @@ function XFC.Confederate:ProcessMessage(inMessage)
     if(inMessage:IsLoginMessage()) then
         self:Login(inMessage:FromUnit())        
     else
-        self:Add(inMessage:FromUnit())
+        self:OnlineUnit(inMessage:FromUnit())
     end
 end
 

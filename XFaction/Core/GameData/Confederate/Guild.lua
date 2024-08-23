@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Guild'
 
-XFC.Guild = XFC.Object:newChildConstructor()
+XFC.Guild = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.Guild:new()
@@ -34,7 +34,9 @@ end
 
 --#region Methods
 function XFC.Guild:Print()
-    self:ParentPrint()
+    XF:Debug(self:ObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
+    XF:Debug(self:ObjectName(), '  id (' .. type(self.id) .. '): ' .. tostring(self.id))
+    XF:Debug(self:ObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))
     XF:Debug(self:ObjectName(), '  initials (' .. type(self.initials) .. '): ' .. tostring(self.initials))
     if(self:HasRegion()) then self:Region():Print() end
 end

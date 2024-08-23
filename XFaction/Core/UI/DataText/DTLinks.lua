@@ -80,20 +80,17 @@ function XFC.DTLinks:RefreshBroker()
 			text = XF.Lib.Locale['LINKS'] .. ': '
 		end
 
-		local guild = 0
 		local chat = 0
 		local bnet = 0
 
 		for _, target in XFO.Targets:Iterator() do
-			if(target:IsMyTarget()) then 
-				guild = target:Count()
-			else
+			if(not target:IsMyTarget()) then
 				chat = chat + target:Count()
 			end
 			bnet = bnet + target:LinkCount()
 		end
 
-		text = format('|cff3CE13F%d|r|cffFFFFFF - |r|cff%s%d|r|cffFFFFFF - |r|cffFFF468%d|r', guild, XF.Player.Faction:GetHex(), chat, bnet)
+		text = format('|cff3CE13F%d|r|cffFFFFFF - |r|cff%s%d|r|cffFFFFFF - |r|cffFFF468%d|r', XFO.Channels:GuildChannel():Count(), XF.Player.Faction:GetHex(), chat, bnet)
 		self:Broker().text = text
 	end).
 	catch(function(err)
@@ -162,11 +159,11 @@ function XFC.DTLinks:CallbackOnEnter(this)
 			self:Tooltip():SetCell(line, 1, XF.Player.Unit:UnitName(), self:RegularFont())
 			for _, target in XFO.Targets:Iterator() do
 				if(target:IsMyTarget()) then
-					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', target:Count()), self:RegularFont(), 'CENTER')
-				elseif(target:Count() > 0) then
-					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', XF.Player.Faction:GetHex(), target:Count()), self:RegularFont(), 'CENTER')
+					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', XFO.Channels:GuildChannel():Count()), self:RegularFont(), 'CENTER')
 				elseif(target:LinkCount() > 0) then
 					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', target:LinkCount()), self:RegularFont(), 'CENTER')
+				elseif(target:Count() > 0) then
+					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', XF.Player.Faction:GetHex(), target:Count()), self:RegularFont(), 'CENTER')				
 				else
 					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self:RegularFont(), 'CENTER')
 				end
@@ -189,10 +186,10 @@ function XFC.DTLinks:CallbackOnEnter(this)
 				for _, target in XFO.Targets:Iterator() do
 					if(unit:TargetGuildCount(target:Key()) > 0) then
 						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', unit:TargetGuildCount(target:Key())), self:RegularFont(), 'CENTER')
-					elseif(unit:TargetChannelCount(target:Key()) > 0) then
-						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', unit:Faction():GetHex(), unit:TargetChannelCount(target:Key())), self:RegularFont(), 'CENTER')
 					elseif(unit:TargetBNetCount(target:Key()) > 0) then
 						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', unit:TargetBNetCount(target:Key())), self:RegularFont(), 'CENTER')
+					elseif(unit:TargetChannelCount(target:Key()) > 0) then
+						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', unit:Faction():GetHex(), unit:TargetChannelCount(target:Key())), self:RegularFont(), 'CENTER')					
 					elseif(unit:Target():Equals(target)) then
 						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F0|r'), self:RegularFont(), 'CENTER')
 					else

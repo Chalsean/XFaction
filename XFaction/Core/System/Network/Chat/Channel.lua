@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Channel'
 
-XFC.Channel = XFC.Object:newChildConstructor()
+XFC.Channel = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.Channel:new()
@@ -10,7 +10,6 @@ function XFC.Channel:new()
     object.__name = 'Channel'
     object.password = nil
     object.community = false
-    object.count = 0
     return object
 end
 --#endregion
@@ -31,21 +30,15 @@ function XFC.Channel:Password(inPassword)
     end
     return self.password
 end
-
-function XFC.Channel:Count(inCount)
-    assert(type(inCount) == 'number' or inCount == nil)
-    if(inCount ~= nil) then
-        self.count = self.count + inCount
-    end
-    return self.count
-end
 --#endregion
 
 --#region Methods
-function XFC.Channel:Print()
-    self:ParentPrint()
+function XFC.Channel:Print()    
+    XF:Debug(self:ObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
+    XF:Debug(self:ObjectName(), '  id (' .. type(self.id) .. '): ' .. tostring(self.id))
+    XF:Debug(self:ObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))
+    XF:Debug(self:ObjectName(), '  count (' .. type(self.objectCount) .. '): ' .. tostring(self.objectCount))
     XF:Debug(self:ObjectName(), '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
-    XF:Debug(self:ObjectName(), '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
 end
 
 function XFC.Channel:SetColor()

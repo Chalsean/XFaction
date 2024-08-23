@@ -85,13 +85,6 @@ function XFC.ChannelCollection:Get(inID)
 	end
 end
 
-function XFC.ChannelCollection:Print()
-	self:ParentPrint()
-	XF:Debug(self:ObjectName(), '  guildChannel (' .. type(self.guildChannel) .. ')')
-	XF:Debug(self:ObjectName(), '  localChannel (' .. type(self.localChannel) .. ')')
-	if(self:HasLocalChannel()) then self:LocalChannel():Print() end
-end
-
 function XFC.ChannelCollection:HasLocalChannel()
     return self.localChannel ~= nil
 end
@@ -148,6 +141,7 @@ function XFC.ChannelCollection:CallbackSync()
 			local channelID, channelName, disabled = channels[i], channels[i+1], channels[i+2]
 			local channelInfo = XFF.ChatChannelInfo(channelName)
 			local channel = XFC.Channel:new()
+			channel:Initialize()
 			channel:Key(channelName)
 			channel:Name(channelName)
 			channel:ID(channelID)

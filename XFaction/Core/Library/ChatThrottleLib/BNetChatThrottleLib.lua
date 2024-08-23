@@ -318,7 +318,7 @@ function BNetChatThrottleLib:Despool(Prio)
 			else
 				Prio.Ring.pos = Prio.Ring.pos.next
 			end
-			if(_G.GetServerTime() - (60 * 5) < msg.enqueuedTime) then
+			if(_G.GetServerTime() - (60 * 2) < msg.enqueuedTime) then
 				local didSend=false
 				local lowerDest = strlower(msg[3] or "")
 				if lowerDest == "raid" and not UnitInRaid("player") then

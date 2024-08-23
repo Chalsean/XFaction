@@ -116,17 +116,7 @@ function XF:CallbackLoginGuild()
 				-- Frame inits were waiting on Confederate init
 				XFO.ChatFrame:Initialize()
 				XFO.SystemFrame:Initialize()
-
-				-- Start network
-				XFO.Tags:Initialize()
-				XFO.Channels:Initialize()
-				XFO.Chat:Initialize()							
-				XFO.BNet:Initialize()
 				
-				if(XF.Cache.UIReload) then
-					XFO.Confederate:Restore()					
-				end
-
 				XFO.Timers:Add({
 					name = 'LoginPlayer', 
 					delta = 1, 
@@ -157,21 +147,28 @@ function XF:CallbackLoginPlayer()
 			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
 			XFO.Timers:Remove('LoginPlayer')
 
-			XFO.Confederate:Add(unitData)
+			XFO.Confederate:OnlineUnit(unitData)
 			XF.Player.Unit:Print()
 
-			-- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
-			XFF.GuildQueryServer()
+			-- Start network
+			XFO.Tags:Initialize()
+			XFO.Channels:Initialize()
+			XFO.Chat:Initialize()							
+			XFO.BNet:Initialize()
 			XFO.Friends:Initialize()
 
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then
 				XF.Cache.UIReload = false
+				XFO.Confederate:Restore()
                 XFO.Mailbox:SendDataMessage()
 			-- Otherwise send login message
 			else
                 XFO.Mailbox:SendLoginMessage()
 			end
+
+			-- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
+			XFF.GuildQueryServer()
 			
 			-- Start all hooks, timers and events
 			XFO.SystemEvent:Initialize()

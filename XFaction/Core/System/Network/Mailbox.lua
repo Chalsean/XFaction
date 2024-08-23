@@ -51,8 +51,6 @@ function XFC.Mailbox:Process(inMessage)
     
     if(inMessage:IsBNetProtocol()) then
         XFO.Friends:ProcessMessage(inMessage)
-    elseif(inMessage:IsChannelProtocol()) then
-        inMessage:FromUnit():Target():Add(inMessage:FromUnit())
     end
     XFO.DTLinks:RefreshBroker()
 end
@@ -83,15 +81,20 @@ function XFC.Mailbox:Send(inMessage)
     self:Add(inMessage:Key())
     inMessage:Print()
 
+    local targeted = inMessage:Contains(XF.Player.Target:Key())
+    inMessage:Remove(XF.Player.Target:Key())
+
     -- Own messages get shotgunned
     if(inMessage:IsMyMessage()) then
         XF:Debug(self:ObjectName(), 'Own message, broadcasting')
-        inMessage:Remove(XF.Player.Target:Key())
-        XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
+        if(XF.Player.Guild:Count() > 0) then
+            XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
+        else
+            XF:Debug(self:ObjectName(), 'No one online to broadcast to')
+        end
         XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
         for _, friend in XFO.Friends:Iterator() do
             if(friend:CanLink()) then
-                friend:Print()
                 XFO.BNet:Whisper(inMessage, friend)
             end
         end
@@ -100,62 +103,64 @@ function XFC.Mailbox:Send(inMessage)
 
     -- Forwarding logic
     local guild = false
-
-    -- If you receive via BNet theres little redundancy so broadcast
-    if(inMessage:Contains(XF.Player.Target:Key()) and inMessage:IsBNetProtocol()) then
-        XF:Debug(self:ObjectName(), 'Received via BNet and guild is targeted')
-        inMessage:Remove(XF.Player.Target:Key())
-        guild = true
-    -- If you received via Channel, do random selection
-    elseif(inMessage:Contains(XF.Player.Target:Key()) and _RandomSelection(XFO.Channels:LocalChannel():Count())) then
-        XF:Debug(self:ObjectName(), 'Received via channel, guild targeted and randomly selected')
-        inMessage:Remove(XF.Player.Target:Key())
-        guild = true
-    -- If you received via Guild, then you dont need to rebroadcast to Guild
+    if(XF.Player.Guild:Count() > 0 and targeted) then
+        -- If you receive via BNet theres little redundancy so broadcast
+        if(inMessage:IsBNetProtocol()) then
+            XF:Debug(self:ObjectName(), 'Received via BNet and guild is targeted')
+            guild = true
+        -- If you received via Channel, do random selection
+        elseif(_RandomSelection(XFO.Channels:LocalChannel():Count())) then
+            XF:Debug(self:ObjectName(), 'Received via channel, guild targeted and randomly selected')
+            guild = true
+        else
+            XF:Debug(self:ObjectName(), 'Not randomly selected to forward to guild')
+        end
+    elseif(XF.Player.Guild:Count() == 0) then
+        XF:Debug(self:ObjectName(), 'No one online to broadcast to')
+    else
+        XF:Debug(self:ObjectName(), 'Guild is no longer targeted')
     end
 
+    -- First figure out all targets bnet will cover
     local coverage = {}
-    for _, target in inMessage:Iterator() do
-        coverage[target:Key()] = {}
-    end
-
-    -- Leverage BNet if you can, whispers dont count against cap
     for _, friend in XFO.Friends:RandomIterator() do
-        if(friend:IsLinked() and friend:HasUnit()) then            
+        if(friend:IsLinked() and friend:HasUnit()) then                        
             local target = friend:Unit():Target()
-            if(inMessage:Contains(target:Key()) and #coverage[target:Key()] < 2) then
-                table.insert(coverage[target:Key()], friend)
+            if(inMessage:Contains(target:Key()) and coverage[target:Key()] == nil) then
+                XF:Debug(self:ObjectName(), 'Friend [%s] selected to cover target [%s]', friend:Tag(), target:Guild():Initials())
+                coverage[target:Key()] = friend
             end
         end
     end
-    -- Remove targets that we know are covered
-    for target, friends in pairs(coverage) do
-        if(#friends > 1) then
-            inMessage:Remove(target)
-        end
+
+    -- Now remove all targets covered by bnet so they dont get forwarded again
+    for target in pairs(coverage) do
+        inMessage:Remove(target)
     end
 
     if(guild) then
         XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
     end
-    
-    for target, friends in pairs(coverage) do
-        inMessage:Add(XFO.Targets:Get(target))
-        for _, friend in ipairs(friends) do
-            friend:Print()
-            XF:Debug(self:ObjectName(), 'BNet whisper linked friends on target')
-            XFO.BNet:Whisper(inMessage, friend)
-        end
-        if(#friends > 1) then
-            inMessage:Remove(target)
-        end
-    end
 
+    -- Whisper bnet recipients
+    for target, friend in pairs(coverage) do
+        inMessage:Add(XFO.Targets:Get(target))
+        XFO.BNet:Whisper(inMessage, friend)
+        inMessage:Remove(target)
+    end
+    
     -- If you received the message via channel, theres no point in putting it back on it
-    -- Otherwise randomly select who forwards
-    if(not inMessage:IsChannelProtocol() and inMessage:Count() > 0 and _RandomSelection(XFO.Channels:LocalChannel():Count())) then
-        XF:Debug(self:ObjectName(), 'Randomly selected to broadcast to chat')
-        XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
+    if(inMessage:Count() > 0) then
+        local channel = false
+        if(inMessage:IsBNetProtocol()) then
+            channel = true
+        elseif(inMessage:IsGuildProtocol() and _RandomSelection(XFO.Channels:LocalChannel():Count())) then
+            channel = true
+        end
+        if(channel) then
+            XF:Debug(self:ObjectName(), 'Forwarding to chat bus for remaining targets: %d', inMessage:Count())
+            XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
+        end
     end
 end
 
