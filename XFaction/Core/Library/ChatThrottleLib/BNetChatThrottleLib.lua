@@ -318,26 +318,28 @@ function BNetChatThrottleLib:Despool(Prio)
 			else
 				Prio.Ring.pos = Prio.Ring.pos.next
 			end
-			local didSend=false
-			local lowerDest = strlower(msg[3] or "")
-			if lowerDest == "raid" and not UnitInRaid("player") then
-				-- do nothing
-			elseif lowerDest == "party" and not UnitInParty("player") then
-				-- do nothing
-			else
-				Prio.avail = Prio.avail - msg.nSize
-				bMyTraffic = true
-				msg.f(unpack(msg, 1, msg.n))
-				bMyTraffic = false
-				Prio.nTotalSent = Prio.nTotalSent + msg.nSize
-				DelMsg(msg)
-				didSend = true
+			if(_G.GetServerTime() - (60 * 5) < msg.enqueuedTime) then
+				local didSend=false
+				local lowerDest = strlower(msg[3] or "")
+				if lowerDest == "raid" and not UnitInRaid("player") then
+					-- do nothing
+				elseif lowerDest == "party" and not UnitInParty("player") then
+					-- do nothing
+				else
+					Prio.avail = Prio.avail - msg.nSize
+					bMyTraffic = true
+					msg.f(unpack(msg, 1, msg.n))
+					bMyTraffic = false
+					Prio.nTotalSent = Prio.nTotalSent + msg.nSize
+					DelMsg(msg)
+					didSend = true
+				end
+				-- notify caller of delivery (even if we didn't send it)
+				if msg.callbackFn then
+					msg.callbackFn (msg.callbackArg, didSend)
+				end
+				-- USER CALLBACK MAY ERROR
 			end
-			-- notify caller of delivery (even if we didn't send it)
-			if msg.callbackFn then
-				msg.callbackFn (msg.callbackArg, didSend)
-			end
-			-- USER CALLBACK MAY ERROR
 		end).
 		catch(function() end)
 	end
@@ -468,6 +470,7 @@ function BNetChatThrottleLib:SendChatMessage(prio, prefix,   text, chattype, lan
 	msg.nSize = nSize
 	msg.callbackFn = callbackFn
 	msg.callbackArg = callbackArg
+	msg.enqueuedTime = _G.GetServerTime()
 
 	self:Enqueue(prio, queueName or (prefix..(chattype or "SAY")..(destination or "")), msg)
 end

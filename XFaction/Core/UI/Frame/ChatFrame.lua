@@ -51,7 +51,7 @@ local function GetMessagePrefix(inEvent, inUnit)
 
     local config = inEvent == 'CHAT_MSG_GUILD' and 'GChat' or 'Achievement'
     local text = ''
-    if(XF.Config.Chat[config].Faction) then
+    if(XF.Config.Chat[config].Faction and inUnit:HasFaction()) then
         text = text .. format('%s ', format(XF.Icons.String, inUnit:Faction():IconID()))
     end
 

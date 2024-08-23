@@ -606,11 +606,15 @@ function XFC.Unit:IsOffline()
 end
 
 function XFC.Unit:HasRace()
-    return self.race ~= nil
+    return self:Race() ~= nil
 end
 
 function XFC.Unit:Faction()
-    return self:HasRace() and self:Race():Faction() or nil
+    return self:Race():Faction()
+end
+
+function XFC.Unit:HasFaction()
+    return self:HasRace() and self:Race():HasFaction()
 end
 
 function XFC.Unit:HasClass()
@@ -682,11 +686,7 @@ function XFC.Unit:IsSameTarget()
 end
 
 function XFC.Unit:CanChat()
-    return self:IsOnline() and 
-           self:IsRunningAddon() and 
-           (
-                self:Target():IsMyTarget() or (self:IsSameFaction() and self:IsSameRealm())
-           )
+    return self:IsOnline() and self:IsRunningAddon() and self:IsSameFaction() and self:IsSameRealm() and self:IsSameGuild() and not self:IsPlayer()
 end
 
 function XFC.Unit:GetLink()

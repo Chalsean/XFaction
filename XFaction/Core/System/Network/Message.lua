@@ -233,15 +233,13 @@ function XFC.Message:Deserialize(inSerial)
     self:TimeStamp(data.T)
     self:Priority(data.Q)
 
-    local unit = nil
     try(function()
-        unit = XFO.Confederate:Pop()
+        local unit = XFC.Unit:new()
         unit:Deserialize(data.U)
         self:FromUnit(unit)
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
-        XFO.Confederate:Push(unit)        
     end)
 
     if(data.R ~= nil) then

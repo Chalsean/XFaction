@@ -28,4 +28,8 @@ function XFC.Race:Print()
     self:ParentPrint()
     if(self:Faction() ~= nil) then self:Faction():Print() end
 end
+
+function XFC.Race:HasFaction()
+    return self:Faction() ~= nil
+end
 --#endregion

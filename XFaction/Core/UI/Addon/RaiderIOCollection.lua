@@ -2,17 +2,13 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RaiderIOCollection'
 
-XFC.RaiderIOCollection = XFC.Factory:newChildConstructor()
+XFC.RaiderIOCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.RaiderIOCollection:new()
     local object = XFC.RaiderIOCollection.parent.new(self)
     object.__name = ObjectName
     return object
-end
-
-function XFC.RaiderIOCollection:NewObject()
-    return XFC.RaiderIO:new()
 end
 
 function XFC.RaiderIOCollection:Initialize()
@@ -39,7 +35,7 @@ end
 function XFC.RaiderIOCollection:AddUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit') 
     try(function ()
-        local raiderIO = self:Pop()
+        local raiderIO = XFC.RaiderIO:new()
         raiderIO:Initialize()
         raiderIO:Key(inUnit:Key())
         raiderIO:Name(inUnit:UnitName())

@@ -73,23 +73,29 @@ end
 
 --#region Methods
 function XFC.DTMetrics:RefreshBroker()
+	local self = XFO.DTMetrics
 	if(XF.Initialized and self:IsInitialized()) then
-		local text = ''
-		local delimiter = false
+		try(function()
+			local text = ''
+			local delimiter = false
 
-		local bnet = XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Count()
-		local channel = XFO.Metrics:Get(XF.Enum.Metric.GuildSend):Count() + XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Count()
+			local bnet = XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Count()
+			local channel = XFO.Metrics:Get(XF.Enum.Metric.GuildSend):Count() + XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Count()
 
-		local delta = (XFF.TimeCurrent() - XF.Start) / XF.Config.DataText.Metric.Rate
-		bnet = bnet / delta
-		channel = channel / delta
+			local delta = (XFF.TimeCurrent() - XF.Start) / XF.Config.DataText.Metric.Rate
+			bnet = bnet / delta
+			channel = channel / delta
 
-		local text = format('|cffffffff%d|r', channel) .. ' : ' ..
-					 format('|cffffffff%d|r', bnet) .. ' : ' ..
-					 format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):Count()) .. ' : ' ..
-					 format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):Count())
+			local text = format('|cffffffff%d|r', channel) .. ' : ' ..
+						format('|cffffffff%d|r', bnet) .. ' : ' ..
+						format('|cffFF4700%d|r', XFO.Metrics:Get(XF.Enum.Metric.Error):Count()) .. ' : ' ..
+						format('|cffffff00%d|r', XFO.Metrics:Get(XF.Enum.Metric.Warning):Count())
 
-		self:Broker().text = text
+			self:Broker().text = text
+		end).
+		catch(function(err)
+			XF:Warn(self:ObjectName(), err)
+		end)
 	end
 end
 
@@ -98,67 +104,78 @@ function XFC.DTMetrics:CallbackOnEnter(this)
 	if(XF.Initialized == false) then return end
 	if(XFF.PlayerIsInCombat()) then return end
 
-	--#region Configure Tooltip
-	if XF.Lib.QT:IsAcquired(self:ObjectName()) then
-		self:Tooltip(XF.Lib.QT:Acquire(self:ObjectName()))
-	else
-		self:Tooltip(XF.Lib.QT:Acquire(self:ObjectName(), 3))
-		self:Tooltip():SetHeaderFont(self:HeaderFont())
-		self:Tooltip():SetFont(self:RegularFont())
-		self:Tooltip():SmartAnchorTo(this)
-		self:Tooltip():SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTMetrics:CallbackOnLeave() end)
-		self:Tooltip():EnableMouse(true)
-		self:Tooltip():SetClampedToScreen(false)
-	end
+	try(function()
 
-	self:Tooltip():Clear()
-	--#endregion
-
-	--#region Header
-	local line = self:Tooltip():AddLine()
-	self:Tooltip():SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self:HeaderFont(), 'LEFT', 3)
-	line = self:Tooltip():AddLine()
-	local calendar = XFO.Metrics:StartCalendar()
-	self:Tooltip():SetCell(line, 1, format(XF.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self:HeaderFont(), 'LEFT', 3)
-
-	line = self.Tooltip():AddLine()
-	line = self.Tooltip():AddLine()
-	line = self.Tooltip():AddHeader()
-	--#endregion
-
-	--#region Column Headers
-	self:Tooltip():SetCell(line, 1, XF.Lib.Locale['DTMETRICS_HEADER_METRIC'], self:HeaderFont(), 'LEFT')
-	self:Tooltip():SetCell(line, 2, XF.Lib.Locale['DTMETRICS_HEADER_TOTAL'], self:HeaderFont(), 'CENTER')
-	self:Tooltip():SetCell(line, 3, XF.Lib.Locale['DTMETRICS_HEADER_AVERAGE'], self:HeaderFont(), 'RIGHT')
-
-	line = self:Tooltip():AddLine()
-	self:Tooltip():AddSeparator()
-	line = self:Tooltip():AddLine()
-	--#endregion
-
-	--#region Populate Table
-	if(XF.Initialized) then
-		for _, metric in XFO.Metrics:SortedIterator() do
-			self:Tooltip():SetCell(line, 1, metric:Name(), self:RegularFont(), 'LEFT')
-			self:Tooltip():SetCell(line, 2, metric:Count(), self:RegularFont(), 'CENTER')
-			self:Tooltip():SetCell(line, 3, format("%.2f", metric:GetAverage(XF.Config.DataText.Metric.Rate)), self:RegularFont(), 'RIGHT')
-			line = self:Tooltip():AddLine()
+		--#region Configure Tooltip
+		if XF.Lib.QT:IsAcquired(self:ObjectName()) then
+			self:Tooltip(XF.Lib.QT:Acquire(self:ObjectName()))
+		else
+			self:Tooltip(XF.Lib.QT:Acquire(self:ObjectName(), 3))
+			self:Tooltip():SetHeaderFont(self:HeaderFont())
+			self:Tooltip():SetFont(self:RegularFont())
+			self:Tooltip():SmartAnchorTo(this)
+			self:Tooltip():SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTMetrics:CallbackOnLeave() end)
+			self:Tooltip():EnableMouse(true)
+			self:Tooltip():SetClampedToScreen(false)
 		end
-	end
-	--#endregion
 
-	self.Tooltip():Show()
+		self:Tooltip():Clear()
+		--#endregion
+
+		--#region Header
+		local line = self:Tooltip():AddLine()
+		self:Tooltip():SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self:HeaderFont(), 'LEFT', 3)
+		line = self:Tooltip():AddLine()
+		local calendar = XFO.Metrics:StartCalendar()
+		self:Tooltip():SetCell(line, 1, format(XF.Lib.Locale['DTMETRICS_HEADER'], calendar.hour, calendar.minute), self:HeaderFont(), 'LEFT', 3)
+
+		line = self.Tooltip():AddLine()
+		line = self.Tooltip():AddLine()
+		line = self.Tooltip():AddHeader()
+		--#endregion
+
+		--#region Column Headers
+		self:Tooltip():SetCell(line, 1, XF.Lib.Locale['DTMETRICS_HEADER_METRIC'], self:HeaderFont(), 'LEFT')
+		self:Tooltip():SetCell(line, 2, XF.Lib.Locale['DTMETRICS_HEADER_TOTAL'], self:HeaderFont(), 'CENTER')
+		self:Tooltip():SetCell(line, 3, XF.Lib.Locale['DTMETRICS_HEADER_AVERAGE'], self:HeaderFont(), 'RIGHT')
+
+		line = self:Tooltip():AddLine()
+		self:Tooltip():AddSeparator()
+		line = self:Tooltip():AddLine()
+		--#endregion
+
+		--#region Populate Table
+		if(XF.Initialized) then
+			for _, metric in XFO.Metrics:SortedIterator() do
+				self:Tooltip():SetCell(line, 1, metric:Name(), self:RegularFont(), 'LEFT')
+				self:Tooltip():SetCell(line, 2, metric:Count(), self:RegularFont(), 'CENTER')
+				self:Tooltip():SetCell(line, 3, format("%.2f", metric:GetAverage(XF.Config.DataText.Metric.Rate)), self:RegularFont(), 'RIGHT')
+				line = self:Tooltip():AddLine()
+			end
+		end
+		--#endregion
+
+		self.Tooltip():Show()
+	end).
+	catch(function(err)
+		XF:Warn(self:ObjectName(), err)
+	end)
 end
 --#endregion
 
 --#region OnLeave
 function XFC.DTMetrics:CallbackOnLeave()
 	local self = XFO.DTMetrics
-	if self:Tooltip() and XFF.UIIsMouseOver(self:Tooltip()) then
-        return
-    else
-        XF.Lib.QT:Release(self:Tooltip())
-        self.tooltip = nil
-	end
+	try(function()
+		if self:Tooltip() and XFF.UIIsMouseOver(self:Tooltip()) then
+			return
+		else
+			XF.Lib.QT:Release(self:Tooltip())
+			self.tooltip = nil
+		end
+	end).
+	catch(function(err)
+		XF:Warn(self:ObjectName(), err)
+	end)
 end
 --#endregion

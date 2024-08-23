@@ -97,18 +97,24 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
     self:Add(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
         XFO.Mailbox:Add(messageKey)
-        XF:Debug(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
+        XF:Trace(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
         local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
 
         local length = string.len(encodedMessage)
-        XF:Debug(self:ObjectName(), 'Message data length [%d]', length)
+        XF:Trace(self:ObjectName(), 'Message data length [%d]', length)
 
-        local message = XFO.Mailbox:Pop()
         try(function()
+            local message = XFC.Message:new()
             message:Decode(encodedMessage, protocol)
 
+            if(message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
+                XF:Trace(self:ObjectName(), 'Message is too old, wont process')
+                return
+            end
+
             if(not message:HasFromUnit() or not message:FromUnit():HasGuild()) then
-                error('Unable to parse message')
+                XF:Trace(self:ObjectName(), 'Message is too old, wont process')
+                return
             end
 
             XFO.Mailbox:Process(message)
@@ -116,10 +122,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             self:Remove(messageKey)
         end).
         catch(function(err)
-            XF:Debug(self:ObjectName(), err)
-        end).
-        finally(function()
-            XFO.Mailbox:Push(message)
+            --XF:Warn(self:ObjectName(), err)
         end)
     end
 end

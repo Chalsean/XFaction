@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'OrderCollection'
 
-XFC.OrderCollection = XFC.Factory:newChildConstructor()
+XFC.OrderCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.OrderCollection:new()
@@ -10,10 +10,6 @@ function XFC.OrderCollection:new()
 	object.__name = ObjectName
     object.firstQuery = true
     return object
-end
-
-function XFC.OrderCollection:NewObject()
-	return XFC.Order:new()
 end
 --#endregion
 
@@ -31,18 +27,14 @@ end
 function XFC.OrderCollection:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 
-    local order = nil
     try(function ()
-        order = self:Pop()
+        local order = XFC.Order:new()
         order:Deserialize(inMessage:Data())
         order:Customer(inMessage:FromUnit())
         XFO.SystemFrame:DisplayOrder(order)
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
-    end).
-    finally(function()
-        self:Push(order)
     end)
 end
 --#endregion

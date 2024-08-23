@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Confederate'
 
-XFC.Confederate = XFC.Factory:newChildConstructor()
+XFC.Confederate = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.Confederate:new()
@@ -10,10 +10,6 @@ function XFC.Confederate:new()
 	object.__name = ObjectName
     object.onlineCount = 0
     return object
-end
-
-function XFC.Confederate:NewObject()
-    return XFC.Unit:new()
 end
 
 function XFC.Confederate:Initialize()
@@ -86,17 +82,25 @@ function XFC.Confederate:Add(inUnit)
         self.parent.Add(self, inUnit)
         if(oldData:IsOffline() and inUnit:IsOnline()) then
             self:OnlineCount(1)
+            if(inUnit:CanChat()) then
+                XFO.Channels:LocalChannel():Count(1)            
+            end
         elseif(oldData:IsOnline() and inUnit:IsOffline()) then
             self:OnlineCount(-1)
+            if(oldData:CanChat()) then
+                XFO.Channels:LocalChannel():Count(-1)
+            end
         end
-        self:Push(oldData)
     else
         self.parent.Add(self, inUnit)
         if(inUnit:IsOnline()) then
             self:OnlineCount(1)
+            if(inUnit:CanChat()) then
+                XFO.Channels:LocalChannel():Count(1)
+            end
         end
     end
-    
+
     if(inUnit:IsPlayer()) then
         XF.Player.Unit = inUnit
     end
@@ -109,9 +113,11 @@ function XFC.Confederate:Remove(inKey)
         self.parent.Remove(self, inKey)
         if(unit:IsOnline()) then
             self:OnlineCount(-1)
+            if(unit:CanChat()) then
+                XFO.Channels:LocalChannel():Count(-1)
+            end
         end
         unit:Target():Remove(inKey)
-        self:Push(unit)
     end
 end
 
@@ -138,16 +144,14 @@ end
 function XFC.Confederate:Restore()
     if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
     for _, data in pairs (XF.Cache.Backup.Confederate) do
-        local unit = nil
         try(function ()
-            unit = self:Pop()
+            local unit = XFC.Unit:new()
             unit:Deserialize(data)
             self:Add(unit)
             XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
         end).
         catch(function (err)
             XF:Warn(self:ObjectName(), err)
-            self:Push(unit)
         end)
     end
     XF.Cache.Backup.Confederate = {}
@@ -186,7 +190,6 @@ function XFC.Confederate:OfflineUnit(inUnit)
         self:Add(inUnit)
     else
         self:Remove(inUnit:Key())
-        self:Push(inUnit)
     end
 
     XFO.DTLinks:RefreshBroker()
@@ -197,8 +200,8 @@ function XFC.Confederate:CallbackLocalGuild()
     local self = XFO.Confederate
     XF:Trace(self:ObjectName(), 'Scanning local guild roster')
     for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID())) do
-        local unit = self:Pop()
         try(function ()
+            local unit = XFC.Unit:new()
             unit:Initialize(memberID)
             if(unit:IsInitialized()) then
                 if(self:Contains(unit:Key())) then
@@ -211,20 +214,12 @@ function XFC.Confederate:CallbackLocalGuild()
                             self:Login(unit)
                         elseif(not oldData:IsRunningAddon()) then
                             self:Add(unit)
-                        else
-                            -- Every logic branch should either add, remove or push, otherwise there will be a memory leak
-                            self:Push(unit)
                         end
-                    else
-                        self:Push(unit)
                     end
                 -- First time scan (i.e. login) do not notify
                 else
                     self:Add(unit)
                 end
-            -- If it didnt initialize properly then we dont really know their status, so do nothing
-            else
-                self:Push(unit)
             end
         end).
         catch(function (err)
@@ -262,6 +257,31 @@ function XFC.Confederate:CallbackPlayerChanged(inEvent)
     end)
 end
 
+function XFC.Confederate:CallbackHeartbeat() 
+    local self = XFO.Confederate
+    try(function ()
+        XFO.Mailbox:SendDataMessage()
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+    end)
+end
+
+function XFC.Confederate:CallbackDisconnected()
+    local self = XFO.Confederate
+    try(function()
+        local window = XFF.TimeCurrent() - XF.Settings.Confederate.UnitStale
+        for _, unit in self:Iterator() do
+            if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < window) then
+                self:OfflineUnit(unit)
+            end
+        end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
+end
+
 -- function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID) 
 --     local self = XFO.Confederate
 --     XF:Debug(self:ObjectName(), 'Guild update event fired [%s]', inUnitID)
@@ -292,29 +312,4 @@ end
 --         XF:Warn(self:ObjectName(), err)
 --     end)
 -- end
-
-function XFC.Confederate:CallbackHeartbeat() 
-    local self = XFO.Confederate
-    try(function ()
-        XFO.Mailbox:SendDataMessage()
-    end).
-    catch(function (err)
-        XF:Warn(self:ObjectName(), err)
-    end)
-end
-
-function XFC.Confederate:CallbackDisconnected()
-    local self = XFO.Confederate
-    try(function()
-        local window = XFF.TimeCurrent() - XF.Settings.Confederate.UnitStale
-        for _, unit in self:Iterator() do
-            if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < window) then
-                self:OfflineUnit(unit)
-            end
-        end
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-    end)
-end
 --#endregion

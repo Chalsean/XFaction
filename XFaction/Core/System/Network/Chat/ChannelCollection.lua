@@ -26,13 +26,13 @@ function XFC.ChannelCollection:Initialize()
 			callback = XFO.Channels.CallbackUnitLeftChannel, 
 			instance = true
 		})
-		XFO.Events:Add({
-			name = 'ChannelChange', 
-			event = 'CHAT_MSG_CHANNEL_NOTICE', 
-			callback = XFO.Channels.CallbackSync,
-			groupDelta = 3,
-			instance = true
-		})
+		-- XFO.Events:Add({
+		-- 	name = 'ChannelChange', 
+		-- 	event = 'CHAT_MSG_CHANNEL_NOTICE', 
+		-- 	callback = XFO.Channels.CallbackSync,
+		-- 	groupDelta = 3,
+		-- 	instance = true
+		-- })
 		XFO.Events:Add({
 			name = 'ChannelColor', 
 			event = 'UPDATE_CHAT_COLOR', 

@@ -10,6 +10,7 @@ function XFC.Channel:new()
     object.__name = 'Channel'
     object.password = nil
     object.community = false
+    object.count = 0
     return object
 end
 --#endregion
@@ -30,12 +31,21 @@ function XFC.Channel:Password(inPassword)
     end
     return self.password
 end
+
+function XFC.Channel:Count(inCount)
+    assert(type(inCount) == 'number' or inCount == nil)
+    if(inCount ~= nil) then
+        self.count = self.count + inCount
+    end
+    return self.count
+end
 --#endregion
 
 --#region Methods
 function XFC.Channel:Print()
     self:ParentPrint()
     XF:Debug(self:ObjectName(), '  community (' .. type(self.community) .. '): ' .. tostring(self.community))
+    XF:Debug(self:ObjectName(), '  count (' .. type(self.count) .. '): ' .. tostring(self.count))
 end
 
 function XFC.Channel:SetColor()
