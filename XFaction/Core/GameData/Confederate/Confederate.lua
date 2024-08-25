@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Confederate'
 
-XFC.Confederate = XFC.ObjectCollection:newChildConstructor()
+XFC.Confederate = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.Confederate:new()
@@ -10,6 +10,10 @@ function XFC.Confederate:new()
 	object.__name = ObjectName
     object.onlineCount = 0
     return object
+end
+
+function XFC.Confederate:NewObject()
+    return XFC.Unit:new()
 end
 
 function XFC.Confederate:Initialize()
@@ -96,14 +100,15 @@ end
 function XFC.Confederate:Restore()
     if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
     for _, data in pairs (XF.Cache.Backup.Confederate) do
+        local unit = self:Pop()
         try(function ()
-            local unit = XFC.Unit:new()
             unit:Deserialize(data)
             self:OnlineUnit(unit)
             XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
         end).
         catch(function (err)
             XF:Warn(self:ObjectName(), err)
+            self:Push(unit)
         end)
     end
     XF.Cache.Backup.Confederate = {}
@@ -137,7 +142,13 @@ end
 function XFC.Confederate:OnlineUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
 
-    self:Add(inUnit)
+    if(self:Contains(inUnit:Key())) then
+        local old = self:Get(inUnit:Key())
+        self:Add(inUnit)
+        self:Push(old)
+    else
+        self:Add(inUnit)
+    end
     if(inUnit:IsOnline()) then
         inUnit:Guild():Add(inUnit)
         XFO.DTGuild:RefreshBroker()
@@ -169,15 +180,19 @@ function XFC.Confederate:OfflineUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
 
     inUnit:Guild():Remove(inUnit:Key())
+    inUnit:Target():Remove(inUnit:Key())
+    XFO.Channels:LocalChannel():Remove(inUnit:Key())
+    XFO.Channels:GuildChannel():Remove(inUnit:Key())
+
+    local old = self:Get(inUnit:Key())
     if(inUnit:IsSameGuild()) then
         self:Add(inUnit)
     else
         self:Remove(inUnit:Key())
     end
-
-    inUnit:Target():Remove(inUnit:Key())
-    XFO.Channels:LocalChannel():Remove(inUnit:Key())
-    XFO.Channels:GuildChannel():Remove(inUnit:Key())
+    if(old ~= nil) then
+        self:Push(old)
+    end
 
     XFO.DTLinks:RefreshBroker()
     XFO.DTGuild:RefreshBroker()
@@ -188,8 +203,8 @@ function XFC.Confederate:CallbackLocalGuild()
     local self = XFO.Confederate
     XF:Trace(self:ObjectName(), 'Scanning local guild roster')
     for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID())) do
+        local unit = self:Pop()
         try(function ()
-            local unit = XFC.Unit:new()
             unit:Initialize(memberID)
             if(unit:IsInitialized()) then
                 if(self:Contains(unit:Key())) then
@@ -202,16 +217,23 @@ function XFC.Confederate:CallbackLocalGuild()
                             self:Login(unit)
                         elseif(not oldData:IsRunningAddon()) then
                             self:OnlineUnit(unit)
+                        else
+                            self:Push(unit)
                         end
+                    else
+                        self:Push(unit)
                     end
                 -- First time scan (i.e. login) do not notify
                 else
                     self:OnlineUnit(unit)
                 end
+            else
+                self:Push(unit)
             end
         end).
         catch(function (err)
             XF:Warn(self:ObjectName(), err)
+            self:Push(unit)
         end)
     end
 end

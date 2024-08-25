@@ -113,7 +113,7 @@ function XFC.SpecCollection:CallbackSpecChanged()
 	local self = XFO.Specs
 	try(function ()
         XF.Player.Unit:Initialize(XF.Player.Unit:ID())
-        XF.Player.Unit:Broadcast()
+		XFO.Mailbox:SendDataMessage()
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)

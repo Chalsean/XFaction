@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Mailbox'
 
-XFC.Mailbox = XFC.ObjectCollection:newChildConstructor()
+XFC.Mailbox = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.Mailbox:new()
@@ -24,6 +24,10 @@ function XFC.Mailbox:Initialize()
 
         self:IsInitialized(true)
     end
+end
+
+function XFC.Mailbox:NewObject()
+	return XFC.Message:new()
 end
 --#endregion
 

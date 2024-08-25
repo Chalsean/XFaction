@@ -54,7 +54,6 @@ function XFC.PostOffice:RebuildMessage(inKey, inTotalPackets)
     local message = ''
     -- Stitch the data back together again
     for i = 1, inTotalPackets do
---    for _, packet in PairsByKeys(self.objects[inKey]) do
         message = message .. self.objects[inKey][i]
     end
     return message
@@ -93,7 +92,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
         XF:Trace(self:ObjectName(), 'Ignoring duplicate message [%s]', messageKey)
         return
     end
-
+    
     self:Add(messageKey, packetNumber, messageData)
     if(self:HasAllPackets(messageKey, totalPackets)) then
         try(function()
@@ -101,24 +100,29 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             XF:Trace(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
 
             -- Logout messages are not encoded
-            if(string.sub(messageData, 1, 5) == 'LOGOUT') then
-                local guid = string.sub(messageData, 6, -1)
+            if(string.sub(messageData, 1, 6) == 'LOGOUT') then
+                local guid = string.sub(messageData, 7, -1)
                 XFO.Confederate:Logout(guid)
                 return
             end
 
             local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-            local message = XFC.Message:new()
-            message:Decode(encodedMessage, protocol)
+            local message = XFO.Mailbox:Pop()
+            try(function()
+                message:Decode(encodedMessage, protocol)
 
-            if(message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
-                XF:Trace(self:ObjectName(), 'Message is too old, wont process')
-                return
-            end
+                if(message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
+                    XF:Trace(self:ObjectName(), 'Message is too old, wont process')
+                    return
+                end
 
-            XFO.Mailbox:Process(message)
-            XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)            
-            self:Remove(messageKey)
+                XFO.Mailbox:Process(message)
+                XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)            
+                self:Remove(messageKey)
+            end).
+            finally(function()
+                XFO.Mailbox:Push(message)
+            end)
         end).
         catch(function(err)
             --XF:Warn(self:ObjectName(), err)
