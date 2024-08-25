@@ -58,8 +58,10 @@ local function GetMessagePrefix(inEvent, inUnit)
     if(inEvent == 'CHAT_MSG_GUILD_ACHIEVEMENT') then
         if(inUnit:IsSameFaction()) then
             text = text .. '%s '
+        elseif(inUnit:IsFriend()) then
+            text = text .. format('|HBNplayer:%s:%d:1:WHISPER:%s|h[%s]|h', inUnit:Name(), inUnit:Friend():AccountID(), inUnit:Name(), inUnit:Name()) .. ' '
         else
-            text = text .. inUnit:GetLink()
+            text = text .. '%s '
         end
     end
 
