@@ -45,6 +45,29 @@ local function GetChatHex(inEvent, inFaction)
     return hex
 end
 
+local function ModifyFilterMessage(inEvent, inText, inUnit)
+    local configNode = inEvent == 'CHAT_MSG_GUILD' and 'GChat' or 'Achievement'
+    local event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
+    local text = ''
+    if(XF.Config.Chat[configNode].Faction) then  
+        text = text .. format('%s ', format(XF.Icons.String, inUnit:Faction():IconID()))
+    end
+    if(XF.Config.Chat[configNode].Main and inUnit:IsAlt()) then
+        text = text .. '(' .. inUnit:MainName() .. ') '
+    end
+    if(XF.Config.Chat[configNode].Guild) then
+        text = text .. '<' .. inUnit:Guild():Initials() .. '> '
+    end
+    text = text .. inText
+
+    local hex = GetChatHex(inEvent, inUnit:Faction())
+    if hex ~= nil then
+        text = format('|cff%s%s|r', hex, text)
+    end
+
+    return text
+end
+
 local function GetMessagePrefix(inEvent, inUnit)
     assert(type(inEvent) == 'string')
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
@@ -99,7 +122,7 @@ function XFC.ChatFrame:ChatFilter(inEvent, inText, arg3, arg4, arg5, arg6, arg7,
     elseif(string.find(inText, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
         return true
     elseif(XFO.Confederate:Contains(inGUID)) then
-        inText = ModifyPlayerChat(inEvent, inText, XFO.Confederate:Get(inGUID))
+        inText = ModifyFilterMessage(inEvent, inText, XFO.Confederate:Get(inGUID))
     end
     return false, inText, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
@@ -110,7 +133,7 @@ function XFC.ChatFrame:AchievementFilter(inEvent, inText, arg3, arg4, arg5, arg6
     elseif(string.find(inText, XF.Settings.Frames.Chat.Prepend)) then
         inText = string.gsub(inText, XF.Settings.Frames.Chat.Prepend, '')
     elseif(XFO.Confederate:Contains(inGUID)) then
-        inText = ModifyPlayerChat(inEvent, inText, XFO.Confederate:Get(inGUID))
+        inText = ModifyFilterMessage(inEvent, inText, XFO.Confederate:Get(inGUID))
     end
     return false, inText, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
 end
