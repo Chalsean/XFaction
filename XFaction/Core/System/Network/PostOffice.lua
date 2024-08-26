@@ -111,7 +111,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             try(function()
                 message:Decode(encodedMessage, protocol)
 
-                if(message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
+                if(not message:IsInitialized() or message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
                     XF:Trace(self:ObjectName(), 'Message is too old, wont process')
                     return
                 end
@@ -125,7 +125,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             end)
         end).
         catch(function(err)
-            --XF:Warn(self:ObjectName(), err)
+            XF:Warn(self:ObjectName(), err)
         end)
     end
 end
