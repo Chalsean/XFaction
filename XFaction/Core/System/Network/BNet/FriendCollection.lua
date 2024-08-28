@@ -85,10 +85,8 @@ function XFC.FriendCollection:CallbackFriendChanged(inID)
 		if(self:Contains(friend:Key())) then
 			local oldFriend = self:Get(friend:Key())
 			if(oldFriend:IsOnline() and not friend:IsOnline()) then
-				XF:Debug(self:ObjectName(), 'Detected BNet logout: %s', oldFriend:Name())			
-				if(XFO.Confederate:Contains(oldFriend:GUID())) then
-					XFO.Confederate:Logout(oldFriend:GUID())
-				end
+				XF:Debug(self:ObjectName(), 'Detected BNet logout: %s', oldFriend:Name())
+				XFO.Confederate:ProcessLogout(oldFriend:GUID())
 			end
 
 			if(friend:CanLink()) then

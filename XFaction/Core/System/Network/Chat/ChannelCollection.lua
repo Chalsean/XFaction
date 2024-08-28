@@ -113,17 +113,9 @@ end
 function XFC.ChannelCollection:CallbackUnitLeftChannel(_, name, _, _, _, _, _, _, channelName, _, _, guid)
 	local self = XFO.Channels
 	try(function()
-		if(self:HasLocalChannel()) then
-			local channel = self:LocalChannel()
-			if(channel:Key() == channelName) then
-				XF:Debug(self:ObjectName(), 'Detected channel logout: %s', name)
-			 	if(XFO.Confederate:Contains(guid)) then
-					local unit = XFO.Confederate:Get(guid)
-					if(not unit:IsSameGuild()) then
-						XFO.Confederate:Logout(guid)
-					end
-				end
-			end
+		if(self:LocalChannel():Key() == channelName) then
+			XF:Debug(self:ObjectName(), 'Detected channel logout: %s', name)
+			XFO.Confederate:ProcessLogout(guid)
 		end
 	end).
 	catch(function(err)

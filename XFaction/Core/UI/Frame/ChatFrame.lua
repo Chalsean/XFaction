@@ -49,20 +49,22 @@ local function ModifyFilterMessage(inEvent, inText, inUnit)
     local configNode = inEvent == 'CHAT_MSG_GUILD' and 'GChat' or 'Achievement'
     local event = inEvent == 'CHAT_MSG_GUILD' and 'GUILD' or 'GUILD_ACHIEVEMENT'
     local text = ''
-    if(XF.Config.Chat[configNode].Faction) then  
+    if(XF.Config.Chat[configNode].Faction and inUnit:HasFaction()) then  
         text = text .. format('%s ', format(XF.Icons.String, inUnit:Faction():IconID()))
     end
     if(XF.Config.Chat[configNode].Main and inUnit:IsAlt()) then
         text = text .. '(' .. inUnit:MainName() .. ') '
     end
-    if(XF.Config.Chat[configNode].Guild) then
+    if(XF.Config.Chat[configNode].Guild and inUnit:HasGuild()) then
         text = text .. '<' .. inUnit:Guild():Initials() .. '> '
     end
     text = text .. inText
 
-    local hex = GetChatHex(inEvent, inUnit:Faction())
-    if hex ~= nil then
-        text = format('|cff%s%s|r', hex, text)
+    if(inUnit:HasFaction()) then
+        local hex = GetChatHex(inEvent, inUnit:Faction())
+        if hex ~= nil then
+            text = format('|cff%s%s|r', hex, text)
+        end
     end
 
     return text
@@ -92,7 +94,7 @@ local function GetMessagePrefix(inEvent, inUnit)
         text = text .. '(' .. inUnit:MainName() .. ') '
     end
 
-    if(XF.Config.Chat[config].Guild) then
+    if(XF.Config.Chat[config].Guild and inUnit:HasGuild()) then
         text = text .. '<' .. inUnit:Guild():Initials() .. '> '
     end
 
@@ -105,9 +107,11 @@ local function ModifyPlayerChat(inEvent, inText, inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
 
     local text = GetMessagePrefix(inEvent, inUnit) .. inText
-    local hex = GetChatHex(inEvent, inUnit:Faction())
-    if hex ~= nil then
-        text = format('|cff%s%s|r', hex, text)
+    if(inUnit:HasFaction()) then
+        local hex = GetChatHex(inEvent, inUnit:Faction())
+        if hex ~= nil then
+            text = format('|cff%s%s|r', hex, text)
+        end
     end
 
     return text

@@ -124,18 +124,11 @@ function XFC.Confederate:Login(inUnit)
 end
 
 function XFC.Confederate:Logout(inUnit)
-    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit' or type(inUnit) == 'string')
-
-    if(type(inUnit) == 'string') then
-        if(not self:Contains(inUnit)) then
-            return
-        end
-        inUnit = self:Get(inUnit)
+    assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    if(self:Contains(inUnit:Key()) and self:Get(inUnit:Key()):IsOnline()) then
+        XF:Info(self:ObjectName(), 'Guild member logout: %s', inUnit:UnitName())
+        XFO.SystemFrame:DisplayLogout(inUnit:UnitName())
     end
-    
-    XF:Info(self:ObjectName(), 'Guild member logout: %s', inUnit:UnitName())
-    XFO.SystemFrame:DisplayLogout(inUnit:UnitName())
-
     self:OfflineUnit(inUnit)
 end
 
@@ -143,9 +136,7 @@ function XFC.Confederate:OnlineUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
 
     if(self:Contains(inUnit:Key())) then
-        local old = self:Get(inUnit:Key())
-        self:Add(inUnit)
-        self:Push(old)
+        self:Replace(inUnit)
     else
         self:Add(inUnit)
     end
@@ -159,6 +150,7 @@ function XFC.Confederate:OnlineUnit(inUnit)
         return
     end
     
+    -- This is messy af, need to find a better way of tracking/querying
     -- Target count == # of addon users outside the guild in the chat channel
     if(inUnit:CanChat() and not inUnit:IsSameGuild()) then
         inUnit:Target():Add(inUnit)
@@ -184,14 +176,11 @@ function XFC.Confederate:OfflineUnit(inUnit)
     XFO.Channels:LocalChannel():Remove(inUnit:Key())
     XFO.Channels:GuildChannel():Remove(inUnit:Key())
 
-    local old = self:Get(inUnit:Key())
     if(inUnit:IsSameGuild()) then
-        self:Add(inUnit)
+        self:Replace(inUnit)
     else
         self:Remove(inUnit:Key())
-    end
-    if(old ~= nil) then
-        self:Push(old)
+        self:Push(inUnit)
     end
 
     XFO.DTLinks:RefreshBroker()
@@ -240,19 +229,20 @@ end
 
 function XFC.Confederate:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-
-    if(inMessage:IsLogoutMessage()) then
-        if(not inMessage:FromUnit():IsSameGuild()) then
-            XF:Debug(self:ObjectName(), 'Detected message logout: %s', inMessage:FromUnit():UnitName())
-            self:Logout(inMessage:FromUnit())
-        end
-        return
-    end
-
     if(inMessage:IsLoginMessage()) then
         self:Login(inMessage:FromUnit())        
     else
         self:OnlineUnit(inMessage:FromUnit())
+    end
+end
+
+function XFC.Confederate:ProcessLogout(inGUID)
+    assert(type(inGUID) == 'string')
+    if(self:Contains(inGUID)) then
+        local unit = self:Get(inGUID)
+        if(not unit:IsSameGuild()) then
+            self:Logout(unit)
+        end
     end
 end
 

@@ -102,13 +102,14 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             -- Logout messages are not encoded
             if(string.sub(messageData, 1, 6) == 'LOGOUT') then
                 local guid = string.sub(messageData, 7, -1)
-                XFO.Confederate:Logout(guid)
+                XFO.Confederate:ProcessLogout(guid)
                 return
             end
 
             local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-            local message = XFO.Mailbox:Pop()
+            local message = nil
             try(function()
+                message = XFO.Mailbox:Pop()
                 message:Decode(encodedMessage, protocol)
 
                 if(not message:IsInitialized() or message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then

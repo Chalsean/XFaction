@@ -129,4 +129,15 @@ function XFC.Factory:Purge(inPurgeTime)
         end
     end
 end
+
+function XFC.Factory:Replace(inObject)
+    assert(type(inObject) == 'table' and inObject.__name ~= nil)
+    local old = self.objects[inObject:Key()]
+    self.objects[inObject:Key()] = inObject
+    if(old ~= nil) then
+        self:Push(old)
+    else
+        self.objectCount = self.objectCount + 1
+    end
+end
 --#endregion

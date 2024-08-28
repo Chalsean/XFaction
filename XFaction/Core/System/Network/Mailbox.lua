@@ -186,8 +186,9 @@ local function SendMessage(inSubject, inPriority, inData)
     local self = XFO.Mailbox
     XF.Player.LastBroadcast = XFF.TimeCurrent()
 
+    local message = nil
     try(function ()
-        local message = XFC.Message:new()
+        message = self:Pop()
         message:Initialize()
         message:Subject(inSubject)
         message:Priority(inPriority)
@@ -196,6 +197,9 @@ local function SendMessage(inSubject, inPriority, inData)
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
+    end).
+    finally(function()
+        self:Push(message)
     end)
 end
 
@@ -221,18 +225,23 @@ end
 
 function XFC.Mailbox:SendAckMessage(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
-    try(function ()
-        if(inFriend:CanLink()) then
-            local message = XFC.Message:new()
+
+    if(inFriend:CanLink()) then
+        local message = nil
+        try(function ()
+            message = self:Pop()
             message:Initialize()
             message:RemoveAll()
             message:Subject(XF.Enum.Message.ACK)
             message:Priority(XF.Enum.Priority.Low)
             XFO.BNet:Whisper(message, inFriend)
-        end
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-    end)
+        end).
+        catch(function(err)
+            XF:Warn(self:ObjectName(), err)
+        end).
+        finally(function()
+            self:Push(message)
+        end)
+    end
 end
 --#endregion
