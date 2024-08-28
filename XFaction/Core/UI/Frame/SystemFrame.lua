@@ -82,7 +82,7 @@ function XFC.SystemFrame:DisplayOrder(inOrder)
     if(inOrder:IsPersonal() and not inOrder:IsMyOrder() and not inOrder:IsPlayerCrafter()) then return end
 
     local display = false
-    if(not XF.Config.Chat.Crafting.Profession) then
+    if(not XF.Config.Chat.Crafting.Professions) then
         display = true
     elseif(inOrder:HasProfession() and inOrder:Profession():Equals(XF.Player.Unit:Profession1())) then
         display = true

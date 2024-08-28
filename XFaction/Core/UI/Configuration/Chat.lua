@@ -567,7 +567,7 @@ XF.Options.args.Chat = {
 							get = function(info) return XF.Config.Chat.Crafting[ info[#info] ] end,
 							set = function(info, value) XF.Config.Chat.Crafting[ info[#info] ] = value; end
 						},
-						Profession = {
+						Professions = {
 							order = 8,
 							type = 'toggle',
 							name = XF.Lib.Locale['CHAT_CRAFTING_PROFESSION'],

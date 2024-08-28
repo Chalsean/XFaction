@@ -178,7 +178,7 @@ L['CHAT_CRAFTING_GUILD'] = 'Guild Orders'
 L['CHAT_CRAFTING_GUILD_TOOLTIP'] = 'Be notified on cross realm/faction guild crafting orders.'
 L['CHAT_CRAFTING_PERSONAL'] = 'Personal Orders'
 L['CHAT_CRAFTING_PERSONAL_TOOLTIP'] = 'Be notified when you receive a personal crafting order.'
-L['CHAT_CRAFTING_PROFESSION'] = 'Profession'
+L['CHAT_CRAFTING_PROFESSION'] = 'Only My Professions'
 L['CHAT_CRAFTING_PROFESSION_TOOLTIP'] = "Only show orders for this character's professions."
 --=========================================================================
 -- Addons Specific
