@@ -63,6 +63,7 @@ XFF.PlayerSpellKnown = IsPlayerSpell
 XFF.PlayerLocationID = C_Map.GetBestMapForUnit
 XFF.LocationInfo = C_Map.GetMapInfo
 XFF.PlayerName = UnitName
+XFF.PlayerIsIgnored = C_FriendList.IsIgnoredByGuid
 
 -- BNet
 XFF.BNetPlayerInfo = BNGetInfo

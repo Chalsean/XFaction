@@ -701,12 +701,8 @@ function XFC.Unit:CanChat()
 end
 
 function XFC.Unit:GetLink()
-
-    if(not self:IsSameFaction()) then
-        local friend = XFO.Friends:Get(self:GUID())
-        if(friend ~= nil) then
-            return format('|HBNplayer:%s:%d:0:WHISPER:%s|h[%s]|h', friend:Name(), friend:AccountID(), friend:Name(), self:Name())
-        end
+    if(self:IsFriend()) then
+        return format('|HBNplayer:%s:%d:0:WHISPER:%s|h[%s]|h', self:Friend():Name(), self:Friend():AccountID(), self:Friend():Name(), self:Name())
     end
 
     return format('|Hplayer:%s|h[%s]|h', self:UnitName(), self:Name())

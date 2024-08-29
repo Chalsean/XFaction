@@ -37,11 +37,11 @@ function XFC.Confederate:Initialize()
             event = 'PLAYER_LEVEL_CHANGED', 
             callback = XFO.Confederate.CallbackPlayerChanged
         })
-        -- XFO.Events:Add({
-        --     name = 'Guild',
-        --     event = 'PLAYER_GUILD_UPDATE',
-        --     callback = XFO.Confederate.CallbackGuildChanged
-        -- })
+        XFO.Events:Add({
+            name = 'Guild',
+            event = 'PLAYER_GUILD_UPDATE',
+            callback = XFO.Confederate.CallbackGuildChanged
+        })
 
         XFO.Timers:Add({
             name = 'Heartbeat', 
@@ -127,7 +127,9 @@ function XFC.Confederate:Logout(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     if(self:Contains(inUnit:Key()) and self:Get(inUnit:Key()):IsOnline()) then
         XF:Info(self:ObjectName(), 'Guild member logout: %s', inUnit:UnitName())
-        XFO.SystemFrame:DisplayLogout(inUnit:UnitName())
+        if(not XFF.PlayerIsIgnored(inUnit:GUID())) then
+            XFO.SystemFrame:DisplayLogout(inUnit:UnitName())
+        end
     end
     self:OfflineUnit(inUnit)
 end
@@ -285,34 +287,52 @@ function XFC.Confederate:CallbackDisconnected()
     end)
 end
 
--- function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID) 
---     local self = XFO.Confederate
---     XF:Debug(self:ObjectName(), 'Guild update event fired [%s]', inUnitID)
---     try(function ()
---         -- Player just joined a guild
---         if(XFF.PlayerIsInGuild()) then
---             XF:Debug(self:ObjectName(), 'Player is in a guild')
---             if(XFO.Timers:Contains('LoginGuild')) then
---                 XFO.Timers:Get('LoginGuild'):Start()
---             else
---                 XFO.Timers:Add({
---                     name = 'LoginGuild', 
---                     delta = 1, 
---                     callback = XF.CallbackLoginGuild, 
---                     repeater = true, 
---                     instance = true,
---                     ttl = XF.Settings.LocalGuild.LoginTTL,
---                     start = true
---                 })
---             end
---         -- Player just left a guild
---         elseif(not XFF.PlayerIsInGuild()) then
---             XF:Debug(self:ObjectName(), 'Player is not in a guild')
---             XF:Stop()
---         end
---     end).
---     catch(function (err)
---         XF:Warn(self:ObjectName(), err)
---     end)
--- end
+function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID) 
+    local self = XFO.Confederate
+    XF:Debug(self:ObjectName(), 'Guild update event fired [%s]', inUnitID)
+    try(function ()
+        -- Player just joined a guild
+        if(XFF.PlayerIsInGuild()) then
+            XF:Debug(self:ObjectName(), 'Player is in a guild')
+            if(not XF.Initialized) then
+                if(XFO.Timers:Contains('LoginGuild')) then
+                    local timer = XFO.Timers:Get('LoginGuild')
+                    timer:Attempt(1)
+                    timer:Start()
+                else    
+                    XFO.Timers:Add({
+                        name = 'LoginGuild', 
+                        delta = 1, 
+                        callback = XF.CallbackLoginGuild, 
+                        repeater = true, 
+                        instance = true,
+                        ttl = XF.Settings.LocalGuild.LoginTTL,
+                        start = true
+                    })
+                end
+            end
+        -- Player just left a guild
+        elseif(not XFF.PlayerIsInGuild()) then
+            XF:Debug(self:ObjectName(), 'Player is not in a guild')
+            XF:Stop()
+            self:RemoveAll()
+            XFO.Channels:LocalChannel():RemoveAll()
+            XFO.Channels:GuildChannel():RemoveAll()
+
+            for _, guild in XFO.Guilds:Iterator() do
+                guild:RemoveAll()
+            end
+
+            for _, target in XFO.Targets:Iterator() do
+                target:RemoveAll()
+            end
+
+            XFO.DTLinks:RefreshBroker()
+            XFO.DTGuild:RefreshBroker()
+        end
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+    end)
+end
 --#endregion

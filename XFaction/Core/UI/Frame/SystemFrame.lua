@@ -40,6 +40,7 @@ end
 function XFC.SystemFrame:DisplayLogin(inUnit)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    if(XFF.PlayerIsIgnored(inUnit:GUID())) then return end
 
     local text = XF.Settings.Frames.Chat.Prepend
     
@@ -76,6 +77,7 @@ end
 function XFC.SystemFrame:DisplayOrder(inOrder)
     if(not XF.Config.Chat.Crafting.Enable) then return end
     assert(type(inOrder) == 'table' and inOrder.__name == 'Order')
+    if(XFF.PlayerIsIgnored(inOrder:Customer():GUID())) then return end
 
     if(inOrder:IsGuild() and not XF.Config.Chat.Crafting.GuildOrder) then return end
     if(inOrder:IsPersonal() and not XF.Config.Chat.Crafting.PersonalOrder) then return end

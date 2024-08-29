@@ -190,8 +190,9 @@ end
 
 local function LineClick(_, inUnitGUID, inMouseButton)
 	local unit = XFO.Confederate:Get(inUnitGUID)
-	local link = unit:GetLink()
-	if(link == nil) then return end
+	local link = unit:IsFriend() and
+		format('BNplayer:%s:%d:0:WHISPER:%s', unit:Friend():Name(), unit:Friend():AccountID(), unit:Friend():Name()) or
+		format('player:%s', unit:UnitName())
 
 	if(inMouseButton == 'RightButton' and XFF.UIIsShiftDown()) then
 		XFF.PartySendInvite(unit:UnitName())

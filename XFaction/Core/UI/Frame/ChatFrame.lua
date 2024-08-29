@@ -70,7 +70,7 @@ local function ModifyFilterMessage(inEvent, inText, inUnit)
     return text
 end
 
-local function GetMessagePrefix(inEvent, inUnit)
+function XFC.ChatFrame:GetMessagePrefix(inEvent, inUnit)
     assert(type(inEvent) == 'string')
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
 
@@ -157,7 +157,7 @@ local function DisplayGuildChat(inUnit, inText)
                 local frame = 'ChatFrame' .. i
                 if _G[frame] then
 
-                    local text = GetMessagePrefix('CHAT_MSG_GUILD', inUnit) .. inText
+                    local text = XFO.ChatFrame:GetMessagePrefix('CHAT_MSG_GUILD', inUnit) .. inText
                     local hex = GetChatHex('CHAT_MSG_GUILD', inUnit:Faction())                   
                     if hex ~= nil then
                         text = format('|cff%s%s|r', hex, text)
@@ -191,7 +191,7 @@ local function DisplayAchievement(inUnit, inID)
                 local frame = 'ChatFrame' .. i
                 if _G[frame] then
 
-                    local text = GetMessagePrefix('CHAT_MSG_GUILD_ACHIEVEMENT', inUnit)
+                    local text = XFO.ChatFrame:GetMessagePrefix('CHAT_MSG_GUILD_ACHIEVEMENT', inUnit)
                     text = text .. XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(XFF.PlayerAchievementLink(inID), "(Player.-:.-:.-:.-:.-:)"  , inUnit:GUID() .. ':1:' .. date("%m:%d:%y:") ) .. '!'
                     local hex = GetChatHex('CHAT_MSG_GUILD_ACHIEVEMENT', inUnit:Faction())                   
                     if hex ~= nil then
@@ -211,13 +211,16 @@ function XFC.ChatFrame:ProcessMessage(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
     if(not XF.Player.Unit:CanGuildListen()) then return end
     if(inMessage:FromUnit():IsSameGuild()) then return end
+    if(XFF.PlayerIsIgnored(inMessage:From())) then return end
 
     if(inMessage:IsGuildChatMessage()) then
         if(not XF.Config.Chat.GChat.Enable) then return end
         DisplayGuildChat(inMessage:FromUnit(), inMessage:Data())
+        XFO.Elephant:AddMessage(inMessage, 'CHAT_MSG_GUILD')
     elseif(inMessage:IsAchievementMessage()) then
         if(not XF.Config.Chat.Achievement.Enable) then return end
         DisplayAchievement(inMessage:FromUnit(), inMessage:Data())
+        XFO.Elephant:AddMessage(inMessage, 'CHAT_MSG_GUILD_ACHIEVEMENT')
     end
 end
 --#endregion
