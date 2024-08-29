@@ -62,6 +62,7 @@ XFF.PlayerZone = GetZoneText
 XFF.PlayerSpellKnown = IsPlayerSpell
 XFF.PlayerLocationID = C_Map.GetBestMapForUnit
 XFF.LocationInfo = C_Map.GetMapInfo
+XFF.PlayerName = UnitName
 
 -- BNet
 XFF.BNetPlayerInfo = BNGetInfo

@@ -40,6 +40,6 @@ function XFC.Media:Print()
 end
 
 function XFC.Media:GetTexture()
-    return format('%s', format(XF.Icons.Texture, self:GetPath()))
+    return format('%s', format(XF.Icons.Texture, self:Path()))
 end
 --#endregion

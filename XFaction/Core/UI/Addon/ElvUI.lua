@@ -72,7 +72,7 @@ function XFC.ElvUI:AddTags()
 
     self:API():AddTag('xf:main', 'UNIT_NAME_UPDATE', function(inNameplate) 
         local guid = XFF.PlayerGUID(inNameplate)
-        local unitName = UnitName(inNameplate)
+        local unitName = XFF.PlayerName(inNameplate)
         try(function ()
             if(XF.Initialized and XFO.Confederate:Contains(guid)) then
                 local unitData = XFO.Confederate:Get(guid)
@@ -120,7 +120,7 @@ function XFC.ElvUI:AddTags()
             local guid = XFF.PlayerGUID(inNameplate)
             local guildName = XFF.PlayerGuild(inNameplate)
             if(XF.Initialized and (XFO.Confederate:Contains(guid) or XFO.Guilds:ContainsName(guildName))) then
-                icon = XFO.Media:Get(XF.Icons.Guild):Texture()
+                icon = XFO.Media:Get(XF.Icons.Guild):GetTexture()
             end
         end)
         return icon
