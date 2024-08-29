@@ -126,7 +126,7 @@ XF.Settings = {
 		Retry = 60,              -- Number of times to try and get player information before giving up
 	},
 	Confederate = {
-		UnitStale = 60 * 10,   -- Seconds before you consider another unit offline
+		UnitStale = 60 * 5,    -- Seconds before you consider another unit offline
 		UnitScan = 60,         -- Seconds between offline checks
 	},
 	LocalGuild = {

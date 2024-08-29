@@ -136,8 +136,11 @@ function XFC.Confederate:OnlineUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
 
     if(self:Contains(inUnit:Key())) then
+        local old = self:Get(inUnit:Key())
+        inUnit:LoginEpoch(old:IsOnline() and old:LoginEpoch() or XFF.TimeCurrent())
         self:Replace(inUnit)
     else
+        inUnit:LoginEpoch(XFF.TimeCurrent())
         self:Add(inUnit)
     end
     if(inUnit:IsOnline()) then
