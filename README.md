@@ -65,13 +65,17 @@ The addon should provide the following functionalities:
 
 > LibStub
 
-> LibTourist
-
 ### Optional Dependencies
 
-> _DebugLog
+> DebugLog
+
+> Elephant
+
+> ElvUI
 
 > RaiderIO
+
+> WIM
 
 ### How It Works
 
