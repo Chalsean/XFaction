@@ -10,6 +10,7 @@ function XF:CoreInit()
 	XFO.Media = XFC.MediaCollection:new(); XFO.Media:Initialize()
 
 	-- External addon handling
+	XFO.Elephant = XFC.Elephant:new()
 	XFO.ElvUI = XFC.ElvUI:new()
 	XFO.RaiderIO = XFC.RaiderIOCollection:new()
 	XFO.WIM = XFC.WIM:new()
@@ -138,16 +139,18 @@ function XF:CallbackLoginGuild()
 end
 
 function XF:CallbackLoginPlayer()
+
+	local unit = nil
 	try(function ()
 		
 		-- Need the player data to continue setup
-		local unitData = XFC.Unit:new()
-		unitData:Initialize()
-		if(unitData:IsInitialized()) then
+		unit = XFO.Confederate:Pop()
+		unit:Initialize()
+		if(unit:IsInitialized()) then
 			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
 			XFO.Timers:Remove('LoginPlayer')
 
-			XFO.Confederate:OnlineUnit(unitData)
+			XFO.Confederate:OnlineUnit(unit)
 			XF.Player.Unit:Print()
 
 			-- Start network
@@ -186,7 +189,7 @@ function XF:CallbackLoginPlayer()
 			for i = 1, XFF.ClientAddonCount() do
 				local name, _, _, enabled = XFF.ClientAddonInfo(i)
 				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
-			end
+			end			
 
 			XFO.Timers:Add({
 				name = 'LoginChannelSync',
@@ -197,6 +200,8 @@ function XF:CallbackLoginPlayer()
 				instance = true,
 				start = true
 			})
+		else
+			XFO.Confederate:Push(unit)
 		end
 	end).
 	catch(function (err)

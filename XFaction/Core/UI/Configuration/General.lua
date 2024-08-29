@@ -903,17 +903,17 @@ function XF:ConfigInitialize()
 		end
 
 		-- One time install logic
-		local version = XFC.Version:new()
-		if(XF.Config.InstallVersion ~= nil) then
-			version:Key(XF.Config.InstallVersion)
-		else
-			version:Key('0.0.0')
-		end
-		if(version:IsNewer(XF.Version, true)) then
-			XF:Info(ObjectName, 'Performing new install')	
-			XF:Install()
-			XF.Config.InstallVersion = XF.Version:Key()
-		end
+		-- local version = XFC.Version:new()
+		-- if(XF.Config.InstallVersion ~= nil) then
+		-- 	version:Key(XF.Config.InstallVersion)
+		-- else
+		-- 	version:Key('0.0.0')
+		-- end
+		-- if(version:IsNewer(XF.Version, true)) then
+		-- 	XF:Info(ObjectName, 'Performing new install')	
+		-- 	XF:Install()
+		-- 	XF.Config.InstallVersion = XF.Version:Key()
+		-- end
 	end).
 	catch(function (inErrorMessage)
 		XF:Debug(ObjectName, inErrorMessage)

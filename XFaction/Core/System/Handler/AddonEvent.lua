@@ -34,6 +34,9 @@ function XFC.AddonEvent:Initialize()
         if(XFF.ClientIsAddonLoaded('RaiderIO')) then
             self:CallbackAddonLoaded('RaiderIO')
         end
+        if(XFF.ClientIsAddonLoaded('Elephant')) then
+            self:CallbackAddonLoaded('Elephant')
+        end
 		self:IsInitialized(true)
 	end
 end
@@ -99,6 +102,8 @@ function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
                 XFO.WIM:Initialize()
             elseif(inAddonName == 'RaiderIO') then
                 XFO.RaiderIO:Initialize()
+            elseif(inAddonName == 'Elephant') then
+                XFO.Elephant:Initialize()
             end
         end
     end).

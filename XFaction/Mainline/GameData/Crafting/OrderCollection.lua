@@ -97,6 +97,8 @@ function GetMyOrders()
                         XFO.SystemFrame:DisplayOrder(order)
                         XFO.Mailbox:SendOrderMessage(order:Serialize())
                     end
+                else
+                    self:Push(order)
                 end                
             else
                 self:Push(order)

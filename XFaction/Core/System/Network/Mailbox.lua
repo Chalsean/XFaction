@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Mailbox'
 
-XFC.Mailbox = XFC.ObjectCollection:newChildConstructor()
+XFC.Mailbox = XFC.Factory:newChildConstructor()
 
 --#region Constructors
 function XFC.Mailbox:new()
@@ -24,6 +24,10 @@ function XFC.Mailbox:Initialize()
 
         self:IsInitialized(true)
     end
+end
+
+function XFC.Mailbox:NewObject()
+	return XFC.Message:new()
 end
 --#endregion
 
@@ -109,6 +113,7 @@ function XFC.Mailbox:Send(inMessage)
             XF:Debug(self:ObjectName(), 'Received via BNet and guild is targeted')
             guild = true
         -- If you received via Channel, do random selection
+        -- Remember the LocalChannel count is the intersection of local/guild count
         elseif(_RandomSelection(XFO.Channels:LocalChannel():Count())) then
             XF:Debug(self:ObjectName(), 'Received via channel, guild targeted and randomly selected')
             guild = true
@@ -149,16 +154,28 @@ function XFC.Mailbox:Send(inMessage)
         inMessage:Remove(target)
     end
     
-    -- If you received the message via channel, theres no point in putting it back on it
+    
     if(inMessage:Count() > 0) then
         local channel = false
+        -- BNet means you were selected to forward
         if(inMessage:IsBNetProtocol()) then
+            XF:Debug(self:ObjectName(), 'Forwarding to chat bus due to BNet selection')
             channel = true
-        elseif(inMessage:IsGuildProtocol() and _RandomSelection(XFO.Channels:LocalChannel():Count())) then
-            channel = true
+        -- If via guild, its a safe assumption that if sender is same realm/faction, that channel broadcast was covered
+        elseif(inMessage:IsGuildProtocol()) then
+            if(inMessage:FromUnit():CanChat()) then
+                XF:Debug(self:ObjectName(), 'Sending unit is same realm/faction')
+            elseif(_RandomSelection(XFO.Channels:LocalChannel():Count())) then
+                XF:Debug(self:ObjectName(), 'Forwarding to chat bus due receiving via guild chat, sender is not same realm/faction and randomly selected')
+                channel = true
+            else
+                XF:Debug(self:ObjectName(), 'Not randomly selected to chat bus broadcast')
+            end
+        -- If you received the message via channel, theres no point in putting it back on it
+        else
+            XF:Debug(self:ObjectName(), 'Received message via chat bus, will not rebroadcast on that bus')
         end
         if(channel) then
-            XF:Debug(self:ObjectName(), 'Forwarding to chat bus for remaining targets: %d', inMessage:Count())
             XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
         end
     end
@@ -182,8 +199,9 @@ local function SendMessage(inSubject, inPriority, inData)
     local self = XFO.Mailbox
     XF.Player.LastBroadcast = XFF.TimeCurrent()
 
+    local message = nil
     try(function ()
-        local message = XFC.Message:new()
+        message = self:Pop()
         message:Initialize()
         message:Subject(inSubject)
         message:Priority(inPriority)
@@ -192,6 +210,9 @@ local function SendMessage(inSubject, inPriority, inData)
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
+    end).
+    finally(function()
+        self:Push(message)
     end)
 end
 
@@ -217,18 +238,23 @@ end
 
 function XFC.Mailbox:SendAckMessage(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
-    try(function ()
-        if(inFriend:CanLink()) then
-            local message = XFC.Message:new()
+
+    if(inFriend:CanLink()) then
+        local message = nil
+        try(function ()
+            message = self:Pop()
             message:Initialize()
             message:RemoveAll()
             message:Subject(XF.Enum.Message.ACK)
             message:Priority(XF.Enum.Priority.Low)
             XFO.BNet:Whisper(message, inFriend)
-        end
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-    end)
+        end).
+        catch(function(err)
+            XF:Warn(self:ObjectName(), err)
+        end).
+        finally(function()
+            self:Push(message)
+        end)
+    end
 end
 --#endregion

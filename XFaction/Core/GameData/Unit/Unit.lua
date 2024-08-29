@@ -41,6 +41,7 @@ function XFC.Unit:new()
     object.target = nil
     object.friend = nil
     object.targetCounts = nil
+    object.loginEpoch = nil
 
     return object
 end
@@ -78,6 +79,7 @@ function XFC.Unit:Deconstructor()
     self.target = nil
     self.friend = nil
     self.targetCounts = nil
+    self.loginEpoch = nil
 end
 
 function XFC.Unit:Initialize(inMemberID)
@@ -525,6 +527,14 @@ function XFC.Unit:LastLogin(inDays)
     return self.lastLogin
 end
 
+function XFC.Unit:LoginEpoch(inEpochTime)
+    assert(type(inEpochTime) == 'number' or inEpochTime == nil)
+    if(inEpochTime ~= nil) then
+        self.loginEpoch = inEpochTime
+    end
+    return self.loginEpoch
+end
+
 function XFC.Unit:TargetGuildCount(inTargetKey, inCount)
     assert(type(inTargetKey) == 'number')
     assert(type(inCount) == 'number' or inCount == nil)
@@ -564,6 +574,7 @@ function XFC.Unit:Print()
     XF:Debug(self:ObjectName(), '  presence (' .. type(self.presence) .. '): ' .. tostring(self.presence))
 --    XF:Debug(self:ObjectName(), '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
     XF:Debug(self:ObjectName(), '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
+    XF:Debug(self:ObjectName(), '  loginEpoch (' .. type(self.loginEpoch) .. '): ' .. tostring(self.loginEpoch))
     XF:Debug(self:ObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
 --    XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
 --    XF:Debug(self:ObjectName(), '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
@@ -690,12 +701,8 @@ function XFC.Unit:CanChat()
 end
 
 function XFC.Unit:GetLink()
-
-    if(not self:IsSameFaction()) then
-        local friend = XFO.Friends:Get(self:GUID())
-        if(friend ~= nil) then
-            return format('|HBNplayer:%s:%d:0:WHISPER:%s|h[%s]|h', friend:Name(), friend:AccountID(), friend:Name(), self:Name())
-        end
+    if(self:IsFriend()) then
+        return format('|HBNplayer:%s:%d:0:WHISPER:%s|h[%s]|h', self:Friend():Name(), self:Friend():AccountID(), self:Friend():Name(), self:Name())
     end
 
     return format('|Hplayer:%s|h[%s]|h', self:UnitName(), self:Name())

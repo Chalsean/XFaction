@@ -1,6 +1,6 @@
 ## Interface: 110002
 ## Author: Chals (US-Proudmoore)
-## Version: 5.0.24
+## Version: 5.1.1
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled

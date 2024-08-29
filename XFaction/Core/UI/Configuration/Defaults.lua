@@ -71,7 +71,7 @@ XF.Defaults = {
                 Faction = true,
                 Main = true,
                 Guild = true,
-                Profession = true,
+                Professions = false,
             },
         },
         Addons = {

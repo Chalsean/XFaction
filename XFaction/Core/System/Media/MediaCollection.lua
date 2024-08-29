@@ -22,7 +22,7 @@ function XFC.MediaCollection:Add(inName, inType)
 	media:Key(inName)
 	media:Name(inName)
 	media:Type(inType)
-	media:Path(MediaPath .. inType .. '/' .. inName .. '.blp')
+	media:Path(MediaPath .. inType .. '/' .. inName)
 	self.parent.Add(self, media)
 end
 --#endregion

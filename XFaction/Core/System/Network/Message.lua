@@ -212,7 +212,8 @@ function XFC.Message:Decode(inEncoded, inProtocol)
     end
 
     if(decompressed == nil) then
-        error('Failed to decompress message')
+        XF:Debug(self:ObjectName(), 'Failed to decompress message')
+        return
     end
 
     self:Deserialize(decompressed)
@@ -221,7 +222,20 @@ end
 
 function XFC.Message:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
-    local data = unpickle(inSerial)
+    local data = nil
+    for i = 1, XF.Settings.Network.CompressionRetry do
+        try(function()
+            data = unpickle(inSerial)
+        end).
+        catch(function() end)
+        if(data ~= nil) then
+            break
+        end
+    end
+
+    if(data == nil) then
+        return
+    end
 
     self:ParentInitialize()
 
@@ -233,13 +247,14 @@ function XFC.Message:Deserialize(inSerial)
     self:TimeStamp(data.T)
     self:Priority(data.Q)
 
+    local unit = XFO.Confederate:Pop()
     try(function()
-        local unit = XFC.Unit:new()
         unit:Deserialize(data.U)
         self:FromUnit(unit)
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
+        XFO.Confederate:Push(unit)
     end)
 
     if(data.R ~= nil) then
@@ -250,6 +265,8 @@ function XFC.Message:Deserialize(inSerial)
             end
         end
     end
+
+    self:IsInitialized(true)
 end
 
 function XFC.Message:IsAckMessage()

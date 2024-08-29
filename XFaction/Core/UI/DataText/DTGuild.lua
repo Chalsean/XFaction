@@ -130,7 +130,12 @@ local function PreSort()
 			unitData.Class = unit:Class():Hex()
 			unitData.Faction = unit:Faction():IconID()
 			unitData.PvP = unit:PvP()
-			unitData.Version = unit:HasVersion() and unit:Version():Key() or '0.0.0'
+
+			if(unit:HasVersion()) then
+				unitData.Version = unit:Version():Key()
+			elseif(unit:LoginEpoch() < XFF.TimeCurrent() - XF.Settings.Confederate.UnitStale) then
+				unitData.Version = '0.0.0'
+			end
 
 			if(unit:HasRaiderIO()) then
 				unitData.Raid = unit:RaiderIO():GetRaid()
@@ -185,8 +190,9 @@ end
 
 local function LineClick(_, inUnitGUID, inMouseButton)
 	local unit = XFO.Confederate:Get(inUnitGUID)
-	local link = unit:GetLink()
-	if(link == nil) then return end
+	local link = unit:IsFriend() and
+		format('BNplayer:%s:%d:0:WHISPER:%s', unit:Friend():Name(), unit:Friend():AccountID(), unit:Friend():Name()) or
+		format('player:%s', unit:UnitName())
 
 	if(inMouseButton == 'RightButton' and XFF.UIIsShiftDown()) then
 		XFF.PartySendInvite(unit:UnitName())
