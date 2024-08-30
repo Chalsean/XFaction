@@ -110,7 +110,7 @@ function XFC.Unit:Initialize(inMemberID)
     if(#name == 2) then
         self:Name(name[1])
         self:UnitName(unitData.name)
-        self:Realm(XFO.Realms:GetByAPIName(name[2]))
+        self:Realm(XFO.Realms:Get(name[2]))
     else
         self:Name(unitData.name)
         self:UnitName(unitData.name .. '-' .. XF.Player.Realm:APIName())
@@ -568,33 +568,33 @@ function XFC.Unit:Print()
     self:ParentPrint()
     XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
     XF:Debug(self:ObjectName(), '  unitName (' .. type(self.unitName) .. '): ' .. tostring(self.unitName))
---    XF:Debug(self:ObjectName(), '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
---    XF:Debug(self:ObjectName(), '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
+    XF:Debug(self:ObjectName(), '  rank (' .. type(self.rank) .. '): ' .. tostring(self.rank))
+    XF:Debug(self:ObjectName(), '  level (' .. type(self.level) .. '): ' .. tostring(self.level))
     XF:Debug(self:ObjectName(), '  note (' .. type(self.note) .. '): ' .. tostring(self.note))
     XF:Debug(self:ObjectName(), '  presence (' .. type(self.presence) .. '): ' .. tostring(self.presence))
---    XF:Debug(self:ObjectName(), '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
+    XF:Debug(self:ObjectName(), '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
     XF:Debug(self:ObjectName(), '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
     XF:Debug(self:ObjectName(), '  loginEpoch (' .. type(self.loginEpoch) .. '): ' .. tostring(self.loginEpoch))
     XF:Debug(self:ObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
---    XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
---    XF:Debug(self:ObjectName(), '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
---    XF:Debug(self:ObjectName(), '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
---    XF:Debug(self:ObjectName(), '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
---    XF:Debug(self:ObjectName(), '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
-    --if(self:HasVersion()) then self:Version():Print() end
+    XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
+    XF:Debug(self:ObjectName(), '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
+    XF:Debug(self:ObjectName(), '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
+    XF:Debug(self:ObjectName(), '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
+    XF:Debug(self:ObjectName(), '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
+    if(self:HasVersion()) then self:Version():Print() end
     if(self:HasGuild()) then self:Guild():Print() end
     if(self:HasRealm()) then self:Realm():Print() end
-    --if(self:HasTarget()) then self:Target():Print() end
-    --if(self:HasTeam()) then self:Team():Print() end
-    --if(self:HasLocation()) then self:Location():Print() end
+    if(self:HasTarget()) then self:Target():Print() end
+    if(self:HasTeam()) then self:Team():Print() end
+    if(self:HasLocation()) then self:Location():Print() end
     if(self:HasRace()) then self:Race():Print() end
-    --if(self:HasClass()) then self:Class():Print() end
-    --if(self:HasSpec()) then self:Spec():Print() end
-    --if(self:HasHero()) then self:Hero():Print() end
-    --if(self:HasProfession1()) then self:Profession1():Print() end
-    --if(self:HasProfession2()) then self:Profession2():Print() end  
-    --if(self:HasRaiderIO()) then self:RaiderIO():Print() end
-    --if(self:HasMythicKey()) then self:MythicKey():Print() end
+    if(self:HasClass()) then self:Class():Print() end
+    if(self:HasSpec()) then self:Spec():Print() end
+    if(self:HasHero()) then self:Hero():Print() end
+    if(self:HasProfession1()) then self:Profession1():Print() end
+    if(self:HasProfession2()) then self:Profession2():Print() end  
+    if(self:HasRaiderIO()) then self:RaiderIO():Print() end
+    if(self:HasMythicKey()) then self:MythicKey():Print() end
     if(self:IsFriend()) then self:Friend():Print() end
 end
 

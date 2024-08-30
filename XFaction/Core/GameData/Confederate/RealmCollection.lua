@@ -639,6 +639,7 @@ function XFC.RealmCollection:new()
 	local object = XFC.RealmCollection.parent.new(self)
 	object.__name = 'RealmCollection'
 	object.realmsByID = nil
+    object.realmsByAPI = nil
     return object
 end
 
@@ -646,6 +647,7 @@ function XFC.RealmCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.realmsByID = {}
+        self.realmsByAPI = {}
 		-- Setup all realms in the region
 		for id, data in pairs(RealmData) do
 			local realmData = string.Split(data, ';')
@@ -687,6 +689,7 @@ end
 function XFC.RealmCollection:Add(inRealm)
 	assert(type(inRealm) == 'table' and inRealm.__name ~= nil and inRealm.__name == 'Realm')
 	self.realmsByID[inRealm:ID()] = inRealm
+    self.realmsByAPI[inRealm:APIName()] = inRealm
 	self.parent.Add(self, inRealm)
 end
 
@@ -695,15 +698,9 @@ function XFC.RealmCollection:Get(inKey)
 	if(type(inKey) == 'number') then
 		return self.realmsByID[inKey]
 	end
+    if(self.realmsByAPI[inKey] ~= nil) then
+        return self.realmsByAPI[inKey]
+    end
 	return self.parent.Get(self, inKey)
-end
-
-function XFC.RealmCollection:GetByAPIName(inName)
-	assert(type(inName) == 'string')
-	for _, realm in self:Iterator() do
-		if(realm:APIName() == inName) then
-			return realm
-		end
-	end
 end
 --#endregion
