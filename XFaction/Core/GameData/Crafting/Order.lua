@@ -135,7 +135,7 @@ function XFC.Order:IsMyOrder()
 end
 
 function XFC.Order:IsPlayerCrafter()
-    return self:GUID() == XF.Player.GUID
+    return self:CrafterGUID() == XF.Player.GUID
 end
 
 function XFC.Order:Serialize()

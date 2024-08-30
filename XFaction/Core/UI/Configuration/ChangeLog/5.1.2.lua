@@ -18,7 +18,7 @@ XF.ChangeLog['5.1.2'] = {
                 order = 2,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Added ability to better identify guild members not using addon per request from DJ/ZtH.',
+                name = 'Added ability to better identify guild members not using addon per request.',
             },
             Messaging = {
                 order = 3,
