@@ -3,7 +3,7 @@
 Enable roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.
 
 ## Notice for The War Within
-XFaction has to undergo significant changes for TWW with the introduction of the cross-realm guild functionality, and there will be downtime prior to TWW starting **Tuesday, 8/20**. Multiple updates will be rolled out. We recommend that you encourage your communities not to update their addon during this time period unless you are part of the stress test. Communities using XFaction should be prepared to show people how to roll back their addon versions if they have auto addon updates enabled on their addon manager such as Curseforge. For support and timely updates, go to our [new support server](https://discord.gg/PaNZ8TmM3Z).
+XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
 
 ## What is included
 The addon should provide the following functionalities:
