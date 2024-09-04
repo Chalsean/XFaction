@@ -7,6 +7,7 @@ XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely su
 
 ## Feature Updates for The War Within
 > Guild crafting order notifications
+
 > Revamped Link(X) datatext
 
 ## Core Features
