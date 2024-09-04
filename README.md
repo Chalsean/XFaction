@@ -5,7 +5,11 @@ Enable roster visibility and communication between guilds of a confederation, in
 ## Notice for The War Within
 XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
 
-## What is included
+## Feature Updates for The War Within
+> Guild crafting order notifications
+> Revamped Link(X) datatext
+
+## Core Features
 The addon should provide the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederate
 <img src="https://user-images.githubusercontent.com/45693161/175836814-c326335a-786d-4be7-9547-5e31c594390c.png" width=400>
