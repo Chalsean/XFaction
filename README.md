@@ -59,7 +59,8 @@ Note: Even though Rysael does not have direct connections, AK4 is covered by ano
 
 > Metrics (X) DT
 - This will show various metrics about XFaction performance
-<img src="https://user-images.githubusercontent.com/45693161/181374308-c82a3fb4-7e9f-4cb3-85a2-e7252296d36d.png" width=200>
+![image](https://github.com/user-attachments/assets/869f0e5e-c55d-4b38-bbf1-ebc5d9adefd7)
+
 
 ## Misc
 
