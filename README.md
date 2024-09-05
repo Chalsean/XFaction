@@ -8,9 +8,7 @@ XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely su
 ## Feature Updates for The War Within
 - Guild crafting order notifications
 
-- Revamped Link(X) datatext
-  
-The Link(X) data text now shows a breakdown of the XFaction mesh across the confederate using a combination of colors and numbers. See the Links (X) DT section for more information.
+- Revamped Link(X) datatext: It now shows a breakdown of the XFaction mesh across the confederate using a combination of colors and numbers. See the Links (X) DT section for more information.
 
 ## Core Features
 The addon should provide the following functionalities:
