@@ -6,9 +6,10 @@ Enable roster visibility and communication between guilds of a confederation, in
 XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
 
 ## Feature Updates for The War Within
-> Guild crafting order notifications
+- Guild crafting order notifications
 
-> Revamped Link(X) datatext
+- Revamped Link(X) datatext
+  
 The Link(X) data text now shows a breakdown of the XFaction mesh across the confederate using a combination of colors and numbers. See the Links (X) DT section for more information.
 
 ## Core Features
@@ -20,7 +21,7 @@ The addon should provide the following functionalities:
 <img src="https://user-images.githubusercontent.com/45693161/175836417-dde29267-b00e-4eda-8506-52ef2a24d7e4.png" width=500>
 
 > Merged system messages across guilds/realms/factions in the confederate
-- When another player using the addon comes online/offline, you should see a system message as if they were local guild member
+- When another player using the addon comes online/offline, you should see a system message as if they were a local guild member.\
 <img src="https://user-images.githubusercontent.com/45693161/175836164-9aa7c46c-5b7c-4056-8d3f-ed5487b4debf.png" width=300>
 
 
@@ -34,13 +35,15 @@ The addon should provide the following functionalities:
 - Full guild roster view across guilds/realms/factions
 - View guild members' faction, level, spec, class, name, covenant, race, realm, guild, team, guild rank, zone, professions, pvp rating, raid progress, max item level and M+ score
 - View guild members' team affiliation
+- View guild members' addon version (must be enabled in Settings)
 - If on an alt, displays the main character name as well
 <img src="https://user-images.githubusercontent.com/45693161/175836288-82855e04-0200-4d4c-964c-387675975f29.png" width=700>
 
 
 > Links (X) DT
 - This shows a breakdown of the XFaction mesh across the confederate using a combination of colors and numbers. 
- - For color:
+  
+For color:
   - Green: guild chat 
   - Blue/Red: faction+realm addon chat channel
   - Yellow: BNet
