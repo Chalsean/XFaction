@@ -9,6 +9,7 @@ XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely su
 > Guild crafting order notifications
 
 > Revamped Link(X) datatext
+
 ![Links(X)](https://github.com/user-attachments/assets/d6d0a29d-d6a1-49ca-90d5-abf0b2ef743f)
 
 
