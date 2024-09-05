@@ -9,9 +9,15 @@ XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely su
 > Guild crafting order notifications
 
 > Revamped Link(X) datatext
+The Link(X) data text now shows a breakdown of the XFaction mesh across the confederate using a combination of colors and numbers. For color:
+- Green: guild chat 
+- Blue/Red: faction+realm addon chat channel
+- Yellow: BNet
 
+The number indicates the number of people the player's addon sees running the addon in that guild. It's a priority system that mimics the communication logic. If guild > 0, it will show green that guild count.  Else if channel > 0, it will show blue/red; else if BNet friends are in the guild it will show how many BNet links there are to that guild.
+
+In the example, Rysael is in EKA and has 62 guild chat connections with other XFaction users, while they have no direct connections to AK4. The rest are covered by the addon chat channel.
 ![Links(X)](https://github.com/user-attachments/assets/d6d0a29d-d6a1-49ca-90d5-abf0b2ef743f)
-
 
 ## Core Features
 The addon should provide the following functionalities:
