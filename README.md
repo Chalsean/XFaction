@@ -6,8 +6,8 @@ Enable roster visibility and communication between guilds of a confederation, in
 XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
 
 ## Feature Updates for The War Within
+- Addon version number lookup in Guild(X) datatext: Addon admins can check the player's addon version during troubleshooting if the option is enabled in Guild(X).
 - Guild crafting order notifications
-
 - Revamped Link(X) datatext: It now shows a breakdown of the XFaction mesh across the confederate using a combination of colors and numbers. See the Links (X) DT section for more information.
 
 ## Core Features
