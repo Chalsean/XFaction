@@ -7,7 +7,10 @@ XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely su
 
 ## Feature Updates for The War Within
 - Addon version number lookup in Guild(X) datatext: Addon admins can check the player's addon version during troubleshooting if the option is enabled in Guild(X).
-- Guild crafting order notifications
+- Guild crafting order notifications: XFaction will provide visual notification in the gchat when guild crafting orders are placed by any player in the confederate. The notification will specify which guild the crafting order was placed for.
+
+![image](https://github.com/user-attachments/assets/bff01290-df06-43a6-b357-7556c0a11be1)
+
 - Revamped Link(X) datatext: It now shows a breakdown of the XFaction mesh across the confederate using a combination of colors and numbers. See the Links (X) DT section for more information.
 
 ## Core Features
