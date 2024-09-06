@@ -1,6 +1,6 @@
 ![xfaction_logo_light_1](https://user-images.githubusercontent.com/45693161/204025849-dbafe9e5-d533-4897-a3a3-d522085eef3b.png)
 
-Enable roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.
+Enables roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.
 
 ## Notice for The War Within
 XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
@@ -14,7 +14,7 @@ XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely su
 - Revamped Link(X) datatext: It now shows a breakdown of the XFaction mesh across the confederate using a combination of colors and numbers. See the Links (X) DT section for more information.
 
 ## Core Features
-The addon should provide the following functionalities:
+The addon provides the following functionalities:
 > Merged guild chat across guilds/realms/factions in the confederate
 <img src="https://user-images.githubusercontent.com/45693161/175836814-c326335a-786d-4be7-9547-5e31c594390c.png" width=400>
 
