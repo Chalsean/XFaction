@@ -1,6 +1,6 @@
 ![xfaction_logo_light_1](https://user-images.githubusercontent.com/45693161/204025849-dbafe9e5-d533-4897-a3a3-d522085eef3b.png)
 
-Enables roster visibility and communication between guilds of a confederation, including guilds on other realms and of a different faction.
+Enabling roster visibility and communication between guilds of a confederation, including guilds on other realms.
 
 ## Notice for The War Within
 XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
