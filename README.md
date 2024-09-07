@@ -2,10 +2,8 @@
 
 Enabling roster visibility and communication between guilds of a confederation, including guilds on other realms.
 
-## Notice for The War Within
-XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
-
-## Feature Updates for The War Within
+## Notable Updates for The War Within
+- XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
 - Addon version number lookup in Guild(X) datatext: Addon admins can check the player's addon version during troubleshooting if the option is enabled in Guild(X).
 - Guild crafting order notifications: XFaction will provide visual notification in the gchat when guild crafting orders are placed by any player in the confederate. The notification will specify which guild the crafting order was placed for.
 
@@ -33,7 +31,7 @@ The addon provides the following functionalities:
 
 
 > Guild roster "Guild (X)" datatext (DT) that provides the following:
-- Full guild roster view across guilds/realms/factions
+- Full guild roster view across guilds/realms/factions, customizable to only show columns you want to see, in whatever order you choose
 - View guild members' faction, level, spec, class, name, covenant, race, realm, guild, team, guild rank, zone, professions, pvp rating, raid progress, max item level and M+ score
 - View guild members' team affiliation
 - View guild members' addon version (must be enabled in Settings)
