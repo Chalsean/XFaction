@@ -8,6 +8,7 @@ function XF:CoreInit()
 	XFO.Events = XFC.EventCollection:new(); XFO.Events:Initialize()
 	XFO.Timers = XFC.TimerCollection:new(); XFO.Timers:Initialize()
 	XFO.Media = XFC.MediaCollection:new(); XFO.Media:Initialize()
+	XFO.Janitor = XFC.Janitor:new()
 
 	-- External addon handling
 	XFO.Elephant = XFC.Elephant:new()
@@ -159,6 +160,7 @@ function XF:CallbackLoginPlayer()
 			XFO.Chat:Initialize()							
 			XFO.BNet:Initialize()
 			XFO.Friends:Initialize()
+			XFO.Janitor:Initialize()
 
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then

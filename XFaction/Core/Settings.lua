@@ -170,8 +170,8 @@ XF.Settings = {
 		AutoHide = .25,
 	},	
 	Factories = {
-		Scan = 60 * 7,
-		Purge = 60 * 30,
+		Scan = 60 * 3,
+		Purge = 60 * 15,
 	},
 	Setup = {
 		MaxTeams = 30,

@@ -51,14 +51,6 @@ function XFC.Confederate:Initialize()
             instance = true
         })
 
-        XFO.Timers:Add({
-            name = 'Disconnected', 
-            delta = XF.Settings.Player.Heartbeat, 
-            callback = XFO.Confederate.CallbackDisconnected, 
-            repeater = true, 
-            instance = true
-        })
-
         XF:Info(self:ObjectName(), 'Initialized confederate %s <%s>', self:Name(), self:Key())
         self:IsInitialized(true)
 	end
@@ -268,21 +260,6 @@ function XFC.Confederate:CallbackHeartbeat()
         XFO.Mailbox:SendDataMessage()
     end).
     catch(function (err)
-        XF:Warn(self:ObjectName(), err)
-    end)
-end
-
-function XFC.Confederate:CallbackDisconnected()
-    local self = XFO.Confederate
-    try(function()
-        local window = XFF.TimeCurrent() - XF.Settings.Confederate.UnitStale
-        for _, unit in self:Iterator() do
-            if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < window) then
-                self:OfflineUnit(unit)
-            end
-        end
-    end).
-    catch(function(err)
         XF:Warn(self:ObjectName(), err)
     end)
 end

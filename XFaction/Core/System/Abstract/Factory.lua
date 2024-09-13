@@ -116,7 +116,7 @@ function XFC.Factory:Purge(inPurgeTime)
     assert(type(inPurgeTime) == 'number')
     for _, object in self:CheckedInIterator() do
         if(object:FactoryTime() < inPurgeTime) then
-			self:Remove(object:GetKey())
+			self:Remove(object:Key())
 			self.checkedIn[object:FactoryKey()] = nil
 			self.checkedInCount = self.checkedInCount - 1
         end
