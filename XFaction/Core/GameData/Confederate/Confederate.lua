@@ -9,7 +9,6 @@ function XFC.Confederate:new()
     local object = XFC.Confederate.parent.new(self)
 	object.__name = ObjectName
     object.onlineCount = 0
-    object.localGuildMember = nil
     return object
 end
 
@@ -22,15 +21,15 @@ function XFC.Confederate:Initialize()
         self:ParentInitialize()
         self:Name(XF.Cache.Confederate.Name)
         self:Key(XF.Cache.Confederate.Key)
-        self.localGuildMember = {}
 
         XFO.Events:Add({
             name = 'Roster', 
-            event = 'CLUB_MEMBER_PRESENCE_UPDATED', 
-            callback = XFO.Confederate.CallbackGuildMemberChanged, 
-            instance = true
+            event = 'GUILD_ROSTER_UPDATE', 
+            callback = XFO.Confederate.CallbackLocalGuild, 
+            instance = true,
+            groupDelta = XF.Settings.LocalGuild.ScanTimer
         })
-
+        
         -- This here because there isnt a good place for it
         -- Will move somewhere else in the future
         XFO.Events:Add({
@@ -138,15 +137,10 @@ function XFC.Confederate:OnlineUnit(inUnit)
         inUnit:LoginEpoch(XFF.TimeCurrent())
         self:Add(inUnit)
     end
-
     if(inUnit:IsOnline()) then
         inUnit:Guild():Add(inUnit)
         XFO.DTGuild:RefreshBroker()
-    end
-    
-    if(inUnit:IsSameGuild()) then
-        self.localGuildMember[inUnit:ID()] = inUnit
-    end
+    end    
 
     if(inUnit:IsPlayer()) then
         XF.Player.Unit = inUnit
@@ -180,39 +174,47 @@ function XFC.Confederate:OfflineUnit(inUnit)
     XFO.Channels:GuildChannel():Remove(inUnit:Key())
 
     if(inUnit:IsSameGuild()) then
-        self.localGuildMember[inUnit:ID()] = inUnit
+        self:Replace(inUnit)
+    else
+        self:Remove(inUnit:Key())
+        self:Push(inUnit)
     end
-
-    self:Remove(inUnit:Key())
-    self:Push(inUnit)
 
     XFO.DTLinks:RefreshBroker()
     XFO.DTGuild:RefreshBroker()
 end
 
-function XFC.Confederate:CallbackScan()
+-- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
+function XFC.Confederate:CallbackLocalGuild()
     local self = XFO.Confederate
     XF:Trace(self:ObjectName(), 'Scanning local guild roster')
     for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID())) do
-
-        if(self.localGuildMember[memberID] ~= nil) then
-
-        end
-
         local unit = self:Pop()
         try(function ()
-            if(self.localGuildMember[memberID] == nil or 
-              (self.localGuildMember[memberID]:IsOnline() and
-               not self.localGuildMember[memberID]:IsRunningAddon())) then
-                unit:Initialize(memberID)
-                if(unit:IsInitialized()) then
-                    self.localGuildMember[unit:ID()] = unit
-                    if(unit:IsOnline()) then
-                        self:OnlineUnit(unit)
+            unit:Initialize(memberID)
+            if(unit:IsInitialized()) then
+                if(self:Contains(unit:Key())) then
+                    local oldData = self:Get(unit:Key())
+                    if(oldData:IsOnline() and unit:IsOffline()) then
+                        XF:Debug(self:ObjectName(), 'Detected guild logout: %s', oldData:UnitName())
+                        self:Logout(unit)
+                    elseif(unit:IsOnline()) then
+                        if(oldData:IsOffline()) then
+                            self:Login(unit)
+                        elseif(not oldData:IsRunningAddon()) then
+                            self:OnlineUnit(unit)
+                        else
+                            self:Push(unit)
+                        end
+                    else
+                        self:Push(unit)
                     end
+                -- First time scan (i.e. login) do not notify
                 else
-                    self:Push(unit)
+                    self:OnlineUnit(unit)
                 end
+            else
+                self:Push(unit)
             end
         end).
         catch(function (err)
@@ -220,47 +222,6 @@ function XFC.Confederate:CallbackScan()
             self:Push(unit)
         end)
     end
-end
-
-function XFC.Confederate:CallbackGuildMemberChanged(inGuildID, inMemberID, inPresence)
-    local self = XFO.Confederate
-    if(inGuildID ~= XF.Player.Guild:ID()) then return end
-    if(inPresence == Enum.ClubMemberPresence.Unknown or inPresence == Enum.ClubMemberPresence.OnlineMobile) then return end
-
-    local unit = self:Pop()
-    try(function ()
-        unit:Initialize(inMemberID)
-        if(unit:IsInitialized()) then
-            if(self:Contains(unit:Key())) then
-                local oldData = self:Get(unit:Key())
-                if(oldData:IsOnline() and unit:IsOffline()) then
-                    XF:Debug(self:ObjectName(), 'Detected guild logout: %s', oldData:UnitName())
-                    self:Logout(unit)
-                elseif(unit:IsOnline()) then
-                    if(oldData:IsOffline()) then
-                        self:Login(unit)
-                    elseif(not oldData:IsRunningAddon()) then
-                        self:OnlineUnit(unit)
-                    else
-                        self:Push(unit)
-                    end
-                else
-                    self:Push(unit)
-                end
-            -- Guild member joined
-            elseif(unit:IsOnline()) then
-                self:OnlineUnit(unit)
-            else
-                self:Push(unit)
-            end
-        else
-            self:Push(unit)
-        end
-    end).
-    catch(function (err)
-        XF:Warn(self:ObjectName(), err)
-        self:Push(unit)
-    end)
 end
 
 function XFC.Confederate:ProcessMessage(inMessage)
