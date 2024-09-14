@@ -720,7 +720,8 @@ end
 function XFC.Unit:Serialize()
     local data = {}
 
-	data.A = self:AchievementPoints()    
+	data.A = self:AchievementPoints()
+    data.B = self:ID()
 	data.C = self:Class():Serialize()
     data.F = self:Race():Serialize()
 	data.G = self:Guild():Serialize()
@@ -775,7 +776,8 @@ function XFC.Unit:Deserialize(inSerial)
     end
 
     self:IsRunningAddon(true)
-	self:AchievementPoints(data.A)    
+	self:AchievementPoints(data.A)
+    self:ID(data.B)
     self:Class(XFO.Classes:Get(tonumber(data.C)))
     self:Race(XFO.Races:Get(tonumber(data.F)))
     self:Guild(XFO.Guilds:Get(tonumber(data.G)))

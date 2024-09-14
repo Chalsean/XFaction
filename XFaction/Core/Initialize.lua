@@ -151,6 +151,7 @@ function XF:CallbackLoginPlayer()
 			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
 			XFO.Timers:Remove('LoginPlayer')
 
+			XFO.Confederate:InitializeRoster()
 			XFO.Confederate:OnlineUnit(unit)
 			XF.Player.Unit:Print()
 
@@ -172,9 +173,6 @@ function XF:CallbackLoginPlayer()
                 XFO.Mailbox:SendLoginMessage()
 			end
 
-			-- On initial login, the roster returned is incomplete, you have to force Blizz to do a guild roster refresh
-			XFF.GuildQueryServer()
-			
 			-- Start all hooks, timers and events
 			XFO.SystemEvent:Initialize()
 			XFO.Hooks:Start()
