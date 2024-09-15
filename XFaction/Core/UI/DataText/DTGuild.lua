@@ -111,7 +111,7 @@ end
 
 local function PreSort()
 	local list = {}
-	for _, unit in XFO.Confederate:Iterator() do
+	for _, unit in XFO.Confederate:SortedIterator() do
 		if(unit:IsOnline()) then
 			local unitData = {}
 

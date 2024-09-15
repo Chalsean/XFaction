@@ -1,4 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+<Ui xmlns="http://www.blizzard.com/wow/ui/">    
     <Include file='Abstract\Load.xml'/>
     <Include file='Client\Load.xml'/>
     <Include file='Handler\Load.xml'/>
@@ -6,4 +6,5 @@
     <Include file='Metric\Load.xml'/>
     <Include file='Network\Load.xml'/>
     <Include file='Wrapper\Load.xml'/>
+    <Script file='Janitor.lua'/>
 </Ui>

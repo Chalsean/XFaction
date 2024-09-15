@@ -11,21 +11,6 @@ function XFC.Mailbox:new()
 	return object
 end
 
-function XFC.Mailbox:Initialize()
-    if(not self:IsInitialized()) then
-        self:ParentInitialize()
-
-        XFO.Timers:Add({
-            name = 'Mailbox', 
-            delta = XF.Settings.Network.Mailbox.Scan, 
-            callback = XFO.Mailbox.CallbackJanitor, 
-            repeater = true
-        })
-
-        self:IsInitialized(true)
-    end
-end
-
 function XFC.Mailbox:NewObject()
 	return XFC.Message:new()
 end
@@ -57,17 +42,6 @@ function XFC.Mailbox:Process(inMessage)
         XFO.Friends:ProcessMessage(inMessage)
     end
     XFO.DTLinks:RefreshBroker()
-end
-
-function XFC.Mailbox:CallbackJanitor()
-	local self = XFO.Mailbox
-    local epoch = XFF.TimeCurrent() - XF.Settings.Network.Mailbox.Stale
-
-	for key, receivedTime in self:Iterator() do
-		if(receivedTime < epoch) then
-			self:Remove(key)
-		end
-	end
 end
 
 local function _RandomSelection(inCount)
