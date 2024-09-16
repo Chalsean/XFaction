@@ -96,6 +96,7 @@ XF.Defaults = {
                 Confederate = true,
                 MOTD = true,
                 Main = true,
+                NonXFaction = false,
                 Enable = {                    
                     Achievement = false,
                     Dungeon = false,

@@ -111,7 +111,8 @@ end
 
 local function PreSort()
 	local list = {}
-	for _, unit in XFO.Confederate:SortedIterator() do
+	local guids = {}
+	for _, unit in XFO.Confederate:Iterator() do
 		if(unit:IsOnline()) then
 			local unitData = {}
 
@@ -169,7 +170,10 @@ local function PreSort()
 				unitData.MythicKey = location .. ' +' .. unit:MythicKey():ID()
 			end
 
-			list[#list + 1] = unitData
+			if(guids[unitData.GUID] == nil) then
+				list[#list + 1] = unitData
+				guids[unitData.GUID] = true
+			end
 		end
 	end
 	return list

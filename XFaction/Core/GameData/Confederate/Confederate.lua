@@ -187,6 +187,8 @@ end
 -- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
 function XFC.Confederate:CallbackLocalGuild()
     local self = XFO.Confederate
+    if(not XF.Config.DataText.Guild.NonXFaction) then return end
+
     XF:Trace(self:ObjectName(), 'Scanning local guild roster')
     for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID())) do
         local unit = self:Pop()
@@ -237,7 +239,7 @@ function XFC.Confederate:ProcessLogout(inGUID)
     assert(type(inGUID) == 'string')
     if(self:Contains(inGUID)) then
         local unit = self:Get(inGUID)
-        if(not unit:IsSameGuild()) then
+        if(not unit:IsSameGuild() or not XF.Config.DataText.Guild.NonXFaction) then
             self:Logout(unit)
         end
     end
