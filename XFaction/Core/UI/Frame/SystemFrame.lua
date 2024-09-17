@@ -27,9 +27,9 @@ function XFC.SystemFrame:CallbackChatFilter(inEvent, inMessage, ...)
         inMessage = string.gsub(inMessage, XF.Settings.Frames.Chat.Prepend, '')
         return false, inMessage, ...
     -- Hide Blizz login/logout messages, we display our own, this is a double notification
-    elseif(string.find(inMessage, XF.Lib.Locale['CHAT_LOGIN'])) then
+    elseif(string.find(inMessage, XF.Lib.Locale['CHAT_LOGIN']) and XF.Config.DataText.Guild.NonXFaction) then
         return true
-    elseif(string.find(inMessage, XF.Lib.Locale['CHAT_LOGOUT'])) then
+    elseif(string.find(inMessage, XF.Lib.Locale['CHAT_LOGOUT']) and XF.Config.DataText.Guild.NonXFaction) then
         return true
     elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
         return true
