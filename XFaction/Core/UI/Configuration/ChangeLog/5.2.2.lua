@@ -12,7 +12,7 @@ XF.ChangeLog['5.2.2'] = {
                 order = 1,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Allows the enable/disable of local guild scans. The Blizzard API is what is causing excessive memory use and garbage collection, so this avoids calling it. Due to game impact, this option will be defaulted to off.\n\nWhen the option is toggled off, you will not see non-XFaction players of your local guild in Guild(X).\n\nTo toggle this option, go to Options / XFaction / DataText / Guild / Non-XFaction Users',
+                name = 'Allows the enable/disable of local guild scans. The Blizzard API is what is causing excessive memory use and garbage collection, so this avoids calling it. This option will be defaulted to off.\n\nWhen the option is toggled off, you will not see non-XFaction players of your local guild in Guild(X).\n\nTo toggle this option, go to Options / XFaction / DataText / Guild / Non-XFaction Users',
             },
             Dups = {
                 order = 2,
