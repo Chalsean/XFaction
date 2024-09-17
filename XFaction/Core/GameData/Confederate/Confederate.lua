@@ -30,13 +30,6 @@ function XFC.Confederate:Initialize()
             groupDelta = XF.Settings.LocalGuild.ScanTimer
         })
         
-        -- This here because there isnt a good place for it
-        -- Will move somewhere else in the future
-        XFO.Events:Add({
-            name = 'Level', 
-            event = 'PLAYER_LEVEL_CHANGED', 
-            callback = XFO.Confederate.CallbackPlayerChanged
-        })
         XFO.Events:Add({
             name = 'Guild',
             event = 'PLAYER_GUILD_UPDATE',
@@ -44,10 +37,10 @@ function XFC.Confederate:Initialize()
         })
 
         XFO.Timers:Add({
-            name = 'Heartbeat', 
-            delta = XF.Settings.Player.Heartbeat, 
-            callback = XFO.Confederate.CallbackHeartbeat, 
-            repeater = true, 
+            name = 'Heartbeat',
+            delta = XF.Settings.Player.Heartbeat,
+            callback = XFO.Confederate.CallbackHeartbeat,
+            repeater = true,
             instance = true
         })
 
@@ -162,7 +155,7 @@ function XFC.Confederate:OnlineUnit(inUnit)
         end            
     end
 
-    XFO.DTLinks:RefreshBroker()   
+    XFO.DTLinks:RefreshBroker()
 end
 
 function XFC.Confederate:OfflineUnit(inUnit)
@@ -245,23 +238,25 @@ function XFC.Confederate:ProcessLogout(inGUID)
     end
 end
 
-function XFC.Confederate:CallbackPlayerChanged(inEvent) 
+function XFC.Confederate:CallbackHeartbeat() 
     local self = XFO.Confederate
+
+    local unit = nil
     try(function ()
-        XF.Player.Unit:Initialize(XF.Player.Unit:ID())
-        XFO.Mailbox:SendDataMessage()
+        unit = self:Pop()
+        unit:Initialize()
+        self:Add(unit)        
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
+        self:Push(unit)
+        return
     end)
-end
 
-function XFC.Confederate:CallbackHeartbeat() 
-    local self = XFO.Confederate
-    try(function ()
+    try(function()
         XFO.Mailbox:SendDataMessage()
     end).
-    catch(function (err)
+    catch(function(err)
         XF:Warn(self:ObjectName(), err)
     end)
 end
