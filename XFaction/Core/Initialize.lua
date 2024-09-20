@@ -61,6 +61,7 @@ function XF:CoreInit()
 	XFO.Professions = XFC.ProfessionCollection:new(); XFO.Professions:Initialize()
 	
 	XFO.Locations = XFC.LocationCollection:new(); XFO.Locations:Initialize()
+	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
 	XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
 	
 	XF.Player.GUID = XFF.PlayerGUID('player')

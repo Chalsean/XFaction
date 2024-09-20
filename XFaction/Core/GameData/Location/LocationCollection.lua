@@ -1785,7 +1785,6 @@ local _MapData = {
 function XFC.LocationCollection:new()
     local object = XFC.LocationCollection.parent.new(self)
 	object.__name = ObjectName
-	object.locationByID = {}
     return object
 end
 
@@ -1797,7 +1796,7 @@ function XFC.LocationCollection:Initialize()
 			local maps = string.Split(data, ';')
 			local location = XFC.Location:new()
 			location:Initialize()
-			location:Key(maps[1])
+			location:Key(id)
 			location:ID(id)
 			location:Name(maps[1])
 			location:ParentID(tonumber(maps[2]))
@@ -1809,35 +1808,12 @@ function XFC.LocationCollection:Initialize()
 		end
 
 		self:Add('?')
-
-		XFO.Events:Add({
-			name = 'Zone',
-			event = 'ZONE_CHANGED_NEW_AREA', 
-			callback = XFO.Locations.CallbackZoneChanged
-		})
-
 		self:IsInitialized(true)
 	end
 end
 --#endregion
 
 --#region Methods
-function XFC.LocationCollection:Contains(inKey)
-	assert(type(inKey) == 'string' or type(inKey) == 'number')
-	if(type(inKey) == 'number') then
-		return self.locationByID[inKey] ~= nil
-	end
-	return self.parent.Contains(self, inKey)
-end
-
-function XFC.LocationCollection:Get(inKey)
-	assert(type(inKey) == 'string' or type(inKey) == 'number')
-	if(type(inKey) == 'number') then
-		return self.locationByID[inKey]
-	end
-	return self.parent.Get(self, inKey)
-end
-
 function XFC.LocationCollection:Add(inLocation)
     assert(type(inLocation) == 'table' and inLocation.__name == 'Location' or type(inLocation) == 'string' or type(inLocation) == 'number')
 	if(type(inLocation) == 'string') then
@@ -1854,33 +1830,15 @@ function XFC.LocationCollection:Add(inLocation)
 		if(info ~= nil) then
 			local location = XFC.Location:new()
 			location:Initialize()
-			location:Key(info.name)
+			location:Key(inLocation)
 			location:ID(info.mapID)
 			location:Name(info.name)
 			self.parent.Add(self, location)
-			self.locationByID[location:ID()] = location
 			XF:Info(self:ObjectName(), 'Initialized location [%s]', location:Name())
 		end
 	else
 		self.parent.Add(self, inLocation)
-		if(inLocation:ID() ~= nil) then
-			self.locationByID[inLocation:ID()] = inLocation
-		end
 	end
-end
-
--- Zone changes are kinda funky, during a zone change C_Club.GetMemberInfo returns a lot of nils
--- So use a different API, detect zone text change, only update that information and broadcast
-function XFC.LocationCollection:CallbackZoneChanged()
-	local self = XFO.Locations
-    if(XF.Initialized) then 
-        try(function ()
-			XF.Player.Unit:Location(self:GetCurrentLocation())
-        end).
-        catch(function (err)
-            XF:Warn(self:ObjectName(), err)
-        end)	
-    end
 end
 
 function XFC.LocationCollection:GetCurrentLocation()

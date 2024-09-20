@@ -165,9 +165,8 @@ local function PreSort()
 
 			unitData.Location = unit:HasLocation() and unit:Location():Name() or nil
 
-			if(unit:HasMythicKey() and unit:MythicKey():HasLocation()) then
-				local location = unit:MythicKey():Location():HasNickname() and unit:MythicKey():Location():Nickname() or unit:MythicKey():Location():Name()
-				unitData.MythicKey = location .. ' +' .. unit:MythicKey():ID()
+			if(unit:HasMythicKey() and unit:MythicKey():HasDungeon()) then
+				unitData.MythicKey = unit:MythicKey():Dungeon():Name() .. ' +' .. unit:MythicKey():ID()
 			end
 
 			if(guids[unitData.GUID] == nil) then
