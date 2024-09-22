@@ -245,7 +245,7 @@ function XFC.Confederate:CallbackHeartbeat()
     try(function ()
         unit = self:Pop()
         unit:Initialize()
-        self:Add(unit)        
+        self:OnlineUnit(unit)
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
