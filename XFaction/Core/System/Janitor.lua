@@ -31,39 +31,58 @@ function XFC.Janitor:CallbackJanitor()
     try(function()
         if(not XFF.PlayerIsInCombat()) then
             local window = XFF.TimeCurrent() - XF.Settings.Factories.Purge
-            XFO.Confederate:Purge(window)
-            XFO.Friends:Purge(window)
-            XFO.Orders:Purge(window)
-            XFO.Mailbox:Purge(window)
+            try(function()
+                XFO.Confederate:Purge(window)
+            end).catch(function() end)
+
+            try(function()
+                XFO.Friends:Purge(window)
+            end).catch(function() end)
+
+            try(function()
+                XFO.Orders:Purge(window)
+            end).catch(function() end)
+
+            try(function()
+                XFO.Mailbox:Purge(window)
+            end).catch(function() end)
 
             local window = XFF.TimeCurrent() - XF.Settings.Confederate.UnitStale
             for _, unit in XFO.Confederate:Iterator() do
-                if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < window) then
-                    XFO.Confederate:OfflineUnit(unit)
-                end
+                try(function()
+                    if(not unit:IsPlayer() and unit:IsOnline() and unit:TimeStamp() < window) then
+                        XFO.Confederate:OfflineUnit(unit)
+                    end
+                end).catch(function() end)
             end
 
             for _, channel in XFO.Channels:Iterator() do
                 for _, unit in channel:Iterator() do
-                    if(not unit:IsPlayer() and unit:TimeStamp() < window) then
-                        channel:Remove(unit:Key())
-                    end
+                    try(function ()
+                        if(not unit:IsPlayer() and unit:TimeStamp() < window) then
+                            channel:Remove(unit:Key())
+                        end
+                    end).catch(function() end)
                 end
             end
 
             for _, target in XFO.Targets:Iterator() do
                 for _, unit in target:Iterator() do
-                    if(not unit:IsPlayer() and unit:TimeStamp() < window) then
-                        target:Remove(unit:Key())
-                    end
+                    try(function()
+                        if(not unit:IsPlayer() and unit:TimeStamp() < window) then
+                            target:Remove(unit:Key())
+                        end
+                    end).catch(function() end)
                 end
             end
 
             local epoch = XFF.TimeCurrent() - XF.Settings.Network.Mailbox.Stale
             for key, receivedTime in XFO.Mailbox:Iterator() do
-                if(receivedTime < epoch) then
-                    XFO.Mailbox:Remove(key)
-                end
+                try(function()
+                    if(receivedTime < epoch) then
+                        XFO.Mailbox:Remove(key)
+                    end
+                end).catch(function() end)
             end
         end
     end).

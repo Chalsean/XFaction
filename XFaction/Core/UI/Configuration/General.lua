@@ -570,7 +570,7 @@ XF.Options = {
 									order = 1,
 									type = 'description',
 									fontSize = 'medium',
-									name = 'Chals (US-Proudmoore)',
+									name = 'Chals (US-Stormrage)',
 								},
 							}
 						},		

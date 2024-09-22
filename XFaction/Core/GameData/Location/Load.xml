@@ -1,4 +1,6 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file='Dungeon.lua'/>
+    <Script file='DungeonCollection.lua'/> 
     <Script file='Location.lua'/>
     <Script file='LocationCollection.lua'/>
 </Ui>

@@ -581,21 +581,21 @@ function XFC.Unit:Print()
     XF:Debug(self:ObjectName(), '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
     XF:Debug(self:ObjectName(), '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
     XF:Debug(self:ObjectName(), '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
-    if(self:HasVersion()) then self:Version():Print() end
-    if(self:HasGuild()) then self:Guild():Print() end
-    if(self:HasRealm()) then self:Realm():Print() end
-    if(self:HasTarget()) then self:Target():Print() end
-    if(self:HasTeam()) then self:Team():Print() end
-    if(self:HasLocation()) then self:Location():Print() end
-    if(self:HasRace()) then self:Race():Print() end
-    if(self:HasClass()) then self:Class():Print() end
-    if(self:HasSpec()) then self:Spec():Print() end
-    if(self:HasHero()) then self:Hero():Print() end
-    if(self:HasProfession1()) then self:Profession1():Print() end
-    if(self:HasProfession2()) then self:Profession2():Print() end  
-    if(self:HasRaiderIO()) then self:RaiderIO():Print() end
+    -- if(self:HasVersion()) then self:Version():Print() end
+    -- if(self:HasGuild()) then self:Guild():Print() end
+    -- if(self:HasRealm()) then self:Realm():Print() end
+    -- if(self:HasTarget()) then self:Target():Print() end
+    -- if(self:HasTeam()) then self:Team():Print() end
+    -- if(self:HasLocation()) then self:Location():Print() end
+    -- if(self:HasRace()) then self:Race():Print() end
+    -- if(self:HasClass()) then self:Class():Print() end
+    -- if(self:HasSpec()) then self:Spec():Print() end
+    -- if(self:HasHero()) then self:Hero():Print() end
+    -- if(self:HasProfession1()) then self:Profession1():Print() end
+    -- if(self:HasProfession2()) then self:Profession2():Print() end  
+    -- if(self:HasRaiderIO()) then self:RaiderIO():Print() end
     if(self:HasMythicKey()) then self:MythicKey():Print() end
-    if(self:IsFriend()) then self:Friend():Print() end
+    -- if(self:IsFriend()) then self:Friend():Print() end
 end
 
 function XFC.Unit:IsPlayer()
@@ -765,6 +765,8 @@ function XFC.Unit:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
 
+    XF:DataDumper(self:ObjectName(), data)
+
     self.targetCounts = {}
     for _, target in XFO.Targets:Iterator() do
         self.targetCounts[target:Key()] = {
@@ -786,6 +788,7 @@ function XFC.Unit:Deserialize(inSerial)
     self:Key(data.K)
 	self:Level(data.L)
     self:MythicKey(XFO.Keys:Deserialize(data.M))
+    self:Print()
 	self:Note(data.N)
 	self:Presence(data.O)
     self:PvP(data.P)	
