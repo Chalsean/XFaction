@@ -8,6 +8,7 @@ XFC.RaiderIOCollection = XFC.ObjectCollection:newChildConstructor()
 function XFC.RaiderIOCollection:new()
     local object = XFC.RaiderIOCollection.parent.new(self)
     object.__name = ObjectName
+    object.api = nil
     return object
 end
 
@@ -18,6 +19,16 @@ function XFC.RaiderIOCollection:Initialize()
         self:IsInitialized(true)        
     end
     return self:IsInitialized()
+end
+--#endregion
+
+--#region Properties
+function XFC.RaiderIOCollection:API(inAPI)
+    assert(type(inAPI) == 'table' or inAPI == nil)
+    if(inAPI ~= nil) then
+        self.api = inAPI
+    end
+    return self.api
 end
 --#endregion
 
