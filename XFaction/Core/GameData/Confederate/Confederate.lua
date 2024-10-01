@@ -26,7 +26,7 @@ function XFC.Confederate:Initialize()
             name = 'Roster', 
             event = 'GUILD_ROSTER_UPDATE', 
             callback = XFO.Confederate.CallbackLocalGuild, 
-            instance = true,
+            instance = false,
             groupDelta = XF.Settings.LocalGuild.ScanTimer
         })
         
@@ -181,6 +181,7 @@ end
 function XFC.Confederate:CallbackLocalGuild()
     local self = XFO.Confederate
     if(not XF.Config.DataText.Guild.NonXFaction) then return end
+    if(XFF.PlayerIsInCombat()) then return end
 
     XF:Trace(self:ObjectName(), 'Scanning local guild roster')
     for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID())) do
