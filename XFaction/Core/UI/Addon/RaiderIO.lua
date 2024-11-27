@@ -12,12 +12,6 @@ function XFC.RaiderIO:new()
     object.dungeon = 0
     return object
 end
-
-function XFC.RaiderIO:Deconstructor()
-    self:ParentDeconstructor()
-    self.raid = ''
-    self.dungeon = 0
-end
 --#endregion
 
 --#region Properties

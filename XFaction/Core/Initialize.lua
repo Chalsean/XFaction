@@ -142,11 +142,10 @@ end
 
 function XF:CallbackLoginPlayer()
 
-	local unit = nil
 	try(function ()
 		
 		-- Need the player data to continue setup
-		unit = XFO.Confederate:Pop()
+		local unit = XFC.Unit:new()
 		unit:Initialize()
 		if(unit:IsInitialized()) then
 			XF:Debug(ObjectName, 'Player info is loaded, proceeding with setup')
@@ -203,8 +202,6 @@ function XF:CallbackLoginPlayer()
 				instance = true,
 				start = true
 			})
-		else
-			XFO.Confederate:Push(unit)
 		end
 	end).
 	catch(function (err)
