@@ -36,20 +36,6 @@ function XFC.Message:Initialize()
     end
     return self:IsInitialized()
 end
-
-function XFC.Message:Deconstructor()
-    self:ParentDeconstructor()
-    self.objects = {}
-    self.objectCount = 0
-    self.from = nil
-    self.fromUnit = nil
-    self.subject = nil
-    self.epochTime = nil
-    self.data = nil
-    self.totalPackets = 1
-    self.priority = nil
-    self.protocol = XF.Enum.Protocol.Unknown
-end
 --#endregion
 
 --#region Properties
@@ -247,14 +233,13 @@ function XFC.Message:Deserialize(inSerial)
     self:TimeStamp(data.T)
     self:Priority(data.Q)
 
-    local unit = XFO.Confederate:Pop()
     try(function()
+        local unit = XFC.Unit:new()
         unit:Deserialize(data.U)
         self:FromUnit(unit)
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
-        XFO.Confederate:Push(unit)
     end)
 
     if(data.R ~= nil) then

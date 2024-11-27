@@ -19,19 +19,6 @@ function XFC.Order:new()
     object.link = nil
     return object
 end
-
-function XFC.Order:Deconstructor()
-    self:ParentDeconstructor()
-    self.customer = nil
-    self.profession = nil
-    self.type = 0
-    self.state = 0
-    self.recipeID = 0
-    self.quality = nil
-    self.crafterGUID = nil
-    self.crafterName = nil
-    self.link = nil
-end
 --#endregion
 
 --#region Properties

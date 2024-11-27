@@ -5,6 +5,8 @@ local ObjectName = 'ClassCollection'
 XFC.ClassCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Class List
+-- https://wago.tools/db2/ChrClasses
+-- Adventurer is a test-only class that Blizzard uses when they need a character which isn't any of the real classes. It's not a real class.
 local ClassData = {
 	[1] = "Warrior,WARRIOR,198,155,109,C69B6D",
 	[2] = "Paladin,PALADIN,244,140,186,F48CBA",

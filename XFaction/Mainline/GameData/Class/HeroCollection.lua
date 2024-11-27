@@ -2,6 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 
 --#region Hero List
+-- https://wago.tools/db2/TraitSubTree
 local HeroData =
 {
 	[18] = "Voidweaver,5927657",

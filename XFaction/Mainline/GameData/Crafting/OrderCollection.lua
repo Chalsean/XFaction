@@ -58,9 +58,8 @@ function GetMyOrders()
     local self = XFO.Orders
     local myOrders = XFF.CraftingGetOrders()
     for _, myOrder in ipairs(myOrders) do
-        local order = nil
         try(function ()
-            order = self:Pop()
+            local order = XFC.Order:new()
             order:Key(XF.Player.Unit:UnitName() .. ':' .. myOrder.orderID)   
             if((myOrder.orderState == Enum.CraftingOrderState.Creating or myOrder.orderState == Enum.CraftingOrderState.Created) and not self:Contains(order:Key())) then
                 order:Type(myOrder.orderType)
@@ -97,16 +96,11 @@ function GetMyOrders()
                         XFO.SystemFrame:DisplayOrder(order)
                         XFO.Mailbox:SendOrderMessage(order:Serialize())
                     end
-                else
-                    self:Push(order)
                 end                
-            else
-                self:Push(order)
             end
         end).
         catch(function (err)
             XF:Warn(ObjectName, err)
-            self:Push(order)
         end)
     end
 

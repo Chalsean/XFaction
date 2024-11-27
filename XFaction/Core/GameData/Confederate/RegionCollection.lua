@@ -5,6 +5,7 @@ local ObjectName = 'RegionCollection'
 XFC.RegionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Region List
+-- https://wago.tools/db2/Cfg_Regions
 local RegionData =
 {
 	'US', -- includes brazil, oceania

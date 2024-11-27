@@ -46,42 +46,6 @@ function XFC.Unit:new()
     return object
 end
 
-function XFC.Unit:Deconstructor()
-    self:ParentDeconstructor()
-    self.guid = nil
-    self.unitName = nil
-    self.rank = nil
-    self.level = 60
-    self.class = nil
-    self.spec = nil
-    self.hero = nil
-    self.location = nil
-    self.note = nil
-    self.presence = Enum.ClubMemberPresence.Unknown
-    self.race = nil
-    self.timeStamp = nil
-    self.profession1 = nil
-    self.profession2 = nil
-    self.achievements = 0
-    self.isRunningAddon = false
-    self.mainName = nil
-    self.team = nil
-    self.guild = nil
-    self.version = nil
-    self.itemLevel = 0
-    self.pvp = ''
-    self.guildSpeak = true
-    self.guildListen = true
-    self.raiderIO = nil
-    self.lastLogin = 0
-    self.mythicKey = nil
-    self.realm = nil
-    self.target = nil
-    self.friend = nil
-    self.targetCounts = nil
-    self.loginEpoch = nil
-end
-
 function XFC.Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number' or inMemberID == nil)
     local unitData

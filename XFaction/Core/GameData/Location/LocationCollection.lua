@@ -5,6 +5,7 @@ local ObjectName = 'LocationCollection'
 XFC.LocationCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Map Data
+-- https://wago.tools/db2/UiMap
 local _MapData = {
 	-- Type: 3 (zone), 5 (micro-dungeon), 2 (continent), 1 (world), 4(dungeon), 6(orphan)
 	[1] = "Durotar;12;3",
@@ -1778,6 +1779,10 @@ local _MapData = {
 	[2359] = "The Dawnbreaker;2215;4;DB",
 	[2367] = "Vault of Memory;2248;4",
 	[2368] = "Hall of Awakening;2248;4",
+	[2369] = "Siren Isle;947;3",
+	[2373] = "The War Creche;2118;4",
+	[2375] = "The Forgotten Vault;2369;5",
+
 }
 --#endregion
 
@@ -1801,9 +1806,6 @@ function XFC.LocationCollection:Initialize()
 			location:Name(maps[1])
 			location:ParentID(tonumber(maps[2]))
 			location:Type(tonumber(maps[3]))
-			if(#maps > 3) then
-				location:Nickname(maps[4])
-			end
 			self:Add(location)
 		end
 
