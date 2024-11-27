@@ -253,7 +253,7 @@ function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID)
     try(function ()
         -- Player just joined a guild
         if(XFF.PlayerIsInGuild()) then
-            XF:Debug(self:ObjectName(), 'Player is in a guild')
+            XF:Trace(self:ObjectName(), 'Player is in a guild')
             if(not XF.Initialized) then
                 if(XFO.Timers:Contains('LoginGuild')) then
                     local timer = XFO.Timers:Get('LoginGuild')
@@ -273,7 +273,7 @@ function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID)
             end
         -- Player just left a guild
         elseif(not XFF.PlayerIsInGuild()) then
-            XF:Debug(self:ObjectName(), 'Player is not in a guild')
+            XF:Warn(self:ObjectName(), 'Player is not in a guild')
             XF:Stop()
             self:RemoveAll()
             XFO.Channels:LocalChannel():RemoveAll()

@@ -120,6 +120,7 @@ function XFC.Message:Print()
         targets = targets .. target:Guild():Initials() .. ';'
     end
     XF:Debug(self:ObjectName(), '  remaining targets: ' .. targets)
+    XF:Debug(self:ObjectName(), '  data: ' .. tostring(self.data))
     XF:SingleLine(self:ObjectName())
 end
 

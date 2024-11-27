@@ -729,8 +729,6 @@ function XFC.Unit:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
 
-    XF:DataDumper(self:ObjectName(), data)
-
     self.targetCounts = {}
     for _, target in XFO.Targets:Iterator() do
         self.targetCounts[target:Key()] = {
