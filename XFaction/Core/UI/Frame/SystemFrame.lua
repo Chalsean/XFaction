@@ -48,7 +48,7 @@ function XFC.SystemFrame:DisplayLogin(inUnit)
         text = text .. format('%s ', format(XF.Icons.String, inUnit:Faction():IconID()))
     end
 
-    text = text .. inUnit:GetLink()
+    text = text .. inUnit:GetLink() .. ' '
   
     if(XF.Config.Chat.Login.Main and inUnit:IsAlt()) then
         text = text .. '(' .. inUnit:MainName() .. ') '
