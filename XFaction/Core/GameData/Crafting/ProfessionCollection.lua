@@ -5,6 +5,7 @@ local ObjectName = 'ProfessionCollection'
 XFC.ProfessionCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Profession List
+-- https://wago.tools/db2/Profession
 local ProfessionData =
 {
 	-- [SkillLineID] = "EnglishName,IconID"

@@ -2,17 +2,13 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Mailbox'
 
-XFC.Mailbox = XFC.Factory:newChildConstructor()
+XFC.Mailbox = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.Mailbox:new()
     local object = XFC.Mailbox.parent.new(self)
 	object.__name = ObjectName
 	return object
-end
-
-function XFC.Mailbox:NewObject()
-	return XFC.Message:new()
 end
 --#endregion
 
@@ -173,9 +169,8 @@ local function SendMessage(inSubject, inPriority, inData)
     local self = XFO.Mailbox
     XF.Player.LastBroadcast = XFF.TimeCurrent()
 
-    local message = nil
     try(function ()
-        message = self:Pop()
+        local message = XFC.Message:new()
         message:Initialize()
         message:Subject(inSubject)
         message:Priority(inPriority)
@@ -184,9 +179,6 @@ local function SendMessage(inSubject, inPriority, inData)
     end).
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
-    end).
-    finally(function()
-        self:Push(message)
     end)
 end
 
@@ -214,9 +206,8 @@ function XFC.Mailbox:SendAckMessage(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
 
     if(inFriend:CanLink()) then
-        local message = nil
         try(function ()
-            message = self:Pop()
+            local message = XFC.Message:new()
             message:Initialize()
             message:RemoveAll()
             message:Subject(XF.Enum.Message.ACK)
@@ -225,9 +216,6 @@ function XFC.Mailbox:SendAckMessage(inFriend)
         end).
         catch(function(err)
             XF:Warn(self:ObjectName(), err)
-        end).
-        finally(function()
-            self:Push(message)
         end)
     end
 end

@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'FriendCollection'
 
-XFC.FriendCollection = XFC.Factory:newChildConstructor()
+XFC.FriendCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.FriendCollection:new()
@@ -11,17 +11,13 @@ function XFC.FriendCollection:new()
 	return object
 end
 
-function XFC.FriendCollection:NewObject()
-	return XFC.Friend:new()
-end
-
 function XFC.FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
 		for i = 1, XFF.BNetFriendCount() do
-			local friend = self:Pop()
 			try(function()
+				local friend = XFC.Friend:new()
 				friend:Initialize(i)
 				if(friend:CanLink()) then
 					self:Add(friend)
@@ -29,7 +25,6 @@ function XFC.FriendCollection:Initialize()
 			end).
 			catch(function(err)
 				XF:Warn(self:ObjectName(), err)
-				self:Push(friend)
 			end)
 		end
 
@@ -79,8 +74,8 @@ function XFC.FriendCollection:CallbackFriendChanged(inID)
 	XF:Debug(self:ObjectName(), 'Checking friend: %d', inID)
 
 	-- Detect friend going offline
-	local friend = self:Pop()
 	try(function()
+		local friend = XFC.Friend:new()
 		friend:Initialize(inID)
 		if(self:Contains(friend:Key())) then
 			local oldFriend = self:Get(friend:Key())
@@ -95,16 +90,12 @@ function XFC.FriendCollection:CallbackFriendChanged(inID)
 			else
 				self:Remove(friend:Key())
 			end
-			self:Push(oldFriend)
 		elseif(friend:CanLink()) then
 			self:Add(friend)
-		else
-			self:Push(friend)
 		end
 	end).
 	catch(function(err)
 		XF:Warn(self:ObjectName(), err)
-		self:Push(friend)
 	end)
 end
 
@@ -113,7 +104,7 @@ function XFC.FriendCollection:ProcessMessage(inMessage)
 
 	local friend = self:Get(inMessage:From())
 	if(friend == nil) then
-		friend = self:Pop()	
+		friend = XFC.Friend:new()
 		friend:Initialize(inMessage:From())
 		friend:IsLinked(true)
 		self:Add(friend)

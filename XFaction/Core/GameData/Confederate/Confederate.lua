@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Confederate'
 
-XFC.Confederate = XFC.Factory:newChildConstructor()
+XFC.Confederate = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
 function XFC.Confederate:new()
@@ -10,10 +10,6 @@ function XFC.Confederate:new()
 	object.__name = ObjectName
     object.onlineCount = 0
     return object
-end
-
-function XFC.Confederate:NewObject()
-    return XFC.Unit:new()
 end
 
 function XFC.Confederate:Initialize()
@@ -85,15 +81,14 @@ end
 function XFC.Confederate:Restore()
     if(XF.Cache.Backup.Confederate == nil) then XF.Cache.Backup.Confederate = {} end
     for _, data in pairs (XF.Cache.Backup.Confederate) do
-        local unit = self:Pop()
         try(function ()
+            local unit = XFC.Unit:new()
             unit:Deserialize(data)
             self:OnlineUnit(unit)
             XF:Info(self:ObjectName(), '  Restored %s unit information from backup', unit:UnitName())
         end).
         catch(function (err)
             XF:Warn(self:ObjectName(), err)
-            self:Push(unit)
         end)
     end
     XF.Cache.Backup.Confederate = {}
@@ -125,11 +120,11 @@ function XFC.Confederate:OnlineUnit(inUnit)
     if(self:Contains(inUnit:Key())) then
         local old = self:Get(inUnit:Key())
         inUnit:LoginEpoch(old:IsOnline() and old:LoginEpoch() or XFF.TimeCurrent())
-        self:Replace(inUnit)
     else
         inUnit:LoginEpoch(XFF.TimeCurrent())
-        self:Add(inUnit)
     end
+    self:Add(inUnit)
+
     if(inUnit:IsOnline()) then
         inUnit:Guild():Add(inUnit)
         XFO.DTGuild:RefreshBroker()
@@ -167,10 +162,9 @@ function XFC.Confederate:OfflineUnit(inUnit)
     XFO.Channels:GuildChannel():Remove(inUnit:Key())
 
     if(inUnit:IsSameGuild()) then
-        self:Replace(inUnit)
+        self:Add(inUnit)
     else
         self:Remove(inUnit:Key())
-        self:Push(inUnit)
     end
 
     XFO.DTLinks:RefreshBroker()
@@ -184,9 +178,9 @@ function XFC.Confederate:CallbackLocalGuild()
     if(XFF.PlayerIsInCombat()) then return end
 
     XF:Trace(self:ObjectName(), 'Scanning local guild roster')
-    for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID())) do
-        local unit = self:Pop()
+    for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID())) do        
         try(function ()
+            local unit = XFC.Unit:new()
             unit:Initialize(memberID)
             if(unit:IsInitialized()) then
                 if(self:Contains(unit:Key())) then
@@ -199,23 +193,16 @@ function XFC.Confederate:CallbackLocalGuild()
                             self:Login(unit)
                         elseif(not oldData:IsRunningAddon()) then
                             self:OnlineUnit(unit)
-                        else
-                            self:Push(unit)
                         end
-                    else
-                        self:Push(unit)
                     end
                 -- First time scan (i.e. login) do not notify
                 else
                     self:OnlineUnit(unit)
                 end
-            else
-                self:Push(unit)
             end
         end).
         catch(function (err)
             XF:Warn(self:ObjectName(), err)
-            self:Push(unit)
         end)
     end
 end
@@ -242,15 +229,13 @@ end
 function XFC.Confederate:CallbackHeartbeat() 
     local self = XFO.Confederate
 
-    local unit = nil
     try(function ()
-        unit = self:Pop()
+        local unit = XFC.Unit:new()
         unit:Initialize()
         self:OnlineUnit(unit)
     end).
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
-        self:Push(unit)
         return
     end)
 
@@ -268,7 +253,7 @@ function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID)
     try(function ()
         -- Player just joined a guild
         if(XFF.PlayerIsInGuild()) then
-            XF:Debug(self:ObjectName(), 'Player is in a guild')
+            XF:Trace(self:ObjectName(), 'Player is in a guild')
             if(not XF.Initialized) then
                 if(XFO.Timers:Contains('LoginGuild')) then
                     local timer = XFO.Timers:Get('LoginGuild')
@@ -288,7 +273,7 @@ function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID)
             end
         -- Player just left a guild
         elseif(not XFF.PlayerIsInGuild()) then
-            XF:Debug(self:ObjectName(), 'Player is not in a guild')
+            XF:Warn(self:ObjectName(), 'Player is not in a guild')
             XF:Stop()
             self:RemoveAll()
             XFO.Channels:LocalChannel():RemoveAll()

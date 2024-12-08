@@ -2,15 +2,19 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO = XF.Class, XF.Object
 
 --#region Abbreviated Names
+-- https://wago.tools/db2/MapChallengeMode
 local NameData = {
 	[168] = "EB",
     [198] = "DHT",
     [199] = "BRH",
     [244] = "AD",
+    [247] = "ML",
     [248] = "WM",
     [353] = "SB",
+    [370] = "OMW",
     [375] = "MTS",
     [376] = "NW",
+    [382] = "TP",
     [399] = "RLP",
     [400] = "NO",
     [401] = "AV",
@@ -30,7 +34,8 @@ local NameData = {
     [504] = "DC",
     [505] = "DB",
     [506] = "CM",
-    [507] = "GB"
+    [507] = "GB",
+    [508] = "OF"
 }
 --#endregion
 

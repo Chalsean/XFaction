@@ -23,19 +23,6 @@ function XFC.Friend:new()
     return object
 end
 
-function XFC.Friend:Deconstructor()
-    self:ParentDeconstructor()
-    self.accountID = nil  
-    self.gameID = nil
-    self.tag = nil
-    self.isLinked = false    
-    self.guid = nil
-    self.isTrueFriend = false
-    self.isOnline = false
-    self.realm = nil
-    self.faction = nil
-end
-
 function XFC.Friend:Initialize(inID)
     assert(type(inID) == 'number' or type(inID) == 'string')
     if(not self:IsInitialized()) then

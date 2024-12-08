@@ -10,9 +10,6 @@ function XFC.Object:new()
     setmetatable(object, self)
     self.__index = self
     self.__name = ObjectName
-
-    self.factoryKey = nil
-    self.factoryTime = nil
     self.key = nil
     self.name = nil
     self.id = nil
@@ -27,22 +24,12 @@ function XFC.Object:newChildConstructor()
     self.__index = self
     self.__name = ObjectName
     self.parent = self
-    
-    self.factoryKey = nil
-    self.factoryTime = nil
     self.key = nil
     self.name = nil
     self.id = nil
     self.initialized = false
 
     return object
-end
-
-function XFC.Object:ParentDeconstructor()
-    self.key = nil
-    self.name = nil
-    self.id = nil
-    self.initialized = false
 end
 
 function XFC.Object:IsInitialized(inBoolean)
@@ -67,22 +54,6 @@ end
 --#endregion
 
 --#region Properties
-function XFC.Object:FactoryKey(inKey)
-    assert(type(inKey) == 'string' or type(inKey) == 'number' or inKey == nil, 'argument must be string, number or nil')
-    if(inKey ~= nil) then
-        self.factoryKey = inKey
-    end
-    return self.factoryKey
-end
-
-function XFC.Object:FactoryTime(inFactoryTime)
-    assert(type(inFactoryTime) == 'number' or inFactoryTime == nil, 'argument must be number or nil')
-    if(inFactoryTime ~= nil) then
-        self.factoryTime = inFactoryTime
-    end
-    return self.factoryTime
-end
-
 function XFC.Object:Key(inKey)
     assert(type(inKey) == 'string' or type(inKey) == 'number' or inKey == nil, 'argument must be string, number or nil')
     if(inKey ~= nil) then
@@ -119,12 +90,6 @@ end
 
 function XFC.Object:ParentPrint()
     XF:SingleLine(self:ObjectName())
-    if(self.factoryKey ~= nil) then
-        XF:Debug(self:ObjectName(), '  factoryKey (' .. type(self.factoryKey) .. '): ' .. tostring(self.factoryKey))
-    end
-    if(self.factoryTime ~= nil) then
-        XF:Debug(self:ObjectName(), '  factoryTime (' .. type(self.factoryTime) .. '): ' .. tostring(self.factoryTime))
-    end
     XF:Debug(self:ObjectName(), '  key (' .. type(self.key) .. '): ' .. tostring(self.key))
     XF:Debug(self:ObjectName(), '  id (' .. type(self.id) .. '): ' .. tostring(self.id))
     XF:Debug(self:ObjectName(), '  name (' .. type(self.name) .. '): ' .. tostring(self.name))

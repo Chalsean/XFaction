@@ -5,6 +5,7 @@ local ObjectName = 'SpecCollection'
 XFC.SpecCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Spec List
+-- https://wago.tools/db2/ChrSpecialization
 local SpecData =
 {
 	-- [SpecID] = "EnglishName,IconID,ClassID"

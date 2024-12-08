@@ -5,6 +5,7 @@ local ObjectName = 'RaceCollection'
 XFC.RaceCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Race List
+-- https://wago.tools/db2/ChrRaces
 local RaceData =
 {
 	[1] = "Human,Alliance",

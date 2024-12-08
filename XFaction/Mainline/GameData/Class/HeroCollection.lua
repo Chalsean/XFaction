@@ -2,6 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 
 --#region Hero List
+-- https://wago.tools/db2/TraitSubTree
 local HeroData =
 {
 	[18] = "Voidweaver,5927657",
@@ -24,10 +25,10 @@ local HeroData =
 	[41] = "Frostfire,135866",
 	[42] = "Sentinel,4695616",
 	[43] = "Pack Leader,5927643",
-	[44] = "Dark Ranger,5927620c",
-	[45] = "Shado-Pan,5927648",
-	[46] = "Master of Harmony,5927638",
-	[47] = "Conduit of the Celestials,5927619",
+	[44] = "Dark Ranger,5927620",
+	[65] = "Shado-Pan,5927648",
+	[66] = "Master of Harmony,5927638",
+	[64] = "Conduit of the Celestials,5927619",
 	[48] = "Templar,571556",
 	[49] = "Lightsmith,5927636",
 	[50] = "Herald of the Sun,5927633",

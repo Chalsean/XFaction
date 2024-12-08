@@ -97,7 +97,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
     if(self:HasAllPackets(messageKey, totalPackets)) then
         try(function()
             XFO.Mailbox:Add(messageKey)
-            XF:Trace(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
+            XF:Debug(self:ObjectName(), 'Received all packets for message [%s] via [%s] from [%d]', messageKey, inDistribution, inSender)
 
             -- Logout messages are not encoded
             if(string.sub(messageData, 1, 6) == 'LOGOUT') then
@@ -107,9 +107,8 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
             end
 
             local encodedMessage = self:RebuildMessage(messageKey, totalPackets)
-            local message = nil
             try(function()
-                message = XFO.Mailbox:Pop()
+                local message = XFC.Message:new()
                 message:Decode(encodedMessage, protocol)
 
                 if(not message:IsInitialized() or message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
@@ -120,9 +119,6 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
                 XFO.Mailbox:Process(message)
                 XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)            
                 self:Remove(messageKey)
-            end).
-            finally(function()
-                XFO.Mailbox:Push(message)
             end)
         end).
         catch(function(err)
