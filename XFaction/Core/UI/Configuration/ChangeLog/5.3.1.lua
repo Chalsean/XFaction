@@ -1,30 +1,36 @@
 local XF, G = unpack(select(2, ...))
 local ObjectName = 'Config.ChangeLog'
 
-XF.ChangeLog['4.9.2'] = {
+XF.ChangeLog['5.3.1'] = {
     Improvements = {
         order = 2,
         type = 'group',
         name = XF.Lib.Locale['IMPROVEMENTS'],
         guiInline = true,
         args = {
-            One = {
+            Keys = {
                 order = 1,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Fixed bug where sometimes login/logout was not being displayed.',
+                name = 'Added season 2 M+ keys',
             },
-            Two = {
+            Siren = {
                 order = 2,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Bumped toc to 10.2.6.',
+                name = 'Added Siren Isles map IDs',
             },
-            Three = {
+            Double = {
                 order = 3,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Added season 4 mythic key codes.',
+                name = 'Fixed an issue where sometimes users would see a double post',
+            },
+            Main = {
+                order = 4,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Fixed an issue where sometimes users would see the wrong main name',
             },
         },
     },		

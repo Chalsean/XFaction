@@ -1,19 +1,19 @@
 local XF, G = unpack(select(2, ...))
 local ObjectName = 'Config.ChangeLog'
 
-XF.ChangeLog['3.5.6'] = {
+XF.ChangeLog['5.3.4'] = {
     Improvements = {
-        order = 1,
+        order = 2,
         type = 'group',
         name = XF.Lib.Locale['IMPROVEMENTS'],
         guiInline = true,
         args = {
-            One = {
+            Keys = {
                 order = 1,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Fixed versioning check (again).',
+                name = 'Bumped toc',
             },
-        }
-    },			
+        },
+    },		
 }

@@ -1,6 +1,6 @@
-## Interface: 110005
-## Author: Chals (US-Stormrage)
-## Version: 5.3.2
+## Interface: 110007
+## Author: Chals (US-Suramar)
+## Version: 5.3.4
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
