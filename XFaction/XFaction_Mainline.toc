@@ -1,6 +1,6 @@
-## Interface: 110100
+## Interface: 110105
 ## Author: Chals (US-Suramar)
-## Version: 5.3.6
+## Version: 5.3.8
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
