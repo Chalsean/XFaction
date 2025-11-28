@@ -271,6 +271,7 @@ local RealmData = {
         [964] = "Spirestone;tw;963;retail",
         [965] = "Stormscale;tw;966;retail",
         [966] = "Dragonmaw;tw;966;retail",
+        [970] = "Lor'themar;us;970;beta",
         [977] = "Frostmane;tw;966;retail",
         [978] = "Sundown Marsh;tw;980;retail",
         [979] = "Hellscream;tw;963;retail",
@@ -648,6 +649,7 @@ function XFC.RealmCollection:Initialize()
 		self:ParentInitialize()
 		self.realmsByID = {}
         self.realmsByAPI = {}
+        
 		-- Setup all realms in the region
 		for id, data in pairs(RealmData) do
 			local realmData = string.Split(data, ';')
@@ -659,7 +661,7 @@ function XFC.RealmCollection:Initialize()
 			realm:Region(XFO.Regions:Get(string.upper(realmData[2])))
 			realm:ParentID(tonumber(realmData[3]))
 			self:Add(realm)
-				
+
 			if(realm:Name() == XFF.RealmName() and XF.Player.Region:Equals(realm:Region())) then
 				XF.Player.Realm = realm
 				XF:Info(self:ObjectName(), 'Initialized player realm [%d:%s]', realm:ID(), realm:Name())
