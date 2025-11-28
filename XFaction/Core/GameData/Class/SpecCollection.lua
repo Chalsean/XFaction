@@ -61,6 +61,7 @@ local SpecData =
 	[1467] = "Devastation,4511811,13",
 	[1468] = "Preservation,4511812,13",
 	[1473] = "Augmentation,5198700,13",
+	[1480] = "Devourer,7455385,12"
 }
 --#endregion
 

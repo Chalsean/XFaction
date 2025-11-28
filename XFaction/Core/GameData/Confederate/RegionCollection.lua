@@ -26,6 +26,12 @@ end
 function XFC.RegionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
+
+		local current = XFF.RegionCurrent()
+		if (current == 90) then
+			current = 1
+		end
+
 		for id, name in ipairs(RegionData) do
 
 			local region = XFC.Region:new()
@@ -36,7 +42,7 @@ function XFC.RegionCollection:Initialize()
 			self:Add(region)
 			XF:Info(self:ObjectName(), 'Initialized region: [%d:%s]', region:ID(), region:Name())
 
-			if(region:ID() == XFF:RegionCurrent()) then
+			if(region:ID() == current) then
 				XF.Player.Region = region
 				XF:Info(self:ObjectName(), 'Player region [%d:%s]', region:ID(), region:Name())
 			end			

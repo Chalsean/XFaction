@@ -44,6 +44,8 @@ local HeroData =
 	[60] = "Slayer,5927649",
 	[61] = "Mountain Thane,5927639",
 	[62] = "Colossus,5927618",
+	[124] = "Annihilator,1041234",
+	[126] = "Void-Scarred,5927628"
 }
 --#endregion
 
