@@ -59,11 +59,16 @@ XFF.PlayerFaction = UnitFactionGroup
 XFF.PlayerPvPRating = GetPersonalRatedInfo
 XFF.PlayerGuild = GetGuildInfo
 XFF.PlayerZone = GetZoneText
-XFF.PlayerSpellKnown = IsPlayerSpell
+--XFF.PlayerSpellKnown = IsPlayerSpell
 XFF.PlayerLocationID = C_Map.GetBestMapForUnit
 XFF.LocationInfo = C_Map.GetMapInfo
 XFF.PlayerName = UnitName
 XFF.PlayerIsIgnored = C_FriendList.IsIgnoredByGuid
+
+function XFF.PlayerSpellKnown(spellID)
+    local spellBank = Enum.SpellBookSpellBank.Player
+    return C_SpellBook.IsSpellKnown(spellID, spellBank)
+end
 
 -- BNet
 XFF.BNetPlayerInfo = BNGetInfo
