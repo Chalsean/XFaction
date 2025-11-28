@@ -42,7 +42,7 @@ XF.Lib = {
 	Broker = LibStub('LibDataBroker-1.1'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XF.Name, true),
 	Config = LibStub('AceConfigRegistry-3.0'),
-	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
+	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0')
 }
 XF.Lib.BCTL = BNetChatThrottleLib
