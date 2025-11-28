@@ -149,7 +149,7 @@ local function DisplayGuildChat(inUnit, inText)
     local frameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
-    for i = 1, NUM_CHAT_WINDOWS do
+    for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
         frameTable = { XFF.ChatGetWindow(i) }
         local v
         for _, frameName in ipairs(frameTable) do
@@ -183,7 +183,7 @@ local function DisplayAchievement(inUnit, inID)
     local frameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
-    for i = 1, NUM_CHAT_WINDOWS do
+    for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
         frameTable = { XFF.ChatGetWindow(i) }
         local v
         for _, frameName in ipairs(frameTable) do
