@@ -24,37 +24,16 @@
 -- LICENSE: BNetChatThrottleLib is released into the Public Domain
 --
 
-local BCTL_VERSION = 24
+local BCTL_VERSION = 120000
 
 local _G = _G
 
-if _G.BNetChatThrottleLib then
-	if _G.BNetChatThrottleLib.version >= CTL_VERSION then
-		-- There's already a newer (or same) version loaded. Buh-bye.
-		return
-	elseif not _G.BNetChatThrottleLib.securelyHooked then
-		print("BNetChatThrottleLib: Warning: There's an ANCIENT BNetChatThrottleLib.lua (pre-wow 2.0, <v16) in an addon somewhere. Get the addon updated or copy in a newer BNetChatThrottleLib.lua (>=v16) in it!")
-		-- ATTEMPT to unhook; this'll behave badly if someone else has hooked...
-		-- ... and if someone has securehooked, they can kiss that goodbye too... >.<
-		_G.SendChatMessage = _G.BNetChatThrottleLib.ORIG_SendChatMessage
-		if _G.BNetChatThrottleLib.ORIG_SendAddonMessage then
-			_G.SendAddonMessage = _G.BNetChatThrottleLib.ORIG_SendAddonMessage
-		end
-	end
-	_G.BNetChatThrottleLib.ORIG_SendChatMessage = nil
-	_G.BNetChatThrottleLib.ORIG_SendAddonMessage = nil
-end
+BNetChatThrottleLib = {}
+BNetChatThrottleLib.version = BCTL_VERSION
 
-if not _G.BNetChatThrottleLib then
-	_G.BNetChatThrottleLib = {}
-end
-
-BNetChatThrottleLib = _G.BNetChatThrottleLib  -- in case some addon does "local BNetChatThrottleLib" above us and we're copypasted (AceComm-2, sigh)
-local BNetChatThrottleLib = _G.BNetChatThrottleLib
-
-BNetChatThrottleLib.version = CTL_VERSION
-
-
+local SendAddonMessage = C_ChatInfo.SendAddonMessage
+local SendChatMessage = C_ChatInfo.SendChatMessage
+local SendGameData = C_BattleNet.SendGameData
 
 ------------------ TWEAKABLES -----------------
 
@@ -210,20 +189,15 @@ function BNetChatThrottleLib:Init()
 		-- Use secure hooks as of v16. Old regular hook support yanked out in v21.
 		self.securelyHooked = true
 		--SendChatMessage
-		hooksecurefunc("SendChatMessage", function(...)
+		hooksecurefunc(_G.C_ChatInfo, "SendChatMessage", function(...)
 			return BNetChatThrottleLib.Hook_SendChatMessage(...)
 		end)
 		--SendAddonMessage
-		if _G.C_ChatInfo then
-			hooksecurefunc(_G.C_ChatInfo, "SendAddonMessage", function(...)
-				return BNetChatThrottleLib.Hook_SendAddonMessage(...)
-			end)
-		else
-			hooksecurefunc("SendAddonMessage", function(...)
-				return BNetChatThrottleLib.Hook_SendAddonMessage(...)
-			end)
-		end
-		hooksecurefunc("BNSendGameData", function(...)
+		hooksecurefunc(_G.C_ChatInfo, "SendAddonMessage", function(...)
+			return BNetChatThrottleLib.Hook_SendAddonMessage(...)
+		end)
+		--BNet
+		hooksecurefunc(_G.C_BattleNet, "SendGameData", function(...)
 			return BNetChatThrottleLib.Hook_BNSendGameData(...)
 		end)
 	end
@@ -459,7 +433,7 @@ function BNetChatThrottleLib:SendChatMessage(prio, prefix,   text, chattype, lan
 	if not self.bQueueing and nSize < self:UpdateAvail() then
 		self.avail = self.avail - nSize
 		bMyTraffic = true
-		_G.SendChatMessage(text, chattype, language, destination)
+		SendChatMessage(text, chattype, language, destination)
 		bMyTraffic = false
 		self.Prio[prio].nTotalSent = self.Prio[prio].nTotalSent + nSize
 		if callbackFn then
@@ -471,7 +445,7 @@ function BNetChatThrottleLib:SendChatMessage(prio, prefix,   text, chattype, lan
 
 	-- Message needs to be queued
 	local msg = NewMsg()
-	msg.f = _G.SendChatMessage
+	msg.f = SendChatMessage
 	msg[1] = text
 	msg[2] = chattype or "SAY"
 	msg[3] = language
@@ -495,16 +469,8 @@ function BNetChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype, targ
 	end
 
 	local nSize = text:len();
-
-	if C_ChatInfo or RegisterAddonMessagePrefix then
-		if nSize>255 then
-			error("BNetChatThrottleLib:SendAddonMessage(): message length cannot exceed 255 bytes", 2)
-		end
-	else
-		nSize = nSize + prefix:len() + 1
-		if nSize>255 then
-			error("BNetChatThrottleLib:SendAddonMessage(): prefix + message length cannot exceed 254 bytes", 2)
-		end
+	if nSize>255 then
+		error("BNetChatThrottleLib:SendAddonMessage(): message length cannot exceed 255 bytes", 2)
 	end
 
 	nSize = nSize + self.MSG_OVERHEAD;
@@ -513,11 +479,7 @@ function BNetChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype, targ
 	if not self.bQueueing and nSize < self:UpdateAvail() then
 		self.avail = self.avail - nSize
 		bMyTraffic = true
-		if _G.C_ChatInfo then
-			_G.C_ChatInfo.SendAddonMessage(prefix, text, chattype, target)
-		else
-			_G.SendAddonMessage(prefix, text, chattype, target)
-		end
+		SendAddonMessage(prefix, text, chattype, target)
 		bMyTraffic = false
 		self.Prio[prio].nTotalSent = self.Prio[prio].nTotalSent + nSize
 		if callbackFn then
@@ -529,7 +491,7 @@ function BNetChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype, targ
 
 	-- Message needs to be queued
 	local msg = NewMsg()
-	msg.f = _G.C_ChatInfo and _G.C_ChatInfo.SendAddonMessage or _G.SendAddonMessage
+	msg.f = SendAddonMessage
 	msg[1] = prefix
 	msg[2] = text
 	msg[3] = chattype
@@ -561,7 +523,7 @@ function BNetChatThrottleLib:BNSendGameData(prio, prefix, text, chattype, target
 	if not self.bQueueing and nSize < self:UpdateAvail() then
 		self.avail = self.avail - nSize
 		bMyTraffic = true
-		BNSendGameData(target, prefix, text)
+		SendGameData(target, prefix, text)
 		bMyTraffic = false
 		self.Prio[prio].nTotalSent = self.Prio[prio].nTotalSent + nSize
 		if callbackFn then
@@ -573,7 +535,7 @@ function BNetChatThrottleLib:BNSendGameData(prio, prefix, text, chattype, target
 
 	-- Message needs to be queued
 	local msg = NewMsg()
-	msg.f = BNSendGameData
+	msg.f = SendGameData
 	msg[1] = target
 	msg[2] = prefix
 	msg[3] = text

@@ -45,7 +45,7 @@ XF.Lib = {
 	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0')
 }
-XF.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
+XF.Lib.BCTL = BNetChatThrottleLib
 --#endregion
 
 --#region Program Settings
