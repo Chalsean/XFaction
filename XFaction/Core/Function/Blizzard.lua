@@ -18,7 +18,7 @@ XFF.ChatChannels = GetChannelList
 XFF.ChatChannelInfo = C_ChatInfo.GetChannelInfoFromIdentifier
 XFF.ChatJoinChannel = JoinChannelByName
 XFF.ChatGetWindow = GetChatWindowMessages
-XFF.ChatHandler = ChatFrame_MessageEventHandler
+XFF.ChatHandler = ChatFrameMixin.MessageEventHandler
 XFF.ChatRegister = C_ChatInfo.RegisterAddonMessagePrefix
 
 -- Guild
