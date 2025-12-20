@@ -602,19 +602,19 @@ function XFC.Unit:IsFriend()
 end
 
 function XFC.Unit:IsSameRealm()
-    return XF.Player.Realm:Equals(self:Realm())
+    return self:HasRealm() and XF.Player.Realm:Equals(self:Realm())
 end
 
 function XFC.Unit:IsSameFaction()
-    return XF.Player.Faction:Equals(self:Faction())
+    return self:HasFaction() and XF.Player.Faction:Equals(self:Faction())
 end
 
 function XFC.Unit:IsSameGuild()
-    return XF.Player.Guild:Equals(self:Guild())
+    return self:HasGuild() and XF.Player.Guild:Equals(self:Guild())
 end
 
 function XFC.Unit:IsSameTarget()
-    return XF.Player.Target:Equals(self:Target())
+    return self:HasTarget() and XF.Player.Target:Equals(self:Target())
 end
 
 function XFC.Unit:CanChat()
