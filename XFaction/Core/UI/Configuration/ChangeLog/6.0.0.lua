@@ -1,7 +1,7 @@
 local XF, G = unpack(select(2, ...))
 local ObjectName = 'Config.ChangeLog'
 
-XF.ChangeLog['5.6.2'] = {
+XF.ChangeLog['6.0.0'] = {
     Improvements = {
         order = 2,
         type = 'group',
@@ -48,13 +48,19 @@ XF.ChangeLog['5.6.2'] = {
                 order = 8,
                 type = 'description',
                 fontSize = 'medium',
-                name = 'Updated some API calls in preparation for Midnight (spec)',
+                name = 'Updated chat/bnet api calls to Midnight versions',
             },
             Season = {
                 order = 5,
                 type = 'description',
                 fontSize = 'medium',
                 name = 'Added Midnight season 1 dungeons',
+            },
+            MSA = {
+                order = 9,
+                type = 'description',
+                fontSize = 'medium',
+                name = 'Removed MSA library that was not working with Midnight',
             },
         },
     },		

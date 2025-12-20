@@ -139,17 +139,11 @@ function XFC.Unit:Initialize(inMemberID)
             self:ItemLevel(itemLevel)
         end
 
-        -- The following call will randomly fail, retries seem to help
-        for i = 1, 10 do
-            local specGroupID = XFF.SpecGroupID()
-            if(specGroupID ~= nil) then
-    	        local specID = XFF.SpecID(specGroupID)
-                if(specID ~= nil and XFO.Specs:Contains(specID)) then
-                    self:Spec(XFO.Specs:Get(specID))
-                    break
-                end
-            end
-        end      
+        local specIndex = XFF.SpecCurrent()
+        if (specIndex ~= nil) then
+            local specId = XFF.SpecInfoByIndex(specIndex)
+            self:Spec(XFO.Specs:Get(specId))
+        end
         
         local id = XFF.SpecHeroID()
 		if(XFO.Heros:Contains(id)) then

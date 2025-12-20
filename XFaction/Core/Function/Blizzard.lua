@@ -52,8 +52,10 @@ XFF.RegionCurrent = GetCurrentRegion
 -- Class/Spec
 XFF.ClassInfo = C_CreatureInfo.GetClassInfo
 XFF.ClassColor = GetClassColor
-XFF.SpecGroupID = C_SpecializationInfo.GetSpecialization
-XFF.SpecID = C_SpecializationInfo.GetSpecializationInfo
+XFF.SpecCurrent = C_SpecializationInfo.GetSpecialization
+XFF.SpecClass = C_SpecializationInfo.GetClassIDFromSpecID
+XFF.SpecInfo = GetSpecializationInfoForSpecID
+XFF.SpecInfoByIndex = C_SpecializationInfo.GetSpecializationInfo
 XFF.SpecHeroID = C_ClassTalents.GetActiveHeroTalentSpec
 
 -- Player
