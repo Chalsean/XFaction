@@ -49,7 +49,9 @@ XFF.RealmName = GetRealmName
 -- Region
 XFF.RegionCurrent = GetCurrentRegion
 
--- Spec
+-- Class/Spec
+XFF.ClassInfo = C_CreatureInfo.GetClassInfo
+XFF.ClassColor = GetClassColor
 XFF.SpecGroupID = C_SpecializationInfo.GetSpecialization
 XFF.SpecID = C_SpecializationInfo.GetSpecializationInfo
 XFF.SpecHeroID = C_ClassTalents.GetActiveHeroTalentSpec
@@ -107,3 +109,4 @@ XFF.LocationInfo = C_Map.GetMapInfo
 
 -- Race
 XFF.RaceInfo = C_CreatureInfo.GetRaceInfo
+XFF.RaceFaction = C_CreatureInfo.GetFactionInfo

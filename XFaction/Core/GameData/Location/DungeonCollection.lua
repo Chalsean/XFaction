@@ -1,55 +1,6 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 
---#region Abbreviated Names
--- https://wago.tools/db2/MapChallengeMode
-local NameData = {
-    [161] = "SKY",
-	[168] = "EB",
-    [198] = "DHT",
-    [199] = "BRH",
-    [239] = "ST",
-    [244] = "AD",
-    [247] = "ML",
-    [248] = "WM",
-    [353] = "SB",
-    [370] = "OMW",
-    [375] = "MTS",
-    [376] = "NW",
-    [378] = "HOA",
-    [382] = "TP",
-    [391] = "TSOW",
-    [392] = "TSG",
-    [399] = "RLP",
-    [400] = "NO",
-    [401] = "AV",
-    [402] = "AA",
-    [403] = "ULT",
-    [404] = "NEL",
-    [405] = "BH",
-    [406] = "HOI",
-    [456] = "TT",
-    [463] = "FALL",
-    [464] = "RISE",
-    [499] = "PSF",
-    [500] = "ROOK",
-    [501] = "SV",
-    [502] = "CT",
-    [503] = "AK",
-    [504] = "DC",
-    [505] = "DB",
-    [506] = "CM",
-    [507] = "GB",
-    [508] = "OF",
-    [542] = "EDA",
-    [556] = "PS",
-    [557] = "WS",
-    [558] = "MT",
-    [559] = "NPX",
-    [560] = "MC"
-}
---#endregion
-
 XFC.DungeonCollection = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
@@ -65,6 +16,7 @@ function XFC.DungeonCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
+        XFF.MythicRequestMaps()
         for _, id in ipairs (XFF.MythicCurrentSeasonMapIDs()) do
             local name = XFF.MythicMapInfo(id)
             local dungeon = XFC.Dungeon:new()

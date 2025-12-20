@@ -360,7 +360,7 @@ function XFC.DTGuild:CallbackOnEnter(this)
 							cellValue = format('%s', format(XF.Icons.String, unitData[columnName]))
 						end
 					elseif(columnName == 'Name') then
-						cellValue = format('|cff%s%s|r', unitData.Class, unitData.Name)
+						cellValue = format('|c%s%s|r', unitData.Class, unitData.Name)
 					elseif(unitData[columnName] ~= nil) then
 						cellValue = format('|cffffffff%s|r', unitData[columnName])
 					end
