@@ -40,6 +40,12 @@ end
 --#endregion
 
 --#region Methods
+function XFC.GuildCollection:Print()
+	if(XF.IsInitialized) then
+		self.parent.Print()
+	end
+end
+
 function XFC.GuildCollection:ContainsName(inGuildName)
 	return self.names[inGuildName] ~= nil
 end

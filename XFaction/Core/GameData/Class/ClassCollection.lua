@@ -45,7 +45,7 @@ function XFC.ClassCollection:Initialize()
 			class:RGB(tonumber(classData[3]), tonumber(classData[4]), tonumber(classData[5]))
 			class:Hex(classData[6])
 			self:Add(class)
-			XF:Info(self:ObjectName(), 'Initialized class [%d:%s]', class:ID(), class:Name())
+			XF:Trace(self:ObjectName(), 'Initialized class [%d:%s]', class:ID(), class:Name())
 		end
 		self:IsInitialized(true)
 	end

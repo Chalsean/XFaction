@@ -72,7 +72,7 @@ function XFC.DungeonCollection:Initialize()
             dungeon:ID(id)
             dungeon:Name(name)
             self:Add(dungeon)
-            XF:Info(self:ObjectName(), "Initialized dungeon [%d:%s]", dungeon:ID(), dungeon:Name())
+            XF:Trace(self:ObjectName(), "Initialized dungeon [%d:%s]", dungeon:ID(), dungeon:Name())
         end
 
 		self:IsInitialized(true)

@@ -18,7 +18,7 @@ XFF.TimerStart = C_Timer.NewTimer
 XFF.RepeatTimerStart = C_Timer.NewTicker
 
 -- Chat / Channel
-XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter
+XFF.ChatFrameFilter = XF.Midnight and ChatFrameUtil.AddMessageEventFilter or ChatFrame_AddMessageEventFilter
 XFF.ChatChannelColor = ChangeChatColor
 XFF.ChatSwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
 XFF.ChatChannels = GetChannelList
@@ -66,10 +66,7 @@ XFF.PlayerFaction = UnitFactionGroup
 XFF.PlayerPvPRating = GetPersonalRatedInfo
 XFF.PlayerGuild = GetGuildInfo
 XFF.PlayerZone = GetZoneText
-XFF.PlayerSpellKnown = IsPlayerSpell
 XFF.PlayerLocationID = C_Map.GetBestMapForUnit
-XFF.LocationInfo = C_Map.GetMapInfo
-XFF.PlayerName = UnitName
 XFF.PlayerIsIgnored = C_FriendList.IsIgnoredByGuid
 
 -- BNet
@@ -102,3 +99,9 @@ XFF.CraftingGetItem = C_TooltipInfo.GetRecipeResultItem
 XFF.MythicRequestMaps = C_MythicPlus.RequestMapInfo
 XFF.MythicLevel = C_MythicPlus.GetOwnedKeystoneLevel
 XFF.MythicMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID
+
+-- Location
+XFF.LocationInfo = C_Map.GetMapInfo
+
+-- Race
+XFF.RaceInfo = C_CreatureInfo.GetRaceInfo

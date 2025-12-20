@@ -47,6 +47,12 @@ end
 --#endregion
 
 --#region Methods
+function XFC.Confederate:Print()
+	if(XF.IsInitialized) then
+		self.parent.Print()
+	end
+end
+
 function XFC.Confederate:GetInitials()
     return self:Key()
 end

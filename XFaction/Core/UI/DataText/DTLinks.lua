@@ -74,6 +74,7 @@ end
 --#region Methods
 function XFC.DTLinks:RefreshBroker()
 	local self = XFO.DTLinks
+	if(not XF.Initialized) then return end
 	try(function()
 		local text = ''
 		if(XF.Config.DataText.Link.Label) then

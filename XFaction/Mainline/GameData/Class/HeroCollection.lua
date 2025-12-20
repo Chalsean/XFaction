@@ -63,7 +63,7 @@ function XFC.HeroCollection:Initialize()
 			hero:Name(heroData[1])
 			hero:IconID(tonumber(heroData[2]))
 			self:Add(hero)
-			XF:Info(self:ObjectName(), 'Initialized hero [%d:%s]', hero:ID(), hero:Name())
+			XF:Trace(self:ObjectName(), 'Initialized hero [%d:%s]', hero:ID(), hero:Name())
 		end
 
 		XFO.Events:Add({

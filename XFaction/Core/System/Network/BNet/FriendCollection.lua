@@ -41,6 +41,12 @@ end
 --#endregion
 
 --#region Methods
+function XFC.FriendCollection:Print()
+	if(XF.IsInitialized) then
+		self.parent.Print()
+	end
+end
+
 function XFC.FriendCollection:Get(inKey)
 	assert(type(inKey) == 'number' or type(inKey) == 'string')
 	if(type(inKey) == 'string') then

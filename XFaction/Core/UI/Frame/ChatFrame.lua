@@ -146,10 +146,12 @@ local function DisplayGuildChat(inUnit, inText)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     assert(type(inText) == 'string')
 
+    local windowCount = XF.Midnight and Constants.ChatFrameConstants.MaxChatWindows or NUM_CHAT_WINDOWS
+
     local frameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
-    for i = 1, NUM_CHAT_WINDOWS do
+    for i = 1, windowCount do
         frameTable = { XFF.ChatGetWindow(i) }
         local v
         for _, frameName in ipairs(frameTable) do
@@ -180,10 +182,12 @@ local function DisplayAchievement(inUnit, inID)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     assert(type(inID) == 'number')
 
+    local windowCount = XF.Midnight and Constants.ChatFrameConstants.MaxChatWindows or NUM_CHAT_WINDOWS
+
     local frameTable
     -- There are multiple chat windows, each registers for certain types of messages to display
     -- Thus GUILD can be on multiple chat windows and we need to display on all
-    for i = 1, NUM_CHAT_WINDOWS do
+    for i = 1, windowCount do
         frameTable = { XFF.ChatGetWindow(i) }
         local v
         for _, frameName in ipairs(frameTable) do

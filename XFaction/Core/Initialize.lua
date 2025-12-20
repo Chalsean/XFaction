@@ -19,7 +19,7 @@ function XF:CoreInit()
 	-- Log XFaction version
 	XFO.Versions = XFC.VersionCollection:new(); XFO.Versions:Initialize()
 	XF.Version = XFO.Versions:Current()
-	XF:Info(ObjectName, 'XFaction version [%s]', XF.Version:Key())
+	XF:Info(ObjectName, 'XFaction version [%s]', XF.Version:Key())	
 	
 	-- Confederate
 	XFO.Regions = XFC.RegionCollection:new(); XFO.Regions:Initialize()
@@ -64,6 +64,7 @@ function XF:CoreInit()
 	XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
 	
 	XF.Player.GUID = XFF.PlayerGUID('player')
+	XF:Info(ObjectName, 'Player GUID: %s', XF.Player.GUID)
 	XF.Player.Faction = XFO.Factions:Get(XFF.PlayerFaction('player'))
 	
 	-- Wrappers	

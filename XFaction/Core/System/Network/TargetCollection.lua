@@ -34,6 +34,12 @@ end
 --#endregion
 
 --#region Methods
+function XFC.TargetCollection:Print()
+	if(XF.IsInitialized) then
+		self.parent.Print()
+	end
+end
+
 function XFC.TargetCollection:ProcessMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 	inMessage:FromUnit():Target():ChatRecipient(inMessage:FromUnit())

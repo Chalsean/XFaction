@@ -61,7 +61,7 @@ function XFC.RaceCollection:Initialize()
 			race:Name(raceData[1])
 			race:Faction(XFO.Factions:Get(raceData[2]))
 			self:Add(race)
-			XF:Info(self:ObjectName(), 'Initialized race [%d:%s:%s]', race:ID(), race:Name(), race:Faction():Name())
+			XF:Trace(self:ObjectName(), 'Initialized race [%d:%s:%s]', race:ID(), race:Name(), race:Faction():Name())
 		end
 		self:IsInitialized(true)
 	end

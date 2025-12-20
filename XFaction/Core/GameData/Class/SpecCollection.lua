@@ -86,7 +86,7 @@ function XFC.SpecCollection:Initialize()
 			spec:IconID(tonumber(specData[2]))
 			spec:Class(XFO.Classes:Get(tonumber(specData[3])))
 			self:Add(spec)
-			XF:Info(self:ObjectName(), 'Initialized spec [%d:%s:%s]', spec:ID(), spec:Name(), spec:Class():Name())
+			XF:Trace(self:ObjectName(), 'Initialized spec [%d:%s:%s]', spec:ID(), spec:Name(), spec:Class():Name())
 		end
 
 		XFO.Events:Add({

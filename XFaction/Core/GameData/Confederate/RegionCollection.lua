@@ -40,7 +40,7 @@ function XFC.RegionCollection:Initialize()
 			region:ID(id)
 			region:Name(name)
 			self:Add(region)
-			XF:Info(self:ObjectName(), 'Initialized region: [%d:%s]', region:ID(), region:Name())
+			XF:Trace(self:ObjectName(), 'Initialized region: [%d:%s]', region:ID(), region:Name())
 
 			if(region:ID() == current) then
 				XF.Player.Region = region

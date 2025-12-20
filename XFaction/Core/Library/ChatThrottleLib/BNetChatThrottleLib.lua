@@ -196,16 +196,16 @@ function BNetChatThrottleLib:Init()
 		-- Use secure hooks as of v16. Old regular hook support yanked out in v21.
 		self.securelyHooked = true
 
-		--SendChatMessage
-		hooksecurefunc(_G.C_ChatInfo, "SendChatMessage", function(...)
-			return BNetChatThrottleLib.Hook_SendChatMessage(...)
-		end)
 		--SendAddonMessage
 		hooksecurefunc(_G.C_ChatInfo, "SendAddonMessage", function(...)
 			return BNetChatThrottleLib.Hook_SendAddonMessage(...)
 		end)
 
-		if (midnight == true) then			
+		if (midnight == true) then
+			--SendChatMessage
+			hooksecurefunc(_G.C_ChatInfo, "SendChatMessage", function(...)
+				return BNetChatThrottleLib.Hook_SendChatMessage(...)
+			end)
 			--BNSendGameData
 			hooksecurefunc(_G.C_BattleNet, "SendGameData", function(...)
 				return BNetChatThrottleLib.Hook_BNSendGameData(...)
@@ -215,6 +215,10 @@ function BNetChatThrottleLib:Init()
 				return BNetChatThrottleLib.Hook_BNSendWhisper(...)
 			end)
 		else
+			--SendChatMessage
+			hooksecurefunc("SendChatMessage", function(...)
+				return BNetChatThrottleLib.Hook_SendChatMessage(...)
+			end)
 			--BNSendGameData
 			hooksecurefunc("BNSendGameData", function(...)
 				return BNetChatThrottleLib.Hook_BNSendGameData(...)

@@ -43,7 +43,7 @@ function XFC.ProfessionCollection:Initialize()
 			profession:Key(tonumber(id))
 			profession:IsInitialized(true)
 			self:Add(profession)
-			XF:Info(self:ObjectName(), 'Initialized profession [%d:%s]', profession:ID(), profession:Name())
+			XF:Trace(self:ObjectName(), 'Initialized profession [%d:%s]', profession:ID(), profession:Name())
 		end
 
 		XFO.Events:Add({

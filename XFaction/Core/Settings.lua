@@ -13,6 +13,8 @@ XF.AddonName = addon
 XF.Name = 'XFaction'
 XF.Title = '|cffFF4700X|r|cff33ccffFaction|r'
 XF.Version = C_AddOns.GetAddOnMetadata(addon, 'Version')
+_, _, _, XF.Toc = GetBuildInfo()
+XF.Midnight = XF.Toc >= 120000
 XF.Start = GetServerTime()
 XF.Verbosity = 4
 
