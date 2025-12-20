@@ -8,7 +8,6 @@ XFC.Confederate = XFC.ObjectCollection:newChildConstructor()
 function XFC.Confederate:new()
     local object = XFC.Confederate.parent.new(self)
 	object.__name = ObjectName
-    object.onlineCount = 0
     return object
 end
 
@@ -44,16 +43,6 @@ function XFC.Confederate:Initialize()
         self:IsInitialized(true)
 	end
 	return self:IsInitialized()
-end
---#endregion
-
---#region Properties
-function XFC.Confederate:OnlineCount()
-    local count = 0
-    for _, guild in XFO.Guilds:Iterator() do
-        count = count + guild:Count()
-    end
-    return count
 end
 --#endregion
 
@@ -125,41 +114,16 @@ function XFC.Confederate:OnlineUnit(inUnit)
     end
     self:Add(inUnit)
 
-    if(inUnit:IsOnline()) then
-        inUnit:Guild():Add(inUnit)
-        XFO.DTGuild:RefreshBroker()
-    end    
-
     if(inUnit:IsPlayer()) then
         XF.Player.Unit = inUnit
-        return
-    end
-    
-    -- This is messy af, need to find a better way of tracking/querying
-    -- Target count == # of addon users outside the guild in the chat channel
-    if(inUnit:CanChat() and not inUnit:IsSameGuild()) then
-        inUnit:Target():Add(inUnit)
     end
 
-    -- Guild channel count == # of addon users inside the guild
-    -- Local channel count == # of addon users both in guild and in chat channel
-    if(inUnit:IsOnline() and inUnit:IsRunningAddon() and inUnit:IsSameGuild()) then
-        XFO.Channels:GuildChannel():Add(inUnit)
-        if(inUnit:CanChat()) then
-            XFO.Channels:LocalChannel():Add(inUnit)
-        end            
-    end
-
+    XFO.DTGuild:RefreshBroker()
     XFO.DTLinks:RefreshBroker()
 end
 
 function XFC.Confederate:OfflineUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
-
-    inUnit:Guild():Remove(inUnit:Key())
-    inUnit:Target():Remove(inUnit:Key())
-    XFO.Channels:LocalChannel():Remove(inUnit:Key())
-    XFO.Channels:GuildChannel():Remove(inUnit:Key())
 
     if(inUnit:IsSameGuild()) then
         self:Add(inUnit)
@@ -276,8 +240,6 @@ function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID)
             XF:Warn(self:ObjectName(), 'Player is not in a guild')
             XF:Stop()
             self:RemoveAll()
-            XFO.Channels:LocalChannel():RemoveAll()
-            XFO.Channels:GuildChannel():RemoveAll()
 
             for _, guild in XFO.Guilds:Iterator() do
                 guild:RemoveAll()
@@ -294,5 +256,15 @@ function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID)
     catch(function (err)
         XF:Warn(self:ObjectName(), err)
     end)
+end
+
+function XFC.Confederate:GetChatCount()
+    local chat = 0
+    for _, unit in self:Iterator() do
+        if(not unit:IsPlayer() and unit:IsOnline() and unit:IsRunningAddon() and not unit:IsSameGuild() and unit:IsSameTarget()) then
+            chat = chat + 1
+        end
+    end
+    return chat
 end
 --#endregion

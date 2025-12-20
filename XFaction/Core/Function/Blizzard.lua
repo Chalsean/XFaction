@@ -1,6 +1,13 @@
 local XF, G = unpack(select(2, ...))
 local XFF = XF.Function
 
+-- Client
+XFF.ClientVersion = GetBuildInfo
+XFF.ClientAddonCount = C_AddOns.GetNumAddOns
+XFF.ClientAddonInfo = C_AddOns.GetAddOnInfo
+XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
+XFF.ClientAddonState = C_AddOns.GetAddOnEnableState
+
 -- Time
 XFF.TimeCurrent = GetServerTime
 XFF.TimeLocal = C_DateAndTime.GetServerTimeLocal
@@ -43,8 +50,8 @@ XFF.RealmName = GetRealmName
 XFF.RegionCurrent = GetCurrentRegion
 
 -- Spec
-XFF.SpecGroupID = GetSpecialization
-XFF.SpecID = GetSpecializationInfo
+XFF.SpecGroupID = C_SpecializationInfo.GetSpecialization
+XFF.SpecID = C_SpecializationInfo.GetSpecializationInfo
 XFF.SpecHeroID = C_ClassTalents.GetActiveHeroTalentSpec
 
 -- Player
@@ -70,13 +77,6 @@ XFF.BNetPlayerInfo = BNGetInfo
 XFF.BNetFriendCount = BNGetNumFriends
 XFF.BNetFriendInfoByID = C_BattleNet.GetFriendAccountInfo
 XFF.BNetFriendInfoByGUID = C_BattleNet.GetAccountInfoByGUID
-
--- Client
-XFF.ClientVersion = GetBuildInfo
-XFF.ClientAddonCount = C_AddOns.GetNumAddOns
-XFF.ClientAddonInfo = C_AddOns.GetAddOnInfo
-XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
-XFF.ClientAddonState = C_AddOns.GetAddOnEnableState
 
 -- UI
 XFF.UIOptionsFrame = InterfaceOptionsFrame

@@ -123,4 +123,14 @@ function XFC.FriendCollection:ProcessMessage(inMessage)
 		XFO.Mailbox:SendAckMessage(friend)
 	end
 end
+
+function XFC.FriendCollection:GetLinkedCount()
+	local count = 0
+	for _, friend in self:Iterator() do
+		if(friend:IsLinked()) then
+			count = count + 1
+		end
+	end
+	return count
+end
 --#endregion

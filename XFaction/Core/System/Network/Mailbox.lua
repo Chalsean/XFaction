@@ -55,17 +55,14 @@ function XFC.Mailbox:Send(inMessage)
     self:Add(inMessage:Key())
     inMessage:Print()
 
+
     local targeted = inMessage:Contains(XF.Player.Target:Key())
     inMessage:Remove(XF.Player.Target:Key())
 
     -- Own messages get shotgunned
     if(inMessage:IsMyMessage()) then
         XF:Debug(self:ObjectName(), 'Own message, broadcasting')
-        if(XF.Player.Guild:Count() > 0) then
-            XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
-        else
-            XF:Debug(self:ObjectName(), 'No one online to broadcast to')
-        end
+        XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
         XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
         for _, friend in XFO.Friends:Iterator() do
             if(friend:CanLink()) then
@@ -77,21 +74,19 @@ function XFC.Mailbox:Send(inMessage)
 
     -- Forwarding logic
     local guild = false
-    if(XF.Player.Guild:Count() > 0 and targeted) then
+    if(targeted) then
         -- If you receive via BNet theres little redundancy so broadcast
         if(inMessage:IsBNetProtocol()) then
             XF:Debug(self:ObjectName(), 'Received via BNet and guild is targeted')
             guild = true
         -- If you received via Channel, do random selection
         -- Remember the LocalChannel count is the intersection of local/guild count
-        elseif(_RandomSelection(XFO.Channels:LocalChannel():Count())) then
+        elseif(_RandomSelection(XFO.Confederate:GetChatCount())) then
             XF:Debug(self:ObjectName(), 'Received via channel, guild targeted and randomly selected')
             guild = true
         else
             XF:Debug(self:ObjectName(), 'Not randomly selected to forward to guild')
         end
-    elseif(XF.Player.Guild:Count() == 0) then
-        XF:Debug(self:ObjectName(), 'No one online to broadcast to')
     else
         XF:Debug(self:ObjectName(), 'Guild is no longer targeted')
     end
@@ -124,7 +119,6 @@ function XFC.Mailbox:Send(inMessage)
         inMessage:Remove(target)
     end
     
-    
     if(inMessage:Count() > 0) then
         local channel = false
         -- BNet means you were selected to forward
@@ -135,7 +129,7 @@ function XFC.Mailbox:Send(inMessage)
         elseif(inMessage:IsGuildProtocol()) then
             if(inMessage:FromUnit():CanChat()) then
                 XF:Debug(self:ObjectName(), 'Sending unit is same realm/faction')
-            elseif(_RandomSelection(XFO.Channels:LocalChannel():Count())) then
+            elseif(_RandomSelection(XFO.Confederate:GetChatCount())) then
                 XF:Debug(self:ObjectName(), 'Forwarding to chat bus due receiving via guild chat, sender is not same realm/faction and randomly selected')
                 channel = true
             else

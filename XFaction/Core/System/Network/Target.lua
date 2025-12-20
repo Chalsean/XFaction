@@ -2,7 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Target'
 
-XFC.Target = XFC.ObjectCollection:newChildConstructor()
+XFC.Target = XFC.Object:newChildConstructor()
 
 --#region Constructors
 function XFC.Target:new()

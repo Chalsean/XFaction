@@ -4,9 +4,11 @@ local XFC, XFO = XF.Class, XF.Object
 --#region Abbreviated Names
 -- https://wago.tools/db2/MapChallengeMode
 local NameData = {
+    [161] = "SKY",
 	[168] = "EB",
     [198] = "DHT",
     [199] = "BRH",
+    [239] = "ST",
     [244] = "AD",
     [247] = "ML",
     [248] = "WM",
@@ -39,7 +41,12 @@ local NameData = {
     [506] = "CM",
     [507] = "GB",
     [508] = "OF",
-    [542] = "EDA"
+    [542] = "EDA",
+    [556] = "PS",
+    [557] = "WS",
+    [558] = "MT",
+    [559] = "NPX",
+    [560] = "MC"
 }
 --#endregion
 

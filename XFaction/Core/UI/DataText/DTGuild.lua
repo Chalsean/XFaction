@@ -100,7 +100,15 @@ function XFC.DTGuild:RefreshBroker()
 			if(XF.Config.DataText.Guild.Label) then
 				text = XF.Lib.Locale['GUILD'] .. ': '
 			end
-			text = format('%s|cff3CE13F%d', text, XFO.Confederate:OnlineCount())
+
+			local online = 0
+			for _, unit in XFO.Confederate:Iterator() do
+				if(unit:IsOnline() and unit:IsRunningAddon()) then
+					online = online + 1
+				end
+			end
+
+			text = format('%s|cff3CE13F%d', text, online)
 			self:Broker().text = text
 		end).
 		catch(function(err)

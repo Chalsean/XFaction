@@ -20,9 +20,7 @@ XF.Class = {}
 XF.Function = {}
 XF.Object = {}
 
-XF.Addons = {
-	ElvUI = {},
-}
+XF.Addons = {}
 XF.ChangeLog = {}
 XF.Handlers = {}
 XF.Options = {}
@@ -42,7 +40,7 @@ XF.Lib = {
 	Broker = LibStub('LibDataBroker-1.1'),
 	Locale = LibStub('AceLocale-3.0'):GetLocale(XF.Name, true),
 	Config = LibStub('AceConfigRegistry-3.0'),
-	ConfigDialog = LibStub('MSA-AceConfigDialog-3.0'),
+	ConfigDialog = LibStub('AceConfigDialog-3.0'),
 	LSM = LibStub('LibSharedMedia-3.0')
 }
 XF.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
@@ -52,11 +50,6 @@ XF.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib
 XF.Icons = {
 	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
 	Texture = '|T%s:17:17|t',
-	Alliance = 2565243,
-	Horde = 463451,
-	Neutral = 132311,
-	Gold = [[|TInterface\MONEYFRAME\UI-GoldIcon:16:16|t]],
-	Guild = 'ElvUI-Windtools-Healer.tga', -- Kept the name to give credit to Windtools
 }
 
 XF.Enum = {
@@ -127,7 +120,6 @@ XF.Settings = {
 	},
 	Confederate = {
 		UnitStale = 60 * 5,    -- Seconds before you consider another unit offline
-		UnitScan = 60,         -- Seconds between offline checks
 	},
 	LocalGuild = {
 		ScanTimer = 5,           -- Seconds between local guild scans
@@ -138,7 +130,6 @@ XF.Settings = {
 	Network = {
 		CompressionLevel = 9,
 		CompressionRetry = 5,
-		MessageWindow = 60 * 2,
 		RandomSelection = 10,
 		Channel = {
 			Total = 10,
@@ -150,14 +141,9 @@ XF.Settings = {
 			PacketSize = 200,
 		},
 		BNet = {
-			FriendTimer = 2,
-			PacketSize = 250,	
-			Ping = {
-				Timer = 60 * 1,     -- Seconds between pinging friends
-			},
+			PacketSize = 250,
 		},
 		Mailbox = {
-			Scan = 60 * 2,   -- Seconds between scanning mailbox for stale messages
 			Stale = 60 * 60  -- Seconds until a message is considered stale
 		},
 	},
@@ -168,14 +154,13 @@ XF.Settings = {
 	},
 	DataText = {
 		AutoHide = .25,
-	},	
-	Factories = {
-		Scan = 60 * 3,
-		Purge = 60 * 15,
 	},
 	Setup = {
 		MaxTeams = 30,
 		MaxGuilds = 10,
 	},
+	Janitor = {
+		Scan = 60
+	}
 }
 --#endregion

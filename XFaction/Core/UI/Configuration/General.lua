@@ -313,20 +313,14 @@ XF.Options = {
 							name = XF.Lib.Locale['ADDONS'],
 							guiInline = true,
 							args = {
-								ElvUI = {
-									order = 1,
-									type = 'description',
-									fontSize = 'medium',
-									name = XF.Lib.Locale['ADDON_ELVUI_DESCRIPTION']
-								},
 								RaiderIO = {
-									order = 3,
+									order = 1,
 									type = 'description',
 									fontSize = 'medium',
 									name = XF.Lib.Locale['ADDON_RAIDERIO']
 								},	
 								WIM = {
-									order = 4,
+									order = 2,
 									type = 'description',
 									fontSize = 'medium',
 									name = XF.Lib.Locale['ADDON_WIM_DESCRIPTION']

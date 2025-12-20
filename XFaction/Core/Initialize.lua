@@ -12,7 +12,6 @@ function XF:CoreInit()
 
 	-- External addon handling
 	XFO.Elephant = XFC.Elephant:new()
-	XFO.ElvUI = XFC.ElvUI:new()
 	XFO.RaiderIO = XFC.RaiderIOCollection:new()
 	XFO.WIM = XFC.WIM:new()
 	XFO.AddonEvent = XFC.AddonEvent:new(); XFO.AddonEvent:Initialize()
