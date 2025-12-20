@@ -28,22 +28,8 @@ local BCTL_VERSION = 24
 
 local _G = _G
 
-if _G.BNetChatThrottleLib then
-	if _G.BNetChatThrottleLib.version >= CTL_VERSION then
-		-- There's already a newer (or same) version loaded. Buh-bye.
-		return
-	elseif not _G.BNetChatThrottleLib.securelyHooked then
-		print("BNetChatThrottleLib: Warning: There's an ANCIENT BNetChatThrottleLib.lua (pre-wow 2.0, <v16) in an addon somewhere. Get the addon updated or copy in a newer BNetChatThrottleLib.lua (>=v16) in it!")
-		-- ATTEMPT to unhook; this'll behave badly if someone else has hooked...
-		-- ... and if someone has securehooked, they can kiss that goodbye too... >.<
-		_G.SendChatMessage = _G.BNetChatThrottleLib.ORIG_SendChatMessage
-		if _G.BNetChatThrottleLib.ORIG_SendAddonMessage then
-			_G.SendAddonMessage = _G.BNetChatThrottleLib.ORIG_SendAddonMessage
-		end
-	end
-	_G.BNetChatThrottleLib.ORIG_SendChatMessage = nil
-	_G.BNetChatThrottleLib.ORIG_SendAddonMessage = nil
-end
+local _, _, _, toc = GetBuildInfo()
+local midnight = toc >= 120000
 
 if not _G.BNetChatThrottleLib then
 	_G.BNetChatThrottleLib = {}
@@ -209,23 +195,35 @@ function BNetChatThrottleLib:Init()
 	if not self.securelyHooked then
 		-- Use secure hooks as of v16. Old regular hook support yanked out in v21.
 		self.securelyHooked = true
+
 		--SendChatMessage
-		hooksecurefunc("SendChatMessage", function(...)
+		hooksecurefunc(_G.C_ChatInfo, "SendChatMessage", function(...)
 			return BNetChatThrottleLib.Hook_SendChatMessage(...)
 		end)
 		--SendAddonMessage
-		if _G.C_ChatInfo then
-			hooksecurefunc(_G.C_ChatInfo, "SendAddonMessage", function(...)
-				return BNetChatThrottleLib.Hook_SendAddonMessage(...)
+		hooksecurefunc(_G.C_ChatInfo, "SendAddonMessage", function(...)
+			return BNetChatThrottleLib.Hook_SendAddonMessage(...)
+		end)
+
+		if (midnight == true) then			
+			--BNSendGameData
+			hooksecurefunc(_G.C_BattleNet, "SendGameData", function(...)
+				return BNetChatThrottleLib.Hook_BNSendGameData(...)
+			end)
+			--BNSendWhisper
+			hooksecurefunc(_G.C_BattleNet, "SendWhisper", function(...)
+				return BNetChatThrottleLib.Hook_BNSendWhisper(...)
 			end)
 		else
-			hooksecurefunc("SendAddonMessage", function(...)
-				return BNetChatThrottleLib.Hook_SendAddonMessage(...)
+			--BNSendGameData
+			hooksecurefunc("BNSendGameData", function(...)
+				return BNetChatThrottleLib.Hook_BNSendGameData(...)
+			end)
+			--BNSendWhisper
+			hooksecurefunc("BNSendWhisper", function(...)
+				return BNetChatThrottleLib.Hook_BNSendWhisper(...)
 			end)
 		end
-		hooksecurefunc("BNSendGameData", function(...)
-			return BNetChatThrottleLib.Hook_BNSendGameData(...)
-		end)
 	end
 	self.nBypass = 0
 end
@@ -263,6 +261,16 @@ function BNetChatThrottleLib.Hook_BNSendGameData(destination, prefix, text)
 	local self = BNetChatThrottleLib
 	local size = tostring(text or ""):len() + tostring(prefix or ""):len();
 	size = size + tostring(destination or ""):len() + self.MSG_OVERHEAD
+	self.avail = self.avail - size
+	self.nBypass = self.nBypass + size	-- just a statistic
+end
+
+function BNetChatThrottleLib.Hook_BNSendWhisper(bnetAccountID, message)
+	if bMyTraffic then
+		return
+	end
+	local self = BNetChatThrottleLib
+	local size = tostring(message or ""):len() + self.MSG_OVERHEAD
 	self.avail = self.avail - size
 	self.nBypass = self.nBypass + size	-- just a statistic
 end
