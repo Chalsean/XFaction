@@ -74,18 +74,6 @@ XF.Defaults = {
                 Professions = false,
             },
         },
-        Addons = {
-            ElvUI = {
-                Enable = true,
-                ConfederateTag = '[xf:confederate]',
-                ConfederateInitialsTag = '[xf:confederate:initials]',
-                GuildInitialsTag = '[xf:guild:initials]',
-                MainTag = '[xf:main]',
-                MainParenthesisTag = '[xf:main:parenthesis]',
-                TeamTag = '[xf:team]',
-                MemberIcon = '[xf:confederate:icon]',
-            },
-        },
         DataText = {
             Font = XF.Lib.LSM:GetDefault('font'),
             FontSize = 10,

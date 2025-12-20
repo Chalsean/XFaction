@@ -33,6 +33,12 @@ end
 --#endregion
 
 --#region Methods
+function XFC.RaiderIOCollection:Print()
+	if(XF.IsInitialized) then
+		self.parent.Print()
+	end
+end
+
 function XFC.RaiderIOCollection:Get(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     if(self:IsInitialized()) then

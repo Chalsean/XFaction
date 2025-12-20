@@ -1,6 +1,13 @@
 local XF, G = unpack(select(2, ...))
 local XFF = XF.Function
 
+-- Client
+XFF.ClientVersion = GetBuildInfo
+XFF.ClientAddonCount = C_AddOns.GetNumAddOns
+XFF.ClientAddonInfo = C_AddOns.GetAddOnInfo
+XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
+XFF.ClientAddonState = C_AddOns.GetAddOnEnableState
+
 -- Time
 XFF.TimeCurrent = GetServerTime
 XFF.TimeLocal = C_DateAndTime.GetServerTimeLocal
@@ -11,7 +18,7 @@ XFF.TimerStart = C_Timer.NewTimer
 XFF.RepeatTimerStart = C_Timer.NewTicker
 
 -- Chat / Channel
-XFF.ChatFrameFilter = ChatFrame_AddMessageEventFilter
+XFF.ChatFrameFilter = XF.Midnight and ChatFrameUtil.AddMessageEventFilter or ChatFrame_AddMessageEventFilter
 XFF.ChatChannelColor = ChangeChatColor
 XFF.ChatSwapChannels = C_ChatInfo.SwapChatChannelsByChannelIndex
 XFF.ChatChannels = GetChannelList
@@ -42,9 +49,13 @@ XFF.RealmName = GetRealmName
 -- Region
 XFF.RegionCurrent = GetCurrentRegion
 
--- Spec
-XFF.SpecGroupID = GetSpecialization
-XFF.SpecID = GetSpecializationInfo
+-- Class/Spec
+XFF.ClassInfo = C_CreatureInfo.GetClassInfo
+XFF.ClassColor = GetClassColor
+XFF.SpecCurrent = C_SpecializationInfo.GetSpecialization
+XFF.SpecClass = C_SpecializationInfo.GetClassIDFromSpecID
+XFF.SpecInfo = GetSpecializationInfoForSpecID
+XFF.SpecInfoByIndex = C_SpecializationInfo.GetSpecializationInfo
 XFF.SpecHeroID = C_ClassTalents.GetActiveHeroTalentSpec
 
 -- Player
@@ -59,10 +70,7 @@ XFF.PlayerFaction = UnitFactionGroup
 XFF.PlayerPvPRating = GetPersonalRatedInfo
 XFF.PlayerGuild = GetGuildInfo
 XFF.PlayerZone = GetZoneText
-XFF.PlayerSpellKnown = IsPlayerSpell
 XFF.PlayerLocationID = C_Map.GetBestMapForUnit
-XFF.LocationInfo = C_Map.GetMapInfo
-XFF.PlayerName = UnitName
 XFF.PlayerIsIgnored = C_FriendList.IsIgnoredByGuid
 
 -- BNet
@@ -70,13 +78,6 @@ XFF.BNetPlayerInfo = BNGetInfo
 XFF.BNetFriendCount = BNGetNumFriends
 XFF.BNetFriendInfoByID = C_BattleNet.GetFriendAccountInfo
 XFF.BNetFriendInfoByGUID = C_BattleNet.GetAccountInfoByGUID
-
--- Client
-XFF.ClientVersion = GetBuildInfo
-XFF.ClientAddonCount = C_AddOns.GetNumAddOns
-XFF.ClientAddonInfo = C_AddOns.GetAddOnInfo
-XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
-XFF.ClientAddonState = C_AddOns.GetAddOnEnableState
 
 -- UI
 XFF.UIOptionsFrame = InterfaceOptionsFrame
@@ -102,3 +103,12 @@ XFF.CraftingGetItem = C_TooltipInfo.GetRecipeResultItem
 XFF.MythicRequestMaps = C_MythicPlus.RequestMapInfo
 XFF.MythicLevel = C_MythicPlus.GetOwnedKeystoneLevel
 XFF.MythicMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID
+XFF.MythicCurrentSeasonMapIDs = C_ChallengeMode.GetMapTable
+XFF.MythicMapInfo = C_ChallengeMode.GetMapUIInfo
+
+-- Location
+XFF.LocationInfo = C_Map.GetMapInfo
+
+-- Race
+XFF.RaceInfo = C_CreatureInfo.GetRaceInfo
+XFF.RaceFaction = C_CreatureInfo.GetFactionInfo

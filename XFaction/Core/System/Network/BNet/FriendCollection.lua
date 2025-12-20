@@ -41,6 +41,12 @@ end
 --#endregion
 
 --#region Methods
+function XFC.FriendCollection:Print()
+	if(XF.IsInitialized) then
+		self.parent.Print()
+	end
+end
+
 function XFC.FriendCollection:Get(inKey)
 	assert(type(inKey) == 'number' or type(inKey) == 'string')
 	if(type(inKey) == 'string') then
@@ -122,5 +128,15 @@ function XFC.FriendCollection:ProcessMessage(inMessage)
 		XF:Debug(self:ObjectName(), 'Sending ack message to [%s]', friend:Tag())
 		XFO.Mailbox:SendAckMessage(friend)
 	end
+end
+
+function XFC.FriendCollection:GetLinkedCount()
+	local count = 0
+	for _, friend in self:Iterator() do
+		if(friend:IsLinked()) then
+			count = count + 1
+		end
+	end
+	return count
 end
 --#endregion

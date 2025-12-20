@@ -25,9 +25,6 @@ function XFC.AddonEvent:Initialize()
         })
 
         -- In case they already loaded
-        if(XFF.ClientIsAddonLoaded('ElvUI')) then
-            self:CallbackAddonLoaded('ElvUI')
-        end
         if(XFF.ClientIsAddonLoaded('WIM')) then
             self:CallbackAddonLoaded('WIM')
         end
@@ -94,10 +91,7 @@ function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
                 XF:Info(self:ObjectName(), 'Addon is loaded and enabled [%s]', inAddonName)
                 InitializeCache()
                 XF:ConfigInitialize()
-                XFO.ElvUI:Initialize()
                 self:IsLoaded(true)
-            elseif(inAddonName == 'ElvUI') then
-                XFO.ElvUI:Initialize()
             elseif(inAddonName == 'WIM') then
                 XFO.WIM:Initialize()
             elseif(inAddonName == 'RaiderIO') then

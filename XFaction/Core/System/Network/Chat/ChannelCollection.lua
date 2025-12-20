@@ -72,6 +72,12 @@ end
 --#endregion
 
 --#region Methods
+function XFC.ChannelCollection:Print()
+	if(XF.IsInitialized) then
+		self.parent.Print()
+	end
+end
+
 function XFC.ChannelCollection:Get(inID)
 	assert(type(inID) == 'number' or type(inID) == 'string')
 	if(type(inID) == 'string') then

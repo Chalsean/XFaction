@@ -33,7 +33,7 @@ function XFC.FactionCollection:Initialize()
 			faction:Language(factionData[2])
 			faction:IconID(tonumber(factionData[3]))
 			self:Add(faction)
-			XF:Info(self:ObjectName(), 'Initialized faction [%d:%s]', faction:Key(), faction:Name())
+			XF:Trace(self:ObjectName(), 'Initialized faction [%d:%s]', faction:Key(), faction:Name())
 		end		
 		self:IsInitialized(true)
 	end

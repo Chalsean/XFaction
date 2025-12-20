@@ -27,7 +27,7 @@ function XFC.ExpansionCollection:Initialize()
                 expansion:Name('Classic')
             end
             self:Add(expansion)
-            XF:Info(self:ObjectName(), 'Initialized expansion [%s:%s]', expansion:Key(), expansion:Name())
+            XF:Trace(self:ObjectName(), 'Initialized expansion [%s:%s]', expansion:Key(), expansion:Name())
 
             if(WOW_PROJECT_ID == expansionID) then
                 self:Current(expansion)

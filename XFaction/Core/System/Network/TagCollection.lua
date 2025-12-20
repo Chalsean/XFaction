@@ -51,6 +51,12 @@ end
 --#endregion
 
 --#region Methods
+function XFC.TagCollection:Print()
+	if(XF.IsInitialized) then
+		self.parent.Print()
+	end
+end
+
 function XFC.TagCollection:Contains(inKey)
 	assert(type(inKey) == 'number' or type(inKey) == 'string')
 	if(type(inKey) == 'string') then
