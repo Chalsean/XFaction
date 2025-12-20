@@ -1,5 +1,5 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 
 --#region Abbreviated Names
 -- https://wago.tools/db2/MapChallengeMode
@@ -65,14 +65,15 @@ function XFC.DungeonCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-        for id, name in pairs (NameData) do
+        for _, id in ipairs (XFF.MythicCurrentSeasonMapIDs()) do
+            local name = XFF.MythicMapInfo(id)
             local dungeon = XFC.Dungeon:new()
             dungeon:Initialize()
             dungeon:Key(id)
             dungeon:ID(id)
             dungeon:Name(name)
             self:Add(dungeon)
-            XF:Trace(self:ObjectName(), "Initialized dungeon [%d:%s]", dungeon:ID(), dungeon:Name())
+            XF:Info(self:ObjectName(), "Initialized dungeon [%d:%s]", dungeon:ID(), dungeon:Name())
         end
 
 		self:IsInitialized(true)

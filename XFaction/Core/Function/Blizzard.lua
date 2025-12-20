@@ -99,6 +99,8 @@ XFF.CraftingGetItem = C_TooltipInfo.GetRecipeResultItem
 XFF.MythicRequestMaps = C_MythicPlus.RequestMapInfo
 XFF.MythicLevel = C_MythicPlus.GetOwnedKeystoneLevel
 XFF.MythicMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID
+XFF.MythicCurrentSeasonMapIDs = C_ChallengeMode.GetMapTable
+XFF.MythicMapInfo = C_ChallengeMode.GetMapUIInfo
 
 -- Location
 XFF.LocationInfo = C_Map.GetMapInfo
