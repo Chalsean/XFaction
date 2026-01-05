@@ -91,7 +91,7 @@ function XFC.DTLinks:RefreshBroker()
 					guild = guild + 1
 				elseif(unit:IsSameRealm() and unit:IsSameFaction()) then
 					chat = chat + 1
-				elseif(unit:IsFriend() and unit:Friend():IsLinked()) then
+				elseif(unit:IsFriend()) then
 					bnet = bnet + 1
 				end
 			end
@@ -184,7 +184,7 @@ function XFC.DTLinks:CallbackOnEnter(this)
 							self:Tooltip():SetCell(line, 1, unit:Name(), self:RegularFont())
 							self:Tooltip():SetCell(line, 2, unit:Realm():Name(), self:RegularFont())
 							self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%sC|r', unit:Faction():GetHex()), self:RegularFont(), 'CENTER')
-						elseif(unit:IsFriend() and unit:Friend():IsLinked()) then
+						elseif(unit:IsFriend()) then
 							line = self:Tooltip():AddLine()
 							self:Tooltip():SetCell(line, 1, unit:Name(), self:RegularFont())
 							self:Tooltip():SetCell(line, 2, unit:Realm():Name(), self:RegularFont())

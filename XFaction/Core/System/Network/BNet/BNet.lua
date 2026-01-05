@@ -19,7 +19,8 @@ function XFC.BNet:Initialize()
             name = 'BNetMessage', 
             event = 'BN_CHAT_MSG_ADDON', 
             callback = XFO.BNet.CallbackReceive, 
-            instance = true
+            instance = true,
+            start = true
         })
 
         self:IsInitialized(true)

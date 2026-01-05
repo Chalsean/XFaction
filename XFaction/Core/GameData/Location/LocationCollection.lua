@@ -30,7 +30,7 @@ function XFC.LocationCollection:Add(inLocation)
 			location:Key(inLocation)
 			location:Name(inLocation)
 			self.parent.Add(self, location)
-			XF:Debug(self:ObjectName(), 'Initialized location [%s]', location:Name())
+			XF:Info(self:ObjectName(), 'Initialized location [%s]', location:Name())
 		end
 	elseif(type(inLocation) == 'number') then
 		local info = XFF.LocationInfo(inLocation)
@@ -41,7 +41,7 @@ function XFC.LocationCollection:Add(inLocation)
 			location:ID(info.mapID)
 			location:Name(info.name)
 			self.parent.Add(self, location)
-			XF:Debug(self:ObjectName(), 'Initialized location [%s]', location:Name())
+			XF:Info(self:ObjectName(), 'Initialized location [%d:%s]', location:ID(), location:Name())
 		end
 	else
 		self.parent.Add(self, inLocation)

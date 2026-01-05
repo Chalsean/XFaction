@@ -18,9 +18,10 @@ function XFC.FriendCollection:Initialize()
 		for i = 1, XFF.BNetFriendCount() do
 			try(function()
 				local friend = XFC.Friend:new()
-				friend:Initialize(i)
-				if(friend:CanLink()) then
+				friend:Initialize(i)				
+				if (friend:CanCommunicate()) then
 					self:Add(friend)
+					XFO.Mailbox:SendPingMessage(friend)
 				end
 			end).
 			catch(function(err)
@@ -33,6 +34,7 @@ function XFC.FriendCollection:Initialize()
             event = 'BN_FRIEND_INFO_CHANGED', 
             callback = XFO.Friends.CallbackFriendChanged, 
             instance = true,
+			start = true
         })
 
 		self:IsInitialized(true)
@@ -42,9 +44,21 @@ end
 
 --#region Methods
 function XFC.FriendCollection:Print()
-	if(XF.IsInitialized) then
+	if(XF.Initialized) then
 		self.parent.Print()
 	end
+end
+
+function XFC.FriendCollection:Contains(inKey)
+	assert(type(inKey) == 'number' or type(inKey) == 'string')
+	if(type(inKey) == 'string') then
+		for _, friend in self:Iterator() do
+			if(friend:GUID() == inKey) then
+				return true
+			end
+		end
+	end
+	return self.parent.Contains(self, inKey)
 end
 
 function XFC.FriendCollection:Get(inKey)
@@ -63,17 +77,6 @@ function XFC.FriendCollection:HasFriends()
     return self:Count() > 0
 end
 
-function XFC.FriendCollection:Remove(inKey)
-	assert(type(inKey) == 'number')
-	if(self:Contains(inKey)) then
-		local friend = self:Get(inKey)
-		if(XFO.Confederate:Contains(friend:GUID())) then
-			XFO.Confederate:Get(friend:GUID()):UnlinkFriend()
-		end
-		self.parent.Remove(self, inKey)
-	end
-end
-
 function XFC.FriendCollection:CallbackFriendChanged(inID)
 	local self = XFO.Friends
 	if(inID == nil or inID == 0) then return end
@@ -83,21 +86,11 @@ function XFC.FriendCollection:CallbackFriendChanged(inID)
 	try(function()
 		local friend = XFC.Friend:new()
 		friend:Initialize(inID)
-		if(self:Contains(friend:Key())) then
+		if (not friend:CanCommunicate() and self:Contains(friend:Key())) then
 			local oldFriend = self:Get(friend:Key())
-			if(oldFriend:IsOnline() and not friend:IsOnline()) then
-				XF:Debug(self:ObjectName(), 'Detected BNet logout: %s', oldFriend:Name())
-				XFO.Confederate:ProcessLogout(oldFriend:GUID())
-			end
-
-			if(friend:CanLink()) then
-				friend:IsLinked(oldFriend:IsLinked())
-				self:Add(friend)
-			else
-				self:Remove(friend:Key())
-			end
-		elseif(friend:CanLink()) then
-			self:Add(friend)
+			XF:Debug(self:ObjectName(), 'Detected BNet logout: %s', oldFriend:Name())
+			XFO.Confederate:ProcessLogout(oldFriend:GUID())
+			self:Remove(friend:Key())
 		end
 	end).
 	catch(function(err)
@@ -112,14 +105,7 @@ function XFC.FriendCollection:ProcessMessage(inMessage)
 	if(friend == nil) then
 		friend = XFC.Friend:new()
 		friend:Initialize(inMessage:From())
-		friend:IsLinked(true)
 		self:Add(friend)
-	elseif(not friend:IsLinked()) then
-		friend:IsLinked(true)
-	end
-
-	if(XFO.Confederate:Contains(friend:GUID())) then
-		XFO.Confederate:Get(friend:GUID()):Friend(friend)
 	end
 
 	if(inMessage:IsAckMessage()) then
@@ -128,15 +114,5 @@ function XFC.FriendCollection:ProcessMessage(inMessage)
 		XF:Debug(self:ObjectName(), 'Sending ack message to [%s]', friend:Tag())
 		XFO.Mailbox:SendAckMessage(friend)
 	end
-end
-
-function XFC.FriendCollection:GetLinkedCount()
-	local count = 0
-	for _, friend in self:Iterator() do
-		if(friend:IsLinked()) then
-			count = count + 1
-		end
-	end
-	return count
 end
 --#endregion

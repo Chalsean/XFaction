@@ -259,6 +259,10 @@ function XFC.Message:IsAckMessage()
     return self:Subject() == XF.Enum.Message.ACK
 end
 
+function XFC.Message:IsPingMessage()
+    return self:Subject() == XF.Enum.Message.PING
+end
+
 function XFC.Message:IsLoginMessage()
     return self:Subject() == XF.Enum.Message.LOGIN
 end

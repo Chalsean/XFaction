@@ -36,14 +36,4 @@ end
 function XFC.Target:IsMyTarget()
     return XF.Player.Target:Equals(self)
 end
-
-function XFC.Target:LinkCount()
-    local count = 0
-    for _, friend in XFO.Friends:Iterator() do
-        if(friend:IsLinked() and friend:HasUnit() and self:Equals(friend:Unit():Target())) then
-            count = count + 1
-        end
-    end
-    return count
-end
 --#endregion

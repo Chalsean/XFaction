@@ -77,7 +77,8 @@ XF.Enum = {
 		LOGIN = '4',
 		ACHIEVEMENT = '5',
 		ORDER = '6',
-		ACK = '7'
+		ACK = '7',
+		PING = '8'
 	},
 	Metric = {
 		BNetSend = XF.Lib.Locale['DTMETRICS_BNET_SEND'],

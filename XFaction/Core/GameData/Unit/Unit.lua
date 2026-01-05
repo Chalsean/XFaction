@@ -39,7 +39,6 @@ function XFC.Unit:new()
     object.mythicKey = nil
     object.realm = nil
     object.target = nil
-    object.friend = nil
     object.loginEpoch = nil
 
     return object
@@ -383,14 +382,6 @@ function XFC.Unit:Target(inTarget)
     return self.target
 end
 
-function XFC.Unit:Friend(inFriend)
-    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend' or inFriend == nil)
-    if(inFriend ~= nil) then
-        self.friend = inFriend
-    end
-    return self.friend
-end
-
 function XFC.Unit:Note(inNote)
     assert(type(inNote) == 'string' or inNote == nil)
     if(inNote ~= nil) then
@@ -516,7 +507,6 @@ function XFC.Unit:Print()
     -- if(self:HasProfession2()) then self:Profession2():Print() end  
     -- if(self:HasRaiderIO()) then self:RaiderIO():Print() end
     if(self:HasMythicKey()) then self:MythicKey():Print() end
-    -- if(self:IsFriend()) then self:Friend():Print() end
 end
 
 function XFC.Unit:IsPlayer()
@@ -598,7 +588,11 @@ function XFC.Unit:HasTarget()
 end
 
 function XFC.Unit:IsFriend()
-    return self:Friend() ~= nil
+    return XFO.Friends:Contains(self:GUID())
+end
+
+function XFC.Unit:Friend()
+    return XFO.Friends:Get(self:GUID())
 end
 
 function XFC.Unit:IsSameRealm()
@@ -627,11 +621,6 @@ function XFC.Unit:GetLink()
     end
 
     return format('|Hplayer:%s|h[%s]|h', self:UnitName(), self:Name())
-end
-
-function XFC.Unit:UnlinkFriend()
-    self.friend = nil
-    return not self:IsFriend()
 end
 
 function XFC.Unit:GetColoredName()

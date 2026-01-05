@@ -182,6 +182,10 @@ function XF:CallbackLoginPlayer()
 			XFO.Events:Start()				
 			XF.Initialized = true
 
+			for _, friend in XFO.Friends:Iterator() do
+				XFO.Mailbox:SendPingMessage(friend)
+			end
+
 			-- Finish DT init
 			XFO.DTGuild:PostInitialize()
 			XFO.DTLinks:PostInitialize()
