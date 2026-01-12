@@ -1,46 +1,8 @@
 local XF, G = unpack(select(2, ...))
-local XFC, XFO = XF.Class, XF.Object
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'RaceCollection'
 
 XFC.RaceCollection = XFC.ObjectCollection:newChildConstructor()
-
---#region Race List
--- https://wago.tools/db2/ChrRaces
-local RaceData =
-{
-	[1] = "Human,Alliance",
-	[2] = "Orc,Horde",
-	[3] = "Dwarf,Alliance",
-	[4] = "Night Elf,Alliance",
-	[5] = "Undead,Horde",
-	[6] = "Tauren,Horde",
-	[7] = "Gnome,Alliance",
-	[8] = "Troll,Horde",
-	[9] = "Goblin,Horde",
-	[10] = "Blood Elf,Horde",
-	[11] = "Draenei,Alliance",
-	[22] = "Worgen,Alliance",
-	[24] = "Panderan,Neutral",
-	[25] = "Panderan,Alliance",
-	[26] = "Panderan,Horde",
-	[27] = "Nightborne,Horde",
-	[28] = "Highmountain Tauren,Horde",
-	[29] = "Void Elf,Alliance",
-	[30] = "Lightforged Draenei,Alliance",
-	[31] = "Zandalari Troll,Horde",
-	[32] = "Kul Tiran,Alliance",
-	[34] = "Dark Iron Dwarf,Alliance",
-	[35] = "Vulpera,Horde",
-	[36] = "Mag'har Orc,Horde",
-	[37] = "Mechagnome,Alliance",
-	[52] = "Dracthyr,Alliance",
-	[70] = "Dracthyr,Horde",
-    [84] = "Earthen,Horde",
-    [85] = "Earthen,Alliance",
-	[86] = "Haranir,Alliance",
-	[91] = "Haranir,Horde"
-}
---#endregion
 
 --#region Constructors
 function XFC.RaceCollection:new()
@@ -48,22 +10,32 @@ function XFC.RaceCollection:new()
 	object.__name = ObjectName
     return object
 end
+--#endregion
 
-function XFC.RaceCollection:Initialize()
-	if(not self:IsInitialized()) then
-		self:ParentInitialize()
-		for id, data in pairs (RaceData) do
-			local raceData = string.Split(data, ',')
-			local race = XFC.Race:new()
-			race:Initialize()
-			race:Key(tonumber(id))
-			race:ID(tonumber(id))
-			race:Name(raceData[1])
-			race:Faction(XFO.Factions:Get(raceData[2]))
-			self:Add(race)
-			XF:Info(self:ObjectName(), 'Initialized race [%d:%s:%s]', race:ID(), race:Name(), race:Faction():Name())
-		end
-		self:IsInitialized(true)
+--#region Methods
+function XFC.RaceCollection:Get(inID)
+	assert(type(inID) == 'number')
+	if (not self:Contains(inID)) then
+		self:Add(inID)
+	end
+	return self.parent.Get(self, inID)
+end
+
+function XFC.RaceCollection:Add(inRace)
+	assert(type(inRace) == 'table' and inRace.__name == 'Race' or type(inRace) == 'number')
+	if (type(inRace) == 'number') then
+		local name = XFF.RaceInfo(inRace)
+		local faction = XFF.RaceFaction(inRace)
+		local race = XFC.Race:new()
+		race:Initialize()
+		race:Key(inRace)
+		race:ID(inRace)
+		race:Name(name.raceName)		
+		race:Faction(XFO.Factions:Get(faction.name))
+		self.parent.Add(self, race)
+		XF:Info(self:ObjectName(), 'Initialized race [%d:%s:%s]', race:ID(), race:Name(), race:Faction():Name())
+	else
+		self.parent.Add(self, inRace)
 	end
 end
 --#endregion

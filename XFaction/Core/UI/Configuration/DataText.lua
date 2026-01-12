@@ -154,17 +154,6 @@ XF.Options.args.DataText = {
 					type = 'description',
 					name = '',
 				},
-				NonXFaction = {
-					order = 3,
-					type = 'toggle',
-					name = XF.Lib.Locale['NONXFACTION'],
-					desc = XF.Lib.Locale['DT_CONFIG_NONXFACTION_TOOLTIP'],
-					get = function(info) return XF.Config.DataText.Guild[ info[#info] ] end,
-					set = function(info, value) 
-						XF.Config.DataText.Guild[ info[#info] ] = value;
-						XFO.DTGuild:RefreshBroker()
-					end
-				},
 				Label = {
 					order = 3,
 					type = 'toggle',

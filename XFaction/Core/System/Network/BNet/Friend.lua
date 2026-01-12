@@ -13,9 +13,8 @@ function XFC.Friend:new()
     object.gameID = nil     -- This is the game ID you use to send whispers
     object.accountName = nil
     object.tag = nil
-    object.isLinked = false
     object.guid = nil
-    object.isTrueFriend = false
+    object.isTrueFriend = false -- oddly enough, ignore list is in the bnet friends list
     object.isOnline = false
     object.realm = nil
     object.faction = nil
@@ -36,15 +35,14 @@ function XFC.Friend:Initialize(inID)
             self:AccountID(accountInfo.bnetAccountID)                
             self:Tag(accountInfo.battleTag)        
             self:IsTrueFriend(accountInfo.isFriend)
+            self:IsInitialized(true)
 
             if(self:IsOnline(accountInfo.gameAccountInfo.isOnline and accountInfo.gameAccountInfo.clientProgram == 'WoW')) then
                 self:GameID(accountInfo.gameAccountInfo.gameAccountID)
                 self:GUID(accountInfo.gameAccountInfo.playerGuid)
                 self:Realm(XFO.Realms:Get(tonumber(accountInfo.gameAccountInfo.realmID)))
-                self:Faction(XFO.Factions:Get(accountInfo.gameAccountInfo.factionName))
-            end
-
-            self:IsInitialized(true)
+                self:Faction(XFO.Factions:Get(accountInfo.gameAccountInfo.factionName))                
+            end            
         end
     end
 end
@@ -81,14 +79,6 @@ function XFC.Friend:GUID(inGUID)
         self.guid = inGUID
     end
     return self.guid
-end
-
-function XFC.Friend:IsLinked(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
-    if(inBoolean ~= nil) then
-        self.isLinked = inBoolean
-    end
-    return self.isLinked
 end
 
 function XFC.Friend:IsTrueFriend(inBoolean)
@@ -131,7 +121,6 @@ function XFC.Friend:Print()
     XF:Debug(self:ObjectName(), '  gameID (' .. type(self.gameID) .. '): ' .. tostring(self.gameID))
     XF:Debug(self:ObjectName(), '  tag (' .. type(self.tag) .. '): ' .. tostring(self.tag))
     XF:Debug(self:ObjectName(), '  guid (' .. type(self.guid) .. '): ' .. tostring(self.guid))
-    XF:Debug(self:ObjectName(), '  isLinked (' .. type(self.isLinked) .. '): ' .. tostring(self.isLinked))
     XF:Debug(self:ObjectName(), '  isTrueFriend (' .. type(self.isTrueFriend) .. '): ' .. tostring(self.isTrueFriend))
     XF:Debug(self:ObjectName(), '  isOnline (' .. type(self.isOnline) .. '): ' .. tostring(self.isOnline))
     if(self:HasRealm()) then self:Realm():Print() end
@@ -162,10 +151,12 @@ function XFC.Friend:Unit()
     return XFO.Confederate:Get(self:GUID())
 end
 
-function XFC.Friend:CanLink(inBoolean)
-    if(not self:IsOnline() or not self:IsTrueFriend()) then return false end
-    if(self:IsSameRealm() and self:IsSameFaction()) then return false end -- addon channel will handle this
-    if(self:HasUnit() and self:Unit():IsSameTarget()) then return false end -- GUILD channel will handle this
+function XFC.Friend:CanCommunicate()
+    if (not self:IsInitialized()) then return false end
+    if (not self:IsOnline()) then return false end
+    if (not self:IsTrueFriend()) then return false end
+    if (self:IsSameRealm() and self:IsSameFaction()) then return false end -- addon channel will handle this
+    if (self:HasUnit() and self:Unit():IsSameTarget()) then return false end -- GUILD channel will handle this
     return true
 end
 --#endregion

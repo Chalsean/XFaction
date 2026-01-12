@@ -28,16 +28,13 @@ function XFC.Mailbox:Process(inMessage)
 
     XFO.Confederate:ProcessMessage(inMessage)
 
-    if(inMessage:IsGuildChatMessage() or inMessage:IsAchievementMessage()) then
+    if(inMessage:IsPingMessage() or inMessage:IsAckMessage()) then
+        XFO.Friends:ProcessMessage(inMessage)
+    elseif(inMessage:IsGuildChatMessage() or inMessage:IsAchievementMessage()) then
         XFO.ChatFrame:ProcessMessage(inMessage)
     elseif(inMessage:IsOrderMessage()) then
         XFO.Orders:ProcessMessage(inMessage)
     end
-    
-    if(inMessage:IsBNetProtocol()) then
-        XFO.Friends:ProcessMessage(inMessage)
-    end
-    XFO.DTLinks:RefreshBroker()
 end
 
 local function _RandomSelection(inCount)
@@ -55,20 +52,17 @@ function XFC.Mailbox:Send(inMessage)
     self:Add(inMessage:Key())
     inMessage:Print()
 
+
     local targeted = inMessage:Contains(XF.Player.Target:Key())
     inMessage:Remove(XF.Player.Target:Key())
 
     -- Own messages get shotgunned
-    if(inMessage:IsMyMessage()) then
+    if (inMessage:IsMyMessage()) then
         XF:Debug(self:ObjectName(), 'Own message, broadcasting')
-        if(XF.Player.Guild:Count() > 0) then
-            XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
-        else
-            XF:Debug(self:ObjectName(), 'No one online to broadcast to')
-        end
+        XFO.Chat:Broadcast(inMessage, XFO.Channels:GuildChannel())
         XFO.Chat:Broadcast(inMessage, XFO.Channels:LocalChannel())
         for _, friend in XFO.Friends:Iterator() do
-            if(friend:CanLink()) then
+            if(friend:CanCommunicate()) then
                 XFO.BNet:Whisper(inMessage, friend)
             end
         end
@@ -77,21 +71,19 @@ function XFC.Mailbox:Send(inMessage)
 
     -- Forwarding logic
     local guild = false
-    if(XF.Player.Guild:Count() > 0 and targeted) then
+    if(targeted) then
         -- If you receive via BNet theres little redundancy so broadcast
         if(inMessage:IsBNetProtocol()) then
             XF:Debug(self:ObjectName(), 'Received via BNet and guild is targeted')
             guild = true
         -- If you received via Channel, do random selection
         -- Remember the LocalChannel count is the intersection of local/guild count
-        elseif(_RandomSelection(XFO.Channels:LocalChannel():Count())) then
+        elseif(_RandomSelection(XFO.Confederate:GetChatCount())) then
             XF:Debug(self:ObjectName(), 'Received via channel, guild targeted and randomly selected')
             guild = true
         else
             XF:Debug(self:ObjectName(), 'Not randomly selected to forward to guild')
         end
-    elseif(XF.Player.Guild:Count() == 0) then
-        XF:Debug(self:ObjectName(), 'No one online to broadcast to')
     else
         XF:Debug(self:ObjectName(), 'Guild is no longer targeted')
     end
@@ -99,7 +91,7 @@ function XFC.Mailbox:Send(inMessage)
     -- First figure out all targets bnet will cover
     local coverage = {}
     for _, friend in XFO.Friends:RandomIterator() do
-        if(friend:IsLinked() and friend:HasUnit()) then                        
+        if (friend:HasUnit()) then                        
             local target = friend:Unit():Target()
             if(inMessage:Contains(target:Key()) and coverage[target:Key()] == nil) then
                 XF:Debug(self:ObjectName(), 'Friend [%s] selected to cover target [%s]', friend:Tag(), target:Guild():Initials())
@@ -124,7 +116,6 @@ function XFC.Mailbox:Send(inMessage)
         inMessage:Remove(target)
     end
     
-    
     if(inMessage:Count() > 0) then
         local channel = false
         -- BNet means you were selected to forward
@@ -135,7 +126,7 @@ function XFC.Mailbox:Send(inMessage)
         elseif(inMessage:IsGuildProtocol()) then
             if(inMessage:FromUnit():CanChat()) then
                 XF:Debug(self:ObjectName(), 'Sending unit is same realm/faction')
-            elseif(_RandomSelection(XFO.Channels:LocalChannel():Count())) then
+            elseif(_RandomSelection(XFO.Confederate:GetChatCount())) then
                 XF:Debug(self:ObjectName(), 'Forwarding to chat bus due receiving via guild chat, sender is not same realm/faction and randomly selected')
                 channel = true
             else
@@ -157,9 +148,7 @@ function XFC.Mailbox:SendLogoutMessage()
         XFO.Chat:SendLogoutMessage(key, XFO.Channels:GuildChannel())
         XFO.Chat:SendLogoutMessage(key, XFO.Channels:LocalChannel())
         for _, friend in XFO.Friends:Iterator() do
-            if(friend:IsLinked()) then
-                XFO.BNet:SendLogoutMessage(key, friend)
-            end
+            XFO.BNet:SendLogoutMessage(key, friend)
         end
     end).
     catch(function() end)
@@ -202,21 +191,33 @@ function XFC.Mailbox:SendOrderMessage(inData)
     SendMessage(XF.Enum.Message.ORDER, XF.Enum.Priority.Medium, inData)
 end
 
+function XFC.Mailbox:SendPingMessage(inFriend)
+    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
+    try(function ()
+        local message = XFC.Message:new()
+        message:Initialize()
+        message:RemoveAll()
+        message:Subject(XF.Enum.Message.PING)
+        message:Priority(XF.Enum.Priority.Low)
+        XFO.BNet:Whisper(message, inFriend)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
+end
+
 function XFC.Mailbox:SendAckMessage(inFriend)
     assert(type(inFriend) == 'table' and inFriend.__name == 'Friend')
-
-    if(inFriend:CanLink()) then
-        try(function ()
-            local message = XFC.Message:new()
-            message:Initialize()
-            message:RemoveAll()
-            message:Subject(XF.Enum.Message.ACK)
-            message:Priority(XF.Enum.Priority.Low)
-            XFO.BNet:Whisper(message, inFriend)
-        end).
-        catch(function(err)
-            XF:Warn(self:ObjectName(), err)
-        end)
-    end
+    try(function ()
+        local message = XFC.Message:new()
+        message:Initialize()
+        message:RemoveAll()
+        message:Subject(XF.Enum.Message.ACK)
+        message:Priority(XF.Enum.Priority.Low)
+        XFO.BNet:Whisper(message, inFriend)
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 --#endregion

@@ -39,8 +39,6 @@ function XFC.Unit:new()
     object.mythicKey = nil
     object.realm = nil
     object.target = nil
-    object.friend = nil
-    object.targetCounts = nil
     object.loginEpoch = nil
 
     return object
@@ -92,15 +90,6 @@ function XFC.Unit:Initialize(inMemberID)
     self:Note(unitData.memberNote or '?')
     self:AchievementPoints(unitData.achievementPoints or 0)
 
-    self.targetCounts = {}
-    for _, target in XFO.Targets:Iterator() do
-        self.targetCounts[target:Key()] = {
-            guild = 0,
-            channel = 0,
-            bnet = 0
-        }
-    end
-
     local lastLogin = 0
     if(unitData.lastOnlineYear ~= nil) then
         lastLogin = lastLogin + (unitData.lastOnlineYear * 365)
@@ -149,17 +138,11 @@ function XFC.Unit:Initialize(inMemberID)
             self:ItemLevel(itemLevel)
         end
 
-        -- The following call will randomly fail, retries seem to help
-        for i = 1, 10 do
-            local specGroupID = XFF.SpecGroupID()
-            if(specGroupID ~= nil) then
-    	        local specID = XFF.SpecID(specGroupID)
-                if(specID ~= nil and XFO.Specs:Contains(specID)) then
-                    self:Spec(XFO.Specs:Get(specID))
-                    break
-                end
-            end
-        end      
+        local specIndex = XFF.SpecCurrent()
+        if (specIndex ~= nil) then
+            local specId = XFF.SpecInfoByIndex(specIndex)
+            self:Spec(XFO.Specs:Get(specId))
+        end
         
         local id = XFF.SpecHeroID()
 		if(XFO.Heros:Contains(id)) then
@@ -399,14 +382,6 @@ function XFC.Unit:Target(inTarget)
     return self.target
 end
 
-function XFC.Unit:Friend(inFriend)
-    assert(type(inFriend) == 'table' and inFriend.__name == 'Friend' or inFriend == nil)
-    if(inFriend ~= nil) then
-        self.friend = inFriend
-    end
-    return self.friend
-end
-
 function XFC.Unit:Note(inNote)
     assert(type(inNote) == 'string' or inNote == nil)
     if(inNote ~= nil) then
@@ -498,33 +473,6 @@ function XFC.Unit:LoginEpoch(inEpochTime)
     end
     return self.loginEpoch
 end
-
-function XFC.Unit:TargetGuildCount(inTargetKey, inCount)
-    assert(type(inTargetKey) == 'number')
-    assert(type(inCount) == 'number' or inCount == nil)
-    if(inCount ~= nil) then
-        self.targetCounts[inTargetKey].guild = inCount
-    end
-    return self.targetCounts[inTargetKey].guild
-end
-
-function XFC.Unit:TargetChannelCount(inTargetKey, inCount)
-    assert(type(inTargetKey) == 'number')
-    assert(type(inCount) == 'number' or inCount == nil)
-    if(inCount ~= nil) then
-        self.targetCounts[inTargetKey].channel = inCount
-    end
-    return self.targetCounts[inTargetKey].channel
-end
-
-function XFC.Unit:TargetBNetCount(inTargetKey, inCount)
-    assert(type(inTargetKey) == 'number')
-    assert(type(inCount) == 'number' or inCount == nil)
-    if(inCount ~= nil) then
-        self.targetCounts[inTargetKey].bnet = inCount
-    end
-    return self.targetCounts[inTargetKey].bnet
-end
 --#endregion
 
 --#region Methods
@@ -559,7 +507,6 @@ function XFC.Unit:Print()
     -- if(self:HasProfession2()) then self:Profession2():Print() end  
     -- if(self:HasRaiderIO()) then self:RaiderIO():Print() end
     if(self:HasMythicKey()) then self:MythicKey():Print() end
-    -- if(self:IsFriend()) then self:Friend():Print() end
 end
 
 function XFC.Unit:IsPlayer()
@@ -641,23 +588,27 @@ function XFC.Unit:HasTarget()
 end
 
 function XFC.Unit:IsFriend()
-    return self:Friend() ~= nil
+    return XFO.Friends:Contains(self:GUID())
+end
+
+function XFC.Unit:Friend()
+    return XFO.Friends:Get(self:GUID())
 end
 
 function XFC.Unit:IsSameRealm()
-    return XF.Player.Realm:Equals(self:Realm())
+    return self:HasRealm() and XF.Player.Realm:Equals(self:Realm())
 end
 
 function XFC.Unit:IsSameFaction()
-    return XF.Player.Faction:Equals(self:Faction())
+    return self:HasFaction() and XF.Player.Faction:Equals(self:Faction())
 end
 
 function XFC.Unit:IsSameGuild()
-    return XF.Player.Guild:Equals(self:Guild())
+    return self:HasGuild() and XF.Player.Guild:Equals(self:Guild())
 end
 
 function XFC.Unit:IsSameTarget()
-    return XF.Player.Target:Equals(self:Target())
+    return self:HasTarget() and XF.Player.Target:Equals(self:Target())
 end
 
 function XFC.Unit:CanChat()
@@ -672,18 +623,12 @@ function XFC.Unit:GetLink()
     return format('|Hplayer:%s|h[%s]|h', self:UnitName(), self:Name())
 end
 
-function XFC.Unit:UnlinkFriend()
-    self.friend = nil
-    return not self:IsFriend()
-end
-
 function XFC.Unit:GetColoredName()
     return format('|cff%s%s|r', self:Class():Hex(), self:Name())
 end
 
 function XFC.Unit:Serialize()
     local data = {}
-
 	data.A = self:AchievementPoints()    
 	data.C = self:Class():Serialize()
     data.F = self:Race():Serialize()
@@ -705,39 +650,12 @@ function XFC.Unit:Serialize()
 	data.X = self:HasProfession1() and self:Profession1():Serialize() or nil
 	data.Y = self:HasProfession2() and self:Profession2():Serialize() or nil
     data.Z = self:Location():Serialize()
-
-    local counts = ''
-    if(self:IsPlayer()) then
-        for _, target in XFO.Targets:Iterator() do
-            local guild = target:IsMyTarget() and XFO.Channels:GuildChannel():Count() or 0
-            local channel = not target:IsMyTarget() and target:Count() or 0
-            counts = counts .. target:Key() .. ':' .. guild .. ':' .. channel .. ':' .. target:LinkCount() .. ';'
-        end
-    else        
-        for key, data in pairs(self.targetCounts) do
-            counts = counts .. key .. ':' .. data.guild .. ':' .. data.channel .. ':' .. data.bnet .. ';'
-        end        
-    end
-    if(string.len(counts) > 0) then
-        data.W = counts
-    end
-
 	return pickle(data)
 end
 
 function XFC.Unit:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
-
-    self.targetCounts = {}
-    for _, target in XFO.Targets:Iterator() do
-        self.targetCounts[target:Key()] = {
-            guild = 0,
-            channel = 0,
-            bnet = 0
-        }
-    end
-
     self:IsRunningAddon(true)
 	self:AchievementPoints(data.A)    
     self:Class(XFO.Classes:Get(tonumber(data.C)))
@@ -773,18 +691,6 @@ function XFC.Unit:Deserialize(inSerial)
             XFO.Locations:Add(data.Z)
         end
         self:Location(XFO.Locations:Get(data.Z))
-    end
-
-    if(data.W ~= nil) then
-        local targets = string.Split(data.W, ';')
-        for _, target in ipairs(targets) do
-            if(target ~= nil and string.len(target) > 0) then
-                local counts = string.Split(target, ':')
-                self:TargetGuildCount(tonumber(counts[1]), tonumber(counts[2]))
-                self:TargetChannelCount(tonumber(counts[1]), tonumber(counts[3]))
-                self:TargetBNetCount(tonumber(counts[1]), tonumber(counts[4]))
-            end
-        end
     end
 
     self:TimeStamp(XFF.TimeCurrent())

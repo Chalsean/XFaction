@@ -74,23 +74,30 @@ end
 --#region Methods
 function XFC.DTLinks:RefreshBroker()
 	local self = XFO.DTLinks
+	if(not XF.Initialized) then return end
 	try(function()
 		local text = ''
 		if(XF.Config.DataText.Link.Label) then
 			text = XF.Lib.Locale['LINKS'] .. ': '
 		end
 
+		local guild = 0
 		local chat = 0
 		local bnet = 0
 
-		for _, target in XFO.Targets:Iterator() do
-			if(not target:IsMyTarget()) then
-				chat = chat + target:Count()
+		for _, unit in XFO.Confederate:Iterator() do
+			if(unit:IsOnline() and unit:IsRunningAddon() and not unit:IsPlayer()) then
+				if(unit:IsSameGuild()) then
+					guild = guild + 1
+				elseif(unit:IsSameRealm() and unit:IsSameFaction()) then
+					chat = chat + 1
+				elseif(unit:IsFriend()) then
+					bnet = bnet + 1
+				end
 			end
-			bnet = bnet + target:LinkCount()
 		end
 
-		text = format('|cff3CE13F%d|r|cffFFFFFF - |r|cff%s%d|r|cffFFFFFF - |r|cffFFF468%d|r', XFO.Channels:GuildChannel():Count(), XF.Player.Faction:GetHex(), chat, bnet)
+		text = format('|cff3CE13F%d|r|cffFFFFFF - |r|cff%s%d|r|cffFFFFFF - |r|cffFFF468%d|r', guild, XF.Player.Faction:GetHex(), chat, bnet)
 		self:Broker().text = text
 	end).
 	catch(function(err)
@@ -106,7 +113,7 @@ function XFC.DTLinks:CallbackOnEnter(this)
 	try(function()
 
 		--#region Configure Tooltip
-		local tarCount = XFO.Targets:Count() + 1
+		local tarCount = XFO.Targets:Count() + 2
 		
 		if XF.Lib.QT:IsAcquired(ObjectName) then
 			self:Tooltip(XF.Lib.QT:Acquire(ObjectName))
@@ -138,10 +145,12 @@ function XFC.DTLinks:CallbackOnEnter(this)
 		sort(columns, function(a, b) return a < b end)
 
 		local targetColumn = {
-			Player = 1
+			Player = 1,
+			Realm = 2,
 		}
 		self:Tooltip():SetCell(line, 1, XF.Lib.Locale['PLAYER'])
-		local i = 2
+		self:Tooltip():SetCell(line, 2, XF.Lib.Locale['REALM'])
+		local i = 3
 		for _, column in ipairs(columns) do
 			self:Tooltip():SetCell(line, i, column)
 			targetColumn[column] = i
@@ -155,24 +164,6 @@ function XFC.DTLinks:CallbackOnEnter(this)
 
 		--#region Populate Table
 		if(XF.Initialized) then
-			-- Player first
-			self:Tooltip():SetCell(line, 1, XF.Player.Unit:UnitName(), self:RegularFont())
-			for _, target in XFO.Targets:Iterator() do
-				if(target:IsMyTarget()) then
-					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', XFO.Channels:GuildChannel():Count()), self:RegularFont(), 'CENTER')
-				elseif(target:LinkCount() > 0) then
-					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', target:LinkCount()), self:RegularFont(), 'CENTER')
-				elseif(target:Count() > 0) then
-					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', XF.Player.Faction:GetHex(), target:Count()), self:RegularFont(), 'CENTER')				
-				else
-					self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self:RegularFont(), 'CENTER')
-				end
-			end
-
-			line = self:Tooltip():AddLine()
-			self:Tooltip():AddSeparator()
-			line = self:Tooltip():AddLine()
-
 			local units = {}
 			for _, unit in XFO.Confederate:Iterator() do
 				if(not unit:IsPlayer() and unit:IsOnline() and unit:IsRunningAddon()) then
@@ -180,20 +171,25 @@ function XFC.DTLinks:CallbackOnEnter(this)
 				end
 			end
 
-			for unitName, unit in PairsByKeys(units) do
-				line = self:Tooltip():AddLine()
-				self:Tooltip():SetCell(line, 1, unitName, self:RegularFont())
+			for unitName, unit in PairsByKeys(units) do				
 				for _, target in XFO.Targets:Iterator() do
-					if(unit:TargetGuildCount(target:Key()) > 0) then
-						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F%s|r', unit:TargetGuildCount(target:Key())), self:RegularFont(), 'CENTER')
-					elseif(unit:TargetBNetCount(target:Key()) > 0) then
-						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468%s|r', unit:TargetBNetCount(target:Key())), self:RegularFont(), 'CENTER')
-					elseif(unit:TargetChannelCount(target:Key()) > 0) then
-						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%s%s|r', unit:Faction():GetHex(), unit:TargetChannelCount(target:Key())), self:RegularFont(), 'CENTER')					
-					elseif(unit:Target():Equals(target)) then
-						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13F0|r'), self:RegularFont(), 'CENTER')
-					else
-						self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFFFFF0|r'), self:RegularFont(), 'CENTER')
+					if(unit:Target():Equals(target)) then						
+						if(unit:IsSameGuild()) then
+							line = self:Tooltip():AddLine()
+							self:Tooltip():SetCell(line, 1, unit:Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, 2, unit:Realm():Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13FG|r'), self:RegularFont(), 'CENTER')
+						elseif(unit:IsSameRealm() and unit:IsSameFaction()) then
+							line = self:Tooltip():AddLine()
+							self:Tooltip():SetCell(line, 1, unit:Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, 2, unit:Realm():Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%sC|r', unit:Faction():GetHex()), self:RegularFont(), 'CENTER')
+						elseif(unit:IsFriend()) then
+							line = self:Tooltip():AddLine()
+							self:Tooltip():SetCell(line, 1, unit:Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, 2, unit:Realm():Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468B|r'), self:RegularFont(), 'CENTER')
+						end
 					end
 				end
 			end

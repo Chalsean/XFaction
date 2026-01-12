@@ -3,46 +3,6 @@ local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Config.General'
 local Initialized = false
 
---#region Popup Window
-StaticPopupDialogs["LINKS"] = {
-	text = XF.Title,
-	button1 = OKAY,
-	hasEditBox = 1,
-	OnShow = function(self, data)
-		self.editBox:SetAutoFocus(false)
-		self.editBox.width = self.editBox:GetWidth()
-		self.editBox:Width(280)
-		self.editBox:AddHistoryLine("text")
-		self.editBox.temptxt = data
-		self.editBox:SetText(data)
-		self.editBox:HighlightText()
-		self.editBox:SetJustifyH("CENTER")
-	end,
-	OnHide = function(self)
-		self.editBox:Width(self.editBox.width or 50)
-		self.editBox.width = nil
-		self.temptxt = nil
-	end,
-	EditBoxOnEnterPressed = function(self)
-		self:GetParent():Hide();
-	end,
-	EditBoxOnEscapePressed = function(self)
-		self:GetParent():Hide();
-	end,
-	EditBoxOnTextChanged = function(self)
-		if(self:GetText() ~= self.temptxt) then
-			self:SetText(self.temptxt)
-		end
-		self:HighlightText()
-		self:ClearFocus()
-	end,
-	timeout = 0,
-	whileDead = 1,
-	preferredIndex = 3,
-	hideOnEscape = 1,
-}
---#endregion
-
 function XF:SetupMenus()
 	
 	if(not Initialized) then
@@ -313,20 +273,14 @@ XF.Options = {
 							name = XF.Lib.Locale['ADDONS'],
 							guiInline = true,
 							args = {
-								ElvUI = {
-									order = 1,
-									type = 'description',
-									fontSize = 'medium',
-									name = XF.Lib.Locale['ADDON_ELVUI_DESCRIPTION']
-								},
 								RaiderIO = {
-									order = 3,
+									order = 1,
 									type = 'description',
 									fontSize = 'medium',
 									name = XF.Lib.Locale['ADDON_RAIDERIO']
 								},	
 								WIM = {
-									order = 4,
+									order = 2,
 									type = 'description',
 									fontSize = 'medium',
 									name = XF.Lib.Locale['ADDON_WIM_DESCRIPTION']
@@ -542,21 +496,21 @@ XF.Options = {
 							args = {
 								FAQ = {
 									order = 1,
-									type = 'execute',
-									name = XF.Lib.Locale['FAQ'],
-									func = function() StaticPopup_Show("LINKS", nil, nil, 'https://github.com/Chalsean/XFaction/wiki/FAQ') end,
+									type = 'description',
+									fontSize = 'medium',
+									name = XF.Lib.Locale['FAQ'] .. ': https://github.com/Chalsean/XFaction/wiki/FAQ'
 								},
 								Discord = {
 									order = 2,
-									type = 'execute',
-									name = XF.Lib.Locale['DISCORD'],
-									func = function() StaticPopup_Show("LINKS", nil, nil, 'https://discord.gg/PaNZ8TmM3Z') end,
+									type = 'description',
+									fontSize = 'medium',
+									name = XF.Lib.Locale['DISCORD'] .. ': https://discord.gg/PaNZ8TmM3Z',
 								},
 								Git = {
 									order = 3,
-									type = 'execute',
-									name = XF.Lib.Locale['GITHUB'],
-									func = function() StaticPopup_Show("LINKS", nil, nil, 'https://github.com/Chalsean/XFaction') end,
+									type = 'description',
+									fontSize = 'medium',
+									name = XF.Lib.Locale['GITHUB'] .. ': https://github.com/Chalsean/XFaction'
 								},					
 							}
 						},
@@ -570,7 +524,7 @@ XF.Options = {
 									order = 1,
 									type = 'description',
 									fontSize = 'medium',
-									name = 'Chals (US-Stormrage)',
+									name = 'Chals (US-Blackrock)',
 								},
 							}
 						},		
@@ -663,13 +617,6 @@ XF.Options = {
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
 									func = function(info) XFO.Confederate:Print() end,
 								},
-								Continent = {
-									order = 5,
-									type = 'execute',
-									name = XF.Lib.Locale['CONTINENT'],
-									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XFO.Continents:Print() end,
-								},
 								Dungeon = {
 									order = 6,
 									type = 'execute',
@@ -731,7 +678,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['PLAYER'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XF.Player.Unit:Print() end,
+									func = function(info) if(XF.IsInitialized) then XF.Player.Unit:Print() end end,
 								},
 								Profession = {
 									order = 15,
@@ -752,7 +699,7 @@ XF.Options = {
 									type = 'execute',
 									name = XF.Lib.Locale['RAIDERIO'],
 									disabled = function () return XF.Config.Debug.Verbosity == 0 end,
-									func = function(info) XFO.RaiderIO:Print() end,					
+									func = function(info) if(XFO.RaiderIO) then XFO.RaiderIO:Print() end end,
 								},
 								Realm = {
 									order = 18,
