@@ -1,7 +1,7 @@
 local XF, G = unpack(select(2, ...))
 local ObjectName = 'Config.ChangeLog'
 
-XF.ChangeLog['6.0.0'] = {
+XF.ChangeLog['6.0.2'] = {
     Improvements = {
         order = 2,
         type = 'group',

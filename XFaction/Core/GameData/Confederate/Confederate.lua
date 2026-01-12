@@ -18,14 +18,6 @@ function XFC.Confederate:Initialize()
         self:Key(XF.Cache.Confederate.Key)
 
         XFO.Events:Add({
-            name = 'Roster', 
-            event = 'GUILD_ROSTER_UPDATE', 
-            callback = XFO.Confederate.CallbackLocalGuild, 
-            instance = false,
-            groupDelta = XF.Settings.LocalGuild.ScanTimer
-        })
-        
-        XFO.Events:Add({
             name = 'Guild',
             event = 'PLAYER_GUILD_UPDATE',
             callback = XFO.Confederate.CallbackGuildChanged
@@ -139,42 +131,6 @@ function XFC.Confederate:OfflineUnit(inUnit)
 
     XFO.DTLinks:RefreshBroker()
     XFO.DTGuild:RefreshBroker()
-end
-
--- The event doesn't tell you what has changed, only that something has changed. So you have to scan the whole roster
-function XFC.Confederate:CallbackLocalGuild()
-    local self = XFO.Confederate
-    if(not XF.Config.DataText.Guild.NonXFaction) then return end
-    if(XFF.PlayerIsInCombat()) then return end
-
-    XF:Trace(self:ObjectName(), 'Scanning local guild roster')
-    for _, memberID in pairs (XFF.GuildMembers(XF.Player.Guild:ID())) do        
-        try(function ()
-            local unit = XFC.Unit:new()
-            unit:Initialize(memberID)
-            if(unit:IsInitialized()) then
-                if(self:Contains(unit:Key())) then
-                    local oldData = self:Get(unit:Key())
-                    if(oldData:IsOnline() and unit:IsOffline()) then
-                        XF:Debug(self:ObjectName(), 'Detected guild logout: %s', oldData:UnitName())
-                        self:Logout(unit)
-                    elseif(unit:IsOnline()) then
-                        if(oldData:IsOffline()) then
-                            self:Login(unit)
-                        elseif(not oldData:IsRunningAddon()) then
-                            self:OnlineUnit(unit)
-                        end
-                    end
-                -- First time scan (i.e. login) do not notify
-                else
-                    self:OnlineUnit(unit)
-                end
-            end
-        end).
-        catch(function (err)
-            XF:Warn(self:ObjectName(), err)
-        end)
-    end
 end
 
 function XFC.Confederate:ProcessMessage(inMessage)
