@@ -294,7 +294,7 @@ function XFC.DTGuild:CallbackOnEnter(this)
 					else
 						self:Tooltip():SetCell(line, 1, format('|cffffffff%s|r', lineWords), self:RegularFont(), 'LEFT', -1)
 						line = self.Tooltip():AddLine()
-						lineWords = ''				
+						lineWords = word				
 					end
 				end
 			end
