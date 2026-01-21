@@ -9,7 +9,7 @@ XFF.ClientIsAddonLoaded = C_AddOns.IsAddOnLoaded
 XFF.ClientAddonState = C_AddOns.GetAddOnEnableState
 
 -- Time
-XFF.TimeCurrent = GetServerTime
+XFF.TimeCurrent = time
 XFF.TimeLocal = C_DateAndTime.GetServerTimeLocal
 XFF.TimeCalendar = C_DateAndTime.GetCurrentCalendarTime
 

@@ -166,6 +166,7 @@ function XF:CallbackLoginPlayer()
 			if(XF.Cache.UIReload) then
 				XF.Cache.UIReload = false
 				XFO.Confederate:Restore()
+				XFO.Mailbox:Restore()
                 XFO.Mailbox:SendDataMessage()
 			-- Otherwise send login message
 			else

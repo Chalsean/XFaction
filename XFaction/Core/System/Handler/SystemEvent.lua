@@ -67,6 +67,7 @@ function XFC.SystemEvent:CallbackReloadUI()
     local self = XFO.SystemEvent
     try(function ()
         XFO.Confederate:Backup()
+        XFO.Mailbox:Backup()
     end).
     catch(function (err)
         XF:Error(self:ObjectName(), err)

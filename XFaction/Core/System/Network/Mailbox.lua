@@ -52,7 +52,6 @@ function XFC.Mailbox:Send(inMessage)
     self:Add(inMessage:Key())
     inMessage:Print()
 
-
     local targeted = inMessage:Contains(XF.Player.Target:Key())
     inMessage:Remove(XF.Player.Target:Key())
 
@@ -219,5 +218,32 @@ function XFC.Mailbox:SendAckMessage(inFriend)
     catch(function(err)
         XF:Warn(self:ObjectName(), err)
     end)
+end
+
+function XFC.Mailbox:Backup()
+    try(function()
+        local ids = ''
+        for _, id in self:Iterator() do
+            ids = ids .. ';' .. id
+        end
+        XF.Cache.Backup.Mailbox = ids
+    end).
+    catch(function() end)
+end
+
+function XFC.Mailbox:Restore()
+    if (XF.Cache.Backup.Mailbox ~= nil) then
+        local ids = string.Split(XF.Cache.Backup.Mailbox, ';')
+        for _, id in ipairs (ids) do
+            try(function ()
+                if(id ~= nil and string.len(id) > 0) then
+                    self:Add(id)
+                end
+            end).
+            catch(function (err)
+                XF:Warn(self:ObjectName(), err)
+            end)
+        end
+    end
 end
 --#endregion
