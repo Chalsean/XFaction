@@ -146,7 +146,7 @@ function XFC.Confederate:ProcessLogout(inGUID)
     assert(type(inGUID) == 'string')
     if(self:Contains(inGUID)) then
         local unit = self:Get(inGUID)
-        if(not unit:IsSameGuild() or not XF.Config.DataText.Guild.NonXFaction) then
+        if(not unit:IsSameGuild()) then
             self:Logout(unit)
         end
     end
