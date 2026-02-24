@@ -112,10 +112,10 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
                 local message = XFC.Message:new()
                 message:Decode(encodedMessage, protocol)
 
-                -- if(not message:IsInitialized() or message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
-                --     XF:Trace(self:ObjectName(), 'Message is too old, wont process')
-                --     return
-                -- end
+                if(not message:IsInitialized() or message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
+                    XF:Trace(self:ObjectName(), 'Message is too old, wont process')
+                    return
+                end
 
                 XFO.Mailbox:Process(message)
                 XF:Debug(self:ObjectName(), 'Processed message: ' .. messageKey)            

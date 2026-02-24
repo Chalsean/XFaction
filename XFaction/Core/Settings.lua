@@ -134,6 +134,7 @@ XF.Settings = {
 		CompressionLevel = 9,
 		CompressionRetry = 5,
 		RandomSelection = 10,
+		MessageWindow = 60 * 2,
 		Channel = {
 			Total = 10,
 			NoticeTimer = 2,
