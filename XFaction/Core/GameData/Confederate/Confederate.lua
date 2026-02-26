@@ -199,8 +199,9 @@ function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID)
             end
         -- Player just left a guild
         elseif(not XFF.PlayerIsInGuild()) then
-            XF:Warn(self:ObjectName(), 'Player is not in a guild')
+            XF:Warn(self:ObjectName(), 'Player is not in a guild')            
             XF:Stop()
+            XFF.ChatLeaveChannel(XF.Cache.Channel.Name)
             self:RemoveAll()
 
             for _, guild in XFO.Guilds:Iterator() do
