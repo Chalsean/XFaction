@@ -3,7 +3,7 @@
 Enabling roster visibility and communication between guilds of a confederation, including guilds on other realms.
 
 ## Notable Updates for The War Within
-- XFaction has a [new support server](https://discord.gg/PaNZ8TmM3Z) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
+- XFaction has a [new support server](https://discord.gg/uUXntUSjVt) for timely support and more up-to-date documentation to reflect the TWW overhaul of XFaction.
 - Addon version number lookup in Guild(X) datatext: Addon admins can check the player's addon version during troubleshooting if the option is enabled in Guild(X).
 - Guild crafting order notifications: XFaction will provide visual notification in the gchat when guild crafting orders are placed by any player in the confederate. The notification will specify which guild the crafting order was placed for.
 
@@ -107,7 +107,7 @@ This dependency on BNet means users will need BNet friends online and logged int
 
 For more information, please reference the [wiki](https://github.com/Chalsean/XFaction/wiki/Operator-Manual#how-does-it-work) or [faq](https://github.com/Chalsean/XFaction/wiki/FAQ).
 
-For TWW impacts on the addon logic, please visit the [new support server](https://discord.gg/PaNZ8TmM3Z) and check out the [XFaction Coding Logic](<https://discord.com/channels/1270065431956295740/1270077121884192859/1272385857793560659>).
+For TWW impacts on the addon logic, please visit the [new support server](https://discord.gg/uUXntUSjVt) and check out the [XFaction Coding Logic](<https://discord.com/channels/1270065431956295740/1270077121884192859/1272385857793560659>).
 
 ### Logo
 
