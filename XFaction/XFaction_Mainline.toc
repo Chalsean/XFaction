@@ -1,6 +1,6 @@
 ## Interface: 110207,120000,120001
 ## Author: Chals (US-Blackrock)
-## Version: 6.0.8
+## Version: 6.0.9
 ## Title: |cffFF4700X|r|cff33ccffFaction|r
 ## Notes: Cross realm/faction guild communication
 ## DefaultState: Enabled
@@ -10,5 +10,4 @@
 ## AddonCompartmentFunc: XF_ToggleOptions
 ## IconTexture: Interface\Addons\XFaction\Media\Icon\xfaction.png
 
-Core\Load.xml
-Mainline\Load.xml
+Load.xml
