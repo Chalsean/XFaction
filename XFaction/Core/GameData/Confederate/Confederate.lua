@@ -153,7 +153,6 @@ function XFC.Confederate:ProcessLogout(inGUID)
 end
 
 function XFC.Confederate:CallbackHeartbeat() 
-    if (XFF.IsChatRestricted()) then return end
     local self = XFO.Confederate
 
     try(function ()

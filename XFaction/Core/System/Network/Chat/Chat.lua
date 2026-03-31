@@ -78,7 +78,6 @@ function XFC.Chat:CallbackReceive(inMessageTag, inEncodedMessage, inDistribution
 end
 
 function XFC.Chat:CallbackGuildMessage(inText, _, _, _, _, _, _, _, _, _, _, inSenderGUID)
-    if (XFF.IsChatRestricted()) then return end
     local self = XFO.Chat
     try(function ()
         -- If you are the sender, broadcast to other realms/factions
@@ -92,7 +91,6 @@ function XFC.Chat:CallbackGuildMessage(inText, _, _, _, _, _, _, _, _, _, _, inS
 end
 
 function XFC.Chat:CallbackAchievement(inID)
-    if (XFF.IsChatRestricted()) then return end
     local self = XFO.Chat
     try(function ()
         local _, name, _, _, _, _, _, _, _, _, _, isGuild = XFF.PlayerAchievement(inID)
@@ -106,7 +104,6 @@ function XFC.Chat:CallbackAchievement(inID)
 end
 
 function XFC.Chat:SendLogoutMessage(inKey, inChannel)
-    if (XFF.IsChatRestricted()) then return end
     assert(type(inKey) == 'string')
     assert(type(inChannel) == 'table' and inChannel.__name == 'Channel')
     local tag = XFO.Tags:GetRandomTag()

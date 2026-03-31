@@ -2,15 +2,7 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MythicKeyCollection'
 
-XFC.MythicKeyCollection = XFC.ObjectCollection:newChildConstructor()
-
 --#region Constructors
-function XFC.MythicKeyCollection:new()
-    local object = XFC.MythicKeyCollection.parent.new(self)
-    object.__name = ObjectName
-    return object
-end
-
 function XFC.MythicKeyCollection:Initialize()
     if(not self:IsInitialized()) then
         self:ParentInitialize()
@@ -18,28 +10,19 @@ function XFC.MythicKeyCollection:Initialize()
         -- Far as can tell does not fire event, so call and pray it loads before we query for the data
 		XFF.MythicRequestMaps()
 
+        XFO.Events:Add({
+            name = 'Mythic', 
+            event = 'CHALLENGE_MODE_COMPLETED', 
+            callback = XFO.Keys.CallbackKeyChanged, 
+            instance = true
+        })
+        
         self:IsInitialized(true)
     end
 end
 --#endregion
 
 --#region Methods
-function XFC.MythicKeyCollection:Deserialize(inKey)
-    if(inKey == nil) then return end
-    if(not self:Contains(inKey)) then
-        try(function()
-            local mkey = XFC.MythicKey:new()
-            mkey:Initialize()
-            mkey:Deserialize(inKey)
-            self:Add(mkey)
-        end).
-        catch(function(err)
-            XF:Warn(self:ObjectName(), err)
-        end)
-    end
-    return self:Get(inKey)
-end
-
 function XFC.MythicKeyCollection:GetMyKey()
 
     local level = XFF.MythicLevel()    
@@ -59,5 +42,19 @@ function XFC.MythicKeyCollection:GetMyKey()
 
         return self:Get(key)
     end
+end
+
+function XFC.MythicKeyCollection:CallbackKeyChanged()
+    local self = XFO.Keys
+
+    try(function()
+        local mkey = self:GetMyKey()
+        if(mkey ~= nil) then
+            XF.Player.Unit:MythicKey(mkey)
+        end
+    end).
+    catch(function(err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 --#endregion

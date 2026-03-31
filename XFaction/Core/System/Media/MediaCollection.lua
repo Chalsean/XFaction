@@ -1,7 +1,7 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'MediaCollection'
-local MediaPath = 'Interface/Addons/XFaction/System/Media/'
+local MediaPath = 'Interface/Addons/XFaction/Core/System/Media/'
 
 XFC.MediaCollection = XFC.ObjectCollection:newChildConstructor()
 

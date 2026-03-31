@@ -10,4 +10,5 @@
 ## AddonCompartmentFunc: XF_ToggleOptions
 ## IconTexture: Interface\Addons\XFaction\Media\Icon\xfaction.png
 
-Load.xml
+Core\Load.xml
+Mainline\Load.xml

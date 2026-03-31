@@ -100,10 +100,6 @@ XFF.PartyRequestInvite = C_PartyInfo.RequestInviteFromUnit
 
 -- Crafting
 XFF.CraftingGetItem = C_TooltipInfo.GetRecipeResultItem
-XFF.CraftingQueryServer = C_CraftingOrders.ListMyOrders
-XFF.CraftingGetOrders = C_CraftingOrders.GetMyOrders
-XFF.CraftingGetRecipe = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility
-XFF.CraftingGetSkillProfession = C_TradeSkillUI.GetProfessionNameForSkillLineAbility
 
 -- M+
 XFF.MythicRequestMaps = C_MythicPlus.RequestMapInfo
@@ -111,8 +107,6 @@ XFF.MythicLevel = C_MythicPlus.GetOwnedKeystoneLevel
 XFF.MythicMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID
 XFF.MythicCurrentSeasonMapIDs = C_ChallengeMode.GetMapTable
 XFF.MythicMapInfo = C_ChallengeMode.GetMapUIInfo
-XFF.MythicGetKeyLevel = C_MythicPlus.GetOwnedKeystoneLevel
-XFF.MythicGetKeyMapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID
 
 -- Location
 XFF.LocationInfo = C_Map.GetMapInfo
@@ -120,6 +114,3 @@ XFF.LocationInfo = C_Map.GetMapInfo
 -- Race
 XFF.RaceInfo = C_CreatureInfo.GetRaceInfo
 XFF.RaceFaction = C_CreatureInfo.GetFactionInfo
-
--- Function
-XFF.FunctionCreateCallback = C_FunctionContainers.CreateCallback

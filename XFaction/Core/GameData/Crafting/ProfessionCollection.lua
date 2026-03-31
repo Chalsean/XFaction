@@ -46,6 +46,12 @@ function XFC.ProfessionCollection:Initialize()
 			XF:Trace(self:ObjectName(), 'Initialized profession [%d:%s]', profession:ID(), profession:Name())
 		end
 
+		XFO.Events:Add({
+			name = 'Profession', 
+			event = 'SKILL_LINES_CHANGED', 
+			callback = XFO.Professions.CallbackSkillChanged
+		})
+
 		self:IsInitialized(true)
 	end
 end
@@ -64,5 +70,14 @@ function XFC.ProfessionCollection:Get(inKey)
 	else
 		return self.parent.Get(self, inKey)
 	end
+end
+
+function XFC.ProfessionCollection:CallbackSkillChanged()
+    try(function ()
+        XF.Player.Unit:Initialize(XF.Player.Unit:ID())
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
+    end)
 end
 --#endregion

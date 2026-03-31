@@ -1,6 +1,5 @@
 local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
-local ObjectName = 'HeroCollection'
 
 --#region Hero List
 -- https://wago.tools/db2/TraitSubTree
@@ -50,15 +49,7 @@ local HeroData =
 }
 --#endregion
 
-XFC.HeroCollection = XFC.ObjectCollection:newChildConstructor()
-
 --#region Constructors
-function XFC.HeroCollection:new()
-    local object = XFC.HeroCollection.parent.new(self)
-	object.__name = ObjectName
-    return object
-end
-
 function XFC.HeroCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
@@ -74,6 +65,13 @@ function XFC.HeroCollection:Initialize()
 			self:Add(hero)
 			XF:Trace(self:ObjectName(), 'Initialized hero [%d:%s]', hero:ID(), hero:Name())
 		end
+
+		XFO.Events:Add({
+			name = 'Hero', 
+			event = 'TRAIT_SUB_TREE_CHANGED', 
+			callback = XFO.Heros.CallbackHeroChanged, 
+			instance = true
+		})
 
 		self:IsInitialized(true)
 	end

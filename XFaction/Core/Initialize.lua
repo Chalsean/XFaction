@@ -219,13 +219,3 @@ function XF:Stop()
 	if(XFO.Hooks) then XFO.Hooks:Stop() end
 	if(XFO.Timers) then XFO.Timers:Stop() end
 end
-
-do
-	try(function ()
-		XF.CoreInit()
-	end).
-	catch(function (inErrorMessage)
-		XF:Error(ObjectName, inErrorMessage)
-		XF:Stop()
-	end)
-end
