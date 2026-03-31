@@ -22,21 +22,8 @@ function XFC.EventCollection:Initialize()
             for _, event in XFO.Events:Iterator() do
                 if(event:Name() == inEvent and event:IsEnabled()) then
                     XF:Trace(ObjectName, 'Event fired: %s', event:Name())
-                    if(event:IsGroup()) then
-                        if(XFO.Timers:Contains(event:Key())) then
-                            XFO.Timers:Get(event:Key()):Start()
-                        else
-                            XFO.Timers:Add({name = event:Key(),
-                                            delta = event:GroupDelta(),
-                                            callback = event:Callback(),
-                                            repeater = false,
-                                            instance = event:IsInstance(),
-                                            start = true})
-                        end
-                    else
-                        local _Function = event:Callback()
-                        _Function(self, ...)
-                    end
+                    local _Function = event:Callback()
+                    _Function(self, ...)
                 end
             end
         end)
@@ -53,17 +40,15 @@ function XFC.EventCollection:Add(inArgs)
     assert(type(inArgs.callback) == 'function')
     assert(inArgs.instance == nil or type(inArgs.instance) == 'boolean')
     assert(inArgs.start == nil or type(inArgs.start) == 'boolean')
-    assert(inArgs.groupDelta == nil or type(inArgs.groupDelta) == 'number')
+    assert(inArgs.restricted == nil or type(inArgs.restricted) == 'boolean')
 
     local event = XFC.Event:new()
     event:Key(inArgs.name)
     event:Name(inArgs.event)
     event:Callback(inArgs.callback)
     event:IsInstance(inArgs.instance)
-    if(inArgs.groupDelta ~= nil) then
-        event:GroupDelta(inArgs.groupDelta)
-    end
-    if(inArgs.start and (event:IsInstance() or not XF.Player.InInstance)) then
+    event:IsRestricted(inArgs.restricted)
+    if(inArgs.start and (event:IsInstance() or not XF.Player.InInstance) and (not event:IsRestricted() or not XFF.IsChatRestricted())) then
         event:Start()
     end
     self.frame:RegisterEvent(event:Name())
@@ -82,6 +67,22 @@ end
 function XFC.EventCollection:LeaveInstance()
     for _, event in self:Iterator() do
         if(not event:IsEnabled()) then
+            event:Start()
+        end
+    end
+end
+
+function XFC.EventCollection:RestrictionStart()
+    for _, event in self:Iterator() do
+        if(event:IsEnabled() and event:IsRestricted()) then
+            event:Stop()
+        end
+    end
+end
+
+function XFC.EventCollection:RestrictionStop()
+    for _, event in self:Iterator() do
+        if(not event:IsEnabled() and event:IsRestricted()) then
             event:Start()
         end
     end

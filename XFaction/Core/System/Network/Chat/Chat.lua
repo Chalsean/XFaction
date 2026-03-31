@@ -27,7 +27,8 @@ function XFC.Chat:Initialize()
             name = 'GuildChat', 
             event = 'CHAT_MSG_GUILD', 
             callback = XFO.Chat.CallbackGuildMessage,
-            instance = true
+            instance = true,
+            restricted = true
         })
 
         XFO.Events:Add({

@@ -11,7 +11,7 @@ function XFC.Event:new()
     object.callback = nil
     object.isEnabled = false
     object.inInstance = false
-    object.groupDelta = 0
+    object.isRestricted = false
     return object
 end
 --#endregion
@@ -41,16 +41,12 @@ function XFC.Event:IsInstance(inBoolean)
 	return self.inInstance
 end
 
-function XFC.Event:IsGroup()
-    return self.groupDelta > 0
-end
-
-function XFC.Event:GroupDelta(inGroupDelta)
-    assert(type(inGroupDelta) == 'number' or inGroupDelta == nil)
-    if(inGroupDelta ~= nil) then
-        self.groupDelta = inGroupDelta
+function XFC.Event:IsRestricted(inBoolean)
+    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
+    if(inBoolean ~= nil) then
+        self.isRestricted = inBoolean
     end
-    return self.groupDelta
+	return self.isRestricted
 end
 --#endregion
 
@@ -60,7 +56,7 @@ function XFC.Event:Print()
     XF:Debug(self:ObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
     XF:Debug(self:ObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
     XF:Debug(self:ObjectName(), '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-    XF:Debug(self:ObjectName(), '  groupDelta (' .. type(self.groupDelta) .. '): ' .. tostring(self.groupDelta))
+    XF:Debug(self:ObjectName(), '  IsRestricted (' .. type(self.IsRestricted) .. '): ' .. tostring(self.IsRestricted))
 end
 
 function XFC.Event:Start()

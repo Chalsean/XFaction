@@ -66,13 +66,6 @@ function XFC.HeroCollection:Initialize()
 			XF:Trace(self:ObjectName(), 'Initialized hero [%d:%s]', hero:ID(), hero:Name())
 		end
 
-		XFO.Events:Add({
-			name = 'Hero', 
-			event = 'TRAIT_SUB_TREE_CHANGED', 
-			callback = XFO.Heros.CallbackHeroChanged, 
-			instance = true
-		})
-
 		self:IsInitialized(true)
 	end
 end

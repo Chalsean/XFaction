@@ -32,6 +32,12 @@ function XFC.SystemEvent:Initialize()
             callback = XFO.SystemEvent.CallbackLogout,
             instance = true
         })
+        XFO.Events:Add({
+            name = 'Restriction',
+            event = 'ADDON_RESTRICTION_STATE_CHANGED',
+            callback = XFO.SystemEvent.CallbackRestriction,
+            instance = true
+        })
 
 		self:IsInitialized(true)
         XF.Config.Logout[#XF.Config.Logout + 1] = XF.Player.Unit:UnitName()
@@ -69,6 +75,22 @@ function XFC.SystemEvent:CallbackReloadUI()
     finally(function ()
         XF.Cache.UIReload = true
         _G.XFCacheDB = XF.Cache
+    end)
+end
+
+function XFC.SystemEvent:CallbackRestriction(inType, inState)
+    local self = XFO.SystemEvent
+    try(function ()
+        if (inState == Enum.AddOnRestrictionState.Inactive) then
+            XF:Debug(self:ObjectName(), 'restriction inactive')
+            XFO.Events:RestrictionStop()
+        else
+            XF:Debug(self:ObjectName(), 'restriction active')
+            XFO.Events:RestrictionStart()
+        end
+    end).
+    catch(function (err)
+        XF:Warn(self:ObjectName(), err)
     end)
 end
 --#endregion

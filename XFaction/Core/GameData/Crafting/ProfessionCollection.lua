@@ -46,12 +46,6 @@ function XFC.ProfessionCollection:Initialize()
 			XF:Trace(self:ObjectName(), 'Initialized profession [%d:%s]', profession:ID(), profession:Name())
 		end
 
-		XFO.Events:Add({
-			name = 'Profession', 
-			event = 'SKILL_LINES_CHANGED', 
-			callback = XFO.Professions.CallbackSkillChanged
-		})
-
 		self:IsInitialized(true)
 	end
 end

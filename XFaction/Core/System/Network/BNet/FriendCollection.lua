@@ -34,7 +34,8 @@ function XFC.FriendCollection:Initialize()
             event = 'BN_FRIEND_INFO_CHANGED', 
             callback = XFO.Friends.CallbackFriendChanged, 
             instance = true,
-			start = true
+			start = true,
+			restricted = true
         })
 
 		self:IsInitialized(true)
@@ -79,7 +80,7 @@ end
 
 function XFC.FriendCollection:CallbackFriendChanged(inID)
 	local self = XFO.Friends
-	if(inID == nil or inID == 0 or XFF.IsChatRestricted()) then return end
+	if(inID == nil or inID == 0) then return end
 	XF:Debug(self:ObjectName(), 'Checking friend: %d', inID)
 
 	-- Detect friend going offline

@@ -10,6 +10,18 @@ function XFC.ChatFrame:new()
     object.__name = ObjectName
     return object
 end
+
+function XFC.ChatFrame:Initialize()
+	if(not self:IsInitialized()) then
+        self:ParentInitialize()
+        -- XFF.ChatFrameFilter('CHAT_MSG_GUILD', XFO.ChatFrame.ChatFilter)
+        -- XF:Info(self:ObjectName(), 'Created CHAT_MSG_GUILD event filter')
+        -- XFF.ChatFrameFilter('CHAT_MSG_GUILD_ACHIEVEMENT', XFO.ChatFrame.AchievementFilter)
+        -- XF:Info(self:ObjectName(), 'Created CHAT_MSG_GUILD_ACHIEVEMENT event filter')
+		self:IsInitialized(true)
+	end
+	return self:IsInitialized()
+end
 --#endregion
 
 --#region Methods
@@ -105,6 +117,35 @@ local function ModifyPlayerChat(inEvent, inText, inUnit)
     return text
 end
 
+function XFC.ChatFrame:ChatFilter(inEvent, inText, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+    if (not XFF.IsChatRestricted()) then
+        if(not XF.Config.Chat.GChat.Enable) then
+            return true
+        elseif(string.find(inText, XF.Settings.Frames.Chat.Prepend)) then
+            inText = string.gsub(inText, XF.Settings.Frames.Chat.Prepend, '')
+        -- This is an erronous error from Blizzard that has no association with xfaction, just hiding for player convenience
+        elseif(string.find(inText, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
+            return true
+        elseif(XFO.Confederate:Contains(inGUID)) then
+            inText = ModifyFilterMessage(inEvent, inText, XFO.Confederate:Get(inGUID))
+        end
+    end
+    return false, inText, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
+end
+
+function XFC.ChatFrame:AchievementFilter(inEvent, inText, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...)
+    if (not XFF.IsChatRestricted()) then
+        if(not XF.Config.Chat.Achievement.Enable) then
+            return true
+        elseif(string.find(inText, XF.Settings.Frames.Chat.Prepend)) then
+            inText = string.gsub(inText, XF.Settings.Frames.Chat.Prepend, '')
+        elseif(XFO.Confederate:Contains(inGUID)) then
+            inText = ModifyFilterMessage(inEvent, inText, XFO.Confederate:Get(inGUID))
+        end
+    end
+    return false, inText, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, inGUID, ...
+end
+
 local function DisplayGuildChat(inUnit, inText)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     assert(type(inText) == 'string')
@@ -131,6 +172,7 @@ local function DisplayGuildChat(inUnit, inText)
                     if(XFO.WIM:IsLoaded() and XFO.WIM:API().modules.GuildChat.enabled) then
                         XFO.WIM:API():CHAT_MSG_GUILD(text, inUnit:UnitName(), XF.Player.Faction():Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
                     else
+                        -- text = XF.Settings.Frames.Chat.Prepend .. text
                         XFF.ChatHandler(_G[frame], 'CHAT_MSG_GUILD', text, inUnit:UnitName(), XF.Player.Faction:Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
                     end
                 end                                   
@@ -155,7 +197,7 @@ local function DisplayAchievement(inUnit, inID)
         for _, frameName in ipairs(frameTable) do
             if frameName == 'GUILD_ACHIEVEMENT' then
                 local frame = 'ChatFrame' .. i
-                if _G[frame] and (not XFF.IsChatRestricted() or _G[frame].IsShown()) then
+                if _G[frame] and (not XFF.IsChatRestricted() or _G[frame].IsShown())then
 
                     local text = XFO.ChatFrame:GetMessagePrefix('CHAT_MSG_GUILD_ACHIEVEMENT', inUnit)
                     text = text .. XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(XFF.PlayerAchievementLink(inID), "(Player.-:.-:.-:.-:.-:)"  , inUnit:GUID() .. ':1:' .. date("%m:%d:%y:") ) .. '!'
@@ -164,6 +206,7 @@ local function DisplayAchievement(inUnit, inID)
                         text = format('|cff%s%s|r', hex, text)
                     end
                     
+                    -- text = XF.Settings.Frames.Chat.Prepend .. text
                     XFF.ChatHandler(_G[frame], 'CHAT_MSG_GUILD_ACHIEVEMENT', text, inUnit:UnitName(), XF.Player.Faction:Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
                 end                                   
                 break

@@ -10,13 +10,6 @@ function XFC.MythicKeyCollection:Initialize()
         -- Far as can tell does not fire event, so call and pray it loads before we query for the data
 		XFF.MythicRequestMaps()
 
-        XFO.Events:Add({
-            name = 'Mythic', 
-            event = 'CHALLENGE_MODE_COMPLETED', 
-            callback = XFO.Keys.CallbackKeyChanged, 
-            instance = true
-        })
-        
         self:IsInitialized(true)
     end
 end
@@ -42,19 +35,5 @@ function XFC.MythicKeyCollection:GetMyKey()
 
         return self:Get(key)
     end
-end
-
-function XFC.MythicKeyCollection:CallbackKeyChanged()
-    local self = XFO.Keys
-
-    try(function()
-        local mkey = self:GetMyKey()
-        if(mkey ~= nil) then
-            XF.Player.Unit:MythicKey(mkey)
-        end
-    end).
-    catch(function(err)
-        XF:Warn(self:ObjectName(), err)
-    end)
 end
 --#endregion

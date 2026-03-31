@@ -24,15 +24,9 @@ function XFC.ChannelCollection:Initialize()
 			name = 'ChannelLeft', 
 			event = 'CHAT_MSG_CHANNEL_LEAVE', 
 			callback = XFO.Channels.CallbackUnitLeftChannel, 
-			instance = true
+			instance = true,
+			restricted = true
 		})
-		-- XFO.Events:Add({
-		-- 	name = 'ChannelChange', 
-		-- 	event = 'CHAT_MSG_CHANNEL_NOTICE', 
-		-- 	callback = XFO.Channels.CallbackSync,
-		-- 	groupDelta = 3,
-		-- 	instance = true
-		-- })
 		XFO.Events:Add({
 			name = 'ChannelColor', 
 			event = 'UPDATE_CHAT_COLOR', 
@@ -119,7 +113,7 @@ end
 function XFC.ChannelCollection:CallbackUnitLeftChannel(_, name, _, _, _, _, _, _, channelName, _, _, guid)
 	local self = XFO.Channels
 	try(function()
-		if(not XFF.IsChatRestricted() and self:LocalChannel():Key() == channelName) then
+		if(self:LocalChannel():Key() == channelName) then
 			XF:Debug(self:ObjectName(), 'Detected channel logout: %s', name)
 			XFO.Confederate:ProcessLogout(guid)
 		end

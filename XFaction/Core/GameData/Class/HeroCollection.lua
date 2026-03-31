@@ -12,18 +12,3 @@ function XFC.HeroCollection:new()
     return object
 end
 --#endregion
-
---#region Methods
-function XFC.HeroCollection:CallbackHeroChanged()
-	local self = XFO.Heros
-	try(function ()
-		local id = XFF.SpecHeroID()
-		if(self:Contains(id)) then
-			XF.Player.Unit:Hero(self:Get(id))
-		end
-    end).
-    catch(function (err)
-        XF:Warn(self:ObjectName(), err)
-    end)
-end
---#endregion

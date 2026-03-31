@@ -10,19 +10,6 @@ function XFC.SpecCollection:new()
 	object.__name = ObjectName
     return object
 end
-
-function XFC.SpecCollection:Initialize()
-	if(not self:IsInitialized()) then
-		self:ParentInitialize()
-		XFO.Events:Add({
-			name = 'Spec', 
-			event = 'ACTIVE_TALENT_GROUP_CHANGED', 
-			callback = XFO.Specs.CallbackSpecChanged, 
-			instance = true
-		})
-		self:IsInitialized(true)
-	end
-end
 --#endregion
 
 --#region Methods
@@ -50,16 +37,5 @@ function XFC.SpecCollection:Add(inSpec)
 	else
 		self.parent.Add(self, inSpec)
 	end
-end
-
-function XFC.SpecCollection:CallbackSpecChanged()
-	local self = XFO.Specs
-	try(function ()
-        XF.Player.Unit:Initialize(XF.Player.Unit:ID())
-		XFO.Mailbox:SendDataMessage()
-    end).
-    catch(function (err)
-        XF:Warn(self:ObjectName(), err)
-    end)
 end
 --#endregion
