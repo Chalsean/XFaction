@@ -10,35 +10,9 @@ function XFC.SystemFrame:new()
     object.__name = ObjectName
     return object
 end
-
-function XFC.SystemFrame:Initialize()
-    if(not self:IsInitialized()) then
-        self:ParentInitialize()
-        XFF.ChatFrameFilter('CHAT_MSG_SYSTEM', XFO.SystemFrame.CallbackChatFilter)
-        XF:Info(self:ObjectName(), 'Created CHAT_MSG_SYSTEM event filter')
-        self:IsInitialized(true)
-    end
-end
 --#endregion
 
 --#region Methods
-function XFC.SystemFrame:CallbackChatFilter(inEvent, inMessage, ...)
-    if (not XFF.IsChatRestricted()) then
-        if(string.find(inMessage, XF.Settings.Frames.Chat.Prepend)) then
-            inMessage = string.gsub(inMessage, XF.Settings.Frames.Chat.Prepend, '')
-            return false, inMessage, ...
-        -- Hide Blizz login/logout messages, we display our own, this is a double notification
-        -- elseif(string.find(inMessage, XF.Lib.Locale['CHAT_LOGIN'])) then
-        --     return true
-        -- elseif(string.find(inMessage, XF.Lib.Locale['CHAT_LOGOUT'])) then
-        --     return true
-        elseif(string.find(inMessage, XF.Lib.Locale['CHAT_NO_PLAYER_FOUND'])) then
-            return true
-        end
-    end
-    return false, inMessage, ...
-end
-
 function XFC.SystemFrame:DisplayLogin(inUnit)
     if(not XF.Config.Chat.Login.Enable) then return end
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
