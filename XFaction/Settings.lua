@@ -1,0 +1,156 @@
+local addon, Engine = ...
+local LogCategory = 'Constants'
+
+--#region XF Instantiation
+local XF = {}
+setmetatable(XF, self)
+
+Engine[1] = XF
+Engine[2] = G
+_G[addon] = Engine
+
+XF.AddonName = addon
+XF.Name = 'XFaction'
+XF.Title = '|cffFF4700X|r|cff33ccffFaction|r'
+XF.Version = C_AddOns.GetAddOnMetadata(addon, 'Version')
+_, _, _, XF.Toc = GetBuildInfo()
+XF.Midnight = XF.Toc >= 120000
+XF.Start = GetServerTime()
+XF.Verbosity = 4
+
+XF.Class = {}
+XF.Function = {}
+XF.Object = {}
+
+XF.Addons = {}
+XF.ChangeLog = {}
+XF.Handlers = {}
+XF.Options = {}
+
+XF.Initialized = false
+XF.Lockdown = C_ChatInfo.InChatMessagingLockdown()
+
+XF.Player = {
+	LastBroadcast = 0,
+	InInstance = false
+}
+--#endregion
+
+--#region Libraries
+XF.Lib = {
+	Deflate = LibStub:GetLibrary('LibDeflate'),
+	QT = LibStub('LibQTip-1.0'),
+	Broker = LibStub('LibDataBroker-1.1'),
+	Locale = LibStub('AceLocale-3.0'):GetLocale(XF.Name, true),
+	Config = LibStub('AceConfigRegistry-3.0'),
+	ConfigDialog = LibStub('AceConfigDialog-3.0'),
+	LSM = LibStub('LibSharedMedia-3.0')
+}
+XF.Lib.BCTL = assert(BNetChatThrottleLib, 'XFaction requires BNetChatThrottleLib')
+--#endregion
+
+--#region Program Settings
+XF.Icons = {
+	String = '|T%d:16:16:0:0:64:64:4:60:4:60|t',
+	Texture = '|T%s:17:17|t',
+}
+
+XF.Enum = {
+	Version = {
+		Prod = 1,
+		Beta = 2,
+		Alpha = 3,
+	},
+	Priority = {
+		High = 1,
+		Medium = 2,
+		Low = 3,
+	},
+	Channel = {
+		GUILD = 1,
+		COMMUNITY = 2,
+		CUSTOM = 3,
+	},
+	Message = {
+		DATA = '1',
+		GCHAT = '2',
+		LOGOUT = '3',
+		LOGIN = '4',
+		ACHIEVEMENT = '5',
+		ORDER = '6',
+		ACK = '7',
+		PING = '8'
+	},
+	Metric = {
+		BNetSend = XF.Lib.Locale['DTMETRICS_BNET_SEND'],
+		BNetReceive = XF.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
+		ChannelSend = XF.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
+		ChannelReceive = XF.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
+		Error = XF.Lib.Locale['DTMETRICS_ERROR'],
+		Warning = XF.Lib.Locale['DTMETRICS_WARNING'],
+		GuildSend = XF.Lib.Locale['DTMETRICS_GUILD_SEND'],
+		GuildReceive = XF.Lib.Locale['DTMETRICS_GUILD_RECEIVE']
+	},
+    Protocol = {
+        Unknown = 1,
+        BNet = 2,
+        Channel = 3,
+        Guild = 4
+    },
+	Location = {
+		Unknown = 0,
+		World = 1,
+		Continent = 2,
+		Zone = 3,
+		Dungeon = 4,
+		MicroDungeon = 5,
+		Orphan = 6
+	}
+}
+
+XF.Settings = {
+	System = {
+		Roster = true,
+		UIDLength = 11,
+	},
+	Player = {
+		Heartbeat = 60 * 2,      -- Seconds between player status broadcast
+		MinimumHeartbeat = 15,
+		Retry = 60,              -- Number of times to try and get player information before giving up
+	},
+	Confederate = {
+		UnitStale = 60 * 5,    -- Seconds before you consider another unit offline
+	},
+	LocalGuild = {
+		ScanTimer = 5,           -- Seconds between local guild scans
+		LoginTTL = 60 * 5,       -- Seconds before giving up on querying for guild on login
+		MaxGuildInfo = 500,      -- Maximum # of characters guild info can take
+	},	
+	Factions = {'Alliance', 'Horde', 'Neutral'},
+	Network = {
+		CompressionLevel = 9,
+		CompressionRetry = 5,
+		RandomSelection = 10,
+		MessageWindow = 60 * 2,
+		Chat = {
+			PacketSize = 200,
+		},
+		BNet = {
+			PacketSize = 250,
+		},
+		Mailbox = {
+			Stale = 60 * 60  -- Seconds until a message is considered stale
+		},
+	},
+	DataText = {
+		AutoHide = .25,
+	},
+	Setup = {
+		MaxTeams = 30,
+		MaxGuilds = 10,
+	},
+	Janitor = {
+		Scan = 60
+	}
+}
+--#endregion

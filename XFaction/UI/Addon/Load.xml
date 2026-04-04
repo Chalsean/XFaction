@@ -1,0 +1,5 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">   
+    <Script file='Addon.lua'/>
+    <Script file='Elephant.lua'/>
+    <Script file='WIM.lua'/>
+</Ui>
