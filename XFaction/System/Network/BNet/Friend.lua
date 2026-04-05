@@ -27,7 +27,7 @@ function XFC.Friend:Initialize(inID)
     if(not self:IsInitialized()) then
         self:ParentInitialize()
 
-        local accountInfo = type(inID) == 'number' and XFF.BNetFriendInfoByID(inID) or XFF.BNetFriendInfoByGUID(inID)
+        local accountInfo = type(inID) == 'number' and C_BattleNet.GetFriendAccountInfo(inID) or C_BattleNet.GetAccountInfoByGUID(inID)
         if(accountInfo ~= nil) then
             self:Key(accountInfo.bnetAccountID)
             self:ID(inID) -- Query ID, this can change between logins, thus why its not key

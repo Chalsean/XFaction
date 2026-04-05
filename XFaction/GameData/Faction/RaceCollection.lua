@@ -24,8 +24,8 @@ end
 function XFC.RaceCollection:Add(inRace)
 	assert(type(inRace) == 'table' and inRace.__name == 'Race' or type(inRace) == 'number')
 	if (type(inRace) == 'number') then
-		local name = XFF.RaceInfo(inRace)
-		local faction = XFF.RaceFaction(inRace)
+		local name = C_CreatureInfo.GetRaceInfo(inRace)
+		local faction = C_CreatureInfo.GetFactionInfo(inRace)
 		local race = XFC.Race:new()
 		race:Initialize()
 		race:Key(inRace)

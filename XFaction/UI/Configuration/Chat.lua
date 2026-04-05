@@ -100,17 +100,6 @@ XF.Options.args.Chat = {
 							get = function(info) return XF.Config.Chat.GChat[ info[#info] ] end,
 							set = function(info, value) XF.Config.Chat.GChat[ info[#info] ] = value; end
 						},
-						FColor = {
-							order = 10,
-							type = 'toggle',
-							name = XF.Lib.Locale['CHAT_FCOLOR'],
-							desc = XF.Lib.Locale['CHAT_FCOLOR_TOOLTIP'],
-							disabled = function()
-								return (not XF.Config.Chat.GChat.Enable)
-							end,
-							get = function(info) return XF.Config.Chat.GChat[ info[#info] ] end,
-							set = function(info, value) XF.Config.Chat.GChat[ info[#info] ] = value; end
-						},
 						Space3 = {
 							order = 11,
 							type = 'description',
@@ -121,7 +110,7 @@ XF.Options.args.Chat = {
 							type = 'color',
 							name = XF.Lib.Locale['CHAT_FONT_COLOR'],
 							hidden = function()
-								return (not XF.Config.Chat.GChat.Enable or XF.Config.Chat.GChat.FColor or not XF.Config.Chat.GChat.CColor)
+								return (not XF.Config.Chat.GChat.Enable or not XF.Config.Chat.GChat.CColor)
 							end,
 							get = function()
 								return XF.Config.Chat.GChat.Color.Red, XF.Config.Chat.GChat.Color.Green, XF.Config.Chat.GChat.Color.Blue
@@ -130,38 +119,6 @@ XF.Options.args.Chat = {
 								XF.Config.Chat.GChat.Color.Red = inRed
 								XF.Config.Chat.GChat.Color.Green = inGreen
 								XF.Config.Chat.GChat.Color.Blue = inBlue
-							end,
-						},
-						AColor = {
-							order = 13,
-							type = 'color',
-							name = XF.Lib.Locale['CHAT_FONT_ACOLOR'],
-							hidden = function()
-								return (not XF.Config.Chat.GChat.Enable or not XF.Config.Chat.GChat.FColor or not XF.Config.Chat.GChat.CColor)
-							end,
-							get = function()
-								return XF.Config.Chat.GChat.AColor.Red, XF.Config.Chat.GChat.AColor.Green, XF.Config.Chat.GChat.AColor.Blue
-							end,
-							set = function(_, inRed, inGreen, inBlue)
-								XF.Config.Chat.GChat.AColor.Red = inRed
-								XF.Config.Chat.GChat.AColor.Green = inGreen
-								XF.Config.Chat.GChat.AColor.Blue = inBlue
-							end,
-						},
-						HColor = {
-							order = 14,
-							type = 'color',
-							name = XF.Lib.Locale['CHAT_FONT_HCOLOR'],
-							hidden = function()
-								return (not XF.Config.Chat.GChat.Enable or not XF.Config.Chat.GChat.FColor or not XF.Config.Chat.GChat.CColor)
-							end,
-							get = function()
-								return XF.Config.Chat.GChat.HColor.Red, XF.Config.Chat.GChat.HColor.Green, XF.Config.Chat.GChat.HColor.Blue
-							end,
-							set = function(_, inRed, inGreen, inBlue)
-								XF.Config.Chat.GChat.HColor.Red = inRed
-								XF.Config.Chat.GChat.HColor.Green = inGreen
-								XF.Config.Chat.GChat.HColor.Blue = inBlue
 							end,
 						},
 					}
@@ -258,57 +215,7 @@ XF.Options.args.Chat = {
 					},
 				},
 			}
-		},
-		Channel = {
-			order = 4,
-			type = 'group',
-			name = XF.Lib.Locale['CHANNEL'],
-			args = {
-				Header = {
-					order = 1,
-					type = 'group',
-					name = XF.Lib.Locale['DESCRIPTION'],
-					inline = true,
-					args = {
-						Description = {
-							order = 1,
-							type = 'description',
-							fontSize = 'medium',
-							name = XF.Lib.Locale['CHAT_CHANNEL_DESCRIPTION'],
-						},
-					}
-				},
-				Space1 = {
-					order = 2,
-					type = 'description',
-					name = '',
-				},
-				Options = {
-					order = 3,
-					type = 'group',
-					name = '',
-					inline = true,
-					args = {
-						Last = {
-							order = 3,
-							type = 'toggle',
-							name = XF.Lib.Locale['CHANNEL_LAST'],
-							desc = XF.Lib.Locale['CHANNEL_LAST_TOOLTIP'],
-							get = function(info) return XF.Config.Chat.Channel[ info[#info] ] end,
-							set = function(info, value) XF.Config.Chat.Channel[ info[#info] ] = value; end
-						},
-						Color = {
-							order = 4,
-							type = 'toggle',
-							name = XF.Lib.Locale['CHANNEL_COLOR'],
-							desc = XF.Lib.Locale['CHANNEL_COLOR_TOOLTIP'],
-							get = function(info) return XF.Config.Chat.Channel[ info[#info] ] end,
-							set = function(info, value) XF.Config.Chat.Channel[ info[#info] ] = value; end
-						},
-					},
-				},
-			}
-		},
+		},		
 		Crafting = {
 			order = 5,
 			type = 'group',

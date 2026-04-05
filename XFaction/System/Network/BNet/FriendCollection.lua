@@ -15,7 +15,7 @@ function XFC.FriendCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-		for i = 1, XFF.BNetFriendCount() do
+		for i = 1, BNGetNumFriends() do
 			try(function()
 				local friend = XFC.Friend:new()
 				friend:Initialize(i)				
@@ -34,8 +34,7 @@ function XFC.FriendCollection:Initialize()
             event = 'BN_FRIEND_INFO_CHANGED', 
             callback = XFO.Friends.CallbackFriendChanged, 
             instance = true,
-			start = true,
-			restricted = true
+			start = true
         })
 
 		self:IsInitialized(true)
@@ -80,7 +79,7 @@ end
 
 function XFC.FriendCollection:CallbackFriendChanged(inID)
 	local self = XFO.Friends
-	if(inID == nil or inID == 0) then return end
+	if(inID == nil or inID == 0 or issecretvalue(inID)) then return end
 	XF:Debug(self:ObjectName(), 'Checking friend: %d', inID)
 
 	-- Detect friend going offline
@@ -89,7 +88,8 @@ function XFC.FriendCollection:CallbackFriendChanged(inID)
 		friend:Initialize(inID)
 		if (not friend:CanCommunicate() and self:Contains(friend:Key())) then
 			local oldFriend = self:Get(friend:Key())
-			XF:Debug(self:ObjectName(), 'Detected BNet logout: %s', oldFriend:Name())
+			XF:Info(self:ObjectName(), 'Detected BNet logout: %s', oldFriend:Name())
+			XFO.ChatWindow:DisplayLogout(oldFriend:GUID())
 			XFO.Confederate:Logout(oldFriend:GUID())
 			self:Remove(friend:Key())
 		end

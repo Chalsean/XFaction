@@ -2,6 +2,22 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Message'
 
+XF.Enum.Priority = {
+    High = 1,
+    Medium = 2,
+    Low = 3
+}
+XF.Enum.Message = {
+    DATA = '1',
+    GCHAT = '2',
+    LOGOUT = '3',
+    LOGIN = '4',
+    ACHIEVEMENT = '5',
+    ORDER = '6',
+    ACK = '7',
+    PING = '8'
+}
+
 XFC.Message = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
@@ -25,7 +41,7 @@ function XFC.Message:Initialize()
         self:ParentInitialize()
         self:From(XF.Player.GUID)
         self:FromUnit(XF.Player.Unit)
-        self:TimeStamp(XFF.TimeCurrent())
+        self:TimeStamp(time())
         self:Priority(XF.Enum.Priority.Low)
 
         for _, target in XFO.Targets:Iterator() do
@@ -140,14 +156,14 @@ function XFC.Message:Encode(inBNet)
     assert(type(inBNet) == 'boolean' or inBNet == nil)
     local serialized = self:Serialize()
 	local compressed = nil 
-    for i = 1, XF.Settings.Network.CompressionRetry do
-        compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
+    for i = 1, 5 do
+        compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = 9})
         if(compressed ~= nil) then
             break
         end
     end
 
-    for i = 1, XF.Settings.Network.CompressionRetry do
+    for i = 1, 5 do
         local encoded = inBNet and XF.Lib.Deflate:EncodeForPrint(compressed) or XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
         if(encoded ~= nil) then
             return encoded
@@ -183,7 +199,7 @@ function XFC.Message:Decode(inEncoded, inProtocol)
     assert(type(inProtocol) == 'number')
 
     local decoded = nil
-    for i = 1, XF.Settings.Network.CompressionRetry do
+    for i = 1, 5 do
         decoded = inProtocol == XF.Enum.Protocol.BNet and XF.Lib.Deflate:DecodeForPrint(inEncoded) or XF.Lib.Deflate:DecodeForWoWAddonChannel(inEncoded)
         if(decoded ~= nil) then
             break
@@ -191,7 +207,7 @@ function XFC.Message:Decode(inEncoded, inProtocol)
     end
 
     local decompressed = nil
-    for i = 1, XF.Settings.Network.CompressionRetry do
+    for i = 1, 5 do
         decompressed = XF.Lib.Deflate:DecompressDeflate(decoded)
         if(decompressed ~= nil) then
             break
@@ -210,7 +226,7 @@ end
 function XFC.Message:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = nil
-    for i = 1, XF.Settings.Network.CompressionRetry do
+    for i = 1, 5 do
         try(function()
             data = unpickle(inSerial)
         end).

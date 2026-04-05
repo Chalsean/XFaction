@@ -132,9 +132,9 @@ function XFC.Timer:Start()
     if(not self:IsEnabled()) then
         local callback = self:Callback()
         if(self:IsRepeat()) then
-            self.handle = XFF.RepeatTimerStart(self:Delta(), 
+            self.handle = C_Timer.NewTicker(self:Delta(), 
                 function (...)
-                    if(self:HasTimeToLive() and self:StartTime() + self:TimeToLive() < XFF.TimeCurrent()) then
+                    if(self:HasTimeToLive() and self:StartTime() + self:TimeToLive() < time()) then
                         XF:Debug(ObjectName, 'Timer will stop due to time limit [' .. tostring(self:TimeToLive()) .. '] being reached: ' .. self:Key())
                         self:Stop()
                     elseif(self:HasMaxAttempts() and self:MaxAttempts() < self:Attempt()) then
@@ -147,13 +147,13 @@ function XFC.Timer:Start()
                     end                    
                 end)
         else
-            self.handle = XFF.TimerStart(self:Delta(), 
+            self.handle = C_Timer.NewTimer(self:Delta(), 
                 function (...) 
                     callback(...)
                     self:IsEnabled(false) 
                 end)
         end
-        self:StartTime(XFF.TimeCurrent())        
+        self:StartTime(time())        
         self:IsEnabled(true)
         XF:Debug(self:ObjectName(), 'Started timer [%s] for [%d] seconds', self:Name(), self:Delta())
     end

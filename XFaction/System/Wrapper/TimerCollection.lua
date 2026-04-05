@@ -38,7 +38,7 @@ function XFC.TimerCollection:Add(inArgs)
     if(inArgs.maxAttempts ~= nil) then
         timer:MaxAttempts(inArgs.maxAttempts)
     end
-    if(inArgs.start and (timer:IsInstance() or not XF.Player.InInstance)) then
+    if(inArgs.start and (timer:IsInstance() or not IsInInstance())) then
         timer:Start()
     end
     self.parent.Add(self, timer)
@@ -63,10 +63,10 @@ function XFC.TimerCollection:LeaveInstance()
     for _, timer in self:Iterator() do
         if(not timer:IsEnabled()) then
             timer:Start()
-            if(timer:LastRan() < XFF.TimeCurrent() - timer:Delta()) then
+            if(timer:LastRan() < time() - timer:Delta()) then
                 local _Function = timer:Callback()
                 _Function()
-                timer:LastRan(XFF.TimeCurrent())
+                timer:LastRan(time())
             end
         end
     end

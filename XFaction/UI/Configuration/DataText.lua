@@ -236,17 +236,13 @@ XF.Options.args.DataText = {
 					name = XF.Lib.Locale['DTGUILD_CONFIG_SORT'],
 					desc = XF.Lib.Locale['DTGUILD_CONFIG_SORT_TOOLTIP'],
 					values = {
-						Achievement = XF.Lib.Locale['ACHIEVEMENT'],
 						Guild = XF.Lib.Locale['GUILD'],
-						ItemLevel = XF.Lib.Locale['ITEMLEVEL'],
 						Level = XF.Lib.Locale['LEVEL'],       
 						Location = XF.Lib.Locale['LOCATION'],
-						Dungeon = XF.Lib.Locale['DUNGEON'],
 						MythicKey = XF.Lib.Locale['MYTHICKEY'],
                         Name = XF.Lib.Locale['NAME'],
 						Note = 	XF.Lib.Locale['NOTE'],
 						Race = XF.Lib.Locale['RACE'],
-						Raid = XF.Lib.Locale['RAID'],
 						Rank = XF.Lib.Locale['RANK'],
 						Realm = XF.Lib.Locale['REALM'],
 						Team = XF.Lib.Locale['TEAM'],
@@ -266,21 +262,16 @@ XF.Options.args.DataText = {
 					name = XF.Lib.Locale['DTGUILD_SELECT_COLUMN'],
 					desc = XF.Lib.Locale['DTGUILD_SELECT_COLUMN_TOOLTIP'],
 					values = {
-						Achievement = XF.Lib.Locale['ACHIEVEMENT'],
 						Faction = XF.Lib.Locale['FACTION'],
 						Guild = XF.Lib.Locale['GUILD'],
-						ItemLevel = XF.Lib.Locale['ITEMLEVEL'],
 						Level = XF.Lib.Locale['LEVEL'],            
-						Dungeon = XF.Lib.Locale['DUNGEON'],
 						Hero = XF.Lib.Locale['HERO'],
 						Location = XF.Lib.Locale['LOCATION'],
 						MythicKey = XF.Lib.Locale['MYTHICKEY'],
                         Name = XF.Lib.Locale['NAME'],
 						Note = 	XF.Lib.Locale['NOTE'],
 						Profession = XF.Lib.Locale['PROFESSION'],
-						PvP = XF.Lib.Locale['PVP'],
 						Race = XF.Lib.Locale['RACE'],
-						Raid = XF.Lib.Locale['RAID'],
 						Rank = XF.Lib.Locale['RANK'],
 						Realm = XF.Lib.Locale['REALM'],
 						Spec = XF.Lib.Locale['SPEC'],
@@ -295,44 +286,6 @@ XF.Options.args.DataText = {
 					type = 'description',
 					name = '',
 					--hidden = function()	return XF.Config.DataText.Guild.Enable.Achievement	end,
-				},
-				Achievement = {
-					order = 21,
-					type = 'toggle',
-					name = ENABLE,
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_TOOLTIP'],
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Achievement' end,
-					get = function(info) return XF.Config.DataText.Guild.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XF.Config.DataText.Guild.Enable[ info[#info] ] = value
-						if(value) then GuildAddedMenuItem(info[#info]) else GuildRemovedMenuItem(info[#info]) end
-					end
-				},
-				AchievementOrder = {
-					order = 22,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Achievement' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.Achievement) end,
-					name = XF.Lib.Locale['ORDER'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_ORDER_TOOLTIP'],
-					values = function () return GuildOrderMenu() end,
-					get = function(info) if(XF.Config.DataText.Guild.Enable.Achievement) then return tostring(XF.Config.DataText.Guild.Order.Achievement) end end,
-					set = function(info, value) GuildSelectedMenuItem('Achievement', value) end
-				},				
-				AchievementAlignment = {
-					order = 23,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Achievement' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.Achievement) end,
-					name = XF.Lib.Locale['ALIGNMENT'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ACHIEVEMENT_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XF.Lib.Locale['CENTER'],
-						Left = XF.Lib.Locale['LEFT'],
-						Right = XF.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XF.Config.DataText.Guild.Alignment.Achievement end,
-					set = function(info, value) XF.Config.DataText.Guild.Alignment.Achievement = value; end
 				},
 				Faction = {
 					order = 28,
@@ -448,44 +401,6 @@ XF.Options.args.DataText = {
 					get = function(info) return XF.Config.DataText.Guild.Alignment.Hero end,
 					set = function(info, value) XF.Config.DataText.Guild.Alignment.Hero = value; end
 				},
-				ItemLevel = {
-					order = 37,
-					type = 'toggle',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'ItemLevel' end,
-					name = ENABLE,
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ITEMLEVEL_TOOLTIP'],
-					get = function(info) return XF.Config.DataText.Guild.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XF.Config.DataText.Guild.Enable[ info[#info] ] = value
-						if(value) then GuildAddedMenuItem(info[#info]) else GuildRemovedMenuItem(info[#info]) end
-					end
-				},
-				ItemLevelOrder = {
-					order = 38,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'ItemLevel' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.ItemLevel) end,
-					name = XF.Lib.Locale['ORDER'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ITEMLEVEL_ORDER_TOOLTIP'],
-					values = function () return GuildOrderMenu() end,
-					get = function(info) if(XF.Config.DataText.Guild.Enable.ItemLevel) then return tostring(XF.Config.DataText.Guild.Order.ItemLevel) end end,
-					set = function(info, value) GuildSelectedMenuItem('ItemLevel', value) end
-				},
-				ItemLevelAlignment = {
-					order = 39,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'ItemLevel' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.ItemLevel) end,
-					name = XF.Lib.Locale['ALIGNMENT'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_ITEMLEVEL_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XF.Lib.Locale['CENTER'],
-						Left = XF.Lib.Locale['LEFT'],
-						Right = XF.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XF.Config.DataText.Guild.Alignment.ItemLevel end,
-					set = function(info, value) XF.Config.DataText.Guild.Alignment.ItemLevel = value; end
-				},				
 				Level = {
 					order = 40,
 					type = 'toggle',
@@ -523,44 +438,6 @@ XF.Options.args.DataText = {
                     },
 					get = function(info) return XF.Config.DataText.Guild.Alignment.Level end,
 					set = function(info, value) XF.Config.DataText.Guild.Alignment.Level = value; end
-				},				
-				Dungeon = {
-					order = 43,
-					type = 'toggle',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Dungeon' end,
-					name = ENABLE,
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_DUNGEON_TOOLTIP'],
-					get = function(info) return XF.Config.DataText.Guild.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XF.Config.DataText.Guild.Enable[ info[#info] ] = value
-						if(value) then GuildAddedMenuItem(info[#info]) else GuildRemovedMenuItem(info[#info]) end
-					end
-				},
-				DungeonOrder = {
-					order = 44,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Dungeon' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.Dungeon) end,
-					name = XF.Lib.Locale['ORDER'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_DUNGEON_ORDER_TOOLTIP'],
-					values = function () return GuildOrderMenu() end,
-					get = function(info) if(XF.Config.DataText.Guild.Enable.Dungeon) then return tostring(XF.Config.DataText.Guild.Order.Dungeon) end end,
-					set = function(info, value) GuildSelectedMenuItem('Dungeon', value) end
-				},
-				DungeonAlignment = {
-					order = 45,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Dungeon' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.Dungeon) end,
-					name = XF.Lib.Locale['ALIGNMENT'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_DUNGEON_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XF.Lib.Locale['CENTER'],
-						Left = XF.Lib.Locale['LEFT'],
-						Right = XF.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XF.Config.DataText.Guild.Alignment.Dungeon end,
-					set = function(info, value) XF.Config.DataText.Guild.Alignment.Dungeon = value; end
 				},
 				Name = {
 					order = 46,
@@ -685,44 +562,6 @@ XF.Options.args.DataText = {
 					get = function(info) return XF.Config.DataText.Guild.Alignment.Profession end,
 					set = function(info, value) XF.Config.DataText.Guild.Alignment.Profession = value; end
 				},
-				PvP = {
-					order = 56,
-					type = 'toggle',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'PvP' end,
-					name = ENABLE,
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_PVP_TOOLTIP'],
-					get = function(info) return XF.Config.DataText.Guild.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XF.Config.DataText.Guild.Enable[ info[#info] ] = value
-						if(value) then GuildAddedMenuItem(info[#info]) else GuildRemovedMenuItem(info[#info]) end
-					end
-				},
-				PvPOrder = {
-					order = 57,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'PvP' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.PvP) end,
-					name = XF.Lib.Locale['ORDER'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_PVP_ORDER_TOOLTIP'],
-					values = function () return GuildOrderMenu() end,
-					get = function(info) if(XF.Config.DataText.Guild.Enable.PvP) then return tostring(XF.Config.DataText.Guild.Order.PvP) end end,
-					set = function(info, value) GuildSelectedMenuItem('PvP', value) end
-				},
-				PvPAlignment = {
-					order = 58,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'PvP' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.PvP) end,
-					name = XF.Lib.Locale['ALIGNMENT'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_PVP_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XF.Lib.Locale['CENTER'],
-						Left = XF.Lib.Locale['LEFT'],
-						Right = XF.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XF.Config.DataText.Guild.Alignment.PvP end,
-					set = function(info, value) XF.Config.DataText.Guild.Alignment.PvP = value; end
-				},
 				Race = {
 					order = 59,
 					type = 'toggle',
@@ -760,44 +599,6 @@ XF.Options.args.DataText = {
                     },
 					get = function(info) return XF.Config.DataText.Guild.Alignment.Race end,
 					set = function(info, value) XF.Config.DataText.Guild.Alignment.Race = value; end
-				},
-				Raid = {
-					order = 62,
-					type = 'toggle',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Raid' end,
-					name = ENABLE,
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_RAID_TOOLTIP'],
-					get = function(info) return XF.Config.DataText.Guild.Enable[ info[#info] ] end,
-					set = function(info, value) 
-						XF.Config.DataText.Guild.Enable[ info[#info] ] = value
-						if(value) then GuildAddedMenuItem(info[#info]) else GuildRemovedMenuItem(info[#info]) end
-					end
-				},
-				RaidOrder = {
-					order = 63,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Raid' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.Raid) end,
-					name = XF.Lib.Locale['ORDER'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_RAID_ORDER_TOOLTIP'],
-					values = function () return GuildOrderMenu() end,
-					get = function(info) if(XF.Config.DataText.Guild.Enable.Raid) then return tostring(XF.Config.DataText.Guild.Order.Raid) end end,
-					set = function(info, value) GuildSelectedMenuItem('Raid', value) end
-				},
-				RaidAlignment = {
-					order = 64,
-					type = 'select',
-					hidden = function () return XF.Config.DataText.Guild.Column ~= 'Raid' end,
-					disabled = function () return (not XF.Config.DataText.Guild.Enable.Raid) end,
-					name = XF.Lib.Locale['ALIGNMENT'],
-					desc = XF.Lib.Locale['DTGUILD_CONFIG_COLUMN_RAID_ALIGNMENT_TOOLTIP'],
-					values = {
-						Center = XF.Lib.Locale['CENTER'],
-						Left = XF.Lib.Locale['LEFT'],
-						Right = XF.Lib.Locale['RIGHT'],
-                    },
-					get = function(info) return XF.Config.DataText.Guild.Alignment.Raid end,
-					set = function(info, value) XF.Config.DataText.Guild.Alignment.Raid = value; end
 				},
 				Rank = {
 					order = 65,

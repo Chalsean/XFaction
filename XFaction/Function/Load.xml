@@ -1,11 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file='Font\RGBToHex.lua'/>
-    <Script file='Math\UID.lua'/>
-    <Script file='String\Split.lua'/>
-    <Script file='String\StartsWith.lua'/>
-    <Script file='Table\PairsByKeys.lua'/>
-    <Script file='Table\Pickle.lua'/>
+    <Script file='GenerateUID.lua'/>
+    <Script file='StringSplit.lua'/>
+    <Script file='StringStartsWith.lua'/>
+    <Script file='PairsByKeys.lua'/>
+    <Script file='Pickle.lua'/>
     <Script file='Exception\try-catch-finally.lua'/>
-    <Script file='Logger\Logger.lua'/>
-    <Script file='Blizzard.lua'/>
+    <Script file='Logger.lua'/>
 </Ui>

@@ -138,7 +138,7 @@ function XFC.Order:IsPersonal()
 end
 
 function XFC.Order:GetLink()
-    local item = XFF.CraftingGetItem(self:RecipeID(), nil, nil, nil, self:Quality())
+    local item = C_TooltipInfo.GetRecipeResultItem(self:RecipeID(), nil, nil, nil, self:Quality())
     if(item ~= nil) then return item.hyperlink end
     return nil
 end

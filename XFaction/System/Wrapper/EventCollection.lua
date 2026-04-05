@@ -40,15 +40,13 @@ function XFC.EventCollection:Add(inArgs)
     assert(type(inArgs.callback) == 'function')
     assert(inArgs.instance == nil or type(inArgs.instance) == 'boolean')
     assert(inArgs.start == nil or type(inArgs.start) == 'boolean')
-    assert(inArgs.restricted == nil or type(inArgs.restricted) == 'boolean')
 
     local event = XFC.Event:new()
     event:Key(inArgs.name)
     event:Name(inArgs.event)
     event:Callback(inArgs.callback)
     event:IsInstance(inArgs.instance)
-    event:IsRestricted(inArgs.restricted)
-    if(inArgs.start and (event:IsInstance() or not XF.Player.InInstance) and (not event:IsRestricted() or not XFF.IsChatRestricted())) then
+    if(inArgs.start and (event:IsInstance() or not IsInInstance())) then
         event:Start()
     end
     self.frame:RegisterEvent(event:Name())
@@ -73,18 +71,16 @@ function XFC.EventCollection:LeaveInstance()
 end
 
 function XFC.EventCollection:RestrictionStart()
-    XF.Lockdown = true
     for _, event in self:Iterator() do
-        if(event:IsEnabled() and event:IsRestricted()) then
+        if(event:IsEnabled()) then
             event:Stop()
         end
     end
 end
 
 function XFC.EventCollection:RestrictionStop()
-    XF.Lockdown = false
     for _, event in self:Iterator() do
-        if(not event:IsEnabled() and event:IsRestricted()) then
+        if(not event:IsEnabled()) then
             event:Start()
         end
     end

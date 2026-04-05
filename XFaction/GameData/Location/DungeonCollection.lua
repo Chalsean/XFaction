@@ -16,9 +16,9 @@ function XFC.DungeonCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-        XFF.MythicRequestMaps()
-        for _, id in ipairs (XFF.MythicCurrentSeasonMapIDs()) do
-            local name = XFF.MythicMapInfo(id)
+        C_MythicPlus.RequestMapInfo()
+        for _, id in ipairs (C_ChallengeMode.GetMapTable()) do
+            local name = C_ChallengeMode.GetMapUIInfo(id)
             local dungeon = XFC.Dungeon:new()
             dungeon:Initialize()
             dungeon:Key(id)

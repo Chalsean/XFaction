@@ -25,7 +25,7 @@ function XFC.Confederate:Initialize()
 
         XFO.Timers:Add({
             name = 'Heartbeat',
-            delta = XF.Settings.Player.Heartbeat,
+            delta = 60 * 2,
             callback = XFO.Confederate.CallbackHeartbeat,
             repeater = true,
             instance = true
@@ -139,7 +139,7 @@ function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID)
     XF:Debug(self:ObjectName(), 'Guild update event fired [%s]', inUnitID)
     try(function ()
         -- Player just joined a guild
-        if(XFF.PlayerIsInGuild()) then
+        if(IsInGuild()) then
             XF:Trace(self:ObjectName(), 'Player is in a guild')
             if(not XF.Initialized) then
                 if(XFO.Timers:Contains('LoginGuild')) then
@@ -153,16 +153,16 @@ function XFC.Confederate:CallbackGuildChanged(inEvent, inUnitID)
                         callback = XF.CallbackLoginGuild, 
                         repeater = true, 
                         instance = true,
-                        ttl = XF.Settings.LocalGuild.LoginTTL,
+                        ttl = 60 * 5,
                         start = true
                     })
                 end
             end
         -- Player just left a guild
-        elseif(not XFF.PlayerIsInGuild()) then
+        elseif(not IsInGuild()) then
             XF:Warn(self:ObjectName(), 'Player is not in a guild')            
             XF:Stop()
-            XFF.ChatLeaveChannel(XF.Cache.Channel.Name)
+            LeaveChannelByName(XF.Cache.Channel.Name)
             self:RemoveAll()
 
             for _, guild in XFO.Guilds:Iterator() do

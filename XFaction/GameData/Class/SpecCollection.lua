@@ -24,14 +24,14 @@ end
 function XFC.SpecCollection:Add(inSpec)
 	assert(type(inSpec) == 'table' and inSpec.__name == 'Spec' or type(inSpec) == 'number')
 	if (type(inSpec) == 'number') then
-		local id, name, _, icon = XFF.SpecInfo(inSpec)
+		local id, name, _, icon = GetSpecializationInfoForSpecID(inSpec)
 		local spec = XFC.Spec:new()
 		spec:Initialize()
 		spec:Key(id)
 		spec:ID(id)
 		spec:Name(name)
 		spec:IconID(icon)
-		spec:Class(XFO.Classes:Get(XFF.SpecClass(id)))
+		spec:Class(XFO.Classes:Get(C_SpecializationInfo.GetClassIDFromSpecID(id)))
 		self:Add(spec)
 		XF:Info(self:ObjectName(), 'Initialized spec [%d:%s:%s]', spec:ID(), spec:Name(), spec:Class():Name())
 	else

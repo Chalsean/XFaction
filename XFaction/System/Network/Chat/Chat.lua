@@ -27,16 +27,14 @@ function XFC.Chat:Initialize()
             name = 'GuildChat', 
             event = 'CHAT_MSG_GUILD', 
             callback = XFO.Chat.CallbackGuildMessage,
-            instance = true,
-            restricted = true
+            instance = true
         })
 
         XFO.Events:Add({
             name = 'Achievement', 
             event = 'ACHIEVEMENT_EARNED', 
             callback = XFO.Chat.CallbackAchievement, 
-            instance = true,
-            restricted = true
+            instance = true
         })
 
         self:IsInitialized(true)
@@ -51,7 +49,7 @@ function XFC.Chat:Broadcast(inMessage, inChannel)
     if (inChannel == nil) then return end
 
     local data = inMessage:Encode()
-    local packets = XFO.PostOffice:SegmentMessage(data, inMessage:Key(), XF.Settings.Network.Chat.PacketSize)
+    local packets = XFO.PostOffice:SegmentMessage(data, inMessage:Key(), 200)
     local tag = XFO.Tags:GetRandomTag()
     local priority = (inMessage:IsHighPriority() and 'ALERT') or (inMessage:IsMediumPriority() and 'NORMAL') or 'BULK'
 
@@ -65,7 +63,7 @@ end
 function XFC.Chat:EncodeMessage(inMessage)
 	assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
 	local serialized = SerializeMessage(inMessage, inEncodeUnitData)
-	local compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = XF.Settings.Network.CompressionLevel})
+	local compressed = XF.Lib.Deflate:CompressDeflate(serialized, {level = 9})
 	return XF.Lib.Deflate:EncodeForWoWAddonChannel(compressed)
 end
 
@@ -80,6 +78,7 @@ function XFC.Chat:CallbackReceive(inMessageTag, inEncodedMessage, inDistribution
 end
 
 function XFC.Chat:CallbackGuildMessage(inText, _, _, _, _, _, _, _, _, _, _, inSenderGUID)
+    if (issecretvalue(inSenderGUID)) then return end
     local self = XFO.Chat
     try(function ()
         -- If you are the sender, broadcast to other realms/factions
@@ -93,9 +92,10 @@ function XFC.Chat:CallbackGuildMessage(inText, _, _, _, _, _, _, _, _, _, _, inS
 end
 
 function XFC.Chat:CallbackAchievement(inID)
+    if (issecretvalue(inID)) then return end
     local self = XFO.Chat
     try(function ()
-        local _, _, _, _, _, _, _, _, _, _, _, isGuild = XFF.PlayerAchievement(inID)
+        local _, _, _, _, _, _, _, _, _, _, _, isGuild = GetAchievementInfo(inID)
         if(not isGuild) then
             XFO.Mailbox:SendAchievementMessage(inID)
         end

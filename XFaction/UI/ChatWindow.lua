@@ -35,12 +35,18 @@ local function GetPrefix(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     local self = XFO.ChatWindow
     
-    local text = string.format("|T%s:16:16:0:0|t", 'Interface\\AddOns\\XFaction\\Assets\\xfaction-icon.png')
-    -- if (XF.Config.Chat.GChat.Faction and inUnit:HasFaction()) then
-    --     text = format('%s ', format(XF.Icons.String, inUnit:Faction():IconID()))
-    -- end
+    local text = string.format("|T%s:17:17:0:0|t", 'Interface\\AddOns\\XFaction\\Assets\\xfaction-icon.png')
+    if (XF.Config.Chat.GChat.Faction and inUnit:HasFaction()) then
+        text = text .. format('%s', format(XF.Icons, inUnit:Faction():IconID()))
+    end
     text = text .. inUnit:GetLink()
-    if(XF.Config.Chat.GChat.Main and inUnit:IsAlt()) then
+    if(XF.Config.Chat.GChat.Guild and inUnit:HasGuild()) then
+        text = text .. '(' .. inUnit:Guild():Initials()
+        if(XF.Config.Chat.GChat.Main and inUnit:IsAlt()) then
+            text = text .. '-' .. inUnit:MainName()
+        end
+        text = text ..  ')'
+    elseif(XF.Config.Chat.GChat.Main and inUnit:IsAlt()) then
         text = text .. '(' .. inUnit:MainName() .. ')'
     end
     return text
@@ -48,68 +54,60 @@ end
 
 local function DisplayOnFrame(inFrameName, inEvent, inChatType, inUnit, inText)
     local self = XFO.ChatWindow
+    local text = GetPrefix(inUnit) .. ' ' .. inText
     for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
-        local window = { XFF.ChatGetWindow(i) }
+        local window = { GetChatWindowMessages(i) }
         for _, frameName in ipairs(window) do
             if frameName == inFrameName then
                 local frame = 'ChatFrame' .. i
-                if _G[frame] and _G[frame]:IsShown() then
-
-                    local registered = _G[frame]:IsEventRegistered(inEvent)
-                    if (registered) then
-                        -- local _, fontSize = _G[frame]:GetFont()
-                        -- local iconSize = math.floor(fontSize * 1.2)
-                        --local text = string.format("|T%s:%d:%d:0:0|t", 'Interface\\AddOns\\XFaction\\Core\\System\\Media\\Images\\xfaction_icon-01_1.tga', iconSize, iconSize) .. ' ' .. GetPrefix(inUnit) .. inText
-                        local text = GetPrefix(inUnit) .. ' ' .. inText
-
-                    XF:Warn(self:ObjectName(), text)
+                if _G[frame] and _G[frame]:IsShown() and _G[frame]:IsEventRegistered(inEvent) then
                     local color = _G.ChatTypeInfo[inChatType]
-                    --XFF.ChatHandler(_G[frame], inEvent, text, inUnit:UnitName(), XF.Player.Faction:Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
                     _G[frame]:AddMessage(text, color.r, color.g, color.b)
-                    end
-
-                    --local color = _G.ChatTypeInfo[inChatType]
-
-                    -- if(XFO.WIM:IsLoaded() and XFO.WIM:API().modules.GuildChat.enabled) then
-                    --     XFO.WIM:API():CHAT_MSG_GUILD(inText, inUnit:UnitName(), XF.Player.Faction():Language(), '', inUnit:UnitName(), '', 0, 0, '', 0, _, inUnit:GUID())
-                    -- else                
-                      --  frame:AddMessage(inText, color.r, color.g, color.b)
-                    -- end
                 end
             end            
         end
     end
+    return text
 end
 
 function XFC.ChatWindow:DisplayGuildChat(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    XF:Warn(self:ObjectName(), inMessage:Data())
-    DisplayOnFrame('GUILD', 'CHAT_MSG_GUILD', 'GUILD', inMessage:FromUnit(), inMessage:Data())
-    --XFO.Elephant:AddMessage(inMessage, 'CHAT_MSG_GUILD', text)
+    if (not XF.Config.Chat.GChat.Enable or inUnit:IsSameGuild()) then return end
+    local text = DisplayOnFrame('GUILD', 'CHAT_MSG_GUILD', 'GUILD', inMessage:FromUnit(), inMessage:Data())
+    XFO.Elephant:AddMessage(inMessage, 'CHAT_MSG_GUILD', text)
+    XFO.WIM:AddMessage(inMessage:FromUnit(), text)
 end
 
 function XFC.ChatWindow:DisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    XF:Warn(self:ObjectName(), inMessage:Data())
-    DisplayOnFrame('GUILD_ACHIEVEMENT', 'CHAT_MSG_GUILD_ACHIEVEMENT', 'GUILD_ACHIEVEMENT', inMessage:FromUnit(), XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(XFF.PlayerAchievementLink(inMessage:Data()), "(Player.-:.-:.-:.-:.-:)"  , inMessage:FromUnit():GUID() .. ':1:' .. date("%m:%d:%y:") ) .. '!')
-    --XFO.Elephant:AddMessage(inMessage, 'CHAT_MSG_GUILD_ACHIEVEMENT', text)
+    if (not XF.Config.Chat.GChat.Enable or inUnit:IsSameGuild()) then return end
+    local text = DisplayOnFrame('GUILD_ACHIEVEMENT', 'CHAT_MSG_GUILD_ACHIEVEMENT', 'GUILD_ACHIEVEMENT', inMessage:FromUnit(), XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(GetAchievementLink(inMessage:Data()), "(Player.-:.-:.-:.-:.-:)"  , inMessage:FromUnit():GUID() .. ':1:' .. date("%m:%d:%y:") ) .. '!')
+    XFO.Elephant:AddMessage(inMessage, 'CHAT_MSG_GUILD_ACHIEVEMENT', text)
 end
 
 function XFC.ChatWindow:DisplayLogin(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    if (not XF.Config.Chat.Login.Enable or inUnit:IsSameGuild()) then return end
     DisplayOnFrame('GUILD', 'CHAT_MSG_GUILD', 'SYSTEM', inUnit, XF.Lib.Locale['CHAT_LOGIN'])
 end
 
 function XFC.ChatWindow:DisplayLogout(inGUID)
     assert(type(inGUID) == 'string')
+    if (not XF.Config.Chat.Login.Enable) then return end
     if (XFO.Confederate:Contains(inGUID)) then
         local unit = XFO.Confederate:Get(inGUID)
-        DisplayOnFrame('GUILD', 'CHAT_MSG_GUILD', 'SYSTEM', unit, XF.Lib.Locale['CHAT_LOGOUT'])
+        if (not unit:IsSameGuild()) then
+            DisplayOnFrame('GUILD', 'CHAT_MSG_GUILD', 'SYSTEM', unit, XF.Lib.Locale['CHAT_LOGOUT'])
+            if(XF.Config.Chat.Login.Sound and not unit:IsSameGuild()) then
+                PlaySound(3332, 'Master')
+            end
+        end
     end
 end
 
 function XFC.ChatWindow:DisplayOrder(inOrder)
     assert(type(inOrder) == 'table' and inOrder.__name == 'Order')
+    if (not XF.Config.Chat.Crafting.Enable) then return end
 
     if(inOrder:IsGuild() and not XF.Config.Chat.Crafting.GuildOrder) then return end
     if(inOrder:IsPersonal() and not XF.Config.Chat.Crafting.PersonalOrder) then return end

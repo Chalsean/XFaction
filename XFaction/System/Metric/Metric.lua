@@ -2,6 +2,17 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'Metric'
 
+XF.Enum.Metric = {
+    BNetSend = XF.Lib.Locale['DTMETRICS_BNET_SEND'],
+    BNetReceive = XF.Lib.Locale['DTMETRICS_BNET_RECEIVE'],
+    ChannelSend = XF.Lib.Locale['DTMETRICS_CHANNEL_SEND'],
+    ChannelReceive = XF.Lib.Locale['DTMETRICS_CHANNEL_RECEIVE'],
+    Error = XF.Lib.Locale['DTMETRICS_ERROR'],
+    Warning = XF.Lib.Locale['DTMETRICS_WARNING'],
+    GuildSend = XF.Lib.Locale['DTMETRICS_GUILD_SEND'],
+    GuildReceive = XF.Lib.Locale['DTMETRICS_GUILD_RECEIVE']
+}
+
 XFC.Metric = XFC.Object:newChildConstructor()
 
 --#region Constructors
@@ -33,7 +44,7 @@ end
 function XFC.Metric:GetAverage(inPer)
     if(self:Count() == 0) then return 0 end
     assert(type(inPer) == 'number' or inPer == nil)
-    local delta = XFF.TimeCurrent() - XF.Start
+    local delta = time() - XF.Start
     if(inPer ~= nil) then
         delta = delta / inPer
     end

@@ -602,7 +602,7 @@ function DBObjectLib:CopyProfile(name, silent)
 	end
 
 	-- copy unloaded namespaces
-	if self.sv.namespaces then
+	if self.sv and self.sv.namespaces then
 		for nsname, data in pairs(self.sv.namespaces) do
 			if self.children and self.children[nsname] then
 				-- already a mapped namespace

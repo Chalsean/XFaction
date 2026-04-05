@@ -56,7 +56,7 @@ function QueryMyOrders()
                 reversed = false,
             },
             offset = 0,
-            callback = XFF.FunctionCreateCallback(function(inResultStatus, ...)
+            callback = C_FunctionContainers.CreateCallback(function(inResultStatus, ...)
                 if(inResultStatus == Enum.CraftingOrderResult.Ok) then
                     GetMyOrders()
                 end
@@ -64,7 +64,7 @@ function QueryMyOrders()
         }
         -- CraftOrder API is unusual, you can't just call a function to get a listing
         -- You have to make a server request and provide a callback for when the server feels like handling your query
-        XFF.CraftingQueryServer(request)
+        C_CraftingOrders.ListMyOrders(request)
     end).
     catch(function (err)
         XF:Warn(ObjectName, err)
@@ -73,7 +73,7 @@ end
 
 function GetMyOrders()
     local self = XFO.Orders
-    local myOrders = XFF.CraftingGetOrders()
+    local myOrders = C_CraftingOrders.GetMyOrders()
     for _, myOrder in ipairs(myOrders) do
         try(function ()
             local order = XFC.Order:new()
@@ -95,7 +95,7 @@ function GetMyOrders()
                     end
                 end
 
-                local recipe = XFF.CraftingGetRecipe(myOrder.skillLineAbilityID)
+                local recipe = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility(myOrder.skillLineAbilityID)
                 order:RecipeID(recipe.recipeID)
 
                 if(recipe.supportsQualities and myOrder.minQuality > 0) then
@@ -105,7 +105,7 @@ function GetMyOrders()
                 -- This function is executed upon query of the player's orders, therefore we know the player is always the customer for IsPersonal
                 if(order:IsGuild() or order:IsPersonal()) then
 
-                    local item = XFF.CraftingGetItem(order:RecipeID(), nil, nil, nil, order:Quality())
+                    local item = C_TooltipInfo.GetRecipeResultItem(order:RecipeID(), nil, nil, nil, order:Quality())
                     order:Link(item.hyperlink)
                     self:Add(order)
                     

@@ -24,9 +24,9 @@ function XFC.DTMetrics:Initialize()
 		    OnEnter = function(this) XFO.DTMetrics:CallbackOnEnter(this) end,
 			OnLeave = function(this) XFO.DTMetrics:CallbackOnLeave(this) end,
 		}))
-		self:HeaderFont(XFF.UICreateFont('headerFont'))
+		self:HeaderFont(CreateFont('headerFont'))
 		self:HeaderFont():SetTextColor(0.4,0.78,1)
-		self:RegularFont(XFF.UICreateFont('regularFont'))
+		self:RegularFont(CreateFont('regularFont'))
 		self:RegularFont():SetTextColor(255,255,255)
 		self:IsInitialized(true)
 	end
@@ -82,7 +82,7 @@ function XFC.DTMetrics:RefreshBroker()
 			local bnet = XFO.Metrics:Get(XF.Enum.Metric.BNetSend):Count()
 			local channel = XFO.Metrics:Get(XF.Enum.Metric.GuildSend):Count() + XFO.Metrics:Get(XF.Enum.Metric.ChannelSend):Count()
 
-			local delta = (XFF.TimeCurrent() - XF.Start) / XF.Config.DataText.Metric.Rate
+			local delta = (time() - XF.Start) / XF.Config.DataText.Metric.Rate
 			bnet = bnet / delta
 			channel = channel / delta
 
@@ -102,7 +102,7 @@ end
 function XFC.DTMetrics:CallbackOnEnter(this)
 	local self = XFO.DTMetrics
 	if(XF.Initialized == false) then return end
-	if(XFF.PlayerIsInCombat()) then return end
+	if(InCombatLockdown()) then return end
 
 	try(function()
 
@@ -114,7 +114,7 @@ function XFC.DTMetrics:CallbackOnEnter(this)
 			self:Tooltip():SetHeaderFont(self:HeaderFont())
 			self:Tooltip():SetFont(self:RegularFont())
 			self:Tooltip():SmartAnchorTo(this)
-			self:Tooltip():SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTMetrics:CallbackOnLeave() end)
+			self:Tooltip():SetAutoHideDelay(.25, this, function() XFO.DTMetrics:CallbackOnLeave() end)
 			self:Tooltip():EnableMouse(true)
 			self:Tooltip():SetClampedToScreen(false)
 		end
@@ -167,7 +167,7 @@ end
 function XFC.DTMetrics:CallbackOnLeave()
 	local self = XFO.DTMetrics
 	try(function()
-		if self:Tooltip() and XFF.UIIsMouseOver(self:Tooltip()) then
+		if self:Tooltip() and MouseIsOver(self:Tooltip()) then
 			return
 		else
 			XF.Lib.QT:Release(self:Tooltip())

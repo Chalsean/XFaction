@@ -24,9 +24,9 @@ function XFC.DTLinks:Initialize()
 		    OnEnter = function(this) XFO.DTLinks:CallbackOnEnter(this) end,
 			OnLeave = function(this) XFO.DTLinks:CallbackOnLeave(this) end,
 		}))
-		self:HeaderFont(XFF.UICreateFont('headerFont'))
+		self:HeaderFont(CreateFont('headerFont'))
 		self:HeaderFont():SetTextColor(0.4,0.78,1)
-		self:RegularFont(XFF.UICreateFont('regularFont'))
+		self:RegularFont(CreateFont('regularFont'))
 		self:RegularFont():SetTextColor(255,255,255)
 		self:IsInitialized(true)
 	end
@@ -86,7 +86,7 @@ function XFC.DTLinks:RefreshBroker()
 		local bnet = 0
 
 		for _, unit in XFO.Confederate:Iterator() do
-			if(unit:IsOnline() and unit:IsRunningAddon() and not unit:IsPlayer()) then
+			if(unit:IsOnline() and not unit:IsPlayer()) then
 				if(unit:IsSameGuild()) then
 					guild = guild + 1
 				elseif(unit:IsSameRealm() and unit:IsSameFaction()) then
@@ -108,7 +108,7 @@ end
 function XFC.DTLinks:CallbackOnEnter(this)
 	local self = XFO.DTLinks
 	if(not XF.Initialized) then return end
-	if(XFF.PlayerIsInCombat()) then return end
+	if(InCombatLockdown()) then return end
 
 	try(function()
 
@@ -122,7 +122,7 @@ function XFC.DTLinks:CallbackOnEnter(this)
 			self:Tooltip():SetHeaderFont(self.headerFont)
 			self:Tooltip():SetFont(self.regularFont)
 			self:Tooltip():SmartAnchorTo(this)
-			self:Tooltip():SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTLinks:CallbackOnLeave() end)
+			self:Tooltip():SetAutoHideDelay(.25, this, function() XFO.DTLinks:CallbackOnLeave() end)
 			self:Tooltip():EnableMouse(true)
 			self:Tooltip():SetClampedToScreen(false)
 		end
@@ -166,7 +166,7 @@ function XFC.DTLinks:CallbackOnEnter(this)
 		if(XF.Initialized) then
 			local units = {}
 			for _, unit in XFO.Confederate:Iterator() do
-				if(not unit:IsPlayer() and unit:IsOnline() and unit:IsRunningAddon()) then
+				if(not unit:IsPlayer() and unit:IsOnline()) then
 					units[unit:UnitName()] = unit
 				end
 			end
@@ -208,7 +208,7 @@ end
 function XFC.DTLinks:CallbackOnLeave()
 	local self = XFO.DTLinks
 	try(function()
-		if self:Tooltip() and XFF.UIIsMouseOver(self:Tooltip()) then
+		if self:Tooltip() and MouseIsOver(self:Tooltip()) then
 			return
 		else
 			XF.Lib.QT:Release(self:Tooltip())

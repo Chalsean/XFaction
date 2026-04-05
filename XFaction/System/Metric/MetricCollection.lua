@@ -24,8 +24,8 @@ function XFC.MetricCollection:Initialize()
 			self:Add(metric)
 		end
 
-		self:StartCalendar(XFF.TimeCalendar())
-		self:StartTime(XFF.TimeLocal())
+		self:StartCalendar(C_DateAndTime.GetCurrentCalendarTime())
+		self:StartTime(C_DateAndTime.GetServerTimeLocal())
 		self:IsInitialized(true)
 	end
 	return self:IsInitialized()

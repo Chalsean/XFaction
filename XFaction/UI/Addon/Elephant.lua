@@ -32,7 +32,7 @@ function XFC.Elephant:AddMessage(inMessage, inEvent, inText)
                 arg1 = inText,
                 arg2 = inMessage:FromUnit():UnitName(),
                 arg6 = '',
-                arg9 = XFO.Channels:GuildChannel():Name(),
+                arg9 = XFO.Channels:Get('GUILD'):Name(),
                 clColor = 'ff' .. inMessage:FromUnit():Class():Hex()
             }
             for channel_index in pairs(self:API():ProfileDb().events[inEvent].channels) do

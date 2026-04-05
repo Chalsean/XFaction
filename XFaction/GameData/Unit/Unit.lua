@@ -25,20 +25,17 @@ function XFC.Unit:new()
     object.profession1 = nil
     object.profession2 = nil
     object.achievements = 0
-    object.isRunningAddon = false
     object.mainName = nil
     object.team = nil
     object.guild = nil
     object.version = nil
-    object.itemLevel = 0
-    object.pvp = ''
     object.guildSpeak = true
     object.guildListen = true
     object.lastLogin = 0
     object.mythicKey = nil
     object.realm = nil
     object.target = nil
-    object.loginEpoch = nil
+    object.lastUpdatedEpoch = nil
 
     return object
 end
@@ -47,9 +44,9 @@ function XFC.Unit:Initialize(inMemberID)
     assert(type(inMemberID) == 'number' or inMemberID == nil)
     local unitData
     if(inMemberID ~= nil) then
-        unitData = XFF.GuildMemberInfo(XF.Player.Guild:ID(), inMemberID)
+        unitData = C_Club.GetMemberInfo(XF.Player.Guild:ID(), inMemberID)
     else
-        unitData = XFF.GuildMyInfo(XF.Player.Guild:ID())
+        unitData = C_Club.GetMemberInfoForSelf(XF.Player.Guild:ID())
     end
 
     -- Failure conditions:
@@ -82,12 +79,11 @@ function XFC.Unit:Initialize(inMemberID)
 	self:Guild(XF.Player.Guild)
     
     self:Target(XF.Player.Target)
-    self:TimeStamp(XFF.TimeCurrent())
+    self:TimeStamp(time())
     self:Class(XFO.Classes:Get(unitData.classID))
     self:Race(XFO.Races:Get(unitData.race))
     self:Rank(unitData.guildRank)
     self:Note(unitData.memberNote or '?')
-    self:AchievementPoints(unitData.achievementPoints or 0)
 
     local lastLogin = 0
     if(unitData.lastOnlineYear ~= nil) then
@@ -110,9 +106,7 @@ function XFC.Unit:Initialize(inMemberID)
     end
 
     if(self:IsPlayer()) then
-        self:IsRunningAddon(true)
         self:Version(XF.Version)
-
         self:Location(XFO.Locations:GetCurrentLocation())
 
         local mkey = XFO.Keys:GetMyKey()
@@ -120,42 +114,22 @@ function XFC.Unit:Initialize(inMemberID)
             self:MythicKey(mkey)
         end
 
-        local permissions = XFF.GuildMyPermissions(unitData.guildRankOrder)
+        local permissions = C_GuildInfo.GuildControlGetRankFlags(unitData.guildRankOrder)
         if(permissions ~= nil) then
             self:CanGuildListen(permissions[1])
             self:CanGuildSpeak(permissions[2])
         end
         
-        local itemLevel = XFF.PlayerIlvl()
-        if(type(itemLevel) == 'number') then
-            itemLevel = math.floor(itemLevel)
-            self:ItemLevel(itemLevel)
-        end
-
-        local specIndex = XFF.SpecCurrent()
+        local specIndex = C_SpecializationInfo.GetSpecialization()
         if (specIndex ~= nil) then
-            local specId = XFF.SpecInfoByIndex(specIndex)
+            local specId = C_SpecializationInfo.GetSpecializationInfo(specIndex)
             self:Spec(XFO.Specs:Get(specId))
         end
         
-        local id = XFF.SpecHeroID()
+        local id = C_ClassTalents.GetActiveHeroTalentSpec()
 		if(XFO.Heros:Contains(id)) then
 			self:Hero(XFO.Heros:Get(id))
 		end
-
-        -- Highest PvP rating wins
-        local highestRating = 0
-        local highestIndex = 1
-        for i = 1, 3 do
-            local pvpRating = XFF.PlayerPvPRating(i)
-            if(pvpRating > highestRating) then
-                highestRating = pvpRating
-                highestIndex = i
-            end
-        end
-        if(highestRating > 0) then
-            self:PvP(highestRating, highestIndex)
-        end
     else
         if(unitData.zone ~= nil and strlen(unitData.zone) > 0) then
             if(not XFO.Locations:Contains(unitData.zone)) then                
@@ -276,14 +250,6 @@ function XFC.Unit:Hero(inHero)
     return self.hero
 end
 
-function XFC.Unit:AchievementPoints(inPoints)
-    assert(type(inPoints) == 'number' or inPoints == nil)
-    if(inPoints ~= nil) then
-        self.achievements = inPoints
-    end
-    return self.achievements
-end
-
 function XFC.Unit:Profession1(inProfession)
     assert(type(inProfession) == 'table' and inProfession.__name == 'Profession' or inProfession == nil)
     if(inProfession ~= nil) then
@@ -298,14 +264,6 @@ function XFC.Unit:Profession2(inProfession)
         self.profession2 = inProfession
     end
     return self.profession2
-end
-
-function XFC.Unit:IsRunningAddon(inBoolean)
-    assert(type(inBoolean) == 'boolean' or inBoolean == nil)
-    if(inBoolean ~= nil) then
-        self.isRunningAddon = inBoolean
-    end
-    return self.isRunningAddon
 end
 
 function XFC.Unit:Version(inVersion)
@@ -416,34 +374,6 @@ function XFC.Unit:Note(inNote)
     return self.note
 end
 
-function XFC.Unit:PvP(inScore, inIndex)
-    assert(type(inScore) == 'number' or type(inScore) == 'string' or inScore == nil)
-    assert(type(inIndex) == 'number' or inIndex == nil)
-
-    if(inIndex ~= nil) then
-        self.pvp = tostring(inScore)
-        if(inIndex == 1) then
-            self.pvp = self.pvp .. ' (2)'
-        elseif(inIndex == 2) then
-            self.pvp = self.pvp .. ' (3)'
-        else
-            self.pvp = self.pvp .. ' (10)'
-        end
-    elseif(inScore ~= nil) then
-        self.pvp = inScore
-    end
-    
-    return self.pvp
-end
-
-function XFC.Unit:ItemLevel(inItemLevel)
-    assert(type(inItemLevel) == 'number' or inItemLevel == nil)
-    if(inItemLevel ~= nil) then
-        self.itemLevel = inItemLevel
-    end
-    return self.itemLevel
-end
-
 function XFC.Unit:LastLogin(inDays)
     assert(type(inDays) == 'number' or inDays == nil)
     if(inDays ~= nil) then
@@ -452,12 +382,12 @@ function XFC.Unit:LastLogin(inDays)
     return self.lastLogin
 end
 
-function XFC.Unit:LoginEpoch(inEpochTime)
+function XFC.Unit:LastUpdatedEpoch(inEpochTime)
     assert(type(inEpochTime) == 'number' or inEpochTime == nil)
     if(inEpochTime ~= nil) then
-        self.loginEpoch = inEpochTime
+        self.lastUpdatedEpoch = inEpochTime
     end
-    return self.loginEpoch
+    return self.lastUpdatedEpoch
 end
 --#endregion
 
@@ -472,26 +402,10 @@ function XFC.Unit:Print()
     XF:Debug(self:ObjectName(), '  presence (' .. type(self.presence) .. '): ' .. tostring(self.presence))
     XF:Debug(self:ObjectName(), '  achievements (' .. type(self.achievements) .. '): ' .. tostring(self.achievements))
     XF:Debug(self:ObjectName(), '  timeStamp (' .. type(self.timeStamp) .. '): ' .. tostring(self.timeStamp))
-    XF:Debug(self:ObjectName(), '  loginEpoch (' .. type(self.loginEpoch) .. '): ' .. tostring(self.loginEpoch))
-    XF:Debug(self:ObjectName(), '  isRunningAddon (' .. type(self.isRunningAddon) .. '): ' .. tostring(self.isRunningAddon))
+    XF:Debug(self:ObjectName(), '  lastUpdatedEpoch (' .. type(self.lastUpdatedEpoch) .. '): ' .. tostring(self.lastUpdatedEpoch))
     XF:Debug(self:ObjectName(), '  mainName (' .. type(self.mainName) .. '): ' .. tostring(self.mainName))
-    XF:Debug(self:ObjectName(), '  itemLevel (' .. type(self.itemLevel) .. '): ' .. tostring(self.itemLevel))
-    XF:Debug(self:ObjectName(), '  pvp (' .. type(self.pvp) .. '): ' .. tostring(self.pvp))
     XF:Debug(self:ObjectName(), '  guildSpeak (' .. type(self.guildSpeak) .. '): ' .. tostring(self.guildSpeak))
     XF:Debug(self:ObjectName(), '  guildListen (' .. type(self.guildListen) .. '): ' .. tostring(self.guildListen))
-    -- if(self:HasVersion()) then self:Version():Print() end
-    -- if(self:HasGuild()) then self:Guild():Print() end
-    -- if(self:HasRealm()) then self:Realm():Print() end
-    -- if(self:HasTarget()) then self:Target():Print() end
-    -- if(self:HasTeam()) then self:Team():Print() end
-    -- if(self:HasLocation()) then self:Location():Print() end
-    -- if(self:HasRace()) then self:Race():Print() end
-    -- if(self:HasClass()) then self:Class():Print() end
-    -- if(self:HasSpec()) then self:Spec():Print() end
-    -- if(self:HasHero()) then self:Hero():Print() end
-    -- if(self:HasProfession1()) then self:Profession1():Print() end
-    -- if(self:HasProfession2()) then self:Profession2():Print() end  
-    if(self:HasMythicKey()) then self:MythicKey():Print() end
 end
 
 function XFC.Unit:IsPlayer()
@@ -593,7 +507,7 @@ function XFC.Unit:IsSameTarget()
 end
 
 function XFC.Unit:CanChat()
-    return self:IsOnline() and self:IsRunningAddon() and self:IsSameFaction() and self:IsSameRealm() and not self:IsPlayer()
+    return self:IsOnline() and self:IsSameFaction() and self:IsSameRealm() and not self:IsPlayer()
 end
 
 function XFC.Unit:GetLink()
@@ -604,25 +518,18 @@ function XFC.Unit:GetLink()
     return format('[|c%s%s|r]', self:Class():Hex(), format('|Hplayer:%s|h%s|h', self:UnitName(), self:Name()))
 end
 
-function XFC.Unit:GetColoredName()
-    return format('|cff%s%s|r', self:Class():Hex(), self:Name())
-end
-
 function XFC.Unit:Serialize()
     local data = {}
-	data.A = self:AchievementPoints()    
 	data.C = self:Class():Serialize()
     data.F = self:Race():Serialize()
 	data.G = self:Guild():Serialize()
     data.H = self:HasHero() and self:Hero():Serialize() or nil
-	data.I = self:ItemLevel()
 	data.J = self:Rank()
     data.K = self:GUID()
 	data.L = self:Level()
 	data.M = self:HasMythicKey() and self:MythicKey():Serialize() or nil
 	data.N = self:Note()
 	data.O = self:Presence()
-    data.P = self:PvP()	
     data.R = self:Realm():Serialize()
     data.S = self:HasSpec() and self:Spec():Serialize() or nil
     data.T = self:Target():Serialize()
@@ -637,13 +544,10 @@ end
 function XFC.Unit:Deserialize(inSerial)
     assert(type(inSerial) == 'string')
     local data = unpickle(inSerial)
-    self:IsRunningAddon(true)
-	self:AchievementPoints(data.A)    
     self:Class(XFO.Classes:Get(tonumber(data.C)))
     self:Race(XFO.Races:Get(tonumber(data.F)))
     self:Guild(XFO.Guilds:Get(tonumber(data.G)))
     self:Hero(XFO.Heros:Get(tonumber(data.H)))
-	self:ItemLevel(data.I)
 	self:Rank(data.J)
     self:GUID(data.K)
     self:Key(data.K)
@@ -652,7 +556,6 @@ function XFC.Unit:Deserialize(inSerial)
     self:Print()
 	self:Note(data.N)
 	self:Presence(data.O)
-    self:PvP(data.P)	
     self:Realm(XFO.Realms:Get(tonumber(data.R)))
     self:Spec(XFO.Specs:Get(tonumber(data.S)))
     self:Target(XFO.Targets:Get(tonumber(data.T)))
@@ -674,6 +577,6 @@ function XFC.Unit:Deserialize(inSerial)
         self:Location(XFO.Locations:Get(data.Z))
     end
 
-    self:TimeStamp(XFF.TimeCurrent())
+    self:TimeStamp(time())
 end
 --#endregion

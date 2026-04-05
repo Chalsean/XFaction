@@ -24,8 +24,8 @@ end
 function XFC.ClassCollection:Add(inClass)
 	assert(type(inClass) == 'table' and inClass.__name == 'Class' or type(inClass) == 'number')
 	if (type(inClass) == 'number') then
-		local info = XFF.ClassInfo(inClass)
-		local r, g, b, hex = XFF.ClassColor(info.classFile)
+		local info = C_CreatureInfo.GetClassInfo(inClass)
+		local r, g, b, hex = GetClassColor(info.classFile)
 		local class = XFC.Class:new()
 		class:Initialize()
 		class:Key(info.classID)

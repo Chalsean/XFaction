@@ -11,7 +11,7 @@ function XF:CoreInit()
 
 	-- External addon handling
 	XFO.Elephant = XFC.Elephant:new()
-	--XFO.WIM = XFC.WIM:new()
+	XFO.WIM = XFC.WIM:new()
 	XFO.AddonEvent = XFC.AddonEvent:new(); XFO.AddonEvent:Initialize()
 
 	-- Log XFaction version
@@ -58,9 +58,9 @@ function XF:CoreInit()
 	XFO.Dungeons = XFC.DungeonCollection:new(); XFO.Dungeons:Initialize()
 	XFO.Keys = XFC.MythicKeyCollection:new(); XFO.Keys:Initialize()
 	
-	XF.Player.GUID = XFF.PlayerGUID('player')
+	XF.Player.GUID = UnitGUID('player')
 	XF:Info(ObjectName, 'Player GUID: %s', XF.Player.GUID)
-	XF.Player.Faction = XFO.Factions:Get(XFF.PlayerFaction('player'))
+	XF.Player.Faction = XFO.Factions:Get(UnitFactionGroup('player'))
 	
 	-- Wrappers	
 	XFO.Hooks = XFC.HookCollection:new(); XFO.Hooks:Initialize()
@@ -73,13 +73,12 @@ function XF:CoreInit()
 		callback = XF.CallbackLoginGuild, 
 		repeater = true, 
 		instance = true,
-		ttl = XF.Settings.LocalGuild.LoginTTL,
+		ttl = 60,
 		start = true
 	})
 
 	-- These will execute "in-parallel" with remainder of setup as they are not time critical nor is anything dependent upon them
-	try(function ()		
-		XF.Player.InInstance = XFF.PlayerIsInInstance()		
+	try(function ()
 		XFO.DTGuild:Initialize()
 		XFO.DTLinks:Initialize()
 		XFO.DTMetrics:Initialize()
@@ -93,9 +92,9 @@ function XF:CallbackLoginGuild()
 	try(function ()
 		-- For a time Blizz API says player is not in guild, even if they are
 		-- Its not clear what event fires (if any) when this data is available, hence the poller
-		if(XFF.PlayerIsInGuild()) then
+		if(IsInGuild()) then
 			-- Even though it says were in guild, theres a brief time where the following calls fails, hence the sanity check
-			local guildID = XFF.GuildID()
+			local guildID = C_Club.GetGuildClubId()
 			if(guildID ~= nil) then
 				-- Now that guild info is available we can finish setup
 				XF:Debug(ObjectName, 'Guild info is loaded, proceeding with setup')
@@ -113,7 +112,7 @@ function XF:CallbackLoginGuild()
 					callback = XF.CallbackLoginPlayer, 
 					repeater = true, 
 					instance = true,
-					maxAttempts = XF.Settings.Player.Retry,
+					maxAttempts = 60,
 					start = true
 				})
 			end
@@ -176,8 +175,8 @@ function XF:CallbackLoginPlayer()
 			XFO.DTMetrics:PostInitialize()
 
 			-- For support reasons, it helps to know what addons are being used
-			for i = 1, XFF.ClientAddonCount() do
-				local name, _, _, enabled = XFF.ClientAddonInfo(i)
+			for i = 1, C_AddOns.GetNumAddOns() do
+				local name, _, _, enabled = C_AddOns.GetAddOnInfo(i)
 				XF:Debug(ObjectName, 'Addon is loaded [%s] enabled [%s]', name, tostring(enabled))
 			end			
 

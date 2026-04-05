@@ -32,7 +32,7 @@ function XF:SetupMenus()
 		end
 
 		local i = #XF.Cache.Setup.Guilds
-		while i < XF.Settings.Setup.MaxGuilds do
+		while i < 10 do
 			table.insert(XF.Cache.Setup.Guilds, {
 				region = nil,
 				id = nil,
@@ -116,7 +116,7 @@ function XF:SetupMenus()
 		end
 
 		local i = #XF.Cache.Setup.Teams
-		while i < XF.Settings.Setup.MaxTeams do
+		while i < 30 do
 			table.insert(XF.Cache.Setup.Teams, {
 				initials = nil,
 				name = nil,
@@ -768,119 +768,3 @@ XF.Options = {
 		},
 	}
 }
-
-function XF:ConfigInitialize()
-	-- Get AceDB up and running as early as possible, its not available until addon is loaded
-	XF.ConfigDB = LibStub('AceDB-3.0'):New('XFactionDB', XF.Defaults, true)
-	XF.Config = XF.ConfigDB.profile
-
-	-- Cache it because on shutdown, XF.Config gets unloaded while we're still logging
-	XF.Verbosity = XF.Config.Debug.Verbosity
-
-	XF.Options.args.Profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(XF.ConfigDB)
-	XF.Lib.Config:RegisterOptionsTable(XF.Name, XF.Options, nil)
-	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, XF.Name, nil, 'General')
-	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'Chat', XF.Name, 'Chat')
-	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'DataText', XF.Name, 'DataText')
-	XF.Lib.ConfigDialog:AddToBlizOptions(XF.Name, 'Profile', XF.Name, 'Profile')
-
-	XF.ConfigDB.RegisterCallback(XF, 'OnProfileChanged', 'InitProfile')
-	XF.ConfigDB.RegisterCallback(XF, 'OnProfileCopied', 'InitProfile')
-	XF.ConfigDB.RegisterCallback(XF, 'OnProfileReset', 'InitProfile')
-
-	XF.Cache.Setup = {
-		Confederate = {},
-		Realms = {},
-		Teams = {},
-		Guilds = {},
-		GuildsRealms = {},
-		Compress = true,
-	}
-
-	--#region Changelog
-	try(function ()
-		for versionKey, config in pairs(XF.ChangeLog) do
-			XFO.Versions:Add(versionKey)
-			XFO.Versions:Get(versionKey):IsInChangeLog(true)
-		end
-
-		local minorOrder = 0
-		local patchOrder = 0
-		for _, version in XFO.Versions:ReverseSortedIterator() do
-			if(version:IsInChangeLog()) then
-				local minorVersion = version:Major() .. '.' .. version:Minor()
-				if(XF.Options.args.General.args.ChangeLog.args[minorVersion] == nil) then
-					minorOrder = minorOrder + 1
-					patchOrder = 0
-					XF.Options.args.General.args.ChangeLog.args[minorVersion] = {
-						order = minorOrder,
-						type = 'group',
-						childGroups = 'tree',
-						name = minorVersion,
-						args = {},
-					}
-				end
-				patchOrder = patchOrder + 1
-				XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:Key()] = {
-					order = patchOrder,
-					type = 'group',
-					name = version:Key(),
-					desc = 'Major: ' .. version:Major() .. '\nMinor: ' .. version:Minor() .. '\nPatch: ' .. version:Patch(),
-					args = XF.ChangeLog[version:Key()],
-				}
-				if(version:IsAlpha()) then
-					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:Key()].name = version:Key() .. ' |cffFF4700Alpha|r'
-				elseif(version:IsBeta()) then
-					XF.Options.args.General.args.ChangeLog.args[minorVersion].args[version:Key()].name = version:Key() .. ' |cffFF7C0ABeta|r'
-				end
-			end
-		end
-
-		-- One time install logic
-		-- local version = XFC.Version:new()
-		-- if(XF.Config.InstallVersion ~= nil) then
-		-- 	version:Key(XF.Config.InstallVersion)
-		-- else
-		-- 	version:Key('0.0.0')
-		-- end
-		-- if(version:IsNewer(XF.Version, true)) then
-		-- 	XF:Info(ObjectName, 'Performing new install')	
-		-- 	XF:Install()
-		-- 	XF.Config.InstallVersion = XF.Version:Key()
-		-- end
-	end).
-	catch(function (inErrorMessage)
-		XF:Debug(ObjectName, inErrorMessage)
-	end)
-	--#endregion
-
-	XF:Info(ObjectName, 'Configs loaded')
-end
-
-function XF:InitProfile()
-    -- When DB changes namespace (profile) the XF.Config becomes invalid and needs to be reset
-    XF.Config = XF.ConfigDB.profile
-end
-
-function XF_ToggleOptions()
-	if XF.Lib.ConfigDialog.OpenFrames[XF.Name] ~= nil then
-		XF.Lib.ConfigDialog:Close(XF.Name)
-	else
-		XF.Lib.ConfigDialog:Open(XF.Name)
-		XF.Lib.ConfigDialog:SelectGroup(XF.Name, 'General', 'About')
-	end
-end
-
-function XF:Install()
-	for key, value in pairs (XF.Config.DataText.Guild.Order) do
-		local newKey = key:gsub("Order", "")
-		XF.Config.DataText.Guild.Order[key] = nil
-		XF.Config.DataText.Guild.Order[newKey] = value			
-	end
-
-	for key, value in pairs (XF.Config.DataText.Guild.Alignment) do
-		local newKey = key:gsub("Alignment", "")
-		XF.Config.DataText.Guild.Alignment[key] = nil
-		XF.Config.DataText.Guild.Alignment[newKey] = value
-	end
-end

@@ -27,7 +27,7 @@ function XFC.RegionCollection:Initialize()
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 
-		local current = XFF.RegionCurrent()
+		local current = GetCurrentRegion()
 		if (current == 90) then
 			current = 1
 		end

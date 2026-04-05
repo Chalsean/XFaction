@@ -33,7 +33,7 @@ function XFC.LocationCollection:Add(inLocation)
 			XF:Info(self:ObjectName(), 'Initialized location [%s]', location:Name())
 		end
 	elseif(type(inLocation) == 'number') then
-		local info = XFF.LocationInfo(inLocation)
+		local info = C_Map.GetMapInfo(inLocation)
 		if(info ~= nil) then
 			local location = XFC.Location:new()
 			location:Initialize()
@@ -49,7 +49,7 @@ function XFC.LocationCollection:Add(inLocation)
 end
 
 function XFC.LocationCollection:GetCurrentLocation()
-	local id = XFF.PlayerLocationID("player")
+	local id = C_Map.GetBestMapForUnit("player")
 	if(id ~= nil) then
 		if(not self:Contains(id)) then
 			self:Add(id)
@@ -57,7 +57,7 @@ function XFC.LocationCollection:GetCurrentLocation()
 		return self:Get(id)
 	end
 
-	local zone = XFF.PlayerZone()
+	local zone = GetZoneText()
 	if(zone ~= nil and not self:Contains(zone)) then
 		self:Add(zone)
 	end

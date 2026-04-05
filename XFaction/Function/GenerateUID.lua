@@ -7,7 +7,7 @@ end
 
 function math.GenerateUID()
     local uid = ''
-    for i = 1, XF.Settings.System.UIDLength do
+    for i = 1, XF.UIDLength do
         uid = uid .. characterArray[math.random(1, #characterArray)] 
     end
     return uid

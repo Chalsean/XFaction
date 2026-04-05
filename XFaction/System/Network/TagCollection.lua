@@ -29,7 +29,7 @@ function XFC.TagCollection:Initialize()
 			tag:Key(i)
 			tag:ID(i)
 			tag:Name(self:Prefix() .. tostring(i))
-			XFF.ChatRegister(tag:Name())
+			C_ChatInfo.RegisterAddonMessagePrefix(tag:Name())
 			self:Add(tag)
 			self.tagNames[tag:Name()] = i
 		end

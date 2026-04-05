@@ -18,7 +18,7 @@ function XFC.GuildCollection:Initialize(inGuildID)
 	if(not self:IsInitialized()) then
 		self:ParentInitialize()
 		self.names = {}
-		self.info = XFF.GuildInfo(inGuildID)
+		self.info = C_Club.GetClubInfo(inGuildID)
 		self:Deserialize()
 		XF:Info(self:ObjectName(), inGuildID)
 
@@ -31,7 +31,7 @@ function XFC.GuildCollection:Initialize(inGuildID)
 
 		-- Sanity check
 		if(XF.Player.Guild == nil) then
-			error('Unable to identify player guild: ' .. tostring(XFF.GuildID()))
+			error('Unable to identify player guild: ' .. tostring(C_Club.GetGuildClubId()))
 		end
 
 		self:IsInitialized(true)

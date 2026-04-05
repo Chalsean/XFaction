@@ -11,7 +11,6 @@ function XFC.Event:new()
     object.callback = nil
     object.isEnabled = false
     object.inInstance = false
-    object.isRestricted = false
     return object
 end
 --#endregion
@@ -40,14 +39,6 @@ function XFC.Event:IsInstance(inBoolean)
     end
 	return self.inInstance
 end
-
-function XFC.Event:IsRestricted(inBoolean)
-    assert(inBoolean == nil or type(inBoolean) == 'boolean', 'argument needs to be nil or boolean')
-    if(inBoolean ~= nil) then
-        self.isRestricted = inBoolean
-    end
-	return self.isRestricted
-end
 --#endregion
 
 --#region Methods
@@ -56,7 +47,6 @@ function XFC.Event:Print()
     XF:Debug(self:ObjectName(), '  callback (' .. type(self.callback) .. '): ' .. tostring(self.callback))
     XF:Debug(self:ObjectName(), '  isEnabled (' .. type(self.isEnabled) .. '): ' .. tostring(self.isEnabled))
     XF:Debug(self:ObjectName(), '  inInstance (' .. type(self.inInstance) .. '): ' .. tostring(self.inInstance))
-    XF:Debug(self:ObjectName(), '  IsRestricted (' .. type(self.IsRestricted) .. '): ' .. tostring(self.IsRestricted))
 end
 
 function XFC.Event:Start()

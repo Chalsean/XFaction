@@ -11,3 +11,6 @@
 ## IconTexture: Interface\Addons\XFaction\Assets\xfaction-icon.png
 
 Load.xml
+
+
+## clean up init

@@ -16,7 +16,7 @@ end
 function XFC.Mailbox:Add(inKey)
 	assert(type(inKey) == 'string')
 	if(not self:Contains(inKey)) then
-		self.objects[inKey] = XFF.TimeCurrent()
+		self.objects[inKey] = time()
 	end
 end
 
@@ -26,35 +26,26 @@ function XFC.Mailbox:Process(inMessage)
     -- Forward message to any remaining targets
     self:Send(inMessage)
     
-    if (XFF.PlayerIsIgnored(inMessage:From())) then
+    if (C_FriendList.IsIgnoredByGuid(inMessage:From())) then
         return
     elseif (inMessage:IsLoginMessage()) then
-        XF:Warn(self:ObjectName(), 'login message')
         XFO.Confederate:Login(inMessage:FromUnit())
         XFO.ChatWindow:DisplayLogin(inMessage:FromUnit())
-        return
-    elseif (inMessage:IsLogoutMessage()) then
-        XF:Warn(self:ObjectName(), 'logout message')
-        XFO.Confederate:Logout(inMessage:From())
-        XFO.ChatWindow:DisplayLogout(inMessage:FromUnit())
         return
     end
 
     XFO.Confederate:RefreshUnit(inMessage:FromUnit())
     if (not XF.Player.Unit:CanGuildListen()) then return end
 
-    if (inMessage:IsGuildChatMessage()) then
-        XF:Warn(self:ObjectName(), 'guild message')
-        XFO.ChatWindow:DisplayGuildChat(inMessage)
-    elseif (inMessage:IsAchievementMessage()) then
-        XF:Warn(self:ObjectName(), 'achievement message')
-        XFO.ChatWindow:DisplayAchievement(inMessage)
-    elseif (inMessage:IsOrderMessage()) then
-        XF:Warn(self:ObjectName(), 'order message')
+    if (inMessage:IsOrderMessage()) then
         local order = XFC.Order:new()
         order:Deserialize(inMessage:Data())
         order:Customer(inMessage:FromUnit())
         XFO.ChatWindow:DisplayOrder(order)
+    elseif (inMessage:IsGuildChatMessage()) then
+        XFO.ChatWindow:DisplayGuildChat(inMessage)
+    elseif (inMessage:IsAchievementMessage()) then
+        XFO.ChatWindow:DisplayAchievement(inMessage)
     end
 end
 
@@ -62,7 +53,7 @@ local function _RandomSelection(inCount)
     assert(type(inCount) == 'number')
     if(inCount > 0) then
         local rand = math.random(1, inCount)
-        return rand <= XF.Settings.Network.RandomSelection
+        return rand <= 10
     end
     return true
 end
@@ -176,7 +167,6 @@ end
 
 local function SendMessage(inSubject, inPriority, inData)
     local self = XFO.Mailbox
-    XF.Player.LastBroadcast = XFF.TimeCurrent()
 
     try(function ()
         local message = XFC.Message:new()

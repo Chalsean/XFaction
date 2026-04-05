@@ -18,7 +18,7 @@ function XFC.MythicKeyCollection:Initialize()
         self:ParentInitialize()
 
         -- Far as can tell does not fire event, so call and pray it loads before we query for the data
-		XFF.MythicRequestMaps()
+		C_MythicPlus.RequestMapInfo()
 
         self:IsInitialized(true)
     end
@@ -28,8 +28,8 @@ end
 --#region Methods
 function XFC.MythicKeyCollection:GetMyKey()
 
-    local level = XFF.MythicLevel()    
-    local mapID = XFF.MythicMapID()
+    local level = C_MythicPlus.GetOwnedKeystoneLevel()    
+    local mapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID()
 
     if(level ~= nil and mapID ~= nil) then
         local dungeon = XFO.Dungeons:Get(mapID)

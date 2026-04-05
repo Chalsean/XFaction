@@ -662,7 +662,7 @@ function XFC.RealmCollection:Initialize()
 			realm:ParentID(tonumber(realmData[3]))
 			self:Add(realm)
 
-			if(realm:Name() == XFF.RealmName() and XF.Player.Region:Equals(realm:Region())) then
+			if(realm:Name() == GetRealmName() and XF.Player.Region:Equals(realm:Region())) then
 				XF.Player.Realm = realm
 				XF:Info(self:ObjectName(), 'Initialized player realm [%d:%s]', realm:ID(), realm:Name())
 			end

@@ -36,7 +36,7 @@ function XFC.BNet:Whisper(inMessage, inFriend)
 
     local tag = XFO.Tags:GetRandomTag()
     local data = inMessage:Encode(true)
-    local packets = XFO.PostOffice:SegmentMessage(data, inMessage:Key(), XF.Settings.Network.BNet.PacketSize)
+    local packets = XFO.PostOffice:SegmentMessage(data, inMessage:Key(), 250)
     local priority = (inMessage:IsHighPriority() and 'ALERT') or (inMessage:IsMediumPriority() and 'NORMAL') or 'BULK'
 
     try(function ()

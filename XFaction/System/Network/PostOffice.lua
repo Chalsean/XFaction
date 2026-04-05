@@ -2,6 +2,13 @@ local XF, G = unpack(select(2, ...))
 local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
 local ObjectName = 'PostOffice'
 
+XF.Enum.Protocol = {
+    Unknown = 1,
+    BNet = 2,
+    Channel = 3,
+    Guild = 4
+}
+
 XFC.PostOffice = XFC.ObjectCollection:newChildConstructor()
 
 --#region Constructors
@@ -84,8 +91,8 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
     -- Ensure this message has not already been processed
     local packetNumber = tonumber(string.sub(inEncodedMessage, 1, 1))
     local totalPackets = tonumber(string.sub(inEncodedMessage, 2, 2))
-    local messageKey = string.sub(inEncodedMessage, 3, 3 + XF.Settings.System.UIDLength - 1)
-    local messageData = string.sub(inEncodedMessage, 3 + XF.Settings.System.UIDLength, -1)
+    local messageKey = string.sub(inEncodedMessage, 3, 3 + XF.UIDLength - 1)
+    local messageData = string.sub(inEncodedMessage, 3 + XF.UIDLength, -1)
 
     -- Ignore if it's your own message or you've seen it before
     if(XFO.Mailbox:Contains(messageKey)) then
@@ -113,7 +120,7 @@ function XFC.PostOffice:Receive(inMessageTag, inEncodedMessage, inDistribution, 
                 local message = XFC.Message:new()
                 message:Decode(encodedMessage, protocol)
 
-                if(not message:IsInitialized() or message:TimeStamp() < XF.Start or message:TimeStamp() < XFF.TimeCurrent() - XF.Settings.Network.MessageWindow) then
+                if(not message:IsInitialized() or message:TimeStamp() < XF.Start or message:TimeStamp() < time() - 120) then
                     XF:Trace(self:ObjectName(), 'Message is too old, wont process')
                     return
                 end

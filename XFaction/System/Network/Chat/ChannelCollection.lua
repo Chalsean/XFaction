@@ -30,8 +30,7 @@ function XFC.ChannelCollection:Initialize()
 			name = 'ChannelLeft', 
 			event = 'CHAT_MSG_CHANNEL_LEAVE', 
 			callback = XFO.Channels.CallbackUnitLeftChannel, 
-			instance = true,
-			restricted = true
+			instance = true
 		})
 
 		self:IsInitialized(true)
@@ -41,12 +40,13 @@ end
 
 --#region Methods
 function XFC.ChannelCollection:CallbackUnitLeftChannel(_, name, _, _, _, _, _, _, channelName, _, _, guid)
+	if (issecretvalue(guid)) then return end
 	local self = XFO.Channels
 	try(function()
-		if(self:LocalChannel():Key() == channelName) then
-			XF:Debug(self:ObjectName(), 'Detected channel logout: %s', name)
-			XFO.Confederate:Logout(guid)
+		if(self:Contains('CHANNEL') and self:Get('CHANNEL'):Name() == channelName) then
+			XF:Info(self:ObjectName(), 'Detected channel logout: %s', name)
 			XFO.ChatWindow:DisplayLogout(guid)
+			XFO.Confederate:Logout(guid)
 		end
 	end).
 	catch(function(err)
@@ -60,7 +60,7 @@ function XFC.ChannelCollection:CallbackLoginChannel()
 		JoinTemporaryChannel(self.localName, self.localPassword)
         XF:Info(self:ObjectName(), 'Joined confederate channel [%s]', self.localName)
 
-		local channels = {XFF.ChatChannels()}
+		local channels = {GetChannelList()}
 		for i = 1, #channels, 3 do
 			local channelID, channelName, disabled = channels[i], channels[i+1], channels[i+2]
 			if (channelName == self.localName) then

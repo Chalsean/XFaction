@@ -27,9 +27,9 @@ function XFC.DTGuild:Initialize()
 			OnLeave = function(this) XFO.DTGuild:CallbackOnLeave(this) end,
 			OnClick = function(this, button) XFO.DTGuild:CallbackOnClick(this, button) end,
 		}))
-		self:HeaderFont(XFF.UICreateFont('headerFont'))
+		self:HeaderFont(CreateFont('headerFont'))
 		self:HeaderFont():SetTextColor(0.4,0.78,1)
-		self:RegularFont(XFF.UICreateFont('regularFont'))
+		self:RegularFont(CreateFont('regularFont'))
 		self:RegularFont():SetTextColor(255,255,255)
 		self:IsInitialized(true)
 	end
@@ -103,7 +103,7 @@ function XFC.DTGuild:RefreshBroker()
 
 			local online = 0
 			for _, unit in XFO.Confederate:Iterator() do
-				if(unit:IsOnline() and unit:IsRunningAddon()) then
+				if(unit:IsOnline()) then
 					online = online + 1
 				end
 			end
@@ -131,19 +131,14 @@ local function PreSort()
 			unitData.UnitName = unit:UnitName()
 			unitData.Note = unit:Note()
 			unitData.GUID = unit:GUID()
-			unitData.Achievement = unit:AchievementPoints()
 			unitData.Rank = unit:Rank()
-			unitData.ItemLevel = unit:ItemLevel()	
 			unitData.Race = unit:Race():Name()
 			unitData.Team = unit:HasTeam() and unit:Team():Name() or 'Unknown'
 			unitData.Class = unit:Class():Hex()
 			unitData.Faction = unit:Faction():IconID()
-			unitData.PvP = unit:PvP()
 
 			if(unit:HasVersion()) then
 				unitData.Version = unit:Version():Key()
-			elseif(unit:LoginEpoch() < XFF.TimeCurrent() - XF.Settings.Confederate.UnitStale) then
-				unitData.Version = '0.0.0'
 			end
 
 			if(unit:IsAlt() and XF.Config.DataText.Guild.Main) then
@@ -200,19 +195,19 @@ local function LineClick(_, inUnitGUID, inMouseButton)
 		format('BNplayer:%s:%d:0:WHISPER:%s', unit:Friend():Name(), unit:Friend():AccountID(), unit:Friend():Name()) or
 		format('player:%s', unit:UnitName())
 
-	if(inMouseButton == 'RightButton' and XFF.UIIsShiftDown()) then
-		XFF.PartySendInvite(unit:UnitName())
-	elseif(inMouseButton == 'RightButton' and XFF.UIIsCtrlDown()) then
-		XFF.PartyRequestInvite(unit:UnitName())
+	if(inMouseButton == 'RightButton' and IsShiftKeyDown()) then
+		C_PartyInfo.InviteUnit(unit:UnitName())
+	elseif(inMouseButton == 'RightButton' and IsControlKeyDown()) then
+		C_PartyInfo.RequestInviteFromUnit(unit:UnitName())
  	elseif(inMouseButton == 'LeftButton' or inMouseButton == 'RightButton') then
-		XFF.UICreateLink(link, unit:Name(), inMouseButton)
+		SetItemRef(link, unit:Name(), inMouseButton)
 	end
 end
 
 function XFC.DTGuild:CallbackOnEnter(this)
 	local self = XFO.DTGuild
 	if(not XF.Initialized) then return end
-	if(XFF.PlayerIsInCombat()) then return end
+	if(InCombatLockdown()) then return end
 
 	try(function()
 
@@ -249,7 +244,7 @@ function XFC.DTGuild:CallbackOnEnter(this)
 			self:Tooltip():SetHeaderFont(self:HeaderFont())
 			self:Tooltip():SetFont(self:RegularFont())
 			self:Tooltip():SmartAnchorTo(this)
-			self:Tooltip():SetAutoHideDelay(XF.Settings.DataText.AutoHide, this, function() XFO.DTGuild:CallbackOnLeave() end)
+			self:Tooltip():SetAutoHideDelay(.25, this, function() XFO.DTGuild:CallbackOnLeave() end)
 			self:Tooltip():EnableMouse(true)
 			self:Tooltip():SetClampedToScreen(false)
 			self:Tooltip():SetFrameStrata('FULLSCREEN_DIALOG')
@@ -277,8 +272,8 @@ function XFC.DTGuild:CallbackOnEnter(this)
 			line = self:Tooltip():AddLine()		
 		end
 
-		if(XF.Config.DataText.Guild.MOTD and XF.Cache.DTGuildTotalEnabled > 8) then
-			local motd = XFF.GuildMOTD()
+		if(XF.Config.DataText.Guild.MOTD and XF.Cache.DTGuildTotalEnabled > 6) then
+			local motd = GetGuildRosterMOTD()
 			local lineWords = ''
 			local lineLength = XF.Cache.DTGuildTextEnabled * 15
 			if(motd ~= nil) then
@@ -346,13 +341,13 @@ function XFC.DTGuild:CallbackOnEnter(this)
 					if(orderEnabled[tostring(i)].Icon) then
 						if(columnName == 'Profession') then
 							if(unitData.Profession1 ~= nil) then
-								cellValue = format('%s', format(XF.Icons.String, unitData.Profession1))
+								cellValue = format('%s', format(XF.Icons, unitData.Profession1))
 							end
 							if(unitData.Profession2 ~= nil) then
-								cellValue = cellValue .. ' ' .. format('%s', format(XF.Icons.String, unitData.Profession2))
+								cellValue = cellValue .. ' ' .. format('%s', format(XF.Icons, unitData.Profession2))
 							end
 						elseif(unitData[columnName] ~= nil) then
-							cellValue = format('%s', format(XF.Icons.String, unitData[columnName]))
+							cellValue = format('%s', format(XF.Icons, unitData[columnName]))
 						end
 					elseif(columnName == 'Name') then
 						cellValue = format('|c%s%s|r', unitData.Class, unitData.Name)
@@ -378,7 +373,7 @@ end
 function XFC.DTGuild:CallbackOnLeave()
 	local self = XFO.DTGuild
 	try(function()
-		if self:Tooltip() and XFF.UIIsMouseOver(self:Tooltip()) then
+		if self:Tooltip() and MouseIsOver(self:Tooltip()) then
 			return
 		else
 			XF.Lib.QT:Release(self:Tooltip())
@@ -392,16 +387,16 @@ end
 
 function XFC.DTGuild:CallbackOnClick(this, inButton)
 	local self = XFO.DTGuild
-	if(XFF.PlayerIsInCombat()) then return end
+	if(InCombatLockdown()) then return end
 	try(function()
 		if(inButton == 'LeftButton') then
-			XFF.UIToggleGuild()
+			ToggleGuildFrame()
 		elseif(inButton == 'RightButton') then
-			if not XFF.UIOptionsFrame or not XFF.UIOptionsFrame:IsShown() then
-				XFF.UIOptionsFrame:Show()
-				XFF.UIOptionsFrameCategory(XF.Name)
+			if not InterfaceOptionsFrame or not InterfaceOptionsFrame:IsShown() then
+				InterfaceOptionsFrame:Show()
+				InterfaceOptionsFrame_OpenToCategory(XF.Name)
 			else
-				XFF.UIOptionsFrame:Hide()
+				InterfaceOptionsFrame:Hide()
 			end
 		end
 	end).
