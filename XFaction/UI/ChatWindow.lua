@@ -89,6 +89,9 @@ function XFC.ChatWindow:DisplayLogin(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
     if (not XF.Config.Chat.Login.Enable or inUnit:IsSameGuild()) then return end
     DisplayOnFrame('GUILD', 'CHAT_MSG_GUILD', 'SYSTEM', inUnit, XF.Lib.Locale['CHAT_LOGIN'])
+    if(XF.Config.Chat.Login.Sound) then
+        PlaySound(3332, 'Master')
+    end
 end
 
 function XFC.ChatWindow:DisplayLogout(inGUID)
@@ -98,9 +101,6 @@ function XFC.ChatWindow:DisplayLogout(inGUID)
         local unit = XFO.Confederate:Get(inGUID)
         if (not unit:IsSameGuild()) then
             DisplayOnFrame('GUILD', 'CHAT_MSG_GUILD', 'SYSTEM', unit, XF.Lib.Locale['CHAT_LOGOUT'])
-            if(XF.Config.Chat.Login.Sound) then
-                PlaySound(3332, 'Master')
-            end
         end
     end
 end
