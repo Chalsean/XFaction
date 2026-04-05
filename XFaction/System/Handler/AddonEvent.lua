@@ -54,7 +54,7 @@ local function InitializeAceDB()
 
 	if (XF.ConfigDB.global.HasBeenReset == nil) then
 		XF.ConfigDB:ResetDB(DEFAULT)
-		XF.ConfigDB.global.HasBeenReset = true
+		XF.ConfigDB.global.HasBeenReset = time()
 	end
 
 	XF.Config = XF.ConfigDB.profile

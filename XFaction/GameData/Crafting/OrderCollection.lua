@@ -87,7 +87,7 @@ function GetMyOrders()
                     order:CrafterName(myOrder.crafterName)
                 end
 
-                local professionName = XFF.CraftingGetSkillProfession(myOrder.skillLineAbilityID)
+                local professionName = C_TradeSkillUI.GetProfessionNameForSkillLineAbility(myOrder.skillLineAbilityID)
                 if(professionName ~= nil and type(professionName) == 'string') then
                     local profession = XFO.Professions:Get(professionName)
                     if(profession ~= nil) then

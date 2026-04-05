@@ -174,6 +174,9 @@ function XF:CallbackLoginPlayer()
 			XFO.DTLinks:PostInitialize()
 			XFO.DTMetrics:PostInitialize()
 
+			XFO.DTGuild:RefreshBroker()
+        	XFO.DTLinks:RefreshBroker()
+
 			-- For support reasons, it helps to know what addons are being used
 			for i = 1, C_AddOns.GetNumAddOns() do
 				local name, _, _, enabled = C_AddOns.GetAddOnInfo(i)

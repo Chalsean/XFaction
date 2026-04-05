@@ -72,7 +72,7 @@ end
 
 function XFC.ChatWindow:DisplayGuildChat(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    if (not XF.Config.Chat.GChat.Enable or inUnit:IsSameGuild()) then return end
+    if (not XF.Config.Chat.GChat.Enable or inMessage:FromUnit():IsSameGuild()) then return end
     local text = DisplayOnFrame('GUILD', 'CHAT_MSG_GUILD', 'GUILD', inMessage:FromUnit(), inMessage:Data())
     XFO.Elephant:AddMessage(inMessage, 'CHAT_MSG_GUILD', text)
     XFO.WIM:AddMessage(inMessage:FromUnit(), text)
@@ -80,7 +80,7 @@ end
 
 function XFC.ChatWindow:DisplayAchievement(inMessage)
     assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
-    if (not XF.Config.Chat.GChat.Enable or inUnit:IsSameGuild()) then return end
+    if (not XF.Config.Chat.GChat.Enable or inMessage:FromUnit():IsSameGuild()) then return end
     local text = DisplayOnFrame('GUILD_ACHIEVEMENT', 'CHAT_MSG_GUILD_ACHIEVEMENT', 'GUILD_ACHIEVEMENT', inMessage:FromUnit(), XF.Lib.Locale['ACHIEVEMENT_EARNED'] .. ' ' .. gsub(GetAchievementLink(inMessage:Data()), "(Player.-:.-:.-:.-:.-:)"  , inMessage:FromUnit():GUID() .. ':1:' .. date("%m:%d:%y:") ) .. '!')
     XFO.Elephant:AddMessage(inMessage, 'CHAT_MSG_GUILD_ACHIEVEMENT', text)
 end
@@ -98,7 +98,7 @@ function XFC.ChatWindow:DisplayLogout(inGUID)
         local unit = XFO.Confederate:Get(inGUID)
         if (not unit:IsSameGuild()) then
             DisplayOnFrame('GUILD', 'CHAT_MSG_GUILD', 'SYSTEM', unit, XF.Lib.Locale['CHAT_LOGOUT'])
-            if(XF.Config.Chat.Login.Sound and not unit:IsSameGuild()) then
+            if(XF.Config.Chat.Login.Sound) then
                 PlaySound(3332, 'Master')
             end
         end
