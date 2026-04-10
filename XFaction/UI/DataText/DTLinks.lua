@@ -1,0 +1,222 @@
+local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
+local ObjectName = 'DTLinks'
+
+XFC.DTLinks = XFC.Object:newChildConstructor()
+	
+--#region Constructors
+function XFC.DTLinks:new()
+	local object = XFC.DTLinks.parent.new(self)
+    object.__name = ObjectName
+    object.headerFont = nil
+	object.regularFont = nil
+	object.broker = nil
+	object.tooltip = nil
+    return object
+end
+
+function XFC.DTLinks:Initialize()
+	if(not self:IsInitialized()) then
+		self:ParentInitialize()
+		self:Broker(XF.Lib.Broker:NewDataObject(XF.Lib.Locale['DTLINKS_NAME'], {
+			type = 'data source',
+			label = XF.Lib.Locale['DTLINKS_NAME'],
+		    OnEnter = function(this) XFO.DTLinks:CallbackOnEnter(this) end,
+			OnLeave = function(this) XFO.DTLinks:CallbackOnLeave(this) end,
+		}))
+		self:HeaderFont(CreateFont('headerFont'))
+		self:HeaderFont():SetTextColor(0.4,0.78,1)
+		self:RegularFont(CreateFont('regularFont'))
+		self:RegularFont():SetTextColor(255,255,255)
+		self:IsInitialized(true)
+	end
+	return self:IsInitialized()
+end
+
+function XFC.DTLinks:PostInitialize()
+	self:HeaderFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	self:RegularFont():SetFont(XF.Lib.LSM:Fetch('font', XF.Config.DataText.Font), XF.Config.DataText.FontSize, 'OUTLINE')
+	self:RefreshBroker()
+end
+--#endregion
+
+--#region Properties
+function XFC.DTLinks:Broker(inBroker)
+	if(inBroker ~= nil) then
+		self.broker = inBroker
+	end
+	return self.broker
+end
+
+function XFC.DTLinks:HeaderFont(inFont)
+	if(inFont ~= nil) then
+		self.headerFont = inFont
+	end
+	return self.headerFont
+end
+
+function XFC.DTLinks:RegularFont(inFont)
+	if(inFont ~= nil) then
+		self.regularFont = inFont
+	end
+	return self.regularFont
+end
+
+function XFC.DTLinks:Tooltip(inTooltip)
+	local self = XFO.DTLinks
+	if(inTooltip ~= nil) then
+		self.tooltip = inTooltip
+	end
+	return self.tooltip
+end
+--#endregion
+
+--#region Methods
+function XFC.DTLinks:RefreshBroker()
+	local self = XFO.DTLinks
+	if(not XF.Initialized) then return end
+	try(function()
+		local text = ''
+		if(XF.Config.DataText.Link.Label) then
+			text = XF.Lib.Locale['LINKS'] .. ': '
+		end
+
+		local guild = 0
+		local chat = 0
+		local bnet = 0
+
+		for _, unit in XFO.Confederate:Iterator() do
+			if(unit:IsOnline() and not unit:IsPlayer()) then
+				if(unit:IsSameGuild()) then
+					guild = guild + 1
+				elseif(unit:IsSameRealm() and unit:IsSameFaction()) then
+					chat = chat + 1
+				elseif(unit:IsFriend()) then
+					bnet = bnet + 1
+				end
+			end
+		end
+
+		text = format('|cff3CE13F%d|r|cffFFFFFF - |r|cff%s%d|r|cffFFFFFF - |r|cffFFF468%d|r', guild, XF.Player.Faction:GetHex(), chat, bnet)
+		self:Broker().text = text
+	end).
+	catch(function(err)
+		XF:Warn(self:ObjectName(), err)
+	end)
+end
+
+function XFC.DTLinks:CallbackOnEnter(this)
+	local self = XFO.DTLinks
+	if(not XF.Initialized) then return end
+	if(InCombatLockdown()) then return end
+
+	try(function()
+
+		--#region Configure Tooltip
+		local tarCount = XFO.Targets:Count() + 2
+		
+		if XF.Lib.QT:IsAcquired(ObjectName) then
+			self:Tooltip(XF.Lib.QT:Acquire(ObjectName))
+		else
+			self:Tooltip(XF.Lib.QT:Acquire(ObjectName, tarCount))
+			self:Tooltip():SetHeaderFont(self.headerFont)
+			self:Tooltip():SetFont(self.regularFont)
+			self:Tooltip():SmartAnchorTo(this)
+			self:Tooltip():SetAutoHideDelay(.25, this, function() XFO.DTLinks:CallbackOnLeave() end)
+			self:Tooltip():EnableMouse(true)
+			self:Tooltip():SetClampedToScreen(false)
+		end
+
+		self:Tooltip():Clear()
+		--#endregion
+
+		--#region Header
+		local line = self:Tooltip():AddLine()
+		self:Tooltip():SetCell(line, 1, format(XF.Lib.Locale['DT_HEADER_CONFEDERATE'], XFO.Confederate:Name()), self:HeaderFont(), 'LEFT', tarCount)
+		line = self:Tooltip():AddLine()
+		line = self:Tooltip():AddHeader()
+		--#endregion
+
+		--#region Column Headers
+		local columns = {}
+		for _, target in XFO.Targets:Iterator() do
+			table.insert(columns, target:Guild():Initials())
+		end
+		sort(columns, function(a, b) return a < b end)
+
+		local targetColumn = {
+			Player = 1,
+			Realm = 2,
+		}
+		self:Tooltip():SetCell(line, 1, XF.Lib.Locale['PLAYER'])
+		self:Tooltip():SetCell(line, 2, XF.Lib.Locale['REALM'])
+		local i = 3
+		for _, column in ipairs(columns) do
+			self:Tooltip():SetCell(line, i, column)
+			targetColumn[column] = i
+			i = i + 1
+		end
+
+		line = self:Tooltip():AddLine()
+		self:Tooltip():AddSeparator()
+		line = self:Tooltip():AddLine()
+		--#endregion
+
+		--#region Populate Table
+		if(XF.Initialized) then
+			local units = {}
+			for _, unit in XFO.Confederate:Iterator() do
+				if(not unit:IsPlayer() and unit:IsOnline()) then
+					units[unit:UnitName()] = unit
+				end
+			end
+
+			for unitName, unit in PairsByKeys(units) do				
+				for _, target in XFO.Targets:Iterator() do
+					if(unit:Target():Equals(target)) then						
+						if(unit:IsSameGuild()) then
+							line = self:Tooltip():AddLine()
+							self:Tooltip():SetCell(line, 1, unit:Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, 2, unit:Realm():Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff3CE13FG|r'), self:RegularFont(), 'CENTER')
+						elseif(unit:IsSameRealm() and unit:IsSameFaction()) then
+							line = self:Tooltip():AddLine()
+							self:Tooltip():SetCell(line, 1, unit:Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, 2, unit:Realm():Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cff%sC|r', unit:Faction():GetHex()), self:RegularFont(), 'CENTER')
+						elseif(unit:IsFriend()) then
+							line = self:Tooltip():AddLine()
+							self:Tooltip():SetCell(line, 1, unit:Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, 2, unit:Realm():Name(), self:RegularFont())
+							self:Tooltip():SetCell(line, targetColumn[target:Guild():Initials()], format('|cffFFF468B|r'), self:RegularFont(), 'CENTER')
+						end
+					end
+				end
+			end
+			line = self:Tooltip():AddLine()
+		end
+		--#endregion
+
+		self:Tooltip():UpdateScrolling(XF.Config.DataText.Guild.Size)
+		self:Tooltip():Show()
+	end).
+	catch(function(err)
+		XF:Warn(self:ObjectName(), err)
+	end)
+end
+
+function XFC.DTLinks:CallbackOnLeave()
+	local self = XFO.DTLinks
+	try(function()
+		if self:Tooltip() and MouseIsOver(self:Tooltip()) then
+			return
+		else
+			XF.Lib.QT:Release(self:Tooltip())
+			self.tooltip = nil
+		end
+	end).
+	catch(function(err)
+		XF:Warn(self:ObjectName(), err)
+	end)
+end
+--#endregion

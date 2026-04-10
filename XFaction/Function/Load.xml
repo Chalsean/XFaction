@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file='GenerateUID.lua'/>
+    <Script file='StringSplit.lua'/>
+    <Script file='StringStartsWith.lua'/>
+    <Script file='PairsByKeys.lua'/>
+    <Script file='Pickle.lua'/>
+    <Script file='Exception\try-catch-finally.lua'/>
+    <Script file='Logger.lua'/>
+</Ui>

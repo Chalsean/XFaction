@@ -1,0 +1,121 @@
+local XF, G = unpack(select(2, ...))
+local XFC, XFO, XFF = XF.Class, XF.Object, XF.Function
+local LogCategory = 'Config'
+
+XF.Defaults = {
+    profile = {
+        Logout = {},
+        Channels = {},      
+        Chat = {
+            GChat = {
+                Enable = true,
+                Achievement = true,
+                Icon = true,
+                Faction = false,
+                Guild = true,
+                Main = false,
+                CColor = false,
+                Color = {
+                    Red = 0.251,
+                    Green = 1,
+                    Blue = 0.251,
+                },
+            },
+            Login = {
+                Enable = true,
+                Sound = false,
+                Faction = false,
+                Guild = false,
+                Main = true,
+            },
+            Crafting = {
+                Enable = true,
+                GuildOrder = true,
+                PersonalOrder = true,
+                Faction = false,
+                Main = true,
+                Guild = false,
+                Professions = false,
+            },
+        },
+        DataText = {
+            Font = XF.Lib.LSM:GetDefault('font'),
+            FontSize = 10,
+            Guild = {
+                Column = '',
+                Label = false,
+                GuildName = true,
+                Confederate = true,
+                MOTD = true,
+                Main = true,
+                Enable = {
+                    Faction = true,
+                    Guild = true,
+                    Level = false,
+                    Name = true,
+                    Note = false,
+                    Profession = false,
+                    Race = true,
+                    Rank = false,
+                    Realm = true,
+                    Spec = true,
+                    Team = true,
+                    Location = true,
+                    Version = false,
+                    MythicKey = false,
+                    Hero = true
+                },
+                Order = {
+                    Faction = 1,
+                    Guild = 6,
+                    Level = 0,
+                    Name = 4,
+                    Note = 0,
+                    Profession = 0,
+                    Race = 5,
+                    Rank = 0,
+                    Realm = 7,
+                    Spec = 2,
+                    Team = 8,
+                    Version = 0,
+                    Location = 9,
+                    MythicKey = 0,
+                    Hero = 3,
+                },
+                Alignment = {
+                    Faction = 'Center',
+                    Guild = 'Left',
+                    Level = 'Center',
+                    Name = 'Left',
+                    Note = 'Left',
+                    Profession = 'Center',
+                    Race = 'Left',
+                    Rank = 'Left',
+                    Realm = 'Left',
+                    Spec = 'Center',
+                    Team = 'Left',
+                    Version = 'Center',
+                    Location = 'Center',
+                    MythicKey = 'Left',
+                    Hero = 'Center'
+                },                
+                Sort = 'Name',
+                Size = 350,
+            },
+            Link = {
+                Label = false,
+                Faction = true,
+            },
+            Metric = {
+                Rate = 60,
+                Total = false,
+                Average = true,
+                Error = true,
+                Warning = true,
+            },
+        },
+        Debug = {
+            Verbosity = 0,
+        },
+    }
+}
