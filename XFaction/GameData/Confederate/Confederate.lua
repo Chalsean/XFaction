@@ -110,7 +110,15 @@ end
 
 function XFC.Confederate:RefreshUnit(inUnit)
     assert(type(inUnit) == 'table' and inUnit.__name == 'Unit')
+    local refresh = false
+    if (not self:Contains(inUnit:Key())) then
+        refresh = true
+    end
     self:Add(inUnit)
+    if (refresh) then
+        XFO.DTGuild:RefreshBroker()
+        XFO.DTLinks:RefreshBroker()
+    end
 end
 
 function XFC.Confederate:CallbackHeartbeat() 
