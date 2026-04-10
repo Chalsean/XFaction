@@ -39,7 +39,7 @@ function XFC.ChatWindow:AchievementFilter(inEvent, ...)
     if (not XF.Config.Chat.GChat.Enable or not XF.Config.Chat.GChat.Achievement) then
         return true
     end
-    return false, inEvent, ...
+    return false, ...
 end
 
 local function GetPrefix(inUnit)
