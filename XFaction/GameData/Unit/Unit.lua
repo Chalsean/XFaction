@@ -512,7 +512,7 @@ end
 
 function XFC.Unit:GetLink()
     if(self:IsFriend()) then
-        return format('|HBNplayer:%s:%d:0:WHISPER:%s|h%s|h', self:Friend():Name(), self:Friend():AccountID(), self:Friend():Name(), self:Name())
+        return format('[|c%s%s|r]', self:Class():Hex(), format('|HBNplayer:%s:%d:0:WHISPER:%s|h%s|h', self:Friend():Name(), self:Friend():AccountID(), self:Friend():Name(), self:Name()))
     end
 
     return format('[|c%s%s|r]', self:Class():Hex(), format('|Hplayer:%s|h%s|h', self:UnitName(), self:Name()))
