@@ -17,7 +17,6 @@ XF.Verbosity = 4
 XF.Initialized = false
 XF.UIDLength = 11
 XF.Icons = '|T%d:16:16:0:0:64:64:4:60:4:60|t'
-XF.Chattynator = false
 
 XF.Player = {}
 XF.Class = {}

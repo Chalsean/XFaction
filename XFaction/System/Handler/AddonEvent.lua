@@ -170,8 +170,6 @@ function XFC.AddonEvent:CallbackAddonLoaded(inAddonName)
                 XFO.WIM:Initialize()
             elseif(inAddonName == 'Elephant') then
                 XFO.Elephant:Initialize()
-			elseif(inAddonName == 'Chattynator') then
-				XF.Chattynator = true
             end
         end
     end).

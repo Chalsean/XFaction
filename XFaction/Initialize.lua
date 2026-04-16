@@ -33,7 +33,7 @@ function XF:CoreInit()
 	XFO.DTGuild = XFC.DTGuild:new()
 	XFO.DTLinks = XFC.DTLinks:new()
 	XFO.DTMetrics = XFC.DTMetrics:new()
-	XFO.ChatWindow = XFC.ChatWindow:new(); XFO.ChatWindow:Initialize()
+	XFO.ChatWindow = XFC.ChatWindow:new()
 
 	-- Declare handlers but not listening yet
 	XFO.SystemEvent = XFC.SystemEvent:new()
@@ -146,6 +146,7 @@ function XF:CallbackLoginPlayer()
 			XFO.BNet:Initialize()
 			XFO.Friends:Initialize()
 			XFO.Janitor:Initialize()
+			XFO.ChatWindow:Initialize()
 
 			-- If reload, restore backup information
 			if(XF.Cache.UIReload) then

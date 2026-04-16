@@ -78,7 +78,9 @@ function XFC.Confederate:Restore()
             XF:Warn(self:ObjectName(), err)
         end)
     end
-    XF.Cache.Backup.Confederate = {}    
+    XF.Cache.Backup.Confederate = {}
+    XFO.DTGuild:RefreshBroker()
+    XFO.DTLinks:RefreshBroker() 
 end
 
 function XFC.Confederate:Login(inUnit)
