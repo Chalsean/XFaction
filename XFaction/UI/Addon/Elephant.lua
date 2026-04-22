@@ -23,17 +23,16 @@ end
 --#endregion
 
 --#region Methods
-function XFC.Elephant:AddMessage(inMessage, inEvent, inText)
-    assert(type(inMessage) == 'table' and inMessage.__name == 'Message')
+function XFC.Elephant:AddMessage(inUnit, inEvent, inText)
     if(self:IsInitialized()) then
         try(function()
             local elephant = {
-                time = inMessage:TimeStamp(),
+                time = time(),
                 arg1 = inText,
-                arg2 = inMessage:FromUnit():UnitName(),
+                arg2 = inUnit:UnitName(),
                 arg6 = '',
                 arg9 = XFO.Channels:Get('GUILD'):Name(),
-                clColor = 'ff' .. inMessage:FromUnit():Class():Hex()
+                clColor = 'ff' .. inUnit():Class():Hex()
             }
             for channel_index in pairs(self:API():ProfileDb().events[inEvent].channels) do
                 if self:API():ProfileDb().events[inEvent].channels[channel_index] ~= 0 and self:API():LogsDb().logs[channel_index].enabled then
